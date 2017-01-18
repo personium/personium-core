@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.fujitsu</groupId>
-	<artifactId>dc1-core</artifactId>
+	<groupId>io.personium</groupId>
+	<artifactId>personium-core</artifactId>
 	<packaging>war</packaging>
 	<version>1.4.2-SNAPSHOT</version>
-	<name>dc1-core Maven Webapp</name>
+	<name>personiu-core Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<licenses>
 		<license>
@@ -15,37 +15,32 @@
 	</licenses>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<final.name>dc1-core</final.name>
-		<esapi.version>2_4</esapi.version>
+		<final.name>personium-core</final.name>
 		<java.source.version>1.8</java.source.version>
 		<java.target.version>1.8</java.target.version>
 		<logback.version>1.0.12</logback.version>
 		<slf4j.version>1.7.6</slf4j.version>
 		<jacoco.include.package>com.fujitsu.*</jacoco.include.package>
+		<!-- <jacoco.include.package>io.personium.*</jacoco.include.package> -->
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.fujitsu.dc</groupId>
-			<artifactId>dc1-es-api-${esapi.version}</artifactId>
+			<groupId>io.personium</groupId>
+			<artifactId>personium-lib-es-adaptor</artifactId>
 			<version>1.4.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.fujitsu.dc</groupId>
-			<artifactId>dc1-common</artifactId>
+			<groupId>io.personium</groupId>
+			<artifactId>personium-lib-common</artifactId>
 			<version>1.4.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.fujitsu.dc</groupId>
-			<artifactId>dc1-logback</artifactId>
+			<groupId>io.personium</groupId>
+			<artifactId>personium-client-java</artifactId>
 			<version>1.4.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-            <groupId>com.fujitsu.dc</groupId>
-            <artifactId>dc1-client</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
 			<scope>test</scope>
-        </dependency>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
