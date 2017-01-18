@@ -6,25 +6,9 @@ An open source PDS (Personal Data Store) server software.
 
 http://personium.io/
 
-## Components
-
-	core                    - Core module of Personium
-	engine                  - Module to enable server-side JS execution.
-	cell-sweeper            - A batch program to delete the cells that are marked to be deleted.
-	logback                 - A logback customization to rotate the event logs.
-	logback-settings        - A shell command to run logback as a daemon process .
-	es-api-2.4              - Abstraction layer to absorb version incompatibilities of ElasticSearch.
-	common                  - Common modules used in the above modules.
-	engine-extension-common - Common modules for implementing Engine Extension.
-	client-java             - Java client. Engine internally uses it.
-	client-js               - JavaScript client for web browsers.
-
 ## Documentation
 
 http://personium.io/docs/
-
-Wiki pages are also available.
-https://github.com/personium/io/wiki
 
 ## Set up
 
