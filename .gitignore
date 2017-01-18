@@ -1,9 +1,6 @@
-.svn
-
-.settings
-.project
 .classpath
+.project
+.settings/
+bin/target/
 target
-core/src/main/resources/dc-config.properties
-
-*.log
+/src/main/resources/dc-config.properties
