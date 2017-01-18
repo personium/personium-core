@@ -1,0 +1,8 @@
+${method} /${cellPath}/__ctl/${entitySet}(${key})/$links/${navProp}(${navKey}) HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer ${token}
+

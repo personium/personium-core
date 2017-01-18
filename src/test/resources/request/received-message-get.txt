@@ -1,0 +1,7 @@
+GET /${cellPath}/__ctl/ReceivedMessage('${messageId}') HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/json
+Authorization: Bearer ${token}
+

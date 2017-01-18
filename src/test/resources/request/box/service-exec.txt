@@ -1,0 +1,7 @@
+${method} /testcell1/box1/${path}${query} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Authorization: Bearer ${token}
+
+${body}

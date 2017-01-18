@@ -1,0 +1,8 @@
+MKCOL /testcell1/box1/${path} HTTP/1.1
+Host: ?
+Connection: close
+Accept: application/xml
+Content-Type: application/xml
+Authorization: Bearer ${token}
+Content-Length: 0
+

@@ -1,0 +1,8 @@
+DELETE /__ctl/Cell(Name='${cellName}',_Domain.Name='${domainName}') HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Content-Type: application/json
+Authorization: Bearer ${token}
+If-Match: *
+

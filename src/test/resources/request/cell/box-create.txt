@@ -1,0 +1,9 @@
+POST /${cellPath}/__ctl/Box HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer ${token}
+
+{"Name":"${boxPath}"}

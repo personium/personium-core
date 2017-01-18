@@ -1,0 +1,10 @@
+MOVE /${cellPath}/${path} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Authorization: ${authorization}
+Destination: ${destination}
+If-Match: ${ifMatch}
+Overwrite: ${overWrite}
+Depth: ${depth}
+

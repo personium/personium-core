@@ -1,0 +1,6 @@
+${METHOD} /${cellPath}/__log/${collection} HTTP/1.1
+Host: ?
+Connection: close
+Authorization: Bearer ${token}
+Depth: ${depth}
+

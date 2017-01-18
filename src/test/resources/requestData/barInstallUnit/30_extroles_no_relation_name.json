@@ -1,0 +1,7 @@
+{
+  "ExtRoles": [
+    {
+      "ExtRole": "https://fqdn/cellName/__role/__/role2"
+    }
+  ]
+}

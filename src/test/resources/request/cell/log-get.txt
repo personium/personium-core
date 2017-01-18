@@ -1,0 +1,7 @@
+${METHOD} /${cellPath}/__log/${collection}/${fileName} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Authorization: Bearer ${token}
+If-None-Match: ${ifNoneMatch}
+

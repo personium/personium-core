@@ -1,0 +1,104 @@
+/**
+ * personium.io
+ * Copyright 2014 FUJITSU LIMITED
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.fujitsu.dc.test.jersey.box.acl.jaxb;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java class for anonymous complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType>
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element ref="{}principal" minOccurs="0"/>
+ *         &lt;element ref="{}grant" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
+ *
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+    "principal",
+    "grant"
+})
+@XmlRootElement(name = "ace")
+public class Ace {
+
+    Principal principal;
+    Grant grant;
+
+    /**
+     * Gets the value of the principal property.
+     *
+     * @return
+     *     possible object is
+     *     {@link Principal }
+     *
+     */
+    public Principal getPrincipal() {
+        return principal;
+    }
+
+    /**
+     * Sets the value of the principal property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Principal }
+     *
+     */
+    public void setPrincipal(Principal value) {
+        this.principal = value;
+    }
+
+    /**
+     * Gets the value of the grant property.
+     *
+     * @return
+     *     possible object is
+     *     {@link Grant }
+     *
+     */
+    public Grant getGrant() {
+        return grant;
+    }
+
+    /**
+     * Sets the value of the grant property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Grant }
+     *
+     */
+    public void setGrant(Grant value) {
+        this.grant = value;
+    }
+
+}

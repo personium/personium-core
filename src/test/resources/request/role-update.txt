@@ -1,0 +1,11 @@
+PUT /${cellPath}/__ctl/Role(Name='${rolenamekey}',_Box.Name=${boxnamekey}) HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer ${token}
+If-Match: *
+
+{"Name":"${rolename}","_Box.Name":${boxname}}
+

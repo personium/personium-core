@@ -1,0 +1,7 @@
+POST /${remoteCell}/__auth HTTP/1.1
+Host: ?
+Content-Type: application/x-www-form-urlencoded
+Content-Length: ?
+Connection: close
+
+grant_type=password&username=${username}&password=${password}&dc_cookie=${dc_cookie}

@@ -1,0 +1,11 @@
+ACL /${url} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/xml
+Content-Type: application/xml
+Authorization: Bearer ${token}
+
+<?xml version="1.0" encoding="utf-8" ?>
+<D:acl xmlns:D="DAV:" xml:base="${roleBaseUrl}">
+</D:acl>

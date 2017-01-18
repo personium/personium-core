@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    personium.io
+    Copyright 2014 FUJITSU LIMITED
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<edmx:Edmx Version='1.0' xmlns:edmx='http://schemas.microsoft.com/ado/2007/06/edmx' xmlns:d='http://schemas.microsoft.com/ado/2007/08/dataservices' xmlns:m='http://schemas.microsoft.com/ado/2007/08/dataservices/metadata' xmlns:dc='urn:x-dc1:xmlns'>
+  <edmx:DataServices m:DataServiceVersion='1.0'>
+    <Schema xmlns='http://schemas.microsoft.com/ado/2006/04/edm' Namespace='UserData'>
+      <ComplexType Name="complex1">
+        <Property Name='compprop1' Type='Edm.String' Nullable='true' DefaultValue='defVal'/>
+        <Property Name='compprop2' Type='UserData.complex1' Nullable='false'/>
+      </ComplexType>
+      <EntityType Name="entity1" OpenType="true">
+        <Key>
+          <PropertyRef Name="__id" /> 
+        </Key>
+        <Property Name="__id" Type="Edm.String" Nullable="false" DefaultValue="UUID()" dc:Format="regEx('^[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}$')" /> 
+        <Property Name="__published" Type="Edm.DateTime" Nullable="false" DefaultValue="SYSUTCDATETIME()" Precision="3" /> 
+        <Property Name="__updated" Type="Edm.DateTime" Nullable="false" DefaultValue="SYSUTCDATETIME()" Precision="3" /> 
+      </EntityType>
+      <EntityType Name="entity2" OpenType="true">
+        <Key>
+          <PropertyRef Name="__id" /> 
+        </Key>
+        <Property Name="__id" Type="Edm.String" Nullable="false" DefaultValue="UUID()" dc:Format="regEx('^[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}$')" /> 
+        <Property Name="__published" Type="Edm.DateTime" Nullable="false" DefaultValue="SYSUTCDATETIME()" Precision="3" /> 
+        <Property Name="__updated" Type="Edm.DateTime" Nullable="false" DefaultValue="SYSUTCDATETIME()" Precision="3" /> 
+      </EntityType>
+      <EntityContainer Name="UserData" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="entity1" EntityType="UserData.entity1" /> 
+        <EntitySet Name="entity2" EntityType="UserData.entity2" /> 
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,7 @@
+${METHOD} /${cellPath}/__log/${collection} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Authorization: Bearer ${token}
+
+${body}

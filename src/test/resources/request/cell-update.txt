@@ -1,0 +1,10 @@
+PUT /__ctl/Cell('${cellPath}') HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/json
+Content-Type: application/json
+Authorization: ${token}
+If-Match: *
+
+{"Name":"${cellName}"}

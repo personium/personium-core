@@ -1,0 +1,30 @@
+ACL /${cellPath}/${box}/${colname} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/xml
+Content-Type: application/xml
+Authorization: ${token}
+
+<?xml version="1.0" encoding="utf-8" ?>
+<D:acl xmlns:D="DAV:" xml:base="${roleBaseUrl}"
+    xmlns:dc="urn:x-dc1:xmlns"
+    dc:requireSchemaAuthz="${level}">
+    <D:ace>
+        <D:principal>
+            <D:href>${role1}</D:href>
+        </D:principal>
+        <D:grant>
+            <D:privilege>${privilege1}</D:privilege>
+        </D:grant>
+    </D:ace>
+    <D:ace>
+        <D:principal>
+            <D:href>${role2}</D:href>
+        </D:principal>
+        <D:grant>
+            <D:privilege>${privilege1}</D:privilege>
+            <D:privilege>${privilege2}</D:privilege>
+        </D:grant>
+    </D:ace>
+</D:acl>

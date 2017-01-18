@@ -1,0 +1,7 @@
+GET /${cell}/${box}/${collection}/${entityType}${query} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Authorization: ${token}
+Accept: ${accept}
+

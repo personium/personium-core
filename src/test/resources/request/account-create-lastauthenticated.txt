@@ -1,0 +1,10 @@
+POST /${cellPath}/__ctl/Account HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer ${token}
+X-Dc-Credential: ${password}
+
+{"Name":"${username}","LastAuthenticated":"${lastauthenticated}"}

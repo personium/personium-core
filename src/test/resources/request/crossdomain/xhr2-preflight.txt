@@ -1,0 +1,8 @@
+OPTIONS ${path} HTTP/1.1
+Host: ?
+Content-Length: ?
+Access-Control-Request-Headers: Accept
+Authorization: Bearer ${token}
+Origin: example.com
+Connection: close
+

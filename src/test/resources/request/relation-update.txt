@@ -1,0 +1,8 @@
+PUT /${cellPath}/__ctl/Relation(Name='${relationname}',_Box.Name=${boxname}) HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Authorization: Bearer ${token}
+If-Match: *
+
+{"Name":"${updateName}", "_Box.Name": ${updateBoxName}}

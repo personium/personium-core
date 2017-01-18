@@ -1,0 +1,16 @@
+{
+    "Links": [
+        {
+            "FromType": "entity1",
+            "FromId": {
+                    "__id": "barInstallTest"
+            },
+            "ToType": "entity2",
+            "ToId": [
+                {
+                    "__id": "barInstallTest2"
+                }
+            ]
+        }
+    ]
+}

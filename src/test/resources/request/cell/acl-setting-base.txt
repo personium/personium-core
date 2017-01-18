@@ -1,0 +1,28 @@
+ACL /${url} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/xml
+Content-Type: application/xml
+Authorization: Bearer ${token}
+
+<?xml version="1.0" encoding="utf-8" ?>
+<D:acl xmlns:D="DAV:" xml:base="${roleBaseUrl}">
+     <D:ace>
+        <D:principal>
+            <D:href>${role1}</D:href>
+        </D:principal>
+        <D:grant>
+            <D:privilege><D:auth/></D:privilege>
+            <D:privilege><D:auth-read/></D:privilege>
+        </D:grant>
+    </D:ace>
+    <D:ace>
+        <D:principal>
+            <D:href>${role2}</D:href>
+        </D:principal>
+        <D:grant>
+            <D:privilege><D:auth/></D:privilege>
+        </D:grant>
+    </D:ace>
+</D:acl>

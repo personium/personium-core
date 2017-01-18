@@ -1,0 +1,11 @@
+PUT /${cellPath}/__ctl/Account('${username}') HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer ${token}
+X-Dc-Credential: ${password}
+If-Match: *
+
+{"Name":"${newUsername}","LastAuthenticated":${newLastAuthenticated}}

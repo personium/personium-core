@@ -1,0 +1,8 @@
+DELETE /${cellPath}/__ctl/${sourceEntity}(${sourceKey})/$links/${navPropName}(${navPropKey}) HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Content-Type: application/json
+Authorization: ${token}
+If-Match: ${ifMatch}
+

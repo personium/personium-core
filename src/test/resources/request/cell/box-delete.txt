@@ -1,0 +1,8 @@
+DELETE /${cellPath}/__ctl/Box('${boxPath}') HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Content-Type: application/json
+Authorization: Bearer ${token}
+If-Match: *
+

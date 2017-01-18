@@ -1,0 +1,6 @@
+GET /${cellPath}/__ctl/Role(Name='${rolename}') HTTP/1.1
+Host: ?
+Connection: close
+Accept: application/json
+Authorization: Bearer ${token}
+

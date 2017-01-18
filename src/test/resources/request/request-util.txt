@@ -1,0 +1,7 @@
+${method} ${url} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/xml
+Authorization: ${token}
+

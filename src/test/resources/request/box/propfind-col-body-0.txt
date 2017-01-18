@@ -1,0 +1,9 @@
+PROPFIND /testcell1/box1/${path} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Depth: ${depth}
+Accept: application/xml
+Content-Type: application/xml
+Authorization: Bearer ${token}
+

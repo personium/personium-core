@@ -1,0 +1,7 @@
+DELETE /${cellPath}/__ctl/Account('${username}')/$links/_Role(${keyPredicate}) HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Content-Type: application/json
+Authorization: Bearer ${token}
+

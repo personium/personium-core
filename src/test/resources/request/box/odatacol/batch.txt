@@ -1,0 +1,8 @@
+POST /${cell}/${box}/${collection}/$batch HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Authorization: Bearer ${token}
+Content-Type: multipart/mixed; boundary=${boundary}
+
+${body}

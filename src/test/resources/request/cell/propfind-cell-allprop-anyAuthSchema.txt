@@ -1,0 +1,13 @@
+PROPFIND /${url} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Depth: ${depth}
+Accept: application/xml
+Content-Type: application/xml
+Authorization: ${authorization}
+
+<?xml version="1.0" encoding="utf-8"?>
+<D:propfind xmlns:D="DAV:">
+  <D:allprop/>
+</D:propfind>

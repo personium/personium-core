@@ -1,0 +1,8 @@
+DELETE /${cell} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/json
+Authorization: Bearer ${token}
+X-Dc-Recursive: true
+

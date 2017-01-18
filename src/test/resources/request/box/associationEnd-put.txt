@@ -1,0 +1,12 @@
+PUT /${cell}/${box}/${odataSvcPath}/$metadata/AssociationEnd(Name='${name}',_EntityType.Name='${entityTypeName}') HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Authorization: Bearer ${token}
+If-Match: ${ifMatch}
+
+{
+  "Name": "${reName}",
+  "Multiplicity": "${multiplicity}",
+  "_EntityType.Name":"${entityTypeReName}"
+}

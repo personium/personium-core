@@ -1,0 +1,9 @@
+POST /${remoteCell}/__auth HTTP/1.1
+Host: ?
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+Authorization: ${Authorization_header}
+Content-Length: ?
+Connection: close
+
+${body}

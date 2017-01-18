@@ -1,0 +1,56 @@
+テスト用の正常な組み合わせの証明書
+
+cacrt.crt：ルートCA証明書
+pio4.crt：サーバ証明書
+→
+pio2.key:サーバ秘密鍵
+
+【作成手順】
+
+${user} = ローカルPCのユーザフォルダ
+☆下準備
+・作業ディレクトリへの移動
+・#/usr/demoCA
+
+・ルートCAディレクトリ作成
+#export CATOP=./effective
+
+１．ルートCA証明書の作成
+・CA.sh内の有効期限を修正
+
+if [ -z "$DAYS" ] ; then DAYS="-days 36500" ; fi	# 1 year
+CADAYS="-days 109500"	# 3 years
+
+#/usr/ssl/misc/CA.sh -newca
+
+
+    開発環境（jerseyテストフレームワーク用）
+
+署名者 	Social Cloud CA
+PEM pass phrase 	pass
+Country Name 	JP
+State or Province Name 	Tokyo
+Locality Name 	Ota-ku
+Organization Name 	Fujitsu Ltd
+Organizational Unit Name 	Social Cloud Office
+Common Name 	localhost
+Email Address 	nssp-dc@ml.css.fujitsu.com
+
+
+２．ユーザ証明書要求
+
+・RSA秘密鍵の作成
+#openssl genrsa -des3 -out pio.key 10240
+
+・RSA秘密鍵のパスフレーズ削除
+#openssl rsa -in pio.key -out pio.key
+
+・X.509証明書要求（CSR：Certification Signing Request ）の作成
+#openssl req -new -key pio.key -out pio3.csr
+
+・発行管理ファイル作成（存在しない場合のみ）
+#echo 00 > /home/${user}/effective/cacert.srl
+
+３ルート証明書を使ってユーザ証明書要求へ署名
+#openssl x509 -in pio3.csr -CA /home/${user}/effective/cacert.pem -CAkey /home/${user}/effective/private/cakey.pem -out pio.crt -req -days 26500
+

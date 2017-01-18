@@ -1,0 +1,8 @@
+{
+  "ExtRoles": [
+    {
+      "ExtRole": "https://fqdn/cellName/__role/__/role2",
+      "_Relation.Name": "relation1"
+    }
+  ]
+}

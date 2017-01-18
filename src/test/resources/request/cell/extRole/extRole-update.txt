@@ -1,0 +1,10 @@
+PUT /${cellPath}/__ctl/ExtRole(ExtRole='${extRoleName}',_Relation.Name=${relationName},_Relation._Box.Name=${relationBoxName}) HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer ${token}
+If-Match: *
+
+{"ExtRole":"${newextRoleName}", "_Relation.Name":${newRelation}, "_Relation._Box.Name":${newRelationBox}}

@@ -1,0 +1,6 @@
+GET /${cellPath}/${boxName}/${colName}/$metadata/EntityType?dc_cookie_peer=${dc_cookie_peer} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/json
+

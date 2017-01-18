@@ -1,0 +1,7 @@
+GET /${cellPath}/__ctl/ExtRole(ExtRole='${extRoleName}',_Relation.Name=${relationName},_Relation._Box.Name=${relationBoxName}) HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/json
+Authorization: Bearer ${token}
+

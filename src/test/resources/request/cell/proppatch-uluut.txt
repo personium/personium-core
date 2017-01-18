@@ -1,0 +1,16 @@
+PROPPATCH /${path} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Accept: application/xml
+Content-Type: application/xml
+Authorization: Bearer ${token}
+
+<?xml version="1.0" encoding="utf-8" ?>
+<D:propertyupdate xmlns:D="DAV:" xmlns:dc="urn:x-dc1:xmlns">
+  <D:set>
+    <D:prop>
+      <dc:ownerRepresentativeAccounts><dc:account>account1</dc:account><dc:account>account2</dc:account></dc:ownerRepresentativeAccounts>
+    </D:prop>
+  </D:set>
+</D:propertyupdate>

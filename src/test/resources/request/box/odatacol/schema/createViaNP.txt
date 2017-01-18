@@ -1,0 +1,9 @@
+POST /${cell}/${box}/${collection}/$metadata/${entityType}('${id}')/${navPropName} HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Authorization: Bearer ${token}
+Accept: ${accept}
+Content-Type: ${contentType}
+
+${body}

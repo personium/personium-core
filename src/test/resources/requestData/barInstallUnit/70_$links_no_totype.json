@@ -1,0 +1,14 @@
+{
+  "Links": [
+    {
+      "FromType": "Relation",
+      "FromName": {
+          "Name": "relation1" 
+      },
+      "ToName": {
+          "Name": "role1"
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,8 @@
+PROPFIND /${url} HTTP/1.1
+Host: ?
+Connection: close
+Depth: ${depth}
+Accept: application/xml
+Content-Type: application/xml
+Authorization: Bearer ${token}
+

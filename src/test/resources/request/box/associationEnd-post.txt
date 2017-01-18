@@ -1,0 +1,12 @@
+POST /${cell}/${box}/${odataSvcPath}/$metadata/AssociationEnd HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Authorization: Bearer ${token}
+Accept: ${accept}
+
+{
+  "Name": "${Name}",
+  "Multiplicity": "${Multiplicity}",
+  "_EntityType.Name":"${entityTypeName}"
+}

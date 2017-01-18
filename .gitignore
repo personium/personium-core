@@ -1,0 +1,9 @@
+.svn
+
+.settings
+.project
+.classpath
+target
+core/src/main/resources/dc-config.properties
+
+*.log
