@@ -10,16 +10,6 @@ http://personium.io/
 
 http://personium.io/docs/
 
-## Set up
-
-1. Try Personium  on your machine !
-
-	Please refer __io-vagrant-ansible__ page. ([io-vagrant-ansible](https://github.com/personium/io-vagrant-ansible))
-
-2. Try Personium on your cloud !
-
-	Please refer __io-setup-ansible__ page. ([io-setup-ansible](https://github.com/personium/io-setup-ansible))
-	
 ## License
 
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,4 +24,4 @@ http://personium.io/docs/
 	See the License for the specific language governing permissions and
 	limitations under the License.
 
-	Copyright 2016 FUJITSU LIMITED
+	Copyright 2017 FUJITSU LIMITED
