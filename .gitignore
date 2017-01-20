@@ -1,0 +1,6 @@
+.classpath
+.project
+.settings/
+bin/target/
+target
+/src/main/resources/dc-config.properties
