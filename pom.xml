@@ -26,20 +26,25 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>io.personium</groupId>
-			<artifactId>personium-lib-es-adaptor</artifactId>
+			<groupId>com.fujitsu.dc</groupId>
+			<artifactId>dc1-es-api-2_4</artifactId>
 			<version>1.4.1</version>
 		</dependency>
 		<dependency>
-			<groupId>io.personium</groupId>
-			<artifactId>personium-lib-common</artifactId>
+			<groupId>com.fujitsu.dc</groupId>
+			<artifactId>dc1-common</artifactId>
 			<version>1.4.1</version>
 		</dependency>
 		<dependency>
-			<groupId>io.personium</groupId>
-			<artifactId>personium-client-java</artifactId>
+			<groupId>com.fujitsu.dc</groupId>
+			<artifactId>dc1-client</artifactId>
 			<version>1.4.1</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.fujitsu.dc</groupId>
+			<artifactId>dc1-logback</artifactId>
+			<version>1.4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
