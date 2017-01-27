@@ -1112,7 +1112,7 @@ public class DavCmpFsImpl implements DavCmp {
     public DavMetadataFile getDavMetadataFile() {
         return this.metaFile;
     }
-    
+
     /**
      * @return FsPath
      */

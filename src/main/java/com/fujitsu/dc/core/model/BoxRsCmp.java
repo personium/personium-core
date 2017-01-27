@@ -31,14 +31,14 @@ public class BoxRsCmp extends DavRsCmp {
 
     /**
      * コンストラクタ.
+     * @param cellRsCmp CellRsCmp
      * @param davCmp DavCmp
-     * @param cell Cell
      * @param accessContext AccessContext
      * @param box ボックス
      */
-    public BoxRsCmp(final DavCmp davCmp, final Cell cell, final AccessContext accessContext, final Box box) {
-        super(null, davCmp);
-        this.cell = cell;
+    public BoxRsCmp(final CellRsCmp cellRsCmp, final DavCmp davCmp, final AccessContext accessContext, final Box box) {
+        super(cellRsCmp, davCmp);
+        this.cell = cellRsCmp.getCell();
         this.accessContext = accessContext;
         this.box = box;
         this.davCmp = davCmp;

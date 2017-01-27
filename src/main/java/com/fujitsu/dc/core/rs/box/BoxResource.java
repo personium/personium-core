@@ -56,6 +56,7 @@ import com.fujitsu.dc.core.model.Box;
 import com.fujitsu.dc.core.model.BoxCmp;
 import com.fujitsu.dc.core.model.BoxRsCmp;
 import com.fujitsu.dc.core.model.Cell;
+import com.fujitsu.dc.core.model.CellRsCmp;
 import com.fujitsu.dc.core.model.DavRsCmp;
 import com.fujitsu.dc.core.model.ModelFactory;
 import com.fujitsu.dc.core.model.ctl.Event;
@@ -90,7 +91,7 @@ public final class BoxResource {
      * @param jaxRsRequest JAX-RS用HTTPリクエスト
      */
     public BoxResource(final Cell cell, final String boxName, final AccessContext accessContext,
-            final DavRsCmp cellRsCmp, final HttpServletRequest request, Request jaxRsRequest) {
+            final CellRsCmp cellRsCmp, final HttpServletRequest request, Request jaxRsRequest) {
         // 親はなし。パス名としてとりあえずboxNameをいれておく。
         this.cell = cell;
         this.boxName = boxName;
@@ -109,7 +110,7 @@ public final class BoxResource {
         if (this.box != null) {
             //BoxCmp is necessary only if this Box exists
             BoxCmp davCmp = ModelFactory.boxCmp(this.box);
-            this.davRsCmp = new BoxRsCmp(davCmp, this.cell, this.accessContext, this.box);
+            this.davRsCmp = new BoxRsCmp(cellRsCmp, davCmp, this.accessContext, this.box);
         } else {
             //This box does not exist.
             String reqPathInfo = request.getPathInfo();

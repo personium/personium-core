@@ -256,7 +256,7 @@ public final class CellResource {
      */
     @Path("__box")
     public BoxUrlResource boxUrl() {
-        return new BoxUrlResource(this.cell, this.cellRsCmp);
+        return new BoxUrlResource(this.cellRsCmp);
     }
 
     /**

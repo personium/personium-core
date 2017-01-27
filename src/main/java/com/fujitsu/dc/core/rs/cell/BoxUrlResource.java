@@ -30,6 +30,7 @@ import com.fujitsu.dc.core.auth.OAuth2Helper;
 import com.fujitsu.dc.core.model.Box;
 import com.fujitsu.dc.core.model.BoxUrlRsCmp;
 import com.fujitsu.dc.core.model.Cell;
+import com.fujitsu.dc.core.model.CellRsCmp;
 import com.fujitsu.dc.core.model.DavCmp;
 import com.fujitsu.dc.core.model.DavRsCmp;
 import com.fujitsu.dc.core.model.ModelFactory;
@@ -42,17 +43,15 @@ public class BoxUrlResource {
 
     private AccessContext accessContext = null;
     private Cell cell = null;
-    private DavRsCmp davRsCmp;
+    private CellRsCmp cellRsCmp;
 
     /**
      * constructor.
-     * @param cell Cell
-     * @param davRsCmp DavRsCmp
+     * @param cellRsCmp DavRsCmp
      */
-    public BoxUrlResource(final Cell cell, final DavRsCmp davRsCmp) {
-        this.davRsCmp = davRsCmp;
-        this.accessContext = this.davRsCmp.getAccessContext();
-        this.cell = cell;
+    public BoxUrlResource(final CellRsCmp cellRsCmp) {
+        this.cellRsCmp = cellRsCmp;
+        this.accessContext = this.cellRsCmp.getAccessContext();
     }
 
     /**
@@ -87,14 +86,14 @@ public class BoxUrlResource {
             // Basic認証が許可されているかのチェック
             this.accessContext.updateBasicAuthenticationStateForResource(null);
             if (AccessContext.TYPE_INVALID.equals(accessContext.getType())) {
-                accessContext.throwInvalidTokenException(this.davRsCmp.getAcceptableAuthScheme());
+                accessContext.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
             }
             throw DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
 
         // 認証トークンの有効性チェック（有効期限の切れているトークンなど）
         DavCmp davCmp = ModelFactory.boxCmp(box);
-        DavRsCmp boxUrlRsCmp = new BoxUrlRsCmp(davCmp, this.cell, this.accessContext, box);
+        DavRsCmp boxUrlRsCmp = new BoxUrlRsCmp(this.cellRsCmp, davCmp, this.accessContext, box);
         boxUrlRsCmp.checkAccessContext(this.accessContext, BoxPrivilege.READ);
 
         // レスポンスを返却する

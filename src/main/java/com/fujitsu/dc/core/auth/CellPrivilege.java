@@ -43,11 +43,11 @@ public final class CellPrivilege extends Privilege {
     /**
      * すべての権限.
      */
-    public static final CellPrivilege ALL = new CellPrivilege("all");
+    public static final CellPrivilege ROOT = new CellPrivilege("root");
     /**
      * Account, Role, extRole グループ操作権限.
      */
-    public static final CellPrivilege AUTH = new CellPrivilege("auth", ALL);
+    public static final CellPrivilege AUTH = new CellPrivilege("auth", ROOT);
     /**
      * AUTHグループ read権限.
      */
@@ -55,7 +55,7 @@ public final class CellPrivilege extends Privilege {
     /**
      * ReceivedMessage, SentMessage グループ操作権限.
      */
-    public static final CellPrivilege MESSAGE = new CellPrivilege("message", ALL);
+    public static final CellPrivilege MESSAGE = new CellPrivilege("message", ROOT);
     /**
      * MESSAGEグループ read権限.
      */
@@ -63,7 +63,7 @@ public final class CellPrivilege extends Privilege {
     /**
      * event, log グループ操作権限.
      */
-    public static final CellPrivilege EVENT = new CellPrivilege("event", ALL);
+    public static final CellPrivilege EVENT = new CellPrivilege("event", ROOT);
     /**
      * EVENTグループ read権限.
      */
@@ -71,7 +71,7 @@ public final class CellPrivilege extends Privilege {
     /**
      * log 操作権限.
      */
-    public static final CellPrivilege LOG = new CellPrivilege("log", ALL);
+    public static final CellPrivilege LOG = new CellPrivilege("log", ROOT);
     /**
      * log read権限.
      */
@@ -79,7 +79,7 @@ public final class CellPrivilege extends Privilege {
     /**
      * relation, extCell グループ操作権限.
      */
-    public static final CellPrivilege SOCIAL = new CellPrivilege("social", ALL);
+    public static final CellPrivilege SOCIAL = new CellPrivilege("social", ROOT);
     /**
      * SOCIALグループ read権限.
      */
@@ -87,7 +87,7 @@ public final class CellPrivilege extends Privilege {
     /**
      * Box グループ操作権限.
      */
-    public static final CellPrivilege BOX = new CellPrivilege("box", ALL);
+    public static final CellPrivilege BOX = new CellPrivilege("box", ROOT);
     /**
      * BOXグループ read権限.
      */
@@ -99,7 +99,7 @@ public final class CellPrivilege extends Privilege {
     /**
      * ACL グループ操作権限.
      */
-    public static final CellPrivilege ACL = new CellPrivilege("acl", ALL);
+    public static final CellPrivilege ACL = new CellPrivilege("acl", ROOT);
     /**
      * ACLグループ read権限.
      */
@@ -107,7 +107,7 @@ public final class CellPrivilege extends Privilege {
     /**
      * PROPFIND権限.
      */
-    public static final CellPrivilege PROPFIND = new CellPrivilege("propfind", ALL);
+    public static final CellPrivilege PROPFIND = new CellPrivilege("propfind", ROOT);
 
     static Map<String, CellPrivilege> map = new HashMap<String, CellPrivilege>();
 
@@ -120,7 +120,7 @@ public final class CellPrivilege extends Privilege {
     }
 
     static {
-        register(ALL);
+        register(ROOT);
         register(AUTH);
         register(AUTH_READ);
         register(MESSAGE);

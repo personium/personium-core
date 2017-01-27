@@ -305,13 +305,13 @@ public class DavFileTest extends JerseyTest {
                     .statusCode(HttpStatus.SC_OK);
             int cl1 = Integer.parseInt(getRes.getHeader(HttpHeaders.CONTENT_LENGTH));
             assertEquals(FILE_BODY.length(), cl1);
-            // PUT 
+            // PUT
             TResponse resp2 = this.putFileRequest(FILE_NAME, FILE_BODY2, null, Setup.TEST_BOX1)
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT);
             String etag2 = resp2.getHeader(HttpHeaders.ETAG);
             assertNotNull(etag2);
-            // GET 
+            // GET
             getRes = this.getFileRequest(FILE_NAME, TEST_BOX1, null)
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
@@ -323,7 +323,6 @@ public class DavFileTest extends JerseyTest {
         }
     }
 
-    
     /**
      * FileをETAGつきPUTで更新してDELETEする.
      */

@@ -29,13 +29,14 @@ public class BoxUrlRsCmp extends BoxRsCmp {
 
     /**
      * コンストラクタ.
+     * @param cellRsCmp CellRsCmp
      * @param davCmp DavCmp
-     * @param cell Cell
      * @param accessContext AccessContext
      * @param box ボックス
      */
-    public BoxUrlRsCmp(final DavCmp davCmp, final Cell cell, final AccessContext accessContext, final Box box) {
-        super(davCmp, cell, accessContext, box);
+    public BoxUrlRsCmp(final CellRsCmp cellRsCmp, final DavCmp davCmp,
+            final AccessContext accessContext, final Box box) {
+        super(cellRsCmp, davCmp, accessContext, box);
     }
 
     /**

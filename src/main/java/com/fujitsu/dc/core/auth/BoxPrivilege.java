@@ -36,14 +36,14 @@ public final class BoxPrivilege extends Privilege {
      * @param name Privilege名
      * @param parent 親Privilege
      */
-    BoxPrivilege(final String name, final BoxPrivilege parent) {
+    BoxPrivilege(final String name, final Privilege parent) {
         super(name, parent);
     }
 
     /**
      * すべての権限.
      */
-    public static final BoxPrivilege ALL = new BoxPrivilege("all");
+    public static final BoxPrivilege ALL = new BoxPrivilege("all", CellPrivilege.ROOT);
     /**
      * リード権限.
      */

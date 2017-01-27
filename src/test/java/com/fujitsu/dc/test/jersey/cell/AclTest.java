@@ -117,12 +117,13 @@ public class AclTest extends AbstractCase {
             List<String> rolList = new ArrayList<String>();
             rolList.add("auth");
             rolList.add("auth-read");
+            rolList.add("read");
             map.put(TEST_ROLE1, rolList);
             list.add(map);
 
             List<String> rolList2 = new ArrayList<String>();
             Map<String, List<String>> map2 = new HashMap<String, List<String>>();
-            rolList2.add("auth");
+            rolList2.add("root");
             map2.put(TEST_ROLE2, rolList2);
             list.add(map2);
             String resorce = UrlUtils.cellRoot(TEST_CELL1);
@@ -837,7 +838,7 @@ public class AclTest extends AbstractCase {
         result.add(ResourceUtils.getMyCellLocalToken(TEST_CELL1, "account18", "password18"));
         // 9 account19 AUTH＋SOCIAL
         result.add(ResourceUtils.getMyCellLocalToken(TEST_CELL1, "account19", "password19"));
-        // 10 account20 ALL
+        // 10 account20 ROOT
         result.add(ResourceUtils.getMyCellLocalToken(TEST_CELL1, "account20", "password20"));
         // 11 account21 auth-read
         result.add(ResourceUtils.getMyCellLocalToken(TEST_CELL1, "account21", "password21"));
@@ -1143,7 +1144,7 @@ public class AclTest extends AbstractCase {
         ReceivedMessageUtils.get(account.get(0), TEST_CELL1, HttpStatus.SC_FORBIDDEN, "acltest");
         // MESSAGE
         ReceivedMessageUtils.get(account.get(2), TEST_CELL1, HttpStatus.SC_NOT_FOUND, "acltest");
-        // ALL
+        // ROOT
         ReceivedMessageUtils.get(account.get(10), TEST_CELL1, HttpStatus.SC_NOT_FOUND, "acltest");
         // message-read
         ReceivedMessageUtils.get(account.get(12), TEST_CELL1, HttpStatus.SC_NOT_FOUND, "acltest");
@@ -1153,7 +1154,7 @@ public class AclTest extends AbstractCase {
         ReceivedMessageUtils.list(account.get(0), TEST_CELL1, HttpStatus.SC_FORBIDDEN);
         // MESSAGE
         ReceivedMessageUtils.list(account.get(2), TEST_CELL1, HttpStatus.SC_OK);
-        // ALL
+        // ROOT
         ReceivedMessageUtils.list(account.get(10), TEST_CELL1, HttpStatus.SC_OK);
         // message-read
         ReceivedMessageUtils.list(account.get(12), TEST_CELL1, HttpStatus.SC_OK);
@@ -1163,7 +1164,7 @@ public class AclTest extends AbstractCase {
         ReceivedMessageUtils.delete(account.get(0), TEST_CELL1, HttpStatus.SC_FORBIDDEN, "acltest");
         // MESSAGE
         ReceivedMessageUtils.delete(account.get(2), TEST_CELL1, HttpStatus.SC_NOT_FOUND, "acltest");
-        // ALL
+        // ROOT
         ReceivedMessageUtils.delete(account.get(10), TEST_CELL1, HttpStatus.SC_NOT_FOUND, "acltest");
         // message-read
         ReceivedMessageUtils.delete(account.get(12), TEST_CELL1, HttpStatus.SC_FORBIDDEN, "acltest");
@@ -1182,7 +1183,7 @@ public class AclTest extends AbstractCase {
             SentMessageUtils.sent(account.get(0), TEST_CELL1, message01, HttpStatus.SC_FORBIDDEN);
             // MESSAGE
             response1 = SentMessageUtils.sent(account.get(2), TEST_CELL1, message01, HttpStatus.SC_CREATED);
-            // ALL
+            // ROOT
             response2 = SentMessageUtils.sent(account.get(10), TEST_CELL1, message01, HttpStatus.SC_CREATED);
             // message-read
             SentMessageUtils.sent(account.get(12), TEST_CELL1, message01, HttpStatus.SC_FORBIDDEN);
@@ -1192,7 +1193,7 @@ public class AclTest extends AbstractCase {
             SentMessageUtils.get(account.get(0), TEST_CELL1, HttpStatus.SC_FORBIDDEN, "acltest");
             // MESSAGE
             SentMessageUtils.get(account.get(2), TEST_CELL1, HttpStatus.SC_NOT_FOUND, "acltest");
-            // ALL
+            // ROOT
             SentMessageUtils.get(account.get(10), TEST_CELL1, HttpStatus.SC_NOT_FOUND, "acltest");
             // message-read
             SentMessageUtils.get(account.get(12), TEST_CELL1, HttpStatus.SC_NOT_FOUND, "acltest");
@@ -1202,7 +1203,7 @@ public class AclTest extends AbstractCase {
             SentMessageUtils.list(account.get(0), TEST_CELL1, HttpStatus.SC_FORBIDDEN);
             // MESSAGE
             SentMessageUtils.list(account.get(2), TEST_CELL1, HttpStatus.SC_OK);
-            // ALL
+            // ROOT
             SentMessageUtils.list(account.get(10), TEST_CELL1, HttpStatus.SC_OK);
             // message-read
             SentMessageUtils.list(account.get(12), TEST_CELL1, HttpStatus.SC_OK);
@@ -1212,7 +1213,7 @@ public class AclTest extends AbstractCase {
             SentMessageUtils.delete(account.get(0), TEST_CELL1, HttpStatus.SC_FORBIDDEN, "acltest");
             // MESSAGE
             SentMessageUtils.delete(account.get(2), TEST_CELL1, HttpStatus.SC_NOT_FOUND, "acltest");
-            // ALL
+            // ROOT
             SentMessageUtils.delete(account.get(10), TEST_CELL1, HttpStatus.SC_NOT_FOUND, "acltest");
             // message-read
             SentMessageUtils.delete(account.get(12), TEST_CELL1, HttpStatus.SC_FORBIDDEN, "acltest");
@@ -1253,7 +1254,7 @@ public class AclTest extends AbstractCase {
             ReceivedMessageUtils.read(account.get(12), TEST_CELL1, uuid, HttpStatus.SC_FORBIDDEN);
             // NG: social-read
             ReceivedMessageUtils.read(account.get(14), TEST_CELL1, uuid, HttpStatus.SC_FORBIDDEN);
-            // OK: ALL
+            // OK: ROOT
             apvRes1 = ReceivedMessageUtils.read(account.get(10), TEST_CELL1, uuid, HttpStatus.SC_NO_CONTENT);
             // OK: message
             apvRes2 = ReceivedMessageUtils.read(account.get(2), TEST_CELL1, uuid, HttpStatus.SC_NO_CONTENT);
@@ -1276,7 +1277,7 @@ public class AclTest extends AbstractCase {
             // NG: social-read
             ReceivedMessageUtils.approve(account.get(14), TEST_CELL1, uuid, HttpStatus.SC_FORBIDDEN);
 
-            // OK: ALL
+            // OK: ROOT
             apvRes4 = ReceivedMessageUtils.approve(account.get(10), TEST_CELL1, uuid, HttpStatus.SC_NO_CONTENT);
             // Relation-ExtCell $links削除
             ResourceUtils.linkExtCellRelationDelete(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1,
@@ -1318,7 +1319,7 @@ public class AclTest extends AbstractCase {
             ReceivedMessageUtils.reject(account.get(12), TEST_CELL1, uuid, HttpStatus.SC_FORBIDDEN);
             // NG: social-read
             ReceivedMessageUtils.reject(account.get(14), TEST_CELL1, uuid, HttpStatus.SC_FORBIDDEN);
-            // OK: ALL
+            // OK: ROOT
             apvRes6 = ReceivedMessageUtils.reject(account.get(10), TEST_CELL1, uuid,
                     HttpStatus.SC_NO_CONTENT);
             if (rcvRes3 != null) {
@@ -1572,7 +1573,7 @@ public class AclTest extends AbstractCase {
         }
 
         try {
-            // ALL: 成功
+            // ROOT: 成功
             res = ResourceUtils.barInstall(account.get(10), TEST_CELL1, targetBoxName2, HttpStatus.SC_ACCEPTED);
         } finally {
             deleteBox(targetBoxName2, res.getHeader(HttpHeaders.LOCATION));

@@ -346,7 +346,7 @@ public class BoxCrudTest extends ODataCommon {
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
         try {
             DcResponse res = request(req);
-            
+
             // 201になることを確認
             assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
         } finally {

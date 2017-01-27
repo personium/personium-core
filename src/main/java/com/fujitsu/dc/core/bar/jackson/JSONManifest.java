@@ -120,7 +120,7 @@ public class JSONManifest implements JSONMappedObject {
      */
     public boolean checkSchema() {
         // schemaの値がnull、またはURL形式でない場合はエラーを返却する。
-        // TODO: box schemaの末尾/の必須を緩和することを見越してisValidSchemaUriを使わない
+        // box schemaの末尾/の必須を緩和することを見越してisValidSchemaUriを使わない
         if (this.getSchema() == null
                 || !(ODataUtils.isValidUri(this.getSchema()))) {
             return false;

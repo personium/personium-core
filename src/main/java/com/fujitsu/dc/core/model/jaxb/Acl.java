@@ -220,7 +220,8 @@ public final class Acl {
                 }
                 // Privilegeに設定可能なタグであるかチェック
                 if (isCellLevel) {
-                    if (!cellPrivilegeMap.containsKey(privilege.body.getLocalName())) {
+                    if (!cellPrivilegeMap.containsKey(privilege.body.getLocalName())
+                     && !boxPrivilegeMap.containsKey(privilege.body.getLocalName())) {
                         return false;
                     }
                 } else {

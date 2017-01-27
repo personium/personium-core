@@ -611,7 +611,7 @@ public class MoveServiceCollectionAclTest extends JerseyTest {
     }
 
     /**
-     * 指定されたコレクションに対しPrincipal ALL Privilege ALLを設定.
+     * 指定されたコレクションに対しPrincipal ROOT Privilege ALLを設定.
      * @param collection コレクション名
      * @throws JAXBException ACLのパースに失敗
      */
