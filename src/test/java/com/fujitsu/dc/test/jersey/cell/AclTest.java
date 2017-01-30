@@ -252,12 +252,13 @@ public class AclTest extends AbstractCase {
             List<String> rolList = new ArrayList<String>();
             rolList.add("auth");
             rolList.add("auth-read");
+            rolList.add("read");
             map.put(TEST_ROLE1, rolList);
             list.add(map);
 
             List<String> rolList2 = new ArrayList<String>();
             Map<String, List<String>> map2 = new HashMap<String, List<String>>();
-            rolList2.add("auth");
+            rolList2.add("root");
             map2.put(TEST_ROLE2, rolList2);
             list.add(map2);
             String resorce = UrlUtils.cellRoot(TEST_CELL1);
@@ -288,12 +289,13 @@ public class AclTest extends AbstractCase {
             rolList = new ArrayList<String>();
             rolList.add("auth");
             rolList.add("auth-read");
+            rolList.add("read");
             map.put(TEST_ROLE1, rolList);
             list.add(map);
 
             rolList2 = new ArrayList<String>();
             map2 = new HashMap<String, List<String>>();
-            rolList2.add("auth");
+            rolList2.add("root");
             map2.put(TEST_ROLE2, rolList2);
             list.add(map2);
             resorce = UrlUtils.cellRoot(TEST_CELL1);
@@ -351,12 +353,13 @@ public class AclTest extends AbstractCase {
             List<String> rolList = new ArrayList<String>();
             rolList.add("auth");
             rolList.add("auth-read");
+            rolList.add("read");
             map.put(TEST_ROLE1, rolList);
             list.add(map);
 
             List<String> rolList2 = new ArrayList<String>();
             Map<String, List<String>> map2 = new HashMap<String, List<String>>();
-            rolList2.add("auth");
+            rolList2.add("root");
             map2.put(TEST_ROLE2, rolList2);
             list.add(map2);
             String resorce = UrlUtils.cellRoot(TEST_CELL1);
