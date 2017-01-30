@@ -63,7 +63,7 @@ public class RoleResource {
      * @param authzHeader Authorization ヘッダ
      * @return JAX-RS Response Object
      */
-    @Path("")
+//    @Path("")
     @GET
     public final Response list(
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader) {

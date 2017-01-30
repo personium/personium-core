@@ -146,7 +146,7 @@ public abstract class ODataResource extends ODataCtlResource {
      * @return JAX-RS Response
      */
     @OPTIONS
-    @Path("")
+//    @Path("")
     public Response optionsRoot() {
         // アクセス制御
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
@@ -182,7 +182,7 @@ public abstract class ODataResource extends ODataCtlResource {
      * @return JAX-RS Response Object
      */
     @GET
-    @Path("")
+//    @Path("")
     public Response getRoot(
             @Context final UriInfo uriInfo,
             @QueryParam("$format") final String format,

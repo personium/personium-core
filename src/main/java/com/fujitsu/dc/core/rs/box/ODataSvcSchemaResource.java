@@ -116,7 +116,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
      */
     @Override
     @GET
-    @Path("")
+//    @Path("")
     public Response getRoot(@Context final UriInfo uriInfo,
             @QueryParam("$format") final String format,
             @Context HttpHeaders httpHeaders) {
@@ -172,7 +172,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
      */
     @Override
     @OPTIONS
-    @Path("")
+//    @Path("")
     public Response optionsRoot() {
         // アクセス制御
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
