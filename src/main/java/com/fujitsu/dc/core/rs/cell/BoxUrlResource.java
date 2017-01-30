@@ -29,7 +29,6 @@ import com.fujitsu.dc.core.auth.BoxPrivilege;
 import com.fujitsu.dc.core.auth.OAuth2Helper;
 import com.fujitsu.dc.core.model.Box;
 import com.fujitsu.dc.core.model.BoxUrlRsCmp;
-import com.fujitsu.dc.core.model.Cell;
 import com.fujitsu.dc.core.model.CellRsCmp;
 import com.fujitsu.dc.core.model.DavCmp;
 import com.fujitsu.dc.core.model.DavRsCmp;
