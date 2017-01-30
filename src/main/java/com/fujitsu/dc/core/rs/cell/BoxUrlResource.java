@@ -42,7 +42,6 @@ import com.fujitsu.dc.core.utils.ODataUtils;
 public class BoxUrlResource {
 
     private AccessContext accessContext = null;
-    private Cell cell = null;
     private CellRsCmp cellRsCmp;
 
     /**
@@ -78,8 +77,13 @@ public class BoxUrlResource {
             }
         }
 
-        // スキーマ情報からBoxを取得する
-        Box box = this.cell.getBoxForSchema(schema);
+        Box box = null;
+        if (schema == null || schema.length() == 0) {
+            box = this.cellRsCmp.getBox();
+        } else {
+            // スキーマ情報からBoxを取得する
+            box = this.cellRsCmp.getCell().getBoxForSchema(schema);
+        }
 
         // Boxが存在しない場合も権限エラーを返却する
         if (box == null) {
