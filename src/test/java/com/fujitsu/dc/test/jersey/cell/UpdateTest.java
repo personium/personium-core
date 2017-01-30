@@ -195,7 +195,7 @@ public class UpdateTest extends AbstractCase {
         for (int i = 0; i < nodeListPrivilege.getLength(); i++) {
             String nodename = nodeListPrivilege.item(i).getNodeName();
             // all -> root
-            if ("root".equals(nodename)) {
+            if ("all".equals(nodename)) {
                 existsPrivilegeAll = true;
             }
         }
@@ -250,7 +250,7 @@ public class UpdateTest extends AbstractCase {
         for (int i = 0; i < nodeListPrivilege.getLength(); i++) {
             String nodename = nodeListPrivilege.item(i).getNodeName();
             // all -> root
-            if ("root".equals(nodename)) {
+            if ("all".equals(nodename)) {
                 existsPrivilegeAll = true;
             }
         }
