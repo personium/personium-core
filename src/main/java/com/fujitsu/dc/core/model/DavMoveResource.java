@@ -88,6 +88,10 @@ public class DavMoveResource extends DavRsCmp {
             if (null == parent) {
                 break;
             }
+            // Boxが取れない場合は終了
+            if (null == parent.getBox()) {
+                break;
+            }
             davRsCmp = parent;
         }
 
