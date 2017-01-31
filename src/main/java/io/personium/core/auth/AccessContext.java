@@ -245,12 +245,12 @@ public final class AccessContext {
      * ファクトリメソッド. アクセスしているCellとAuthorizationヘッダの値を元にオブジェクトを生成して返します.
      * @param authzHeaderValue Authorizationヘッダの値
      * @param requestURIInfo リクエストのURI情報
-     * @param dcCookiePeer リクエストパラメタに指定された dc_cookie_peerの値
-     * @param dcCookieAuthValue クッキー内 dc_cookieに指定されている値
+     * @param dcCookiePeer リクエストパラメタに指定された p_cookie_peerの値
+     * @param dcCookieAuthValue クッキー内 p_cookieに指定されている値
      * @param cell アクセスしているCell
      * @param baseUri アクセスしているbaseUri
      * @param host リクエストヘッダのHostの値
-     * @param xDcUnitUser X-Dc-UnitUserヘッダ
+     * @param xDcUnitUser X-Personium-UnitUserヘッダ
      * @return 生成されたAccessContextオブジェクト
      */
     public static AccessContext create(final String authzHeaderValue,
@@ -356,7 +356,7 @@ public final class AccessContext {
      * @param authzHeaderValue Authorizationヘッダの値
      * @param cell アクセスしているCell
      * @param baseUri アクセスしているbaseUri
-     * @param xDcUnitUser X-DC-UnitUserヘッダ
+     * @param xDcUnitUser X-Personium-UnitUserヘッダ
      * @return 生成されたAccessContextオブジェクト
      */
     private static AccessContext createBearerAuthz(final String authzHeaderValue, final Cell cell,
@@ -368,12 +368,12 @@ public final class AccessContext {
         }
         String accessToken = authzHeaderValue.substring(OAuth2Helper.Scheme.BEARER.length() + 1);
         // マスタートークンの検出
-        // マスタートークン指定で、X-Dc-UnitUserヘッダがなかった場合はマスタートークン扱い
+        // マスタートークン指定で、X-Personium-UnitUserヘッダがなかった場合はマスタートークン扱い
         if (DcCoreConfig.getMasterToken().equals(accessToken) && xDcUnitUser == null) {
             AccessContext ret = new AccessContext(TYPE_UNIT_MASTER, cell, baseUri);
             return ret;
         } else if (DcCoreConfig.getMasterToken().equals(accessToken) && xDcUnitUser != null) {
-            // X-Dc-UnitUserヘッダ指定だとマスターからユニットユーザトークンへの降格
+            // X-Personium-UnitUserヘッダ指定だとマスターからユニットユーザトークンへの降格
             AccessContext ret = new AccessContext(TYPE_UNIT_USER, cell, baseUri);
             ret.subject = xDcUnitUser;
             return ret;

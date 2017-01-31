@@ -1122,7 +1122,7 @@ public class AuthTestCommon extends JerseyTest {
     /**
      * 認証テストに必要なトークンを取得する（パスワード認証でトランスセルトークン）.
      * @param cell 認証先のセル
-     * @param targetCell dc_target
+     * @param targetCell p_target
      * @param token トークンを入れるリスト
      * @param refreshToken リフレッシュトークンを入れるリスト
      */
@@ -1175,7 +1175,7 @@ public class AuthTestCommon extends JerseyTest {
     /**
      * リフレッシュトークン認証でトークンを取り直す.
      * @param cell 認証先のセル
-     * @param targetCell dc_target
+     * @param targetCell p_target
      * @param beforeRefreshToken リフレッシュ認証に利用するトークンのリスト
      * @param token トークンを入れるリスト
      * @param refreshToken リフレッシュトークンを入れるリスト
@@ -1230,7 +1230,7 @@ public class AuthTestCommon extends JerseyTest {
     /**
      * 認証テストに必要なトークンを取得する（トークン認証でトランスセルトークン）.
      * @param cell 認証先のセル
-     * @param targetCell dc_target
+     * @param targetCell p_target
      * @param beforeRefreshToken トークン認証に利用するトークンのリスト
      * @param token トークンを入れるリスト
      * @param refreshToken リフレッシュトークンを入れるリスト
@@ -1339,7 +1339,7 @@ public class AuthTestCommon extends JerseyTest {
                 .with("remoteCell", cell)
                 .with("username", account)
                 .with("password", pass)
-                .with("dc_target", target)
+                .with("p_target", target)
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
         return res.bodyAsJson();
@@ -1360,7 +1360,7 @@ public class AuthTestCommon extends JerseyTest {
         TResponse res = Http.request("authn/refresh-tc.txt")
                 .with("remoteCell", cell)
                 .with("refresh_token", refreshToken)
-                .with("dc_target", UrlUtils.cellRoot(target))
+                .with("p_target", UrlUtils.cellRoot(target))
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
         return res.bodyAsJson();
@@ -1370,7 +1370,7 @@ public class AuthTestCommon extends JerseyTest {
         TResponse res = Http.request("authn/saml-tc-c0.txt")
                 .with("remoteCell", cell)
                 .with("assertion", token)
-                .with("dc_target", UrlUtils.cellRoot(target))
+                .with("p_target", UrlUtils.cellRoot(target))
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
         return res.bodyAsJson();

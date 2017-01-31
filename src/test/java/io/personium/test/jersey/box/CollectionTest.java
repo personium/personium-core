@@ -150,7 +150,7 @@ public class CollectionTest extends JerseyTest {
         StringBuilder sb;
         sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-        sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:dc=\"urn:x-dc1:xmlns\">");
+        sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:p=\"urn:x-personium:xmlns\">");
         sb.append("<D:sets><D:prop><D:resourcetype><D:collection/></D:resourcetype></D:prop></D:sets>");
         sb.append("</D:mkcol>");
         // Http http = Http.request("box/mkcol-custom.txt").with("path", path).with("token", TOKEN);
@@ -160,7 +160,7 @@ public class CollectionTest extends JerseyTest {
             String message = DcCoreException.Dav.XML_ERROR.getMessage();
             sb = new StringBuilder();
             sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:dc=\"urn:x-dc1:xmlns\">");
+            sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:p=\"urn:x-personium:xmlns\">");
             sb.append("<D:set<D:prop><D:resourcetype2><D:collection/></D:resourcetype2></D:prop></D:set>");
             sb.append("</D:mkcol>");
             Http.request("box/mkcol-custom.txt")
@@ -174,7 +174,7 @@ public class CollectionTest extends JerseyTest {
             // set 要素無し
             sb = new StringBuilder();
             sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:dc=\"urn:x-dc1:xmlns\">");
+            sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:p=\"urn:x-personium:xmlns\">");
             sb.append("</D:mkcol>");
             Http.request("box/mkcol-custom.txt")
                     .with("path", path)
@@ -186,7 +186,7 @@ public class CollectionTest extends JerseyTest {
             // set 要素名ミス
             sb = new StringBuilder();
             sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:dc=\"urn:x-dc1:xmlns\">");
+            sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:p=\"urn:x-personium:xmlns\">");
             sb.append("<D:sets><D:prop><D:resourcetype><D:collection/></D:resourcetype></D:prop></D:sets>");
             sb.append("</D:mkcol>");
             Http.request("box/mkcol-custom.txt")
@@ -199,7 +199,7 @@ public class CollectionTest extends JerseyTest {
             // props 要素名ミス
             sb = new StringBuilder();
             sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:dc=\"urn:x-dc1:xmlns\">");
+            sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:p=\"urn:x-personium:xmlns\">");
             sb.append("<D:set><D:props><D:resourcetype><D:collection/></D:resourcetype></D:props></D:set>");
             sb.append("</D:mkcol>");
             Http.request("box/mkcol-custom.txt")
@@ -212,7 +212,7 @@ public class CollectionTest extends JerseyTest {
             // resourcetype 要素名ミス
             sb = new StringBuilder();
             sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:dc=\"urn:x-dc1:xmlns\">");
+            sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:p=\"urn:x-personium:xmlns\">");
             sb.append("<D:set><D:prop><D:resourcetype2><D:collection/></D:resourcetype2></D:prop></D:set>");
             sb.append("</D:mkcol>");
             Http.request("box/mkcol-custom.txt")
@@ -225,7 +225,7 @@ public class CollectionTest extends JerseyTest {
             // resourcetype が不正
             sb = new StringBuilder();
             sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:dc=\"urn:x-dc1:xmlns\">");
+            sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:p=\"urn:x-personium:xmlns\">");
             sb.append("<D:set><D:prop><D:resourcetype><D:collection2/></D:resourcetype></D:prop></D:set>");
             sb.append("</D:mkcol>");
             Http.request("box/mkcol-custom.txt")

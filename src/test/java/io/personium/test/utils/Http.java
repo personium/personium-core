@@ -164,7 +164,7 @@ public class Http {
             }
 
             // Version情報のヘッダを追加
-            lines.add("X-Dc-Version: " + DcCoreTestConfig.getCoreVersion() + CRLF);
+            lines.add("X-Personium-Version: " + DcCoreTestConfig.getCoreVersion() + CRLF);
             String body = null;
             // 前処理で空行でBreakしたときはBodyがあることの証。
             if (line != null) {

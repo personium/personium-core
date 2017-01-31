@@ -156,7 +156,7 @@ public final class OAuth2Helper {
         /**
          * dc1-oidc google.
          */
-        public static final String DC1_OIDC_GOOGLE = "urn:x-dc1:oidc:google";
+        public static final String DC1_OIDC_GOOGLE = "urn:x-personium:oidc:google";
 
     }
 
@@ -264,15 +264,15 @@ public final class OAuth2Helper {
          */
         public static final String SCOPE = "scope";
         /**
-         * dc_target.
+         * p_target.
          */
-        public static final String TARGET = "dc_target";
+        public static final String TARGET = "p_target";
         /**
-         * dc_owner.
+         * p_owner.
          */
-        public static final String OWNER = "dc_owner";
+        public static final String OWNER = "p_owner";
         /**
-         * dc_owner value.
+         * p_owner value.
          */
         public static final String TRUE_STR = "true";
         /**

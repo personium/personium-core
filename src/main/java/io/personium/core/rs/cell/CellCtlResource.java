@@ -53,7 +53,7 @@ public final class CellCtlResource extends ODataResource {
     /**
      * constructor.
      * @param accessContext AccessContext
-     * @param dcCredHeader X-Dc-Credentialヘッダ
+     * @param dcCredHeader X-Personium-Credentialヘッダ
      * @param davRsCmp davRsCmp
      */
     public CellCtlResource(final AccessContext accessContext, final String dcCredHeader, DavRsCmp davRsCmp) {

@@ -4,5 +4,5 @@ Content-Length: ?
 Connection: close
 Accept: application/json
 Authorization: Bearer ${token}
-X-Dc-Recursive: true
+X-Personium-Recursive: true
 

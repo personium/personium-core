@@ -144,7 +144,7 @@ public class AuthzEndPointResource {
     /**
      * 認証のエンドポイント. <h2>トークンの発行しわけ</h2>
      * <ul>
-     * <li>dc_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
+     * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
      * </ul>
      * @param authzHeader Authorization ヘッダ
      * @param dcOwner フォームパラメタ
@@ -266,7 +266,7 @@ public class AuthzEndPointResource {
     /**
      * 認証のエンドポイント. <h2>トークンの発行しわけ</h2>
      * <ul>
-     * <li>dc_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
+     * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
      * </ul>
      * @param authzHeader Authorization ヘッダ
      * @param dcTarget クエリパラメタ
@@ -312,11 +312,11 @@ public class AuthzEndPointResource {
                     target = target + "/";
                 }
                 if (target.contains("\n") || target.contains("\r")) {
-                    // dc_targetがURLでない場合はエラー
+                    // p_targetがURLでない場合はエラー
                     throw DcCoreAuthnException.INVALID_TARGET;
                 }
             } catch (MalformedURLException e) {
-                // dc_targetがURLでない場合はエラー
+                // p_targetがURLでない場合はエラー
                 throw DcCoreAuthnException.INVALID_TARGET;
             }
         }
@@ -724,7 +724,7 @@ public class AuthzEndPointResource {
             final String state,
             final String dcOwner) {
 
-        // dc_target がURLでない場合はヘッダInjectionの脆弱性を産んでしまう。(改行コードが入っているなど)
+        // p_target がURLでない場合はヘッダInjectionの脆弱性を産んでしまう。(改行コードが入っているなど)
         try {
             this.checkDcTarget(dcTarget);
         } catch (DcCoreAuthnException e) {

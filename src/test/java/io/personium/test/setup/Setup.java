@@ -1300,7 +1300,7 @@ public class Setup extends AbstractCase {
     public static void cellBulkDeletion(String cellName) {
         // セルの一括削除APIを実行する
         DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
-        request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).header("X-Dc-Recursive", "true");
+        request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).header("X-Personium-Recursive", "true");
         request(request);
     }
 

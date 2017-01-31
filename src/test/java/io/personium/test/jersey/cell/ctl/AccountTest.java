@@ -169,7 +169,7 @@ public class AccountTest extends ODataCommon {
 
         // パスワード認証。トランスセルトークン取得
         req = DcRequest.post(UrlUtils.auth(cellName));
-        authBody = String.format("grant_type=password&username=%s&password=%s&dc_target=%s",
+        authBody = String.format("grant_type=password&username=%s&password=%s&p_target=%s",
                 testAccountName, testAccountPass, "https://example.com/testcell");
         req.header(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded").addStringBody(authBody);
         res = request(req);

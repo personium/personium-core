@@ -118,7 +118,7 @@ public class AuthErrorTest extends JerseyTest {
                         .with("remoteCell", TEST_CELL2)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL1))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -144,7 +144,7 @@ public class AuthErrorTest extends JerseyTest {
                         .with("remoteCell", TEST_CELL2)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_APP_CELL1))
+                        .with("p_target", UrlUtils.cellRoot(TEST_APP_CELL1))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -170,7 +170,7 @@ public class AuthErrorTest extends JerseyTest {
                         .with("remoteCell", TEST_CELL2)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL1))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -182,7 +182,7 @@ public class AuthErrorTest extends JerseyTest {
                 Http.request("authn/saml-tc-c0.txt")
                         .with("remoteCell", TEST_CELL1)
                         .with("assertion", transCellAccessToken)
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -226,7 +226,7 @@ public class AuthErrorTest extends JerseyTest {
                         .with("remoteCell", TEST_CELL2)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL1))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -341,7 +341,7 @@ public class AuthErrorTest extends JerseyTest {
                         .with("remoteCell", TEST_CELL2)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL1))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -378,7 +378,7 @@ public class AuthErrorTest extends JerseyTest {
                         .with("remoteCell", TEST_CELL2)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL1))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 

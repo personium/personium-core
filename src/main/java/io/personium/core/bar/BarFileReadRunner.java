@@ -2360,7 +2360,7 @@ public class BarFileReadRunner implements Runnable {
     private Reader getProppatchXml(List<Element> propElements) {
         StringBuffer sbPropXml = new StringBuffer();
         sbPropXml.append("<D:propertyupdate xmlns:D=\"DAV:\"");
-        sbPropXml.append(" xmlns:dc=\"urn:x-dc1:xmlns\"");
+        sbPropXml.append(" xmlns:p=\"urn:x-personium:xmlns\"");
         sbPropXml.append(" xmlns:Z=\"http://www.w3.com/standards/z39.50/\">");
         sbPropXml.append("<D:set>");
         sbPropXml.append("<D:prop>");

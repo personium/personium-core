@@ -5,5 +5,5 @@ Connection: close
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer ${token}
-X-Dc-Unit-User: ${owner}
+X-Personium-Unit-User: ${owner}
 

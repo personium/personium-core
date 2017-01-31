@@ -7,7 +7,7 @@ Content-Type: application/xml
 Authorization: Bearer ${token}
 
 <?xml version="1.0" encoding="utf-8" ?>
-<D:acl xmlns:D="DAV:" xmlns:dc="urn:x-dc1:xmlns" xml:base="${roleBaseUrl}">
+<D:acl xmlns:D="DAV:" xmlns:p="urn:x-personium:xmlns" xml:base="${roleBaseUrl}">
     <D:ace>
         <D:principal>
             <D:href>role10</D:href>

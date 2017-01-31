@@ -148,7 +148,7 @@ public class AuthCheckTest extends JerseyTest {
                     .with("remoteCell", testCellName)
                     .with("username", userName)
                     .with("password", pass)
-                    .with("dc_target", UrlUtils.cellRoot(TEST_CELL1))
+                    .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -220,7 +220,7 @@ public class AuthCheckTest extends JerseyTest {
                     .with("remoteCell", testCellName)
                     .with("username", userName)
                     .with("password", pass)
-                    .with("dc_target", UrlUtils.cellRoot(TEST_CELL1))
+                    .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -290,7 +290,7 @@ public class AuthCheckTest extends JerseyTest {
                     .with("remoteCell", testCellName)
                     .with("username", userName)
                     .with("password", pass)
-                    .with("dc_target", UrlUtils.cellRoot(TEST_CELL1))
+                    .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -754,7 +754,7 @@ public class AuthCheckTest extends JerseyTest {
                     .with("remoteCell", testCellName)
                     .with("username", userName)
                     .with("password", pass)
-                    .with("dc_target", UrlUtils.cellRoot(testCellName2))
+                    .with("p_target", UrlUtils.cellRoot(testCellName2))
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -766,7 +766,7 @@ public class AuthCheckTest extends JerseyTest {
                     Http.request("authn/saml-tc-c0.txt")
                             .with("remoteCell", testCellName2)
                             .with("assertion", transCellAccessToken)
-                            .with("dc_target", UrlUtils.cellRoot("schema1"))
+                            .with("p_target", UrlUtils.cellRoot("schema1"))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
 
@@ -818,7 +818,7 @@ public class AuthCheckTest extends JerseyTest {
         String userName = "blankUser";
         try {
 
-            // アカウント追加(X-Dc-Credentialヘッダなし)
+            // アカウント追加(X-Personium-Credentialヘッダなし)
             AccountUtils.createNonCredential(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1,
                     userName, HttpStatus.SC_CREATED);
 
@@ -1146,7 +1146,7 @@ public class AuthCheckTest extends JerseyTest {
                         .with("remoteCell", UNIT_USER_CELL)
                         .with("username", user1)
                         .with("password", pass)
-                        .with("dc_target", UrlUtils.getBaseUrl())
+                        .with("p_target", UrlUtils.getBaseUrl())
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
         JSONObject json = res.bodyAsJson();
@@ -1160,7 +1160,7 @@ public class AuthCheckTest extends JerseyTest {
                 .with("remoteCell", accountAuthCellName)
                 .with("username", userName)
                 .with("password", pass)
-                .with("dc_target", UrlUtils.cellRoot(tokenAuthCellName))
+                .with("p_target", UrlUtils.cellRoot(tokenAuthCellName))
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
 

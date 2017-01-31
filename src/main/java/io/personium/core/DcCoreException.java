@@ -731,7 +731,7 @@ public class DcCoreException extends RuntimeException {
          */
         public static final DcCoreException JSON_PARSE_ERROR = create("PR400-EV-0001");
         /**
-         * X-Dc-RequestKey の値が不正.
+         * X-Personium-RequestKey の値が不正.
          */
         public static final DcCoreException X_PERSONIUM_REQUESTKEY_INVALID = create("PR400-EV-0002");
         /**

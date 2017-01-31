@@ -6,6 +6,6 @@ Accept: application/json
 Content-Type: application/json
 Authorization: Bearer ${token}
 If-Match: *
-X-Dc-Unit-User: ${owner}
+X-Personium-Unit-User: ${owner}
 
 {"Name":"${cellName}"}

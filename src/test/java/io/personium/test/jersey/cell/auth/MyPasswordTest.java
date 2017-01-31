@@ -159,7 +159,7 @@ public class MyPasswordTest extends JerseyTest {
                         .with("remoteCell", Setup.TEST_CELL1)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(Setup.TEST_CELL2))
+                        .with("p_target", UrlUtils.cellRoot(Setup.TEST_CELL2))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -216,7 +216,7 @@ public class MyPasswordTest extends JerseyTest {
                     .with("remoteCell", UNIT_USER_CELL)
                     .with("username", "Account")
                     .with("password", "AccountPass")
-                    .with("dc_target", UrlUtils.unitRoot())
+                    .with("p_target", UrlUtils.unitRoot())
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 

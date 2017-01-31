@@ -5,4 +5,4 @@ Content-Length: ?
 Accept: application/json
 Connection: close
 
-grant_type=urn:ietf:params:oauth:grant-type:saml2-bearer&assertion=${assertion}&dc_cookie=true
+grant_type=urn:ietf:params:oauth:grant-type:saml2-bearer&assertion=${assertion}&p_cookie=true

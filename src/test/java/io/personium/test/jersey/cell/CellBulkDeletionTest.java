@@ -111,7 +111,7 @@ public class CellBulkDeletionTest extends AbstractCase {
         // セルの一括削除APIを実行する
         DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
         request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
-                .header("X-Dc-Recursive", "true");
+                .header("X-Personium-Recursive", "true");
         DcResponse response = request(request);
 
         // セル削除APIを実行して、204が返却されることを確認
@@ -153,7 +153,7 @@ public class CellBulkDeletionTest extends AbstractCase {
                             .getMessage());
         } finally {
             // セルを削除する
-            request.header("X-Dc-Recursive", "true");
+            request.header("X-Personium-Recursive", "true");
             request(request);
         }
     }
@@ -170,7 +170,7 @@ public class CellBulkDeletionTest extends AbstractCase {
         // セルの一括削除APIを実行する
         DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
         request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
-                .header("X-Dc-Recursive", "false");
+                .header("X-Personium-Recursive", "false");
         DcResponse response = request(request);
 
         // セル削除APIを実行して、412が返却されることを確認
@@ -182,7 +182,7 @@ public class CellBulkDeletionTest extends AbstractCase {
                             .getMessage());
         } finally {
             // セルを削除する
-            request.header("X-Dc-Recursive", "true");
+            request.header("X-Personium-Recursive", "true");
             request(request);
         }
     }
@@ -194,14 +194,14 @@ public class CellBulkDeletionTest extends AbstractCase {
     public final void セル一括削除時にユニットユーザの認証トークンを指定してセルが削除できること() {
         // セルを作成する
         String cellName = "CellBulkDeletionTest";
-        // マスタートークンでX-Dc-UnitUserヘッダを指定すると指定した値のOwnerでセルが作成される。
+        // マスタートークンでX-Personium-UnitUserヘッダを指定すると指定した値のOwnerでセルが作成される。
         CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, Setup.OWNER_VET, HttpStatus.SC_CREATED);
 
         // セルの一括削除APIを実行する（マスタートークンのヘッダ指定での降格を利用）
         DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
         request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
-                .header("X-Dc-Recursive", "true")
-                .header("X-Dc-Unit-User", Setup.OWNER_VET);
+                .header("X-Personium-Recursive", "true")
+                .header("X-Personium-Unit-User", Setup.OWNER_VET);
 
         // セル削除APIを実行して、204が返却されることを確認
         DcResponse response = request(request);
@@ -215,22 +215,22 @@ public class CellBulkDeletionTest extends AbstractCase {
     public final void セル一括削除時に異なるセルのユニットユーザの認証トークンを指定して403が返却されること() {
         // セルを作成する
         String cellName = "CellBulkDeletionTest";
-        // マスタートークンでX-Dc-UnitUserヘッダを指定すると指定した値のOwnerでセルが作成される。
+        // マスタートークンでX-Personium-UnitUserヘッダを指定すると指定した値のOwnerでセルが作成される。
         CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, Setup.OWNER_VET, HttpStatus.SC_CREATED);
 
         try {
             // セルの一括削除APIを実行する（マスタートークンのヘッダ指定での降格を利用）
             DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
             request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
-                    .header("X-Dc-Recursive", "true")
-                    .header("X-Dc-Unit-User", Setup.OWNER_HMC);
+                    .header("X-Personium-Recursive", "true")
+                    .header("X-Personium-Unit-User", Setup.OWNER_HMC);
             DcResponse response = request(request);
             assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatusCode());
         } finally {
             // セルを削除する
             DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
             request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
-                    .header("X-Dc-Recursive", "true");
+                    .header("X-Personium-Recursive", "true");
             request(request);
         }
     }
@@ -262,13 +262,13 @@ public class CellBulkDeletionTest extends AbstractCase {
             assertEquals(Setup.OWNER_VET, uluut.getSubject());
             assertEquals(UrlUtils.getHost(), uluut.getIssuer());
 
-            // マスタートークンでX-Dc-UnitUserヘッダを指定すると指定した値のOwnerでセルが作成される。
+            // マスタートークンでX-Personium-UnitUserヘッダを指定すると指定した値のOwnerでセルが作成される。
             CellUtils.create(cellName, uluutString, -1);
 
             // セルの一括削除APIを実行する
             DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
             request.header(HttpHeaders.AUTHORIZATION, "Bearer " + uluutString)
-                    .header("X-Dc-Recursive", "true");
+                    .header("X-Personium-Recursive", "true");
             DcResponse response = request(request);
             assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
         } catch (TokenParseException e) {
@@ -277,7 +277,7 @@ public class CellBulkDeletionTest extends AbstractCase {
             // セルを削除する
             DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
             request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
-                    .header("X-Dc-Recursive", "true");
+                    .header("X-Personium-Recursive", "true");
             request(request);
         }
     }

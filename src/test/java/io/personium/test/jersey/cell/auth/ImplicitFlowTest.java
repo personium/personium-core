@@ -499,7 +499,7 @@ public class ImplicitFlowTest extends JerseyTest {
         // 認証前のアカウントの最終ログイン時刻を取得しておく
         Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL2, "account4");
 
-        String addbody = "&username=account4&password=password4&dc_target=" + UrlUtils.cellRoot(Setup.TEST_CELL1);
+        String addbody = "&username=account4&password=password4&p_target=" + UrlUtils.cellRoot(Setup.TEST_CELL1);
 
         DcResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
 
@@ -541,7 +541,7 @@ public class ImplicitFlowTest extends JerseyTest {
         // 認証前のアカウントの最終ログイン時刻を取得しておく
         Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "account2");
 
-        String addbody = "&username=account2&password=password2&dc_owner=true";
+        String addbody = "&username=account2&password=password2&p_owner=true";
 
         // アカウントにユニット昇格権限付与
         DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
@@ -574,12 +574,12 @@ public class ImplicitFlowTest extends JerseyTest {
     }
 
     /**
-     * パスワード認証でdc_targetとdc_ownerを指定した場合ULUUTを取得できること.
+     * パスワード認証でp_targetとp_ownerを指定した場合ULUUTを取得できること.
      */
     @Test
-    public final void パスワード認証でdc_targetとdc_ownerを指定した場合ULUUTを取得できること() {
+    public final void パスワード認証でp_targetとp_ownerを指定した場合ULUUTを取得できること() {
 
-        String addbody = "&username=account2&password=password2&dc_owner=true&dc_target="
+        String addbody = "&username=account2&password=password2&p_owner=true&p_target="
                 + UrlUtils.cellRoot(Setup.TEST_CELL1);
 
         // アカウントにユニット昇格権限付与
@@ -753,7 +753,7 @@ public class ImplicitFlowTest extends JerseyTest {
             String transCellAccessToken = getTcToken();
 
             // トークン認証
-            String addbody = "&assertion=" + transCellAccessToken + "&dc_target=" + UrlUtils.cellRoot("authzcell");
+            String addbody = "&assertion=" + transCellAccessToken + "&p_target=" + UrlUtils.cellRoot("authzcell");
             DcResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2,
                     UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
 
@@ -965,7 +965,7 @@ public class ImplicitFlowTest extends JerseyTest {
         String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
                 + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
                 + "&state=" + DEFAULT_STATE
-                + "&dc_target=" + UrlUtils.cellRoot(Setup.TEST_CELL2);
+                + "&p_target=" + UrlUtils.cellRoot(Setup.TEST_CELL2);
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("session-id", sessionId);
         res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
@@ -995,10 +995,10 @@ public class ImplicitFlowTest extends JerseyTest {
     }
 
     /**
-     * Cookie認証でdc_ownerを指定した場合ULUUTを取得できること.
+     * Cookie認証でp_ownerを指定した場合ULUUTを取得できること.
      */
     @Test
-    public final void Cookie認証でdc_ownerを指定した場合ULUUTを取得できること() {
+    public final void Cookie認証でp_ownerを指定した場合ULUUTを取得できること() {
 
         // パスワード認証で自分セルリフレッシュトークン取得
         String addbody = "&username=account2&password=password2";
@@ -1015,7 +1015,7 @@ public class ImplicitFlowTest extends JerseyTest {
         String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
                 + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
                 + "&state=" + DEFAULT_STATE
-                + "&dc_owner=true";
+                + "&p_owner=true";
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("session-id", sessionId);
         res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
@@ -1041,10 +1041,10 @@ public class ImplicitFlowTest extends JerseyTest {
     }
 
     /**
-     * Cookie認証でdc_targetとdc_ownerを指定した場合ULUUTを取得できること.
+     * Cookie認証でp_targetとp_ownerを指定した場合ULUUTを取得できること.
      */
     @Test
-    public final void Cookie認証でdc_targetとdc_ownerを指定した場合ULUUTを取得できること() {
+    public final void Cookie認証でp_targetとp_ownerを指定した場合ULUUTを取得できること() {
 
         // パスワード認証で自分セルリフレッシュトークン取得
         String addbody = "&username=account2&password=password2";
@@ -1061,7 +1061,7 @@ public class ImplicitFlowTest extends JerseyTest {
         String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
                 + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
                 + "&state=" + DEFAULT_STATE
-                + "&dc_owner=true&dc_target=" + UrlUtils.cellRoot(Setup.TEST_CELL2);
+                + "&p_owner=true&p_target=" + UrlUtils.cellRoot(Setup.TEST_CELL2);
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("session-id", sessionId);
         res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
@@ -1109,7 +1109,7 @@ public class ImplicitFlowTest extends JerseyTest {
         String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
                 + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
                 + "&state=" + DEFAULT_STATE
-                + "&dc_owner=true";
+                + "&p_owner=true";
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("session-id", sessionId);
         res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
@@ -1128,10 +1128,10 @@ public class ImplicitFlowTest extends JerseyTest {
     }
 
     /**
-     * Cookie認証でオーナー指定の無いセルに対しdc_ownerを指定した場合302が返ること.
+     * Cookie認証でオーナー指定の無いセルに対しp_ownerを指定した場合302が返ること.
      */
     @Test
-    public final void Cookie認証でオーナー指定の無いセルに対しdc_ownerを指定した場合302が返ること() {
+    public final void Cookie認証でオーナー指定の無いセルに対しp_ownerを指定した場合302が返ること() {
 
         String cellName = "authzcell";
         try {
@@ -1161,7 +1161,7 @@ public class ImplicitFlowTest extends JerseyTest {
             String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
                     + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
                     + "&state=" + DEFAULT_STATE
-                    + "&dc_owner=true";
+                    + "&p_owner=true";
             HashMap<String, String> headers = new HashMap<String, String>();
             headers.put("session-id", sessionId);
             res = requesttoAuthzWithBody(cellName, body, headers);
@@ -1461,10 +1461,10 @@ public class ImplicitFlowTest extends JerseyTest {
             String id = element.getAttribute("id");
             if ("state".equals(id)) {
                 assertEquals(DEFAULT_STATE, element.getAttribute("value"));
-            } else if ("dc_target".equals(id)) {
+            } else if ("p_target".equals(id)) {
                 assertEquals("", element.getAttribute("value"));
 
-            } else if ("dc_owner".equals(id)) {
+            } else if ("p_owner".equals(id)) {
                 assertEquals(dcOwner, element.getAttribute("value"));
             } else if ("client_id".equals(id)) {
                 assertEquals(UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), element.getAttribute("value"));
@@ -1482,7 +1482,7 @@ public class ImplicitFlowTest extends JerseyTest {
                         .with("remoteCell", Setup.TEST_CELL1)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(Setup.TEST_CELL2))
+                        .with("p_target", UrlUtils.cellRoot(Setup.TEST_CELL2))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 

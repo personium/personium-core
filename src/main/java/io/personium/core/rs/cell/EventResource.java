@@ -73,8 +73,8 @@ public class EventResource {
     /**
      * イベントの受付.
      * @param reader リクエストボディ
-     * @param version X-Dc-Versionヘッダー値
-     * @param requestKey X-Dc-RequestKeyヘッダー値
+     * @param version X-Personium-Versionヘッダー値
+     * @param requestKey X-Personium-RequestKeyヘッダー値
      * @return JAXRS Response
      */
     @POST
@@ -90,7 +90,7 @@ public class EventResource {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.EVENT);
 
-        // X-Dc-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
+        // X-Personium-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
         requestKey = validateXDcRequestKey(requestKey);
         // TODO findBugs対策↓
         log.debug(requestKey);
@@ -136,11 +136,11 @@ public class EventResource {
     }
 
     /**
-     * リクエストヘッダの X-Dc-RequestKey の正当性チェックを行う. <br/>
+     * リクエストヘッダの X-Personium-RequestKey の正当性チェックを行う. <br/>
      * 不正な場合には例外を発する. <br/>
      * 未指定時には、デフォルト値を補充する.
      * @param requestKey リクエストヘッダ
-     * @return 正当性チェック通過後の X-Dc-RequetKeyの値
+     * @return 正当性チェック通過後の X-Personium-RequetKeyの値
      */
     public static String validateXDcRequestKey(String requestKey) {
         if (null == requestKey) {

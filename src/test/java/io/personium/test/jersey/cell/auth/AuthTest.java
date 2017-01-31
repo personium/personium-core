@@ -218,7 +218,7 @@ public class AuthTest extends JerseyTest {
                         .with("remoteCell", "schema1")
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL1))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -261,7 +261,7 @@ public class AuthTest extends JerseyTest {
                         .with("remoteCell", "schema1")
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL1))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -331,7 +331,7 @@ public class AuthTest extends JerseyTest {
                         .with("remoteCell", TEST_CELL1)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -342,7 +342,7 @@ public class AuthTest extends JerseyTest {
         Http.request("authn/saml-tc-c0.txt")
                 .with("remoteCell", TEST_CELL2)
                 .with("assertion", transCellAccessToken)
-                .with("dc_target", UrlUtils.cellRoot(TEST_APP_CELL1))
+                .with("p_target", UrlUtils.cellRoot(TEST_APP_CELL1))
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
 
@@ -359,7 +359,7 @@ public class AuthTest extends JerseyTest {
                         .with("remoteCell", TEST_CELL1)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", "personium-localunit:/" + TEST_CELL2 + "/")
+                        .with("p_target", "personium-localunit:/" + TEST_CELL2 + "/")
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -370,7 +370,7 @@ public class AuthTest extends JerseyTest {
         Http.request("authn/saml-tc-c0.txt")
                 .with("remoteCell", TEST_CELL2)
                 .with("assertion", transCellAccessToken)
-                .with("dc_target", "personium-localunit:/" + TEST_APP_CELL1 + "/")
+                .with("p_target", "personium-localunit:/" + TEST_APP_CELL1 + "/")
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
 
@@ -429,7 +429,7 @@ public class AuthTest extends JerseyTest {
                     .with("remoteCell", TEST_CELL1)
                     .with("username", "account1")
                     .with("password", "password1")
-                    .with("dc_target", httpCell2Url)
+                    .with("p_target", httpCell2Url)
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -560,7 +560,7 @@ public class AuthTest extends JerseyTest {
                     .with("remoteCell", TEST_CELL1)
                     .with("username", "account1")
                     .with("password", "password1")
-                    .with("dc_target", httpCell2Url)
+                    .with("p_target", httpCell2Url)
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -683,7 +683,7 @@ public class AuthTest extends JerseyTest {
                         .with("remoteCell", TEST_CELL1)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -710,7 +710,7 @@ public class AuthTest extends JerseyTest {
                         .with("remoteCell", TEST_CELL1)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -723,7 +723,7 @@ public class AuthTest extends JerseyTest {
                         .with("remoteCell", TEST_APP_CELL1)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -762,7 +762,7 @@ public class AuthTest extends JerseyTest {
                         .with("remoteCell", TEST_CELL1)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -775,7 +775,7 @@ public class AuthTest extends JerseyTest {
                         .with("remoteCell", TEST_APP_CELL1)
                         .with("username", "account1")
                         .with("password", "password1")
-                        .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                        .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -788,7 +788,7 @@ public class AuthTest extends JerseyTest {
                 .with("assertion", transCellAccessToken)
                 .with("client_id", UrlUtils.cellRoot(TEST_APP_CELL1))
                 .with("client_secret", schemaTransCellAccessToken)
-                .with("dc_target", UrlUtils.cellRoot(TEST_APP_CELL1))
+                .with("p_target", UrlUtils.cellRoot(TEST_APP_CELL1))
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
 
@@ -801,7 +801,7 @@ public class AuthTest extends JerseyTest {
                 .with("remoteCell", TEST_CELL2)
                 .with("assertion", transCellAccessToken)
                 .with("base64idpw", schemaTransCellAccessTokenHeader)
-                .with("dc_target", UrlUtils.cellRoot(TEST_APP_CELL1))
+                .with("p_target", UrlUtils.cellRoot(TEST_APP_CELL1))
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
     }
@@ -848,7 +848,7 @@ public class AuthTest extends JerseyTest {
             TResponse res = Http.request("authn/refresh-tc.txt")
                     .with("remoteCell", TEST_CELL1)
                     .with("refresh_token", refreshToken)
-                    .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                    .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
             String refreshToken2 = (String) res.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
@@ -945,7 +945,7 @@ public class AuthTest extends JerseyTest {
                             .with("remoteCell", TEST_APP_CELL1)
                             .with("username", "account1")
                             .with("password", "password1")
-                            .with("dc_target", UrlUtils.cellRoot(TEST_CELL1))
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
             JSONObject json = res.bodyAsJson();
@@ -977,7 +977,7 @@ public class AuthTest extends JerseyTest {
                     Http.request("authn/refresh-tc.txt")
                             .with("remoteCell", TEST_CELL1)
                             .with("refresh_token", refreshToken)
-                            .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
             String refreshToken2 = (String) res3.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
@@ -1009,7 +1009,7 @@ public class AuthTest extends JerseyTest {
                             .with("remoteCell", TEST_APP_CELL1)
                             .with("username", "account1")
                             .with("password", "password1")
-                            .with("dc_target", UrlUtils.cellRoot(TEST_CELL1))
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
 
@@ -1106,7 +1106,7 @@ public class AuthTest extends JerseyTest {
                             .with("remoteCell", TEST_CELL1)
                             .with("username", "account1")
                             .with("password", "password1")
-                            .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
 
@@ -1118,7 +1118,7 @@ public class AuthTest extends JerseyTest {
                     Http.request("authn/saml-tc-c0.txt")
                             .with("remoteCell", TEST_CELL2)
                             .with("assertion", transCellAccessToken)
-                            .with("dc_target", UrlUtils.cellRoot(TEST_APP_CELL1))
+                            .with("p_target", UrlUtils.cellRoot(TEST_APP_CELL1))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
 
@@ -1139,7 +1139,7 @@ public class AuthTest extends JerseyTest {
                     Http.request("authn/refresh-tc.txt")
                             .with("remoteCell", TEST_CELL2)
                             .with("refresh_token", refreshToken)
-                            .with("dc_target", UrlUtils.cellRoot(TEST_APP_CELL1))
+                            .with("p_target", UrlUtils.cellRoot(TEST_APP_CELL1))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
             JSONObject json3 = res3.bodyAsJson();
@@ -1197,7 +1197,7 @@ public class AuthTest extends JerseyTest {
                             .with("remoteCell", TEST_CELL1)
                             .with("username", "account1")
                             .with("password", "password1")
-                            .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
 
@@ -1209,7 +1209,7 @@ public class AuthTest extends JerseyTest {
                     Http.request("authn/saml-tc-c0.txt")
                             .with("remoteCell", TEST_CELL2)
                             .with("assertion", transCellAccessToken)
-                            .with("dc_target", UrlUtils.cellRoot(TEST_APP_CELL1))
+                            .with("p_target", UrlUtils.cellRoot(TEST_APP_CELL1))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
 
@@ -1256,7 +1256,7 @@ public class AuthTest extends JerseyTest {
                             .with("remoteCell", TEST_CELL1)
                             .with("username", "account1")
                             .with("password", "password1")
-                            .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
 
@@ -1269,7 +1269,7 @@ public class AuthTest extends JerseyTest {
                             .with("remoteCell", TEST_APP_CELL1)
                             .with("username", "account1")
                             .with("password", "password1")
-                            .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
 
@@ -1301,7 +1301,7 @@ public class AuthTest extends JerseyTest {
                     Http.request("authn/refresh-tc.txt")
                             .with("remoteCell", TEST_CELL2)
                             .with("refresh_token", refreshToken)
-                            .with("dc_target", UrlUtils.cellRoot(TEST_APP_CELL1))
+                            .with("p_target", UrlUtils.cellRoot(TEST_APP_CELL1))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
             String refreshToken2 = (String) res4.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
@@ -1335,7 +1335,7 @@ public class AuthTest extends JerseyTest {
                             .with("remoteCell", TEST_CELL1)
                             .with("username", "account1")
                             .with("password", "password1")
-                            .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
 
@@ -1348,7 +1348,7 @@ public class AuthTest extends JerseyTest {
                             .with("remoteCell", TEST_APP_CELL1)
                             .with("username", "account1")
                             .with("password", "password1")
-                            .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                             .returns()
                             .statusCode(HttpStatus.SC_OK);
 

@@ -91,7 +91,7 @@ public final class DavCollectionResource {
     @DELETE
     public Response delete(@HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         boolean recursive = false;
-        // X-Dc-Recursive Header
+        // X-Personium-Recursive Header
         if (recursiveHeader != null) {
             try {
                 recursive = Boolean.valueOf(recursiveHeader);

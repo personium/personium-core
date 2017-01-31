@@ -110,55 +110,55 @@ public class Common {
     public static final int MAX_EVENT_VALUE_LENGTH = 1024 * 50;
 
     /**
-     * Name項目に対するdc:Formatの定義.
+     * Name項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_NAME = new ArrayList<EdmAnnotation<?>>();
     /**
-     * 半角記号を許容する項目に対するdc:Formatの定義.
+     * 半角記号を許容する項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_NAME_WITH_SIGN = new ArrayList<EdmAnnotation<?>>();
     /**
-     * RelationのName項目に対するdc:Formatの定義.
+     * RelationのName項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_RELATION_NAME = new ArrayList<EdmAnnotation<?>>();
     /**
-     * dc:FormatのURI定義.
+     * p:FormatのURI定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_URI = new ArrayList<EdmAnnotation<?>>();
     /**
-     * dc:FormatのSchema URI定義.
+     * p:FormatのSchema URI定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_SCHEMA_URI = new ArrayList<EdmAnnotation<?>>();
     /**
-     * dc:FormatのCell URL定義.
+     * p:FormatのCell URL定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_CELL_URL = new ArrayList<EdmAnnotation<?>>();
     /**
-     * Multiplicity項目に対するdc:Formatの定義.
+     * Multiplicity項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_MULTIPLICITY = new ArrayList<EdmAnnotation<?>>();
     /**
-     * ID項目に対するdc:Formatの定義.
+     * ID項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_ID = new ArrayList<EdmAnnotation<?>>();
     /**
-     * InReplyTo項目に対するdc:Formatの定義.
+     * InReplyTo項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_IN_REPLY_TO = new ArrayList<EdmAnnotation<?>>();
     /**
-     * MessageType項目に対するdc:Formatの定義.
+     * MessageType項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_MESSAGE_TYPE = new ArrayList<EdmAnnotation<?>>();
     /**
-     * MessageTitle項目に対するdc:Formatの定義.
+     * MessageTitle項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_MESSAGE_TITLE = new ArrayList<EdmAnnotation<?>>();
     /**
-     * MessagePriority項目に対するdc:Formatの定義.
+     * MessagePriority項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_MESSAGE_PRIORITY = new ArrayList<EdmAnnotation<?>>();
     /**
-     * AccountType項目に対するdc:Formatの定義.
+     * AccountType項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> DC_FORMAT_ACCOUNT_TYPE = new ArrayList<EdmAnnotation<?>>();
 
@@ -196,7 +196,7 @@ public class Common {
     }
 
     /**
-     * Name項目に対するdc:FormatのAnnotationを返却.
+     * Name項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatNameAnnotation() {
@@ -206,7 +206,7 @@ public class Common {
     }
 
     /**
-     * Name項目に対するdc:FormatのAnnotationを返却.
+     * Name項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatNameWithSignAnnotation() {
@@ -216,7 +216,7 @@ public class Common {
     }
 
     /**
-     * RelationのName項目に対するdc:FormatのAnnotationを返却.
+     * RelationのName項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatRelationNameAnnotation() {
@@ -226,7 +226,7 @@ public class Common {
     }
 
     /**
-     * dc:FormatのURIのAnnotationを返却.
+     * p:FormatのURIのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatUriAnnotation() {
@@ -236,7 +236,7 @@ public class Common {
     }
 
     /**
-     * dc:FormatのSchema URIのAnnotationを返却.
+     * p:FormatのSchema URIのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatSchemaUriAnnotation() {
@@ -246,7 +246,7 @@ public class Common {
     }
 
     /**
-     * dc:FormatのCell URLのAnnotationを返却.
+     * p:FormatのCell URLのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatCellUrlAnnotation() {
@@ -256,7 +256,7 @@ public class Common {
     }
 
     /**
-     * dc:FormatのMultiplicityのAnnotationを返却.
+     * p:FormatのMultiplicityのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatMultiplicityAnnotation() {
@@ -266,7 +266,7 @@ public class Common {
     }
 
     /**
-     * ID項目に対するdc:FormatのAnnotationを返却.
+     * ID項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatIdAnnotation() {
@@ -276,7 +276,7 @@ public class Common {
     }
 
     /**
-     * InReplyTo項目に対するdc:FormatのAnnotationを返却.
+     * InReplyTo項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatInReplyToAnnotation() {
@@ -286,7 +286,7 @@ public class Common {
     }
 
     /**
-     * MessageType項目に対するdc:FormatのAnnotationを返却.
+     * MessageType項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatMessageTypeAnnotation() {
@@ -296,7 +296,7 @@ public class Common {
     }
 
     /**
-     * MessageTitle項目に対するdc:FormatのAnnotationを返却.
+     * MessageTitle項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatMessageTitleAnnotation() {
@@ -306,7 +306,7 @@ public class Common {
     }
 
     /**
-     * Message Priority 項目に対するdc:FormatのAnnotationを返却.
+     * Message Priority 項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatMessagePriorityAnnotation() {
@@ -316,7 +316,7 @@ public class Common {
     }
 
     /**
-     * Account Type 項目に対するdc:FormatのAnnotationを返却.
+     * Account Type 項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
     public static EdmAnnotation<?> createFormatAccountTypeAnnotation() {

@@ -44,7 +44,7 @@ public final class DcCoreAuthnException extends DcCoreException {
     public static final DcCoreAuthnException UNSUPPORTED_GRANT_TYPE =
             create("PR400-AN-0001", Error.UNSUPPORTED_GRANT_TYPE);
     /**
-     * dc_targetの値異常.
+     * p_targetの値異常.
      */
     public static final DcCoreAuthnException INVALID_TARGET = create("PR400-AN-0002", Error.INVALID_REQUEST);
     /**

@@ -699,7 +699,7 @@ public class SchemaAuthTest extends JerseyTest {
                 .with("remoteCell", TEST_CELL1)
                 .with("username", account)
                 .with("password", pass)
-                .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
         JSONObject json = res.bodyAsJson();
@@ -721,7 +721,7 @@ public class SchemaAuthTest extends JerseyTest {
                         .with("remoteCell", cellName)
                         .with("username", account)
                         .with("password", pass)
-                        .with("dc_target", targetUrl)
+                        .with("p_target", targetUrl)
                         .returns()
                         .statusCode(HttpStatus.SC_OK);
 
@@ -768,7 +768,7 @@ public class SchemaAuthTest extends JerseyTest {
                 .with("password", pass)
                 .with("client_id", UrlUtils.cellRoot(TEST_APP_CELL1))
                 .with("client_secret", token)
-                .with("dc_target", UrlUtils.cellRoot(TEST_CELL2))
+                .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
 

@@ -94,7 +94,7 @@ public class DcRestAdapter {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Dc-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
 
         debugHttpRequest(req, "");
         DcResponse res = this.request(req);
@@ -115,7 +115,7 @@ public class DcRestAdapter {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Dc-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
 
         debugHttpRequest(req, "");
         DcResponse res = this.request(req);
@@ -138,7 +138,7 @@ public class DcRestAdapter {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Dc-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
 
         debugHttpRequest(req, data);
         DcResponse res = request(req);
@@ -160,7 +160,7 @@ public class DcRestAdapter {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Dc-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
 
         debugHttpRequest(req, "body is InputStream...");
         DcResponse res = request(req);
@@ -182,7 +182,7 @@ public class DcRestAdapter {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Dc-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
 
         debugHttpRequest(req, data);
         DcResponse res = request(req);
@@ -201,7 +201,7 @@ public class DcRestAdapter {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Dc-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
 
         debugHttpRequest(req, "");
         return this.request(req);
@@ -228,7 +228,7 @@ public class DcRestAdapter {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Dc-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
 
         if (body != null) {
             HttpEntity httpEntity = null;

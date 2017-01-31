@@ -102,7 +102,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     public final void マスタートークンでX_PERSONIUM_UnitUserヘッダを指定すると指定したユニットユーザトークンになることを確認() {
-        // マスタートークンでX-Dc-UnitUserヘッダを指定すると指定した値のOwnerでセルが作成される。
+        // マスタートークンでX-Personium-UnitUserヘッダを指定すると指定した値のOwnerでセルが作成される。
         CellUtils.create(CREATE_CELL, AbstractCase.MASTER_TOKEN_NAME, Setup.OWNER_VET, HttpStatus.SC_CREATED);
 
         // ユニットユーザトークンを使えば取得可能なことを確認
@@ -134,7 +134,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
                     .with("remoteCell", UNIT_USER_CELL)
                     .with("username", UNIT_USER_ACCOUNT)
                     .with("password", UNIT_USER_ACCOUNT_PASS)
-                    .with("dc_target", UrlUtils.unitRoot())
+                    .with("p_target", UrlUtils.unitRoot())
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -207,7 +207,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
                     .with("remoteCell", UNIT_USER_CELL)
                     .with("username", UNIT_USER_ACCOUNT)
                     .with("password", UNIT_USER_ACCOUNT_PASS)
-                    .with("dc_target", UrlUtils.unitRoot())
+                    .with("p_target", UrlUtils.unitRoot())
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -392,7 +392,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
                 .with("remoteCell", Setup.TEST_CELL2)
                 .with("username", "account1")
                 .with("password", "password1")
-                .with("dc_target", UrlUtils.cellRoot(Setup.TEST_CELL1))
+                .with("p_target", UrlUtils.cellRoot(Setup.TEST_CELL1))
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
 
@@ -422,7 +422,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
                 .with("remoteCell", Setup.TEST_CELL2)
                 .with("username", "account1")
                 .with("password", "password1")
-                .with("dc_target", UrlUtils.cellRoot(Setup.TEST_CELL1))
+                .with("p_target", UrlUtils.cellRoot(Setup.TEST_CELL1))
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
 
@@ -692,7 +692,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
                 .with("remoteCell", Setup.TEST_CELL1)
                 .with("username", "account1")
                 .with("password", "password1")
-                .with("dc_target", UrlUtils.cellRoot(Setup.TEST_CELL2))
+                .with("p_target", UrlUtils.cellRoot(Setup.TEST_CELL2))
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
 

@@ -50,25 +50,25 @@ public class FacadeResource {
     /**
      * クッキー認証の際、クッキー内に埋め込まれている情報のキー.
      */
-    public static final String DC_COOKIE_KEY = "dc_cookie";
+    public static final String p_cookie_KEY = "p_cookie";
     /**
      * クッキー認証の際、クエリパラメタに指定されるキー.
      */
-    public static final String COOKIE_PEER_QUERY_KEY = "dc_cookie_peer";
+    public static final String COOKIE_PEER_QUERY_KEY = "p_cookie_peer";
 
     /**
-     * @param cookieAuthValue クッキー内の dc_cookieキーに指定された値
-     * @param cookiePeer dc_cookie_peerクエリに指定された値
+     * @param cookieAuthValue クッキー内の p_cookieキーに指定された値
+     * @param cookiePeer p_cookie_peerクエリに指定された値
      * @param authzHeaderValue Authorization ヘッダ
      * @param host Host ヘッダ
      * @param uriInfo UriInfo
-     * @param xDcUnitUser X-Dc-UnitUserヘッダ
+     * @param xDcUnitUser X-Personium-UnitUserヘッダ
      * @param httpServletRequest HttpServletRequest
      * @return CellResourceオブジェクトまたはResponseオブジェクト
      */
     @Path("{path1}")
     public final Object facade(
-            @CookieParam(DC_COOKIE_KEY) final String cookieAuthValue,
+            @CookieParam(p_cookie_KEY) final String cookieAuthValue,
             @QueryParam(COOKIE_PEER_QUERY_KEY) final String cookiePeer,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeaderValue,
             @HeaderParam(HttpHeaders.HOST) final String host,
@@ -94,8 +94,8 @@ public class FacadeResource {
     }
 
     /**
-     * @param cookieAuthValue クッキー内の dc_cookieキーに指定された値
-     * @param cookiePeer dc_cookie_peerクエリに指定された値
+     * @param cookieAuthValue クッキー内の p_cookieキーに指定された値
+     * @param cookiePeer p_cookie_peerクエリに指定された値
      * @param authzHeaderValue Authorization ヘッダ
      * @param host Host ヘッダ
      * @param xDcUnitUser ヘッダ
@@ -104,7 +104,7 @@ public class FacadeResource {
      */
     @Path("__ctl")
     public final UnitCtlResource ctl(
-            @CookieParam(DC_COOKIE_KEY) final String cookieAuthValue,
+            @CookieParam(p_cookie_KEY) final String cookieAuthValue,
             @QueryParam(COOKIE_PEER_QUERY_KEY) final String cookiePeer,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeaderValue,
             @HeaderParam(HttpHeaders.HOST) final String host,

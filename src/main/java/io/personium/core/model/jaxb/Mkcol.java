@@ -101,7 +101,7 @@ public final class Mkcol {
         String localName = e.getLocalName();
         String nsUri = e.getNamespaceURI();
 
-        if ("urn:x-dc1:xmlns".equals(nsUri)) {
+        if ("urn:x-personium:xmlns".equals(nsUri)) {
             if ("odata".equals(localName)) {
                 return DavCmp.TYPE_COL_ODATA;
             } else if ("service".equals(localName)) {

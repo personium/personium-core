@@ -1,4 +1,4 @@
-GET /${cellPath}/${boxName}/${colName}/$metadata/EntityType?dc_cookie_peer=${dc_cookie_peer} HTTP/1.1
+GET /${cellPath}/${boxName}/${colName}/$metadata/EntityType?p_cookie_peer=${p_cookie_peer} HTTP/1.1
 Host: ?
 Content-Length: ?
 Connection: close

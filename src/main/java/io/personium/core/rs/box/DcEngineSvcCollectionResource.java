@@ -304,15 +304,15 @@ public final class DcEngineSvcCollectionResource {
         req.addHeader("X-Request-Uri", uriInfo.getRequestUri().toString());
         if (davCmp instanceof DavCmpFsImpl) {
             DavCmpFsImpl dcmp = (DavCmpFsImpl) davCmp;
-            req.addHeader("X-Dc-Fs-Path", dcmp.getFsPath());
+            req.addHeader("X-Personium-Fs-Path", dcmp.getFsPath());
         } else if (davCmp instanceof DavCmpEsImpl) {
             DavCmpEsImpl dcmp = (DavCmpEsImpl) davCmp;
-            req.addHeader("X-Dc-Es-Index", dcmp.getEsColType().getIndex().getName());
-            req.addHeader("X-Dc-Es-Id", dcmp.getNodeId());
-            req.addHeader("X-Dc-Es-Type", dcmp.getEsColType().getType());
-            req.addHeader("X-Dc-Es-Routing-Id", this.davRsCmp.getCell().getId());
+            req.addHeader("X-Personium-Es-Index", dcmp.getEsColType().getIndex().getName());
+            req.addHeader("X-Personium-Es-Id", dcmp.getNodeId());
+            req.addHeader("X-Personium-Es-Type", dcmp.getEsColType().getType());
+            req.addHeader("X-Personium-Es-Routing-Id", this.davRsCmp.getCell().getId());
         }
-        req.addHeader("X-Dc-Box-Schema", this.davRsCmp.getBox().getSchema());
+        req.addHeader("X-Personium-Box-Schema", this.davRsCmp.getBox().getSchema());
 
         // リレイまでのヘッダを追加
         MultivaluedMap<String, String> multivalueHeaders = headers.getRequestHeaders();

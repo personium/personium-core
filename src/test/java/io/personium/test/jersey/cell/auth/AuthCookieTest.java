@@ -94,21 +94,21 @@ public class AuthCookieTest extends JerseyTest {
     }
 
     /**
-     * dc_target指定なしでdc_cookieがtrueの場合にCookieが返却されること.
+     * p_target指定なしでp_cookieがtrueの場合にCookieが返却されること.
      */
     @Test
-    public final void dc_target指定なしでdc_cookieがtrueの場合にCookieが返却されること() {
+    public final void p_target指定なしでp_cookieがtrueの場合にCookieが返却されること() {
         Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(TEST_CELL1, "account1");
         TResponse passRes = requestAuthentication(TEST_CELL1, "account1",
                 "password1", "true", HttpStatus.SC_OK);
         AuthTestCommon.accountLastAuthenticatedCheck(TEST_CELL1, "account1", lastAuthenticatedTime);
-        String body = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+        String body = (String) passRes.bodyAsJson().get("p_cookie_peer");
         assertNotNull(body);
         String header = passRes.getHeader("Set-Cookie");
         assertNotNull(header);
 
         Map<String, String> cookie = resolveCookie(header);
-        assertTrue(cookie.containsKey("dc_cookie"));
+        assertTrue(cookie.containsKey("p_cookie"));
         assertTrue(cookie.containsKey("Version"));
         assertEquals("0", cookie.get("Version"));
         assertTrue(cookie.containsKey("Domain"));
@@ -118,23 +118,23 @@ public class AuthCookieTest extends JerseyTest {
     }
 
     /**
-     * dc_target指定なしでdc_cookieがfalseの場合にCookieが返却されないこと.
+     * p_target指定なしでp_cookieがfalseの場合にCookieが返却されないこと.
      */
     @Test
-    public final void dc_target指定なしでdc_cookieがfalseの場合にCookieが返却されないこと() {
+    public final void p_target指定なしでp_cookieがfalseの場合にCookieが返却されないこと() {
         TResponse passRes = requestAuthentication(TEST_CELL1, "account1",
                 "password1", "false", HttpStatus.SC_OK);
-        String body = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+        String body = (String) passRes.bodyAsJson().get("p_cookie_peer");
         assertNull(body);
         String header = passRes.getHeader("Set-Cookie");
         assertNull(header);
     }
 
     /**
-     * dc_target指定ありでdc_cookieがtrueの場合にCookieが返却されないこと.
+     * p_target指定ありでp_cookieがtrueの場合にCookieが返却されないこと.
      */
     @Test
-    public final void dc_target指定ありでdc_cookieがtrueの場合にCookieが返却されないこと() {
+    public final void p_target指定ありでp_cookieがtrueの場合にCookieが返却されないこと() {
         try {
             // 本テスト用セルの作成
             CellUtils.create(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
@@ -154,7 +154,7 @@ public class AuthCookieTest extends JerseyTest {
 
             TResponse passRes = requestAuthorizationWithTarget(TESTCELL_NAME, USERNAME,
                     PASS, "true", UrlUtils.cellRoot(TEST_CELL1), HttpStatus.SC_OK);
-            String body = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+            String body = (String) passRes.bodyAsJson().get("p_cookie_peer");
             assertNull(body);
             String header = passRes.getHeader("Set-Cookie");
             assertNull(header);
@@ -174,10 +174,10 @@ public class AuthCookieTest extends JerseyTest {
     }
 
     /**
-     * dc_target指定ありでdc_cookieがfalseの場合にCookieが返却されないこと.
+     * p_target指定ありでp_cookieがfalseの場合にCookieが返却されないこと.
      */
     @Test
-    public final void dc_target指定ありでdc_cookieがfalseの場合にCookieが返却されないこと() {
+    public final void p_target指定ありでp_cookieがfalseの場合にCookieが返却されないこと() {
         try {
             // 本テスト用セルの作成
             CellUtils.create(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
@@ -197,7 +197,7 @@ public class AuthCookieTest extends JerseyTest {
 
             TResponse passRes = requestAuthorizationWithTarget(TESTCELL_NAME, USERNAME,
                     PASS, "false", UrlUtils.cellRoot(TEST_CELL1), HttpStatus.SC_OK);
-            String body = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+            String body = (String) passRes.bodyAsJson().get("p_cookie_peer");
             assertNull(body);
             String header = passRes.getHeader("Set-Cookie");
             assertNull(header);
@@ -217,23 +217,23 @@ public class AuthCookieTest extends JerseyTest {
     }
 
     /**
-     * dc_target指定なしでdc_cookieが指定なしの場合にCookieが返却されないこと.
+     * p_target指定なしでp_cookieが指定なしの場合にCookieが返却されないこと.
      */
     @Test
-    public final void dc_target指定なしでdc_cookieが指定なしの場合にCookieが返却されないこと() {
+    public final void p_target指定なしでp_cookieが指定なしの場合にCookieが返却されないこと() {
         TResponse passRes = requestAuthentication(TEST_CELL1, "account1",
                 "password1", null, HttpStatus.SC_OK);
-        String body = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+        String body = (String) passRes.bodyAsJson().get("p_cookie_peer");
         assertNull(body);
         String header = passRes.getHeader("Set-Cookie");
         assertNull(header);
     }
 
     /**
-     * dc_target指定ありでdc_cookieが指定なしの場合にCookieが返却されないこと.
+     * p_target指定ありでp_cookieが指定なしの場合にCookieが返却されないこと.
      */
     @Test
-    public final void dc_target指定ありでdc_cookieが指定なしの場合にCookieが返却されないこと() {
+    public final void p_target指定ありでp_cookieが指定なしの場合にCookieが返却されないこと() {
         try {
             // 本テスト用セルの作成
             CellUtils.create(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
@@ -253,7 +253,7 @@ public class AuthCookieTest extends JerseyTest {
 
             TResponse passRes = requestAuthorizationWithTarget(TESTCELL_NAME, USERNAME,
                     PASS, null, UrlUtils.cellRoot(TEST_CELL1), HttpStatus.SC_OK);
-            String body = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+            String body = (String) passRes.bodyAsJson().get("p_cookie_peer");
             assertNull(body);
             String header = passRes.getHeader("Set-Cookie");
             assertNull(header);
@@ -281,7 +281,7 @@ public class AuthCookieTest extends JerseyTest {
         // パスワード認証要求、クッキーを取得
         TResponse passRes = requestAuthentication(TEST_CELL1, "account2",
                 "password2", "true", HttpStatus.SC_OK);
-        String cookiePeer = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+        String cookiePeer = (String) passRes.bodyAsJson().get("p_cookie_peer");
         assertNotNull(cookiePeer);
 
         // クッキーを受け取る
@@ -292,7 +292,7 @@ public class AuthCookieTest extends JerseyTest {
 
         // クッキーを与えてオペレーションを実行できるか確認する。
         requestOperation(TEST_CELL1, cookiePeer,
-                "dc_cookie=" + cookie.get("dc_cookie"), HttpStatus.SC_OK);
+                "p_cookie=" + cookie.get("p_cookie"), HttpStatus.SC_OK);
     }
 
     /**
@@ -304,7 +304,7 @@ public class AuthCookieTest extends JerseyTest {
         // パスワード認証要求、クッキーを取得
         TResponse passRes = requestAuthentication(TEST_CELL1, "account2",
                 "password2", "true", HttpStatus.SC_OK);
-        String cookiePeer = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+        String cookiePeer = (String) passRes.bodyAsJson().get("p_cookie_peer");
         assertNotNull(cookiePeer);
 
         // クッキーを受け取る
@@ -315,7 +315,7 @@ public class AuthCookieTest extends JerseyTest {
 
         // クッキーを改変してオペレーションが失敗することを確認する。
         TResponse res = requestOperation(TEST_CELL1, cookiePeer,
-                "dc_cookie=" + cookie.get("dc_cookie") + "invalid", HttpStatus.SC_UNAUTHORIZED);
+                "p_cookie=" + cookie.get("p_cookie") + "invalid", HttpStatus.SC_UNAUTHORIZED);
         AuthTestCommon.checkAuthenticateHeader(res, OAuth2Helper.Scheme.BEARER, TEST_CELL1);
     }
 
@@ -348,7 +348,7 @@ public class AuthCookieTest extends JerseyTest {
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
-            String cookiePeer = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+            String cookiePeer = (String) passRes.bodyAsJson().get("p_cookie_peer");
             assertNotNull(cookiePeer);
 
             // クッキーを受け取る
@@ -359,7 +359,7 @@ public class AuthCookieTest extends JerseyTest {
 
             // クッキーを与えてオペレーション(セル1のBox一覧取得)で認証エラーにならないことを確認する。
             requestOperation(LOCAL_CELL, cookiePeer,
-                    "dc_cookie=" + cookie.get("dc_cookie"), HttpStatus.SC_OK);
+                    "p_cookie=" + cookie.get("p_cookie"), HttpStatus.SC_OK);
         } finally {
             // セル1とセル2を削除
             Setup.cellBulkDeletion(TARGET_CELL);
@@ -397,7 +397,7 @@ public class AuthCookieTest extends JerseyTest {
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
-            String cookiePeer = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+            String cookiePeer = (String) passRes.bodyAsJson().get("p_cookie_peer");
             assertNotNull(cookiePeer);
 
             // クッキーを受け取る
@@ -408,7 +408,7 @@ public class AuthCookieTest extends JerseyTest {
 
             // クッキーを改変してオペレーションが失敗することを確認する。
             TResponse res = requestOperation(LOCAL_CELL, cookiePeer,
-                    "dc_cookie=" + cookie.get("dc_cookie") + "invalid", HttpStatus.SC_UNAUTHORIZED);
+                    "p_cookie=" + cookie.get("p_cookie") + "invalid", HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(res, LOCAL_CELL);
         } finally {
             // セル1とセル2を削除
@@ -439,12 +439,12 @@ public class AuthCookieTest extends JerseyTest {
 
         Map<String, String> cookie = resolveCookie(header);
 
-        String cookiePeer = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+        String cookiePeer = (String) passRes.bodyAsJson().get("p_cookie_peer");
         assertNotNull(cookiePeer);
 
         // クッキーを与えてオペレーションを実行できるか確認する。
         requestOperation(TEST_CELL1, cookiePeer,
-                "dc_cookie=" + cookie.get("dc_cookie"), HttpStatus.SC_OK);
+                "p_cookie=" + cookie.get("p_cookie"), HttpStatus.SC_OK);
     }
 
     /**
@@ -468,12 +468,12 @@ public class AuthCookieTest extends JerseyTest {
 
         Map<String, String> cookie = resolveCookie(header);
 
-        String cookiePeer = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+        String cookiePeer = (String) passRes.bodyAsJson().get("p_cookie_peer");
         assertNotNull(cookiePeer);
 
         // クッキーを改変してオペレーションが失敗することを確認する。
         TResponse res = requestOperation(TEST_CELL1, cookiePeer,
-                "dc_cookie=" + cookie.get("dc_cookie") + "invalid", HttpStatus.SC_UNAUTHORIZED);
+                "p_cookie=" + cookie.get("p_cookie") + "invalid", HttpStatus.SC_UNAUTHORIZED);
         AuthTestCommon.checkAuthenticateHeader(res, OAuth2Helper.Scheme.BEARER, TEST_CELL1);
     }
 
@@ -498,7 +498,7 @@ public class AuthCookieTest extends JerseyTest {
             // パスワード認証要求、クッキーを取得
             TResponse passRes = requestAuthentication(TEST_CELL1, "account2",
                     "password2", "true", HttpStatus.SC_OK);
-            String cookiePeer = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+            String cookiePeer = (String) passRes.bodyAsJson().get("p_cookie_peer");
             assertNotNull(cookiePeer);
 
             // クッキーを受け取る
@@ -508,7 +508,7 @@ public class AuthCookieTest extends JerseyTest {
             Map<String, String> cookie = resolveCookie(header);
 
             // クッキー認証
-            String dcCookie = "dc_cookie=" + cookie.get("dc_cookie");
+            String dcCookie = "p_cookie=" + cookie.get("p_cookie");
             requestOperation(TEST_CELL1, boxName, colName, cookiePeer, dcCookie, HttpStatus.SC_OK);
         } finally {
             // コレクション削除
@@ -537,7 +537,7 @@ public class AuthCookieTest extends JerseyTest {
             // パスワード認証要求、クッキーを取得
             TResponse passRes = requestAuthentication(TEST_CELL1, "account2",
                     "password2", "true", HttpStatus.SC_OK);
-            String cookiePeer = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+            String cookiePeer = (String) passRes.bodyAsJson().get("p_cookie_peer");
             assertNotNull(cookiePeer);
 
             // クッキーを受け取る
@@ -547,15 +547,15 @@ public class AuthCookieTest extends JerseyTest {
             Map<String, String> cookie = resolveCookie(header);
 
             // クッキー認証
-            // dc_cookieが不正
-            String dcCookie = "dc_cookie=" + cookie.get("dc_cookie") + "invalid";
+            // p_cookieが不正
+            String dcCookie = "p_cookie=" + cookie.get("p_cookie") + "invalid";
             requestOperation(TEST_CELL1, boxName, colName, cookiePeer, dcCookie, HttpStatus.SC_OK);
 
-            // dc_cookieが空
+            // p_cookieが空
             requestOperationWithoutCookie(TEST_CELL1, boxName, colName, cookiePeer, HttpStatus.SC_OK);
 
-            // dc_cookie_peerが不正
-            dcCookie = "dc_cookie=" + cookie.get("dc_cookie");
+            // p_cookie_peerが不正
+            dcCookie = "p_cookie=" + cookie.get("p_cookie");
             String dcCookiePeer = cookiePeer + "invalid";
             requestOperation(TEST_CELL1, boxName, colName, dcCookiePeer, dcCookie, HttpStatus.SC_OK);
         } finally {
@@ -586,7 +586,7 @@ public class AuthCookieTest extends JerseyTest {
             // パスワード認証要求、クッキーを取得
             TResponse passRes = requestAuthentication(TEST_CELL1, "account2",
                     "password2", "true", HttpStatus.SC_OK);
-            String cookiePeer = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+            String cookiePeer = (String) passRes.bodyAsJson().get("p_cookie_peer");
             assertNotNull(cookiePeer);
 
             // クッキーを受け取る
@@ -596,7 +596,7 @@ public class AuthCookieTest extends JerseyTest {
             Map<String, String> cookie = resolveCookie(header);
 
             // クッキー認証
-            String dcCookie = "dc_cookie=" + cookie.get("dc_cookie");
+            String dcCookie = "p_cookie=" + cookie.get("p_cookie");
             requestOperation(TEST_CELL1, boxName, colName, cookiePeer, dcCookie, HttpStatus.SC_OK);
         } finally {
             // コレクション削除
@@ -625,7 +625,7 @@ public class AuthCookieTest extends JerseyTest {
             // パスワード認証要求、クッキーを取得
             TResponse passRes = requestAuthentication(TEST_CELL1, "account2",
                     "password2", "true", HttpStatus.SC_OK);
-            String cookiePeer = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+            String cookiePeer = (String) passRes.bodyAsJson().get("p_cookie_peer");
             assertNotNull(cookiePeer);
 
             // クッキーを受け取る
@@ -635,18 +635,18 @@ public class AuthCookieTest extends JerseyTest {
             Map<String, String> cookie = resolveCookie(header);
 
             // クッキー認証
-            // dc_cookieが不正
-            String dcCookie = "dc_cookie=" + cookie.get("dc_cookie") + "invalid";
+            // p_cookieが不正
+            String dcCookie = "p_cookie=" + cookie.get("p_cookie") + "invalid";
             TResponse res = requestOperation(TEST_CELL1, boxName, colName, cookiePeer, dcCookie,
                     HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(res, OAuth2Helper.Scheme.BEARER, TEST_CELL1);
 
-            // dc_cookieが空
+            // p_cookieが空
             res = requestOperationWithoutCookie(TEST_CELL1, boxName, colName, cookiePeer, HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(res, OAuth2Helper.Scheme.BEARER, TEST_CELL1);
 
-            // dc_cookie_peerが不正
-            dcCookie = "dc_cookie=" + cookie.get("dc_cookie");
+            // p_cookie_peerが不正
+            dcCookie = "p_cookie=" + cookie.get("p_cookie");
             String dcCookiePeer = cookiePeer + "invalid";
             res = requestOperation(TEST_CELL1, boxName, colName, dcCookiePeer, dcCookie, HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(res, OAuth2Helper.Scheme.BEARER, TEST_CELL1);
@@ -678,7 +678,7 @@ public class AuthCookieTest extends JerseyTest {
             // パスワード認証要求、クッキーを取得
             TResponse passRes = requestAuthentication(TEST_CELL1, "account1",
                     "password1", "true", HttpStatus.SC_OK);
-            String cookiePeer = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+            String cookiePeer = (String) passRes.bodyAsJson().get("p_cookie_peer");
             assertNotNull(cookiePeer);
 
             // クッキーを受け取る
@@ -688,7 +688,7 @@ public class AuthCookieTest extends JerseyTest {
             Map<String, String> cookie = resolveCookie(header);
 
             // クッキー認証
-            String dcCookie = "dc_cookie=" + cookie.get("dc_cookie");
+            String dcCookie = "p_cookie=" + cookie.get("p_cookie");
             TResponse res = requestOperation(TEST_CELL1, boxName, colName, cookiePeer, dcCookie,
                     HttpStatus.SC_FORBIDDEN);
             AuthTestCommon.checkAuthenticateHeaderNotExists(res);
@@ -719,7 +719,7 @@ public class AuthCookieTest extends JerseyTest {
             // パスワード認証要求、クッキーを取得
             TResponse passRes = requestAuthentication(TEST_CELL1, "account1",
                     "password1", "true", HttpStatus.SC_OK);
-            String cookiePeer = (String) passRes.bodyAsJson().get("dc_cookie_peer");
+            String cookiePeer = (String) passRes.bodyAsJson().get("p_cookie_peer");
             assertNotNull(cookiePeer);
 
             // クッキーを受け取る
@@ -729,17 +729,17 @@ public class AuthCookieTest extends JerseyTest {
             Map<String, String> cookie = resolveCookie(header);
 
             // クッキー認証
-            // dc_cookieが不正
-            String dcCookie = "dc_cookie=" + cookie.get("dc_cookie") + "invalid";
+            // p_cookieが不正
+            String dcCookie = "p_cookie=" + cookie.get("p_cookie") + "invalid";
             TResponse res = requestOperation(TEST_CELL1, boxName, colName, cookiePeer, dcCookie,
                     HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(res, OAuth2Helper.Scheme.BEARER, TEST_CELL1);
 
-            // dc_cookieが空
+            // p_cookieが空
             res = requestOperationWithoutCookie(TEST_CELL1, boxName, colName, cookiePeer, HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(res, OAuth2Helper.Scheme.BEARER, TEST_CELL1);
-            // dc_cookie_peerが不正
-            dcCookie = "dc_cookie=" + cookie.get("dc_cookie");
+            // p_cookie_peerが不正
+            dcCookie = "p_cookie=" + cookie.get("p_cookie");
             String dcCookiePeer = cookiePeer + "invalid";
             res = requestOperation(TEST_CELL1, boxName, colName, dcCookiePeer, dcCookie, HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(res, OAuth2Helper.Scheme.BEARER, TEST_CELL1);
@@ -763,7 +763,7 @@ public class AuthCookieTest extends JerseyTest {
                 .with("cellPath", cellName)
                 .with("boxName", boxName)
                 .with("colName", colName)
-                .with("dc_cookie_peer", cookiePeer)
+                .with("p_cookie_peer", cookiePeer)
                 .with("cookie", cookie)
                 .returns()
                 .debug()
@@ -779,7 +779,7 @@ public class AuthCookieTest extends JerseyTest {
                 .with("cellPath", cellName)
                 .with("boxName", boxName)
                 .with("colName", colName)
-                .with("dc_cookie_peer", cookiePeer)
+                .with("p_cookie_peer", cookiePeer)
                 .returns()
                 .debug()
                 .statusCode(expectedStatus);
@@ -802,7 +802,7 @@ public class AuthCookieTest extends JerseyTest {
                             .with("remoteCell", cellName)
                             .with("username", userName)
                             .with("password", password)
-                            .with("dc_cookie", dcCookie)
+                            .with("p_cookie", dcCookie)
                             .returns()
                             .statusCode(expectedStatus);
         }
@@ -831,7 +831,7 @@ public class AuthCookieTest extends JerseyTest {
                             .with("remoteCell", cellName)
                             .with("username", userName)
                             .with("password", password)
-                            .with("dc_target", dcTarget)
+                            .with("p_target", dcTarget)
                             .returns()
                             .statusCode(code);
         } else {
@@ -840,8 +840,8 @@ public class AuthCookieTest extends JerseyTest {
                             .with("remoteCell", cellName)
                             .with("username", userName)
                             .with("password", password)
-                            .with("dc_cookie", dcCookie)
-                            .with("dc_target", dcTarget)
+                            .with("p_cookie", dcCookie)
+                            .with("p_target", dcTarget)
                             .returns()
                             .statusCode(code);
         }

@@ -124,7 +124,7 @@ public class ExtCellCreateTest extends ODataCommon {
      */
     @Test
     public final void UrlのschemeがURNの場合400エラーを返却すること() {
-        String extCellUrl = "urn:x-dc1:test";
+        String extCellUrl = "urn:x-personium:test";
         ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_BAD_REQUEST);
     }
 

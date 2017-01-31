@@ -232,7 +232,7 @@ public final class ODataProducerUtils {
         String hPassStr = AuthUtils.checkValidatePassword(dcCredHeader, oedhNew.getType());
         // 変更するパスワードをHashedCredentialへ上書きする
         Map<String, Object> hiddenFields = oedhNew.getHiddenFields();
-        // X-Dc-Credentialの値をHashedCredentialのキーへputする
+        // X-Personium-Credentialの値をHashedCredentialのキーへputする
         // 指定がない場合400エラーを返却する
         if (hPassStr != null) {
             hiddenFields.put("HashedCredential", hPassStr);

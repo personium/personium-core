@@ -202,7 +202,7 @@ public final class DcCoreContainerFilter implements ContainerRequestFilter, Cont
     /**
      * 全てのレスポンスに共通するレスポンスヘッダーを追加する.
      * Access-Control-Allow-Origin, Access-Control-Allow-Headers<br/>
-     * X-Dc-Version<br/>
+     * X-Personium-Version<br/>
      * @param request
      * @param response
      */
@@ -215,7 +215,7 @@ public final class DcCoreContainerFilter implements ContainerRequestFilter, Cont
             mm.remove(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS);
         }
         mm.putSingle(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, HttpHeaders.Value.ASTERISK);
-        // X-Dc-Version
+        // X-Personium-Version
         mm.putSingle(HttpHeaders.X_PERSONIUM_VERSION, DcCoreConfig.getCoreVersion());
     }
 

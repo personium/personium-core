@@ -99,7 +99,7 @@ public class AccountUtils {
     }
 
     /**
-     * X-Dc-Credentialヘッダー有でTypeを指定してアカウントを作成するユーティリティ.
+     * X-Personium-Credentialヘッダー有でTypeを指定してアカウントを作成するユーティリティ.
      * @param token トークン
      * @param typeName Type値
      * @param cellName セル名
@@ -123,7 +123,7 @@ public class AccountUtils {
     }
 
     /**
-     * X-Dc-Credentialヘッダー無しでアカウントを作成するユーティリティ.
+     * X-Personium-Credentialヘッダー無しでアカウントを作成するユーティリティ.
      * @param token トークン
      * @param cellName セル名
      * @param userName ユーザ名
@@ -143,7 +143,7 @@ public class AccountUtils {
     }
 
     /**
-     * X-Dc-Credentialヘッダー無しでTypeを指定してアカウントを作成するユーティリティ.
+     * X-Personium-Credentialヘッダー無しでTypeを指定してアカウントを作成するユーティリティ.
      * @param token トークン
      * @param cellName セル名
      * @param userName ユーザ名

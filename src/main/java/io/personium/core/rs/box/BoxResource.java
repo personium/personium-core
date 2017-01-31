@@ -337,7 +337,7 @@ public final class BoxResource {
             reqBody.setLevel(LEVEL.INFO);
             reqBody.setObject(this.cell.getUrl() + boxName);
             reqBody.setResult("");
-            // X-Dc-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
+            // X-Personium-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
             requestKey = EventResource.validateXDcRequestKey(requestKey);
             // TODO findBugs対策↓
             log.debug(requestKey);
@@ -350,7 +350,7 @@ public final class BoxResource {
             }
 
             // Boxを作成するためにCellCtlResource、ODataEntityResource(ODataProducer)が必要
-            // この時点では "X-Dc-Credential" ヘッダーは不要なのでnullを指定する
+            // この時点では "X-Personium-Credential" ヘッダーは不要なのでnullを指定する
             CellCtlResource cellctl = new CellCtlResource(this.accessContext, null, this.cellRsCmp);
             String keyName = "'" + this.boxName + "'";
             ODataEntityResource odataEntity = new ODataEntityResource(cellctl, Box.EDM_TYPE_NAME, keyName);
@@ -359,7 +359,7 @@ public final class BoxResource {
             headers.put(HttpHeaders.CONTENT_TYPE, contentType);
             headers.put(HttpHeaders.CONTENT_LENGTH, contentLength);
 
-            // X-Dc-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
+            // X-Personium-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
             BarFileInstaller installer =
                     new BarFileInstaller(this.cell, this.boxName, odataEntity, uriInfo);
 

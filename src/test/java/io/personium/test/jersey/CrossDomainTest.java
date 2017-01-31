@@ -1388,7 +1388,7 @@ public class CrossDomainTest extends JerseyTest {
     }
 
     /**
-     * X-Dc-Versionヘッダーが存在していることを確認する.
+     * X-Personium-Versionヘッダーが存在していることを確認する.
      * @params response レスポンス情報
      * @params allowMethod 許可メソッド
      */
@@ -1396,7 +1396,7 @@ public class CrossDomainTest extends JerseyTest {
         if (DcCoreConfig.getCoreVersion().compareTo("1.1.0") >= 0) {
             response.checkHeader(HttpHeaders.X_PERSONIUM_VERSION, DcCoreConfig.getCoreVersion());
         } else {
-            // Versionが1.1.0より古い場合は、X-Dc-Versionヘッダーを返さない
+            // Versionが1.1.0より古い場合は、X-Personium-Versionヘッダーを返さない
             response.checkHeader(HttpHeaders.X_PERSONIUM_VERSION, null);
         }
     }

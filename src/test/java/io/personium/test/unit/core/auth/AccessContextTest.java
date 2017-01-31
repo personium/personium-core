@@ -252,7 +252,7 @@ public class AccessContextTest {
                 cell.getOwner(), uriInfo.getBaseUri().getHost()  + ":"  + uriInfo.getBaseUri().getPort());
 
         String tokenString = uluut.toTokenString();
-        // dc_cookie_peerとして、ランダムなUUIDを設定する
+        // p_cookie_peerとして、ランダムなUUIDを設定する
         String dcCookiePeer = UUID.randomUUID().toString();
         String cookieValue = dcCookiePeer + "\t" + tokenString;
         // ヘッダに返却するdc-cookie値は、暗号化する
@@ -283,7 +283,7 @@ public class AccessContextTest {
                 uriInfo.getBaseUri().getHost()  + ":"  + uriInfo.getBaseUri().getPort());
 
         String tokenString = token.toTokenString();
-        // dc_cookie_peerとして、ランダムなUUIDを設定する
+        // p_cookie_peerとして、ランダムなUUIDを設定する
         String dcCookiePeer = UUID.randomUUID().toString();
         String cookieValue = dcCookiePeer + "\t" + tokenString;
         // ヘッダに返却するdc-cookie値は、暗号化する
@@ -313,7 +313,7 @@ public class AccessContextTest {
                 cell.getOwner(), uriInfo.getBaseUri().getHost()  + ":"  + uriInfo.getBaseUri().getPort());
 
         String tokenString = uluut.toTokenString();
-        // dc_cookie_peerとして、ランダムなUUIDを設定する
+        // p_cookie_peerとして、ランダムなUUIDを設定する
         String dcCookiePeer = UUID.randomUUID().toString();
         String cookieValue = dcCookiePeer + "\t" + tokenString;
         // ヘッダに返却するdc-cookie値は、暗号化する
@@ -347,7 +347,7 @@ public class AccessContextTest {
                 cell.getOwner(), uriInfo.getBaseUri().getHost()  + ":"  + uriInfo.getBaseUri().getPort());
 
         String tokenString = uluut.toTokenString();
-        // dc_cookie_peerとして、ランダムなUUIDを設定する
+        // p_cookie_peerとして、ランダムなUUIDを設定する
         String dcCookiePeer = UUID.randomUUID().toString();
         String cookieValue = dcCookiePeer + "\t" + tokenString;
         // ヘッダに返却するdc-cookie値は、暗号化する

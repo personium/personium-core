@@ -106,7 +106,7 @@ public class TokenEndPointResource {
     /**
      * 認証のエンドポイント. <h2>トークンの発行しわけ</h2>
      * <ul>
-     * <li>dc_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
+     * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
      * <li>scopeがなければCellLocalを発行する。</li>
      * </ul>
      * @param uriInfo URI情報
@@ -137,13 +137,13 @@ public class TokenEndPointResource {
             @FormParam(Key.REFRESH_TOKEN) final String refreshToken,
             @FormParam(Key.CLIENT_ID) final String clientId,
             @FormParam(Key.CLIENT_SECRET) final String clientSecret,
-            @FormParam("dc_cookie") final String dcCookie,
+            @FormParam("p_cookie") final String dcCookie,
             @FormParam(Key.ID_TOKEN) final String idToken,
             @HeaderParam(HttpHeaders.HOST) final String host) {
 
         // Accept unit local scheme url.
         String target = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), dcTarget);
-        // dc_target がURLでない場合はヘッダInjectionの脆弱性を産んでしまう。(改行コードが入っているなど)
+        // p_target がURLでない場合はヘッダInjectionの脆弱性を産んでしまう。(改行コードが入っているなど)
         target = this.checkDcTarget(target);
 
         if (null != dcTarget) {
@@ -195,11 +195,11 @@ public class TokenEndPointResource {
                     target = target + "/";
                 }
                 if (target.contains("\n") || target.contains("\r")) {
-                    // dc_targetがURLでない場合はエラー
+                    // p_targetがURLでない場合はエラー
                     throw DcCoreAuthnException.INVALID_TARGET.realm(this.cell.getUrl());
                 }
             } catch (MalformedURLException e) {
-                // dc_targetがURLでない場合はエラー
+                // p_targetがURLでない場合はエラー
                 throw DcCoreAuthnException.INVALID_TARGET.realm(this.cell.getUrl());
             }
         }
@@ -459,10 +459,10 @@ public class TokenEndPointResource {
 
         if (issueCookie) {
             String tokenString = accessToken.toTokenString();
-            // dc_cookie_peerとして、ランダムなUUIDを設定する
+            // p_cookie_peerとして、ランダムなUUIDを設定する
             String dcCookiePeer = UUID.randomUUID().toString();
             String cookieValue = dcCookiePeer + "\t" + tokenString;
-            // ヘッダに返却するdc_cookie値は、暗号化する
+            // ヘッダに返却するp_cookie値は、暗号化する
             String encodedCookieValue = LocalToken.encode(cookieValue,
                     UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(requestURIInfo.getBaseUri())));
             // Cookieのバージョン(0)を指定
@@ -470,11 +470,11 @@ public class TokenEndPointResource {
             String path = getCookiePath();
 
             // Cookieを作成し、レスポンスヘッダに返却する
-            Cookie cookie = new Cookie("dc_cookie", encodedCookieValue, path, requestURIInfo.getBaseUri().getHost(),
+            Cookie cookie = new Cookie("p_cookie", encodedCookieValue, path, requestURIInfo.getBaseUri().getHost(),
                     version);
             rb.cookie(new NewCookie(cookie, "", -1, DcCoreConfig.isHttps()));
-            // レスポンスボディの"dc_cookie_peer"を返却する
-            resp.put("dc_cookie_peer", dcCookiePeer);
+            // レスポンスボディの"p_cookie_peer"を返却する
+            resp.put("p_cookie_peer", dcCookiePeer);
         }
         return rb.entity(resp.toJSONString()).build();
     }

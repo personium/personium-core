@@ -76,7 +76,7 @@ import io.personium.core.rs.DcCoreExceptionMapper;
  */
 public class ODataBatchResource extends AbstractODataResource {
 
-    private static final String X_PERSONIUM_PRIORITY = "X-Dc-Priority";
+    private static final String X_PERSONIUM_PRIORITY = "X-Personium-Priority";
 
     /**
      * Lockを他プロセスに譲るためにスリープするか否か.

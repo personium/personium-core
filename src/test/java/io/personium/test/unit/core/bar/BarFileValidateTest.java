@@ -780,7 +780,7 @@ public class BarFileValidateTest {
             buf.append("<collection/>");
             buf.append("</resourcetype>");
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/__/\""
-                    + " xmlns:dc=\"urn:x-dc1:xmlns\"/>");
+                    + " xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</prop>");
             buf.append("<status>HTTP/1.1 200 OK</status>");
             buf.append("</propstat>");
@@ -793,10 +793,10 @@ public class BarFileValidateTest {
             buf.append("<getlastmodified>Sun, 20 Jan 2013 23:41:54 GMT</getlastmodified>");
             buf.append("<resourcetype>");
             buf.append("<collection/>");
-            buf.append("<dc:odata xmlns:dc=\"urn:x-dc1:xmlns\"/>");
+            buf.append("<dc:odata xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</resourcetype>");
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/__/\""
-                    + " xmlns:dc=\"urn:x-dc1:xmlns\">");
+                    + " xmlns:p=\"urn:x-personium:xmlns\">");
             buf.append("<ace>");
             buf.append("<principal>");
             buf.append("<href>../__/role</href>");
@@ -823,10 +823,10 @@ public class BarFileValidateTest {
             buf.append("<getlastmodified>Sun, 20 Jan 2013 23:42:04 GMT</getlastmodified>");
             buf.append("<resourcetype>");
             buf.append("<collection/>");
-            buf.append("<dc:service xmlns:dc=\"urn:x-dc1:xmlns\"/>");
+            buf.append("<dc:service xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</resourcetype>");
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/__/\""
-                    + " xmlns:dc=\"urn:x-dc1:xmlns\"/>");
+                    + " xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</prop>");
             buf.append("<status>HTTP/1.1 200 OK</status>");
             buf.append("</propstat>");
@@ -871,7 +871,7 @@ public class BarFileValidateTest {
             buf.append("<collection/>");
             buf.append("</resourcetype>");
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/box/\""
-                    + " xmlns:dc=\"urn:x-dc1:xmlns\"/>");
+                    + " xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</prop>");
             buf.append("<status>HTTP/1.1 200 OK</status>");
             buf.append("</propstat>");
@@ -908,7 +908,7 @@ public class BarFileValidateTest {
             buf.append("<collection/>");
             buf.append("</resourcetype>");
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/box/\""
-                    + " xmlns:dc=\"urn:x-dc1:xmlns\"/>");
+                    + " xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</prop>");
             buf.append("<status>HTTP/1.1 200 OK</status>");
             buf.append("</propstat>");
@@ -942,10 +942,10 @@ public class BarFileValidateTest {
             buf.append("<resourcetype>");
             buf.append("<collection/>");
             //
-            buf.append("<dc:invalidtype xmlns:dc=\"urn:x-dc1:xmlns\"/>");
+            buf.append("<dc:invalidtype xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</resourcetype>");
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/box/\""
-                    + " xmlns:dc=\"urn:x-dc1:xmlns\"/>");
+                    + " xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</prop>");
             buf.append("<status>HTTP/1.1 200 OK</status>");
             buf.append("</propstat>");

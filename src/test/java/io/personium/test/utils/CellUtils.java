@@ -79,7 +79,7 @@ public class CellUtils {
      * オーナー指定でCellを1件取得するユーティリティ.
      * @param cellName セル名
      * @param token トークン
-     * @param owner X-Dc-Unit-Userに指定する値
+     * @param owner X-Personium-Unit-Userに指定する値
      * @param code 返却値
      */
     public static void get(final String cellName, final String token, final String owner, final int code) {
@@ -127,7 +127,7 @@ public class CellUtils {
     /**
      * オーナー指定でCellを一覧取得するユーティリティ.
      * @param token トークン
-     * @param owner X-Dc-Unit-Userに指定する値
+     * @param owner X-Personium-Unit-Userに指定する値
      * @param code 返却値
      * @return レスポンス
      */
@@ -178,7 +178,7 @@ public class CellUtils {
      * オーナー指定でCellを作成するユーティリティ.
      * @param cellName セル名
      * @param token トークン
-     * @param owner X-Dc-Unit-Userに指定する値
+     * @param owner X-Personium-Unit-Userに指定する値
      * @param code 返却値
      */
     public static void create(final String cellName, final String token, final String owner, final int code) {
@@ -264,7 +264,7 @@ public class CellUtils {
      * @param cellPath 更新前のセル名
      * @param cellName 更新後のセル名
      * @param token トークン
-     * @param owner X-Dc-Unit-Userに指定する値
+     * @param owner X-Personium-Unit-Userに指定する値
      * @param code 返却値
      */
     public static void update(final String cellPath, final String cellName, final String token,
@@ -349,7 +349,7 @@ public class CellUtils {
         // セル再帰的削除APIを実行する
         DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
         request.header(HttpHeaders.AUTHORIZATION, tokenWithAuthSchema)
-                .header("X-Dc-Recursive", "true");
+                .header("X-Personium-Recursive", "true");
         return AbstractCase.request(request);
     }
 
@@ -679,7 +679,7 @@ public class CellUtils {
                 .with("remoteCell", cellName)
                 .with("username", account)
                 .with("password", pass)
-                .with("dc_target", targetUrl)
+                .with("p_target", targetUrl)
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
     }

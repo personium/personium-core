@@ -122,7 +122,7 @@ public final class CellResource {
     public Response getSvcDoc() {
         StringBuffer sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb.append("<cell xmlns=\"urn:x-dc1:xmlns\">");
+        sb.append("<cell xmlns=\"urn:x-personium:xmlns\">");
         sb.append("<uuid>" + this.cell.getId() + "</uuid>");
         sb.append("<ctl>" + this.cell.getUrl() + "__ctl/" + "</ctl>");
         sb.append("</cell>");
@@ -132,13 +132,13 @@ public final class CellResource {
     /**
      * handler for DELETE Method.
      * ie, Recursive Cell Deletion.
-     * @param recursiveHeader X-Dc-Recursive Header
+     * @param recursiveHeader X-Personium-Recursive Header
      * @return JAX-RS Response Object
      */
     @DELETE
     public Response cellBulkDeletion(
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
-        // X-Dc-Recursiveヘッダの指定が"true"でない場合はエラーとする
+        // X-Personium-Recursiveヘッダの指定が"true"でない場合はエラーとする
         if (!"true".equals(recursiveHeader)) {
             throw DcCoreException.Misc.PRECONDITION_FAILED.params(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
         }
@@ -188,7 +188,7 @@ public final class CellResource {
     }
 
     /**
-     * @param dcCredHeader dcCredHeader X-Dc-Credentialヘッダ
+     * @param dcCredHeader dcCredHeader X-Personium-Credentialヘッダ
      * @return CellCtlResource
      */
     @Path("__ctl")
@@ -210,7 +210,7 @@ public final class CellResource {
     /**
      * 認証のエンドポイント .
      * <ul>
-     * <li>dc_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
+     * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
      * <li>scopeがなければCellLocalを発行する。</li>
      * </ul>
      * @return TokenEndPointResourceオブジェクト
@@ -223,7 +223,7 @@ public final class CellResource {
     /**
      * ImplicitFlow認証のエンドポイント .
      * <ul>
-     * <li>dc_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
+     * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
      * </ul>
      * @return AuthzEndPointResourceオブジェクト
      */

@@ -695,7 +695,7 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * dc:Format以外のチェック処理.
+     * p:Format以外のチェック処理.
      * @param props プロパティ一覧
      * @param
      */
