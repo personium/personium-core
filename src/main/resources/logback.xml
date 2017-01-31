@@ -59,7 +59,7 @@
         <sift>
             <appender name="FILE-${eventlog_path}" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <file>/personium_nfs/dc-core/eventlog/${eventlog_path}/current/default.log</file>
-                <rollingPolicy class="com.fujitsu.dc.logging.rolling.DcFixedWindowRollingPolicy">
+                <rollingPolicy class="io.personium.logging.rolling.DcFixedWindowRollingPolicy">
                     <fileNamePattern>/personium_nfs/dc-core/eventlog/${eventlog_path}/archive/default.log.%i.zip</fileNamePattern>
                     <minIndex>1</minIndex>
                     <maxIndex>12</maxIndex>
@@ -85,13 +85,13 @@
         </encoder>
     </appender>
 
-     <logger  name="com.fujitsu.dc.core.event" additivity="false">
+     <logger  name="io.personium.core.event" additivity="false">
         <level value="DEBUG" />
         <appender-ref ref="FILE_USER" />
         <appender-ref ref="stdout" />
     </logger>
 
-    <logger  name="com.fujitsu.dc">
+    <logger  name="io.personium">
         <level value="DEBUG" />
         <appender-ref ref="file" />    <appender-ref ref="stdout" />
     </logger>
@@ -107,13 +107,13 @@
        <appender-ref ref="file" />
        <appender-ref ref="stdout" />
     </logger>
-    <logger name="com.fujitsu.dc.core.eventbus" additivity="false">
+    <logger name="io.personium.core.eventbus" additivity="false">
         <level value="INFO" />
         <appender-ref ref="SIFT" />
         <appender-ref ref="stdout" />
     </logger>
 
-    <logger name="com.fujitsu.dc.logging" additivity="false">
+    <logger name="io.personium.logging" additivity="false">
         <level value="INFO" />
         <appender-ref ref="FILE_LOGBACK" />
         <appender-ref ref="stdout" />

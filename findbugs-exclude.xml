@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
-    <Match class="com.fujitsu.dc.core.model.jaxb.ObjectFactory">
+    <Match class="io.personium.core.model.jaxb.ObjectFactory">
         <BugCode name="Nm" />
     </Match>
-    <Match class="com.fujitsu.dc.core.model.jaxb.Grant">
+    <Match class="io.personium.core.model.jaxb.Grant">
         <BugCode name="UwF" />
     </Match>
-    <Match class="com.fujitsu.dc.core.rs.cell.LogResource" method="getLog">
+    <Match class="io.personium.core.rs.cell.LogResource" method="getLog">
         <BugCode name="OBL" />
     </Match>
 </FindBugsFilter>
