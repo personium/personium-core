@@ -416,7 +416,7 @@ public class BarInstallTest extends JerseyTest {
     }
 
     /**
-     * ContentTypeが値なしの場合は400エラーとなること. dc1-coreで処理される前に"Bad Content-Type header value: ''"が返却されるためテスト無効化
+     * ContentTypeが値なしの場合は400エラーとなること. personium-coreで処理される前に"Bad Content-Type header value: ''"が返却されるためテスト無効化
      */
     @Test
     @Ignore

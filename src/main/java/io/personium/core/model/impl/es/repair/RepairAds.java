@@ -50,7 +50,7 @@ import io.personium.core.model.lock.LockManager;
 /**
  * ADSへのデータ補正処理を実装したクラス.
  * <p>
- * 本クラスでは、ADS書き込み失敗ログを読み込み、Elasticsearch上のデータを基準としてADSへのデータ補正を実施する。 データ補正処理は singletonとし、dc1-coreの
+ * 本クラスでは、ADS書き込み失敗ログを読み込み、Elasticsearch上のデータを基準としてADSへのデータ補正を実施する。 データ補正処理は singletonとし、personium-coreの
  * ScheduleExecutorServiceにて一定間隔で実行する。 なお、本処理の内容は、PCSのAPIとは異なるため、別ファイルとしてログを出力する。
  * </p>
  */

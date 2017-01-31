@@ -83,7 +83,7 @@ public class ExtCellCreateTest extends ODataCommon {
      */
     @Test
     public final void 正規化されていないパスを含むURLを指定した場合400エラーを返却すること() {
-        String extCellUrl = "http://localhost:8080/dc1-core/testcell1/../test/./box/../";
+        String extCellUrl = "http://localhost:8080/personium-core/testcell1/../test/./box/../";
         ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_BAD_REQUEST);
     }
 
@@ -92,7 +92,7 @@ public class ExtCellCreateTest extends ODataCommon {
      */
     @Test
     public final void Urlが1024文字の場合正常に作成されること() {
-        String extCellUrl = "http://localhost:8080/dc1-core/testcell1" + StringUtils.repeat("a", 983) + TRAILING_SLASH;
+        String extCellUrl = "http://localhost:8080/personium-core/testcell1" + StringUtils.repeat("a", 983) + TRAILING_SLASH;
 
         try {
             ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);
@@ -106,7 +106,7 @@ public class ExtCellCreateTest extends ODataCommon {
      */
     @Test
     public final void Urlが1025文字以上の場合400エラーを返却すること() {
-        String extCellUrl = "http://localhost:8080/dc1-core/testcell1" + StringUtils.repeat("a", 984) + TRAILING_SLASH;
+        String extCellUrl = "http://localhost:8080/personium-core/testcell1" + StringUtils.repeat("a", 984) + TRAILING_SLASH;
         ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_BAD_REQUEST);
     }
 
@@ -115,7 +115,7 @@ public class ExtCellCreateTest extends ODataCommon {
      */
     @Test
     public final void UrlのschemeがFTPの場合400エラーを返却すること() {
-        String extCellUrl = "ftp://localhost:21/dc1-core/testcell1/";
+        String extCellUrl = "ftp://localhost:21/personium-core/testcell1/";
         ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_BAD_REQUEST);
     }
 

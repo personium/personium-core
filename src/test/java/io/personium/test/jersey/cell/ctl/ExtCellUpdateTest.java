@@ -84,7 +84,7 @@ public class ExtCellUpdateTest extends ODataCommon {
      */
     @Test
     public final void Urlが1024文字の場合正常に作成されること() {
-        String newCellUrl = "http://localhost:8080/dc1-core/testcell1" + StringUtils.repeat("a", 983) + "/";
+        String newCellUrl = "http://localhost:8080/personium-core/testcell1" + StringUtils.repeat("a", 983) + "/";
 
         try {
             ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);
@@ -99,7 +99,7 @@ public class ExtCellUpdateTest extends ODataCommon {
      */
     @Test
     public final void Urlが1025文字以上の場合400エラーを返却すること() {
-        String newCellUrl = "http://localhost:8080/dc1-core/testcell1" + StringUtils.repeat("a", 984) + "/";
+        String newCellUrl = "http://localhost:8080/personium-core/testcell1" + StringUtils.repeat("a", 984) + "/";
 
         try {
             ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);
@@ -114,7 +114,7 @@ public class ExtCellUpdateTest extends ODataCommon {
      */
     @Test
     public final void UrlのschemeがFTPの場合400エラーを返却すること() {
-        String newCellUrl = "ftp://localhost:21/dc1-core/testcell1/";
+        String newCellUrl = "ftp://localhost:21/personium-core/testcell1/";
 
         try {
             ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);
@@ -153,7 +153,7 @@ public class ExtCellUpdateTest extends ODataCommon {
      */
     @Test
     public final void Urlが正規化されていない場合400エラーを返却すること() {
-        String newCellUrl = "https://localhost:8080/dc1-core/test/../cell/./box/../";
+        String newCellUrl = "https://localhost:8080/personium-core/test/../cell/./box/../";
 
         try {
             ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);

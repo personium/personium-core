@@ -28,7 +28,7 @@ import io.personium.core.DcCoreLog;
 
 
 /**
- * DC-Coreの/_cell_/* 以下URLを担当するJAX-RSのApplication.
+ * Personium-coreの/_cell_/* 以下URLを担当するJAX-RSのApplication.
  */
 public class DcCoreApplication extends Application {
     static {
