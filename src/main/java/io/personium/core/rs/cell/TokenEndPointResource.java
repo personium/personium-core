@@ -241,7 +241,7 @@ public class TokenEndPointResource {
         } catch (TokenParseException e) {
             // パースの失敗
             DcCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
-            throw DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.realm(cell.getUrl()).reason(e);
+            throw DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.realm(cell.getUrl()).reason(e);
         } catch (TokenDsigException e) {
             // 署名検証エラー
             DcCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
@@ -254,17 +254,17 @@ public class TokenEndPointResource {
 
         // ・有効期限チェック
         if (tcToken.isExpired()) {
-            throw DcCoreAuthnException.CLIENT_SERCRET_EXPIRED.realm(cell.getUrl());
+            throw DcCoreAuthnException.CLIENT_SECRET_EXPIRED.realm(cell.getUrl());
         }
 
         // ・IssuerがIDと等しいことを確認
         if (!id.equals(tcToken.getIssuer())) {
-            throw DcCoreAuthnException.CLIENT_SERCRET_ISSUER_MISMATCH.realm(cell.getUrl());
+            throw DcCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cell.getUrl());
         }
 
         // トークンのターゲットが自分でない場合はエラー応答
         if (!tcToken.getTarget().equals(cell.getUrl())) {
-            throw DcCoreAuthnException.CLIENT_SERCRET_TARGET_WRONG.realm(cell.getUrl());
+            throw DcCoreAuthnException.CLIENT_SECRET_TARGET_WRONG.realm(cell.getUrl());
         }
 
         // ロールが特殊(confidential)な値だったら#cを付与

@@ -299,8 +299,8 @@ public class AuthErrorTest extends JerseyTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(passRes);
-        String code = DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.getMessage();
+        String code = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
+        String message = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(passRes, Error.INVALID_CLIENT, errDesc);
@@ -323,8 +323,8 @@ public class AuthErrorTest extends JerseyTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(passRes);
-        String code = DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.getMessage();
+        String code = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
+        String message = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(passRes, Error.INVALID_CLIENT, errDesc);
@@ -360,8 +360,8 @@ public class AuthErrorTest extends JerseyTest {
                         .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(tokenRes);
-        String code = DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.getMessage();
+        String code = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
+        String message = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(tokenRes, Error.INVALID_CLIENT, errDesc);
@@ -399,8 +399,8 @@ public class AuthErrorTest extends JerseyTest {
                         .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(tokenRes);
-        String code = DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.getMessage();
+        String code = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
+        String message = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(tokenRes, Error.INVALID_CLIENT, errDesc);
@@ -433,8 +433,8 @@ public class AuthErrorTest extends JerseyTest {
                 .debug();
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(tokenRes);
-        String code = DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.getMessage();
+        String code = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
+        String message = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(tokenRes, Error.INVALID_CLIENT, errDesc);
@@ -469,8 +469,8 @@ public class AuthErrorTest extends JerseyTest {
                 .debug();
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(tokenRes);
-        String code = DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.CLIENT_SERCRET_PARSE_ERROR.getMessage();
+        String code = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
+        String message = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(tokenRes, Error.INVALID_CLIENT, errDesc);

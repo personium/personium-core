@@ -48,27 +48,27 @@ public final class DcCoreAuthnException extends DcCoreException {
      */
     public static final DcCoreAuthnException INVALID_TARGET = create("PR400-AN-0002", Error.INVALID_REQUEST);
     /**
-     * Client Sercret パースエラー.
+     * Client Secret パースエラー.
      */
-    public static final DcCoreAuthnException CLIENT_SERCRET_PARSE_ERROR = create("PR400-AN-0003", Error.INVALID_CLIENT);
+    public static final DcCoreAuthnException CLIENT_SECRET_PARSE_ERROR = create("PR400-AN-0003", Error.INVALID_CLIENT);
     /**
-     * Client Sercret 有効期限チェック.
+     * Client Secret 有効期限チェック.
      */
-    public static final DcCoreAuthnException CLIENT_SERCRET_EXPIRED = create("PR400-AN-0004", Error.INVALID_CLIENT);
+    public static final DcCoreAuthnException CLIENT_SECRET_EXPIRED = create("PR400-AN-0004", Error.INVALID_CLIENT);
     /**
-     * Client Sercret 署名検証をエラー.
+     * Client Secret 署名検証をエラー.
      */
-    public static final DcCoreAuthnException CLIENT_SERCRET_DSIG_INVALID =
+    public static final DcCoreAuthnException CLIENT_SECRET_DSIG_INVALID =
             create("PR400-AN-0005", Error.INVALID_CLIENT);
     /**
-     * Client Sercret のIssuerがIDと等しくない.
+     * Client Secret のIssuerがIDと等しくない.
      */
-    public static final DcCoreAuthnException CLIENT_SERCRET_ISSUER_MISMATCH =
+    public static final DcCoreAuthnException CLIENT_SECRET_ISSUER_MISMATCH =
             create("PR400-AN-0006", Error.INVALID_CLIENT);
     /**
-     * Client Sercret のターゲットが自分でない.
+     * Client Secret のターゲットが自分でない.
      */
-    public static final DcCoreAuthnException CLIENT_SERCRET_TARGET_WRONG =
+    public static final DcCoreAuthnException CLIENT_SECRET_TARGET_WRONG =
             create("PR400-AN-0007", Error.INVALID_CLIENT);
 
     /**
