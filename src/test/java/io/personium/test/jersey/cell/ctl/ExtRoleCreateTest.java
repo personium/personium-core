@@ -198,7 +198,7 @@ public class ExtRoleCreateTest extends ODataCommon {
      */
     @Test
     public final void ExtRoleが1024文字の場合正常に作成されること() {
-        String extRolePath = "http://localhost:8080/dc1-core/testextRole"
+        String extRolePath = "http://localhost:8080/personium-core/testextRole"
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -225,7 +225,7 @@ public class ExtRoleCreateTest extends ODataCommon {
      */
     @Test
     public final void ExtRoleが1025文字の場合正常に作成されること() {
-        String extRolePath = "http://localhost:8080/dc1-core/testextRole"
+        String extRolePath = "http://localhost:8080/personium-core/testextRole"
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                 + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -251,7 +251,7 @@ public class ExtRoleCreateTest extends ODataCommon {
      */
     @Test
     public final void ExtRoleのschemeが不正の場合400エラーを返却すること() {
-        String extRolePath = "ftp://localhost:21/dc1-core/testextRole";
+        String extRolePath = "ftp://localhost:21/personium-core/testextRole";
         String relationName = "testrelation";
         try {
             CellCtlUtils.createRelation(cellName, relationName);
