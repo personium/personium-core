@@ -655,7 +655,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がnoneかつクエリに指定されたスキーマのPublicトークンを使用してボックスURLが取得できること() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='none' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='none' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -694,7 +694,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がpublicかつクエリに指定されたスキーマのPublicトークンを使用してボックスURLが取得できること() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='public' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='public' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -733,7 +733,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がconfidentialClientかつクエリに指定されたスキーマのConfidentialClientトークンを使用してボックスURLが取得できること() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='confidential' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='confidential' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -810,7 +810,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がnoneかつクエリに指定されたスキーマでないPublicトークンを使用してクエリに指定されたスキーマのボックスURLが取得できること() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='none' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='none' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -851,7 +851,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がpublicかつクエリに指定されたスキーマでないPublicトークンを使用してクエリに指定されたスキーマのボックスURLが取得できないこと() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='public' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='public' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -891,7 +891,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がconfidentialかつクエリに指定されたスキーマでないConfidentialClientトークンを使用してクエリに指定されたスキーマのボックスURLが取得できないこと() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='confidential' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='confidential' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -931,7 +931,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がnoneの場合にアクセストークンを使用してボックスURLが取得できないこと() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='none' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='none' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -970,7 +970,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がpublicの場合にアクセストークンを使用してボックスURLが取得できること() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='public' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='public' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -1009,7 +1009,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がconfidentialの場合にアクセストークンを使用してボックスURLが取得できないこと() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='confidential' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='confidential' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -1086,7 +1086,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がnoneの場合にPublicトークンを使用してボックスURLが取得できること() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='none' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='none' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -1125,7 +1125,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がpublicの場合にPublicトークンを使用してボックスURLが取得できること() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='public' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='public' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -1163,7 +1163,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がconfidentialの場合にPublicトークンを使用してボックスURLが取得できないこと() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='confidential' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='confidential' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -1241,7 +1241,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がnoneの場合にConfidentialClientトークンを使用してボックスURLが取得できること() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='none' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='none' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -1280,7 +1280,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がpublicの場合にConfidentialClientトークンを使用してボックスURLが取得できること() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='public' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='public' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"
@@ -1319,7 +1319,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void スキーマ設定がconfidentialの場合にConfidentialClientトークンを使用してボックスURLが取得できること() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
-                    + " dc:requireSchemaAuthz='confidential' xml:base='%s/%s/__role/__/'>",
+                    + " p:requireSchemaAuthz='confidential' xml:base='%s/%s/__role/__/'>",
                     UrlUtils.getBaseUrl(), Setup.TEST_CELL1)
                     + "  <D:ace>"
                     + "    <D:principal>"

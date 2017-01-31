@@ -63,13 +63,13 @@ public final class Acl {
     String base;
 
     /**
-     * dc:requireSchemaAuthz.
+     * p:requireSchemaAuthz.
      */
     @XmlAttribute(namespace = PersoniumCoreUtils.XmlConst.NS_PERSONIUM)
     String requireSchemaAuthz;
 
     /**
-     * dc:requireSchemaAuthz setter.
+     * p:requireSchemaAuthz setter.
      * @param requireSchemaAuthz requireSchemaAuthz
      */
     public void setRequireSchemaAuthz(String requireSchemaAuthz) {
@@ -77,7 +77,7 @@ public final class Acl {
     }
 
     /**
-     * dc:requireSchemaAuthz getter.
+     * p:requireSchemaAuthz getter.
      * @return requireSchemaAuthz
      */
     public String getRequireSchemaAuthz() {
