@@ -13,7 +13,7 @@ Authorization: ${token}
             <D:all/>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:root/></D:privilege>
+            <D:privilege><p:root/></D:privilege>
         </D:grant>
     </D:ace>
 </D:acl>

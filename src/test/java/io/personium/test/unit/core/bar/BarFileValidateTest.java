@@ -793,7 +793,7 @@ public class BarFileValidateTest {
             buf.append("<getlastmodified>Sun, 20 Jan 2013 23:41:54 GMT</getlastmodified>");
             buf.append("<resourcetype>");
             buf.append("<collection/>");
-            buf.append("<dc:odata xmlns:p=\"urn:x-personium:xmlns\"/>");
+            buf.append("<p:odata xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</resourcetype>");
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/__/\""
                     + " xmlns:p=\"urn:x-personium:xmlns\">");
@@ -823,7 +823,7 @@ public class BarFileValidateTest {
             buf.append("<getlastmodified>Sun, 20 Jan 2013 23:42:04 GMT</getlastmodified>");
             buf.append("<resourcetype>");
             buf.append("<collection/>");
-            buf.append("<dc:service xmlns:p=\"urn:x-personium:xmlns\"/>");
+            buf.append("<p:service xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</resourcetype>");
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/__/\""
                     + " xmlns:p=\"urn:x-personium:xmlns\"/>");
@@ -942,7 +942,7 @@ public class BarFileValidateTest {
             buf.append("<resourcetype>");
             buf.append("<collection/>");
             //
-            buf.append("<dc:invalidtype xmlns:p=\"urn:x-personium:xmlns\"/>");
+            buf.append("<p:invalidtype xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</resourcetype>");
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/box/\""
                     + " xmlns:p=\"urn:x-personium:xmlns\"/>");

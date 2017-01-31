@@ -938,9 +938,9 @@ public class BarFileReadRunner implements Runnable {
                         List<Element> elements = resourceType.getAny();
                         for (Element element : elements) {
                             String nodeName = element.getNodeName();
-                            if (nodeName.equals("dc:odata")) {
+                            if (nodeName.equals("p:odata")) {
                                 collectionType = TYPE_ODATA_COLLECTION;
-                            } else if (nodeName.equals("dc:service")) {
+                            } else if (nodeName.equals("p:service")) {
                                 collectionType = TYPE_SERVICE_COLLECTION;
                             }
                         }
@@ -1130,7 +1130,7 @@ public class BarFileReadRunner implements Runnable {
     private int getCollectionType(String rootPropsName, Response response) {
         // <propstat>要素の配下を辿って定義されているコレクションのタイプを取得する
         // －prop/resourcetype/collecton のDOMノードパスが存在する場合はコレクション定義とみなす
-        // この際、"dc:odata" または "dc:service" のDOMノードパスが存在しない場合はWebDAVコレクション定義とみなす
+        // この際、"p:odata" または "p:service" のDOMノードパスが存在しない場合はWebDAVコレクション定義とみなす
         // - 上記に当てはまらない場合はWebDAvファイルまたはサービスソースとみなす
         for (Propstat propstat : response.getPropstat()) {
             Prop prop = propstat.getProp();
@@ -1139,9 +1139,9 @@ public class BarFileReadRunner implements Runnable {
                 List<Element> elements = resourceType.getAny();
                 for (Element element : elements) {
                     String nodeName = element.getNodeName();
-                    if (nodeName.equals("dc:odata")) {
+                    if (nodeName.equals("p:odata")) {
                         return TYPE_ODATA_COLLECTION;
-                    } else if (nodeName.equals("dc:service")) {
+                    } else if (nodeName.equals("p:service")) {
                         return TYPE_SERVICE_COLLECTION;
                     } else {
                         String message = MessageFormat.format(DcCoreMessageUtils.getMessage("PL-BI-2018"), nodeName);

@@ -12,9 +12,9 @@ Authorization: Bearer ${token}
     xmlns:Z="http://www.w3.com/standards/z39.50/">
     <D:set>
         <D:prop>
-          <dc:service language="JavaScript">
-            <dc:path name="${name}" src="${src}"/>
-          </dc:service>
+          <p:service language="JavaScript">
+            <p:path name="${name}" src="${src}"/>
+          </p:service>
         </D:prop>
     </D:set>
 </D:propertyupdate>

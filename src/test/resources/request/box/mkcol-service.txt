@@ -12,7 +12,7 @@ Authorization: Bearer ${token}
     <D:prop>
       <D:resourcetype>
         <D:collection/>
-        <dc:service/>
+        <p:service/>
       </D:resourcetype>
     </D:prop>
   </D:set>

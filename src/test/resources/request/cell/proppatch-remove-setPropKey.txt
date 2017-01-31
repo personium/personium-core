@@ -13,7 +13,7 @@ Authorization: Bearer ${token}
     <D:remove>
         <D:${propkey}>
             <Z:Author/>
-            <dc:hoge/>
+            <p:hoge/>
         </D:${propkey}>
     </D:remove>
 </D:propertyupdate>

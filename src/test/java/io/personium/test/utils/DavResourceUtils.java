@@ -1087,25 +1087,25 @@ public class DavResourceUtils {
 
     /**
      * PROPFINDの結果にODataコレクションが含まれるかどうかをチェックする. <br />
-     * dc:odataタグが含まれていれば OData コレクションが含まれものとする.
+     * p:odataタグが含まれていれば OData コレクションが含まれものとする.
      * @param res PROPFINDレスポンス
      */
     public static void assertIsODataCol(TResponse res) {
         Document propfind = res.bodyAsXml();
         NodeList list;
-        list = propfind.getElementsByTagName("dc:odata");
+        list = propfind.getElementsByTagName("p:odata");
         assertThat(list.getLength()).isGreaterThanOrEqualTo(1);
     }
 
     /**
      * PROPFINDの結果にServiceコレクションが含まれるかどうかをチェックする. <br />
-     * dc:pathタグが含まれていれば Service コレクションが含まれものとする.
+     * p:pathタグが含まれていれば Service コレクションが含まれものとする.
      * @param res PROPFINDレスポンス
      */
     public static void assertIsServiceCol(TResponse res) {
         Document propfind = res.bodyAsXml();
         NodeList list;
-        list = propfind.getElementsByTagName("dc:path");
+        list = propfind.getElementsByTagName("p:path");
         assertThat(list.getLength()).isGreaterThanOrEqualTo(1);
     }
 

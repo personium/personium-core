@@ -10,7 +10,7 @@ Authorization: Bearer ${token}
 <D:propertyupdate xmlns:D="DAV:" xmlns:p="urn:x-personium:xmlns">
   <D:set>
     <D:prop>
-      <dc:ownerRepresentativeAccounts><dc:account>account1</dc:account><dc:account>account2</dc:account></dc:ownerRepresentativeAccounts>
+      <p:ownerRepresentativeAccounts><p:account>account1</p:account><p:account>account2</p:account></p:ownerRepresentativeAccounts>
     </D:prop>
   </D:set>
 </D:propertyupdate>

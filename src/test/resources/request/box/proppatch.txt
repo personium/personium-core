@@ -13,13 +13,13 @@ Authorization: ${token}
     <D:set>
         <D:prop>
             <Z:Author>${author1}</Z:Author>
-            <dc:hoge>${hoge}</dc:hoge>
+            <p:hoge>${hoge}</p:hoge>
         </D:prop>
     </D:set>
     <D:remove>
         <D:prop>
             <Z:Author/>
-            <dc:hoge/>
+            <p:hoge/>
         </D:prop>
     </D:remove>
 </D:propertyupdate>

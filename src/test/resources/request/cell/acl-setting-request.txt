@@ -13,8 +13,8 @@ Authorization: Bearer ${token}
             <D:href>${roleBaseUrl}${role1}</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:auth/></D:privilege>
-            <D:privilege><dc:auth-read/></D:privilege>
+            <D:privilege><p:auth/></D:privilege>
+            <D:privilege><p:auth-read/></D:privilege>
             <D:privilege><D:read/></D:privilege>
         </D:grant>
     </D:ace>
@@ -23,7 +23,7 @@ Authorization: Bearer ${token}
             <D:href>${roleBaseUrl}${role2}</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:root/></D:privilege>
+            <D:privilege><p:root/></D:privilege>
         </D:grant>
     </D:ace>
 </D:acl>

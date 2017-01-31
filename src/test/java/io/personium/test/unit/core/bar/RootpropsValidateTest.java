@@ -376,7 +376,7 @@ public class RootpropsValidateTest {
                 + "            <prop>"
                 + "                <resourcetype>"
                 + "                    <collection/>"
-                + "                    <dc:odata xmlns:p=\"urn:x-personium:xmlns\"/>"
+                + "                    <p:odata xmlns:p=\"urn:x-personium:xmlns\"/>"
                 + "                </resourcetype>"
                 + "            </prop>"
                 + "        </propstat>"
@@ -421,7 +421,7 @@ public class RootpropsValidateTest {
                 + "            <prop>"
                 + "                <resourcetype>"
                 + "                    <collection/>"
-                + "                    <dc:service xmlns:p=\"urn:x-personium:xmlns\"/>"
+                + "                    <p:service xmlns:p=\"urn:x-personium:xmlns\"/>"
                 + "                </resourcetype>"
                 + "            </prop>"
                 + "        </propstat>"
@@ -466,7 +466,7 @@ public class RootpropsValidateTest {
                 + "            <prop>"
                 + "                <resourcetype>"
                 + "                    <collection/>"
-                + "                    <dc:service xmlns:p=\"urn:x-personium:xmlns\"/>"
+                + "                    <p:service xmlns:p=\"urn:x-personium:xmlns\"/>"
                 + "                </resourcetype>"
                 + "            </prop>"
                 + "        </propstat>"
@@ -477,7 +477,7 @@ public class RootpropsValidateTest {
                 + "            <prop>"
                 + "                <resourcetype>"
                 + "                    <collection/>"
-                + "                    <dc:odata xmlns:p=\"urn:x-personium:xmlns\"/>"
+                + "                    <p:odata xmlns:p=\"urn:x-personium:xmlns\"/>"
                 + "                </resourcetype>"
                 + "            </prop>"
                 + "        </propstat>"
@@ -486,7 +486,7 @@ public class RootpropsValidateTest {
         TestBarRunner runner = new TestBarRunner();
         try {
             assertFalse(runner.validateCollectionDefinitions(multiStatusInputStr));
-            String input2 = multiStatusInputStr.replace("dc:odata", "dc:service");
+            String input2 = multiStatusInputStr.replace("p:odata", "p:service");
             assertFalse(runner.validateCollectionDefinitions(input2));
         } catch (IOException e) {
             fail(e.getMessage());
@@ -516,7 +516,7 @@ public class RootpropsValidateTest {
                 + "            <prop>"
                 + "                <resourcetype>"
                 + "                    <collection/>"
-                + "                    <dc:service xmlns:p=\"urn:x-personium:xmlns\"/>"
+                + "                    <p:service xmlns:p=\"urn:x-personium:xmlns\"/>"
                 + "                </resourcetype>"
                 + "            </prop>"
                 + "        </propstat>"
@@ -563,7 +563,7 @@ public class RootpropsValidateTest {
                 + "            <prop>"
                 + "                <resourcetype>"
                 + "                    <collection/>"
-                + "                    <dc:service xmlns:p=\"urn:x-personium:xmlns\"/>"
+                + "                    <p:service xmlns:p=\"urn:x-personium:xmlns\"/>"
                 + "                </resourcetype>"
                 + "            </prop>"
                 + "        </propstat>"
@@ -608,7 +608,7 @@ public class RootpropsValidateTest {
                 + "            <prop>"
                 + "                <resourcetype>"
                 + "                    <collection/>"
-                + "                    <dc:service xmlns:p=\"urn:x-personium:xmlns\"/>"
+                + "                    <p:service xmlns:p=\"urn:x-personium:xmlns\"/>"
                 + "                </resourcetype>"
                 + "            </prop>"
                 + "        </propstat>"
@@ -735,7 +735,7 @@ public class RootpropsValidateTest {
                 + "            <prop>"
                 + "                <resourcetype>"
                 + "                    <collection/>"
-                + "                    <dc:service xmlns:p=\"urn:x-personium:xmlns\"/>"
+                + "                    <p:service xmlns:p=\"urn:x-personium:xmlns\"/>"
                 + "                </resourcetype>"
                 + "            </prop>"
                 + "        </propstat>"
@@ -744,9 +744,9 @@ public class RootpropsValidateTest {
         TestBarRunner runner = new TestBarRunner();
         try {
             assertFalse(runner.validateCollectionDefinitions(multiStatusInputStr));
-            String input2 = multiStatusInputStr.replace("dc:service", "dc:odata");
+            String input2 = multiStatusInputStr.replace("p:service", "p:odata");
             assertFalse(runner.validateCollectionDefinitions(input2));
-            String input3 = multiStatusInputStr.replace("<dc:service xmlns:p=\"urn:x-personium:xmlns\"/>", "");
+            String input3 = multiStatusInputStr.replace("<p:service xmlns:p=\"urn:x-personium:xmlns\"/>", "");
             assertFalse(runner.validateCollectionDefinitions(input3));
         } catch (IOException e) {
             fail(e.getMessage());

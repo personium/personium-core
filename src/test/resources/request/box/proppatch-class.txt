@@ -12,11 +12,11 @@ Authorization: Bearer ${token}
     xmlns:Z="http://www.w3.com/standards/z39.50/">
     <D:set>
         <D:prop>
-          <dc:service language="JavaScript">
-            <dc:path name="${name1}" src="${src1}"/>
-            <dc:path name="${name2}" src="${src2}"/>
-            <dc:path name="${name3}" src="${src3}"/>
-          </dc:service>
+          <p:service language="JavaScript">
+            <p:path name="${name1}" src="${src1}"/>
+            <p:path name="${name2}" src="${src2}"/>
+            <p:path name="${name3}" src="${src3}"/>
+          </p:service>
         </D:prop>
     </D:set>
 </D:propertyupdate>

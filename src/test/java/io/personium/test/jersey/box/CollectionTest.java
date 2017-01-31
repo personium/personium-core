@@ -392,8 +392,8 @@ public class CollectionTest extends JerseyTest {
                     .returns();
             tresponseAll.statusCode(HttpStatus.SC_MULTI_STATUS);
 
-            // dc:odata の存在チェック
-            serviceColTypeTest(tresponseAll.bodyAsXml(), "dc:odata");
+            // p:odata の存在チェック
+            serviceColTypeTest(tresponseAll.bodyAsXml(), "p:odata");
         } finally {
 
             // Boxの削除
@@ -425,8 +425,8 @@ public class CollectionTest extends JerseyTest {
                     .returns();
             tresponseAll.statusCode(HttpStatus.SC_MULTI_STATUS);
 
-            // dc:service の存在チェック
-            serviceColTypeTest(tresponseAll.bodyAsXml(), "dc:service");
+            // p:service の存在チェック
+            serviceColTypeTest(tresponseAll.bodyAsXml(), "p:service");
         } finally {
             // コレクションの削除
             deleteTest(path, -1);
