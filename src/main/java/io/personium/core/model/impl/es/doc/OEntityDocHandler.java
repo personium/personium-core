@@ -55,9 +55,9 @@ import org.odata4j.expression.EntitySimpleProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcSearchHit;
-import io.personium.common.es.response.DcSearchHitField;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
+import io.personium.common.es.response.PersoniumSearchHitField;
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.DcCoreException;
@@ -151,7 +151,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
      * Constructor.
      * @param getResponse GetResponse
      */
-    public OEntityDocHandler(DcGetResponse getResponse) {
+    public OEntityDocHandler(PersoniumGetResponse getResponse) {
         this.type = getResponse.getType();
         this.id = getResponse.getId();
         this.version = getResponse.getVersion();
@@ -190,10 +190,10 @@ public class OEntityDocHandler implements EntitySetDocHandler {
         return (Map<String, Object>) source.get(KEY_LINK);
     }
 
-    void parseFields(Map<String, DcSearchHitField> fields) {
-        for (Map.Entry<String, DcSearchHitField> ent : fields.entrySet()) {
+    void parseFields(Map<String, PersoniumSearchHitField> fields) {
+        for (Map.Entry<String, PersoniumSearchHitField> ent : fields.entrySet()) {
             String key = ent.getKey();
-            DcSearchHitField value = ent.getValue();
+            PersoniumSearchHitField value = ent.getValue();
             if (key.startsWith(KEY_STATIC_FIELDS + ".")) {
                 this.staticFields.put(key.substring((KEY_STATIC_FIELDS + ".").length()),
                         value.getValues().get(0));
@@ -215,7 +215,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
      * Constructor.
      * @param searchHit SearchHit
      */
-    public OEntityDocHandler(DcSearchHit searchHit) {
+    public OEntityDocHandler(PersoniumSearchHit searchHit) {
         this.type = searchHit.getType();
         this.id = searchHit.getId();
         this.version = searchHit.getVersion();
@@ -223,7 +223,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
         if (source != null) {
             this.parseSource(source);
         }
-//        Map<String, DcSearchHitField> fields = searchHit.getFields();
+//        Map<String, PersoniumSearchHitField> fields = searchHit.getFields();
 //        if (fields.size() > 0) {
 //            this.parseFields(fields);
 //        }

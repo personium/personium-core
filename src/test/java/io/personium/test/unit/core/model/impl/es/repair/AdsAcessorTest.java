@@ -33,8 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.EsType;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.ads.Ads;
@@ -76,7 +76,7 @@ public class AdsAcessorTest {
         json1.put("c", ROUTING_ID);
         json1.put("p", Long.parseLong("1406595596944"));
         json1.put("u", Long.parseLong("1406595596944"));
-        DcIndexResponse res1 = type.create("documentId1", json1);
+        PersoniumIndexResponse res1 = type.create("documentId1", json1);
         assertEquals(idList[0], res1.getId());
     }
 
@@ -101,7 +101,7 @@ public class AdsAcessorTest {
             AdsAccessor.initializedAds();
             // Elasticsearchへリペア対象のデータを取得
             List<String> list = Arrays.asList(idList);
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
 
             // ADSへリペアを実施する
             AdsAccessor.createAds(idxName, "Cell", esResponse);
@@ -134,14 +134,14 @@ public class AdsAcessorTest {
             json1.put("k2", "_u8jGStVRNmS2dypzsQAHD");
             json1.put("p", Long.parseLong("1406595596944"));
             json1.put("u", Long.parseLong("1406595596944"));
-            DcIndexResponse res1 = type.create("documentId2", json1);
+            PersoniumIndexResponse res1 = type.create("documentId2", json1);
             assertEquals("documentId2", res1.getId());
 
             AdsAccessor.initializedAds();
             // Elasticsearchへリペア対象のデータを取得
             List<String> list = new ArrayList<String>();
             list.add("documentId2");
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
 
             // ADSへリペアを実施する
             AdsAccessor.createAds(idxName, "link", esResponse);
@@ -164,7 +164,7 @@ public class AdsAcessorTest {
             AdsAccessor.initializedAds();
             // Elasticsearchへリペア対象のデータを取得
             List<String> list = Arrays.asList(idList);
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
 
             // ADSへリペアを実施する
             AdsAccessor.createAds(idxName, "dav", esResponse);
@@ -187,7 +187,7 @@ public class AdsAcessorTest {
             AdsAccessor.initializedAds();
             // Elasticsearchへリペア対象のデータを取得
             List<String> list = Arrays.asList(idList);
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
 
             // ADSへリペアを実施する
             AdsAccessor.createAds(idxName, "Box", esResponse);
@@ -210,7 +210,7 @@ public class AdsAcessorTest {
             AdsAccessor.initializedAds();
             // Elasticsearchへリペア対象のデータを取得
             List<String> list = Arrays.asList(idList);
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
             AdsAccessor.createAds(idxName, "Cell", esResponse);
 
             Map<String, Object> map = esResponse.getHits().getHits()[0].getSource();
@@ -247,14 +247,14 @@ public class AdsAcessorTest {
             json1.put("k2", "_u8jGStVRNmS2dypzsQAHD");
             json1.put("p", Long.parseLong("1406595596944"));
             json1.put("u", Long.parseLong("1406595596944"));
-            DcIndexResponse res1 = type.create("documentId2", json1);
+            PersoniumIndexResponse res1 = type.create("documentId2", json1);
             assertEquals("documentId2", res1.getId());
 
             AdsAccessor.initializedAds();
             // Elasticsearchへリペア対象のデータを取得
             List<String> list = new ArrayList<String>();
             list.add("documentId2");
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
 
             // ADSへリペアを実施する
             AdsAccessor.createAds(idxName, "link", esResponse);
@@ -286,7 +286,7 @@ public class AdsAcessorTest {
             AdsAccessor.initializedAds();
             // Elasticsearchへリペア対象のデータを取得
             List<String> list = Arrays.asList(idList);
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
             AdsAccessor.createAds(idxName, "dav", esResponse);
 
             Map<String, Object> map = esResponse.getHits().getHits()[0].getSource();
@@ -313,7 +313,7 @@ public class AdsAcessorTest {
             AdsAccessor.initializedAds();
             // Elasticsearchへリペア対象のデータを取得
             List<String> list = Arrays.asList(idList);
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
             AdsAccessor.createAds(idxName, "Box", esResponse);
 
             Map<String, Object> map = esResponse.getHits().getHits()[0].getSource();

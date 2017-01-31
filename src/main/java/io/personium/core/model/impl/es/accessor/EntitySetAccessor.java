@@ -18,10 +18,10 @@ package io.personium.core.model.impl.es.accessor;
 
 import java.util.Map;
 
-import io.personium.common.es.response.DcDeleteResponse;
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumDeleteResponse;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
@@ -34,14 +34,14 @@ public interface EntitySetAccessor {
      * @param id ドキュメントのID
      * @return 応答
      */
-    DcGetResponse get(String id);
+    PersoniumGetResponse get(String id);
 
     /**
      * UUIDでデータ登録を行う.
      * @param docHandler 登録データ
      * @return 登録結果
      */
-    DcIndexResponse create(EntitySetDocHandler docHandler);
+    PersoniumIndexResponse create(EntitySetDocHandler docHandler);
 
     /**
      * ID指定ありでデータ登録を行う.
@@ -49,7 +49,7 @@ public interface EntitySetAccessor {
      * @param docHandler 登録データ
      * @return 登録結果
      */
-    DcIndexResponse create(String id, EntitySetDocHandler docHandler);
+    PersoniumIndexResponse create(String id, EntitySetDocHandler docHandler);
 
     /**
      * バージョン指定ありでデータ更新を行う.
@@ -58,7 +58,7 @@ public interface EntitySetAccessor {
      * @param version バージョン情報
      * @return 更新結果
      */
-    DcIndexResponse update(String id, EntitySetDocHandler docHandler, long version);
+    PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler, long version);
 
     /**
      * データ更新を行う.
@@ -66,14 +66,14 @@ public interface EntitySetAccessor {
      * @param docHandler 登録データ
      * @return 更新結果
      */
-    DcIndexResponse update(String id, EntitySetDocHandler docHandler);
+    PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler);
 
     /**
      * データ削除を行う.
      * @param docHandler 削除データ
      * @return 削除結果
      */
-    DcDeleteResponse delete(EntitySetDocHandler docHandler);
+    PersoniumDeleteResponse delete(EntitySetDocHandler docHandler);
 
     /**
      * ドキュメントの件数を取得.
@@ -87,7 +87,7 @@ public interface EntitySetAccessor {
      * @param query クエリ情報
      * @return ES応答
      */
-    DcSearchResponse search(Map<String, Object> query);
+    PersoniumSearchResponse search(Map<String, Object> query);
 
     /**
      * データ削除を行う.
@@ -95,7 +95,7 @@ public interface EntitySetAccessor {
      * @param version バージョン
      * @return 削除結果
      */
-    DcDeleteResponse delete(EntitySetDocHandler docHandler, long version);
+    PersoniumDeleteResponse delete(EntitySetDocHandler docHandler, long version);
 
     /**
      * Typeを取得する.

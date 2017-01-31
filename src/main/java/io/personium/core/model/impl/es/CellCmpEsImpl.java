@@ -24,9 +24,9 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.DcCoreException;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
@@ -81,8 +81,8 @@ public class CellCmpEsImpl extends DavCmpEsImpl implements CellCmp {
      * @return Node取得結果
      */
     @Override
-    public DcGetResponse getNode() {
-        DcGetResponse res = this.getCellAccessor().get(this.nodeId);
+    public PersoniumGetResponse getNode() {
+        PersoniumGetResponse res = this.getCellAccessor().get(this.nodeId);
         return res;
     }
 
@@ -91,8 +91,8 @@ public class CellCmpEsImpl extends DavCmpEsImpl implements CellCmp {
      * @return 更新結果.
      */
     @Override
-    public DcIndexResponse updateNodeWithVersion() {
-        DcIndexResponse resp;
+    public PersoniumIndexResponse updateNodeWithVersion() {
+        PersoniumIndexResponse resp;
         try {
             resp = this.getCellAccessor().update(this.nodeId, this.docHandler, this.version);
         } finally {
@@ -106,8 +106,8 @@ public class CellCmpEsImpl extends DavCmpEsImpl implements CellCmp {
      * @return 更新結果.
      */
     @Override
-    public DcIndexResponse updateNode() {
-        DcIndexResponse resp;
+    public PersoniumIndexResponse updateNode() {
+        PersoniumIndexResponse resp;
         try {
             resp = this.getCellAccessor().update(this.nodeId, this.docHandler);
         } finally {
@@ -121,8 +121,8 @@ public class CellCmpEsImpl extends DavCmpEsImpl implements CellCmp {
      * @return 作成結果
      */
     @Override
-    public DcIndexResponse createNode() {
-        DcIndexResponse res;
+    public PersoniumIndexResponse createNode() {
+        PersoniumIndexResponse res;
         res = this.getCellAccessor().create(this.docHandler);
         return res;
     }
@@ -146,7 +146,7 @@ public class CellCmpEsImpl extends DavCmpEsImpl implements CellCmp {
      * @return 子リソースの検索結果
      */
     @Override
-    public DcSearchResponse getChildResource() {
+    public PersoniumSearchResponse getChildResource() {
         // 子リソースの情報を取得する。
         Map<String, Object> query = new HashMap<String, Object>();
         Map<String, Object> query2 = new HashMap<String, Object>();
@@ -155,7 +155,7 @@ public class CellCmpEsImpl extends DavCmpEsImpl implements CellCmp {
         query2.put("term", query3);
         query.put("query", query2);
 
-        DcSearchResponse resp = this.getCellAccessor().search(query);
+        PersoniumSearchResponse resp = this.getCellAccessor().search(query);
         return resp;
     }
 

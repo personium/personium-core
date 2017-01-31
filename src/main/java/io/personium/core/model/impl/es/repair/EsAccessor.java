@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.response.EsClientException;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.model.impl.es.EsModel;
@@ -54,7 +54,7 @@ public class EsAccessor {
      * @return 検索結果
      * @throws EsClientException ESへの検索に失敗した場合
      */
-    public static DcSearchResponse search(final String indexName,
+    public static PersoniumSearchResponse search(final String indexName,
             final String routingId,
             final List<String> idList,
             final String type)

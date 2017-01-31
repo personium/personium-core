@@ -25,8 +25,8 @@ import java.util.TreeMap;
 
 import org.odata4j.producer.QueryInfo;
 
-import io.personium.common.es.response.DcSearchHit;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.ODataLinkAccessor;
@@ -100,7 +100,7 @@ public class LinkDocHandler implements EsDocHandler {
      * 検索結果からLinkDocHandlerを生成するコンストラクタ.
      * @param searchHit 検索結果データ
      */
-    public LinkDocHandler(final DcSearchHit searchHit) {
+    public LinkDocHandler(final PersoniumSearchHit searchHit) {
         this.id = searchHit.getId();
 
         Map<String, Object> source = searchHit.getSource();
@@ -319,12 +319,12 @@ public class LinkDocHandler implements EsDocHandler {
         }
 
         List<String> ret = new ArrayList<String>();
-        DcSearchResponse sr = accessor.search(parameter.getSource(size, from));
+        PersoniumSearchResponse sr = accessor.search(parameter.getSource(size, from));
         if (sr == null) {
             return ret;
         }
 
-        for (DcSearchHit hit : sr.getHits().getHits()) {
+        for (PersoniumSearchHit hit : sr.getHits().getHits()) {
             Map<String, Object> hs = hit.getSource();
             ret.add((String) hs.get(parameter.getTargetKey()));
         }

@@ -34,9 +34,9 @@ import org.junit.runner.RunWith;
 
 import io.personium.common.es.EsClient;
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.DcDeleteResponse;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumDeleteResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.test.categories.Unit;
@@ -99,7 +99,7 @@ public class DataSourceAccessorTest {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
         DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
-        DcIndexResponse response = dsa.create("id00001", new HashMap<Object, Object>());
+        PersoniumIndexResponse response = dsa.create("id00001", new HashMap<Object, Object>());
         assertNotNull(response);
         assertEquals("id00001", response.getId());
     }
@@ -112,7 +112,7 @@ public class DataSourceAccessorTest {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
         DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
-        DcIndexResponse response = dsa.create(new HashMap<Object, Object>());
+        PersoniumIndexResponse response = dsa.create(new HashMap<Object, Object>());
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
     }
@@ -125,7 +125,7 @@ public class DataSourceAccessorTest {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
         DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
-        DcIndexResponse response = dsa.update("id00001", new HashMap<Object, Object>());
+        PersoniumIndexResponse response = dsa.update("id00001", new HashMap<Object, Object>());
         assertNotNull(response);
         assertEquals("id00001", response.getId());
     }
@@ -139,7 +139,7 @@ public class DataSourceAccessorTest {
         assertNotNull(index);
         DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
         dsa.create("id00001", new HashMap<Object, Object>());
-        DcSearchResponse response = dsa.search(new HashMap<String, Object>());
+        PersoniumSearchResponse response = dsa.search(new HashMap<String, Object>());
         assertNotNull(response);
     }
 
@@ -159,7 +159,7 @@ public class DataSourceAccessorTest {
 
         Map<String, Object> query = new HashMap<String, Object>();
         query.put("size", 3);
-        DcSearchResponse response = dsa.search(query);
+        PersoniumSearchResponse response = dsa.search(query);
         assertEquals(5, response.getHits().getAllPages());
         assertEquals(3, response.getHits().getCount());
     }
@@ -178,7 +178,7 @@ public class DataSourceAccessorTest {
 
         Map<String, Object> query = new HashMap<String, Object>();
         query.put("size", 5);
-        DcSearchResponse response = dsa.search(query);
+        PersoniumSearchResponse response = dsa.search(query);
         assertEquals(3, response.getHits().getAllPages());
         assertEquals(3, response.getHits().getCount());
     }
@@ -197,7 +197,7 @@ public class DataSourceAccessorTest {
 
         Map<String, Object> query = new HashMap<String, Object>();
         query.put("size", 0);
-        DcSearchResponse response = dsa.search(query);
+        PersoniumSearchResponse response = dsa.search(query);
         assertEquals(3, response.getHits().getAllPages());
         assertEquals(0, response.getHits().getCount());
     }
@@ -222,7 +222,7 @@ public class DataSourceAccessorTest {
         dsa.create("id00010", new HashMap<Object, Object>());
         dsa.create("id00011", new HashMap<Object, Object>());
 
-        DcSearchResponse response = dsa.search(null);
+        PersoniumSearchResponse response = dsa.search(null);
         assertEquals(11, response.getHits().getAllPages());
         assertEquals(11, response.getHits().getCount());
     }
@@ -252,7 +252,7 @@ public class DataSourceAccessorTest {
 
         Map<String, Object> query = new HashMap<String, Object>();
         query.put("query", QueryMapFactory.filteredQuery(null, QueryMapFactory.termQuery("test", "value")));
-        DcSearchResponse response = dsa.search(query);
+        PersoniumSearchResponse response = dsa.search(query);
         assertEquals(11, response.getHits().getAllPages());
         assertEquals(11, response.getHits().getCount());
     }
@@ -373,7 +373,7 @@ public class DataSourceAccessorTest {
         assertNotNull(index);
         DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
         dsa.create("id00001", new HashMap<Object, Object>());
-        DcDeleteResponse response = dsa.delete("id00001", -1);
+        PersoniumDeleteResponse response = dsa.delete("id00001", -1);
         assertNotNull(response);
         assertFalse(response.isNotFound());
     }
@@ -386,7 +386,7 @@ public class DataSourceAccessorTest {
         EsIndex index = esClient.idxAdmin("index_for_test");
         assertNotNull(index);
         DataSourceAccessor dsa = new DataSourceAccessor(index, "TypeForTest", "RoutingIdTest");
-        DcDeleteResponse response = dsa.delete("id00001", -1);
+        PersoniumDeleteResponse response = dsa.delete("id00001", -1);
         assertNull(response);
     }
 

@@ -17,9 +17,9 @@
 package io.personium.core.model.impl.es.accessor;
 
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.DcDeleteResponse;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.response.PersoniumDeleteResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
@@ -68,8 +68,8 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
      * @return 登録結果
      */
     @Override
-    public DcIndexResponse create(final EntitySetDocHandler docHandler) {
-        String id = DcUUID.randomUUID();
+    public PersoniumIndexResponse create(final EntitySetDocHandler docHandler) {
+        String id = PersoniumUUID.randomUUID();
         return create(id, docHandler);
     }
 
@@ -79,11 +79,11 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
      * @param docHandler 登録データ
      * @return 登録結果
      */
-    public DcIndexResponse create(String id, EntitySetDocHandler docHandler) {
+    public PersoniumIndexResponse create(String id, EntitySetDocHandler docHandler) {
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         prepareDataUpdate(getIndex().getName());
         docHandler.setId(id);
-        DcIndexResponse response = create(id, docHandler.getSource(), docHandler);
+        PersoniumIndexResponse response = create(id, docHandler.getSource(), docHandler);
         createAds(docHandler);
         return response;
     }
@@ -95,7 +95,7 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
      * @return 更新結果
      */
     @Override
-    public DcIndexResponse update(String id, EntitySetDocHandler docHandler) {
+    public PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler) {
         return this.update(id, docHandler, -1);
     }
 
@@ -106,10 +106,10 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
      * @param version バージョン情報
      * @return 更新結果
      */
-    public DcIndexResponse update(String id, EntitySetDocHandler docHandler, long version) {
+    public PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler, long version) {
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         prepareDataUpdate(getIndex().getName());
-        DcIndexResponse response = update(id, docHandler.getSource(), version);
+        PersoniumIndexResponse response = update(id, docHandler.getSource(), version);
         updateAds(docHandler, response.getVersion());
         return response;
     }
@@ -120,7 +120,7 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
      * @return 削除結果
      */
     @Override
-    public DcDeleteResponse delete(final EntitySetDocHandler docHandler) {
+    public PersoniumDeleteResponse delete(final EntitySetDocHandler docHandler) {
         return this.delete(docHandler, -1);
     }
 
@@ -131,12 +131,12 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
      * @return 削除結果
      */
     @Override
-    public DcDeleteResponse delete(EntitySetDocHandler docHandler, long version) {
+    public PersoniumDeleteResponse delete(EntitySetDocHandler docHandler, long version) {
         String id = docHandler.getId();
 
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         super.prepareDataUpdate(getIndex().getName());
-        DcDeleteResponse response = super.delete(id, version);
+        PersoniumDeleteResponse response = super.delete(id, version);
         deleteAds(docHandler, response.getVersion());
         return response;
     }

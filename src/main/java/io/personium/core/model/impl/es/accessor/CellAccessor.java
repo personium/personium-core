@@ -24,10 +24,10 @@ import java.util.Map;
 
 import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.query.DcQueryBuilder;
-import io.personium.common.es.query.DcQueryBuilders;
-import io.personium.common.es.response.DcSearchHit;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.query.PersoniumQueryBuilder;
+import io.personium.common.es.query.PersoniumQueryBuilders;
+import io.personium.common.es.response.PersoniumSearchHit;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.response.EsClientException;
 import io.personium.core.DcCoreLog;
 import io.personium.core.model.DavCmp;
@@ -67,7 +67,7 @@ public class CellAccessor extends AbstractEntitySetAccessor {
         Map<String, Object> countQuery = getDavFileFilterQuery(cellId);
         countQuery.put("size", 0);
 
-        DcSearchResponse response = accessor.searchForIndex(cellId, countQuery);
+        PersoniumSearchResponse response = accessor.searchForIndex(cellId, countQuery);
         return response.getHits().getAllPages();
     }
 
@@ -87,9 +87,9 @@ public class CellAccessor extends AbstractEntitySetAccessor {
         searchQuery.put("size", size);
         searchQuery.put("from", from);
 
-        DcSearchResponse response = accessor.searchForIndex(cellId, searchQuery);
+        PersoniumSearchResponse response = accessor.searchForIndex(cellId, searchQuery);
         List<String> davFileIdList = new ArrayList<String>();
-        for (DcSearchHit hit : response.getHits().getHits()) {
+        for (PersoniumSearchHit hit : response.getHits().getHits()) {
             davFileIdList.add(hit.getId());
         }
         return davFileIdList;
@@ -128,7 +128,7 @@ public class CellAccessor extends AbstractEntitySetAccessor {
         DataSourceAccessor accessor = EsModel.dsa(unitUserName);
 
         // セルIDを指定してelasticsearchからセル関連エンティティを一括削除する
-        DcQueryBuilder matchQuery = DcQueryBuilders.matchQuery("c", cellId);
+        PersoniumQueryBuilder matchQuery = PersoniumQueryBuilders.matchQuery("c", cellId);
         try {
             accessor.deleteByQuery(cellId, matchQuery);
             log.info("KVS Deletion Success.");

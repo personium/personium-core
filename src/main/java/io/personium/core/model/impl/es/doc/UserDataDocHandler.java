@@ -34,8 +34,8 @@ import org.odata4j.edm.EdmProperty.CollectionKind;
 import org.odata4j.edm.EdmSimpleType;
 import org.odata4j.edm.EdmType;
 
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcSearchHit;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ComplexTypeProperty;
 import io.personium.core.model.ctl.CtlSchema;
@@ -63,7 +63,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
      * ESの1件取得結果からUserDataDocHandlerのインスタンスを生成するコンストラクタ.
      * @param getResponse .
      */
-    public UserDataDocHandler(DcGetResponse getResponse) {
+    public UserDataDocHandler(PersoniumGetResponse getResponse) {
         super(getResponse);
         this.propertyAliasMap = null;
         this.entitySetName = null;
@@ -73,7 +73,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
      * ESの検索結果からUserDataDocHandlerのインスタンスを生成するコンストラクタ.
      * @param searchHit .
      */
-    public UserDataDocHandler(DcSearchHit searchHit) {
+    public UserDataDocHandler(PersoniumSearchHit searchHit) {
         super(searchHit);
         this.propertyAliasMap = null;
         this.entitySetName = null;

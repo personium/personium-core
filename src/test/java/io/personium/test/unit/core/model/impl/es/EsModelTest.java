@@ -35,10 +35,10 @@ import org.slf4j.LoggerFactory;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.EsType;
-import io.personium.common.es.response.DcDeleteResponse;
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumDeleteResponse;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.test.categories.Unit;
 
 /**
@@ -63,7 +63,7 @@ public class EsModelTest {
         EsType typ = EsModel.type(idx.getName(), "tType2", null, 0, 0);
 
         // いきなりドキュメントを取得しようとするとFALSEになるテスト
-        DcGetResponse getResp1 = typ.get("doc4");
+        PersoniumGetResponse getResp1 = typ.get("doc4");
         assertNull(getResp1);
 
         // いきなりドキュメントを検索しようとすると０件になるテスト
@@ -73,7 +73,7 @@ public class EsModelTest {
         query3.put("key1", "value1");
         query2.put("term", query3);
         query.put("query", query2);
-        DcSearchResponse searchResp = typ.search(query);
+        PersoniumSearchResponse searchResp = typ.search(query);
         log.debug("search performed.. ");
         assertNull(searchResp);
 
@@ -81,7 +81,7 @@ public class EsModelTest {
         JSONObject json = new JSONObject();
         json.put("key1", "value1");
         json.put("key2", "value2");
-        DcIndexResponse res = typ.create("doc5", json);
+        PersoniumIndexResponse res = typ.create("doc5", json);
 
         // String id = typ.post(json);
         String id = res.getId();
@@ -91,7 +91,7 @@ public class EsModelTest {
 
         // ドキュメント登録したものを
         // 一件取得
-        DcGetResponse getResp = typ.get(id);
+        PersoniumGetResponse getResp = typ.get(id);
         log.debug("doc [" + id + "] retrieved.. ");
         log.debug(getResp.sourceAsString());
         assertTrue(getResp.exists());
@@ -111,7 +111,7 @@ public class EsModelTest {
 
         // 消す
 
-        DcDeleteResponse delResp = typ.delete(id);
+        PersoniumDeleteResponse delResp = typ.delete(id);
         assertFalse(delResp.isNotFound());
         if (delResp.isNotFound()) {
             log.debug(" doc [" + id + "] not found.. ");

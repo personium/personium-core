@@ -47,10 +47,10 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.Role;
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcSearchHit;
-import io.personium.common.es.response.DcSearchHits;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
+import io.personium.common.es.response.PersoniumSearchHits;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.DcCoreException;
@@ -230,7 +230,7 @@ public final class CellEsImpl implements Cell {
     public static Cell load(final String id, final UriInfo uriInfo) {
         log.debug(id);
         EntitySetAccessor esCells = EsModel.cell();
-        DcGetResponse resp = esCells.get(id);
+        PersoniumGetResponse resp = esCells.get(id);
         if (resp.exists()) {
             CellEsImpl ret = new CellEsImpl();
             ret.setJson(resp.getSource());
@@ -289,11 +289,11 @@ public final class CellEsImpl implements Cell {
             filter.put("term", term);
             source.put("query", QueryMapFactory.filteredQuery(null, filter));
 
-            DcSearchResponse resp = ecCells.search(source);
+            PersoniumSearchResponse resp = ecCells.search(source);
             if ((resp == null) || (resp.getHits().getCount() == 0)) {
                 return null;
             }
-            DcSearchHit hit = resp.getHits().getAt(0);
+            PersoniumSearchHit hit = resp.getHits().getAt(0);
             ret.setJson(hit.getSource());
             ret.id = hit.getId();
 
@@ -384,13 +384,13 @@ public final class CellEsImpl implements Cell {
         source.put("filter", QueryMapFactory.andFilter(filters));
         source.put("query", query);
 
-        DcSearchHits hits = accountType.search(source).getHits();
+        PersoniumSearchHits hits = accountType.search(source).getHits();
 
         if (hits.getCount() == 0) {
             return null;
         }
 
-        DcSearchHit hit = hits.getHits()[0];
+        PersoniumSearchHit hit = hits.getHits()[0];
 
         List<Role> ret = new ArrayList<Role>();
         ODataLinkAccessor links = EsModel.cellCtlLink(this);
@@ -415,17 +415,17 @@ public final class CellEsImpl implements Cell {
         // 検索結果件数設定
         searchRoleSource.put("size", TOP_NUM);
 
-        DcSearchResponse res = links.search(searchRoleSource);
+        PersoniumSearchResponse res = links.search(searchRoleSource);
         if (res == null) {
             return ret;
         }
-        DcSearchHit[] hits2 = res.getHits().getHits();
-        for (DcSearchHit hit2 : hits2) {
+        PersoniumSearchHit[] hits2 = res.getHits().getHits();
+        for (PersoniumSearchHit hit2 : hits2) {
             Map<String, Object> row = hit2.getSource();
             String role = (String) row.get("k2");
             log.debug(this.id);
             EntitySetAccessor roleDao = EsModel.cellCtl(this, Role.EDM_TYPE_NAME);
-            DcGetResponse gRes = roleDao.get(role);
+            PersoniumGetResponse gRes = roleDao.get(role);
             if (gRes == null) {
                 continue;
             }
@@ -439,7 +439,7 @@ public final class CellEsImpl implements Cell {
             if (boxId != null) {
                 // Boxの検索
                 EntitySetAccessor box = EsModel.box(this);
-                DcGetResponse getRes = box.get(boxId);
+                PersoniumGetResponse getRes = box.get(boxId);
                 if (getRes == null || !getRes.isExists()) {
                     continue;
                 }
@@ -568,7 +568,7 @@ public final class CellEsImpl implements Cell {
             OEntityWrapper entRelation = (OEntityWrapper) ent;
 
             // ExtCell-Relationのリンク情報をすべて見て今回アクセスしてきたセル向けのロールを洗い出す。
-            DcSearchResponse res = serchRoleLinks(Relation.EDM_TYPE_NAME, entRelation.getUuid());
+            PersoniumSearchResponse res = serchRoleLinks(Relation.EDM_TYPE_NAME, entRelation.getUuid());
             if (res == null) {
                 continue;
             }
@@ -598,13 +598,13 @@ public final class CellEsImpl implements Cell {
             }
             source.put("size", hitNum);
 
-            DcSearchHits extRoleHits = extRoleType.search(source).getHits();
+            PersoniumSearchHits extRoleHits = extRoleType.search(source).getHits();
             // ExtCellの設定が存在しないときは飛ばす
             // 件数取得後に削除される場合があるため、検索結果を再度確認しておく
             if (extRoleHits.getCount() == 0) {
                 continue;
             }
-            for (DcSearchHit extRoleHit : extRoleHits.getHits()) {
+            for (PersoniumSearchHit extRoleHit : extRoleHits.getHits()) {
                 Map<String, Object> extRoleSource = extRoleHit.getSource();
                 Map<String, Object> extRoleS = (Map<String, Object>) extRoleSource.get("s");
                 String esExtRole = (String) extRoleS.get(ExtRole.EDM_TYPE_NAME);
@@ -615,7 +615,7 @@ public final class CellEsImpl implements Cell {
                         continue;
                     }
                     // ExtCell-Roleのリンク情報をすべて見て今回アクセスしてきたセル向けのロールを洗い出す。
-                    DcSearchResponse resExtRoleToRole = serchRoleLinks(ExtRole.EDM_TYPE_NAME, extRoleHit.getId());
+                    PersoniumSearchResponse resExtRoleToRole = serchRoleLinks(ExtRole.EDM_TYPE_NAME, extRoleHit.getId());
                     if (resExtRoleToRole == null) {
                         continue;
                     }
@@ -633,7 +633,7 @@ public final class CellEsImpl implements Cell {
      *            検索するuuid
      * @return 検索結果
      */
-    private DcSearchResponse serchRoleLinks(final String searchKey, final String searchValue) {
+    private PersoniumSearchResponse serchRoleLinks(final String searchKey, final String searchValue) {
 
         ODataLinkAccessor links = EsModel.cellCtlLink(this);
         // Relationに結びつくロールの検索
@@ -666,8 +666,8 @@ public final class CellEsImpl implements Cell {
      * @param roles
      *            払い出すロールのリスト。ここに追加する（破壊的メソッド）
      */
-    private void addRoles(DcSearchHit[] hits, List<Role> roles) {
-        for (DcSearchHit hit : hits) {
+    private void addRoles(PersoniumSearchHit[] hits, List<Role> roles) {
+        for (PersoniumSearchHit hit : hits) {
             Map<String, Object> src = hit.getSource();
             String roleUuid = (String) src.get("k2");
 
@@ -686,7 +686,7 @@ public final class CellEsImpl implements Cell {
     @SuppressWarnings("unchecked")
     private void addRole(String uuid, List<Role> roles) {
         EntitySetAccessor roleDao = EsModel.cellCtl(this, Role.EDM_TYPE_NAME);
-        DcGetResponse gRes = roleDao.get(uuid);
+        PersoniumGetResponse gRes = roleDao.get(uuid);
         if (gRes == null) {
             return;
         }
@@ -889,7 +889,7 @@ public final class CellEsImpl implements Cell {
             source.put("filter", QueryMapFactory.andFilter(filters));
         }
         source.put("query", query);
-        DcSearchHits hits = roleType.search(source).getHits();
+        PersoniumSearchHits hits = roleType.search(source).getHits();
 
         // 対象のRoleが存在しない場合はNull
         if (hits == null || hits.getCount() == 0) {
@@ -902,7 +902,7 @@ public final class CellEsImpl implements Cell {
             throw DcCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT;
         }
 
-        DcSearchHit hit = hits.getHits()[0];
+        PersoniumSearchHit hit = hits.getHits()[0];
         return hit.getId();
     }
 

@@ -18,7 +18,7 @@ package io.personium.core.model.impl.es.doc;
 
 import java.util.TreeMap;
 
-import io.personium.common.es.response.DcSearchHit;
+import io.personium.common.es.response.PersoniumSearchHit;
 
 /**
  * ESでN:Nリンクを扱う. リンクは２つのタイプの間に張られている。 EsLinkHandler elh = new EsLinkHandler(type1, type2); 双方のキーを指定して、リンクドキュメントを作成する。
@@ -63,7 +63,7 @@ public class UserDataLinkDocHandler extends LinkDocHandler {
      * コンストラクタ.
      * @param searchHit 検索結果
      */
-    public UserDataLinkDocHandler(DcSearchHit searchHit) {
+    public UserDataLinkDocHandler(PersoniumSearchHit searchHit) {
         super(searchHit);
     }
 

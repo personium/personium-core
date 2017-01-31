@@ -18,9 +18,9 @@ package io.personium.core.model.impl.es.accessor;
 
 import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.DcDeleteResponse;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.response.PersoniumDeleteResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.DcCoreLog;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.ads.AdsException;
@@ -48,8 +48,8 @@ public class ODataLinkAccessor extends DataSourceAccessor {
      * @param docHandler 登録データ
      * @return 登録結果
      */
-    public DcIndexResponse create(final LinkDocHandler docHandler) {
-        String id = DcUUID.randomUUID();
+    public PersoniumIndexResponse create(final LinkDocHandler docHandler) {
+        String id = PersoniumUUID.randomUUID();
         return this.create(id, docHandler);
     }
 
@@ -59,11 +59,11 @@ public class ODataLinkAccessor extends DataSourceAccessor {
      * @param docHandler 登録データ
      * @return 登録結果
      */
-    public DcIndexResponse create(String id, LinkDocHandler docHandler) {
+    public PersoniumIndexResponse create(String id, LinkDocHandler docHandler) {
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         super.prepareDataUpdate(getIndex().getName());
         docHandler.setId(id);
-        DcIndexResponse response = super.create(id, docHandler.createLinkDoc());
+        PersoniumIndexResponse response = super.create(id, docHandler.createLinkDoc());
         createAds(docHandler);
         return response;
     }
@@ -98,7 +98,7 @@ public class ODataLinkAccessor extends DataSourceAccessor {
      * @param docHandler 登録データ
      * @return 更新結果
      */
-    public DcIndexResponse update(String id, LinkDocHandler docHandler) {
+    public PersoniumIndexResponse update(String id, LinkDocHandler docHandler) {
         return this.update(id, docHandler, -1);
     }
 
@@ -109,10 +109,10 @@ public class ODataLinkAccessor extends DataSourceAccessor {
      * @param version バージョン情報
      * @return 更新結果
      */
-    public DcIndexResponse update(String id, LinkDocHandler docHandler, long version) {
+    public PersoniumIndexResponse update(String id, LinkDocHandler docHandler, long version) {
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         super.prepareDataUpdate(getIndex().getName());
-        DcIndexResponse response = super.update(id, docHandler.createLinkDoc(), version);
+        PersoniumIndexResponse response = super.update(id, docHandler.createLinkDoc(), version);
         updateAds(docHandler, response.getVersion());
         return response;
     }
@@ -147,7 +147,7 @@ public class ODataLinkAccessor extends DataSourceAccessor {
      * @param docHandler 削除データ
      * @return 応答
      */
-    public DcDeleteResponse delete(final LinkDocHandler docHandler) {
+    public PersoniumDeleteResponse delete(final LinkDocHandler docHandler) {
         return this.delete(docHandler, -1);
     }
 
@@ -157,12 +157,12 @@ public class ODataLinkAccessor extends DataSourceAccessor {
      * @param version バージョン情報
      * @return 削除結果
      */
-    public DcDeleteResponse delete(final LinkDocHandler docHandler, long version) {
+    public PersoniumDeleteResponse delete(final LinkDocHandler docHandler, long version) {
         String id = docHandler.getId();
 
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         super.prepareDataUpdate(getIndex().getName());
-        DcDeleteResponse response = super.delete(id, version);
+        PersoniumDeleteResponse response = super.delete(id, version);
         deleteAds(docHandler, response.getVersion());
         return response;
     }

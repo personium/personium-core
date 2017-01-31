@@ -31,10 +31,10 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.EsType;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.response.DcSearchHit;
-import io.personium.common.es.response.DcSearchResponse;
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
+import io.personium.common.es.response.PersoniumSearchResponse;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.repair.EsAccessor;
 import io.personium.test.categories.Unit;
@@ -50,7 +50,7 @@ public class EsAcessorTest {
 
     static Logger log = LoggerFactory.getLogger(EsAcessorTest.class);
 
-    private String idxName = "test" + DcUUID.randomUUID();
+    private String idxName = "test" + PersoniumUUID.randomUUID();
     private String[] idList = {"documentId1", "documentId2" };
 
     /**
@@ -71,12 +71,12 @@ public class EsAcessorTest {
         JSONObject json1 = new JSONObject();
         json1.put("key1-1", "value1");
         json1.put("key1-2", "value2");
-        DcIndexResponse res1 = type.create("documentId1", json1);
+        PersoniumIndexResponse res1 = type.create("documentId1", json1);
         assertEquals(idList[0], res1.getId());
         JSONObject json2 = new JSONObject();
         json2.put("key2-1", "value1");
         json2.put("key2-2", "value2");
-        DcIndexResponse res2 = type.create("documentId2", json2);
+        PersoniumIndexResponse res2 = type.create("documentId2", json2);
         assertEquals(idList[1], res2.getId());
     }
 
@@ -98,9 +98,9 @@ public class EsAcessorTest {
     public void EsModelの基礎的なテスト() {
 
         List<String> list = Arrays.asList(idList);
-        DcSearchResponse response = EsAccessor.search(idxName, ROUTING_ID, list, "tType2");
+        PersoniumSearchResponse response = EsAccessor.search(idxName, ROUTING_ID, list, "tType2");
         assertEquals(2, response.getHits().getHits().length);
-        for (DcSearchHit hit : response.getHits().getHits()) {
+        for (PersoniumSearchHit hit : response.getHits().getHits()) {
             assertTrue(list.contains(hit.getId()));
         }
     }

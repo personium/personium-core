@@ -47,8 +47,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.DcSearchHit;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.DcCoreException;
 import io.personium.core.model.Cell;
@@ -282,9 +282,9 @@ public class UserSchemaODataProducer extends EsODataProducer {
             filter.put("version", true);
             filter.put("filter", QueryMapFactory.andFilter(andfilter));
             filter.put("query", query);
-            DcSearchResponse response = accessor.search(filter);
+            PersoniumSearchResponse response = accessor.search(filter);
 
-            for (DcSearchHit hit : response.getHits().getHits()) {
+            for (PersoniumSearchHit hit : response.getHits().getHits()) {
                 accessor.delete(this.getDocHandler(hit, hit.getType()));
             }
         } else if (ComplexType.EDM_TYPE_NAME.equals(entitySetName)) {
@@ -753,7 +753,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
         filter.put("query", filteredQuery);
 
         DataSourceAccessor accessor = getAccessorForIndex(entitySetName);
-        DcSearchResponse response = accessor.indexSearch(filter);
+        PersoniumSearchResponse response = accessor.indexSearch(filter);
         if (0 < response.getHits().allPages()) {
             throw DcCoreException.OData.CONFLICT_HAS_RELATED;
         }

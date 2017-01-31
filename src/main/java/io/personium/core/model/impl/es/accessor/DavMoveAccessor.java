@@ -25,8 +25,8 @@ import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.es.EsBulkRequest;
 import io.personium.common.es.EsBulkRequest.BULK_REQUEST_TYPE;
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.DcBulkItemResponse;
-import io.personium.common.es.response.DcBulkResponse;
+import io.personium.common.es.response.PersoniumBulkItemResponse;
+import io.personium.common.es.response.PersoniumBulkResponse;
 import io.personium.common.es.response.EsClientException;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.DcCoreException;
@@ -189,8 +189,8 @@ public class DavMoveAccessor extends DavNodeAccessor {
      * ES用のバルク登録ドキュメント数とADS用のバルク登録ドキュメント数は、同じにすること
      * @return バルクレスポンス
      */
-    public DcBulkResponse move() {
-        DcBulkResponse response = esMove(this.esBulkRequest);
+    public PersoniumBulkResponse move() {
+        PersoniumBulkResponse response = esMove(this.esBulkRequest);
         // ESへのバルクリクエストでエラーが発生した場合はロールバックするためバイナリファイルの削除とADSの更新は行わない
         if (response.hasFailures()) {
             rollback();
@@ -204,7 +204,7 @@ public class DavMoveAccessor extends DavNodeAccessor {
         return response;
     }
 
-    private DcBulkResponse adsMove(DcBulkResponse response) {
+    private PersoniumBulkResponse adsMove(PersoniumBulkResponse response) {
         // ADSへの書込みは、連続した登録/更新のリクエストをバルクで実行する
         // 削除リクエストはリクエストを単体で実行する
         // 例）登録→更新→削除→削除→登録→更新→登録→削除 の順で実行した場合
@@ -242,11 +242,11 @@ public class DavMoveAccessor extends DavNodeAccessor {
      * @param esRequest ES用バルク登録ドキュメントリスト
      * @return バルクレスポンス
      */
-    public DcBulkResponse esMove(List<EsBulkRequest> esRequest) {
+    public PersoniumBulkResponse esMove(List<EsBulkRequest> esRequest) {
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         prepareDataUpdate(getIndex().getName());
 
-        DcBulkResponse response = null;
+        PersoniumBulkResponse response = null;
         try {
             response = getIndex().bulkRequest(getRoutingId(), esRequest, true);
         } catch (EsClientException.EsNoResponseException e) {
@@ -261,7 +261,7 @@ public class DavMoveAccessor extends DavNodeAccessor {
      * @param response Elasticsearchのバルク更新レスポンス（Ads書込み失敗ログ出力用）
      * @param responseIndex Elasticsearchのバルク更新レスポンスのインデックス
      */
-    private void bulkUpdateAds(List<DavNode> adsRequest, DcBulkResponse response, int responseIndex) {
+    private void bulkUpdateAds(List<DavNode> adsRequest, PersoniumBulkResponse response, int responseIndex) {
         try {
             // Davテーブルを一括更新
             if (adsRequest.size() > 0) {
@@ -272,11 +272,11 @@ public class DavMoveAccessor extends DavNodeAccessor {
 
             // Adsの登録に失敗した場合は、専用のログに書込む
             // ESでのバージョン情報を取得するためにesBulkRequestをループさせている
-            DcBulkItemResponse[] responseItems = response.items();
+            PersoniumBulkItemResponse[] responseItems = response.items();
 
             for (DavNode docHandler : adsRequest) {
                 // Adsの登録に失敗した場合は、専用のログに書込む
-                DcBulkItemResponse itemResponse = responseItems[responseIndex++];
+                PersoniumBulkItemResponse itemResponse = responseItems[responseIndex++];
                 String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_DAV,
                         null, docHandler.getBoxId(), null);
                 AdsWriteFailureLogInfo loginfo = new AdsWriteFailureLogInfo(
@@ -317,7 +317,7 @@ public class DavMoveAccessor extends DavNodeAccessor {
         }
 
         // ロールバックではElasticsearchのデータのみを戻す
-        DcBulkResponse bulkResponse = esMove(esRequest);
+        PersoniumBulkResponse bulkResponse = esMove(esRequest);
         if (bulkResponse.hasFailures()) {
             // ロールバック失敗時はロールバックしようとしたデータの内容を出力する
             log.info("rollback was abnormally end.");

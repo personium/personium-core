@@ -24,8 +24,8 @@ import org.odata4j.edm.EdmDataServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcSearchHit;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
@@ -68,7 +68,7 @@ public class CellDocHandler extends OEntityDocHandler {
      * Constructor.
      * @param getResponse GetResponse
      */
-    public CellDocHandler(DcGetResponse getResponse) {
+    public CellDocHandler(PersoniumGetResponse getResponse) {
         super(getResponse);
         if (this.aclFields == null) {
             aclFields = new HashMap<String, JSONObject>();
@@ -92,7 +92,7 @@ public class CellDocHandler extends OEntityDocHandler {
      * Constructor.
      * @param searchHit SearchHit
      */
-    public CellDocHandler(DcSearchHit searchHit) {
+    public CellDocHandler(PersoniumSearchHit searchHit) {
         super(searchHit);
         if (this.aclFields == null) {
             aclFields = new HashMap<String, JSONObject>();

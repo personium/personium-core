@@ -68,7 +68,7 @@ import org.odata4j.format.FormatWriter;
 import org.odata4j.format.Settings;
 import org.odata4j.producer.EntityResponse;
 
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.DcCoreException;
 import io.personium.core.model.ctl.Common;
@@ -262,7 +262,7 @@ public abstract class AbstractODataResource {
         }
 
         // ラッパにくるむ. POSTでIf-Match等 ETagを受け取ることはないのでetagはnull。
-        String uuid = DcUUID.randomUUID();
+        String uuid = PersoniumUUID.randomUUID();
         OEntityWrapper oew = new OEntityWrapper(uuid, newEnt, null);
         // 必要ならばメタ情報をつける処理
         odataResource.beforeCreate(oew);

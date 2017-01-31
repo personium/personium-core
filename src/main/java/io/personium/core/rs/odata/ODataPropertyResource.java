@@ -51,7 +51,7 @@ import org.odata4j.producer.EntitiesResponse;
 import org.odata4j.producer.EntityResponse;
 import org.odata4j.producer.QueryInfo;
 
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.DcCoreException;
 import io.personium.core.auth.AccessContext;
@@ -177,7 +177,7 @@ public class ODataPropertyResource extends AbstractODataResource {
         OEntity newEnt = createRequestEntity(reader, null);
 
         // ラッパにくるむ. POSTでIf-Match等 ETagを受け取ることはないのでetagはnull。
-        String uuid = DcUUID.randomUUID();
+        String uuid = PersoniumUUID.randomUUID();
         OEntityWrapper oew = new OEntityWrapper(uuid, newEnt, null);
         return oew;
     }

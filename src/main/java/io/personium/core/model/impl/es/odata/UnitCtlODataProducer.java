@@ -28,8 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcSearchHit;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Cell;
 import io.personium.core.model.ModelFactory;
@@ -154,7 +154,7 @@ public class UnitCtlODataProducer extends EsODataProducer {
      * @return OEntityDocHandler
      */
     @Override
-    protected EntitySetDocHandler getDocHandler(DcSearchHit searchHit, String entitySetName) {
+    protected EntitySetDocHandler getDocHandler(PersoniumSearchHit searchHit, String entitySetName) {
         return new CellDocHandler(searchHit);
     }
 
@@ -176,7 +176,7 @@ public class UnitCtlODataProducer extends EsODataProducer {
      * @return OEntityDocHandler
      */
     @Override
-    protected EntitySetDocHandler getDocHandler(DcGetResponse response, String entitySetName) {
+    protected EntitySetDocHandler getDocHandler(PersoniumGetResponse response, String entitySetName) {
         return new CellDocHandler(response);
     }
 

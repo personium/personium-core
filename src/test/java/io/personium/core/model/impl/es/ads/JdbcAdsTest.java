@@ -31,7 +31,7 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.impl.es.DavNode;
@@ -80,7 +80,7 @@ public class JdbcAdsTest {
     public void CELLに対応するADSのCRUD() throws Exception {
         JdbcAds ads = new JdbcAds();
         OEntityDocHandler oedh = new OEntityDocHandler();
-        String testId = DcUUID.randomUUID();
+        String testId = PersoniumUUID.randomUUID();
         oedh.setId(testId);
         oedh.setType(Cell.EDM_TYPE_NAME);
         oedh.setPublished(new Date().getTime());
@@ -144,9 +144,9 @@ public class JdbcAdsTest {
 
     OEntityDocHandler createTestOEntityDocHandler() {
         OEntityDocHandler oedh = new OEntityDocHandler();
-        String testId = DcUUID.randomUUID();
+        String testId = PersoniumUUID.randomUUID();
         oedh.setId(testId);
-        oedh.setType(DcUUID.randomUUID());
+        oedh.setType(PersoniumUUID.randomUUID());
         oedh.setCellId("cellid");
         oedh.setBoxId("boxid");
         oedh.setPublished(new Date().getTime());
@@ -212,7 +212,7 @@ public class JdbcAdsTest {
 
         // 作成
         DavNode davNode = new DavNode();
-        davNode.setId(DcUUID.randomUUID());
+        davNode.setId(PersoniumUUID.randomUUID());
         ads.createDavNode(TEST_INDEX, davNode);
         assertEquals(1, ads.countDavNode(TEST_INDEX));
         List<JSONObject> list = ads.getDavNodeList(TEST_INDEX, 0, 10);

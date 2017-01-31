@@ -54,15 +54,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import io.personium.common.auth.token.Role;
-import io.personium.common.es.response.DcActionResponse;
-import io.personium.common.es.response.DcBulkItemResponse;
-import io.personium.common.es.response.DcBulkResponse;
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.response.DcSearchHit;
-import io.personium.common.es.response.DcSearchHits;
-import io.personium.common.es.response.DcSearchResponse;
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.response.PersoniumActionResponse;
+import io.personium.common.es.response.PersoniumBulkItemResponse;
+import io.personium.common.es.response.PersoniumBulkResponse;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
+import io.personium.common.es.response.PersoniumSearchHits;
+import io.personium.common.es.response.PersoniumSearchResponse;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.DcCoreConfig;
@@ -286,7 +286,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
      * Davの管理データ情報を最新化する.
      */
     public final void load() {
-        DcGetResponse res = getNode();
+        PersoniumGetResponse res = getNode();
         if (res == null) {
             this.davNode = null;
             return;
@@ -369,8 +369,8 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
      * Nodeのデータを取得する.
      * @return Node取得結果
      */
-    public DcGetResponse getNode() {
-        DcGetResponse res = this.getEsColType().get(this.nodeId);
+    public PersoniumGetResponse getNode() {
+        PersoniumGetResponse res = this.getEsColType().get(this.nodeId);
         return res;
     }
 
@@ -403,7 +403,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
      * 子リソースの情報を取得する.
      * @return 子リソースの検索結果
      */
-    public DcSearchResponse getChildResource() {
+    public PersoniumSearchResponse getChildResource() {
         // 子リソースの情報を取得する。
         Map<String, Object> source = new HashMap<String, Object>();
 
@@ -421,7 +421,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
         // 検索性能の問題もあるため、対応方針を決めて修正する必要がある
         source.put("size", TOP_NUM);
 
-        DcSearchResponse resp = this.getEsColType().search(source);
+        PersoniumSearchResponse resp = this.getEsColType().search(source);
         return resp;
     }
 
@@ -490,7 +490,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             this.davNode.setUpdated(now);
             // 変更後JSONを書き出し。
             setPropToJson(propsJson);
-            DcIndexResponse resp = updateNodeWithVersion();
+            PersoniumIndexResponse resp = updateNodeWithVersion();
             // ETAG生成用にVersionを反映
             this.version = resp.version();
         } finally {
@@ -512,8 +512,8 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
      * バージョン指定でNodeの情報を更新する.
      * @return 更新結果.
      */
-    public DcIndexResponse updateNodeWithVersion() {
-        DcIndexResponse resp;
+    public PersoniumIndexResponse updateNodeWithVersion() {
+        PersoniumIndexResponse resp;
         resp = this.getEsColType().update(this.nodeId, this.davNode, this.version);
         return resp;
     }
@@ -522,8 +522,8 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
      * バージョン指定でNodeファイルの情報を更新する.
      * @return 更新結果.
      */
-    public DcIndexResponse updateNodeWithVersionForFile() {
-        DcIndexResponse resp;
+    public PersoniumIndexResponse updateNodeWithVersionForFile() {
+        PersoniumIndexResponse resp;
         resp = this.getEsColType().updateForFile(this.nodeId, this.davNode, this.version);
         return resp;
     }
@@ -588,7 +588,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             aclJson.remove(KEY_ACL_BASE);
             setAclToJson(aclJson);
             // このノードの更新を保存
-            DcIndexResponse resp = updateNode();
+            PersoniumIndexResponse resp = updateNode();
             this.version = resp.getVersion();
             this.acl = aclToSet;
             // レスポンス
@@ -610,8 +610,8 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
      * Nodeの情報を更新する.
      * @return 更新結果.
      */
-    public DcIndexResponse updateNode() {
-        DcIndexResponse resp;
+    public PersoniumIndexResponse updateNode() {
+        PersoniumIndexResponse resp;
         resp = this.getEsColType().update(this.nodeId, this.davNode);
         return resp;
     }
@@ -650,9 +650,9 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
      * Node情報を作成する.
      * @return 作成結果
      */
-    public DcActionResponse createNode() {
-        DcIndexResponse res = null;
-        String id = DcUUID.randomUUID();
+    public PersoniumActionResponse createNode() {
+        PersoniumIndexResponse res = null;
+        String id = PersoniumUUID.randomUUID();
         res = this.getEsColType().create(id, this.davNode);
         return res;
     }
@@ -662,8 +662,8 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
      * @param id ID
      * @return 作成結果
      */
-    public DcActionResponse createNodeWithId(String id) {
-        DcActionResponse res;
+    public PersoniumActionResponse createNodeWithId(String id) {
+        PersoniumActionResponse res;
         res = this.getEsColType().createForFile(id, this.davNode);
         return res;
     }
@@ -710,7 +710,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
         // 親コレクション内のコレクション・ファイル数のチェック
         checkChildResourceCount();
 
-        String newId = DcUUID.randomUUID();
+        String newId = PersoniumUUID.randomUUID();
         try {
             BinaryDataAccessor accessor = getBinaryDataAccessor();
             long writtenBytes = accessor.create(bufferedInput, newId);
@@ -723,13 +723,13 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
 
         // メタデータの保存処理.
         this.davNode = fileNode;
-        DcActionResponse res = createNodeWithId(newId);
-        if (res instanceof DcIndexResponse) {
-            this.nodeId = ((DcIndexResponse) res).getId();
-            this.version = ((DcIndexResponse) res).version();
-        } else if (res instanceof DcGetResponse) {
-            this.nodeId = ((DcGetResponse) res).getId();
-            this.version = ((DcGetResponse) res).version();
+        PersoniumActionResponse res = createNodeWithId(newId);
+        if (res instanceof PersoniumIndexResponse) {
+            this.nodeId = ((PersoniumIndexResponse) res).getId();
+            this.version = ((PersoniumIndexResponse) res).version();
+        } else if (res instanceof PersoniumGetResponse) {
+            this.nodeId = ((PersoniumGetResponse) res).getId();
+            this.version = ((PersoniumGetResponse) res).version();
         }
 
         // adding newNode to this nodeDocument;
@@ -774,7 +774,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
 
         this.davNode.setFile(data);
         // 更新内容を書きだす
-        DcIndexResponse res = updateNodeWithVersionForFile();
+        PersoniumIndexResponse res = updateNodeWithVersionForFile();
         this.version = res.getVersion();
         return javax.ws.rs.core.Response.ok().status(HttpStatus.SC_NO_CONTENT).header(HttpHeaders.ETAG, this.getEtag());
 
@@ -928,13 +928,13 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             checkChildResourceCount();
 
             // 新しいノードを保存
-            DcActionResponse resp = createNode();
-            if (resp instanceof DcIndexResponse) {
-                this.nodeId = ((DcIndexResponse) resp).getId();
-                this.version = ((DcIndexResponse) resp).version();
-            } else if (resp instanceof DcGetResponse) {
-                this.nodeId = ((DcGetResponse) resp).getId();
-                this.version = ((DcGetResponse) resp).version();
+            PersoniumActionResponse resp = createNode();
+            if (resp instanceof PersoniumIndexResponse) {
+                this.nodeId = ((PersoniumIndexResponse) resp).getId();
+                this.version = ((PersoniumIndexResponse) resp).version();
+            } else if (resp instanceof PersoniumGetResponse) {
+                this.nodeId = ((PersoniumGetResponse) resp).getId();
+                this.version = ((PersoniumGetResponse) resp).version();
             }
 
             // 親ノードにポインタを追加
@@ -1008,10 +1008,10 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             DavNode dstNode = ((DavCmpEsImpl) dstCmp).getDavNode();
 
             accessor.setMoveRequest(this.name, dstCmp.getName(), srcNode, dstNode, srcParentNode, dstParentNode);
-            DcBulkResponse bulkResponse = accessor.move();
+            PersoniumBulkResponse bulkResponse = accessor.move();
 
             // バルクレスポンスの解析
-            for (DcBulkItemResponse item : bulkResponse.items()) {
+            for (PersoniumBulkItemResponse item : bulkResponse.items()) {
                 if (srcNode.getId().equals(item.getId())) {
                     // Etag返却用に、ソースのノードを更新した時のElaticsearchのバージョンを付与しておく
                     this.version = item.version();
@@ -1251,7 +1251,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             source.put("filter", QueryMapFactory.andFilter(filters));
         }
         source.put("query", query);
-        DcSearchHits hits = roleType.search(source).getHits();
+        PersoniumSearchHits hits = roleType.search(source).getHits();
 
         // 対象のRoleが存在しない場合はNull
         if (hits == null || hits.getCount() == 0) {
@@ -1264,7 +1264,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             throw DcCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT;
         }
 
-        DcSearchHit hit = hits.getHits()[0];
+        PersoniumSearchHit hit = hits.getHits()[0];
         return hit.getId();
     }
 
@@ -1322,7 +1322,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
         String schema = null;
 
         EntitySetAccessor roleType = EsModel.cellCtl(this.cell, Role.EDM_TYPE_NAME);
-        DcGetResponse hit = roleType.get(roleId);
+        PersoniumGetResponse hit = roleType.get(roleId);
 
         if (hit == null || !hit.isExists()) {
             // ロールが存在しない場合、nullを返す。
@@ -1455,7 +1455,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
     public static Map<String, Object> searchBox(final Cell cellObj, final String boxId) {
 
         EntitySetAccessor boxType = EsModel.box(cellObj);
-        DcGetResponse getRes = boxType.get(boxId);
+        PersoniumGetResponse getRes = boxType.get(boxId);
         if (getRes == null || !getRes.isExists()) {
             DcCoreLog.Dav.ROLE_NOT_FOUND.params("Box Id Not Hit").writeLog();
 

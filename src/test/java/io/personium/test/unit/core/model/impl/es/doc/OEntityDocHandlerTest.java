@@ -28,8 +28,8 @@ import org.mockito.Mockito;
 import org.odata4j.edm.EdmDataServices;
 import org.odata4j.edm.EdmEntitySet;
 
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcSearchHit;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.odata.OEntityWrapper;
@@ -59,7 +59,7 @@ public class OEntityDocHandlerTest {
         Map<String, Object> src = this.createMockSrc();
 
         // Mockの作成
-        DcGetResponse gRes = Mockito.mock(DcGetResponse.class);
+        PersoniumGetResponse gRes = Mockito.mock(PersoniumGetResponse.class);
         Mockito.when(gRes.id()).thenReturn(ID_0);
         Mockito.when(gRes.getId()).thenReturn(ID_0);
         Mockito.when(gRes.version()).thenReturn(VERSION_0);
@@ -81,7 +81,7 @@ public class OEntityDocHandlerTest {
         Map<String, Object> src = this.createMockSrc();
 
         // Mockの作成
-        DcSearchHit hit = Mockito.mock(DcSearchHit.class);
+        PersoniumSearchHit hit = Mockito.mock(PersoniumSearchHit.class);
         Mockito.when(hit.id()).thenReturn(ID_0);
         Mockito.when(hit.getId()).thenReturn(ID_0);
         Mockito.when(hit.version()).thenReturn(VERSION_0);
@@ -121,7 +121,7 @@ public class OEntityDocHandlerTest {
         Map<String, Object> src = this.createMockSrc();
 
         // Mockの作成
-        DcGetResponse gRes = Mockito.mock(DcGetResponse.class);
+        PersoniumGetResponse gRes = Mockito.mock(PersoniumGetResponse.class);
         Mockito.when(gRes.id()).thenReturn(ID_0);
         Mockito.when(gRes.getId()).thenReturn(ID_0);
         Mockito.when(gRes.version()).thenReturn(VERSION_0);

@@ -27,7 +27,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.DcCoreException;
 
 /**
@@ -77,7 +77,7 @@ public class DavMetadataFile {
 
     private void setDefault() {
         long date = new Date().getTime();
-        this.setNodeId(DcUUID.randomUUID());
+        this.setNodeId(PersoniumUUID.randomUUID());
         this.setUpdated(date);
         this.setPublished(date);
         this.setVersion(0L);

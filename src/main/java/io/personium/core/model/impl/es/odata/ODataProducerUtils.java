@@ -32,7 +32,7 @@ import org.odata4j.producer.QueryInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.es.response.DcSearchHits;
+import io.personium.common.es.response.PersoniumSearchHits;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.DcCoreException;
@@ -166,7 +166,7 @@ public final class ODataProducerUtils {
      * @param queryInfo リクエストで指定されたクエリ情報
      * @return Links情報の検索結果
      */
-    public static DcSearchHits searchLinksNN(EntitySetDocHandler src,
+    public static PersoniumSearchHits searchLinksNN(EntitySetDocHandler src,
             String targetSetName, List<String> idvals, EntitySetAccessor tgtEsType, QueryInfo queryInfo) {
 
         if (idvals.size() == 0) {
@@ -208,7 +208,7 @@ public final class ODataProducerUtils {
         orderByName.put("s.Name.untouched", order);
         orderById.put("s.__id.untouched", order);
 
-        DcSearchHits sHits = tgtEsType.search(source).hits();
+        PersoniumSearchHits sHits = tgtEsType.search(source).hits();
         return sHits;
     }
 

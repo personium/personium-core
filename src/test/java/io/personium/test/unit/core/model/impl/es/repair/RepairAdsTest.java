@@ -34,9 +34,9 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.ads.AdsWriteFailureLogException;
 import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.es.EsType;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.response.DcSearchResponse;
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.response.PersoniumSearchResponse;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.ads.Ads;
@@ -62,7 +62,7 @@ public class RepairAdsTest {
     static Logger log = LoggerFactory.getLogger(RepairAdsTest.class);
 
     private String idxName = DcCoreConfig.getEsUnitPrefix() + "_anon";
-    private String id = "repair_" + DcUUID.randomUUID();
+    private String id = "repair_" + PersoniumUUID.randomUUID();
     private String[] idList = {id };
     private Ads ads;
 
@@ -84,7 +84,7 @@ public class RepairAdsTest {
         json1.put("c", ROUTING_ID);
         json1.put("p", Long.parseLong("1406595596944"));
         json1.put("u", Long.parseLong("1406595596944"));
-        DcIndexResponse res1 = type.create(id, json1);
+        PersoniumIndexResponse res1 = type.create(id, json1);
         assertEquals(idList[0], res1.getId());
     }
 
@@ -147,7 +147,7 @@ public class RepairAdsTest {
 
             List<String> list = new ArrayList<String>();
             list.add("abc");
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
 
             List<JSONObject> adsResponse = AdsAccessor.getIdListOnAds(logInfo);
             repair.repairToAds(logInfo, esResponse, adsResponse);
@@ -186,7 +186,7 @@ public class RepairAdsTest {
             // 前準備で登録したデータをESから取得する
             List<String> list = new ArrayList<String>();
             list.add(id);
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
 
             // ADSへ同じデータを2件登録する
             AdsAccessor.createAds(idxName, "Cell", esResponse);
@@ -236,7 +236,7 @@ public class RepairAdsTest {
             // 前準備で登録したデータをESから取得する
             List<String> list = new ArrayList<String>();
             list.add(id);
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
 
             // ADSから対象データを検索する
             List<JSONObject> adsResponseBefore = AdsAccessor.getIdListOnAds(logInfo);
@@ -272,7 +272,7 @@ public class RepairAdsTest {
             // ADSにデータを登録する
             List<String> list = new ArrayList<String>();
             list.add(id);
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
             AdsAccessor.createAds(idxName, "Entity", esResponse);
 
             // ESにデータ更新をする(バージョンが2)
@@ -351,7 +351,7 @@ public class RepairAdsTest {
         // 前準備で登録したデータをESから取得する
         List<String> list = new ArrayList<String>();
         list.add(id);
-        DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+        PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
 
         // ADSにデータを登録
         EntitySetDocHandler oedh = new OEntityDocHandler(esResponse.getHits().getHits()[0]);
@@ -407,7 +407,7 @@ public class RepairAdsTest {
         // ADSから対象データを検索する(0件)
         List<JSONObject> adsResponseBefore = AdsAccessor.getIdListOnAds(logInfo);
         // ESから対象データを検索する(0件)
-        DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+        PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
 
         // 対象データのリペア処理が無視されること
         repair.repairToAds(logInfo, esResponse, adsResponseBefore);
@@ -436,7 +436,7 @@ public class RepairAdsTest {
             // ADSにデータを登録する
             List<String> list = new ArrayList<String>();
             list.add(id);
-            DcSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
+            PersoniumSearchResponse esResponse = EsAccessor.search(idxName, ROUTING_ID, list, "UserData");
             AdsAccessor.createAds(idxName, "Entity", esResponse);
 
             // ESにデータ更新をする(バージョンが2)

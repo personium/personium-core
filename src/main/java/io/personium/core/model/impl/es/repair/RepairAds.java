@@ -37,8 +37,8 @@ import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.ads.AdsWriteFailureLogWriter;
 import io.personium.common.ads.RollingAdsWriteFailureLog;
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.DcSearchHits;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumSearchHits;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.response.EsClientException;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.DcCoreException;
@@ -398,7 +398,7 @@ public class RepairAds {
                         indexName = DcCoreConfig.getEsUnitPrefix() + "_" + EsIndex.CATEGORY_AD;
                     }
                     // ES/ADSへの検索は、一括検索ができるようなAPIを使用しているが、今のところは1件ずつ処理することを前提としている。
-                    DcSearchResponse esResponse = EsAccessor.search(indexName, routingId, idList, logInfo.getType());
+                    PersoniumSearchResponse esResponse = EsAccessor.search(indexName, routingId, idList, logInfo.getType());
                     List<JSONObject> adsResponse = AdsAccessor.getIdListOnAds(logInfo);
                     repairToAds(logInfo, esResponse, adsResponse);
                 } catch (EsClientException e) {
@@ -453,13 +453,13 @@ public class RepairAds {
      */
     public void repairToAds(
             AdsWriteFailureLogInfo logInfo,
-            DcSearchResponse esResponse,
+            PersoniumSearchResponse esResponse,
             List<JSONObject> adsResponse) throws RepairAdsException {
 
         // 検索結果として、２件以上がヒットした場合は異常事態とみなし、エラーとする。
         // （現状は、１件ずつ処理しているため、このチェックがある。ｎ件ずつ処理する場合は、ｎ件ヒットで確認する）
         // TODO 件数の数値は、フィールドに追い出す。
-        DcSearchHits hits = esResponse.getHits();
+        PersoniumSearchHits hits = esResponse.getHits();
         if (hits.getAllPages() > 1) {
             String message =
                     String.format("Unexpected number of data returned from Elasticsearch. [%d]", hits.getAllPages());

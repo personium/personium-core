@@ -40,8 +40,8 @@ import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.ads.AdsWriteFailureLogWriter;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.EsType;
-import io.personium.common.es.response.DcSearchHit;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.DcCoreLog;
@@ -129,7 +129,7 @@ public class RepairAdsIntegrationTest extends AbstractCase {
             CellUtils.create(cellName, MASTER_TOKEN_NAME, owner, HttpStatus.SC_CREATED);
 
             // ESからデータ取得
-            DcSearchHit esHit = searchFromEs(indexName, esTypeName, routingId, searchFieldName, searchFieldValue);
+            PersoniumSearchHit esHit = searchFromEs(indexName, esTypeName, routingId, searchFieldName, searchFieldValue);
             String id = esHit.getId();
             EntitySetDocHandler esDocument = new CellDocHandler(esHit);
 
@@ -232,10 +232,10 @@ public class RepairAdsIntegrationTest extends AbstractCase {
 
             // ESからデータ取得
             String cellIndexName = DcCoreConfig.getEsUnitPrefix() + "_" + IndexNameEncoder.encodeEsIndexName("ad");
-            DcSearchHit cellEsHit = searchFromEs(cellIndexName, Cell.EDM_TYPE_NAME, EsIndex.CELL_ROUTING_KEY_NAME,
+            PersoniumSearchHit cellEsHit = searchFromEs(cellIndexName, Cell.EDM_TYPE_NAME, EsIndex.CELL_ROUTING_KEY_NAME,
                     "Name", cellName);
             String cellId = cellEsHit.getId();
-            DcSearchHit userDataEsHit = searchFromEs(userDataIndexName, userDataEsTypeName, cellId,
+            PersoniumSearchHit userDataEsHit = searchFromEs(userDataIndexName, userDataEsTypeName, cellId,
                     userDataSearchFieldName,
                     userDataSearchFieldValue);
             EntitySetDocHandler esDocument = new UserDataDocHandler(userDataEsHit);
@@ -323,7 +323,7 @@ public class RepairAdsIntegrationTest extends AbstractCase {
      * @return 検索結果
      */
     @SuppressWarnings("unchecked")
-    DcSearchHit searchFromEs(String indexName,
+    PersoniumSearchHit searchFromEs(String indexName,
             String esTypeName,
             String routingId,
             String searchFieldName,
@@ -340,11 +340,11 @@ public class RepairAdsIntegrationTest extends AbstractCase {
                 + "    }, "
                 + "    \"size\": 1"
                 + "}";
-        DcSearchResponse esResponse;
+        PersoniumSearchResponse esResponse;
         try {
             esResponse = type.search((Map<String, Object>) new JSONParser().parse(query));
             assertEquals("Failed to retrieve test data from Elasticsearch.", 1, esResponse.getHits().getCount());
-            DcSearchHit esHit = esResponse.getHits().getAt(0);
+            PersoniumSearchHit esHit = esResponse.getHits().getAt(0);
             return esHit;
         } catch (ParseException e) {
             fail("Failed to parse query for ES. " + e.getMessage());

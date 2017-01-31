@@ -59,14 +59,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.EsBulkRequest;
-import io.personium.common.es.response.DcBulkItemResponse;
-import io.personium.common.es.response.DcBulkResponse;
-import io.personium.common.es.response.DcDeleteResponse;
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.response.DcSearchHit;
-import io.personium.common.es.response.DcSearchHits;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumBulkItemResponse;
+import io.personium.common.es.response.PersoniumBulkResponse;
+import io.personium.common.es.response.PersoniumDeleteResponse;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
+import io.personium.common.es.response.PersoniumSearchHits;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.response.EsClientException;
 import io.personium.common.es.response.EsClientException.DcSearchPhaseExecutionException;
 import io.personium.core.DcCoreConfig;
@@ -196,7 +196,7 @@ public abstract class EsODataProducer implements DcODataProducer {
      * @param searchHit 検索結果
      * @return LinkDocHandler
      */
-    public LinkDocHandler getLinkDocHandler(DcSearchHit searchHit) {
+    public LinkDocHandler getLinkDocHandler(PersoniumSearchHit searchHit) {
         return new LinkDocHandler(searchHit);
     }
 
@@ -475,7 +475,7 @@ public abstract class EsODataProducer implements DcODataProducer {
                     // linkの情報を取得する
                     String id = (String) links.get(getLinkskey(entityType));
                     EntitySetAccessor esType = this.getAccessorForEntitySet(entityType);
-                    DcGetResponse res = esType.get(id);
+                    PersoniumGetResponse res = esType.get(id);
                     if (res != null) {
                         // linkに紐付いているlinkのIDを取得する
                         HashMap<String, String> tmpntkp = AbstractODataResource.convertNTKP(propName);
@@ -490,7 +490,7 @@ public abstract class EsODataProducer implements DcODataProducer {
                 String propValue = null;
                 if (linkId != null) {
                     EntitySetAccessor esType = this.getAccessorForEntitySet(entityType);
-                    DcGetResponse res = esType.get(linkId);
+                    PersoniumGetResponse res = esType.get(linkId);
                     if (res != null) {
                         propValue = (String) ((Map<String, Object>) res.getSource().get(
                                 OEntityDocHandler.KEY_STATIC_FIELDS)).get(propName);
@@ -628,14 +628,14 @@ public abstract class EsODataProducer implements DcODataProducer {
 
         // 2. ESへのリクエスト
         EntitySetAccessor esType = this.getAccessorForEntitySet(entitySetName);
-        DcSearchResponse res = esType.search(source);
+        PersoniumSearchResponse res = esType.search(source);
 
         // 3. ESからの応答の評価
         // Indexつくりたてのときはresがnullになる。データがないのでnullを返せば良い.
         if (res == null) {
             return null;
         }
-        DcSearchHits hits = res.getHits();
+        PersoniumSearchHits hits = res.getHits();
         // ヒット件数0はしなかったらNullを返す
         if (hits.getCount() == 0) {
             return null;
@@ -651,7 +651,7 @@ public abstract class EsODataProducer implements DcODataProducer {
     }
     private EntitySetDocHandler retrieveWithInternalId(EdmEntitySet eSet, String internalId) {
         EntitySetAccessor esType = this.getAccessorForEntitySet(eSet.getName());
-        DcGetResponse getRes = esType.get(internalId);
+        PersoniumGetResponse getRes = esType.get(internalId);
         if (getRes == null) {
             return null;
         }
@@ -665,7 +665,7 @@ public abstract class EsODataProducer implements DcODataProducer {
      * @param entitySetName エンティティセット名
      * @return EntitySetDocHandler
      */
-    protected EntitySetDocHandler getDocHandler(DcSearchHit searchHit, String entitySetName) {
+    protected EntitySetDocHandler getDocHandler(PersoniumSearchHit searchHit, String entitySetName) {
         return new OEntityDocHandler(searchHit);
     }
 
@@ -685,7 +685,7 @@ public abstract class EsODataProducer implements DcODataProducer {
      * @param entitySetName エンティティセット名
      * @return EntitySetDocHandler
      */
-    protected EntitySetDocHandler getDocHandler(DcGetResponse response, String entitySetName) {
+    protected EntitySetDocHandler getDocHandler(PersoniumGetResponse response, String entitySetName) {
         return new OEntityDocHandler(response);
     }
 
@@ -768,7 +768,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         ODataQueryHandler visitor = getODataQueryHandler(queryInfo, eSet.getType(), implicitFilters);
         Map<String, Object> source = visitor.getSource();
 
-        DcSearchResponse res = null;
+        PersoniumSearchResponse res = null;
         try {
             res = esType.search(source);
         } catch (EsClientException ex) {
@@ -787,7 +787,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         }
         List<OEntity> entList = new ArrayList<OEntity>();
         if (res != null) {
-            DcSearchHit[] hits = res.getHits().getHits();
+            PersoniumSearchHit[] hits = res.getHits().getHits();
             Map<String, List<OEntity>> expandEntitiesMap = null;
 
             Map<String, String> ntkpProperties = new HashMap<String, String>();
@@ -805,7 +805,7 @@ public abstract class EsODataProducer implements DcODataProducer {
                 setEntityPropertyMap(eSet, hits, ntkpValueMap);
             }
             List<EntitySetDocHandler> entityList = new ArrayList<EntitySetDocHandler>();
-            for (DcSearchHit hit : hits) {
+            for (PersoniumSearchHit hit : hits) {
                 EntitySetDocHandler oedh = getDocHandler(hit, eSet.getName());
                 entityList.add(oedh);
             }
@@ -859,7 +859,7 @@ public abstract class EsODataProducer implements DcODataProducer {
      * @param ntkpValueMap NTKPマップ
      */
     @SuppressWarnings("unchecked")
-    private void setEntityPropertyMap(EdmEntitySet eSet, DcSearchHit[] hits, Map<String, String> ntkpValueMap) {
+    private void setEntityPropertyMap(EdmEntitySet eSet, PersoniumSearchHit[] hits, Map<String, String> ntkpValueMap) {
         String entityTypeKey;
         String linkTypeName;
         if (Property.EDM_TYPE_NAME.equals(eSet.getName())) {
@@ -875,7 +875,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         this.entityTypeMap.putAll(ntkpValueMap);
 
         List<String> processedPropertyAlias = new ArrayList<String>();
-        for (DcSearchHit property : hits) {
+        for (PersoniumSearchHit property : hits) {
             Map<String, Object> fields = property.getSource();
             Map<String, Object> staticFileds = ((Map<String, Object>) fields.get(OEntityDocHandler.KEY_STATIC_FIELDS));
             Map<String, Object> hideenFileds = ((Map<String, Object>) fields.get(OEntityDocHandler.KEY_HIDDEN_FIELDS));
@@ -949,10 +949,10 @@ public abstract class EsODataProducer implements DcODataProducer {
                     searchQuery.put("query", query);
                 }
 
-                DcSearchHit[] ntkpSearchResults = ntkpAccessor.search(searchQuery).getHits().getHits();
+                PersoniumSearchHit[] ntkpSearchResults = ntkpAccessor.search(searchQuery).getHits().getHits();
 
                 // 2階層目のNTKPが存在する場合、2階層目のNTKPのエンティティ一覧を取得する
-                DcSearchHit[] nestNtkpSearchResults = null;
+                PersoniumSearchHit[] nestNtkpSearchResults = null;
                 Map<String, String> nestNtkpValueMap = new HashMap<String, String>();
                 if (propName.startsWith("_")) {
                     HashMap<String, String> tmpntkp = AbstractODataResource.convertNTKP(propName);
@@ -960,7 +960,7 @@ public abstract class EsODataProducer implements DcODataProducer {
                     propName = tmpntkp.get("propName");
                     ntkpAccessor = this.getAccessorForEntitySet(entityType);
                     nestNtkpSearchResults = ntkpAccessor.search(searchQuery).getHits().getHits();
-                    for (DcSearchHit nestNtkpSearchResult : nestNtkpSearchResults) {
+                    for (PersoniumSearchHit nestNtkpSearchResult : nestNtkpSearchResults) {
                         String linkId = nestNtkpSearchResult.getId();
                         String linkNtkpValue = ((Map<String, Object>) nestNtkpSearchResult.getSource().get(
                                 OEntityDocHandler.KEY_STATIC_FIELDS)).get(propName).toString();
@@ -969,7 +969,7 @@ public abstract class EsODataProducer implements DcODataProducer {
                 }
 
                 // LinkIDがKey,NTKPの値がValueのMapを作成する
-                for (DcSearchHit ntkpSearchResult : ntkpSearchResults) {
+                for (PersoniumSearchHit ntkpSearchResult : ntkpSearchResults) {
                     String linkId = ntkpSearchResult.getId();
                     Map<String, Object> linkFields = (Map<String, Object>) ntkpSearchResult.getSource().get(
                             OEntityDocHandler.KEY_LINK);
@@ -1033,7 +1033,7 @@ public abstract class EsODataProducer implements DcODataProducer {
                 EntitySetAccessor targetEsType = this.getAccessorForEntitySet(key);
 
                 // 削除するデータと紐ついているデータを取得する
-                DcGetResponse linksRes = targetEsType.get(entry.getValue().toString());
+                PersoniumGetResponse linksRes = targetEsType.get(entry.getValue().toString());
                 EntitySetDocHandler linksDocHandler = getDocHandler(linksRes, entitySetName);
                 Map<String, Object> links = linksDocHandler.getManyToOnelinkId();
 
@@ -1048,7 +1048,7 @@ public abstract class EsODataProducer implements DcODataProducer {
 
             // 削除前処理
             this.beforeDelete(entitySetName, entityKey, hit);
-            DcDeleteResponse res = null;
+            PersoniumDeleteResponse res = null;
             // 削除処理
             res = esType.delete(hit);
 
@@ -1147,7 +1147,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         this.beforeCreate(entitySetName, entity, oedh);
 
         // データが存在しなければ、esJsonをESに保存する
-        DcIndexResponse idxRs = null;
+        PersoniumIndexResponse idxRs = null;
         idxRs = esType.create(oedh.getId(), oedh);
 
         // 登録後処理
@@ -1867,7 +1867,7 @@ public abstract class EsODataProducer implements DcODataProducer {
     private void checkExistsLinkForNtoN(ODataLinkAccessor esType, LinkDocHandler docHandler) {
         String docid = docHandler.createLinkId();
         // Link の存在確認
-        DcGetResponse gRes = esType.get(docid);
+        PersoniumGetResponse gRes = esType.get(docid);
         if (gRes != null && gRes.exists()) {
             // 既に該当LINKが存在する
             throw DcCoreException.OData.CONFLICT_LINKS;
@@ -2088,7 +2088,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         String docid = elh.createLinkId();
 
         // Link の存在確認
-        DcGetResponse gRes = esType.get(docid);
+        PersoniumGetResponse gRes = esType.get(docid);
         if (gRes != null && gRes.exists()) {
             esType.delete(elh);
             return true;
@@ -2322,7 +2322,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             List<String> idvals = LinkDocHandler.query(this.getAccessorForLink(),
                     src, tgtEsType.getType(), targetEntityTypeId, qi);
 
-            DcSearchHits sHits = ODataProducerUtils.searchLinksNN(src, targetSetName, idvals, tgtEsType, queryInfo);
+            PersoniumSearchHits sHits = ODataProducerUtils.searchLinksNN(src, targetSetName, idvals, tgtEsType, queryInfo);
             oeids = getOEntityIds(sHits, targetSetName, tgtSet);
 
         } else if ((assoc.getEnd1().getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE
@@ -2369,7 +2369,7 @@ public abstract class EsODataProducer implements DcODataProducer {
 
                 // 検索の実行
                 EntitySetAccessor esType = this.getAccessorForEntitySet(targetSetName);
-                DcSearchHits sHits = esType.search(filter).hits();
+                PersoniumSearchHits sHits = esType.search(filter).hits();
                 oeids = getOEntityIds(sHits, targetSetName, tgtSet);
             } else {
                 // SOURCEがNの場合
@@ -2387,13 +2387,13 @@ public abstract class EsODataProducer implements DcODataProducer {
      * @param tgtSet リクエストURLにて指定されたNavPropのEdmEntitySet
      * @return OEntityIdの一覧
      */
-    private List<OEntityId> getOEntityIds(DcSearchHits sHits, String targetSetName, EdmEntitySet tgtSet) {
+    private List<OEntityId> getOEntityIds(PersoniumSearchHits sHits, String targetSetName, EdmEntitySet tgtSet) {
         // 検索結果からOEntityIdのListを生成する
         List<OEntityId> oeids = new ArrayList<OEntityId>();
         if (sHits == null) {
             return oeids;
         }
-        for (DcSearchHit hit : sHits.getHits()) {
+        for (PersoniumSearchHit hit : sHits.getHits()) {
             EntitySetDocHandler oedh = getDocHandler(hit, targetSetName);
             OEntityId id = getOEntityId(targetSetName, tgtSet, oedh);
             oeids.add(id);
@@ -2415,7 +2415,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         String linksId = (String) src.getManyToOnelinkId().get(getLinkskey(targetSetName));
 
         if (linksId != null) {
-            DcGetResponse response = esType.get(linksId);
+            PersoniumGetResponse response = esType.get(linksId);
             EntitySetDocHandler docHandler = getDocHandler(response, targetSetName);
             OEntityId id = getOEntityId(targetSetName, tgtSet, docHandler);
             oeids.add(id);
@@ -2703,7 +2703,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         }
 
         // esJsonをESに保存する
-        DcIndexResponse idxRes = null;
+        PersoniumIndexResponse idxRes = null;
         // リクエストのEtag指定から検査用versionを取り出す（Etag指定が無い場合はNull）
         Long version = oedhNew.getVersion();
         if (version == null || version < 0) {
@@ -2763,13 +2763,13 @@ public abstract class EsODataProducer implements DcODataProducer {
 
             // ESから変更するAccount情報を取得する
             EntitySetAccessor esType = this.getAccessorForEntitySet(entitySet.getName());
-            DcGetResponse dcGetResponseNew = esType.get(accountId);
-            if (dcGetResponseNew == null) {
+            PersoniumGetResponse PersoniumGetResponseNew = esType.get(accountId);
+            if (PersoniumGetResponseNew == null) {
                 // 認証から最終ログイン時刻更新までにAccountが削除された場合は、更新対象が存在しないため、正常終了する。
                 DcCoreLog.Auth.ACCOUNT_ALREADY_DELETED.params(originalKey.toKeyString()).writeLog();
                 return;
             }
-            EntitySetDocHandler oedhNew = new OEntityDocHandler(dcGetResponseNew);
+            EntitySetDocHandler oedhNew = new OEntityDocHandler(PersoniumGetResponseNew);
             // 取得したAccountの最終ログイン日時を上書きする
             Map<String, Object> staticFields = oedhNew.getStaticFields();
             staticFields.put("LastAuthenticated", nowTimeMillis);
@@ -2988,9 +2988,9 @@ public abstract class EsODataProducer implements DcODataProducer {
             return false;
         }
         DataSourceAccessor accessor = getAccessorForBatch();
-        DcSearchResponse searchResponse = accessor.searchForIndex(getCellId(), searchQuery);
+        PersoniumSearchResponse searchResponse = accessor.searchForIndex(getCellId(), searchQuery);
         if (searchResponse.getHits().getCount() != 0) {
-            for (DcSearchHit hit : searchResponse.getHits().getHits()) {
+            for (PersoniumSearchHit hit : searchResponse.getHits().getHits()) {
                 // TODO 複合主キー対応
                 HashMap<String, Object> staticFields = (HashMap<String, Object>) hit.getSource()
                         .get(OEntityDocHandler.KEY_STATIC_FIELDS);
@@ -3058,9 +3058,9 @@ public abstract class EsODataProducer implements DcODataProducer {
         if (searchQuery == null) {
             return response;
         }
-        DcSearchResponse searchResponse = accessor.searchForIndex(cellId, searchQuery);
+        PersoniumSearchResponse searchResponse = accessor.searchForIndex(cellId, searchQuery);
         if (searchResponse.getHits().getCount() != 0) {
-            for (DcSearchHit hit : searchResponse.getHits().getHits()) {
+            for (PersoniumSearchHit hit : searchResponse.getHits().getHits()) {
                 // TODO 複合主キー対応
                 HashMap<String, Object> staticFields = (HashMap<String, Object>) hit.getSource()
                         .get(OEntityDocHandler.KEY_STATIC_FIELDS);
@@ -3089,9 +3089,9 @@ public abstract class EsODataProducer implements DcODataProducer {
         }
         // 一括登録を実行する
         try {
-            DcBulkResponse bulkResponse = accessor.bulkCreate(esBulkRequest, adsBulkRequest, cellId);
+            PersoniumBulkResponse bulkResponse = accessor.bulkCreate(esBulkRequest, adsBulkRequest, cellId);
             // EntitiesResponse組み立て
-            for (DcBulkItemResponse itemResponse : bulkResponse.items()) {
+            for (PersoniumBulkItemResponse itemResponse : bulkResponse.items()) {
                 String key = keyMap.get(itemResponse.getId());
                 if (itemResponse.isFailed()) {
                     // バルク内でエラーが発生していた場合はエラーをセットする
@@ -3337,9 +3337,9 @@ public abstract class EsODataProducer implements DcODataProducer {
         DataSourceAccessor accessor = getAccessorForBatch();
         try {
             int responseIndex = 0;
-            DcBulkResponse bulkResponse = accessor.bulkUpdateLink(esBulkRequest, adsBulkEntityRequest,
+            PersoniumBulkResponse bulkResponse = accessor.bulkUpdateLink(esBulkRequest, adsBulkEntityRequest,
                     adsBulkLinkRequest, cellId);
-            DcBulkItemResponse[] responseItems = bulkResponse.items();
+            PersoniumBulkItemResponse[] responseItems = bulkResponse.items();
             for (NavigationPropertyBulkContext context : bulkContexts) {
                 if (context.isError()) {
                     continue;
@@ -3348,8 +3348,8 @@ public abstract class EsODataProducer implements DcODataProducer {
                 NavigationPropertyLinkType linkType = context.getLinkType();
                 switch (linkType) {
                 case oneToOne:
-                    DcBulkItemResponse itemResponseFrom = responseItems[responseIndex++];
-                    DcBulkItemResponse itemResponseTo = responseItems[responseIndex++];
+                    PersoniumBulkItemResponse itemResponseFrom = responseItems[responseIndex++];
+                    PersoniumBulkItemResponse itemResponseTo = responseItems[responseIndex++];
                     if (itemResponseFrom.isFailed() || itemResponseTo.isFailed()) {
                         context.setException(new ServerErrorException("failed to store to es"));
                     } else {
@@ -3357,14 +3357,14 @@ public abstract class EsODataProducer implements DcODataProducer {
                     }
                     break;
                 case manyToOne:
-                    DcBulkItemResponse manyToOneResponse = responseItems[responseIndex++];
+                    PersoniumBulkItemResponse manyToOneResponse = responseItems[responseIndex++];
                     if (manyToOneResponse.isFailed()) {
                         context.setException(new ServerErrorException("failed to store to es"));
                     }
                     break;
                 case oneToMany:
                 case manyToMany:
-                    DcBulkItemResponse itemResponse = responseItems[responseIndex++];
+                    PersoniumBulkItemResponse itemResponse = responseItems[responseIndex++];
                     if (itemResponse.isFailed()) {
                         context.setException(new ServerErrorException("failed to store to es"));
                     } else {

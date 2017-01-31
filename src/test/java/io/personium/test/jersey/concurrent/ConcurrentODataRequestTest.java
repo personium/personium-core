@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.lock.Lock;
@@ -521,14 +521,14 @@ public class ConcurrentODataRequestTest extends JerseyTest {
 
     private String retrieveCellId(Map<String, Object> query) {
         EntitySetAccessor ecCells = EsModel.cell();
-        DcSearchResponse response = ecCells.search(query);
+        PersoniumSearchResponse response = ecCells.search(query);
         if (isRetriveFailed(response)) {
             return null;
         }
         return response.getHits().getAt(0).getId();
     }
 
-    private boolean isRetriveFailed(DcSearchResponse response) {
+    private boolean isRetriveFailed(PersoniumSearchResponse response) {
         return response == null || response.getHits().getCount() == 0;
     }
 

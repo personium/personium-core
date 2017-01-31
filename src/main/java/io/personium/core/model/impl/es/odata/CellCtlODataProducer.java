@@ -32,8 +32,8 @@ import org.odata4j.producer.EntityResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.DcCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
@@ -206,7 +206,7 @@ public class CellCtlODataProducer extends EsODataProducer {
             // ESに保存する
             EntitySetAccessor esType = this.getAccessorForEntitySet(entitySet.getName());
             Long version = entitySetDocHandler.getVersion();
-            DcIndexResponse idxRes;
+            PersoniumIndexResponse idxRes;
             idxRes = esType.update(entitySetDocHandler.getId(), entitySetDocHandler, version);
             entitySetDocHandler.setVersion(idxRes.version());
             return entitySetDocHandler.createEtag();
@@ -376,7 +376,7 @@ public class CellCtlODataProducer extends EsODataProducer {
         // EntitySetDocHandlerの作成
         EntitySetDocHandler oedh = new OEntityDocHandler();
         oedh.setType(typeName);
-        oedh.setId(DcUUID.randomUUID());
+        oedh.setId(PersoniumUUID.randomUUID());
 
         // staticFields
         oedh.setStaticFields(staticFields);

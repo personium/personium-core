@@ -21,10 +21,10 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.DcActionResponse;
-import io.personium.common.es.response.DcDeleteResponse;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.response.PersoniumActionResponse;
+import io.personium.common.es.response.PersoniumDeleteResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.DcCoreException;
 import io.personium.core.DcCoreLog;
@@ -60,8 +60,8 @@ public class DavNodeAccessor extends DataSourceAccessor {
      * @param davNode Davコンポーネント
      * @return 登録結果
      */
-    public DcIndexResponse create(final DavNode davNode) {
-        String id = DcUUID.randomUUID();
+    public PersoniumIndexResponse create(final DavNode davNode) {
+        String id = PersoniumUUID.randomUUID();
         return this.create(id, davNode);
     }
 
@@ -71,11 +71,11 @@ public class DavNodeAccessor extends DataSourceAccessor {
      * @param davNode Davコンポーネント
      * @return 登録結果
      */
-    public DcIndexResponse create(String id, DavNode davNode) {
+    public PersoniumIndexResponse create(String id, DavNode davNode) {
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         super.prepareDataUpdate(getIndex().getName());
         davNode.setId(id);
-        DcIndexResponse response = super.create(id, davNode.getSource());
+        PersoniumIndexResponse response = super.create(id, davNode.getSource());
         createAds(davNode);
         return response;
     }
@@ -86,11 +86,11 @@ public class DavNodeAccessor extends DataSourceAccessor {
      * @param davNode Davコンポーネント
      * @return 登録結果
      */
-    public DcActionResponse createForFile(String id, DavNode davNode) {
+    public PersoniumActionResponse createForFile(String id, DavNode davNode) {
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         prepareDataUpdate(getIndex().getName());
         davNode.setId(id);
-        DcActionResponse response = null;
+        PersoniumActionResponse response = null;
         try {
             // ElasticSearch更新
             response = createForDavNodeFile(id, davNode.getSource());
@@ -154,7 +154,7 @@ public class DavNodeAccessor extends DataSourceAccessor {
      * @param davNode 削除データ
      * @return 削除結果
      */
-    public DcDeleteResponse delete(DavNode davNode) {
+    public PersoniumDeleteResponse delete(DavNode davNode) {
         return this.delete(davNode, -1);
     }
 
@@ -164,12 +164,12 @@ public class DavNodeAccessor extends DataSourceAccessor {
      * @param davNode 削除データ
      * @return 削除結果
      */
-    public DcDeleteResponse delete(DavNode davNode, long version) {
+    public PersoniumDeleteResponse delete(DavNode davNode, long version) {
         String id = davNode.getId();
 
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         super.prepareDataUpdate(getIndex().getName());
-        DcDeleteResponse response = super.delete(id, version);
+        PersoniumDeleteResponse response = super.delete(id, version);
         deleteAds(davNode, response.getVersion());
         return response;
     }
@@ -206,7 +206,7 @@ public class DavNodeAccessor extends DataSourceAccessor {
      * @param davNode Davコンポーネント
      * @return 更新結果
      */
-    public DcIndexResponse update(String id, DavNode davNode) {
+    public PersoniumIndexResponse update(String id, DavNode davNode) {
         return this.update(id, davNode, -1);
     }
 
@@ -217,10 +217,10 @@ public class DavNodeAccessor extends DataSourceAccessor {
      * @param version バージョン情報
      * @return 更新結果
      */
-    public DcIndexResponse update(String id, DavNode davNode, long version) {
+    public PersoniumIndexResponse update(String id, DavNode davNode, long version) {
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         super.prepareDataUpdate(getIndex().getName());
-        DcIndexResponse response = super.update(id, davNode.getSource(), version);
+        PersoniumIndexResponse response = super.update(id, davNode.getSource(), version);
         updateAds(davNode, response.getVersion());
         return response;
     }
@@ -232,10 +232,10 @@ public class DavNodeAccessor extends DataSourceAccessor {
      * @param version バージョン情報
      * @return 更新結果
      */
-    public DcIndexResponse updateForFile(String id, DavNode davNode, long version) {
+    public PersoniumIndexResponse updateForFile(String id, DavNode davNode, long version) {
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         super.prepareDataUpdate(getIndex().getName());
-        DcIndexResponse response = null;
+        PersoniumIndexResponse response = null;
         try {
             // ElasticSearch更新
             response = super.update(id, davNode.getSource(), version);

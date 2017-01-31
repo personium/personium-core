@@ -81,7 +81,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.DcCoreException;
@@ -668,7 +668,7 @@ public class BarFileReadRunner implements Runnable {
             LinkedHashMap<String, BulkRequest> bulkRequests,
             Map<String, String> fileNameMap) {
         BulkRequest bulkRequest = new BulkRequest();
-        String key = DcUUID.randomUUID();
+        String key = PersoniumUUID.randomUUID();
         try {
             // entityType名を取得する
             String entityTypeName = getEntityTypeName(entryName);
@@ -702,7 +702,7 @@ public class BarFileReadRunner implements Runnable {
 
             // ID指定がない場合はUUIDを払い出す
             if (docHandler.getId() == null) {
-                docHandler.setId(DcUUID.randomUUID());
+                docHandler.setId(PersoniumUUID.randomUUID());
             }
             bulkRequest.setEntitySetName(entityTypeName);
             bulkRequest.setDocHandler(docHandler);

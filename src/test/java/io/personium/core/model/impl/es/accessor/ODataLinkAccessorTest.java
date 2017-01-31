@@ -33,7 +33,7 @@ import org.junit.runner.RunWith;
 
 import io.personium.common.es.EsClient;
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.DcIndexResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.model.impl.es.ads.AdsException;
 import io.personium.core.model.impl.es.ads.JdbcAds;
@@ -119,7 +119,7 @@ public class ODataLinkAccessorTest {
         LinkDocHandler docHandler = createTestLinkDocHandler();
 
         // データ登録実行
-        DcIndexResponse response = linkAccessor.create(docHandler);
+        PersoniumIndexResponse response = linkAccessor.create(docHandler);
 
         // レスポンスのチェック
         assertNotNull(response);
@@ -157,7 +157,7 @@ public class ODataLinkAccessorTest {
         }
 
         // データ登録実行
-        DcIndexResponse response = linkAccessor.create(docHandler);
+        PersoniumIndexResponse response = linkAccessor.create(docHandler);
 
         // レスポンスのチェック
         assertNotNull(response);
@@ -174,7 +174,7 @@ public class ODataLinkAccessorTest {
         assertNotNull(index);
         ODataLinkAccessor linkAccessor = new ODataLinkAccessor(index, TYPE_NAME, ROUTING_ID);
         LinkDocHandler docHandler = createTestLinkDocHandler();
-        DcIndexResponse createResponse = linkAccessor.create(docHandler);
+        PersoniumIndexResponse createResponse = linkAccessor.create(docHandler);
         assertNotNull(createResponse);
         assertFalse(createResponse.getId().equals(""));
 
@@ -182,7 +182,7 @@ public class ODataLinkAccessorTest {
         String updateString = "updatedEnt1Key";
         docHandler.setEnt1Key(updateString);
 
-        DcIndexResponse updateResponse = linkAccessor.update(createResponse.getId(), docHandler);
+        PersoniumIndexResponse updateResponse = linkAccessor.update(createResponse.getId(), docHandler);
 
         // レスポンスのチェック
         assertNotNull(updateResponse);
@@ -215,7 +215,7 @@ public class ODataLinkAccessorTest {
         assertNotNull(index);
         ODataLinkAccessor linkAccessor = new ODataLinkAccessor(index, TYPE_NAME, ROUTING_ID);
         LinkDocHandler docHandler = createTestLinkDocHandler();
-        DcIndexResponse createResponse = linkAccessor.create(docHandler);
+        PersoniumIndexResponse createResponse = linkAccessor.create(docHandler);
         assertNotNull(createResponse);
         assertFalse(createResponse.getId().equals(""));
         try {
@@ -228,7 +228,7 @@ public class ODataLinkAccessorTest {
         String updateString = "updatedEnt1Key";
         docHandler.setEnt1Key(updateString);
 
-        DcIndexResponse updateResponse = linkAccessor.update(createResponse.getId(), docHandler);
+        PersoniumIndexResponse updateResponse = linkAccessor.update(createResponse.getId(), docHandler);
 
         // レスポンスのチェック
         assertNotNull(updateResponse);
@@ -245,7 +245,7 @@ public class ODataLinkAccessorTest {
         assertNotNull(index);
         ODataLinkAccessor linkAccessor = new ODataLinkAccessor(index, TYPE_NAME, ROUTING_ID);
         LinkDocHandler docHandler = createTestLinkDocHandler();
-        DcIndexResponse response = linkAccessor.create(docHandler);
+        PersoniumIndexResponse response = linkAccessor.create(docHandler);
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
 
@@ -274,7 +274,7 @@ public class ODataLinkAccessorTest {
         assertNotNull(index);
         ODataLinkAccessor linkAccessor = new ODataLinkAccessor(index, TYPE_NAME, ROUTING_ID);
         LinkDocHandler docHandler = createTestLinkDocHandler();
-        DcIndexResponse response = linkAccessor.create(docHandler);
+        PersoniumIndexResponse response = linkAccessor.create(docHandler);
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
         try {

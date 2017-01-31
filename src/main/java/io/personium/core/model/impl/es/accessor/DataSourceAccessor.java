@@ -29,17 +29,17 @@ import io.personium.common.ads.AdsWriteFailureLogWriter;
 import io.personium.common.es.EsBulkRequest;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.EsType;
-import io.personium.common.es.query.DcQueryBuilder;
-import io.personium.common.es.response.DcActionResponse;
-import io.personium.common.es.response.DcBulkItemResponse;
-import io.personium.common.es.response.DcBulkResponse;
-import io.personium.common.es.response.DcDeleteResponse;
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcIndexResponse;
-import io.personium.common.es.response.DcMultiSearchResponse;
-import io.personium.common.es.response.DcSearchResponse;
+import io.personium.common.es.query.PersoniumQueryBuilder;
+import io.personium.common.es.response.PersoniumActionResponse;
+import io.personium.common.es.response.PersoniumBulkItemResponse;
+import io.personium.common.es.response.PersoniumBulkResponse;
+import io.personium.common.es.response.PersoniumDeleteResponse;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
+import io.personium.common.es.response.PersoniumMultiSearchResponse;
+import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.response.EsClientException;
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.DcCoreException;
 import io.personium.core.DcCoreLog;
@@ -153,7 +153,7 @@ public class DataSourceAccessor {
      * @param id ドキュメントのID
      * @return 応答
      */
-    public DcGetResponse get(final String id) {
+    public PersoniumGetResponse get(final String id) {
         try {
             return this.type.get(id);
         } catch (EsClientException.EsNoResponseException e) {
@@ -167,8 +167,8 @@ public class DataSourceAccessor {
      * @return ES応答
      */
     @SuppressWarnings("rawtypes")
-    public DcIndexResponse create(final Map data) {
-        String id = DcUUID.randomUUID();
+    public PersoniumIndexResponse create(final Map data) {
+        String id = PersoniumUUID.randomUUID();
         return this.create(id, data);
     }
 
@@ -179,8 +179,8 @@ public class DataSourceAccessor {
      * @return ES応答
      */
     @SuppressWarnings({"rawtypes" })
-    public DcActionResponse createForDavNodeFile(final String id, final Map data) {
-        DcIndexResponse res = create(id, data);
+    public PersoniumActionResponse createForDavNodeFile(final String id, final Map data) {
+        PersoniumIndexResponse res = create(id, data);
         return res;
     }
 
@@ -191,7 +191,7 @@ public class DataSourceAccessor {
      * @return ES応答
      */
     @SuppressWarnings({"rawtypes" })
-    public DcIndexResponse create(final String id, final Map data) {
+    public PersoniumIndexResponse create(final String id, final Map data) {
         try {
             return this.type.create(id, data);
         } catch (EsClientException.EsSchemaMismatchException e) {
@@ -218,7 +218,7 @@ public class DataSourceAccessor {
      * @return ES応答
      */
     @SuppressWarnings({"rawtypes" })
-    public DcIndexResponse create(final String id, final Map data, final EntitySetDocHandler docHandler) {
+    public PersoniumIndexResponse create(final String id, final Map data, final EntitySetDocHandler docHandler) {
         try {
             return this.type.create(id, data);
         } catch (EsClientException.EsSchemaMismatchException e) {
@@ -245,7 +245,7 @@ public class DataSourceAccessor {
      * @return ES応答
      */
     @SuppressWarnings({"rawtypes" })
-    public DcIndexResponse update(final String id, final Map data, final long version) {
+    public PersoniumIndexResponse update(final String id, final Map data, final long version) {
         try {
             return this.type.update(id, data, version);
         } catch (EsClientException.EsSchemaMismatchException e) {
@@ -271,7 +271,7 @@ public class DataSourceAccessor {
      * @return ES応答
      */
     @SuppressWarnings("rawtypes")
-    public DcIndexResponse update(final String id, final Map data) {
+    public PersoniumIndexResponse update(final String id, final Map data) {
         return this.update(id, data, -1);
     }
 
@@ -289,7 +289,7 @@ public class DataSourceAccessor {
         }
         requestQuery.put("size", 0);
         try {
-            DcSearchResponse hit = this.type.search(requestQuery);
+            PersoniumSearchResponse hit = this.type.search(requestQuery);
             return hit.getHits().getAllPages();
         } catch (EsClientException.EsNoResponseException e) {
             throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
@@ -301,7 +301,7 @@ public class DataSourceAccessor {
      * @param query クエリ情報
      * @return ES応答
      */
-    public DcSearchResponse search(final Map<String, Object> query) {
+    public PersoniumSearchResponse search(final Map<String, Object> query) {
         Map<String, Object> requestQuery = null;
         if (query != null) {
             requestQuery = new HashMap<String, Object>(query);
@@ -325,7 +325,7 @@ public class DataSourceAccessor {
      * @param queryList クエリ情報の一覧
      * @return ES応答
      */
-    public DcMultiSearchResponse multiSearch(final List<Map<String, Object>> queryList) {
+    public PersoniumMultiSearchResponse multiSearch(final List<Map<String, Object>> queryList) {
         try {
             return this.type.multiSearch(queryList);
         } catch (EsClientException.EsNoResponseException e) {
@@ -339,7 +339,7 @@ public class DataSourceAccessor {
      * @param query クエリ情報
      * @return ES応答
      */
-    public DcSearchResponse indexSearch(final Map<String, Object> query) {
+    public PersoniumSearchResponse indexSearch(final Map<String, Object> query) {
         Map<String, Object> requestQuery = null;
         if (query == null) {
             requestQuery = new HashMap<String, Object>();
@@ -363,7 +363,7 @@ public class DataSourceAccessor {
      * @param version The version of the document to delete
      * @return 応答
      */
-    public DcDeleteResponse delete(final String docId, final long version) {
+    public PersoniumDeleteResponse delete(final String docId, final long version) {
         try {
             return this.type.delete(docId, version);
         } catch (EsClientException.EsIndexMissingException e) {
@@ -382,13 +382,13 @@ public class DataSourceAccessor {
      * @param routingId routingId
      * @return バルクレスポンス
      */
-    public DcBulkResponse bulkCreate(List<EsBulkRequest> esBulkRequest,
+    public PersoniumBulkResponse bulkCreate(List<EsBulkRequest> esBulkRequest,
             List<EntitySetDocHandler> adsBulkRequest,
             String routingId) {
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         prepareDataUpdate(this.index.getName());
 
-        DcBulkResponse response = null;
+        PersoniumBulkResponse response = null;
         try {
             response = this.index.bulkRequest(routingId, esBulkRequest, false);
         } catch (EsClientException.EsNoResponseException e) {
@@ -424,14 +424,14 @@ public class DataSourceAccessor {
      * @param routingId routingId
      * @return バルクレスポンス
      */
-    public DcBulkResponse bulkUpdateLink(List<EsBulkRequest> esBulkRequest,
+    public PersoniumBulkResponse bulkUpdateLink(List<EsBulkRequest> esBulkRequest,
             List<EntitySetDocHandler> adsBulkEntityRequest,
             List<LinkDocHandler> adsBulkLinkRequest,
             String routingId) {
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         prepareDataUpdate(this.index.getName());
 
-        DcBulkResponse response = null;
+        PersoniumBulkResponse response = null;
         try {
             response = this.index.bulkRequest(routingId, esBulkRequest, false);
         } catch (EsClientException.EsNoResponseException e) {
@@ -448,7 +448,7 @@ public class DataSourceAccessor {
 
                 // Adsの登録に失敗した場合は、専用のログに書込む
                 // ESでのバージョン情報を取得するためにesBulkRequestをループさせている
-                DcBulkItemResponse[] responseItems = response.items();
+                PersoniumBulkItemResponse[] responseItems = response.items();
                 int responseIndex = 0;
                 int adsBulkEntityRequestIndex = 0;
                 for (EsBulkRequest request : esBulkRequest) {
@@ -456,7 +456,7 @@ public class DataSourceAccessor {
                         responseIndex++;
                         continue;
                     }
-                    DcBulkItemResponse itemResponse = responseItems[responseIndex++];
+                    PersoniumBulkItemResponse itemResponse = responseItems[responseIndex++];
                     EntitySetDocHandler docHandler = adsBulkEntityRequest.get(adsBulkEntityRequestIndex++);
                     String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
                             docHandler.getCellId(), null, docHandler.getNodeId());
@@ -496,7 +496,7 @@ public class DataSourceAccessor {
      * @param routingId routingId
      * @param deleteQuery 削除対象を指定するクエリ
      */
-    protected void deleteByQuery(String routingId, DcQueryBuilder deleteQuery) {
+    protected void deleteByQuery(String routingId, PersoniumQueryBuilder deleteQuery) {
         this.index.deleteByQuery(routingId, deleteQuery);
     }
 
@@ -518,13 +518,13 @@ public class DataSourceAccessor {
      * @param query 検索クエリ
      * @return 検索結果
      */
-    public DcSearchResponse searchForIndex(String routingId, Map<String, Object> query) {
+    public PersoniumSearchResponse searchForIndex(String routingId, Map<String, Object> query) {
         try {
             if (!query.containsKey("size")) {
                 try {
                     // サイズの指定がない場合は、全件取得するようsizeを設定
                     query.put("size", 0);
-                    DcSearchResponse hit = this.index.search(routingId, query);
+                    PersoniumSearchResponse hit = this.index.search(routingId, query);
                     query.put("size", hit.getHits().getAllPages());
                 } catch (EsClientException.EsNoResponseException e) {
                     throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
@@ -542,7 +542,7 @@ public class DataSourceAccessor {
      * @param queryList 検索クエリ一覧
      * @return 検索結果
      */
-    public DcMultiSearchResponse multiSearchForIndex(String routingId, List<Map<String, Object>> queryList) {
+    public PersoniumMultiSearchResponse multiSearchForIndex(String routingId, List<Map<String, Object>> queryList) {
         try {
             return this.index.multiSearch(routingId, queryList);
         } catch (EsClientException.EsNoResponseException e) {

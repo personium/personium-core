@@ -40,11 +40,11 @@ import org.junit.runner.RunWith;
 
 import io.personium.common.es.EsClient;
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.DcActionResponse;
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcIndexResponse;
+import io.personium.common.es.response.PersoniumActionResponse;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.common.es.response.EsClientException;
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.model.file.BinaryDataAccessException;
 import io.personium.core.model.file.BinaryDataAccessor;
@@ -133,7 +133,7 @@ public class DavNodeAccessorTest {
         }
 
         @Override
-        public DcActionResponse createForFile(String id, DavNode davNode) {
+        public PersoniumActionResponse createForFile(String id, DavNode davNode) {
             throw new EsClientException(id);
         }
     }
@@ -150,7 +150,7 @@ public class DavNodeAccessorTest {
         DavNode davNode = createTestDavNode();
 
         // データ登録実行
-        DcIndexResponse response = davNodeAccessor.create(davNode);
+        PersoniumIndexResponse response = davNodeAccessor.create(davNode);
 
         // レスポンスのチェック
         assertNotNull(response);
@@ -188,7 +188,7 @@ public class DavNodeAccessorTest {
         }
 
         // データ登録実行
-        DcIndexResponse response = davNodeAccessor.create(davNode);
+        PersoniumIndexResponse response = davNodeAccessor.create(davNode);
 
         // レスポンスのチェック
         assertNotNull(response);
@@ -205,7 +205,7 @@ public class DavNodeAccessorTest {
         assertNotNull(index);
         DavNodeAccessor davNodeAccessor = new DavNodeAccessor(index, TYPE_NAME, ROUTING_ID);
         DavNode davNode = createTestDavNode();
-        DcIndexResponse createResponse = davNodeAccessor.create(davNode);
+        PersoniumIndexResponse createResponse = davNodeAccessor.create(davNode);
         assertNotNull(createResponse);
         assertFalse(createResponse.getId().equals(""));
 
@@ -213,7 +213,7 @@ public class DavNodeAccessorTest {
         long dateTime = new Date().getTime();
         davNode.setUpdated(dateTime);
 
-        DcIndexResponse updateResponse = davNodeAccessor.update(createResponse.getId(), davNode);
+        PersoniumIndexResponse updateResponse = davNodeAccessor.update(createResponse.getId(), davNode);
 
         // レスポンスのチェック
         assertNotNull(updateResponse);
@@ -246,7 +246,7 @@ public class DavNodeAccessorTest {
         assertNotNull(index);
         DavNodeAccessor davNodeAccessor = new DavNodeAccessor(index, TYPE_NAME, ROUTING_ID);
         DavNode davNode = createTestDavNode();
-        DcIndexResponse createResponse = davNodeAccessor.create(davNode);
+        PersoniumIndexResponse createResponse = davNodeAccessor.create(davNode);
         assertNotNull(createResponse);
         assertFalse(createResponse.getId().equals(""));
         try {
@@ -259,7 +259,7 @@ public class DavNodeAccessorTest {
         long dateTime = new Date().getTime();
         davNode.setUpdated(dateTime);
 
-        DcIndexResponse updateResponse = davNodeAccessor.update(createResponse.getId(), davNode);
+        PersoniumIndexResponse updateResponse = davNodeAccessor.update(createResponse.getId(), davNode);
 
         // レスポンスのチェック
         assertNotNull(updateResponse);
@@ -276,7 +276,7 @@ public class DavNodeAccessorTest {
         assertNotNull(index);
         DavNodeAccessor davNodeAccessor = new DavNodeAccessor(index, TYPE_NAME, ROUTING_ID);
         DavNode davNode = createTestDavNode();
-        DcIndexResponse response = davNodeAccessor.create(davNode);
+        PersoniumIndexResponse response = davNodeAccessor.create(davNode);
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
 
@@ -305,7 +305,7 @@ public class DavNodeAccessorTest {
         assertNotNull(index);
         DavNodeAccessor davNodeAccessor = new DavNodeAccessor(index, TYPE_NAME, ROUTING_ID);
         DavNode davNode = createTestDavNode();
-        DcIndexResponse response = davNodeAccessor.create(davNode);
+        PersoniumIndexResponse response = davNodeAccessor.create(davNode);
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
         try {
@@ -327,20 +327,20 @@ public class DavNodeAccessorTest {
         EsIndex index = esClient.idxUser(UNIT_PREFIX, UNIT_USER_NAME);
         assertNotNull(index);
 
-        String id = DcUUID.randomUUID();
+        String id = PersoniumUUID.randomUUID();
         DavNodeAccessor davNodeAccessor = new DavNodeAccessor(index, TYPE_NAME, ROUTING_ID);
         DavNode davNode = createTestDavNode(id);
 
         // データ登録実行
-        DcActionResponse response = davNodeAccessor.createForFile(id, davNode);
+        PersoniumActionResponse response = davNodeAccessor.createForFile(id, davNode);
 
         // レスポンスのチェック
         assertNotNull(response);
         String resId = null;
-        if (response instanceof DcIndexResponse) {
-            resId = ((DcIndexResponse) response).getId();
-        } else if (response instanceof DcGetResponse) {
-            resId = ((DcGetResponse) response).getId();
+        if (response instanceof PersoniumIndexResponse) {
+            resId = ((PersoniumIndexResponse) response).getId();
+        } else if (response instanceof PersoniumGetResponse) {
+            resId = ((PersoniumGetResponse) response).getId();
         }
         assertEquals(id, resId);
 
@@ -372,20 +372,20 @@ public class DavNodeAccessorTest {
         EsIndex index = esClient.idxUser(UNIT_PREFIX, UNIT_USER_NAME);
         assertNotNull(index);
 
-        String id = DcUUID.randomUUID();
+        String id = PersoniumUUID.randomUUID();
         DavNodeAccessor davNodeAccessor = new DavNodeAccessor(index, TYPE_NAME, ROUTING_ID);
         DavNode davNode = createTestDavNode(id);
 
         // データ登録実行
-        DcActionResponse response = davNodeAccessor.createForFile(id, davNode);
+        PersoniumActionResponse response = davNodeAccessor.createForFile(id, davNode);
 
         // レスポンスのチェック
         assertNotNull(response);
         String resId = null;
-        if (response instanceof DcIndexResponse) {
-            resId = ((DcIndexResponse) response).getId();
-        } else if (response instanceof DcGetResponse) {
-            resId = ((DcGetResponse) response).getId();
+        if (response instanceof PersoniumIndexResponse) {
+            resId = ((PersoniumIndexResponse) response).getId();
+        } else if (response instanceof PersoniumGetResponse) {
+            resId = ((PersoniumGetResponse) response).getId();
         }
         assertEquals(id, resId);
         assertTrue(binaryDataAccessor.existsForFilename(id));
@@ -428,7 +428,7 @@ public class DavNodeAccessorTest {
         EsIndex index = esClient.idxUser(UNIT_PREFIX, UNIT_USER_NAME);
         assertNotNull(index);
 
-        String id = DcUUID.randomUUID();
+        String id = PersoniumUUID.randomUUID();
         DavNodeAccessor davNodeAccessor = new DavNodeAccessor(index, TYPE_NAME, ROUTING_ID);
         DavNode davNode = createTestDavNode(id);
 
@@ -440,15 +440,15 @@ public class DavNodeAccessorTest {
         }
 
         // データ登録実行
-        DcActionResponse response = davNodeAccessorTest.createForFile(id, davNode);
+        PersoniumActionResponse response = davNodeAccessorTest.createForFile(id, davNode);
 
         // レスポンスのチェック
         assertNotNull(response);
         String resId = null;
-        if (response instanceof DcIndexResponse) {
-            resId = ((DcIndexResponse) response).getId();
-        } else if (response instanceof DcGetResponse) {
-            resId = ((DcGetResponse) response).getId();
+        if (response instanceof PersoniumIndexResponse) {
+            resId = ((PersoniumIndexResponse) response).getId();
+        } else if (response instanceof PersoniumGetResponse) {
+            resId = ((PersoniumGetResponse) response).getId();
         }
         assertEquals(id, resId);
         assertTrue(binaryDataAccessor.existsForFilename(id));
@@ -479,7 +479,7 @@ public class DavNodeAccessorTest {
         EsIndex index = esClient.idxUser(UNIT_PREFIX, UNIT_USER_NAME);
         assertNotNull(index);
 
-        String id = DcUUID.randomUUID();
+        String id = PersoniumUUID.randomUUID();
         DavNodeAccessor davNodeAccessor = new DavNodeAccessor(index, TYPE_NAME, ROUTING_ID);
         DavNode davNode = createTestDavNode();
 
@@ -517,16 +517,16 @@ public class DavNodeAccessorTest {
         // 事前準備
         EsIndex index = esClient.idxUser(UNIT_PREFIX, UNIT_USER_NAME);
         assertNotNull(index);
-        String id = DcUUID.randomUUID();
+        String id = PersoniumUUID.randomUUID();
         DavNodeAccessor davNodeAccessor = new DavNodeAccessor(index, TYPE_NAME, ROUTING_ID);
         DavNode davNode = createTestDavNode(id);
-        DcActionResponse createResponse = davNodeAccessor.createForFile(id, davNode);
+        PersoniumActionResponse createResponse = davNodeAccessor.createForFile(id, davNode);
         assertNotNull(createResponse);
         String resId = null;
-        if (createResponse instanceof DcIndexResponse) {
-            resId = ((DcIndexResponse) createResponse).getId();
-        } else if (createResponse instanceof DcGetResponse) {
-            resId = ((DcGetResponse) createResponse).getId();
+        if (createResponse instanceof PersoniumIndexResponse) {
+            resId = ((PersoniumIndexResponse) createResponse).getId();
+        } else if (createResponse instanceof PersoniumGetResponse) {
+            resId = ((PersoniumGetResponse) createResponse).getId();
         }
         assertFalse(resId.equals(""));
 
@@ -538,7 +538,7 @@ public class DavNodeAccessorTest {
         davNode.setUpdated(dateTime);
         createTestTmpFile(id, "DavNodeAccessorTest Update!");
 
-        DcIndexResponse updateResponse = davNodeAccessor.updateForFile(resId, davNode, -1);
+        PersoniumIndexResponse updateResponse = davNodeAccessor.updateForFile(resId, davNode, -1);
 
         // レスポンスのチェック
         assertNotNull(updateResponse);
@@ -573,16 +573,16 @@ public class DavNodeAccessorTest {
         // 事前準備
         EsIndex index = esClient.idxUser(UNIT_PREFIX, UNIT_USER_NAME);
         assertNotNull(index);
-        String id = DcUUID.randomUUID();
+        String id = PersoniumUUID.randomUUID();
         DavNodeAccessor davNodeAccessor = new DavNodeAccessor(index, TYPE_NAME, ROUTING_ID);
         DavNode davNode = createTestDavNode(id);
-        DcActionResponse createResponse = davNodeAccessor.createForFile(id, davNode);
+        PersoniumActionResponse createResponse = davNodeAccessor.createForFile(id, davNode);
         assertNotNull(createResponse);
         String resId = null;
-        if (createResponse instanceof DcIndexResponse) {
-            resId = ((DcIndexResponse) createResponse).getId();
-        } else if (createResponse instanceof DcGetResponse) {
-            resId = ((DcGetResponse) createResponse).getId();
+        if (createResponse instanceof PersoniumIndexResponse) {
+            resId = ((PersoniumIndexResponse) createResponse).getId();
+        } else if (createResponse instanceof PersoniumGetResponse) {
+            resId = ((PersoniumGetResponse) createResponse).getId();
         }
         assertFalse(resId.equals(""));
         assertTrue(binaryDataAccessor.existsForFilename(id));
@@ -599,7 +599,7 @@ public class DavNodeAccessorTest {
         } catch (Exception e1) {
             throw new RuntimeException(e1);
         }
-        DcIndexResponse updateResponse = davNodeAccessorUp.updateForFile(resId, davNode, -1);
+        PersoniumIndexResponse updateResponse = davNodeAccessorUp.updateForFile(resId, davNode, -1);
 
         // レスポンスのチェック
         assertNotNull(updateResponse);
@@ -634,16 +634,16 @@ public class DavNodeAccessorTest {
         // 事前準備
         EsIndex index = esClient.idxUser(UNIT_PREFIX, UNIT_USER_NAME);
         assertNotNull(index);
-        String id = DcUUID.randomUUID();
+        String id = PersoniumUUID.randomUUID();
         DavNodeAccessor davNodeAccessor = new DavNodeAccessor(index, TYPE_NAME, ROUTING_ID);
         DavNode davNode = createTestDavNode(id);
-        DcActionResponse createResponse = davNodeAccessor.createForFile(id, davNode);
+        PersoniumActionResponse createResponse = davNodeAccessor.createForFile(id, davNode);
         assertNotNull(createResponse);
         String resId = null;
-        if (createResponse instanceof DcIndexResponse) {
-            resId = ((DcIndexResponse) createResponse).getId();
-        } else if (createResponse instanceof DcGetResponse) {
-            resId = ((DcGetResponse) createResponse).getId();
+        if (createResponse instanceof PersoniumIndexResponse) {
+            resId = ((PersoniumIndexResponse) createResponse).getId();
+        } else if (createResponse instanceof PersoniumGetResponse) {
+            resId = ((PersoniumGetResponse) createResponse).getId();
         }
         assertFalse(resId.equals(""));
         assertTrue(binaryDataAccessor.existsForFilename(id));

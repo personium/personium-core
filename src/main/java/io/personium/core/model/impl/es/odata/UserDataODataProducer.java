@@ -46,8 +46,8 @@ import org.odata4j.stax2.staximpl.StaxXMLFactoryProvider2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.es.response.DcGetResponse;
-import io.personium.common.es.response.DcSearchHit;
+import io.personium.common.es.response.PersoniumGetResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.DcCoreException;
 import io.personium.core.model.Cell;
@@ -166,7 +166,7 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     @Override
-    protected EntitySetDocHandler getDocHandler(DcSearchHit searchHit, String entitySetName) {
+    protected EntitySetDocHandler getDocHandler(PersoniumSearchHit searchHit, String entitySetName) {
         this.getMetadata();
         UserDataDocHandler handler = new UserDataDocHandler(searchHit);
         handler.setPropertyAliasMap(getPropertyAliasMap());
@@ -175,7 +175,7 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     @Override
-    protected EntitySetDocHandler getDocHandler(DcGetResponse response, String entitySetName) {
+    protected EntitySetDocHandler getDocHandler(PersoniumGetResponse response, String entitySetName) {
         UserDataDocHandler handler = new UserDataDocHandler(response);
         handler.setPropertyAliasMap(getPropertyAliasMap());
         handler.setEntitySetName(entitySetName);
@@ -377,7 +377,7 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     @Override
-    public LinkDocHandler getLinkDocHandler(DcSearchHit searchHit) {
+    public LinkDocHandler getLinkDocHandler(PersoniumSearchHit searchHit) {
         return new UserDataLinkDocHandler(searchHit);
     }
 

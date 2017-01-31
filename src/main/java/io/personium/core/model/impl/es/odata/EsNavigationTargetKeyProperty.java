@@ -26,7 +26,7 @@ import java.util.Set;
 import org.odata4j.core.OProperties;
 import org.odata4j.core.OProperty;
 
-import io.personium.common.es.response.DcSearchHits;
+import io.personium.common.es.response.PersoniumSearchHits;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
@@ -102,7 +102,7 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
 
         // 検索の実行
         EntitySetAccessor esType = odataProducer.getAccessorForEntitySet(type);
-        DcSearchHits sHits = esType.search(filter).hits();
+        PersoniumSearchHits sHits = esType.search(filter).hits();
 
         Map<String, String> link = new HashMap<String, String>();
         if (sHits.getCount() == 0) {

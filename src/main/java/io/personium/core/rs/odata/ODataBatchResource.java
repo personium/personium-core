@@ -55,7 +55,7 @@ import org.odata4j.producer.resources.ODataBatchProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.es.util.DcUUID;
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.DcCoreAuthzException;
 import io.personium.core.DcCoreConfig;
@@ -422,7 +422,7 @@ public class ODataBatchResource extends AbstractODataResource {
         for (NavigationPropertyBulkContext npBulkContext : npBulkContexts) {
             BatchBodyPart bodyPart = npBulkContext.getBodyPart();
             BulkRequest bulkRequest = new BulkRequest(bodyPart);
-            String key = DcUUID.randomUUID();
+            String key = PersoniumUUID.randomUUID();
 
             if (npBulkContext.isError()) {
                 bulkRequest.setError(npBulkContext.getException());
@@ -438,7 +438,7 @@ public class ODataBatchResource extends AbstractODataResource {
                 EntitySetDocHandler docHandler = bulkRequest.getDocHandler();
                 key = docHandler.getEntityTypeId() + ":" + (String) docHandler.getStaticFields().get("__id");
                 if (npBulkRequests.containsKey(key)) {
-                    key = DcUUID.randomUUID();
+                    key = PersoniumUUID.randomUUID();
                     bulkRequest.setError(DcCoreException.OData.ENTITY_ALREADY_EXISTS);
                 }
             }
@@ -587,7 +587,7 @@ public class ODataBatchResource extends AbstractODataResource {
      * @param bodyPart BatchBodyPart
      */
     private void setBulkRequestsForEntity(BatchBodyPart bodyPart) {
-        String key = DcUUID.randomUUID();
+        String key = PersoniumUUID.randomUUID();
 
         BulkRequest bulkRequest = createBulkRequest(bodyPart, bodyPart.getEntitySetName());
         if (bulkRequest.getError() == null) {
@@ -596,7 +596,7 @@ public class ODataBatchResource extends AbstractODataResource {
             EntitySetDocHandler docHandler = bulkRequest.getDocHandler();
             key = docHandler.getEntityTypeId() + ":" + (String) docHandler.getStaticFields().get("__id");
             if (bulkRequests.containsKey(key)) {
-                key = DcUUID.randomUUID();
+                key = PersoniumUUID.randomUUID();
                 bulkRequest.setError(DcCoreException.OData.ENTITY_ALREADY_EXISTS);
             }
         }
@@ -629,7 +629,7 @@ public class ODataBatchResource extends AbstractODataResource {
 
             // ID指定がない場合はUUIDを払い出す
             if (docHandler.getId() == null) {
-                docHandler.setId(DcUUID.randomUUID());
+                docHandler.setId(PersoniumUUID.randomUUID());
             }
             bulkRequest.setEntitySetName(entitySetName);
             bulkRequest.setDocHandler(docHandler);
@@ -724,7 +724,7 @@ public class ODataBatchResource extends AbstractODataResource {
         OEntity newEnt = createRequestEntity(reader, null, metadata, targetEntitySetName);
 
         // ラッパにくるむ. POSTでIf-Match等 ETagを受け取ることはないのでetagはnull。
-        String uuid = DcUUID.randomUUID();
+        String uuid = PersoniumUUID.randomUUID();
         OEntityWrapper oew = new OEntityWrapper(uuid, newEnt, null);
         return oew;
     }

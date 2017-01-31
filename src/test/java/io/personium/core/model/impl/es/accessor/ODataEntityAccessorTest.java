@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 
 import io.personium.common.es.EsClient;
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.DcIndexResponse;
+import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.core.DcCoreConfig;
 import io.personium.core.model.impl.es.ads.AdsException;
 import io.personium.core.model.impl.es.ads.JdbcAds;
@@ -123,7 +123,7 @@ public class ODataEntityAccessorTest {
         OEntityDocHandler docHandler = createTestOEntityDocHandler();
 
         // データ登録実行
-        DcIndexResponse response = entityAccessor.create(docHandler);
+        PersoniumIndexResponse response = entityAccessor.create(docHandler);
 
         // レスポンスのチェック
         assertNotNull(response);
@@ -162,7 +162,7 @@ public class ODataEntityAccessorTest {
         }
 
         // データ登録実行
-        DcIndexResponse response = entityAccessor.create(docHandler);
+        PersoniumIndexResponse response = entityAccessor.create(docHandler);
 
         // レスポンスのチェック
         assertNotNull(response);
@@ -180,7 +180,7 @@ public class ODataEntityAccessorTest {
         assertNotNull(index);
         ODataEntityAccessor entityAccessor = new ODataEntityAccessor(index, TYPE_NAME, ROUTING_ID);
         OEntityDocHandler docHandler = createTestOEntityDocHandler();
-        DcIndexResponse createResponse = entityAccessor.create(docHandler);
+        PersoniumIndexResponse createResponse = entityAccessor.create(docHandler);
         assertNotNull(createResponse);
         assertFalse(createResponse.getId().equals(""));
 
@@ -189,7 +189,7 @@ public class ODataEntityAccessorTest {
         staticFields.put("test", "testdata");
         docHandler.setStaticFields(staticFields);
 
-        DcIndexResponse updateResponse = entityAccessor.update(createResponse.getId(), docHandler);
+        PersoniumIndexResponse updateResponse = entityAccessor.update(createResponse.getId(), docHandler);
 
         // レスポンスのチェック
         assertNotNull(updateResponse);
@@ -223,7 +223,7 @@ public class ODataEntityAccessorTest {
         assertNotNull(index);
         ODataEntityAccessor entityAccessor = new ODataEntityAccessor(index, TYPE_NAME, ROUTING_ID);
         OEntityDocHandler docHandler = createTestOEntityDocHandler();
-        DcIndexResponse createResponse = entityAccessor.create(docHandler);
+        PersoniumIndexResponse createResponse = entityAccessor.create(docHandler);
         assertNotNull(createResponse);
         assertFalse(createResponse.getId().equals(""));
         try {
@@ -237,7 +237,7 @@ public class ODataEntityAccessorTest {
         staticFields.put("test", "testdata");
         docHandler.setStaticFields(staticFields);
 
-        DcIndexResponse updateResponse = entityAccessor.update(createResponse.getId(), docHandler);
+        PersoniumIndexResponse updateResponse = entityAccessor.update(createResponse.getId(), docHandler);
 
         // レスポンスのチェック
         assertNotNull(updateResponse);
@@ -255,7 +255,7 @@ public class ODataEntityAccessorTest {
         assertNotNull(index);
         ODataEntityAccessor entityAccessor = new ODataEntityAccessor(index, TYPE_NAME, ROUTING_ID);
         OEntityDocHandler docHandler = createTestOEntityDocHandler();
-        DcIndexResponse response = entityAccessor.create(docHandler);
+        PersoniumIndexResponse response = entityAccessor.create(docHandler);
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
 
@@ -285,7 +285,7 @@ public class ODataEntityAccessorTest {
         assertNotNull(index);
         ODataEntityAccessor entityAccessor = new ODataEntityAccessor(index, TYPE_NAME, ROUTING_ID);
         OEntityDocHandler docHandler = createTestOEntityDocHandler();
-        DcIndexResponse response = entityAccessor.create(docHandler);
+        PersoniumIndexResponse response = entityAccessor.create(docHandler);
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
         try {

@@ -28,9 +28,9 @@ import org.odata4j.edm.EdmNavigationProperty;
 import org.odata4j.expression.EntitySimpleProperty;
 import org.odata4j.producer.QueryInfo;
 
-import io.personium.common.es.response.DcItem;
-import io.personium.common.es.response.DcMultiSearchResponse;
-import io.personium.common.es.response.DcSearchHit;
+import io.personium.common.es.response.PersoniumItem;
+import io.personium.common.es.response.PersoniumMultiSearchResponse;
+import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.core.DcCoreException;
 import io.personium.core.model.ctl.Property;
 import io.personium.core.model.impl.es.QueryMapFactory;
@@ -147,7 +147,7 @@ public final class ExpandEntitiesMapCreator {
         // ID一覧を使ってexpandデータを取得する
         String baseEntityTypeName = this.edmBaseEntityType.getName();
         String baseEntityLinksKey = producer.getLinkskey(baseEntityTypeName);
-        DcMultiSearchResponse multiSearchResponse = getRelatedEntities(producer,
+        PersoniumMultiSearchResponse multiSearchResponse = getRelatedEntities(producer,
                 relatedEntityIdList,
                 baseEntityLinksKey,
                 baseEntityList);
@@ -168,9 +168,9 @@ public final class ExpandEntitiesMapCreator {
         }
 
         // 検索結果をrelatedEntitieslistに追加する
-        for (DcItem item : multiSearchResponse) {
-            DcSearchHit[] searchHits = item.getSearchHits();
-            for (DcSearchHit hit : searchHits) {
+        for (PersoniumItem item : multiSearchResponse) {
+            PersoniumSearchHit[] searchHits = item.getSearchHits();
+            for (PersoniumSearchHit hit : searchHits) {
                 // 取得データのDocHandlerを生成する
                 Map<String, String> entityTypeNameMap = producer.getEntityTypeMap();
                 Map<String, Object> source = hit.getSource();
@@ -287,12 +287,12 @@ public final class ExpandEntitiesMapCreator {
 
         // Linkテーブルの検索(multisearch)
         ODataLinkAccessor accessor = producer.getAccessorForLink();
-        DcMultiSearchResponse multiSearchResponse = accessor.multiSearch(queries);
+        PersoniumMultiSearchResponse multiSearchResponse = accessor.multiSearch(queries);
 
         // リンク先データのID一覧に追加
-        for (DcItem item : multiSearchResponse.getResponses()) {
-            DcSearchHit[] searchHits = item.getSearchHits();
-            for (DcSearchHit hit : searchHits) {
+        for (PersoniumItem item : multiSearchResponse.getResponses()) {
+            PersoniumSearchHit[] searchHits = item.getSearchHits();
+            for (PersoniumSearchHit hit : searchHits) {
                 LinkDocHandler linkDoc = producer.getLinkDocHandler(hit);
                 String relatedEntityId = linkDoc.getLinkedEntitytIdFromBaseEntityType(linksKey);
                 relatedEntityIdList.add(relatedEntityId);
@@ -382,7 +382,7 @@ public final class ExpandEntitiesMapCreator {
         return idList;
     }
 
-    private DcMultiSearchResponse getRelatedEntities(EsODataProducer producer,
+    private PersoniumMultiSearchResponse getRelatedEntities(EsODataProducer producer,
             List<String> expandEntityIdList,
             String baseEntityLinksKey,
             List<EntitySetDocHandler> baseEntityList) {
@@ -393,7 +393,7 @@ public final class ExpandEntitiesMapCreator {
         }
 
         DataSourceAccessor accessor = producer.getAccessorForBatch();
-        DcMultiSearchResponse searchResponse = accessor.multiSearchForIndex(producer.getCellId(), queries);
+        PersoniumMultiSearchResponse searchResponse = accessor.multiSearchForIndex(producer.getCellId(), queries);
         return searchResponse;
     }
 
