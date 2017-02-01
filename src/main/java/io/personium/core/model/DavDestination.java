@@ -20,8 +20,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 
 /**
  * Davのあて先情報を管理するクラス.
@@ -115,10 +115,10 @@ public class DavDestination {
      */
     private void checkParentChildCount(DavCmp currentCmp, DavCmp parentCmp) {
         if (!currentCmp.exists()
-                && DcCoreConfig.getMaxChildResourceCount() <= parentCmp.getChildrenCount()) {
+                && PersoniumUnitConfig.getMaxChildResourceCount() <= parentCmp.getChildrenCount()) {
             // 移動先にリソースが存在しない、かつ、移動先の親の子要素数がすでに最大値に達している場合
             // ※移動先にすでにリソースが存在する（上書き）の場合は、移動先のリソース作成時に最大値に関するチェックは行われているので、ここでは実施しない
-            throw DcCoreException.Dav.COLLECTION_CHILDRESOURCE_ERROR;
+            throw PersoniumCoreException.Dav.COLLECTION_CHILDRESOURCE_ERROR;
         }
     }
 
@@ -129,7 +129,7 @@ public class DavDestination {
     private void checkHasParent(List<String> destinationPaths, int hierarchyNumber) {
         if (hierarchyNumber < destinationPaths.size() - 1) {
             // 移動先のパスの途中のリソースが存在しない場合、409エラーとする
-            throw DcCoreException.Dav.HAS_NOT_PARENT.params(destinationPaths.get(hierarchyNumber));
+            throw PersoniumCoreException.Dav.HAS_NOT_PARENT.params(destinationPaths.get(hierarchyNumber));
         }
     }
 
@@ -142,31 +142,31 @@ public class DavDestination {
 
             if (DavCommon.OVERWRITE_FALSE.equalsIgnoreCase(overwrite)) {
                 // OverwriteヘッダにFが指定された場合は上書き不可のためエラーとする
-                throw DcCoreException.Dav.DESTINATION_ALREADY_EXISTS;
+                throw PersoniumCoreException.Dav.DESTINATION_ALREADY_EXISTS;
 
             } else if (DavCmp.TYPE_COL_SVC.equals(parentCmp.getType())
                     && DavCmp.SERVICE_SRC_COLLECTION.equals(currentCmp.getName())) {
                 // Serviceソースコレクションへの上書きは行えないため、エラーとする
-                throw DcCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE;
+                throw PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE;
 
             } else if (!DavCmp.TYPE_DAV_FILE.equals(currentCmp.getType())) {
                 // 現状の仕様ではコレクションの上書きは行えないため、エラーとする
-                throw DcCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
+                throw PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
             }
         } else {
             // 移動後のリソースが新規に作成される場合に必要なチェック
 
             if (DavCmp.TYPE_COL_ODATA.equals(parentCmp.getType())) {
                 // 親のリソースがODataコレクションであるため移動できない
-                throw DcCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION;
+                throw PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION;
 
             } else if (DavCmp.TYPE_DAV_FILE.equals(parentCmp.getType())) {
                 // 親のリソースがWebDavファイルであるため移動できない
-                throw DcCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_FILE;
+                throw PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_FILE;
 
             } else if (DavCmp.TYPE_COL_SVC.equals(parentCmp.getType())) {
                 // 親のリソースがServiceコレクションであるため移動できない
-                throw DcCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION;
+                throw PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION;
             }
         }
 
@@ -174,7 +174,7 @@ public class DavDestination {
                 && !DavCmp.TYPE_DAV_FILE.equals(sourceResourceType)) {
             // ServiceSourceコレクション配下へコレクションは移動できない
             // 例）ServiceSourceコレクション/__src/collection
-            throw DcCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_CONTAIN_COLLECTION;
+            throw PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_CONTAIN_COLLECTION;
         }
     }
 

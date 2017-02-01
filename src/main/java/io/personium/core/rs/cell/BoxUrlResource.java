@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.OAuth2Helper;
@@ -72,7 +72,7 @@ public class BoxUrlResource {
         } else {
             // クエリ指定がある場合は、schemaのチェックをおこなう
             if (!ODataUtils.isValidSchemaUri(querySchema)) {
-                throw DcCoreException.OData.QUERY_INVALID_ERROR.params("schema", querySchema);
+                throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("schema", querySchema);
             }
         }
 
@@ -91,7 +91,7 @@ public class BoxUrlResource {
             if (AccessContext.TYPE_INVALID.equals(accessContext.getType())) {
                 accessContext.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
             }
-            throw DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
 
         // 認証トークンの有効性チェック（有効期限の切れているトークンなど）

@@ -65,9 +65,9 @@ import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.OAuth2Helper.Key;
@@ -95,7 +95,7 @@ import io.personium.core.model.jaxb.ObjectIo;
 import io.personium.core.model.lock.Lock;
 import io.personium.core.model.lock.LockKeyComposer;
 import io.personium.core.model.lock.LockManager;
-import io.personium.core.odata.DcODataProducer;
+import io.personium.core.odata.PersoniumODataProducer;
 
 /**
  * DavCmpのElastic Search実装.
@@ -116,7 +116,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
     /**
      * Esの検索結果出力上限.
      */
-    private static final int TOP_NUM = DcCoreConfig.getEsTopNum();
+    private static final int TOP_NUM = PersoniumUnitConfig.getEsTopNum();
 
     /**
      * ログ.
@@ -228,8 +228,8 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             }
             return !(svcSourceCol.getChildrenCount() > 0);
         }
-        DcCoreLog.Misc.UNREACHABLE_CODE_ERROR.writeLog();
-        throw DcCoreException.Server.UNKNOWN_ERROR;
+        PersoniumCoreLog.Misc.UNREACHABLE_CODE_ERROR.writeLog();
+        throw PersoniumCoreException.Server.UNKNOWN_ERROR;
     }
 
     @Override
@@ -303,7 +303,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             setMetadata(source);
         } catch (ParseException e) {
             // ESのJSONが壊れている状態。
-            throw DcCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(e);
+            throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(e);
         }
     }
 
@@ -361,7 +361,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
         load();
         if (this.davNode == null) {
             // Boxから辿ってidで検索して、Davデータに不整合があった場合
-            throw DcCoreException.Dav.DAV_INCONSISTENCY_FOUND;
+            throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND;
         }
     }
 
@@ -385,7 +385,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             ByteArrayInputStream is = new ByteArrayInputStream(value.getBytes(CharEncoding.UTF_8));
             doc = builder.parse(is);
         } catch (Exception e1) {
-            throw DcCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e1);
+            throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e1);
         }
         Element e = doc.getDocumentElement();
         return e;
@@ -454,7 +454,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
 
             for (Prop prop : propsToSet) {
                 if (null == prop) {
-                    throw DcCoreException.Dav.XML_CONTENT_ERROR;
+                    throw PersoniumCoreException.Dav.XML_CONTENT_ERROR;
                 }
                 List<Element> lpe = prop.getAny();
                 for (Element elem : lpe) {
@@ -470,7 +470,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             List<Prop> propsToRemove = propUpdate.getPropsToRemove();
             for (Prop prop : propsToRemove) {
                 if (null == prop) {
-                    throw DcCoreException.Dav.XML_CONTENT_ERROR;
+                    throw PersoniumCoreException.Dav.XML_CONTENT_ERROR;
                 }
                 List<Element> lpe = prop.getAny();
                 for (Element elem : lpe) {
@@ -536,17 +536,17 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
         try {
             aclToSet = ObjectIo.unmarshal(reader, Acl.class);
         } catch (Exception e1) {
-            throw DcCoreException.Dav.XML_CONTENT_ERROR.reason(e1);
+            throw PersoniumCoreException.Dav.XML_CONTENT_ERROR.reason(e1);
         }
         if (!aclToSet.validateAcl(isCellLevel())) {
-            throw DcCoreException.Dav.XML_VALIDATE_ERROR;
+            throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR;
         }
         JSONParser parser = new JSONParser();
         JSONObject aclJson = null;
         try {
             aclJson = (JSONObject) parser.parse(aclToSet.toJSON());
         } catch (ParseException e) {
-            throw DcCoreException.Dav.XML_ERROR.reason(e);
+            throw PersoniumCoreException.Dav.XML_ERROR.reason(e);
         }
         // ロック
         Lock lock = this.lock();
@@ -626,7 +626,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             // 親DavNodeが存在するが、作成対象のDavNodeが存在する場合：他のリクエストによって作成されたたｔめ、更新処理を実行
             this.parent.load();
             if (!this.parent.exists()) {
-                throw DcCoreException.Dav.HAS_NOT_PARENT.params(this.parent.getUrl());
+                throw PersoniumCoreException.Dav.HAS_NOT_PARENT.params(this.parent.getUrl());
             }
 
             this.nodeId = this.parent.davNode.getChildren().get(this.name);
@@ -716,9 +716,9 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             long writtenBytes = accessor.create(bufferedInput, newId);
             data.put(KEY_CONTENT_LENGTH, writtenBytes);
         } catch (BinaryDataNotFoundException nex) {
-            throw DcCoreException.Dav.RESOURCE_NOT_FOUND.reason(nex);
+            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.reason(nex);
         } catch (BinaryDataAccessException ex) {
-            throw DcCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(ex);
+            throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(ex);
         }
 
         // メタデータの保存処理.
@@ -751,7 +751,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
 
         // 指定etagがあり、かつそれが*ではなく内部データから導出されるものと異なるときはエラー
         if (etag != null && !"*".equals(etag) && !this.getEtag().equals(etag)) {
-            throw DcCoreException.Dav.ETAG_NOT_MATCH;
+            throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;
         }
 
         // 内容の更新をする
@@ -767,9 +767,9 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             long writtenBytes = accessor.update(bufferedInput, this.nodeId);
             data.put(KEY_CONTENT_LENGTH, writtenBytes);
         } catch (BinaryDataNotFoundException nex) {
-            throw DcCoreException.Dav.RESOURCE_NOT_FOUND.reason(nex);
+            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.reason(nex);
         } catch (BinaryDataAccessException ex) {
-            throw DcCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(ex);
+            throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(ex);
         }
 
         this.davNode.setFile(data);
@@ -804,13 +804,13 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
 
                 // Rangeヘッダの範囲チェック
                 if (!range.isSatisfiable()) {
-                    DcCoreLog.Dav.REQUESTED_RANGE_NOT_SATISFIABLE.params(range.getRangeHeaderField()).writeLog();
-                    throw DcCoreException.Dav.REQUESTED_RANGE_NOT_SATISFIABLE;
+                    PersoniumCoreLog.Dav.REQUESTED_RANGE_NOT_SATISFIABLE.params(range.getRangeHeaderField()).writeLog();
+                    throw PersoniumCoreException.Dav.REQUESTED_RANGE_NOT_SATISFIABLE;
                 }
 
                 if (range.getByteRangeSpecCount() > 1) {
                     // MultiPartレスポンスには未対応
-                    throw DcCoreException.Misc.NOT_IMPLEMENTED.params("Range-MultiPart");
+                    throw PersoniumCoreException.Misc.NOT_IMPLEMENTED.params("Range-MultiPart");
                 } else {
                     StreamingOutput sout = new StreamingOutputForDavFileWithRange(fileFullPath, fileSize, range);
                     res = davFileResponseForRange(sout, fileSize, contentType, range);
@@ -824,7 +824,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             if (!this.exists()) {
                 throw getNotFoundException().params(this.getUrl());
             }
-            throw DcCoreException.Dav.DAV_UNAVAILABLE.reason(nex);
+            throw PersoniumCoreException.Dav.DAV_UNAVAILABLE.reason(nex);
         }
     }
 
@@ -903,25 +903,25 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             if (!this.parent.exists()) {
                 // クリティカルなタイミングで先に親を削除されてしまい、
                 // 親が存在しないので409エラーとする
-                throw DcCoreException.Dav.HAS_NOT_PARENT.params(this.parent.getUrl());
+                throw PersoniumCoreException.Dav.HAS_NOT_PARENT.params(this.parent.getUrl());
             }
             if (this.parent.davNode.getChildren().get(this.name) != null) {
                 // クリティカルなタイミングで先にコレクションを作られてしまい、
                 // すでに存在するのでEXCEPTION
-                throw DcCoreException.Dav.METHOD_NOT_ALLOWED;
+                throw PersoniumCoreException.Dav.METHOD_NOT_ALLOWED;
             }
 
             // コレクションの階層数のチェック
             DavCmpEsImpl current = this;
             int depth = 0;
-            int maxDepth = DcCoreConfig.getMaxCollectionDepth();
+            int maxDepth = PersoniumUnitConfig.getMaxCollectionDepth();
             while (null != current.parent) {
                 current = current.parent;
                 depth++;
             }
             if (depth > maxDepth) {
                 // コレクション数の制限を超えたため、400エラーとする
-                throw DcCoreException.Dav.COLLECTION_DEPTH_ERROR;
+                throw PersoniumCoreException.Dav.COLLECTION_DEPTH_ERROR;
             }
 
             // 親コレクション内のコレクション・ファイル数のチェック
@@ -970,7 +970,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             }
             // 指定etagがあり、かつそれが*ではなく内部データから導出されるものと異なるときはエラー
             if (etag != null && !"*".equals(etag) && !this.getEtag().equals(etag)) {
-                throw DcCoreException.Dav.ETAG_NOT_MATCH;
+                throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;
             }
 
             // 移動元のDavNodeをリロードしたことにより親DavNodeが別のリソースに切り替わっている可能性があるため、リロードする。
@@ -1036,10 +1036,10 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
 
     private void checkChildResourceCount() {
         // 親コレクション内のコレクション・ファイル数のチェック
-        int maxChildResource = DcCoreConfig.getMaxChildResourceCount();
+        int maxChildResource = PersoniumUnitConfig.getMaxChildResourceCount();
         if (this.parent.getChildrenCount() >= maxChildResource) {
             // コレクション内に作成可能なコレクション・ファイル数の制限を超えたため、400エラーとする
-            throw DcCoreException.Dav.COLLECTION_CHILDRESOURCE_ERROR;
+            throw PersoniumCoreException.Dav.COLLECTION_CHILDRESOURCE_ERROR;
         }
     }
 
@@ -1072,7 +1072,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
     public final ResponseBuilder delete(final String ifMatch, boolean recursive) {
         // 指定etagがあり、かつそれが*ではなく内部データから導出されるものと異なるときはエラー
         if (ifMatch != null && !"*".equals(ifMatch) && !this.getEtag().equals(ifMatch)) {
-            throw DcCoreException.Dav.ETAG_NOT_MATCH;
+            throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;
         }
         long now = new Date().getTime();
         // ロック
@@ -1085,7 +1085,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             }
             // WebDAVコレクションであって子孫リソースがあったら、エラーとする
             if (TYPE_COL_WEBDAV.equals(this.getType()) && this.davNode.getChildren().size() > 0) {
-                throw DcCoreException.Dav.HAS_CHILDREN;
+                throw PersoniumCoreException.Dav.HAS_CHILDREN;
             }
 
             if (this.parent != null) {
@@ -1104,7 +1104,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
                     if (srcCmp.exists() && srcCmp instanceof DavCmpEsImpl) {
                         ((DavCmpEsImpl) srcCmp).deleteNode();
                     } else {
-                        throw DcCoreException.Dav.DAV_INCONSISTENCY_FOUND;
+                        throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND;
                     }
                 }
                 this.parent.unlinkChild(this.name, now);
@@ -1136,7 +1136,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
         try {
             accessor.delete(deleteNodeId);
         } catch (BinaryDataAccessException e) {
-            throw DcCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(e);
+            throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(e);
         }
     }
 
@@ -1153,8 +1153,8 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             unitUserName = IndexNameEncoder.encodeEsIndexName(owner);
         }
 
-        return new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(), unitUserName,
-                DcCoreConfig.getPhysicalDeleteMode(), DcCoreConfig.getFsyncEnabled());
+        return new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(), unitUserName,
+                PersoniumUnitConfig.getPhysicalDeleteMode(), PersoniumUnitConfig.getFsyncEnabled());
     }
 
     @Override
@@ -1173,12 +1173,12 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
     }
 
     @Override
-    public final DcODataProducer getODataProducer() {
+    public final PersoniumODataProducer getODataProducer() {
         return ModelFactory.ODataCtl.userData(this.cell, this);
     }
 
     @Override
-    public final DcODataProducer getSchemaODataProducer(Cell cellObject) {
+    public final PersoniumODataProducer getSchemaODataProducer(Cell cellObject) {
         return ModelFactory.ODataCtl.userSchema(cellObject, this);
     }
 
@@ -1209,7 +1209,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
                 url = new URL(roleUrl);
             }
         } catch (MalformedURLException e) {
-            throw DcCoreException.Dav.ROLE_NOT_FOUND.reason(e);
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND.reason(e);
         }
 
         Role role = null;
@@ -1217,13 +1217,13 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             role = new Role(url);
         } catch (MalformedURLException e) {
             log.info("Role URL:" + url.toString());
-            throw DcCoreException.Dav.ROLE_NOT_FOUND;
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
 
         // ロールリソースのセルURL部分はACL設定対象のセルURLと異なるものを指定することは許さない
         if (!(this.cell.getUrl().equals(role.getBaseUrl()))) {
-            DcCoreLog.Dav.ROLE_NOT_FOUND.params("Cell different").writeLog();
-            throw DcCoreException.Dav.ROLE_NOT_FOUND;
+            PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Cell different").writeLog();
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
         // Roleの検索
         List<Map<String, Object>> queries = new ArrayList<Map<String, Object>>();
@@ -1237,7 +1237,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             // Roleがボックスと紐付く場合に、検索クエリを追加
             Box targetBox = this.cell.getBoxForName(role.getBoxName());
             if (targetBox == null) {
-                throw DcCoreException.Dav.BOX_LINKED_BY_ROLE_NOT_FOUND.params(baseUrl);
+                throw PersoniumCoreException.Dav.BOX_LINKED_BY_ROLE_NOT_FOUND.params(baseUrl);
             }
             String boxId = targetBox.getId();
             filters.add(QueryMapFactory.termQuery(KEY_LINK + "." + Box.EDM_TYPE_NAME, boxId));
@@ -1255,13 +1255,13 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
 
         // 対象のRoleが存在しない場合はNull
         if (hits == null || hits.getCount() == 0) {
-            DcCoreLog.Dav.ROLE_NOT_FOUND.params("Not Hit").writeLog();
-            throw DcCoreException.Dav.ROLE_NOT_FOUND;
+            PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Not Hit").writeLog();
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
         // 対象のRoleが複数件取得された場合は内部エラーとする
         if (hits.getAllPages() > 1) {
-            DcCoreLog.OData.FOUND_MULTIPLE_RECORDS.params(hits.getAllPages()).writeLog();
-            throw DcCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT;
+            PersoniumCoreLog.OData.FOUND_MULTIPLE_RECORDS.params(hits.getAllPages()).writeLog();
+            throw PersoniumCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT;
         }
 
         PersoniumSearchHit hit = hits.getHits()[0];
@@ -1379,7 +1379,7 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
             baseUrl = new Role(new URL(baseUrlStr + "__"));
             roloResourceUrl = new Role(new URL(roloResourceUrlStr));
         } catch (MalformedURLException e) {
-            throw DcCoreException.Dav.ROLE_NOT_FOUND.reason(e);
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND.reason(e);
         }
         if (baseUrl.getBoxName().equals(roloResourceUrl.getBoxName())) {
             // base:xmlのBOXとロールリソースURLのBOXが同じ場合
@@ -1457,9 +1457,9 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
         EntitySetAccessor boxType = EsModel.box(cellObj);
         PersoniumGetResponse getRes = boxType.get(boxId);
         if (getRes == null || !getRes.isExists()) {
-            DcCoreLog.Dav.ROLE_NOT_FOUND.params("Box Id Not Hit").writeLog();
+            PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Box Id Not Hit").writeLog();
 
-            throw DcCoreException.Dav.ROLE_NOT_FOUND;
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
         return getRes.getSource();
     }
@@ -1470,8 +1470,8 @@ public class DavCmpEsImpl implements DavCmp, EsDocHandler {
      * メッセージの付加情報は、ここでは設定せずに呼び出し元で設定すること。
      * @return NotFound例外
      */
-    public DcCoreException getNotFoundException() {
-        return DcCoreException.Dav.RESOURCE_NOT_FOUND;
+    public PersoniumCoreException getNotFoundException() {
+        return PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
     }
     @Override
     public Cell getCell() {

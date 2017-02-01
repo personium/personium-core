@@ -29,7 +29,7 @@ import io.personium.common.es.query.PersoniumQueryBuilders;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.response.EsClientException;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.QueryMapFactory;
@@ -164,12 +164,12 @@ public class CellAccessor extends AbstractEntitySetAccessor {
                 // Indexが存在しない場合はインデックスを作成する。
                 if (e.getCause() instanceof SQLException
                         && MYSQL_BAD_TABLE_ERROR.equals(((SQLException) e.getCause()).getSQLState())) {
-                    DcCoreLog.Server.ES_INDEX_NOT_EXIST.params(unitUserName).writeLog();
+                    PersoniumCoreLog.Server.ES_INDEX_NOT_EXIST.params(unitUserName).writeLog();
                     createAdsIndex(unitUserName);
                     try {
                         getAds().createCell(unitUserName, docHandler);
                     } catch (AdsException e1) {
-                        DcCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e1.getMessage()).reason(e1).writeLog();
+                        PersoniumCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e1.getMessage()).reason(e1).writeLog();
 
                         // Adsの登録に失敗した場合は、専用のログに書込む
                         String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
@@ -181,7 +181,7 @@ public class CellAccessor extends AbstractEntitySetAccessor {
                         recordAdsWriteFailureLog(loginfo);
                     }
                 } else {
-                    DcCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                    PersoniumCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                     // Adsの登録に失敗した場合は、専用のログに書込む
                     String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
@@ -208,7 +208,7 @@ public class CellAccessor extends AbstractEntitySetAccessor {
             try {
                 getAds().updateCell(docHandler.getUnitUserName(), docHandler);
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_UPDATE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_UPDATE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 // Adsの登録に失敗した場合は、専用のログに書込む
                 String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
@@ -237,7 +237,7 @@ public class CellAccessor extends AbstractEntitySetAccessor {
             try {
                 getAds().deleteCell(unitUserName, id);
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 // Adsの登録に失敗した場合は、専用のログに書込む
                 String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,

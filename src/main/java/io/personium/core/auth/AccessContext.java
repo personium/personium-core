@@ -39,10 +39,10 @@ import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreAuthzException;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumCoreAuthzException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
@@ -245,38 +245,38 @@ public final class AccessContext {
      * ファクトリメソッド. アクセスしているCellとAuthorizationヘッダの値を元にオブジェクトを生成して返します.
      * @param authzHeaderValue Authorizationヘッダの値
      * @param requestURIInfo リクエストのURI情報
-     * @param dcCookiePeer リクエストパラメタに指定された p_cookie_peerの値
-     * @param dcCookieAuthValue クッキー内 p_cookieに指定されている値
+     * @param pCookiePeer リクエストパラメタに指定された p_cookie_peerの値
+     * @param pCookieAuthValue クッキー内 p_cookieに指定されている値
      * @param cell アクセスしているCell
      * @param baseUri アクセスしているbaseUri
      * @param host リクエストヘッダのHostの値
-     * @param xDcUnitUser X-Personium-UnitUserヘッダ
+     * @param xPersoniumUnitUser X-Personium-UnitUserヘッダ
      * @return 生成されたAccessContextオブジェクト
      */
     public static AccessContext create(final String authzHeaderValue,
-            final UriInfo requestURIInfo, final String dcCookiePeer, final String dcCookieAuthValue,
-            final Cell cell, final String baseUri, final String host, String xDcUnitUser) {
+            final UriInfo requestURIInfo, final String pCookiePeer, final String pCookieAuthValue,
+            final Cell cell, final String baseUri, final String host, String xPersoniumUnitUser) {
         if (authzHeaderValue == null) {
-            if (dcCookiePeer == null || 0 == dcCookiePeer.length()) {
+            if (pCookiePeer == null || 0 == pCookiePeer.length()) {
                 return new AccessContext(TYPE_ANONYMOUS, cell, baseUri);
             }
             // クッキー認証の場合
             // クッキー内の値を復号化した値を取得
             try {
-                if (null == dcCookieAuthValue) {
+                if (null == pCookieAuthValue) {
                     return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.cookieAuthError);
                 }
-                String decodedCookieValue = LocalToken.decode(dcCookieAuthValue,
+                String decodedCookieValue = LocalToken.decode(pCookieAuthValue,
                         UnitLocalUnitUserToken.getIvBytes(
                                 AccessContext.getCookieCryptKey(requestURIInfo.getBaseUri())));
                 int separatorIndex = decodedCookieValue.indexOf("\t");
                 String peer = decodedCookieValue.substring(0, separatorIndex);
                 // クッキー内の情報から authorizationHeader相当のトークンを取得
                 String authToken = decodedCookieValue.substring(separatorIndex + 1);
-                if (dcCookiePeer.equals(peer)) {
+                if (pCookiePeer.equals(peer)) {
                     // 再帰呼び出しで適切な AccessContextを生成する。
                     return create(OAuth2Helper.Scheme.BEARER + " " + authToken,
-                            requestURIInfo, null, null, cell, baseUri, host, xDcUnitUser);
+                            requestURIInfo, null, null, cell, baseUri, host, xPersoniumUnitUser);
                 } else {
                     return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.cookieAuthError);
                 }
@@ -295,7 +295,7 @@ public final class AccessContext {
 
         } else if (authzHeaderValue.startsWith(OAuth2Helper.Scheme.BEARER)) {
             // OAuth2.0認証
-            return createBearerAuthz(authzHeaderValue, cell, baseUri, host, xDcUnitUser);
+            return createBearerAuthz(authzHeaderValue, cell, baseUri, host, xPersoniumUnitUser);
         }
         return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.authenticationScheme);
     }
@@ -356,11 +356,11 @@ public final class AccessContext {
      * @param authzHeaderValue Authorizationヘッダの値
      * @param cell アクセスしているCell
      * @param baseUri アクセスしているbaseUri
-     * @param xDcUnitUser X-Personium-UnitUserヘッダ
+     * @param xPersoniumUnitUser X-Personium-UnitUserヘッダ
      * @return 生成されたAccessContextオブジェクト
      */
     private static AccessContext createBearerAuthz(final String authzHeaderValue, final Cell cell,
-            final String baseUri, final String host, String xDcUnitUser) {
+            final String baseUri, final String host, String xPersoniumUnitUser) {
         // Bearer
         // 認証トークンの値が[Bearer ]で開始していなければ不正なトークンと判断する
         if (!authzHeaderValue.startsWith(OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX)) {
@@ -369,13 +369,13 @@ public final class AccessContext {
         String accessToken = authzHeaderValue.substring(OAuth2Helper.Scheme.BEARER.length() + 1);
         // マスタートークンの検出
         // マスタートークン指定で、X-Personium-UnitUserヘッダがなかった場合はマスタートークン扱い
-        if (DcCoreConfig.getMasterToken().equals(accessToken) && xDcUnitUser == null) {
+        if (PersoniumUnitConfig.getMasterToken().equals(accessToken) && xPersoniumUnitUser == null) {
             AccessContext ret = new AccessContext(TYPE_UNIT_MASTER, cell, baseUri);
             return ret;
-        } else if (DcCoreConfig.getMasterToken().equals(accessToken) && xDcUnitUser != null) {
+        } else if (PersoniumUnitConfig.getMasterToken().equals(accessToken) && xPersoniumUnitUser != null) {
             // X-Personium-UnitUserヘッダ指定だとマスターからユニットユーザトークンへの降格
             AccessContext ret = new AccessContext(TYPE_UNIT_USER, cell, baseUri);
-            ret.subject = xDcUnitUser;
+            ret.subject = xPersoniumUnitUser;
             return ret;
         }
         // 以降、Cellレベル。
@@ -388,16 +388,16 @@ public final class AccessContext {
             tk = AbstractOAuth2Token.parse(accessToken, issuer, host);
         } catch (TokenParseException e) {
             // パースに失敗したので
-            DcCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
+            PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
             return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.tokenParseError);
         } catch (TokenDsigException e) {
             // 証明書検証に失敗したので
-            DcCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
+            PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
             return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.tokenDsigError);
         } catch (TokenRootCrtException e) {
             // ルートCA証明書の設定エラー
-            DcCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
-            throw DcCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
+            PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
+            throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
         }
         log.debug(tk.getClass().getCanonicalName());
         // AccessTokenではない場合、すなわちリフレッシュトークン。
@@ -418,7 +418,7 @@ public final class AccessContext {
             String acct = tk.getSubject();
             ret.roles = cell.getRoleListForAccount(acct);
             if (ret.roles == null) {
-                throw DcCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(baseUri, cell),
+                throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(baseUri, cell),
                         AcceptableAuthScheme.BEARER);
             }
             // AccessContextではSubjectはURLに正規化。
@@ -443,7 +443,7 @@ public final class AccessContext {
             // TCATの場合はユニットユーザトークンである可能性をチェック
             // TCATがユニットユーザトークンである条件１：Targetが自分のユニットであること。
             // TCATがユニットユーザトークンである条件２：Issuerが設定に存在するUnitUserCellであること。
-            if (tca.getTarget().equals(baseUri) && DcCoreConfig.checkUnitUserIssuers(tca.getIssuer())) {
+            if (tca.getTarget().equals(baseUri) && PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer())) {
 
                 // ロール情報をとってきて、ユニットアドミンロールがついていた場合、ユニットアドミンに昇格させる。
                 List<Role> roles = tca.getRoles();
@@ -463,7 +463,7 @@ public final class AccessContext {
                 return ret;
             } else if (cell == null) {
                 // ユニットレベルでCellが空のトークンを許すのはマスタートークンと、ユニットユーザトークンだけなので無効なトークン扱いにする。
-                throw DcCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
+                throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
             } else {
                 // TCATの処理
                 ret.accessType = TYPE_TRANS;
@@ -612,10 +612,10 @@ public final class AccessContext {
             this.throwInvalidTokenException(acceptableAuthScheme);
 
         } else if (AccessContext.TYPE_ANONYMOUS.equals(this.getType())) {
-            throw DcCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), acceptableAuthScheme);
+            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), acceptableAuthScheme);
 
         } else {
-            throw DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
     }
 
@@ -631,10 +631,10 @@ public final class AccessContext {
             this.throwInvalidTokenException(acceptableAuthScheme);
         } else if (AccessContext.TYPE_ANONYMOUS.equals(this.getType())
                 || AccessContext.TYPE_BASIC.equals(this.getType())) {
-            throw DcCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), acceptableAuthScheme);
+            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), acceptableAuthScheme);
         } else if (!(this.getType() == AccessContext.TYPE_LOCAL
         && this.getCell().getName().equals(cellname.getName()))) {
-            throw DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
     }
 
@@ -662,7 +662,7 @@ public final class AccessContext {
         if (AccessContext.TYPE_INVALID.equals(this.getType())) {
             this.throwInvalidTokenException(acceptableAuthScheme);
         } else if (AccessContext.TYPE_ANONYMOUS.equals(this.getType())) {
-            throw DcCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), acceptableAuthScheme);
+            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), acceptableAuthScheme);
         }
 
         // トークン内のスキーマチェック(Boxレベル以下かつマスタートークン以外のアクセスの場合のみ)
@@ -673,11 +673,11 @@ public final class AccessContext {
             // ボックスのスキーマが未設定の場合チェックしない
             if (boxSchema != null) {
                 if (tokenSchema == null) {
-                    throw DcCoreException.Auth.SCHEMA_AUTH_REQUIRED;
+                    throw PersoniumCoreException.Auth.SCHEMA_AUTH_REQUIRED;
                     // トークンスキーマがConfidentialの場合、#cを削除して比較する
                 } else if (!tokenSchema.replaceAll(OAuth2Helper.Key.CONFIDENTIAL_MARKER, "").equals(boxSchema)) {
                     // 認証・ボックスのスキーマが設定済かつ等しいくない場合
-                    throw DcCoreException.Auth.SCHEMA_MISMATCH;
+                    throw PersoniumCoreException.Auth.SCHEMA_MISMATCH;
                 }
             }
         }
@@ -693,7 +693,7 @@ public final class AccessContext {
             // 設定がCONFIDENTIALの場合はトークン（ac）のスキーマがCONFIDENTIALならOK
             return;
         }
-        throw DcCoreException.Auth.INSUFFICIENT_SCHEMA_AUTHZ_LEVEL;
+        throw PersoniumCoreException.Auth.INSUFFICIENT_SCHEMA_AUTHZ_LEVEL;
     }
 
     /**
@@ -746,28 +746,28 @@ public final class AccessContext {
 
         switch (this.invalidReason) {
         case expired:
-            throw DcCoreAuthzException.EXPIRED_ACCESS_TOKEN.realm(realm, allowedAuthScheme);
+            throw PersoniumCoreAuthzException.EXPIRED_ACCESS_TOKEN.realm(realm, allowedAuthScheme);
         case authenticationScheme:
-            throw DcCoreAuthzException.INVALID_AUTHN_SCHEME.realm(realm, allowedAuthScheme);
+            throw PersoniumCoreAuthzException.INVALID_AUTHN_SCHEME.realm(realm, allowedAuthScheme);
         case basicAuthFormat:
-            throw DcCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.realm(realm, allowedAuthScheme);
+            throw PersoniumCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.realm(realm, allowedAuthScheme);
         case basicNotAllowed:
-            throw DcCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), allowedAuthScheme);
+            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), allowedAuthScheme);
         case basicAuthError:
-            throw DcCoreAuthzException.BASIC_AUTHENTICATION_FAILED.realm(realm, allowedAuthScheme);
+            throw PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED.realm(realm, allowedAuthScheme);
         case basicAuthErrorInAccountLock:
-            throw DcCoreAuthzException.BASIC_AUTHENTICATION_FAILED_IN_ACCOUNT_LOCK.realm(realm,
+            throw PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED_IN_ACCOUNT_LOCK.realm(realm,
                     allowedAuthScheme);
         case cookieAuthError:
-            throw DcCoreAuthzException.COOKIE_AUTHENTICATION_FAILED.realm(realm, allowedAuthScheme);
+            throw PersoniumCoreAuthzException.COOKIE_AUTHENTICATION_FAILED.realm(realm, allowedAuthScheme);
         case tokenParseError:
-            throw DcCoreAuthzException.TOKEN_PARSE_ERROR.realm(realm, allowedAuthScheme);
+            throw PersoniumCoreAuthzException.TOKEN_PARSE_ERROR.realm(realm, allowedAuthScheme);
         case refreshToken:
-            throw DcCoreAuthzException.ACCESS_WITH_REFRESH_TOKEN.realm(realm, allowedAuthScheme);
+            throw PersoniumCoreAuthzException.ACCESS_WITH_REFRESH_TOKEN.realm(realm, allowedAuthScheme);
         case tokenDsigError:
-            throw DcCoreAuthzException.TOKEN_DISG_ERROR.realm(realm, allowedAuthScheme);
+            throw PersoniumCoreAuthzException.TOKEN_DISG_ERROR.realm(realm, allowedAuthScheme);
         default:
-            throw DcCoreException.Server.UNKNOWN_ERROR;
+            throw PersoniumCoreException.Server.UNKNOWN_ERROR;
         }
     }
 

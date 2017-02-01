@@ -16,7 +16,7 @@
  */
 package io.personium.core.model.lock;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
@@ -46,7 +46,7 @@ public abstract class UnitUserLockManager extends LockManager {
             String lockPublic = singleton.doGetUnituserLock(key);
             return (lockPublic != null);
         } catch (MemcachedClientException e) {
-            throw DcCoreException.Server.SERVER_CONNECTION_ERROR;
+            throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
         }
     }
 
@@ -66,7 +66,7 @@ public abstract class UnitUserLockManager extends LockManager {
                 lock = singleton.doGetUnituserLock(key);
             } catch (MemcachedClientException e) {
                 MemcachedClient.reportError();
-                throw DcCoreException.Server.GET_LOCK_STATE_ERROR;
+                throw PersoniumCoreException.Server.GET_LOCK_STATE_ERROR;
             }
             if (lock == null) {
                 lock = "service mentenance.";
@@ -78,11 +78,11 @@ public abstract class UnitUserLockManager extends LockManager {
             try {
                 Thread.sleep(lockRetryInterval);
             } catch (InterruptedException e) {
-                throw DcCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
+                throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
             }
             timesRetry++;
         }
-        throw DcCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS;
+        throw PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS;
     }
 
     /**

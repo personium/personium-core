@@ -43,14 +43,14 @@ public class Property {
      */
     public static final EdmProperty.Builder P_NAME = EdmProperty.newBuilder("Name").setType(EdmSimpleType.STRING)
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_NAME);
+            .setAnnotations(Common.P_FORMAT_NAME);
     /**
      * _EntityType/Nameプロパティの定義体.
      */
     public static final EdmProperty.Builder P_ENTITYTYPE_NAME = EdmProperty.newBuilder("_EntityType.Name")
             .setType(EdmSimpleType.STRING)
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_NAME);
+            .setAnnotations(Common.P_FORMAT_NAME);
     /**
      * Typeプロパティの定義体.
      */
@@ -90,7 +90,7 @@ public class Property {
     public static final EdmProperty.Builder P_UNIQUE_KEY = EdmProperty.newBuilder("UniqueKey")
             .setNullable(true)
             .setType(EdmSimpleType.STRING)
-            .setAnnotations(Common.DC_FORMAT_NAME);
+            .setAnnotations(Common.P_FORMAT_NAME);
     /**
      * IsDeclaredプロパティの定義体.
      */

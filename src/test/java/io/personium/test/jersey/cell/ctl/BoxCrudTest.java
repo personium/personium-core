@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -667,8 +667,8 @@ public class BoxCrudTest extends ODataCommon {
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
         checkErrorResponse(res.bodyAsJson(),
-                DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
-                DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
+                PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
+                PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
     }
 
     /**
@@ -684,8 +684,8 @@ public class BoxCrudTest extends ODataCommon {
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
         checkErrorResponse(res.bodyAsJson(),
-                DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
-                DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
+                PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
+                PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
     }
 
     /**
@@ -701,8 +701,8 @@ public class BoxCrudTest extends ODataCommon {
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
         checkErrorResponse(res.bodyAsJson(),
-                DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
-                DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
+                PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
+                PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
     }
 
     /**

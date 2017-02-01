@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DcRunner;
 
@@ -59,7 +59,7 @@ public class AccountLockManagerTest {
         try {
             AccountLockManager.registAccountLockObjct("AccountId");
             AccountLockManager.registAccountLockObjct("AccountId");
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             fail();
         }
     }

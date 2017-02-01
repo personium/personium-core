@@ -21,8 +21,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -89,8 +89,8 @@ public class UserDataListWithNPQueryTest extends AbstractCase {
         TResponse res = UserDataUtils.listViaNP(cell, box, collection, fromEntity, fromUserDataId, toEntity, expands,
                 HttpStatus.SC_BAD_REQUEST);
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getCode(),
-                DcCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getCode(),
+                PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getMessage());
     }
 
     /**
@@ -107,7 +107,7 @@ public class UserDataListWithNPQueryTest extends AbstractCase {
         String expandEntity1 = "Price";
         String expandEntity2 = "Product";
         String fromUserDataId = "userdata000";
-        int top = DcCoreConfig.getTopQueryMaxSizeWithExpand();
+        int top = PersoniumUnitConfig.getTopQueryMaxSizeWithExpand();
 
         // NP経由一覧取得($expand)
         String query = String.format("?\\$expand=_%s,_%s&\\$top=%d", expandEntity1, expandEntity2, top);
@@ -129,7 +129,7 @@ public class UserDataListWithNPQueryTest extends AbstractCase {
         String expandEntity1 = "Price";
         String expandEntity2 = "Product";
         String fromUserDataId = "userdata000";
-        int top = DcCoreConfig.getTopQueryMaxSizeWithExpand() + 1;
+        int top = PersoniumUnitConfig.getTopQueryMaxSizeWithExpand() + 1;
 
         // NP経由一覧取得($expand)
         String query = String.format("?\\$expand=_%s,_%s&\\$top=%d", expandEntity1, expandEntity2, top);
@@ -137,8 +137,8 @@ public class UserDataListWithNPQueryTest extends AbstractCase {
                 HttpStatus.SC_BAD_REQUEST);
 
         ODataCommon.checkErrorResponseBody(res,
-                DcCoreException.OData.QUERY_INVALID_ERROR.params("$top", String.valueOf(top)).getCode(),
-                DcCoreException.OData.QUERY_INVALID_ERROR.params("$top", String.valueOf(top)).getMessage());
+                PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", String.valueOf(top)).getCode(),
+                PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", String.valueOf(top)).getMessage());
     }
 
 }

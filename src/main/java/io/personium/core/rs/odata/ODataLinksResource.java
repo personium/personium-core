@@ -57,13 +57,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.impl.es.odata.EsODataProducer;
-import io.personium.core.odata.DcFormatWriterFactory;
+import io.personium.core.odata.PersoniumFormatWriterFactory;
 
 /**
  * ODataの$linksを扱う JAX-RS Resource.
@@ -124,7 +124,7 @@ public final class ODataLinksResource {
 
         // $links の POSTでNav Propのキー指定があってはいけない。
         if (this.targetEntityKey != null) {
-            throw DcCoreException.OData.KEY_FOR_NAVPROP_SHOULD_NOT_BE_SPECIFIED;
+            throw PersoniumCoreException.OData.KEY_FOR_NAVPROP_SHOULD_NOT_BE_SPECIFIED;
         }
         log.debug("POSTING $LINK");
         OEntityId newTargetEntity =
@@ -145,7 +145,7 @@ public final class ODataLinksResource {
             targetEntitySetName = this.targetNavProp.substring(1);
         }
         if (!targetEntitySetName.equals(bodyNavProp)) {
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Common.DC_FORMAT_PATTERN_URI);
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Common.P_FORMAT_PATTERN_URI);
         }
 
         this.odataProducer.createLink(sourceEntity, targetNavProp, newTargetEntity);
@@ -167,9 +167,9 @@ public final class ODataLinksResource {
         this.checkWriteAccessContext();
 
         if (this.targetEntityKey == null) {
-            throw DcCoreException.OData.KEY_FOR_NAVPROP_SHOULD_BE_SPECIFIED;
+            throw PersoniumCoreException.OData.KEY_FOR_NAVPROP_SHOULD_BE_SPECIFIED;
         } else {
-            throw DcCoreException.Misc.METHOD_NOT_IMPLEMENTED;
+            throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
         }
     }
 
@@ -191,10 +191,10 @@ public final class ODataLinksResource {
         try {
             link = parser.parse(reqBody);
         } catch (Exception e) {
-            throw DcCoreException.OData.JSON_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.OData.JSON_PARSE_ERROR.reason(e);
         }
         if (link.getUri() == null) {
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
         }
 
         log.debug(uriInfo.getBaseUri().toASCIIString());
@@ -208,7 +208,7 @@ public final class ODataLinksResource {
         try {
             oid = OEntityIds.parse(serviceRootUri, linkUrl);
         } catch (IllegalArgumentException e) {
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
         }
 
         // parse処理では後ろ括弧のチェックの対応を行っていないため、括弧の対応チェックを行う
@@ -221,7 +221,7 @@ public final class ODataLinksResource {
         Pattern p = Pattern.compile("^\\(.+\\)$");
         Matcher m = p.matcher(entitySetName);
         if (!m.find()) {
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
         }
 
         return oid;
@@ -260,7 +260,7 @@ public final class ODataLinksResource {
         // 1. http://host/service.svc/Customers('ALFKI')/$links/Orders(1)
         // 2. http://host/service.svc/Orders(1)/$links/Customer.
         if (this.targetEntityKey == null) {
-            throw DcCoreException.OData.KEY_FOR_NAVPROP_SHOULD_BE_SPECIFIED;
+            throw PersoniumCoreException.OData.KEY_FOR_NAVPROP_SHOULD_BE_SPECIFIED;
         }
         this.odataProducer.deleteLink(sourceEntity, targetNavProp, targetEntityKey);
         return noContent();
@@ -305,7 +305,7 @@ public final class ODataLinksResource {
         if (response.getMultiplicity() == EdmMultiplicity.MANY) {
             SingleLinks links = SingleLinks.create(serviceRootUri, response.getEntities());
             // TODO レスポンスはJSON固定とする.
-            FormatWriter<SingleLinks> fw = DcFormatWriterFactory.getFormatWriter(SingleLinks.class, null, "json",
+            FormatWriter<SingleLinks> fw = PersoniumFormatWriterFactory.getFormatWriter(SingleLinks.class, null, "json",
                     callback);
             fw.write(uriInfo2, sw, links);
             contentType = fw.getContentType();
@@ -315,7 +315,7 @@ public final class ODataLinksResource {
                 throw new NotFoundException();
             }
             SingleLink link = SingleLinks.create(serviceRootUri, entityId);
-            FormatWriter<SingleLink> fw = DcFormatWriterFactory.getFormatWriter(SingleLink.class, null, "json",
+            FormatWriter<SingleLink> fw = PersoniumFormatWriterFactory.getFormatWriter(SingleLink.class, null, "json",
                     callback);
             fw.write(uriInfo, sw, link);
             contentType = fw.getContentType();

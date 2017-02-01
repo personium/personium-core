@@ -53,9 +53,9 @@ import org.odata4j.producer.QueryInfo;
 
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
-import io.personium.core.odata.DcFormatWriterFactory;
+import io.personium.core.odata.PersoniumFormatWriterFactory;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
@@ -89,7 +89,7 @@ public class ODataPropertyResource extends AbstractODataResource {
         EdmEntitySet eSet = getOdataProducer().getMetadata().findEdmEntitySet(this.sourceEntityId.getEntitySetName());
         EdmNavigationProperty enp = eSet.getType().findNavigationProperty(this.targetNavProp);
         if (enp == null) {
-            throw DcCoreException.OData.NOT_SUCH_NAVPROP;
+            throw PersoniumCoreException.OData.NOT_SUCH_NAVPROP;
         }
         // TargetのEntityKey, EdmEntitySetを準備
         EdmEntityType tgtType = enp.getToRole().getType();
@@ -233,7 +233,7 @@ public class ODataPropertyResource extends AbstractODataResource {
         List<MediaType> acceptableMediaTypes = new ArrayList<MediaType>();
         acceptableMediaTypes.add(MediaType.APPLICATION_JSON_TYPE);
         // TODO 制限事項でQueryは無視するため固定でnullを指定する.
-        FormatWriter<EntitiesResponse> fw = DcFormatWriterFactory.getFormatWriter(EntitiesResponse.class,
+        FormatWriter<EntitiesResponse> fw = PersoniumFormatWriterFactory.getFormatWriter(EntitiesResponse.class,
                 acceptableMediaTypes, null, callback);
 
         fw.write(uriInfo2, sw, (EntitiesResponse) response);

@@ -27,7 +27,7 @@ import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.eventbus.JSONEvent;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.rs.cell.EventResource;
@@ -71,7 +71,7 @@ public class EventResourceTest {
      */
     @Test
     public void ヘッダの指定が無い場合デフォルト値が入ること() {
-        String result = EventResource.validateXDcRequestKey(null);
+        String result = EventResource.validateXPersoniumRequestKey(null);
         assertTrue(result.startsWith("PCS-"));
         String timeStr = result.substring(4);
         Long.parseLong(timeStr);
@@ -82,7 +82,7 @@ public class EventResourceTest {
      */
     @Test
     public void ヘッダに空文字を指定した場合空文字が入ること() {
-        String result = EventResource.validateXDcRequestKey("");
+        String result = EventResource.validateXPersoniumRequestKey("");
         assertNotNull(result);
         assertEquals(0, result.length());
     }
@@ -92,7 +92,7 @@ public class EventResourceTest {
      */
     @Test
     public void ヘッダに1文字の文字列を指定した場合正しく扱われること() {
-        String result = EventResource.validateXDcRequestKey("a");
+        String result = EventResource.validateXPersoniumRequestKey("a");
         assertEquals("a", result);
     }
 
@@ -106,29 +106,29 @@ public class EventResourceTest {
                 "abcdefghij" + "ABCDEFGHIJ" + "1234567890" + "-_-_-_-_-_" + // 120char
                 "12345678";
 
-        String result = EventResource.validateXDcRequestKey(maxHeaderStr128);
+        String result = EventResource.validateXPersoniumRequestKey(maxHeaderStr128);
         assertEquals(maxHeaderStr128, result);
     }
 
     /**
      * ヘッダに最大長を超えた文字列を指定した場合エラーとなること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public void ヘッダに最大長を超えた文字列を指定した場合エラーとなること() {
         String maxHeaderStr128 = "abcdefghij" + "ABCDEFGHIJ" + "1234567890" + "-_-_-_-_-_" + // 40char
                 "abcdefghij" + "ABCDEFGHIJ" + "1234567890" + "-_-_-_-_-_" + // 80char
                 "abcdefghij" + "ABCDEFGHIJ" + "1234567890" + "-_-_-_-_-_" + // 120char
                 "12345678";
 
-        EventResource.validateXDcRequestKey(maxHeaderStr128 + "X");
+        EventResource.validateXPersoniumRequestKey(maxHeaderStr128 + "X");
     }
 
     /**
      * ヘッダに不正な文字種を指定した場合エラーとなること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public void ヘッダに不正な文字種を指定した場合エラーとなること() {
-        EventResource.validateXDcRequestKey("abc-012#");
+        EventResource.validateXPersoniumRequestKey("abc-012#");
     }
 
     @SuppressWarnings("unchecked")
@@ -160,7 +160,7 @@ public class EventResourceTest {
     /**
      * リクエストボディに空データを指定した場合にエラーとなること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public void リクエストボディに空データを指定した場合にエラーとなること() {
         TestEventResource resource = new TestEventResource();
         StringReader reader = new StringReader("");
@@ -170,7 +170,7 @@ public class EventResourceTest {
     /**
      * リクエストボディに空JSONを指定した場合にエラーとなること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public void リクエストボディに空JSONを指定した場合にエラーとなること() {
         TestEventResource resource = new TestEventResource();
         JSONObject body = new JSONObject();
@@ -182,7 +182,7 @@ public class EventResourceTest {
     /**
      * リクエストボディのlevelがない場合に場合にエラーとなること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public void リクエストボディのlevelがない場合にエラーとなること() {
         TestEventResource resource = new TestEventResource();
         JSONObject body = createEventBody();
@@ -241,7 +241,7 @@ public class EventResourceTest {
     /**
      * リクエストボディのlevelが空文字の場合にエラーとなること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     @SuppressWarnings("unchecked")
     public void リクエストボディのlevelが空文字の場合にエラーとなること() {
         TestEventResource resource = new TestEventResource();
@@ -254,7 +254,7 @@ public class EventResourceTest {
     /**
      * リクエストボディのlevelにFATALを指定した場合にエラーとなること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     @SuppressWarnings("unchecked")
     public void リクエストボディのlevelにFATALを指定した場合にエラーとなること() {
         TestEventResource resource = new TestEventResource();
@@ -267,7 +267,7 @@ public class EventResourceTest {
     /**
      * リクエストボディのactionがない場合にエラーとなること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public void リクエストボディのactionがない場合にエラーとなること() {
         TestEventResource resource = new TestEventResource();
         JSONObject body = createEventBody();
@@ -302,7 +302,7 @@ public class EventResourceTest {
     /**
      * リクエストボディのactionが文字列型上限値超えの場合に正常終了すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     @SuppressWarnings("unchecked")
     public void リクエストボディのactionが文字列型上限値超えの場合に正常終了すること() {
         TestEventResource resource = new TestEventResource();
@@ -393,7 +393,7 @@ public class EventResourceTest {
     /**
      * リクエストボディのobjectがない場合にエラーとなること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public void リクエストボディのobjectがない場合にエラーとなること() {
         TestEventResource resource = new TestEventResource();
         JSONObject body = createEventBody();
@@ -428,7 +428,7 @@ public class EventResourceTest {
     /**
      * リクエストボディのobjectが文字列型上限値超えの場合に正常終了すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     @SuppressWarnings("unchecked")
     public void リクエストボディのobjectが文字列型上限値超えの場合に正常終了すること() {
         TestEventResource resource = new TestEventResource();
@@ -465,7 +465,7 @@ public class EventResourceTest {
     /**
      * リクエストボディのresultがない場合にエラーとなること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public void リクエストボディのresultがない場合にエラーとなること() {
         TestEventResource resource = new TestEventResource();
         JSONObject body = createEventBody();
@@ -500,7 +500,7 @@ public class EventResourceTest {
     /**
      * リクエストボディのresultが文字列型上限値超えの場合に正常終了すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     @SuppressWarnings("unchecked")
     public void リクエストボディのresultが文字列型上限値超えの場合に正常終了すること() {
         TestEventResource resource = new TestEventResource();

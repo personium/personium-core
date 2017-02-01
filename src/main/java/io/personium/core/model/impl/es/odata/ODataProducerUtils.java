@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.response.PersoniumSearchHits;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
@@ -91,7 +91,7 @@ public final class ODataProducerUtils {
             EntitySetDocHandler hit = producer.retrieveWithKey(newEntity.getEntitySet(), newEntity.getEntityKey());
             if (hit != null) {
                 // データが存在したら CONFLICT エラーとする
-                throw DcCoreException.OData.ENTITY_ALREADY_EXISTS;
+                throw PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS;
             }
         }
 
@@ -151,7 +151,7 @@ public final class ODataProducerUtils {
                 EntitySetDocHandler edh = producer.retrieveWithKey(newEntity.getEntitySet(), ukSet, null);
                 if (edh != null) {
                     // データが存在したら CONFLICT エラーとする
-                    throw DcCoreException.OData.ENTITY_ALREADY_EXISTS;
+                    throw PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS;
                 }
             }
         }
@@ -175,7 +175,7 @@ public final class ODataProducerUtils {
 
         // リクエストでクエリが指定されていない場合は、デフォルト値を設定する
         // linksの一覧取得で設定できるクエリは、$top,$skipのみのため、$top,$skipのみデフォルト値を設定している
-        Integer size = DcCoreConfig.getTopQueryDefaultSize();
+        Integer size = PersoniumUnitConfig.getTopQueryDefaultSize();
         Integer from = 0;
         if (queryInfo != null) {
             if (queryInfo.top != null) {
@@ -237,7 +237,7 @@ public final class ODataProducerUtils {
         if (hPassStr != null) {
             hiddenFields.put("HashedCredential", hPassStr);
         } else {
-            throw DcCoreException.Auth.DC_CREDENTIAL_REQUIRED;
+            throw PersoniumCoreException.Auth.P_CREDENTIAL_REQUIRED;
         }
         oedhNew.setHiddenFields(hiddenFields);
 

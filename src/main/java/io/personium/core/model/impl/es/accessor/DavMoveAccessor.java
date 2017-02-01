@@ -28,9 +28,9 @@ import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumBulkItemResponse;
 import io.personium.common.es.response.PersoniumBulkResponse;
 import io.personium.common.es.response.EsClientException;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.model.file.BinaryDataAccessException;
 import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.model.impl.es.DavNode;
@@ -194,7 +194,7 @@ public class DavMoveAccessor extends DavNodeAccessor {
         // ESへのバルクリクエストでエラーが発生した場合はロールバックするためバイナリファイルの削除とADSの更新は行わない
         if (response.hasFailures()) {
             rollback();
-            throw DcCoreException.Server.DATA_STORE_UPDATE_ERROR_ROLLBACKED;
+            throw PersoniumCoreException.Server.DATA_STORE_UPDATE_ERROR_ROLLBACKED;
         }
 
         adsMove(response);
@@ -250,7 +250,7 @@ public class DavMoveAccessor extends DavNodeAccessor {
         try {
             response = getIndex().bulkRequest(getRoutingId(), esRequest, true);
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
         return response;
     }
@@ -268,7 +268,7 @@ public class DavMoveAccessor extends DavNodeAccessor {
                 getAds().bulkUpdateDav(getIndex().getName(), adsRequest);
             }
         } catch (AdsException e) {
-            DcCoreLog.Server.DATA_STORE_ENTITY_BULK_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
+            PersoniumCoreLog.Server.DATA_STORE_ENTITY_BULK_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
             // Adsの登録に失敗した場合は、専用のログに書込む
             // ESでのバージョン情報を取得するためにesBulkRequestをループさせている
@@ -326,7 +326,7 @@ public class DavMoveAccessor extends DavNodeAccessor {
             outputRollbackRequest("source", srcNodeForRollback);
             outputRollbackRequest("destination", dstNoeForRollback);
             // ロールバックに失敗
-            throw DcCoreException.Server.DATA_STORE_UPDATE_ROLLBACK_ERROR;
+            throw PersoniumCoreException.Server.DATA_STORE_UPDATE_ROLLBACK_ERROR;
         }
         // ロールバックに成功
         log.info("rollback was successfully end.");
@@ -353,7 +353,7 @@ public class DavMoveAccessor extends DavNodeAccessor {
             try {
                 accessor.delete(davNode.getId());
             } catch (BinaryDataAccessException e) {
-                DcCoreLog.Dav.FILE_DELETE_FAIL.params(davNode.getId()).writeLog();
+                PersoniumCoreLog.Dav.FILE_DELETE_FAIL.params(davNode.getId()).writeLog();
             }
         }
     }
@@ -363,8 +363,8 @@ public class DavMoveAccessor extends DavNodeAccessor {
      * @return アクセサのインスタンス
      */
     protected BinaryDataAccessor getBinaryDataAccessor() {
-        String unitUserName = getIndex().getName().replace(DcCoreConfig.getEsUnitPrefix() + "_", "");
-        return new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(), unitUserName,
-                DcCoreConfig.getPhysicalDeleteMode(), DcCoreConfig.getFsyncEnabled());
+        String unitUserName = getIndex().getName().replace(PersoniumUnitConfig.getEsUnitPrefix() + "_", "");
+        return new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(), unitUserName,
+                PersoniumUnitConfig.getPhysicalDeleteMode(), PersoniumUnitConfig.getFsyncEnabled());
     }
 }

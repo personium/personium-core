@@ -90,8 +90,8 @@ import org.odata4j.producer.QueryInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
@@ -106,7 +106,7 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
  * Personium.ioでサポートしていないクエリに関しては、例外をスローする。
  */
 public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
-    private static final int DEFAULT_TOP_VALUE = DcCoreConfig.getTopQueryDefaultSize();
+    private static final int DEFAULT_TOP_VALUE = PersoniumUnitConfig.getTopQueryDefaultSize();
     EdmEntityType entityType;
     Map<String, Object> source;
     Map<String, Object> current;
@@ -276,7 +276,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
             for (EntitySimpleProperty select : selects) {
                 if (select == null) {
                     // $selectで指定された値がプロパティ名でなかった場合
-                    throw DcCoreException.OData.SELECT_PARSE_ERROR;
+                    throw PersoniumCoreException.OData.SELECT_PARSE_ERROR;
                 }
                 String prop = select.getPropertyName();
                 if (!Common.P_ID.getName().equals(prop)
@@ -343,7 +343,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     public void visit(OrderByExpression expr) {
         log.debug("visit(OrderByExpression expr)");
         if (!(expr.getExpression() instanceof EntitySimpleProperty)) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR;
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
 
         // ソートクエリを設定する
@@ -378,7 +378,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     @Override
     public void visit(AddExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_OPERATOR;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_OPERATOR;
     }
 
     @Override
@@ -417,7 +417,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
         // $filterに指定された検索条件のプロパティが単純型ではない場合は、パースエラーとする。
         if (!(expr.getLHS() instanceof EntitySimpleProperty)) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR;
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getLHS());
 
@@ -457,7 +457,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
         String propertyName = searchKey.getPropertyName();
         EdmProperty edmProperty = this.entityType.findProperty(propertyName);
         if (null == edmProperty) {
-            throw DcCoreException.OData.UNKNOWN_QUERY_KEY.params(propertyName);
+            throw PersoniumCoreException.OData.UNKNOWN_QUERY_KEY.params(propertyName);
         }
         return edmProperty;
     }
@@ -482,7 +482,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
                 value = StringEscapeUtils.unescapeJavaScript(((StringLiteral) expr).getValue());
             } catch (Exception e) {
                 log.info("Failed to unescape searchValue.", e);
-                throw DcCoreException.OData.OPERATOR_AND_OPERAND_UNABLE_TO_UNESCAPE.params(((StringLiteral) expr)
+                throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_UNABLE_TO_UNESCAPE.params(((StringLiteral) expr)
                         .getValue());
             }
             return value;
@@ -536,7 +536,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     @Override
     public void visit(ConcatMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
@@ -553,12 +553,12 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     @Override
     public void visit(DivExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_OPERATOR;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_OPERATOR;
     }
 
     @Override
     public void visit(EndsWithMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     /**
@@ -575,7 +575,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
         // $filterに指定された検索条件のプロパティが単純型ではない場合は、パースエラーとする。
         if (!(expr.getLHS() instanceof EntitySimpleProperty)) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR;
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getLHS());
 
@@ -598,7 +598,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
         // $filterに指定された検索条件のプロパティが単純型ではない場合は、パースエラーとする。
         if (!(expr.getLHS() instanceof EntitySimpleProperty)) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR;
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getLHS());
 
@@ -632,7 +632,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     @Override
     public void visit(IndexOfMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
@@ -654,7 +654,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     @Override
     public void visit(IsofExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
@@ -663,7 +663,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
         // $filterに指定された検索条件のプロパティが単純型ではない場合は、パースエラーとする。
         if (!(expr.getLHS() instanceof EntitySimpleProperty)) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR;
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getLHS());
 
@@ -682,7 +682,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     @Override
     public void visit(LengthMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
@@ -691,7 +691,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
         // $filterに指定された検索条件のプロパティが単純型ではない場合は、パースエラーとする。
         if (!(expr.getLHS() instanceof EntitySimpleProperty)) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR;
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getLHS());
 
@@ -710,19 +710,19 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     @Override
     public void visit(ModExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_OPERATOR;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_OPERATOR;
     }
 
     @Override
     public void visit(MulExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_OPERATOR;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_OPERATOR;
     }
 
     @Override
     public void visit(NeExpression expr) {
         // $filterに指定された検索条件のプロパティが単純型ではない場合は、パースエラーとする。
         if (!(expr.getLHS() instanceof EntitySimpleProperty)) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR;
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getLHS());
 
@@ -761,7 +761,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     @Override
     public void visit(NotExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_OPERATOR;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_OPERATOR;
     }
 
     @Override
@@ -779,7 +779,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     @Override
     public void visit(ReplaceMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
@@ -788,7 +788,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
         // 左辺辺がプロパティ、右辺が文字列でない場合はパースエラーとする
         if (!(expr.getTarget() instanceof EntitySimpleProperty)) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR;
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getTarget());
         // $filterに指定されたプロパティの型と検索条件の値として指定されたデータ型の検証
@@ -813,12 +813,12 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     @Override
     public void visit(SubExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_OPERATOR;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_OPERATOR;
     }
 
     @Override
     public void visit(SubstringMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
@@ -827,7 +827,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
         // 左辺が文字列、右辺がプロパティでない場合はパースエラーとする
         if (!(expr.getTarget() instanceof EntitySimpleProperty)) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR;
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getTarget());
         // $filterに指定されたプロパティの型と検索条件の値として指定されたデータ型の検証
@@ -853,62 +853,62 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     @Override
     public void visit(ToLowerMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
     public void visit(ToUpperMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
     public void visit(TrimMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
     public void visit(YearMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
     public void visit(MonthMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
     public void visit(DayMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
     public void visit(HourMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
     public void visit(MinuteMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
     public void visit(SecondMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
     public void visit(RoundMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
     public void visit(FloorMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override
     public void visit(CeilingMethodCallExpression expr) {
-        throw DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
+        throw PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION;
     }
 
     @Override

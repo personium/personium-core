@@ -69,15 +69,15 @@ import org.odata4j.format.Settings;
 import org.odata4j.producer.EntityResponse;
 
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.Property;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker.CheckError;
-import io.personium.core.odata.DcFormatParserFactory;
-import io.personium.core.odata.DcFormatWriterFactory;
-import io.personium.core.odata.DcODataProducer;
+import io.personium.core.odata.PersoniumFormatParserFactory;
+import io.personium.core.odata.PersoniumFormatWriterFactory;
+import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.utils.EscapeControlCode;
 import io.personium.core.utils.ODataUtils;
@@ -100,14 +100,14 @@ public abstract class AbstractODataResource {
     /**
      * ODataProducer.
      */
-    private DcODataProducer odataProducer;
+    private PersoniumODataProducer odataProducer;
 
     /** $formatのJSON. */
     public static final String FORMAT_JSON = "json";
     /** $formatのatom. */
     public static final String FORMAT_ATOM = "atom";
 
-    /** データ格納時の時刻(リクエストボディに"SYSUTCDATETIME()"が指定された場合はDcJsonFromatParserクラスで設定). */
+    /** データ格納時の時刻(リクエストボディに"SYSUTCDATETIME()"が指定された場合はPersoniumJsonFromatParserクラスで設定). */
     private long currentTimeMillis = System.currentTimeMillis();
 
     /**
@@ -122,7 +122,7 @@ public abstract class AbstractODataResource {
      * odataProducerのゲッター.
      * @return odataProducer
      */
-    public DcODataProducer getOdataProducer() {
+    public PersoniumODataProducer getOdataProducer() {
         return this.odataProducer;
     }
 
@@ -130,7 +130,7 @@ public abstract class AbstractODataResource {
      * odataProducerのセッター.
      * @param odataProducer odataProducer
      */
-    public void setOdataProducer(DcODataProducer odataProducer) {
+    public void setOdataProducer(PersoniumODataProducer odataProducer) {
         this.odataProducer = odataProducer;
     }
 
@@ -176,7 +176,7 @@ public abstract class AbstractODataResource {
         } else if (format.equals(FORMAT_JSON)) {
             mediaType = MediaType.APPLICATION_JSON_TYPE;
         } else {
-            throw DcCoreException.OData.FORMAT_INVALID_ERROR.params(format);
+            throw PersoniumCoreException.OData.FORMAT_INVALID_ERROR.params(format);
         }
 
         return mediaType;
@@ -199,7 +199,7 @@ public abstract class AbstractODataResource {
                     mediaType = MediaType.APPLICATION_JSON_TYPE;
                 }
             } else {
-                throw DcCoreException.OData.UNSUPPORTED_MEDIA_TYPE.params(acceptHeaderValue);
+                throw PersoniumCoreException.OData.UNSUPPORTED_MEDIA_TYPE.params(acceptHeaderValue);
             }
         }
         return mediaType;
@@ -342,7 +342,7 @@ public abstract class AbstractODataResource {
                 // リクエストボディに__published、__updatedが指定されていた場合400エラーを返却する
                 if (op != null && (propName.equals(Common.P_PUBLISHED.getName())
                         || propName.equals(Common.P_UPDATED.getName()))) {
-                    throw DcCoreException.OData.FIELED_INVALID_ERROR
+                    throw PersoniumCoreException.OData.FIELED_INVALID_ERROR
                             .params(propName + " is management information name. Cannot request.");
                 }
 
@@ -353,7 +353,7 @@ public abstract class AbstractODataResource {
                     // Complex型の場合
                     op = getComplexProperty(ep, propName, op, metadata);
                 }
-            } catch (DcCoreException e) {
+            } catch (PersoniumCoreException e) {
                 throw e;
             } catch (Exception e) {
                 op = setDefaultValue(ep, propName, op, metadata);
@@ -375,7 +375,7 @@ public abstract class AbstractODataResource {
             String req = property.getName();
             if (req.equals("__metadata")) {
                 // リクエストボディに__metadataが指定されていた場合400エラーを返却する
-                throw DcCoreException.OData.FIELED_INVALID_ERROR.params(req
+                throw PersoniumCoreException.OData.FIELED_INVALID_ERROR.params(req
                         + " is management information name. Cannot request.");
             }
             // EntityTypeに存在しないdynamicPropertyが出現した場合は、スキーマを追加登録するため、プロパティ数へカウントする。
@@ -404,7 +404,7 @@ public abstract class AbstractODataResource {
             PropertyLimitChecker checker = new PropertyLimitChecker(metadata, entitySetNameParam, dynamicPropCount);
             List<CheckError> errors = checker.checkPropertyLimits(entitySetNameParam);
             if (errors.size() > 0) {
-                throw DcCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED;
+                throw PersoniumCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED;
             }
         }
 
@@ -422,7 +422,7 @@ public abstract class AbstractODataResource {
             Object value = keyProp.getValue();
             if (value == null) {
                 // 単一主キーがnullの場合、400エラー
-                throw DcCoreException.OData.NULL_SINGLE_KEY;
+                throw PersoniumCoreException.OData.NULL_SINGLE_KEY;
             }
             key = OEntityKey.create(keyProp.getValue());
         } else {
@@ -460,7 +460,7 @@ public abstract class AbstractODataResource {
     protected boolean isRegisteredDynamicProperty(EdmEntityType edmEntityType, String propertyName) {
         boolean isRegisteredDynamicProperty = false;
         EdmProperty prop = edmEntityType.findDeclaredProperty(propertyName);
-        NamespacedAnnotation<?> isDeclared = prop.findAnnotation(Common.DC_NAMESPACE.getUri(),
+        NamespacedAnnotation<?> isDeclared = prop.findAnnotation(Common.P_NAMESPACE.getUri(),
                 Property.P_IS_DECLARED.getName());
         // Property/ComplexTypeProperty以外では、IsDeclaredは定義されていないため、除外する。
         if (isDeclared != null && isDeclared.getValue().equals("false")) {
@@ -481,7 +481,7 @@ public abstract class AbstractODataResource {
                 // 単一主キーの場合
                 if (!(oEntityKey.asSingleValue().getClass().equals(
                         EdmSimpleType.getSimple(keyEdmType.getFullyQualifiedTypeName()).getCanonicalJavaType()))) {
-                    throw DcCoreException.OData.ENTITY_KEY_PARSE_ERROR;
+                    throw PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR;
                 }
             } else {
                 // 複合主キーの場合
@@ -490,7 +490,7 @@ public abstract class AbstractODataResource {
                     if (nv.getName().equals(key) && !(nv.getValue().getClass().equals(
                             EdmSimpleType.getSimple(keyEdmType.getFullyQualifiedTypeName())
                                     .getCanonicalJavaType()))) {
-                        throw DcCoreException.OData.ENTITY_KEY_PARSE_ERROR;
+                        throw PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR;
                     }
                 }
             }
@@ -558,7 +558,7 @@ public abstract class AbstractODataResource {
                     // ComplexTypeの配列要素をOCollectionプロパティとして設定する
                     newProp = OProperties.collection(ep.getName(), collectionType, builder.build());
                 } else {
-                    throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
                 }
             } else {
                 // ComplexTypeが配列でない場合は、ComplexTypeプロパティとして設定する
@@ -649,7 +649,7 @@ public abstract class AbstractODataResource {
         // スキーマ上定義されているのに入力の存在しない Property
         // デフォルト値が定義されていればそれをいれる。
         // ComplexTypeそのものの項目、または配列の項目であればデフォルト値は設定しない
-        NamespacedAnnotation<?> annotation = ep.findAnnotation(Common.DC_NAMESPACE.getUri(),
+        NamespacedAnnotation<?> annotation = ep.findAnnotation(Common.P_NAMESPACE.getUri(),
                 Property.P_IS_DECLARED.getName());
         if (annotation != null && !(Boolean.valueOf(annotation.getValue().toString()))) {
             return null;
@@ -663,7 +663,7 @@ public abstract class AbstractODataResource {
             op = OProperties.null_(propName, ep.getType().getFullyQualifiedTypeName());
         } else {
             // nullableがfalseであれば。エラーとする
-            throw DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(propName);
+            throw PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(propName);
         }
         return op;
     }
@@ -676,18 +676,18 @@ public abstract class AbstractODataResource {
      */
     protected void validateProperty(EdmProperty ep, String propName, OProperty<?> op) {
         for (NamespacedAnnotation<?> annotation : ep.getAnnotations()) {
-            if (annotation.getName().equals(Common.DC_FORMAT)) {
+            if (annotation.getName().equals(Common.P_FORMAT)) {
                 String dcFormat = annotation.getValue().toString();
                 // 正規表現チェックの場合
-                if (dcFormat.startsWith(Common.DC_FORMAT_PATTERN_REGEX)) {
+                if (dcFormat.startsWith(Common.P_FORMAT_PATTERN_REGEX)) {
                     validatePropertyRegEx(propName, op, dcFormat);
-                } else if (dcFormat.equals(Common.DC_FORMAT_PATTERN_URI)) {
+                } else if (dcFormat.equals(Common.P_FORMAT_PATTERN_URI)) {
                     validatePropertyUri(propName, op);
-                } else if (dcFormat.startsWith(Common.DC_FORMAT_PATTERN_SCHEMA_URI)) {
+                } else if (dcFormat.startsWith(Common.P_FORMAT_PATTERN_SCHEMA_URI)) {
                     validatePropertySchemaUri(propName, op);
-                } else if (dcFormat.startsWith(Common.DC_FORMAT_PATTERN_CELL_URL)) {
+                } else if (dcFormat.startsWith(Common.P_FORMAT_PATTERN_CELL_URL)) {
                     validatePropertyCellUrl(propName, op);
-                } else if (dcFormat.startsWith(Common.DC_FORMAT_PATTERN_USUSST)) {
+                } else if (dcFormat.startsWith(Common.P_FORMAT_PATTERN_USUSST)) {
                     validatePropertyUsusst(propName, op, dcFormat);
                 }
             }
@@ -720,7 +720,7 @@ public abstract class AbstractODataResource {
         Pattern pattern = Pattern.compile(Common.PATTERN_USERDATA_KEY);
         Matcher matcher = pattern.matcher(key);
         if (!matcher.matches()) {
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(key);
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(key);
         }
 
         // 動的プロパティなのでnullは許容する
@@ -733,7 +733,7 @@ public abstract class AbstractODataResource {
         if (EdmSimpleType.STRING.equals(type)) {
             String value = property.getValue().toString();
             if (!ODataUtils.validateString(value)) {
-                throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(key);
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(key);
             }
         }
 
@@ -741,7 +741,7 @@ public abstract class AbstractODataResource {
         if (EdmSimpleType.DOUBLE.equals(type)) {
             double value = (Double) property.getValue();
             if (!ODataUtils.validateDouble(value)) {
-                throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(key);
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(key);
             }
         }
     }
@@ -754,7 +754,7 @@ public abstract class AbstractODataResource {
      */
     protected void validatePropertyRegEx(String propName, OProperty<?> op, String dcFormat) {
         // regEx('正規表現')から正規表現を抜き出す
-        Pattern formatPattern = Pattern.compile(Common.DC_FORMAT_PATTERN_REGEX + "\\('(.+)'\\)");
+        Pattern formatPattern = Pattern.compile(Common.P_FORMAT_PATTERN_REGEX + "\\('(.+)'\\)");
         Matcher formatMatcher = formatPattern.matcher(dcFormat);
         formatMatcher.matches();
         dcFormat = formatMatcher.group(1);
@@ -763,7 +763,7 @@ public abstract class AbstractODataResource {
         Pattern pattern = Pattern.compile(dcFormat);
         Matcher matcher = pattern.matcher(op.getValue().toString());
         if (!matcher.matches()) {
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
         }
     }
 
@@ -774,7 +774,7 @@ public abstract class AbstractODataResource {
      */
     protected void validatePropertyUri(String propName, OProperty<?> op) {
         if (!ODataUtils.isValidUri(op.getValue().toString())) {
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
         }
     }
 
@@ -785,7 +785,7 @@ public abstract class AbstractODataResource {
      */
     protected void validatePropertySchemaUri(String propName, OProperty<?> op) {
         if (!ODataUtils.isValidSchemaUri(op.getValue().toString())) {
-            throw DcCoreException.OData.SCHEMA_URI_FORMAT_ERROR.params(propName);
+            throw PersoniumCoreException.OData.SCHEMA_URI_FORMAT_ERROR.params(propName);
         }
     }
 
@@ -796,7 +796,7 @@ public abstract class AbstractODataResource {
      */
     protected void validatePropertyCellUrl(String propName, OProperty<?> op) {
         if (!ODataUtils.isValidCellUrl(op.getValue().toString())) {
-            throw DcCoreException.OData.CELL_URL_FORMAT_ERROR.params(propName);
+            throw PersoniumCoreException.OData.CELL_URL_FORMAT_ERROR.params(propName);
         }
     }
 
@@ -808,7 +808,7 @@ public abstract class AbstractODataResource {
      */
     protected void validatePropertyUsusst(String propName, OProperty<?> op, String dcFormat) {
         // dcFormatから候補をリストとして抽出.
-        Pattern formatPattern = Pattern.compile(Common.DC_FORMAT_PATTERN_USUSST + "\\((.+)\\)");
+        Pattern formatPattern = Pattern.compile(Common.P_FORMAT_PATTERN_USUSST + "\\((.+)\\)");
         Matcher formatMatcher = formatPattern.matcher(dcFormat);
         formatMatcher.matches();
         dcFormat = formatMatcher.group(1);
@@ -823,7 +823,7 @@ public abstract class AbstractODataResource {
         // 検証される文字列を配列にする
         String value = op.getValue().toString();
         if (value.indexOf("  ") > -1) {
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
            }
         String[] tokens = value.split(" ");
         Set<String> overlapChk = new HashSet<>();
@@ -832,11 +832,11 @@ public abstract class AbstractODataResource {
         // 1回でもマッチしないものがあったら、例外を投げる
         for (String token : tokens) {
             if (!allowedTokenList.contains(token)) {
-                throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
                }
             //重複チェック
             if (overlapChk.contains(token)) {
-                throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
                } else {
                    overlapChk.add(token);
                }
@@ -975,12 +975,12 @@ public abstract class AbstractODataResource {
             final List<MediaType> acceptableMediaTypes) {
         StringWriter w = new StringWriter();
         try {
-            FormatWriter<EntityResponse> fw = DcFormatWriterFactory.getFormatWriter(EntityResponse.class,
+            FormatWriter<EntityResponse> fw = PersoniumFormatWriterFactory.getFormatWriter(EntityResponse.class,
                     acceptableMediaTypes, format, null);
             // UriInfo uriInfo2 = PersoniumCoreUtils.createUriInfo(uriInfo, 1);
             fw.write(uriInfo, w, resp);
         } catch (UnsupportedOperationException e) {
-            throw DcCoreException.OData.FORMAT_INVALID_ERROR.params(format);
+            throw PersoniumCoreException.OData.FORMAT_INVALID_ERROR.params(format);
         }
 
         String responseStr = w.toString();
@@ -1006,7 +1006,7 @@ public abstract class AbstractODataResource {
         if (EdmSimpleType.STRING.equals(edmType)) {
             // Typeが文字列でDefault値がCELLID()のとき。
             if (defaultValue.equals("CELLID()")) {
-                String newCellid = DcCoreConfig.getCouchDbCellCreationTarget() + "_"
+                String newCellid = PersoniumUnitConfig.getCouchDbCellCreationTarget() + "_"
                         + UUID.randomUUID().toString().replaceAll("-", "");
                 op = OProperties.string(propName, newCellid);
                 // etag = newCellid;
@@ -1060,15 +1060,15 @@ public abstract class AbstractODataResource {
             final EdmDataServices metadata,
             final String entitySetName,
             final OEntityKey entityKey) {
-        FormatParser<Entry> parser = DcFormatParserFactory.getParser(Entry.class, type, new Settings(version, metadata,
+        FormatParser<Entry> parser = PersoniumFormatParserFactory.getParser(Entry.class, type, new Settings(version, metadata,
                 entitySetName, entityKey, null, false));
         Entry entry = null;
         try {
             entry = parser.parse(body);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             throw e;
         } catch (Exception e) {
-            throw DcCoreException.OData.JSON_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.OData.JSON_PARSE_ERROR.reason(e);
         }
         return entry.getEntity();
     }
@@ -1150,7 +1150,7 @@ public abstract class AbstractODataResource {
                     timeMillis = Long.parseLong(date);
                 }
             } catch (NumberFormatException e) {
-                throw DcCoreException.OData.JSON_PARSE_ERROR.reason(e);
+                throw PersoniumCoreException.OData.JSON_PARSE_ERROR.reason(e);
             }
         }
         return timeMillis;

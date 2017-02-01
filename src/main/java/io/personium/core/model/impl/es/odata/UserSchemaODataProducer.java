@@ -49,8 +49,8 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchResponse;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.ModelFactory;
@@ -75,8 +75,8 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyUpdateDocHandler;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker.CheckError;
-import io.personium.core.odata.DcODataProducer;
-import io.personium.core.odata.DcOptionsQueryParser;
+import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.odata.PersoniumOptionsQueryParser;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
@@ -88,7 +88,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
 
     Cell cell;
     DavCmp davCmp;
-    DcODataProducer userDataProducer = null;
+    PersoniumODataProducer userDataProducer = null;
 
     /**
      * Constructor.
@@ -171,7 +171,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
                 // Name='p_name_1377142311063',_EntityType.Name='SalesDetail'
                 if (propertyAliasMap.containsKey(propertyKey)) {
                     // データが存在したら CONFLICT エラーとする
-                    throw DcCoreException.OData.ENTITY_ALREADY_EXISTS;
+                    throw PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS;
                 }
             }
         } else {
@@ -210,7 +210,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
                 String nullableKey = Property.P_NULLABLE.getName();
                 String nullable = oEntity.getProperty(nullableKey).getValue().toString();
                 if (nullable.equals("false")) {
-                    throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(nullableKey);
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(nullableKey);
                 }
             }
         } else if (ComplexTypeProperty.EDM_TYPE_NAME.equals(entitySetName)) {
@@ -222,7 +222,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
                 String nullableKey = ComplexTypeProperty.P_NULLABLE.getName();
                 String nullable = oEntity.getProperty(nullableKey).getValue().toString();
                 if (nullable.equals("false")) {
-                    throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(nullableKey);
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(nullableKey);
                 }
             }
         } else if (EntityType.EDM_TYPE_NAME.equals(entitySetName)) {
@@ -234,9 +234,9 @@ public class UserSchemaODataProducer extends EsODataProducer {
                 entityTypeIter.next();
                 entityTypeCount++;
             }
-            if (entityTypeCount >= DcCoreConfig.getUserdataMaxEntityCount()) {
+            if (entityTypeCount >= PersoniumUnitConfig.getUserdataMaxEntityCount()) {
                 log.info("Number of EntityTypes exceeds the limit.");
-                throw DcCoreException.OData.ENTITYTYPE_COUNT_LIMITATION_EXCEEDED;
+                throw PersoniumCoreException.OData.ENTITYTYPE_COUNT_LIMITATION_EXCEEDED;
             }
         }
 
@@ -247,7 +247,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
             List<CheckError> checkErrors = checker.checkPropertyLimits();
             if (0 < checkErrors.size()) {
                 // 幾つかの EntityTypeで何らかのエラーが発生
-                throw DcCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED;
+                throw PersoniumCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED;
             }
         }
     }
@@ -259,7 +259,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
         if (EntityType.EDM_TYPE_NAME.equals(entitySetName)) {
             // entitySetがEntityTypeの場合、 entitySet配下のユーザデータが1件でもあれば、409
             if (!isEmpty((String) oEntityKey.asSingleValue())) {
-                throw DcCoreException.OData.CONFLICT_HAS_RELATED;
+                throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
             }
 
             // 動的に定義されたプロパティ情報を検索して、削除する
@@ -278,7 +278,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
             Map<String, Object> query = QueryMapFactory.filteredQuery(null, QueryMapFactory.mustQuery(queries));
 
             Map<String, Object> filter = new HashMap<String, Object>();
-            filter.put("size", DcCoreConfig.getMaxPropertyCountInEntityType());
+            filter.put("size", PersoniumUnitConfig.getMaxPropertyCountInEntityType());
             filter.put("version", true);
             filter.put("filter", QueryMapFactory.andFilter(andfilter));
             filter.put("query", query);
@@ -299,7 +299,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
                     continue;
                 }
                 if (!isEmpty((String) nv.getValue())) {
-                    throw DcCoreException.OData.CONFLICT_HAS_RELATED;
+                    throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
                 }
             }
         } else if (ComplexTypeProperty.EDM_TYPE_NAME.equals(entitySetName)) {
@@ -329,7 +329,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
             // 取得したEntitytypeにユーザデータが存在するかチェックする
             for (String entityType : entityTypeList) {
                 if (!isEmpty(entityType)) {
-                    throw DcCoreException.OData.CONFLICT_HAS_RELATED;
+                    throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
                 }
             }
         }
@@ -342,11 +342,11 @@ public class UserSchemaODataProducer extends EsODataProducer {
     private void beforeDeleteForComplexType(String complexTypeName) {
         // ComplexTypeを使用しているPropertyが存在する場合は409エラーを返却する
         if (isUsedComplexType(complexTypeName, Property.EDM_TYPE_NAME)) {
-            throw DcCoreException.OData.CONFLICT_HAS_RELATED;
+            throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
         }
         // ComplexTypeを使用しているComplexTypePropertyが存在する場合は409エラーを返却する
         if (isUsedComplexType(complexTypeName, ComplexTypeProperty.EDM_TYPE_NAME)) {
-            throw DcCoreException.OData.CONFLICT_HAS_RELATED;
+            throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
         }
     }
 
@@ -442,7 +442,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
             // 削除対象がEntityTypeで、関連データの検索対象がPropertyの場合は、静的プロパティのみ検索対象とする
             if (EntityType.EDM_TYPE_NAME.equals(from.getType().getName())
                     && Property.EDM_TYPE_NAME.equals(to.getType().getName())) {
-                BoolCommonExpression filter = DcOptionsQueryParser.parseFilter("IsDeclared eq true");
+                BoolCommonExpression filter = PersoniumOptionsQueryParser.parseFilter("IsDeclared eq true");
                 query = new QueryInfo(InlineCount.NONE, null, null, filter, null, null, null, null, null);
             }
 
@@ -540,11 +540,11 @@ public class UserSchemaODataProducer extends EsODataProducer {
      * 不正なLink情報のチェックを行う.
      * @param sourceEntity ソース側Entity
      * @param targetEntity ターゲット側Entity
-     * @throws DcCoreException AssociationEnd - AssociationEndの$links登録時、既に同一EntityType間に関連が設定されている場合
+     * @throws PersoniumCoreException AssociationEnd - AssociationEndの$links登録時、既に同一EntityType間に関連が設定されている場合
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceEntity, EntitySetDocHandler targetEntity)
-            throws DcCoreException {
+            throws PersoniumCoreException {
 
         String targetType = targetEntity.getType();
         // AssociationEnd - AssociationEnd の$links登録時、既に同一EntityType間に関連が設定されている場合はエラーとする
@@ -560,11 +560,11 @@ public class UserSchemaODataProducer extends EsODataProducer {
      * @param sourceDocHandler ソース側Entity
      * @param entity ターゲット側Entity
      * @param targetEntitySetName ターゲットのEntitySet名
-     * @throws DcCoreException AssociationEnd - AssociationEndの$links登録時、既に同一EntityType間に関連が設定されている場合
+     * @throws PersoniumCoreException AssociationEnd - AssociationEndの$links登録時、既に同一EntityType間に関連が設定されている場合
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceDocHandler, OEntity entity, String targetEntitySetName)
-            throws DcCoreException {
+            throws PersoniumCoreException {
 
         // AssociationEnd - AssociationEnd の$links登録時、既に同一EntityType間に関連が設定されている場合はエラーとする
         if (AssociationEnd.EDM_TYPE_NAME.equals(sourceDocHandler.getType())
@@ -577,7 +577,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
             if (key == null || OEntityKey.KeyType.COMPLEX != key.getKeyType()) {
                 // AssociationEndの場合KeyTypeはCOMPLEX型なのでありえないルート
                 log.info("Failed to get EntityType ID related with AssociationEnd.");
-                throw DcCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT;
+                throw PersoniumCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT;
             }
             Set<NamedValue<?>> nvSet = key.asComplexValue();
             for (NamedValue<?> nv : nvSet) {
@@ -597,15 +597,15 @@ public class UserSchemaODataProducer extends EsODataProducer {
      * 不正なLink情報(AssociationEnd - AssociationEnd)のチェックを行う.
      * @param sourceEntity ソース側Entity
      * @param relatedTargetEntityTypeId ターゲット側EntityTypeのID
-     * @throws DcCoreException AssociationEnd - AssociationEndの$links登録時、既に同一EntityType間に関連が設定されている場合
+     * @throws PersoniumCoreException AssociationEnd - AssociationEndの$links登録時、既に同一EntityType間に関連が設定されている場合
      */
     private void checkAssociationEndToAssociationEndLink(
             EntitySetDocHandler sourceEntity,
-            String relatedTargetEntityTypeId) throws DcCoreException {
+            String relatedTargetEntityTypeId) throws PersoniumCoreException {
         // AssociationEnd一覧取得
         // データ取得件数はエンティティタイプの最大数と1エンティティタイプ内の最大プロパティ数とする
         int retrieveSize =
-                DcCoreConfig.getUserdataMaxEntityCount() * DcCoreConfig.getMaxPropertyCountInEntityType();
+                PersoniumUnitConfig.getUserdataMaxEntityCount() * PersoniumUnitConfig.getMaxPropertyCountInEntityType();
         QueryInfo queryInfo = new QueryInfo(InlineCount.NONE, retrieveSize,
                 null, null, null, null, null, null, null);
         EdmEntitySet edmAssociationEnd = getMetadata().findEdmEntitySet(AssociationEnd.EDM_TYPE_NAME);
@@ -638,7 +638,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
         // 既に同一EntityType間に関連が設定されているかのチェック
         for (OEntityWrapper associationEnd : relatedSourceEntityTypes) {
             if (relatedTargetEntityTypes.contains(associationEnd.getLinkUuid(AssociationEnd.EDM_TYPE_NAME))) {
-                throw DcCoreException.OData.CONFLICT_DUPLICATED_ENTITY_RELATION;
+                throw PersoniumCoreException.OData.CONFLICT_DUPLICATED_ENTITY_RELATION;
             }
         }
     }
@@ -669,7 +669,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
                     requestType);
 
             if (!isAcceptableTypeModify(existingType, requestType)) {
-                throw DcCoreException.OData.OPERATION_NOT_SUPPORTED.params(message);
+                throw PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.params(message);
             }
         }
 
@@ -679,7 +679,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
             Object requestValue = entry.getValue();
             Object existingValue = oedhExisting.getManyToOnelinkId().get(requestKey);
             if (!requestValue.equals(existingValue)) {
-                throw DcCoreException.OData.OPERATION_NOT_SUPPORTED.params(
+                throw PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.params(
                         String.format("%s '_%s.Name' change", entitySetName, requestKey));
             }
         }
@@ -692,7 +692,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
             if (isStaticFieldValueChanged(requestKey, requestValue, existingValue)) {
                 String message = String.format("%s '%s' change from [%s] to [%s]",
                         entitySetName, requestKey, existingValue, requestValue);
-                throw DcCoreException.OData.OPERATION_NOT_SUPPORTED.params(message);
+                throw PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.params(message);
             }
         }
     }
@@ -755,7 +755,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
         DataSourceAccessor accessor = getAccessorForIndex(entitySetName);
         PersoniumSearchResponse response = accessor.indexSearch(filter);
         if (0 < response.getHits().allPages()) {
-            throw DcCoreException.OData.CONFLICT_HAS_RELATED;
+            throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
         }
     }
 }

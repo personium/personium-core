@@ -37,15 +37,15 @@ public final class EventBus {
      */
     public EventBus(Cell cell) {
         // TODO 本当は、Cellの設定を読み込んで、それぞれのイベントをどのレベルまでログ取得するべきかきめる。
-        this.eventLoggers.put("access", new EventLogger(cell, DcEvent.Level.WARN));
-        this.eventLoggers.put("client", new EventLogger(cell, DcEvent.Level.INFO));
+        this.eventLoggers.put("access", new EventLogger(cell, PersoniumEvent.Level.WARN));
+        this.eventLoggers.put("client", new EventLogger(cell, PersoniumEvent.Level.INFO));
     }
 
     /**
      * イベントを投げる.
      * @param ev イベント
      */
-    public void post(final DcEvent ev) {
+    public void post(final PersoniumEvent ev) {
         // 非同期で Subscriberに通知してゆく処理。
         // JMS ? Netty あたりを使って Engineに通知を出したい。
         // ログの出力。

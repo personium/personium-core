@@ -25,9 +25,9 @@ import io.personium.common.es.response.PersoniumActionResponse;
 import io.personium.common.es.response.PersoniumDeleteResponse;
 import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.model.file.BinaryDataAccessException;
 import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.model.impl.es.DavNode;
@@ -96,16 +96,16 @@ public class DavNodeAccessor extends DataSourceAccessor {
             response = createForDavNodeFile(id, davNode.getSource());
 
             // 一時ファイルコピー
-            String unitUserName = getIndex().getName().replace(DcCoreConfig.getEsUnitPrefix() + "_", "");
-            BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(),
-                    unitUserName, DcCoreConfig.getFsyncEnabled());
+            String unitUserName = getIndex().getName().replace(PersoniumUnitConfig.getEsUnitPrefix() + "_", "");
+            BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(),
+                    unitUserName, PersoniumUnitConfig.getFsyncEnabled());
             binaryDataAccessor.copyFile(id);
 
             // MySQL更新
             createAds(davNode);
         } catch (BinaryDataAccessException ex) {
             // 一時ファイルコピー失敗
-            throw DcCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(ex);
+            throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(ex);
         } finally {
             // 一時ファイル削除
             deleteTmpFile(id);
@@ -115,9 +115,9 @@ public class DavNodeAccessor extends DataSourceAccessor {
     }
 
     private void deleteTmpFile(String id) {
-        String unitUserName = getIndex().getName().replace(DcCoreConfig.getEsUnitPrefix() + "_", "");
-        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(),
-                unitUserName, DcCoreConfig.getFsyncEnabled());
+        String unitUserName = getIndex().getName().replace(PersoniumUnitConfig.getEsUnitPrefix() + "_", "");
+        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(),
+                unitUserName, PersoniumUnitConfig.getFsyncEnabled());
         try {
             // 一時ファイル物理削除
             binaryDataAccessor.deletePhysicalFile(id + ".tmp");
@@ -136,7 +136,7 @@ public class DavNodeAccessor extends DataSourceAccessor {
             try {
                 getAds().createDavNode(getIndex().getName(), davNode);
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 // Adsの登録に失敗した場合は、専用のログに書込む
                 String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_DAV, null,
@@ -187,7 +187,7 @@ public class DavNodeAccessor extends DataSourceAccessor {
             try {
                 getAds().deleteDavNode(getIndex().getName(), id);
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 // Adsの登録に失敗した場合は、専用のログに書込む
                 String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_DAV, null,
@@ -241,16 +241,16 @@ public class DavNodeAccessor extends DataSourceAccessor {
             response = super.update(id, davNode.getSource(), version);
 
             // 一時ファイルコピー
-            String unitUserName = getIndex().getName().replace(DcCoreConfig.getEsUnitPrefix() + "_", "");
-            BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(),
-                    unitUserName, DcCoreConfig.getFsyncEnabled());
+            String unitUserName = getIndex().getName().replace(PersoniumUnitConfig.getEsUnitPrefix() + "_", "");
+            BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(),
+                    unitUserName, PersoniumUnitConfig.getFsyncEnabled());
             binaryDataAccessor.copyFile(id);
 
             // MySQL更新
             updateAds(davNode, response.getVersion());
         } catch (BinaryDataAccessException ex) {
             // 一時ファイルコピー失敗
-            throw DcCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(ex);
+            throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(ex);
         } finally {
             // 一時ファイル削除
             deleteTmpFile(id);
@@ -270,7 +270,7 @@ public class DavNodeAccessor extends DataSourceAccessor {
             try {
                 getAds().updateDavNode(getIndex().getName(), davNode);
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_UPDATE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_UPDATE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 // Adsの登録に失敗した場合は、専用のログに書込む
                 String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_DAV, null,

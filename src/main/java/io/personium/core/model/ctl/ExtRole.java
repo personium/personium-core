@@ -35,21 +35,21 @@ public class ExtRole {
      * ExtRole プロパティの定義体.
      */
     public static final EdmProperty.Builder P_EXT_ROLE = EdmProperty.newBuilder("ExtRole")
-            .setAnnotations(Common.DC_FORMAT_URI)
+            .setAnnotations(Common.P_FORMAT_URI)
             .setType(EdmSimpleType.STRING).setNullable(false);
     /**
      * _Relation.Name プロパティの定義体.
      */
     public static final EdmProperty.Builder P_RELATION_NAME = EdmProperty.newBuilder("_Relation.Name")
             .setType(EdmSimpleType.STRING)
-            .setAnnotations(Common.DC_FORMAT_RELATION_NAME)
+            .setAnnotations(Common.P_FORMAT_RELATION_NAME)
             .setNullable(false);
     /**
      * _Relation._Box.Name プロパティの定義体.
      */
     public static final EdmProperty.Builder P_RELATION_BOX_NAME = EdmProperty.newBuilder("_Relation._Box.Name")
             .setType(EdmSimpleType.STRING)
-            .setAnnotations(Common.DC_FORMAT_NAME)
+            .setAnnotations(Common.P_FORMAT_NAME)
             .setNullable(true);
     /**
      * EntityType Builder.

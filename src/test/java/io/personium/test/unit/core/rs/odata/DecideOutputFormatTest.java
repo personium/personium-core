@@ -24,7 +24,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.test.categories.Unit;
 
@@ -122,7 +122,7 @@ public class DecideOutputFormatTest {
         try {
             odataEntityResource.decideOutputFormat("INVALID_VALUE", null);
             fail();
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             assertEquals("PR415-OD-0001", e.getCode());
         } catch (Exception e) {
             fail();
@@ -164,7 +164,7 @@ public class DecideOutputFormatTest {
             odataEntityResource.decideOutputFormat(
                      MediaType.APPLICATION_ATOM_XML + "," + "INVALID_VALUE", null);
             fail();
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             assertEquals("PR415-OD-0001", e.getCode());
         } catch (Exception e) {
             fail();
@@ -225,7 +225,7 @@ public class DecideOutputFormatTest {
         try {
             odataEntityResource.decideOutputFormat(null, "INVALID_VALUE");
             fail();
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             assertEquals("PR400-OD-0005", e.getCode());
         } catch (Exception e) {
             fail();

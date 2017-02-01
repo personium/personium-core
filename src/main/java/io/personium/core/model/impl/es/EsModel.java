@@ -23,8 +23,8 @@ import io.personium.common.es.EsClient.Event;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.EsRequestLogInfo;
 import io.personium.common.es.EsType;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.impl.es.accessor.CellAccessor;
@@ -47,21 +47,21 @@ public class EsModel {
         EsClient.setEventHandler(Event.connected, new EsClient.EventHandler() {
             @Override
             public void handleEvent(EsRequestLogInfo logInfo, Object... params) {
-                DcCoreLog.Es.CONNECTED.params(params).writeLog();
+                PersoniumCoreLog.Es.CONNECTED.params(params).writeLog();
             }
         });
         // ESへの登録以外のリクエスト後にログを出力するハンドラを設定
         EsClient.setEventHandler(Event.afterRequest, new EsClient.EventHandler() {
             @Override
             public void handleEvent(EsRequestLogInfo logInfo, Object... params) {
-                DcCoreLog.Es.AFTER_REQUEST.params(params).writeLog();
+                PersoniumCoreLog.Es.AFTER_REQUEST.params(params).writeLog();
             }
         });
         // ESへのインデックス作成前にログを出力するハンドラを設定
         EsClient.setEventHandler(Event.creatingIndex, new EsClient.EventHandler() {
             @Override
             public void handleEvent(EsRequestLogInfo logInfo, Object... params) {
-                DcCoreLog.Es.CREATING_INDEX.params(params).writeLog();
+                PersoniumCoreLog.Es.CREATING_INDEX.params(params).writeLog();
             }
         });
         // ESへの登録リクエスト後にログを出力するハンドラを設定
@@ -80,18 +80,18 @@ public class EsModel {
                             uuid = (String) staticFields.get("__id");
                         }
                     }
-                    DcCoreLog.Es.AFTER_CREATE.params(logInfo.getIndex(),
+                    PersoniumCoreLog.Es.AFTER_CREATE.params(logInfo.getIndex(),
                             logInfo.getType(), logInfo.getId(), logInfo.getOpType(), uuid).writeLog();
-                    DcCoreLog.Es.AFTER_CREATE_BODY.params(logInfo.getDataAsString()).writeLog();
+                    PersoniumCoreLog.Es.AFTER_CREATE_BODY.params(logInfo.getDataAsString()).writeLog();
 
                 } else {
-                    DcCoreLog.Es.AFTER_CREATE.params(logInfo.getIndex(), logInfo.getType(),
+                    PersoniumCoreLog.Es.AFTER_CREATE.params(logInfo.getIndex(), logInfo.getType(),
                             logInfo.getId(), logInfo.getOpType(), logInfo.getDataAsString()).writeLog();
                 }
             }
         });
 
-        esClient = new EsClient(DcCoreConfig.getEsClusterName(), DcCoreConfig.getEsHosts());
+        esClient = new EsClient(PersoniumUnitConfig.getEsClusterName(), PersoniumUnitConfig.getEsHosts());
     }
 
     private EsModel() {
@@ -110,9 +110,9 @@ public class EsModel {
      * @return Indexオブジェクト
      */
     public static EsIndex idxAdmin() {
-        return esClient.idxAdmin(DcCoreConfig.getEsUnitPrefix(),
-                Integer.valueOf(DcCoreConfig.getESRetryTimes()),
-                Integer.valueOf(DcCoreConfig.getESRetryInterval()));
+        return esClient.idxAdmin(PersoniumUnitConfig.getEsUnitPrefix(),
+                Integer.valueOf(PersoniumUnitConfig.getESRetryTimes()),
+                Integer.valueOf(PersoniumUnitConfig.getESRetryInterval()));
     }
 
     /**
@@ -121,10 +121,10 @@ public class EsModel {
      * @return Indexオブジェクト
      */
     public static EsIndex idxUser(String userUri) {
-        return esClient.idxUser(DcCoreConfig.getEsUnitPrefix(),
+        return esClient.idxUser(PersoniumUnitConfig.getEsUnitPrefix(),
                 userUri,
-                Integer.valueOf(DcCoreConfig.getESRetryTimes()),
-                Integer.valueOf(DcCoreConfig.getESRetryInterval()));
+                Integer.valueOf(PersoniumUnitConfig.getESRetryTimes()),
+                Integer.valueOf(PersoniumUnitConfig.getESRetryInterval()));
     }
 
     /**
@@ -134,8 +134,8 @@ public class EsModel {
      */
     public static EsIndex idxUserWithUnitPrefix(String indexName) {
         return esClient.idxUser(indexName,
-                Integer.valueOf(DcCoreConfig.getESRetryTimes()),
-                Integer.valueOf(DcCoreConfig.getESRetryInterval()));
+                Integer.valueOf(PersoniumUnitConfig.getESRetryTimes()),
+                Integer.valueOf(PersoniumUnitConfig.getESRetryInterval()));
     }
 
     /**

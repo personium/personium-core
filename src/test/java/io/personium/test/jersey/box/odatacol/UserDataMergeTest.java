@@ -32,8 +32,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -270,7 +270,7 @@ public class UserDataMergeTest extends AbstractUserDataTest {
                     .with("id", userDataId)
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateReqBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_PRECONDITION_FAILED)
@@ -413,7 +413,7 @@ public class UserDataMergeTest extends AbstractUserDataTest {
         String userDataId = "userdata001";
 
         // 最大要素数
-        int maxPropNum = DcCoreConfig.getMaxPropertyCountInEntityType();
+        int maxPropNum = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
 
         // 初期作成用のリクエストボディ
         JSONObject createReqBody = new JSONObject();
@@ -473,7 +473,7 @@ public class UserDataMergeTest extends AbstractUserDataTest {
         String userDataId = "userdata001";
 
         // 最大要素数
-        int maxPropNum = DcCoreConfig.getMaxPropertyCountInEntityType();
+        int maxPropNum = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
 
         // 初期作成用のリクエストボディ
         JSONObject createReqBody = new JSONObject();
@@ -535,7 +535,7 @@ public class UserDataMergeTest extends AbstractUserDataTest {
         String userDataId = "userdata001";
 
         // 最大要素数
-        int maxPropNum = DcCoreConfig.getMaxPropertyCountInEntityType();
+        int maxPropNum = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
 
         // 初期作成用のリクエストボディ
         JSONObject createReqBody = new JSONObject();
@@ -561,8 +561,8 @@ public class UserDataMergeTest extends AbstractUserDataTest {
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
 
             ODataCommon.checkErrorResponseBody(res,
-                    DcCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED.getCode(),
-                    DcCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED.getMessage());
+                    PersoniumCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED.getCode(),
+                    PersoniumCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED.getMessage());
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
@@ -579,7 +579,7 @@ public class UserDataMergeTest extends AbstractUserDataTest {
         String userDataId = "userdata001";
 
         // 最大要素数
-        int maxPropNum = DcCoreConfig.getMaxPropertyCountInEntityType();
+        int maxPropNum = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
 
         // 初期作成用のリクエストボディ
         // 最大要素数 - 1のプロパティを指定
@@ -640,7 +640,7 @@ public class UserDataMergeTest extends AbstractUserDataTest {
         String userDataId = "userdata001";
 
         // 最大要素数
-        int maxPropNum = DcCoreConfig.getMaxPropertyCountInEntityType();
+        int maxPropNum = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
 
         // 初期作成用のリクエストボディ
         // 最大要素数 - 1のプロパティを指定
@@ -666,8 +666,8 @@ public class UserDataMergeTest extends AbstractUserDataTest {
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
 
             ODataCommon.checkErrorResponseBody(res,
-                    DcCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED.getCode(),
-                    DcCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED.getMessage());
+                    PersoniumCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED.getCode(),
+                    PersoniumCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED.getMessage());
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
@@ -899,7 +899,7 @@ public class UserDataMergeTest extends AbstractUserDataTest {
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
                 .with("ifMatch", ifMatch)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", updateReqBody.toJSONString())
                 .returns()
                 .debug();
@@ -920,7 +920,7 @@ public class UserDataMergeTest extends AbstractUserDataTest {
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
                 .with("ifMatch", "*")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", updateReqBody.toJSONString())
                 .returns()
                 .debug();

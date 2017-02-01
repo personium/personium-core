@@ -68,28 +68,28 @@ public class ReceivedMessage {
     public static final EdmProperty.Builder P_ID = EdmProperty.newBuilder("__id")
             .setType(EdmSimpleType.STRING)
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_IN_REPLY_TO);
+            .setAnnotations(Common.P_FORMAT_IN_REPLY_TO);
     /**
      * _Box.Nameプロパティの定義体.
      */
     public static final EdmProperty.Builder P_BOX_NAME = EdmProperty.newBuilder("_Box.Name")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.DC_FORMAT_NAME);
+            .setAnnotations(Common.P_FORMAT_NAME);
     /**
      * InReplyToプロパティの定義体.
      */
     public static final EdmProperty.Builder P_IN_REPLY_TO = EdmProperty.newBuilder("InReplyTo")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.DC_FORMAT_IN_REPLY_TO);
+            .setAnnotations(Common.P_FORMAT_IN_REPLY_TO);
     /**
      * Fromプロパティの定義体.
      */
     public static final EdmProperty.Builder P_FROM = EdmProperty.newBuilder("From")
             .setType(EdmSimpleType.STRING)
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_URI);
+            .setAnnotations(Common.P_FORMAT_URI);
     /**
      * MulticastToプロパティの定義体.
      */
@@ -102,14 +102,14 @@ public class ReceivedMessage {
     public static final EdmProperty.Builder P_TYPE = EdmProperty.newBuilder("Type")
             .setType(EdmSimpleType.STRING)
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_MESSAGE_TYPE);
+            .setAnnotations(Common.P_FORMAT_MESSAGE_TYPE);
     /**
      * Titleプロパティの定義体.
      */
     public static final EdmProperty.Builder P_TITLE = EdmProperty.newBuilder("Title")
             .setType(EdmSimpleType.STRING)
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_MESSAGE_TITLE);
+            .setAnnotations(Common.P_FORMAT_MESSAGE_TITLE);
     /**
      * Bodyプロパティの定義体.
      */
@@ -122,7 +122,7 @@ public class ReceivedMessage {
     public static final EdmProperty.Builder P_PRIORITY = EdmProperty.newBuilder("Priority")
             .setType(EdmSimpleType.INT32)
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_MESSAGE_PRIORITY);
+            .setAnnotations(Common.P_FORMAT_MESSAGE_PRIORITY);
     /**
      * Statusプロパティの定義体.
      */
@@ -135,14 +135,14 @@ public class ReceivedMessage {
     public static final EdmProperty.Builder P_REQUEST_RELATION = EdmProperty.newBuilder("RequestRelation")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.DC_FORMAT_URI);
+            .setAnnotations(Common.P_FORMAT_URI);
     /**
      * RequestRelationTargetプロパティの定義体.
      */
     public static final EdmProperty.Builder P_REQUEST_RELATION_TARGET = EdmProperty.newBuilder("RequestRelationTarget")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.DC_FORMAT_URI);
+            .setAnnotations(Common.P_FORMAT_URI);
 
     /**
      * EntityType Builder.

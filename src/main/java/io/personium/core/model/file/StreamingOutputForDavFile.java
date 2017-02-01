@@ -32,7 +32,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 
 /**
  * Davファイルの内容を Responseに返却する際に利用する StreamingOutputクラス. 内部的には、読み込み専用にハードリンクを作成し、出力完了後に削除する。
@@ -44,12 +44,12 @@ public class StreamingOutputForDavFile implements StreamingOutput {
     /**
      * Davファイルの読み書き時、ハードリンク作成/ファイル名改変時の最大リトライ回数.
      */
-    private static int maxRetryCount = DcCoreConfig.getDavFileOperationRetryCount();
+    private static int maxRetryCount = PersoniumUnitConfig.getDavFileOperationRetryCount();
 
     /**
      * Davファイルの読み書き時、ハードリンク作成/ファイル名改変時のリトライ間隔(msec).
      */
-    private static long retryInterval = DcCoreConfig.getDavFileOperationRetryInterval();
+    private static long retryInterval = PersoniumUnitConfig.getDavFileOperationRetryInterval();
 
     /**
      * 読み込み用のハードリンクのパス.

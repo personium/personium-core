@@ -31,7 +31,7 @@ import org.odata4j.core.OProperty;
 import org.odata4j.producer.EntitiesResponse;
 import org.odata4j.producer.ODataProducer;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
@@ -111,9 +111,9 @@ public class RoleResource {
 //                    "_role",  null);
             // TODO Bodyの生成
             return Response.ok().entity(boxName).build();
-        } catch (DcCoreException dce) {
-            if (DcCoreException.OData.NO_SUCH_ENTITY == dce) {
-                throw DcCoreException.Dav.BOX_NOT_FOUND;
+        } catch (PersoniumCoreException dce) {
+            if (PersoniumCoreException.OData.NO_SUCH_ENTITY == dce) {
+                throw PersoniumCoreException.Dav.BOX_NOT_FOUND;
             }
             throw dce;
         }

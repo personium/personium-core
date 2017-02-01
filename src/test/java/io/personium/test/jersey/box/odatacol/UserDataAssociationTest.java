@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -84,7 +84,7 @@ public class UserDataAssociationTest extends JerseyTest {
     String targetNameSpace = UserDataODataProducer.USER_ODATA_NAMESPACE + "." + targetEntityTypeName;
 
     // 登録するユーザODataの件数（N:Nの$linksで登録可能な上限値）
-    int registUserDataCount = DcCoreConfig.getLinksNtoNMaxSize();
+    int registUserDataCount = PersoniumUnitConfig.getLinksNtoNMaxSize();
 
     /**
      * コンストラクタ.
@@ -325,7 +325,7 @@ public class UserDataAssociationTest extends JerseyTest {
                     .with("entityType", srcEntityTypeName + "('" + userDataId + "')")
                     .with("query", "?\\$expand=" + "_" + targetEntityTypeName)
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -354,7 +354,7 @@ public class UserDataAssociationTest extends JerseyTest {
                     .with("entityType", targetEntityTypeName + "('" + userDataNpId + "')")
                     .with("query", "?\\$expand=" + "_" + srcEntityTypeName)
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();

@@ -44,7 +44,7 @@ import org.apache.wink.webdav.model.Propstat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.REPORT;
 import io.personium.core.auth.BoxPrivilege;
@@ -88,7 +88,7 @@ public class NullResource {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
 
-        throw DcCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
+        throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
@@ -112,11 +112,11 @@ public class NullResource {
          */
 
         if (!DavCommon.isValidResourceName(this.davRsCmp.getDavCmp().getName())) {
-            throw DcCoreException.Dav.RESOURCE_NAME_INVALID;
+            throw PersoniumCoreException.Dav.RESOURCE_NAME_INVALID;
         }
 
         if (this.isParentNull) {
-            throw DcCoreException.Dav.HAS_NOT_PARENT.params(this.davRsCmp.getParent().getUrl());
+            throw PersoniumCoreException.Dav.HAS_NOT_PARENT.params(this.davRsCmp.getParent().getUrl());
         }
 
         return this.davRsCmp.getDavCmp().putForCreate(contentType, inputStream).build();
@@ -145,11 +145,11 @@ public class NullResource {
          * have been created.
          */
         if (this.isParentNull) {
-            throw DcCoreException.Dav.HAS_NOT_PARENT.params(this.davRsCmp.getParent().getUrl());
+            throw PersoniumCoreException.Dav.HAS_NOT_PARENT.params(this.davRsCmp.getParent().getUrl());
         }
 
         if (!DavCommon.isValidResourceName(this.davRsCmp.getDavCmp().getName())) {
-            throw DcCoreException.Dav.RESOURCE_NAME_INVALID;
+            throw PersoniumCoreException.Dav.RESOURCE_NAME_INVALID;
         }
 
         // リクエストが空なら素直にwebdavでコレクションを作成する
@@ -162,12 +162,12 @@ public class NullResource {
         try {
             mkcol = ObjectIo.unmarshal(inputStream, Mkcol.class);
         } catch (Exception e1) {
-            throw DcCoreException.Dav.XML_ERROR.reason(e1);
+            throw PersoniumCoreException.Dav.XML_ERROR.reason(e1);
         }
         ObjectFactory factory = new ObjectFactory();
         String colType;
         try {
-            colType = mkcol.getDcColType();
+            colType = mkcol.getWebdavColType();
             log.debug(colType);
             Response response = this.davRsCmp.getDavCmp().mkcol(colType).build();
             // ServiceCollectionの場合は、ServiceSource用のWebdavCollectionを生成する
@@ -227,7 +227,7 @@ public class NullResource {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
-        throw DcCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
+        throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
@@ -239,7 +239,7 @@ public class NullResource {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
-        throw DcCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
+        throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
@@ -251,7 +251,7 @@ public class NullResource {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
 
-        throw DcCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
+        throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
@@ -263,7 +263,7 @@ public class NullResource {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
 
-        throw DcCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
+        throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
@@ -275,7 +275,7 @@ public class NullResource {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
-        throw DcCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
+        throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
@@ -287,7 +287,7 @@ public class NullResource {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
-        throw DcCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
+        throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
@@ -299,7 +299,7 @@ public class NullResource {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
-        throw DcCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
+        throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**

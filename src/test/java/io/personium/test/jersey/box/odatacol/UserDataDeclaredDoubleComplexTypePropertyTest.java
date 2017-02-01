@@ -35,7 +35,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.utils.ODataUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -857,7 +857,7 @@ public class UserDataDeclaredDoubleComplexTypePropertyTest extends AbstractUserD
                 .with("boxPath", boxName)
                 .with("odataSvcPath", odataName)
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", "Bearer " + DcCoreConfig.getMasterToken())
+                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken())
                 .with("Name", name)
                 .returns()
                 .debug();
@@ -901,7 +901,7 @@ public class UserDataDeclaredDoubleComplexTypePropertyTest extends AbstractUserD
                 .with("collection", COL_NAME)
                 .with("entityType", ENTITY_TYPE_NAME)
                 .with("id", userDataId)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*")
                 .returns()
                 .debug();
@@ -923,7 +923,7 @@ public class UserDataDeclaredDoubleComplexTypePropertyTest extends AbstractUserD
      */
     private void createEntities(String type, String defaultcomplexTypeProperty) {
         // Collection作成
-        DavResourceUtils.createODataCollection(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, cellName, boxName,
+        DavResourceUtils.createODataCollection(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, cellName, boxName,
                 COL_NAME);
 
         // EntityType作成
@@ -961,6 +961,6 @@ public class UserDataDeclaredDoubleComplexTypePropertyTest extends AbstractUserD
 
         // コレクションを削除
         DavResourceUtils.deleteCollection(cellName, boxName, COL_NAME,
-                DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
     }
 }

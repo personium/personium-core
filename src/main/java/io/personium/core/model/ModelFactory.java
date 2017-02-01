@@ -26,7 +26,7 @@ import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 import io.personium.core.model.impl.es.odata.UserSchemaODataProducer;
 import io.personium.core.model.impl.fs.BoxCmpFsImpl;
 import io.personium.core.model.impl.fs.CellCmpFsImpl;
-import io.personium.core.odata.DcODataProducer;
+import io.personium.core.odata.PersoniumODataProducer;
 
 /**
  * モデルオブジェクトのファクトリークラス.
@@ -87,7 +87,7 @@ public final class ModelFactory {
          * @param ac アクセスコンテキスト
          * @return Unit管理エンティティを扱うODataProducer
          */
-        public static DcODataProducer unitCtl(AccessContext ac) {
+        public static PersoniumODataProducer unitCtl(AccessContext ac) {
             return new UnitCtlODataProducer(ac);
         }
 
@@ -96,7 +96,7 @@ public final class ModelFactory {
          * @param cell CellのCell
          * @return Cell管理エンティティを扱うODataProducer
          */
-        public static DcODataProducer cellCtl(final Cell cell) {
+        public static PersoniumODataProducer cellCtl(final Cell cell) {
             return new CellCtlODataProducer(cell);
         }
 
@@ -106,7 +106,7 @@ public final class ModelFactory {
          * @param davCmp DavCmp
          * @return ODataProducer
          */
-        public static DcODataProducer userSchema(final Cell cell, final DavCmp davCmp) {
+        public static PersoniumODataProducer userSchema(final Cell cell, final DavCmp davCmp) {
             return new UserSchemaODataProducer(cell, davCmp);
         }
 
@@ -116,7 +116,7 @@ public final class ModelFactory {
          * @param davCmp DavCmp
          * @return ODataProducer
          */
-        public static DcODataProducer userData(final Cell cell, final DavCmp davCmp) {
+        public static PersoniumODataProducer userData(final Cell cell, final DavCmp davCmp) {
             return new UserDataODataProducer(cell, davCmp);
         }
 

@@ -39,7 +39,7 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.odata4j.core.ODataConstants;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.TResponse;
@@ -335,7 +335,7 @@ public class ODataCommon extends AbstractCase {
             assertEquals(HttpStatus.SC_CONFLICT, resConflict.getStatusCode());
 
             // レスポンスボディのチェック
-            checkErrorResponse(resConflict.bodyAsJson(), DcCoreException.OData.ENTITY_ALREADY_EXISTS.getCode());
+            checkErrorResponse(resConflict.bodyAsJson(), PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS.getCode());
         } finally {
             cellDelete(resConflict);
         }
@@ -373,7 +373,7 @@ public class ODataCommon extends AbstractCase {
                 // 409であることを確認
                 assertEquals(HttpStatus.SC_CONFLICT, resConflict.getStatusCode());
                 // レスポンスボディのチェック
-                checkErrorResponse(resConflict.bodyAsJson(), DcCoreException.OData.ENTITY_ALREADY_EXISTS.getCode());
+                checkErrorResponse(resConflict.bodyAsJson(), PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS.getCode());
             } else {
                 // 201であることを確認
                 assertEquals(HttpStatus.SC_CREATED, resConflict.getStatusCode());

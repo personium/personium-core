@@ -30,7 +30,7 @@ import org.junit.experimental.categories.Category;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Cell;
 import io.personium.test.categories.Integration;
@@ -147,8 +147,8 @@ public class CellBulkDeletionTest extends AbstractCase {
         // セル削除APIを実行して、412が返却されることを確認
         try {
             assertEquals(HttpStatus.SC_PRECONDITION_FAILED, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.Misc.PRECONDITION_FAILED.getCode(),
-                    DcCoreException.Misc.PRECONDITION_FAILED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.Misc.PRECONDITION_FAILED.getCode(),
+                    PersoniumCoreException.Misc.PRECONDITION_FAILED
                             .params(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE)
                             .getMessage());
         } finally {
@@ -176,8 +176,8 @@ public class CellBulkDeletionTest extends AbstractCase {
         // セル削除APIを実行して、412が返却されることを確認
         try {
             assertEquals(HttpStatus.SC_PRECONDITION_FAILED, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.Misc.PRECONDITION_FAILED.getCode(),
-                    DcCoreException.Misc.PRECONDITION_FAILED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.Misc.PRECONDITION_FAILED.getCode(),
+                    PersoniumCoreException.Misc.PRECONDITION_FAILED
                             .params(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE)
                             .getMessage());
         } finally {

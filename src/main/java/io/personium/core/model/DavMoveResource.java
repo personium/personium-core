@@ -24,8 +24,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 
 /**
  * JaxRS Resource オブジェクトから処理の委譲を受けてDavのMoveに関する処理を行うクラス.
@@ -70,7 +70,7 @@ public class DavMoveResource extends DavRsCmp {
             davDestination = new DavDestination(destination, this.getAccessContext().getBaseUri(), boxRsCmp);
         } catch (URISyntaxException e) {
             // URI 形式でない
-            throw DcCoreException.Dav.INVALID_REQUEST_HEADER.params(org.apache.http.HttpHeaders.DESTINATION,
+            throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(org.apache.http.HttpHeaders.DESTINATION,
                     destination);
         }
 
@@ -83,7 +83,7 @@ public class DavMoveResource extends DavRsCmp {
     private BoxRsCmp getBoxRsCmp() {
         // 最上位にあるBoxのリソース情報を取得する
         DavRsCmp davRsCmp = this;
-        for (int i = 0; i <= DcCoreConfig.getMaxCollectionDepth(); i++) {
+        for (int i = 0; i <= PersoniumUnitConfig.getMaxCollectionDepth(); i++) {
             DavRsCmp parent = davRsCmp.getParent();
             if (null == parent) {
                 break;
@@ -108,37 +108,37 @@ public class DavMoveResource extends DavRsCmp {
     void validateHeaders() {
         // Depth ヘッダ
         if (!DavCommon.DEPTH_INFINITY.equalsIgnoreCase(depth)) {
-            throw DcCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
+            throw PersoniumCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
         }
 
         // Overwrite ヘッダ
         if (!DavCommon.OVERWRITE_FALSE.equalsIgnoreCase(overwrite)
                 && !DavCommon.OVERWRITE_TRUE.equalsIgnoreCase(overwrite)) {
-            throw DcCoreException.Dav.INVALID_REQUEST_HEADER.params(org.apache.http.HttpHeaders.OVERWRITE, overwrite);
+            throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(org.apache.http.HttpHeaders.OVERWRITE, overwrite);
         }
 
         // Destination ヘッダ
         if (destination == null || destination.length() <= 0) {
-            throw DcCoreException.Dav.REQUIRED_REQUEST_HEADER_NOT_EXIST
+            throw PersoniumCoreException.Dav.REQUIRED_REQUEST_HEADER_NOT_EXIST
                     .params(org.apache.http.HttpHeaders.DESTINATION);
         }
 
         if (this.getUrl().equals(destination)) {
             // 移動元と移動先が等しい場合はエラーとする
-            throw DcCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destination);
+            throw PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destination);
         }
 
         DavPath destinationPath = getDestination();
         if (!this.getAccessContext().getBaseUri().equals(destinationPath.getBaseUri())) {
             // スキーマ、ホストが移動元、移動先で異なる場合はエラーとする
-            throw DcCoreException.Dav.INVALID_REQUEST_HEADER.params(
+            throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     org.apache.http.HttpHeaders.DESTINATION, destination);
         }
 
         if (!this.getCell().getName().equals(destinationPath.getCellName())
                 || !this.getBox().getName().equals(destinationPath.getBoxName())) {
             // Cell、Box が移動元、移動先で異なる場合はエラーとする
-            throw DcCoreException.Dav.INVALID_REQUEST_HEADER.params(
+            throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     org.apache.http.HttpHeaders.DESTINATION, destination);
         }
     }
@@ -153,7 +153,7 @@ public class DavMoveResource extends DavRsCmp {
             destUri = new URI(destination);
         } catch (URISyntaxException e) {
             // URI 形式でない
-            throw DcCoreException.Dav.INVALID_REQUEST_HEADER.params(org.apache.http.HttpHeaders.DESTINATION,
+            throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(org.apache.http.HttpHeaders.DESTINATION,
                     destination);
         }
         return new DavPath(destUri, this.getAccessContext().getBaseUri());

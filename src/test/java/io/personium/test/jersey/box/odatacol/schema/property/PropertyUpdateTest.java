@@ -30,7 +30,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Property;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -294,8 +294,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     isKey, uniqueKey);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'Type' change from [Edm.String] to [Edm.Double]").getMessage());
 
             // Propertyが更新されていないことの確認
@@ -359,8 +359,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     isKey, uniqueKey);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'Type' change from [Edm.Int32] to [Edm.Single]").getMessage());
 
             // Propertyが更新されていないことの確認
@@ -425,8 +425,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Type").getMessage());
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Type").getMessage());
 
             // Propertyが更新されていないことの確認
             response = PropertyUtils.get(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName, colName, propertyName,
@@ -490,8 +490,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Name").getMessage());
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Name").getMessage());
 
             // Propertyが更新されていないことの確認
             response = PropertyUtils.get(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName, colName, propertyName,
@@ -837,8 +837,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("_EntityType.Name").getMessage());
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("_EntityType.Name").getMessage());
 
             // Propertyが更新されていないことの確認
             response = PropertyUtils.get(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName, colName, propertyName,
@@ -904,8 +904,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     isKey, uniqueKey);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property '_EntityType.Name' change")
                             .getMessage());
 
@@ -971,8 +971,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     collectionKind,
                     isKey, uniqueKey);
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'IsDeclared' change from [false] to [true]").getMessage());
 
             // Propertyが更新されていないことの確認
@@ -1035,8 +1035,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     isKey, uniqueKey);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'Nullable' change from [true] to [false]").getMessage());
 
             // Propertyが更新されていないことの確認
@@ -1172,8 +1172,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'Nullable' change from [false] to [true]").getMessage());
 
             // Property更新されていないことの確認
@@ -1235,8 +1235,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     isKey, uniqueKey);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'DefaultValue' change from [null] to [12345]").getMessage());
 
             // Propertyが更新されていないことの確認
@@ -1372,8 +1372,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'DefaultValue' change from [12345] to [null]").getMessage());
 
             // Property更新されていないことの確認
@@ -1435,8 +1435,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     isKey, uniqueKey);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'CollectionKind' change from [None] to [List]").getMessage());
 
             // Propertyが更新されていないことの確認
@@ -1572,8 +1572,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'CollectionKind' change from [List] to [None]").getMessage());
 
             // Property更新されていないことの確認
@@ -1636,8 +1636,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     true, uniqueKey);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'IsKey' change from [false] to [true]").getMessage());
 
             // Propertyが更新されていないことの確認
@@ -1773,8 +1773,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'IsKey' change from [true] to [false]").getMessage());
 
             // Property更新されていないことの確認
@@ -1837,8 +1837,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     isKey, "PropertyTest");
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'UniqueKey' change from [null] to [PropertyTest]").getMessage());
 
             // Propertyが更新されていないことの確認
@@ -1974,8 +1974,8 @@ public class PropertyUpdateTest extends ODataCommon {
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("Property 'UniqueKey' change from [PropertyTest] to [null]").getMessage());
 
             // Property更新されていないことの確認

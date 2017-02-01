@@ -31,7 +31,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Property;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -94,8 +94,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING
+                PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING
                         .params(PropertyUtils.PROPERTY_NAME_KEY).getMessage());
     }
 
@@ -122,8 +122,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NAME_KEY).getMessage());
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NAME_KEY).getMessage());
     }
 
     /**
@@ -235,8 +235,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NAME_KEY).getMessage());
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NAME_KEY).getMessage());
     }
 
     /**
@@ -305,8 +305,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NAME_KEY).getMessage());
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NAME_KEY).getMessage());
     }
 
     /**
@@ -332,8 +332,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NAME_KEY).getMessage());
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NAME_KEY).getMessage());
     }
 
     /**
@@ -359,8 +359,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NAME_KEY).getMessage());
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NAME_KEY).getMessage());
     }
 
     /**
@@ -385,8 +385,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY)
+                PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY)
                         .getMessage());
     }
 
@@ -413,8 +413,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY)
                         .getMessage());
     }
 
@@ -534,8 +534,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY)
                         .getMessage());
     }
 
@@ -598,8 +598,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY)
                         .getMessage());
     }
 
@@ -626,8 +626,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY)
                         .getMessage());
     }
 
@@ -654,8 +654,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY)
                         .getMessage());
     }
 
@@ -684,8 +684,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
-                DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(entityTypeName).getMessage());
+                PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
+                PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(entityTypeName).getMessage());
     }
 
     /**
@@ -878,8 +878,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_TYPE_KEY).getMessage());
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_TYPE_KEY).getMessage());
     }
 
     /**
@@ -1052,8 +1052,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NULLABLE_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NULLABLE_KEY)
                         .getMessage());
     }
 
@@ -1164,8 +1164,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_COLLECTION_KIND_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_COLLECTION_KIND_KEY)
                         .getMessage());
     }
 
@@ -1276,8 +1276,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
                         .params(PropertyUtils.PROPERTY_IS_KEY_KEY).getMessage());
     }
 
@@ -1304,8 +1304,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY)
                         .getMessage());
     }
 
@@ -1418,8 +1418,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY)
                         .getMessage());
     }
 
@@ -1489,8 +1489,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY)
                         .getMessage());
     }
 
@@ -1517,8 +1517,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY)
                         .getMessage());
     }
 
@@ -1545,8 +1545,8 @@ public class PropertyCreateValidateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY)
                         .getMessage());
     }
 

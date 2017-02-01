@@ -32,7 +32,7 @@ import org.codehaus.jackson.map.exc.UnrecognizedPropertyException;
 import org.w3c.dom.Element;
 
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.ctl.ExtRole;
 import io.personium.core.model.ctl.Relation;
@@ -100,7 +100,7 @@ public class BarFileUtils {
         try {
             newUrl = newUrl + new URL(url).getPath();
         } catch (MalformedURLException e) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(fileName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(fileName);
         }
         return newUrl;
     }
@@ -124,7 +124,7 @@ public class BarFileUtils {
             URL url = new URL(roleClassUrl);
             paths = url.getPath().split("/");
         } catch (MalformedURLException e) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(BarFileReadRunner.ROOTPROPS_XML);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(BarFileReadRunner.ROOTPROPS_XML);
         }
         // ロールクラスURLからロールインスタンスURLへ変換して属性として設定
         StringBuilder newBaseUrl = null;
@@ -187,10 +187,10 @@ public class BarFileUtils {
             try {
                 json = mapper.readValue(jp, clazz);
             } catch (UnrecognizedPropertyException ex) {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
         } else {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         }
         return json;
     }

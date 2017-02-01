@@ -23,7 +23,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpHeaders;
 import org.json.simple.JSONObject;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ComplexTypeProperty;
@@ -454,7 +454,7 @@ public class ComplexTypePropertyUtils {
                 .with("collection", collection)
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("entityType", "ComplexType")
                 .with("id", complexTypeName)
                 .with("navPropName", "_ComplexTypeProperty")

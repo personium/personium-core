@@ -18,8 +18,8 @@ package io.personium.core.model.lock;
 
 import java.util.Date;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
@@ -29,12 +29,12 @@ import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 public abstract class LockManager {
 
     static volatile LockManager singleton;
-    static volatile String lockType = DcCoreConfig.getLockType();
-    static volatile long lockRetryInterval = Long.valueOf(DcCoreConfig.getLockRetryInterval());
-    static volatile int lockRetryTimes = Integer.valueOf(DcCoreConfig.getLockRetryTimes());
-    static volatile String lockMemcachedHost = DcCoreConfig.getLockMemcachedHost();
-    static volatile String lockMemcachedPort = DcCoreConfig.getLockMemcachedPort();
-    static volatile int accountLockLifeTime = Integer.valueOf(DcCoreConfig.getAccountLockLifetime());
+    static volatile String lockType = PersoniumUnitConfig.getLockType();
+    static volatile long lockRetryInterval = Long.valueOf(PersoniumUnitConfig.getLockRetryInterval());
+    static volatile int lockRetryTimes = Integer.valueOf(PersoniumUnitConfig.getLockRetryTimes());
+    static volatile String lockMemcachedHost = PersoniumUnitConfig.getLockMemcachedHost();
+    static volatile String lockMemcachedPort = PersoniumUnitConfig.getLockMemcachedPort();
+    static volatile int accountLockLifeTime = Integer.valueOf(PersoniumUnitConfig.getAccountLockLifetime());
 
     /**
      * Memcached タイプ.
@@ -108,7 +108,7 @@ public abstract class LockManager {
                 lock = singleton.doGetLock(fullKey);
             } catch (MemcachedClientException e) {
                 MemcachedClient.reportError();
-                throw DcCoreException.Server.GET_LOCK_STATE_ERROR;
+                throw PersoniumCoreException.Server.GET_LOCK_STATE_ERROR;
             }
             if (lock == null) {
                 lock = new Lock(fullKey, createdAt);
@@ -120,11 +120,11 @@ public abstract class LockManager {
             try {
                 Thread.sleep(lockRetryInterval);
             } catch (InterruptedException e) {
-                throw DcCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
+                throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
             }
             timesRetry++;
         }
-        throw DcCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS;
+        throw PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS;
     }
 
     /*

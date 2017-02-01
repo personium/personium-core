@@ -25,7 +25,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcRequest;
 import io.personium.test.jersey.DcResponse;
@@ -1016,7 +1016,7 @@ public class UserDataUtils {
                 .with("colPath", colName)
                 .with("srcPath", sourceEntity + "('" + sourceId + "')")
                 .with("trgPath", targetEntity)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
@@ -1046,7 +1046,7 @@ public class UserDataUtils {
                 .with("navProp", "_" + navPropEntity)
                 .with("navKey", navPropId)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*")
                 .returns()
                 .statusCode(code);
@@ -1105,7 +1105,7 @@ public class UserDataUtils {
                 .with("entityType", "_" + navPropEntity)
                 .with("query", query)
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(code)
                 .debug();

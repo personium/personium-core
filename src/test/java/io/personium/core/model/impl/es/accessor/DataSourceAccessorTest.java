@@ -37,7 +37,7 @@ import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumDeleteResponse;
 import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.common.es.response.PersoniumSearchResponse;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DcRunner;
@@ -57,7 +57,7 @@ public class DataSourceAccessorTest {
      */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        esClient = new EsClient(DcCoreConfig.getEsClusterName(), DcCoreConfig.getEsHosts());
+        esClient = new EsClient(PersoniumUnitConfig.getEsClusterName(), PersoniumUnitConfig.getEsHosts());
     }
 
     /**

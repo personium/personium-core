@@ -33,7 +33,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcRunner;
@@ -215,13 +215,13 @@ public class UserDataLinkTopSkipTest extends JerseyTest {
         BoxUtils.create(cellName, boxName, MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
         DavResourceUtils.createODataCollection(MASTER_TOKEN_NAME,
                 HttpStatus.SC_CREATED, cellName, boxName, colName);
-        EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(),
                 colName, toEntityTypeName, HttpStatus.SC_CREATED);
-        EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(),
                 colName, fromEntityTypeName, HttpStatus.SC_CREATED);
-        AssociationEndUtils.create(DcCoreConfig.getMasterToken(), fromMultiplicity, cellName,
+        AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(), fromMultiplicity, cellName,
                 boxName, colName, HttpStatus.SC_CREATED, "AssociationEnd", fromEntityTypeName);
-        AssociationEndUtils.create(DcCoreConfig.getMasterToken(), toMultiplicity, cellName,
+        AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(), toMultiplicity, cellName,
                 boxName, colName, HttpStatus.SC_CREATED, "LinkAssociationEnd", toEntityTypeName);
         AssociationEndUtils.createLink(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                 colName, fromEntityTypeName, toEntityTypeName, "AssociationEnd",

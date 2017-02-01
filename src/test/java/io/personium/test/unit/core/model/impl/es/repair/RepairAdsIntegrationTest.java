@@ -43,8 +43,8 @@ import io.personium.common.es.EsType;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.model.Cell;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.ads.Ads;
@@ -115,8 +115,8 @@ public class RepairAdsIntegrationTest extends AbstractCase {
      */
     @Test
     public void persnoium経由で登録されたCellデータをMySQLに登録できること() throws AdsException {
-        String indexName = DcCoreConfig.getEsUnitPrefix() + "_" + IndexNameEncoder.encodeEsIndexName("ad");
-        String dbName = DcCoreConfig.getEsUnitPrefix() + "_" + IndexNameEncoder.encodeEsIndexName(owner);
+        String indexName = PersoniumUnitConfig.getEsUnitPrefix() + "_" + IndexNameEncoder.encodeEsIndexName("ad");
+        String dbName = PersoniumUnitConfig.getEsUnitPrefix() + "_" + IndexNameEncoder.encodeEsIndexName(owner);
 
         // ESアクセス情報
         String esTypeName = Cell.EDM_TYPE_NAME;
@@ -205,7 +205,7 @@ public class RepairAdsIntegrationTest extends AbstractCase {
     @Test
     public void core経由で登録されたODATAデータをMySQLに登録できること() throws AdsException {
 
-        String userDataIndexName = DcCoreConfig.getEsUnitPrefix() + "_" + IndexNameEncoder.encodeEsIndexName(owner);
+        String userDataIndexName = PersoniumUnitConfig.getEsUnitPrefix() + "_" + IndexNameEncoder.encodeEsIndexName(owner);
 
         // ESアクセス情報
         String userDataEsTypeName = UserDataODataProducer.USER_ODATA_NAMESPACE;
@@ -231,7 +231,7 @@ public class RepairAdsIntegrationTest extends AbstractCase {
                     .create(MASTER_TOKEN_NAME, HttpStatus.SC_CREATED, body, cellName, boxName, colName, entityType);
 
             // ESからデータ取得
-            String cellIndexName = DcCoreConfig.getEsUnitPrefix() + "_" + IndexNameEncoder.encodeEsIndexName("ad");
+            String cellIndexName = PersoniumUnitConfig.getEsUnitPrefix() + "_" + IndexNameEncoder.encodeEsIndexName("ad");
             PersoniumSearchHit cellEsHit = searchFromEs(cellIndexName, Cell.EDM_TYPE_NAME, EsIndex.CELL_ROUTING_KEY_NAME,
                     "Name", cellName);
             String cellId = cellEsHit.getId();
@@ -358,14 +358,14 @@ public class RepairAdsIntegrationTest extends AbstractCase {
      */
     protected void recordAdsWriteFailureLog(AdsWriteFailureLogInfo loginfo) {
         AdsWriteFailureLogWriter adsWriteFailureLogWriter = AdsWriteFailureLogWriter.getInstance(
-                DcCoreConfig.getAdsWriteFailureLogDir(),
-                DcCoreConfig.getCoreVersion(),
-                DcCoreConfig.getAdsWriteFailureLogPhysicalDelete());
+                PersoniumUnitConfig.getAdsWriteFailureLogDir(),
+                PersoniumUnitConfig.getCoreVersion(),
+                PersoniumUnitConfig.getAdsWriteFailureLogPhysicalDelete());
         try {
             adsWriteFailureLogWriter.writeActiveFile(loginfo);
         } catch (AdsWriteFailureLogException e2) {
-            DcCoreLog.Server.WRITE_ADS_FAILURE_LOG_ERROR.reason(e2).writeLog();
-            DcCoreLog.Server.WRITE_ADS_FAILURE_LOG_INFO.params(loginfo.toString());
+            PersoniumCoreLog.Server.WRITE_ADS_FAILURE_LOG_ERROR.reason(e2).writeLog();
+            PersoniumCoreLog.Server.WRITE_ADS_FAILURE_LOG_INFO.params(loginfo.toString());
         }
     }
 

@@ -48,8 +48,8 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.response.PersoniumSearchHit;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.ctl.AssociationEnd;
@@ -70,7 +70,7 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyDocHandler;
 import io.personium.core.model.impl.es.doc.UserDataDocHandler;
 import io.personium.core.model.impl.es.doc.UserDataLinkDocHandler;
-import io.personium.core.odata.DcEdmxFormatParser;
+import io.personium.core.odata.PersoniumEdmxFormatParser;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.BulkRequest;
 import io.personium.core.rs.odata.ODataBatchResource.NavigationPropertyBulkContext;
@@ -256,7 +256,7 @@ public class UserDataODataProducer extends EsODataProducer {
                 XMLFactoryProvider2 provider = StaxXMLFactoryProvider2.getInstance();
                 XMLInputFactory2 factory = provider.newXMLInputFactory2();
                 XMLEventReader2 reader = factory.createXMLEventReader(sr);
-                DcEdmxFormatParser parser = new DcEdmxFormatParser();
+                PersoniumEdmxFormatParser parser = new PersoniumEdmxFormatParser();
                 metacache = parser.parseMetadata(reader);
             } catch (RuntimeException ex) {
                 log.info("XMLParseException: " + ex.getMessage(), ex.fillInStackTrace());
@@ -292,7 +292,7 @@ public class UserDataODataProducer extends EsODataProducer {
 
         // データ取得件数はエンティティタイプの最大数と1エンティティタイプ内の最大プロパティ数
         int schemaPropertyGetCount =
-                DcCoreConfig.getUserdataMaxEntityCount() * DcCoreConfig.getMaxPropertyCountInEntityType();
+                PersoniumUnitConfig.getUserdataMaxEntityCount() * PersoniumUnitConfig.getMaxPropertyCountInEntityType();
 
         // ソート条件としてNameを指定する
         List<OrderByExpression> orderBy = OptionsQueryParser.parseOrderBy("Name");
@@ -405,7 +405,7 @@ public class UserDataODataProducer extends EsODataProducer {
             }
 
             if (!(request.getValue().getDocHandler() instanceof UserDataDocHandler)) {
-                request.getValue().setError(DcCoreException.Server.UNKNOWN_ERROR);
+                request.getValue().setError(PersoniumCoreException.Server.UNKNOWN_ERROR);
                 continue;
             }
 
@@ -437,7 +437,7 @@ public class UserDataODataProducer extends EsODataProducer {
             // 動的プロパティ作成時にエラーが発生した場合は、該当リクエストのみ、エラーを設定する
             try {
                 createDynamicPropertyEntity(docHandler);
-            } catch (DcCoreException e) {
+            } catch (PersoniumCoreException e) {
                 request.getValue().setError(e);
             }
 
@@ -488,7 +488,7 @@ public class UserDataODataProducer extends EsODataProducer {
             long count = accessor.count(queryMap);
             if (0 != count) {
                 UserDataSchemaCache.clear(this.davCmp.getId());
-                throw DcCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS;
+                throw PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS;
             }
 
             for (PropertyDocHandler propertyDocHandler : propertyDocHandlerList) {
@@ -563,10 +563,10 @@ public class UserDataODataProducer extends EsODataProducer {
 
             String bulkLinkContextsKey = getBatchLinkContextsKey(npBulkContext);
             BatchLinkContext batchLinkContext = batchLinkContexts.get(bulkLinkContextsKey);
-            if (batchLinkContext.getRegistCount() >= DcCoreConfig.getLinksNtoNMaxSize()) {
+            if (batchLinkContext.getRegistCount() >= PersoniumUnitConfig.getLinksNtoNMaxSize()) {
                 // リンクの上限値を超えている場合
-                npBulkRequest.setError(DcCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED);
-                npBulkContext.setException(DcCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED);
+                npBulkRequest.setError(PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED);
+                npBulkContext.setException(PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED);
             } else {
                 // 正常な場合は解析済み件数をインクリメントする
                 batchLinkContext.incrementRegistCount();

@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import io.personium.common.auth.token.Role;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -287,8 +287,8 @@ public class RoleUpdateTest extends ODataCommon {
 
             // メッセージ確認
             ODataCommon.checkErrorResponseBody(res,
-                    DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
-                    DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(boxname).getMessage());
+                    PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
+                    PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(boxname).getMessage());
 
         } finally {
             CellCtlUtils.deleteRole(cellName, testRoleName);

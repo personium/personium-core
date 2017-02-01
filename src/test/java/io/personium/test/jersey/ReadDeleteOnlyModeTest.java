@@ -44,7 +44,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.lock.LockManager;
 import io.personium.core.utils.MemcachedClient;
 import io.personium.test.categories.Integration;
@@ -92,7 +92,7 @@ public class ReadDeleteOnlyModeTest extends JerseyTest {
     @Test
     public void ReadDeleteOnlyモード時にPOSTメソッドが503となること() throws Exception {
         // InProcessの場合はテスト不可のため終了する
-        if (LockManager.TYPE_IN_PROCESS.equals(DcCoreConfig.getLockType())) {
+        if (LockManager.TYPE_IN_PROCESS.equals(PersoniumUnitConfig.getLockType())) {
             return;
         }
 
@@ -123,7 +123,7 @@ public class ReadDeleteOnlyModeTest extends JerseyTest {
     @Test
     public void ReadDeleteOnlyモード時に$batchを実行した場合_登録系リクエストが503となること() throws Exception {
         // InProcessの場合はテスト不可のため終了する
-        if (LockManager.TYPE_IN_PROCESS.equals(DcCoreConfig.getLockType())) {
+        if (LockManager.TYPE_IN_PROCESS.equals(PersoniumUnitConfig.getLockType())) {
             return;
         }
 

@@ -27,9 +27,9 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.wink.webdav.model.Multistatus;
 import org.apache.wink.webdav.model.Propertyupdate;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.jaxb.Acl;
-import io.personium.core.odata.DcODataProducer;
+import io.personium.core.odata.PersoniumODataProducer;
 
 
 /**
@@ -273,14 +273,14 @@ public interface DavCmp {
      * データ操作用ODataProducerを返します.
      * @return ODataProducer
      */
-    DcODataProducer getODataProducer();
+    PersoniumODataProducer getODataProducer();
 
     /**
      * スキーマ操作用ODataProducerを返します.
      * @param cell Cell
      * @return ODataProducer
      */
-    DcODataProducer getSchemaODataProducer(Cell cell);
+    PersoniumODataProducer getSchemaODataProducer(Cell cell);
 
     /**
      * @return ETag String.
@@ -309,5 +309,5 @@ public interface DavCmp {
      * メッセージの付加情報は、ここでは設定せずに呼び出し元で設定すること。
      * @return NotFound例外
      */
-    DcCoreException getNotFoundException();
+    PersoniumCoreException getNotFoundException();
 }

@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
 import io.personium.core.model.lock.AccountLockManager;
 
@@ -56,7 +56,7 @@ public class AuthResourceUtils {
         BufferedReader reader = null;
         String rtnstr = null;
         try {
-            in = DcCoreConfig.class.getClassLoader().getResourceAsStream(fileName);
+            in = PersoniumUnitConfig.class.getClassLoader().getResourceAsStream(fileName);
             isr = new InputStreamReader(in, "UTF-8"/* 文字コード指定 */);
             reader = new BufferedReader(isr);
             StringBuffer buf = new StringBuffer();

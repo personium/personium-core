@@ -37,7 +37,7 @@ import io.personium.common.es.EsType;
 import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.ads.Ads;
 import io.personium.core.model.impl.es.ads.AdsConnectionException;
@@ -61,7 +61,7 @@ public class RepairAdsTest {
 
     static Logger log = LoggerFactory.getLogger(RepairAdsTest.class);
 
-    private String idxName = DcCoreConfig.getEsUnitPrefix() + "_anon";
+    private String idxName = PersoniumUnitConfig.getEsUnitPrefix() + "_anon";
     private String id = "repair_" + PersoniumUUID.randomUUID();
     private String[] idList = {id };
     private Ads ads;
@@ -135,7 +135,7 @@ public class RepairAdsTest {
             RepairAds repair = RepairAds.getInstance();
 
             StringBuilder sbuf = new StringBuilder();
-            sbuf.append(DcCoreConfig.getEsUnitPrefix() + "_anon\t");
+            sbuf.append(PersoniumUnitConfig.getEsUnitPrefix() + "_anon\t");
             sbuf.append("ComplexTypeProperty\t");
             sbuf.append("odata-gsX3t2q3Qz6jdIn30fFMaQ\t");
             sbuf.append("aCUuueHzTKCPchE0yxTZZA\t");
@@ -173,7 +173,7 @@ public class RepairAdsTest {
 
             // AdsWriteFailureLogInfoを生成
             StringBuilder sbuf = new StringBuilder();
-            sbuf.append(DcCoreConfig.getEsUnitPrefix() + "_anon\t");
+            sbuf.append(PersoniumUnitConfig.getEsUnitPrefix() + "_anon\t");
             sbuf.append("ComplexTypeProperty\t");
             sbuf.append("odata-gsX3t2q3Qz6jdIn30fFMaQ\t");
             sbuf.append("aCUuueHzTKCPchE0yxTZZA\t");
@@ -223,7 +223,7 @@ public class RepairAdsTest {
 
             // AdsWriteFailureLogInfoを生成
             StringBuilder sbuf = new StringBuilder();
-            sbuf.append(DcCoreConfig.getEsUnitPrefix() + "_anon\t");
+            sbuf.append(PersoniumUnitConfig.getEsUnitPrefix() + "_anon\t");
             sbuf.append("ComplexTypeProperty\t");
             sbuf.append("odata-gsX3t2q3Qz6jdIn30fFMaQ\t");
             sbuf.append("aCUuueHzTKCPchE0yxTZZA\t");
@@ -286,7 +286,7 @@ public class RepairAdsTest {
 
             // AdsWriteFailureLogInfoを生成
             StringBuilder sbuf = new StringBuilder();
-            sbuf.append(DcCoreConfig.getEsUnitPrefix() + "_anon\t");
+            sbuf.append(PersoniumUnitConfig.getEsUnitPrefix() + "_anon\t");
             sbuf.append("ComplexTypeProperty\t");
             sbuf.append("odata-gsX3t2q3Qz6jdIn30fFMaQ\t");
             sbuf.append("aCUuueHzTKCPchE0yxTZZA\t");
@@ -338,7 +338,7 @@ public class RepairAdsTest {
 
         // AdsWriteFailureLogInfoを生成
         StringBuilder sbuf = new StringBuilder();
-        sbuf.append(DcCoreConfig.getEsUnitPrefix() + "_anon\t");
+        sbuf.append(PersoniumUnitConfig.getEsUnitPrefix() + "_anon\t");
         sbuf.append("ComplexTypeProperty\t");
         sbuf.append("odata-gsX3t2q3Qz6jdIn30fFMaQ\t");
         sbuf.append("aCUuueHzTKCPchE0yxTZZA\t");
@@ -390,7 +390,7 @@ public class RepairAdsTest {
 
         // AdsWriteFailureLogInfoを生成
         StringBuilder sbuf = new StringBuilder();
-        sbuf.append(DcCoreConfig.getEsUnitPrefix() + "_anon\t");
+        sbuf.append(PersoniumUnitConfig.getEsUnitPrefix() + "_anon\t");
         sbuf.append("ComplexTypeProperty\t");
         sbuf.append("odata-gsX3t2q3Qz6jdIn30fFMaQ\t");
         sbuf.append("aCUuueHzTKCPchE0yxTZZA\t");
@@ -450,7 +450,7 @@ public class RepairAdsTest {
 
             // AdsWriteFailureLogInfoを生成
             StringBuilder sbuf = new StringBuilder();
-            sbuf.append(DcCoreConfig.getEsUnitPrefix() + "_anon\t");
+            sbuf.append(PersoniumUnitConfig.getEsUnitPrefix() + "_anon\t");
             sbuf.append("ComplexTypeProperty\t");
             sbuf.append("odata-gsX3t2q3Qz6jdIn30fFMaQ\t");
             sbuf.append("aCUuueHzTKCPchE0yxTZZA\t");

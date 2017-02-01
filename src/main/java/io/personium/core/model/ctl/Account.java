@@ -62,7 +62,7 @@ public class Account {
      * Nameプロパティの定義体.
      */
     public static final EdmProperty.Builder P_NAME = EdmProperty.newBuilder("Name").setType(EdmSimpleType.STRING)
-            .setNullable(false).setAnnotations(Common.DC_FORMAT_NAME_WITH_SIGN);
+            .setNullable(false).setAnnotations(Common.P_FORMAT_NAME_WITH_SIGN);
 
     /**
      * LastAuthenticatedプロパティの定義体.
@@ -74,7 +74,7 @@ public class Account {
      * Typeプロパティの定義体.
      */
     public static final EdmProperty.Builder P_TYPE = EdmProperty.newBuilder("Type").setType(EdmSimpleType.STRING)
-            .setDefaultValue(TYPE_VALUE_BASIC).setAnnotations(Common.DC_FORMAT_ACCOUNT_TYPE);
+            .setDefaultValue(TYPE_VALUE_BASIC).setAnnotations(Common.P_FORMAT_ACCOUNT_TYPE);
 
     /**
      * Cellプロパティの定義体.

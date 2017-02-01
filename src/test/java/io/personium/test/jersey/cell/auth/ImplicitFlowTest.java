@@ -55,8 +55,8 @@ import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreMessageUtils;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.lock.LockManager;
 import io.personium.core.rs.cell.AuthResourceUtils;
@@ -66,7 +66,7 @@ import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcException;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.DcRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -283,7 +283,7 @@ public class ImplicitFlowTest extends JerseyTest {
     @Test
     @Ignore
     public final void パスワード認証失敗後1秒以内に成功する認証をリクエストした場合200が返却されてエラーhtmlが返却されること() {
-        String lockType = DcCoreConfig.getLockType();
+        String lockType = PersoniumUnitConfig.getLockType();
         if (lockType.equals("memcached")) {
             String addbody = "&username=account2&password=dummypassword";
 
@@ -323,7 +323,7 @@ public class ImplicitFlowTest extends JerseyTest {
     @Test
     @Ignore
     public final void パスワード認証失敗後1秒以内に失敗する認証をリクエストした場合200が返却されてエラーhtmlが返却されること() {
-        String lockType = DcCoreConfig.getLockType();
+        String lockType = PersoniumUnitConfig.getLockType();
         if (lockType.equals("memcached")) {
             String addbody = "&username=account2&password=dummypassword";
 
@@ -356,7 +356,7 @@ public class ImplicitFlowTest extends JerseyTest {
      */
     @Test
     public final void パスワード認証失敗後1秒後に成功する認証をリクエストした場合302が返却されること() {
-        String lockType = DcCoreConfig.getLockType();
+        String lockType = PersoniumUnitConfig.getLockType();
         if (lockType.equals("memcached")) {
             String addbody = "&username=account2&password=dummypassword";
 
@@ -398,7 +398,7 @@ public class ImplicitFlowTest extends JerseyTest {
      */
     @Test
     public final void パスワード認証失敗後1秒後に失敗する認証をリクエストした場合200が返却されてエラーhtmlが返却されること() {
-        String lockType = DcCoreConfig.getLockType();
+        String lockType = PersoniumUnitConfig.getLockType();
         if (lockType.equals("memcached")) {
             String addbody = "&username=account2&password=dummypassword";
 
@@ -1336,7 +1336,7 @@ public class ImplicitFlowTest extends JerseyTest {
     private DcResponse requesttoAuthzWithBody(String requestCellName,
             String body,
             HashMap<String, String> requestheaders) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -1430,7 +1430,7 @@ public class ImplicitFlowTest extends JerseyTest {
         assertEquals(AuthResourceUtils.getJavascript("ajax.js"), ((Element) nodeList.item(0)).getTextContent());
 
         nodeList = document.getElementsByTagName("title");
-        assertEquals(DcCoreMessageUtils.getMessage("PS-AU-0001"), ((Element) nodeList.item(0)).getTextContent());
+        assertEquals(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"), ((Element) nodeList.item(0)).getTextContent());
 
         nodeList = document.getElementsByTagName("body");
         String expectedAppUrl = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + "__/profile.json";
@@ -1439,7 +1439,7 @@ public class ImplicitFlowTest extends JerseyTest {
                 ((Element) nodeList.item(0)).getAttribute("onload"));
 
         nodeList = document.getElementsByTagName("h1");
-        assertEquals(DcCoreMessageUtils.getMessage("PS-AU-0001"), ((Element) nodeList.item(0)).getTextContent());
+        assertEquals(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"), ((Element) nodeList.item(0)).getTextContent());
 
         nodeList = document.getElementsByTagName("form");
         String expectedFormUrl = UrlUtils.cellRoot(dataCellName) + "__authz";
@@ -1450,7 +1450,7 @@ public class ImplicitFlowTest extends JerseyTest {
             Element element = (Element) nodeList.item(i);
             String id = element.getAttribute("id");
             if ("message".equals(id)) {
-                assertEquals(DcCoreMessageUtils.getMessage(messageId).replaceAll("<br />", ""),
+                assertEquals(PersoniumCoreMessageUtils.getMessage(messageId).replaceAll("<br />", ""),
                         element.getTextContent());
             }
         }

@@ -46,15 +46,15 @@ import org.odata4j.producer.QueryInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.bar.jackson.JSONManifest;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
-import io.personium.core.odata.DcODataProducer;
-import io.personium.core.odata.DcOptionsQueryParser;
+import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.odata.PersoniumOptionsQueryParser;
 import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.core.rs.odata.ODataResource;
 
@@ -75,7 +75,7 @@ public class BarFileInstaller {
     private ODataEntityResource oDataEntityResource;
     private UriInfo uriInfo;
 
-    private String barTempDir = DcCoreConfig.get(DcCoreConfig.BAR.BAR_INSTALLFILE_DIR);
+    private String barTempDir = PersoniumUnitConfig.get(PersoniumUnitConfig.BAR.BAR_INSTALLFILE_DIR);
 
     private JSONObject manifestJson;
 
@@ -136,7 +136,7 @@ public class BarFileInstaller {
             runner.setEntryCount(entryCount);
             runner.writeInitProgressCache();
 
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             if (null != runner) {
                 runner.writeErrorProgressCache();
             }
@@ -147,7 +147,7 @@ public class BarFileInstaller {
                 runner.writeErrorProgressCache();
             }
             removeBarFile(barFile);
-            throw DcCoreException.Server.UNKNOWN_ERROR;
+            throw PersoniumCoreException.Server.UNKNOWN_ERROR;
         } finally {
             IOUtils.closeQuietly(inStream);
         }
@@ -193,7 +193,7 @@ public class BarFileInstaller {
         // Content-Type: application/zip固定
         String contentType = headers.get(HttpHeaders.CONTENT_TYPE);
         if (!"application/zip".equals(contentType)) {
-            throw DcCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR
+            throw PersoniumCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR
                     .params(HttpHeaders.CONTENT_TYPE);
         }
     }
@@ -205,10 +205,10 @@ public class BarFileInstaller {
     protected long getMaxBarFileSize() {
         long maxBarFileSize;
         try {
-            maxBarFileSize = Long.parseLong(DcCoreConfig
-                    .get(DcCoreConfig.BAR.BAR_FILE_MAX_SIZE));
+            maxBarFileSize = Long.parseLong(PersoniumUnitConfig
+                    .get(PersoniumUnitConfig.BAR.BAR_FILE_MAX_SIZE));
         } catch (NumberFormatException ne) {
-            throw DcCoreException.Server.UNKNOWN_ERROR;
+            throw PersoniumCoreException.Server.UNKNOWN_ERROR;
         }
         return maxBarFileSize;
     }
@@ -220,12 +220,12 @@ public class BarFileInstaller {
     protected long getMaxBarEntryFileSize() {
         long maxBarFileSize;
         try {
-            maxBarFileSize = Long.parseLong(DcCoreConfig
-                    .get(DcCoreConfig.BAR.BAR_ENTRY_MAX_SIZE));
+            maxBarFileSize = Long.parseLong(PersoniumUnitConfig
+                    .get(PersoniumUnitConfig.BAR.BAR_ENTRY_MAX_SIZE));
         } catch (NumberFormatException ne) {
-            log.info("NumberFormatException" + DcCoreConfig
-                    .get(DcCoreConfig.BAR.BAR_ENTRY_MAX_SIZE));
-            throw DcCoreException.Server.UNKNOWN_ERROR;
+            log.info("NumberFormatException" + PersoniumUnitConfig
+                    .get(PersoniumUnitConfig.BAR.BAR_ENTRY_MAX_SIZE));
+            throw PersoniumCoreException.Server.UNKNOWN_ERROR;
         }
         return maxBarFileSize;
     }
@@ -251,7 +251,7 @@ public class BarFileInstaller {
         File barFileDir = new File(new File(barTempDir, unitUserName), "bar");
         if (!barFileDir.exists() && !barFileDir.mkdirs()) {
             String message = "unable create directory: " + barFileDir.getAbsolutePath();
-            throw DcCoreException.Server.FILE_SYSTEM_ERROR.params(message);
+            throw PersoniumCoreException.Server.FILE_SYSTEM_ERROR.params(message);
         }
 
         // barファイルをNFS上に格納する。
@@ -270,13 +270,13 @@ public class BarFileInstaller {
             } else {
                 message = String.format(message, barFile.getAbsolutePath());
             }
-            throw DcCoreException.Server.FILE_SYSTEM_ERROR.params(message);
+            throw PersoniumCoreException.Server.FILE_SYSTEM_ERROR.params(message);
         } finally {
-            if (null != outStream && DcCoreConfig.getFsyncEnabled()) {
+            if (null != outStream && PersoniumUnitConfig.getFsyncEnabled()) {
                 try {
                     sync(((FileOutputStream) outStream).getFD());
                 } catch (Exception e) {
-                    throw DcCoreException.Server.FILE_SYSTEM_ERROR.params(e.getMessage());
+                    throw PersoniumCoreException.Server.FILE_SYSTEM_ERROR.params(e.getMessage());
                 }
             }
             IOUtils.closeQuietly(outStream);
@@ -328,7 +328,7 @@ public class BarFileInstaller {
                     }
                     // barファイルの必須ファイルチェック（格納順はインストール時にチェックする）
                     if (!checkBarFileStructures(zae, requiredBarFiles)) {
-                        throw DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.params(entryName);
+                        throw PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.params(entryName);
                     }
                 }
                 if (!requiredBarFiles.isEmpty()) {
@@ -341,25 +341,25 @@ public class BarFileInstaller {
                             entryNames.append(requiredFileNames[i]);
                         }
                     }
-                    throw DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.params(entryNames.toString());
+                    throw PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.params(entryNames.toString());
                 }
                 return entryCount;
-            } catch (DcCoreException e) {
+            } catch (PersoniumCoreException e) {
                 throw e;
             } catch (Exception e) {
                 log.info(e.getMessage(), e.fillInStackTrace());
-                throw DcCoreException.BarInstall.BAR_FILE_CANNOT_READ.params(entryName);
+                throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params(entryName);
             }
         } catch (FileNotFoundException e) {
-            throw DcCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.params("barFile");
+            throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.params("barFile");
         } catch (ZipException e) {
-            throw DcCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.params(e.getMessage());
+            throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.params(e.getMessage());
         } catch (IOException e) {
-            throw DcCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.params(e.getMessage());
-        } catch (DcCoreException e) {
+            throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.params(e.getMessage());
+        } catch (PersoniumCoreException e) {
             throw e;
         } catch (RuntimeException e) {
-            throw DcCoreException.Server.UNKNOWN_ERROR;
+            throw PersoniumCoreException.Server.UNKNOWN_ERROR;
         } finally {
             ZipFile.closeQuietly(zipFile);
         }
@@ -371,7 +371,7 @@ public class BarFileInstaller {
             JSONManifest manifest =
                     BarFileUtils.readJsonEntry(inStream, entryName, JSONManifest.class);
             if (!manifest.checkSchema()) {
-                throw DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.params(entryName);
+                throw PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.params(entryName);
             }
             this.manifestJson = manifest.getJson();
         } finally {
@@ -391,7 +391,7 @@ public class BarFileInstaller {
         if (zae.getSize() > (long) (maxBarEntryFileSize * MB)) {
             String message = "Bar file entry size too large invalid file [%s: %sB]";
             log.info(String.format(message, entryName, String.valueOf(zae.getSize())));
-            throw DcCoreException.BarInstall.BAR_FILE_ENTRY_SIZE_TOO_LARGE
+            throw PersoniumCoreException.BarInstall.BAR_FILE_ENTRY_SIZE_TOO_LARGE
                     .params(entryName, String.valueOf(zae.getSize()));
         }
     }
@@ -406,7 +406,7 @@ public class BarFileInstaller {
         if (barFile.length() > (long) (maxBarFileSize * MB)) {
             String message = "Bar file size too large invalid file [%sB]";
             log.info(String.format(message, String.valueOf(barFile.length())));
-            throw DcCoreException.BarInstall.BAR_FILE_SIZE_TOO_LARGE
+            throw PersoniumCoreException.BarInstall.BAR_FILE_SIZE_TOO_LARGE
                     .params(String.valueOf(barFile.length()));
         }
     }
@@ -440,23 +440,23 @@ public class BarFileInstaller {
      * インストール先Boxが既に登録されているかどうか、マニフェストに定義されているスキーマURLが既に登録されているかどうかをチェックする.
      */
     private void checkDuplicateBoxAndSchema() {
-        DcODataProducer producer = oDataEntityResource.getOdataProducer();
+        PersoniumODataProducer producer = oDataEntityResource.getOdataProducer();
 
         // [400]既に同じscheme URLが設定されたBoxが存在している
         // 同じスキーマURLを持つBoxを検索し、1件以上ヒットした場合はエラーとする。
         String schemaUrl = (String) this.manifestJson.get("Schema");
-        BoolCommonExpression filter = DcOptionsQueryParser.parseFilter("Schema eq '" + schemaUrl + "'");
+        BoolCommonExpression filter = PersoniumOptionsQueryParser.parseFilter("Schema eq '" + schemaUrl + "'");
         QueryInfo query = new QueryInfo(null, null, null, filter, null, null, null, null, null);
         if (producer.getEntitiesCount(Box.EDM_TYPE_NAME, query).getCount() > 0) {
-            throw DcCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.params(schemaUrl);
+            throw PersoniumCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.params(schemaUrl);
         }
 
         // [405]既に同名のBoxが存在している
         // Box名のみで検索を行い、スキーマ有無に係わらず検索にヒットした場合はエラーとする。
-        filter = DcOptionsQueryParser.parseFilter("Name eq '" + this.boxName + "'");
+        filter = PersoniumOptionsQueryParser.parseFilter("Name eq '" + this.boxName + "'");
         query = new QueryInfo(null, null, null, filter, null, null, null, null, null);
         if (producer.getEntitiesCount(Box.EDM_TYPE_NAME, query).getCount() > 0) {
-            throw DcCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.params(this.boxName);
+            throw PersoniumCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.params(this.boxName);
         }
 
         log.info("Install target Box is not found, able to install.");
@@ -474,7 +474,7 @@ public class BarFileInstaller {
      * ODataProducerの取得.
      * @return ODataProducer
      */
-    public DcODataProducer getOdataProducer() {
+    public PersoniumODataProducer getOdataProducer() {
         return oDataEntityResource.getOdataProducer();
     }
 

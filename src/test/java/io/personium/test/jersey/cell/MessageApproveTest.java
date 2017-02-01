@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.Relation;
 import io.personium.test.categories.Integration;
@@ -39,7 +39,7 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DcException;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.DcRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
@@ -84,7 +84,7 @@ public class MessageApproveTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest;
+            PersoniumRestAdapter rest;
 
             HashMap<String, String> requestheaders;
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
@@ -94,7 +94,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
             res = null;
 
             // リクエストヘッダをセット
@@ -134,7 +134,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = "notfoundid123456789";
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             // リクエストヘッダをセット
@@ -146,7 +146,7 @@ public class MessageApproveTest extends ODataCommon {
             res = rest.post(requestUrl, "{\"Command\":\"read\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.NO_SUCH_ENTITY.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode());
         } catch (DcException e) {
             e.printStackTrace();
         }
@@ -171,7 +171,7 @@ public class MessageApproveTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest;
+            PersoniumRestAdapter rest;
 
             HashMap<String, String> requestheaders;
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
@@ -181,7 +181,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
             res = null;
 
             // リクエストヘッダをセット
@@ -194,21 +194,21 @@ public class MessageApproveTest extends ODataCommon {
             res = rest.post(requestUrl, "{\"Command\":null }",
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
             // 空文字でメッセージ承認
             requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
             res = rest.post(requestUrl, "{\"Command\":\"\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
             // 不正な文字列でメッセージ承認
             requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
             res = rest.post(requestUrl, "{\"Command\":\"ABCDE\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
         } catch (DcException e) {
             e.printStackTrace();
         } finally {
@@ -237,7 +237,7 @@ public class MessageApproveTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest;
+            PersoniumRestAdapter rest;
 
             HashMap<String, String> requestheaders;
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
@@ -247,7 +247,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
             res = null;
 
             // リクエストヘッダをセット
@@ -260,14 +260,14 @@ public class MessageApproveTest extends ODataCommon {
             res = rest.post(requestUrl, "{\"Command\":\"approved\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
             // rejectedでメッセージ承認
             requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
             res = rest.post(requestUrl, "{\"Command\":\"rejected\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
         } catch (DcException e) {
             e.printStackTrace();
         } finally {
@@ -320,7 +320,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -396,7 +396,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -486,7 +486,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -496,7 +496,7 @@ public class MessageApproveTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    DcCoreException.ReceiveMessage.REQUEST_RELATION_EXISTS_ERROR.getCode());
+                    PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_EXISTS_ERROR.getCode());
 
         } catch (DcException e) {
             e.printStackTrace();
@@ -548,7 +548,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -609,7 +609,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -620,21 +620,21 @@ public class MessageApproveTest extends ODataCommon {
             res = rest.post(requestUrl, "{\"Command\":null }",
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
             // 空文字でメッセージ承認
             requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
             res = rest.post(requestUrl, "{\"Command\":\"\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
             // 不正な文字列でメッセージ承認
             requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
             res = rest.post(requestUrl, "{\"Command\":\"ABCDE\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
         } catch (DcException e) {
             e.printStackTrace();
@@ -681,7 +681,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -692,14 +692,14 @@ public class MessageApproveTest extends ODataCommon {
             res = rest.post(requestUrl, "{\"Command\":\"read\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
             // 不正な文字列でメッセージ承認
             requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
             res = rest.post(requestUrl, "{\"Command\":\"unread\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
         } catch (DcException e) {
             e.printStackTrace();
@@ -746,7 +746,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -761,7 +761,7 @@ public class MessageApproveTest extends ODataCommon {
             res = rest.post(requestUrl, "{\"Command\":\"approved\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
         } catch (DcException e) {
             e.printStackTrace();
@@ -813,7 +813,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ拒否する
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -828,7 +828,7 @@ public class MessageApproveTest extends ODataCommon {
             res = rest.post(requestUrl, "{\"Command\":\"rejected\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
         } catch (DcException e) {
             e.printStackTrace();
@@ -853,7 +853,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = "dummyMessageId";
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -864,14 +864,14 @@ public class MessageApproveTest extends ODataCommon {
             DcResponse res = rest.post(requestUrl, "{\"Command\":\"approved\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.NO_SUCH_ENTITY.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode());
 
             // rejected
             requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
             res = rest.post(requestUrl, "{\"Command\":\"rejected\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.OData.NO_SUCH_ENTITY.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode());
 
         } catch (DcException e) {
             e.printStackTrace();
@@ -911,7 +911,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -921,7 +921,7 @@ public class MessageApproveTest extends ODataCommon {
             res = rest.post(requestUrl, "{\"Command\":\"approved\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_CONFLICT, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), DcCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR.getCode());
 
         } catch (DcException e) {
             e.printStackTrace();
@@ -968,7 +968,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -979,7 +979,7 @@ public class MessageApproveTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_CONFLICT, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    DcCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR.getCode());
+                    PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR.getCode());
 
         } catch (DcException e) {
             e.printStackTrace();
@@ -1028,7 +1028,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1049,7 +1049,7 @@ public class MessageApproveTest extends ODataCommon {
 
             // 関係削除メッセージを承認する
             messageId = getMessageId(res);
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             requestheaders = new HashMap<String, String>();
@@ -1125,7 +1125,7 @@ public class MessageApproveTest extends ODataCommon {
 
             // 関係削除メッセージを承認する
             String messageId = getMessageId(res);
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1180,7 +1180,7 @@ public class MessageApproveTest extends ODataCommon {
             String messageId = getMessageId(res);
 
             // メッセージ承認にする
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1204,7 +1204,7 @@ public class MessageApproveTest extends ODataCommon {
     }
 
     private DcResponse createReceivedMessage(String requestUrl, JSONObject body) throws DcException {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット

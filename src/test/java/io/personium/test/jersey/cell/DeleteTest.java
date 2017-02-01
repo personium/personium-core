@@ -34,7 +34,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.test.categories.Integration;
@@ -42,7 +42,7 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -158,7 +158,7 @@ public class DeleteTest extends ODataCommon {
     @Test
     public final void Cell削除の正常系のテスト() {
         // Cellを削除
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -189,8 +189,8 @@ public class DeleteTest extends ODataCommon {
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
         checkErrorResponse(res.bodyAsJson(),
-                DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
-                DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
+                PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
+                PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
     }
 
     /**
@@ -199,7 +199,7 @@ public class DeleteTest extends ODataCommon {
     @Test
     public final void Cell削除の存在しないCellId指定のテスト() {
         // Cellを削除
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -232,7 +232,7 @@ public class DeleteTest extends ODataCommon {
         cellUrl.append("?$select=name");
 
         // Cellを削除
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -255,7 +255,7 @@ public class DeleteTest extends ODataCommon {
     @Test
     public final void Cell削除の不正Authorizationのテスト() {
         // Cellを削除
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -281,7 +281,7 @@ public class DeleteTest extends ODataCommon {
         this.boxCreate();
 
         // Cellを削除
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -314,7 +314,7 @@ public class DeleteTest extends ODataCommon {
                     userName, pass, HttpStatus.SC_CREATED);
 
             // Cellを削除
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -415,7 +415,7 @@ public class DeleteTest extends ODataCommon {
             RoleUtils.create(this.cellInfo.cellName, MASTER_TOKEN_NAME, null, roleName, HttpStatus.SC_CREATED);
 
             // Cellを削除
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -462,7 +462,7 @@ public class DeleteTest extends ODataCommon {
                     HttpStatus.SC_CREATED);
 
             // Cellを削除
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -521,7 +521,7 @@ public class DeleteTest extends ODataCommon {
                     HttpStatus.SC_CREATED);
 
             // Cellを削除
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -576,7 +576,7 @@ public class DeleteTest extends ODataCommon {
             RelationUtils.create(this.cellInfo.cellName, MASTER_TOKEN_NAME, body, HttpStatus.SC_CREATED);
 
             // Cellを削除
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();

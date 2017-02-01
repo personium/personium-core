@@ -24,7 +24,7 @@ import javax.ws.rs.HttpMethod;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.rs.odata.BatchRequestShutter;
 import io.personium.test.categories.Unit;
 
@@ -48,7 +48,7 @@ public class BatchRequestShutterTest {
      */
     @Test
     public void TooManyConcurrentが発生した場合シャッターONの状態になること() {
-        Exception e = DcCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS;
+        Exception e = PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS;
 
         BatchRequestShutter shutter = new BatchRequestShutter();
         assertFalse(shutter.isShuttered());
@@ -62,7 +62,7 @@ public class BatchRequestShutterTest {
      */
     @Test
     public void TooManyConcurrent以外の例外が発生した場合シャッターONの状態にならないこと() {
-        Exception e = DcCoreException.Server.GET_LOCK_STATE_ERROR;
+        Exception e = PersoniumCoreException.Server.GET_LOCK_STATE_ERROR;
 
         BatchRequestShutter shutter = new BatchRequestShutter();
         assertFalse(shutter.isShuttered());
@@ -76,8 +76,8 @@ public class BatchRequestShutterTest {
      */
     @Test
     public void 一度でもTooManyConcurrentが発生した場合シャッターONの状態が継続すること() {
-        Exception e1 = DcCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS;
-        Exception e2 = DcCoreException.OData.CONFLICT_DUPLICATED_ENTITY;
+        Exception e1 = PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS;
+        Exception e2 = PersoniumCoreException.OData.CONFLICT_DUPLICATED_ENTITY;
 
         BatchRequestShutter shutter = new BatchRequestShutter();
         assertFalse(shutter.isShuttered());
@@ -108,7 +108,7 @@ public class BatchRequestShutterTest {
      */
     @Test
     public void シャッターONの場合GETメソッドのみ許可されること() {
-        Exception e = DcCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS;
+        Exception e = PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS;
 
         BatchRequestShutter shutter = new BatchRequestShutter();
         assertFalse(shutter.isShuttered());

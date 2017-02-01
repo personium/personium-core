@@ -25,8 +25,8 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    DcCoreExceptionTest.class,
-    DcCoreLogTest.class
+    PersoniumCoreExceptionTest.class,
+    PersoniumCoreLogTest.class
     })
 public class AllTests {
 }

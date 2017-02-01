@@ -27,8 +27,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -110,7 +110,7 @@ public class MoveLimitTest extends JerseyTest {
                     BOX_NAME + "/" + SRC_COL_NAME + "/" + moveFileNameOverLimitCount,
                     FILE_BODY, MediaType.TEXT_PLAIN, HttpStatus.SC_CREATED);
             // 移動先のCollectionに子要素数の最大値 - 2までファイル作成
-            for (int i = 0; i < DcCoreConfig.getMaxChildResourceCount() - 2; i++) {
+            for (int i = 0; i < PersoniumUnitConfig.getMaxChildResourceCount() - 2; i++) {
                 String fileName = String.format("%s_%05d", DST_RESOURCE_PREFIX, i);
                 DavResourceUtils.createWebDavFile(TOKEN, CELL_NAME,
                         BOX_NAME + "/" + DST_COL_NAME + "/" + fileName, FILE_BODY, MediaType.TEXT_PLAIN,
@@ -145,7 +145,7 @@ public class MoveLimitTest extends JerseyTest {
             TResponse res = DavResourceUtils.moveWebDav(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + SRC_COL_NAME + "/" + moveFileNameOverLimitCount, destination,
                     HttpStatus.SC_BAD_REQUEST);
-            DcCoreException expectedException = DcCoreException.Dav.COLLECTION_CHILDRESOURCE_ERROR;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.COLLECTION_CHILDRESOURCE_ERROR;
             ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
 
             // 移動したファイルを取得できること
@@ -203,7 +203,7 @@ public class MoveLimitTest extends JerseyTest {
                     BOX_NAME, SRC_COL_NAME + "/" + moveCollectionNameOverLimitCount);
 
             // 移動先のCollectionに子要素数の最大値 - 2までコレクション作成
-            for (int i = 0; i < DcCoreConfig.getMaxChildResourceCount() - 2; i++) {
+            for (int i = 0; i < PersoniumUnitConfig.getMaxChildResourceCount() - 2; i++) {
                 String collectionName = String.format("%s_%05d", DST_RESOURCE_PREFIX, i);
                 DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME,
                         BOX_NAME, DST_COL_NAME + "/" + collectionName);
@@ -238,7 +238,7 @@ public class MoveLimitTest extends JerseyTest {
             TResponse res = DavResourceUtils.moveWebDav(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + SRC_COL_NAME + "/" + moveCollectionNameOverLimitCount, destination,
                     HttpStatus.SC_BAD_REQUEST);
-            DcCoreException expectedException = DcCoreException.Dav.COLLECTION_CHILDRESOURCE_ERROR;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.COLLECTION_CHILDRESOURCE_ERROR;
             ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
 
             // 移動したコレクションを取得できること
@@ -276,7 +276,7 @@ public class MoveLimitTest extends JerseyTest {
             // 移動先のCollectionに階層の深さの最大値 - 2までコレクション作成
             String destPath = "";
             int index;
-            for (index = 0; index < DcCoreConfig.getMaxCollectionDepth() - 2; index++) {
+            for (index = 0; index < PersoniumUnitConfig.getMaxCollectionDepth() - 2; index++) {
                 destPath = String.format("%s%s_%03d/", destPath, DST_RESOURCE_PREFIX, index);
                 DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME,
                         BOX_NAME, destPath);
@@ -309,7 +309,7 @@ public class MoveLimitTest extends JerseyTest {
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             // エラーコード確認
-            DcCoreException expectedException = DcCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(),
                     expectedException.getMessage());
 
@@ -346,7 +346,7 @@ public class MoveLimitTest extends JerseyTest {
             // 移動先のCollectionに階層の深さの最大値 - 2までコレクション作成
             String destPath = "";
             int index;
-            for (index = 0; index < DcCoreConfig.getMaxCollectionDepth() - 2; index++) {
+            for (index = 0; index < PersoniumUnitConfig.getMaxCollectionDepth() - 2; index++) {
                 destPath = String.format("%s%s_%03d/", destPath, DST_RESOURCE_PREFIX, index);
                 DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME,
                         BOX_NAME, destPath);

@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.test.categories.Integration;
@@ -37,7 +37,7 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DcException;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.DcRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
@@ -77,13 +77,13 @@ public class MessageMethodNotAllowTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             // TODO Authorizationヘッダ
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             try {
                 String requestUrl = UrlUtils.receivedMessageCtl(Setup.TEST_CELL1);
@@ -119,13 +119,13 @@ public class MessageMethodNotAllowTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             // TODO Authorizationヘッダ
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             try {
                 String requestUrl = UrlUtils.receivedMessageCtl(Setup.TEST_CELL1);
@@ -164,7 +164,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             // TODO Authorizationヘッダ
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             // マージリクエスト実行
             String requestUrl = ReceivedMessage.EDM_TYPE_NAME;
@@ -196,13 +196,13 @@ public class MessageMethodNotAllowTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             // TODO Authorizationヘッダ
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             try {
                 String requestUrl = UrlUtils.receivedMessageCtl(Setup.TEST_CELL1, "MessageId");
@@ -238,13 +238,13 @@ public class MessageMethodNotAllowTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             // TODO Authorizationヘッダ
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             try {
                 String requestUrl = UrlUtils.receivedMessageCtl(Setup.TEST_CELL1, "MessageId");
@@ -283,7 +283,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             // TODO Authorizationヘッダ
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             // マージリクエスト実行
             String requestUrl = ReceivedMessage.EDM_TYPE_NAME + "('MessageId')";
@@ -315,13 +315,13 @@ public class MessageMethodNotAllowTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             // TODO Authorizationヘッダ
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             try {
                 String requestUrl = UrlUtils.sentMessageCtl(Setup.TEST_CELL1);
@@ -357,13 +357,13 @@ public class MessageMethodNotAllowTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             // TODO Authorizationヘッダ
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             try {
                 String requestUrl = UrlUtils.sentMessageCtl(Setup.TEST_CELL1);
@@ -402,7 +402,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             // TODO Authorizationヘッダ
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             // マージリクエスト実行
             String requestUrl = SentMessage.EDM_TYPE_NAME;
@@ -434,13 +434,13 @@ public class MessageMethodNotAllowTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             // TODO Authorizationヘッダ
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             try {
                 String requestUrl = UrlUtils.sentMessageCtl(Setup.TEST_CELL1, "MessageId");
@@ -476,13 +476,13 @@ public class MessageMethodNotAllowTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             // TODO Authorizationヘッダ
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             try {
                 String requestUrl = UrlUtils.sentMessageCtl(Setup.TEST_CELL1, "MessageId");
@@ -521,7 +521,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             // TODO Authorizationヘッダ
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             // マージリクエスト実行
             String requestUrl = SentMessage.EDM_TYPE_NAME + "('MessageId')";
@@ -545,7 +545,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
                 .with("ifMatch", ifMatch)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", updateReqBody.toJSONString())
                 .returns()
                 .debug();

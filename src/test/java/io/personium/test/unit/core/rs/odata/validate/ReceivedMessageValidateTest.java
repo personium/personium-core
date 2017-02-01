@@ -24,7 +24,7 @@ import org.odata4j.core.OProperties;
 import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.rs.cell.MessageODataResource;
 import io.personium.core.rs.odata.AbstractODataResource;
@@ -45,7 +45,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * idが31文字の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void idが31文字の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_ID.build(),
                 ReceivedMessage.P_ID.getName(),
@@ -65,7 +65,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * idが33文字の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void idが33文字の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_ID.build(),
                 ReceivedMessage.P_ID.getName(),
@@ -75,7 +75,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * idがNullの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void idがNullの場合にDcCoreExceptionが発生すること() {
         this.setDefaultValue(ReceivedMessage.P_ID.build(),
                 ReceivedMessage.P_ID.getName(),
@@ -85,7 +85,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * InReplyToが31文字の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void InReplyToが31文字の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_IN_REPLY_TO.build(),
                 ReceivedMessage.P_IN_REPLY_TO.getName(),
@@ -105,7 +105,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * InReplyToが33文字の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void InReplyToが33文字の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_IN_REPLY_TO.build(),
                 ReceivedMessage.P_IN_REPLY_TO.getName(),
@@ -138,7 +138,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * FromがURL形式でない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void FromがURL形式でない場合にDcCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_FROM.build(),
                 ReceivedMessage.P_FROM.getName(),
@@ -148,7 +148,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * FromがNullの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void FromがNullの場合にDcCoreExceptionが発生すること() {
         this.setDefaultValue(ReceivedMessage.P_FROM.build(),
                 ReceivedMessage.P_FROM.getName(),
@@ -188,7 +188,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * Typeがsocial_messageの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Typeがsocial_messageの場合にDcCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_TYPE.build(),
                 ReceivedMessage.P_TYPE.getName(),
@@ -198,7 +198,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * Typeがnullの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Typeがnullの場合にDcCoreExceptionが発生すること() {
         this.setDefaultValue(ReceivedMessage.P_TYPE.build(),
                 ReceivedMessage.P_TYPE.getName(),
@@ -231,7 +231,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * Titleが257文字の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Titleが257文字の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(
                 ReceivedMessage.P_TITLE.build(),
@@ -243,7 +243,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * Titleがnullの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Titleがnullの場合にDcCoreExceptionが発生すること() {
         this.setDefaultValue(ReceivedMessage.P_TITLE.build(),
                 ReceivedMessage.P_TITLE.getName(),
@@ -253,7 +253,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * Priorityが0の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Priorityが0の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(
                 ReceivedMessage.P_PRIORITY.build(),
@@ -314,7 +314,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * Priorityが6の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Priorityが6の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(
                 ReceivedMessage.P_PRIORITY.build(),
@@ -325,7 +325,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * Priorityがnullの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Priorityがnullの場合にDcCoreExceptionが発生すること() {
         this.setDefaultValue(ReceivedMessage.P_PRIORITY.build(),
                 ReceivedMessage.P_PRIORITY.getName(),
@@ -345,7 +345,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * RequestRelationがURL形式でない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void RequestRelationがURL形式でない場合にDcCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_REQUEST_RELATION.build(),
                 ReceivedMessage.P_REQUEST_RELATION.getName(),
@@ -377,7 +377,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * RequestRelationTargetがURL形式でない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void RequestRelationTargetがURL形式でない場合にDcCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_REQUEST_RELATION_TARGET.build(),
                 ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
@@ -417,7 +417,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * MulticastToがURL形式でない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void MulticastToがURL形式でない場合にDcCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "ftp://example.com/test");
 
@@ -426,7 +426,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * MulticastToがCSV複数URL形式とURL形式でない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void MulticastToがCSV複数URL形式とURL形式でない場合にDcCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
                 "http://example.com/test,ftp://example.com/test");
@@ -435,7 +435,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * MulticastToが不正なCSV形式の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void MulticastToが不正なCSV形式の場合にDcCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
                 "http://example.com/test,,http://example.com/test");
@@ -464,7 +464,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * TypeがmessageでStatusがnoneの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void TypeがmessageでStatusがnoneの場合にDcCoreExceptionが発生すること() {
         MessageODataResource.validateStatus("message", "none");
     }
@@ -488,7 +488,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * Typeがreq.relation.buildでStatusがunreadの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Typeがreq_relation_buildでStatusがunreadの場合にDcCoreExceptionが発生すること() {
         MessageODataResource.validateStatus("req.relation.build", "unread");
     }
@@ -496,7 +496,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * Typeがreq.relation.breakでStatusがunreadの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Typeがreq_relation_breakでStatusがunreadの場合にDcCoreExceptionが発生すること() {
         MessageODataResource.validateStatus("req.relation.break", "unread");
     }
@@ -512,7 +512,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * Typeがreq.relation.breakでRequestRelationがnullの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Typeがreq_relation_breakでRequestRelationがnullの場合にDcCoreExceptionが発生すること() {
         MessageODataResource.validateReqRelation("req.relation.break", null, "http://example.com/test");
     }
@@ -520,7 +520,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     /**
      * Typeがreq.relation.breakでRequestRelationTargetがnullの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Typeがreq_relation_breakでRequestRelationTargetがnullの場合にDcCoreExceptionが発生すること() {
         MessageODataResource.validateReqRelation("req.relation.break", "http://example.com/test", null);
     }

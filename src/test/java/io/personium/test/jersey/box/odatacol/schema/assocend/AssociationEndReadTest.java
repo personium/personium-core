@@ -27,8 +27,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmMultiplicity;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -121,8 +121,8 @@ public class AssociationEndReadTest extends ODataCommon {
 
             // メッセージチェック
             ODataCommon.checkErrorResponseBody(resGet,
-                    DcCoreException.OData.NO_SUCH_ENTITY.getCode(),
-                    DcCoreException.OData.NO_SUCH_ENTITY.getMessage());
+                    PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode(),
+                    PersoniumCoreException.OData.NO_SUCH_ENTITY.getMessage());
 
         } finally {
             if (res.getLocationHeader() != null) {
@@ -145,7 +145,7 @@ public class AssociationEndReadTest extends ODataCommon {
                 .with("collection", "setodata")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", assocName)
                 .with("multiplicity", multiplicity)
                 .with("entityTypeName", entityTypeName)

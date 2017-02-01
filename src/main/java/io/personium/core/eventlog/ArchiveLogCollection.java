@@ -34,8 +34,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.event.EventUtils;
 import io.personium.core.model.Cell;
 
@@ -66,7 +66,7 @@ public class ArchiveLogCollection {
         // archiveコレクションのURLを生成
         StringBuilder urlSb = new StringBuilder();
         UriBuilder uriBuilder = uriInfo.getBaseUriBuilder();
-        uriBuilder.scheme(DcCoreConfig.getUnitScheme());
+        uriBuilder.scheme(PersoniumUnitConfig.getUnitScheme());
         urlSb.append(uriBuilder.build().toASCIIString());
         urlSb.append(uriInfo.getPath());
         this.url = urlSb.toString();
@@ -110,16 +110,16 @@ public class ArchiveLogCollection {
                     ZipEntry entry = (ZipEntry) emu.nextElement();
                     if (null == entry) {
                         log.info("Zip file entry is null.");
-                        throw DcCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN;
+                        throw PersoniumCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN;
                     }
                     size += entry.getSize();
                 }
             } catch (ZipException e) {
                 log.info("ZipException", e);
-                throw DcCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN;
+                throw PersoniumCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN;
             } catch (IOException e) {
                 log.info("IOException", e);
-                throw DcCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN;
+                throw PersoniumCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN;
             } finally {
                 IOUtils.closeQuietly(zipFile);
             }

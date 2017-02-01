@@ -31,14 +31,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcException;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.DcRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
@@ -1309,7 +1309,7 @@ public class UserDataValidateTest extends ODataCommon {
                 .with("entityType", "Category")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", "Bearer " + DcCoreConfig.getMasterToken())
+                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken())
                 .with("body", body.toJSONString())
                 .returns()
                 .debug();
@@ -1321,12 +1321,12 @@ public class UserDataValidateTest extends ODataCommon {
      * @return レスポンス
      */
     private DcResponse createUserDataWithDcClient(JSONObject body) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
-        requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+        requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
         requestheaders.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
 
         try {

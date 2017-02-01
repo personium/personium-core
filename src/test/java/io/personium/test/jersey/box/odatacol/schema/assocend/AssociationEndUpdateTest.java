@@ -22,7 +22,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmMultiplicity;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -117,8 +117,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     EdmMultiplicity.ONE.getSymbolString(), EdmMultiplicity.MANY.getSymbolString());
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED.params(message).getMessage());
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.params(message).getMessage());
         } finally {
             // AssociationEnd削除
             AssociationEndUtils.delete(AbstractCase.MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_ODATA,
@@ -160,8 +160,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
             String message = "AssociationEnd '_EntityType.Name' change";
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED.params(message).getMessage());
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.params(message).getMessage());
         } finally {
             // AssociationEnd削除
             AssociationEndUtils.delete(AbstractCase.MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_ODATA,
@@ -203,8 +203,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     body, HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Multiplicity").getMessage());
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Multiplicity").getMessage());
         } finally {
             // AssociationEnd削除
             AssociationEndUtils.delete(AbstractCase.MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_ODATA,
@@ -244,8 +244,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     body, HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Name").getMessage());
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Name").getMessage());
         } finally {
             // AssociationEnd削除
             AssociationEndUtils.delete(AbstractCase.MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_ODATA,
@@ -285,8 +285,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     body, HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Multiplicity").getMessage());
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Multiplicity").getMessage());
         } finally {
             // AssociationEnd削除
             AssociationEndUtils.delete(AbstractCase.MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_ODATA,
@@ -327,8 +327,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     body, HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("_EntityType.Name").getMessage());
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("_EntityType.Name").getMessage());
         } finally {
             // AssociationEnd削除
             AssociationEndUtils.delete(AbstractCase.MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_ODATA,
@@ -443,8 +443,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
             String message = "unknown property Type for AssociationEnd";
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.FIELED_INVALID_ERROR.getCode(),
-                    DcCoreException.OData.FIELED_INVALID_ERROR.params(message).getMessage());
+                    PersoniumCoreException.OData.FIELED_INVALID_ERROR.getCode(),
+                    PersoniumCoreException.OData.FIELED_INVALID_ERROR.params(message).getMessage());
         } finally {
             // AssociationEnd削除
             AssociationEndUtils.delete(AbstractCase.MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_ODATA,
@@ -486,8 +486,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
             String message = "__published is management information name. Cannot request.";
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.FIELED_INVALID_ERROR.getCode(),
-                    DcCoreException.OData.FIELED_INVALID_ERROR.params(message).getMessage());
+                    PersoniumCoreException.OData.FIELED_INVALID_ERROR.getCode(),
+                    PersoniumCoreException.OData.FIELED_INVALID_ERROR.params(message).getMessage());
         } finally {
             // AssociationEnd削除
             AssociationEndUtils.delete(AbstractCase.MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_ODATA,
@@ -526,8 +526,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -567,8 +567,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -609,8 +609,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -651,8 +651,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -767,8 +767,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -808,8 +808,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -959,8 +959,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Multiplicity").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Multiplicity").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -1000,8 +1000,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Multiplicity").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Multiplicity").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -1043,8 +1043,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("_EntityType.Name").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("_EntityType.Name").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -1085,8 +1085,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("_EntityType.Name").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("_EntityType.Name").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -1127,8 +1127,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("_EntityType.Name").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("_EntityType.Name").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -1169,8 +1169,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("_EntityType.Name").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("_EntityType.Name").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -1285,8 +1285,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("_EntityType.Name").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("_EntityType.Name").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -1327,8 +1327,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("_EntityType.Name").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("_EntityType.Name").getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -1369,8 +1369,8 @@ public class AssociationEndUpdateTest extends ODataCommon {
                     HttpStatus.SC_BAD_REQUEST);
             ODataCommon.checkErrorResponseBody(
                     res,
-                    DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
-                    DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(entityTypeName2).getMessage());
+                    PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
+                    PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(entityTypeName2).getMessage());
 
         } finally {
             // AssociationEnd削除

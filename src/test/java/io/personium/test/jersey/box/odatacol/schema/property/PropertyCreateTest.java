@@ -34,8 +34,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Property;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -134,8 +134,8 @@ public class PropertyCreateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NULLABLE_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PropertyUtils.PROPERTY_NULLABLE_KEY)
                         .getMessage());
     }
 
@@ -164,8 +164,8 @@ public class PropertyCreateTest extends ODataCommon {
 
             // レスポンスチェック
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.ENTITY_ALREADY_EXISTS.getCode(),
-                    DcCoreException.OData.ENTITY_ALREADY_EXISTS.getMessage());
+                    PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS.getCode(),
+                    PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS.getMessage());
 
         } finally {
             // 作成したPropertyを削除
@@ -252,10 +252,10 @@ public class PropertyCreateTest extends ODataCommon {
     public final void Collectionの異なるEntityTypeNameを指定してPropertyを新規作成した場合にBadRequestが返却されること() {
         try {
             // Collection/EntityType作成
-            DavResourceUtils.createODataCollection(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED,
+            DavResourceUtils.createODataCollection(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED,
                     Setup.TEST_CELL1,
                     Setup.TEST_BOX1, "testcol");
-            EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(), "testcol",
+            EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(), "testcol",
                     "anotherColEntityType", HttpStatus.SC_CREATED);
 
             // リクエストパラメータ設定
@@ -271,14 +271,14 @@ public class PropertyCreateTest extends ODataCommon {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
-                    DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params("anotherColEntityType").getMessage());
+                    PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
+                    PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params("anotherColEntityType").getMessage());
         } finally {
             // 作成したEntityType/Collectionを削除
-            EntityTypeUtils.delete("testcol", DcCoreConfig.getMasterToken(),
+            EntityTypeUtils.delete("testcol", PersoniumUnitConfig.getMasterToken(),
                     MediaType.APPLICATION_JSON, "anotherColEntityType", Setup.TEST_CELL1, -1);
             DavResourceUtils.deleteCollection(Setup.TEST_CELL1, Setup.TEST_BOX1, "testcol",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -289,11 +289,11 @@ public class PropertyCreateTest extends ODataCommon {
     public final void Boxの異なるEntityTypeNameを指定してPropertyを新規作成した場合にBadRequestが返却されること() {
         try {
             // Box/Collection/EntityType作成
-            BoxUtils.create(Setup.TEST_CELL1, "anotherbox", DcCoreConfig.getMasterToken());
-            DavResourceUtils.createODataCollection(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED,
+            BoxUtils.create(Setup.TEST_CELL1, "anotherbox", PersoniumUnitConfig.getMasterToken());
+            DavResourceUtils.createODataCollection(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED,
                     Setup.TEST_CELL1,
                     "anotherbox", Setup.TEST_ODATA);
-            EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(), "anotherbox",
+            EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(), "anotherbox",
                     Setup.TEST_ODATA,
                     "anotherBoxEntityType", HttpStatus.SC_CREATED);
 
@@ -310,16 +310,16 @@ public class PropertyCreateTest extends ODataCommon {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
-                    DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params("anotherBoxEntityType").getMessage());
+                    PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
+                    PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params("anotherBoxEntityType").getMessage());
         } finally {
             // 作成したEntityType/Collectionを削除
-            EntityTypeUtils.delete(Setup.TEST_ODATA, DcCoreConfig.getMasterToken(),
+            EntityTypeUtils.delete(Setup.TEST_ODATA, PersoniumUnitConfig.getMasterToken(),
                     MediaType.APPLICATION_JSON, "anotherBoxEntityType", "anotherbox", Setup.TEST_CELL1, -1);
             DavResourceUtils.deleteCollection(Setup.TEST_CELL1, "anotherbox", Setup.TEST_ODATA,
-                    DcCoreConfig.getMasterToken(),
+                    PersoniumUnitConfig.getMasterToken(),
                     -1);
-            BoxUtils.delete(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(), "anotherbox");
+            BoxUtils.delete(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(), "anotherbox");
         }
     }
 
@@ -332,14 +332,14 @@ public class PropertyCreateTest extends ODataCommon {
     public final void Property制限値より１つ少ないPropertyを持つEntityTypeに_Propertyを１つ追加して_正常終了すること() throws Exception {
         // 実際には 400プロパティが登録されているEntityTypeしか存在しないので、DcCoreConfigをだまして、
         // SimplePropertyの最大値が 401であるように扱う。
-        Field singletonField = DcCoreConfig.class.getDeclaredField("singleton");
+        Field singletonField = PersoniumUnitConfig.class.getDeclaredField("singleton");
         singletonField.setAccessible(true);
-        DcCoreConfig singleton = (DcCoreConfig) singletonField.get(null);
-        Field propField = DcCoreConfig.class.getDeclaredField("props");
+        PersoniumUnitConfig singleton = (PersoniumUnitConfig) singletonField.get(null);
+        Field propField = PersoniumUnitConfig.class.getDeclaredField("props");
         propField.setAccessible(true);
         Properties props = (Properties) propField.get(singleton);
         // ここで数値を詐称する。
-        props.put(DcCoreConfig.UserDataProperties.MAX_PROPERTY_COUNT_IN_ENTITY, "401");
+        props.put(PersoniumUnitConfig.UserDataProperties.MAX_PROPERTY_COUNT_IN_ENTITY, "401");
 
         String locationUrl =
                 UrlUtils.property(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, propName,
@@ -361,7 +361,7 @@ public class PropertyCreateTest extends ODataCommon {
         } finally {
             // 作成したPropertyを削除
             assertEquals(HttpStatus.SC_NO_CONTENT, deleteOdataResource(locationUrl).getStatusCode());
-            props.put(DcCoreConfig.UserDataProperties.MAX_PROPERTY_COUNT_IN_ENTITY, "400");
+            props.put(PersoniumUnitConfig.UserDataProperties.MAX_PROPERTY_COUNT_IN_ENTITY, "400");
         }
     }
 

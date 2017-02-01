@@ -30,7 +30,7 @@ import org.junit.experimental.categories.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.bar.BarFileUtils;
 import io.personium.test.categories.Unit;
 
@@ -69,7 +69,7 @@ public class BarFileUtilsTest {
             return;
         } catch (ParserConfigurationException e) {
             fail("DOM Parsing Error: " + e.getMessage());
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -98,9 +98,9 @@ public class BarFileUtilsTest {
             fail("Unexpected exception");
         } catch (ParserConfigurationException e) {
             fail("DOM Parsing Error: " + e.getMessage());
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             String code = dce.getCode();
-            assertEquals(DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
+            assertEquals(PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
             return;
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -129,9 +129,9 @@ public class BarFileUtilsTest {
             fail("Unexpected exception");
         } catch (ParserConfigurationException e) {
             fail("DOM Parsing Error: " + e.getMessage());
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             String code = dce.getCode();
-            assertEquals(DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
+            assertEquals(PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
             return;
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -160,9 +160,9 @@ public class BarFileUtilsTest {
             return;
         } catch (ParserConfigurationException e) {
             fail("DOM Parsing Error: " + e.getMessage());
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             String code = dce.getCode();
-            assertEquals(DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
+            assertEquals(PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
             return;
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -191,9 +191,9 @@ public class BarFileUtilsTest {
             return;
         } catch (ParserConfigurationException e) {
             fail("DOM Parsing Error: " + e.getMessage());
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             String code = dce.getCode();
-            assertEquals(DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
+            assertEquals(PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
             return;
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -222,9 +222,9 @@ public class BarFileUtilsTest {
             return;
         } catch (ParserConfigurationException e) {
             fail("DOM Parsing Error: " + e.getMessage());
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             String code = dce.getCode();
-            assertEquals(DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
+            assertEquals(PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
             return;
         } catch (Exception ex) {
             fail("Unexpected exception");

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.file.BinaryDataAccessException;
 import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.rs.cell.LogResource;
@@ -53,7 +53,7 @@ public class EventUtils {
         }
 
         StringBuilder logDir = new StringBuilder();
-        logDir.append(DcCoreConfig.getEventLogCurrentDir());
+        logDir.append(PersoniumUnitConfig.getEventLogCurrentDir());
         logDir.append(File.separator);
         logDir.append(unitUserName);
         logDir.append(File.separator);
@@ -87,7 +87,7 @@ public class EventUtils {
         // ログの一覧を取得
         List<String> logFiles = getLogFileList(cellId, owner);
         BinaryDataAccessor accessor = new BinaryDataAccessor("", null,
-                DcCoreConfig.getPhysicalDeleteMode(), DcCoreConfig.getFsyncEnabled());
+                PersoniumUnitConfig.getPhysicalDeleteMode(), PersoniumUnitConfig.getFsyncEnabled());
 
         // ファイル論理削除
         for (String logFile : logFiles) {

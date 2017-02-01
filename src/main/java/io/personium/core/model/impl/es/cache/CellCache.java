@@ -21,7 +21,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.utils.CacheClient;
 import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
@@ -47,7 +47,7 @@ public class CellCache {
      * @return Cell情報を格納したMapオブジェクト。キャッシュに存在しない場合はnull
      */
     public static Map<String, Object> get(String cellName) {
-        if (!DcCoreConfig.isCellCacheEnabled()) {
+        if (!PersoniumUnitConfig.isCellCacheEnabled()) {
             return null;
         }
         try {
@@ -67,10 +67,10 @@ public class CellCache {
      * @param cell Cell情報を格納したMapオブジェクト
      */
     public static void cache(String cellName, Map<String, Object> cell) {
-        if (!DcCoreConfig.isCellCacheEnabled()) {
+        if (!PersoniumUnitConfig.isCellCacheEnabled()) {
             return;
         }
-        getMcdClient().put(cacheKey(cellName), DcCoreConfig.getCacheMemcachedExpiresIn(), cell);
+        getMcdClient().put(cacheKey(cellName), PersoniumUnitConfig.getCacheMemcachedExpiresIn(), cell);
     }
 
     /**
@@ -78,7 +78,7 @@ public class CellCache {
      * @param cellName Cell名
      */
     public static void clear(String cellName) {
-        if (!DcCoreConfig.isCellCacheEnabled()) {
+        if (!PersoniumUnitConfig.isCellCacheEnabled()) {
             return;
         }
         getMcdClient().delete(cacheKey(cellName));

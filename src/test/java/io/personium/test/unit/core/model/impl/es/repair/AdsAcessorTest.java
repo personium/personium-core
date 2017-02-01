@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.EsType;
 import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.common.es.response.PersoniumSearchResponse;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.ads.Ads;
 import io.personium.core.model.impl.es.ads.AdsConnectionException;
@@ -54,7 +54,7 @@ public class AdsAcessorTest {
 
     static Logger log = LoggerFactory.getLogger(AdsAcessorTest.class);
 
-    private String idxName = DcCoreConfig.getEsUnitPrefix() + "_anon";
+    private String idxName = PersoniumUnitConfig.getEsUnitPrefix() + "_anon";
     private String[] idList = {"documentId1" };
     private Ads ads;
 

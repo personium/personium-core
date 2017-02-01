@@ -29,7 +29,7 @@ import org.json.simple.JSONObject;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.DcRequest;
 import io.personium.test.jersey.DcResponse;
 import io.personium.test.jersey.DcRunner;
@@ -116,7 +116,7 @@ public class AbstractUserDataWithNP extends AbstractUserDataTest {
                 ODATA_COLLECTION, parentEntityType, -1);
         ResourceUtils.deleteUserDataLinks("parent", "userdataNP2", childEnitityType, Setup.TEST_CELL1, Setup.TEST_BOX1,
                 ODATA_COLLECTION, parentEntityType, -1);
-        deleteUserData(cellName, boxName, colName, childEnitityType, "userdataNP2", DcCoreConfig.getMasterToken(), -1);
+        deleteUserData(cellName, boxName, colName, childEnitityType, "userdataNP2", PersoniumUnitConfig.getMasterToken(), -1);
         deleteUserDataForONE(parentEntityType, childEnitityType);
     }
 
@@ -126,9 +126,9 @@ public class AbstractUserDataWithNP extends AbstractUserDataTest {
      * @param childEnitityType 子EntityType
      */
     void deleteUserDataForONE(String parentEntityType, String childEnitityType) {
-        deleteUserData(cellName, boxName, colName, childEnitityType, "userdata", DcCoreConfig.getMasterToken(), -1);
-        deleteUserData(cellName, boxName, colName, childEnitityType, "userdataNP", DcCoreConfig.getMasterToken(), -1);
-        deleteUserData(cellName, boxName, colName, parentEntityType, "parent", DcCoreConfig.getMasterToken(), -1);
+        deleteUserData(cellName, boxName, colName, childEnitityType, "userdata", PersoniumUnitConfig.getMasterToken(), -1);
+        deleteUserData(cellName, boxName, colName, childEnitityType, "userdataNP", PersoniumUnitConfig.getMasterToken(), -1);
+        deleteUserData(cellName, boxName, colName, parentEntityType, "parent", PersoniumUnitConfig.getMasterToken(), -1);
     }
 
     /**
@@ -528,7 +528,7 @@ public class AbstractUserDataWithNP extends AbstractUserDataTest {
                 .with("entityType", "_" + childEntityType)
                 .with("query", query)
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();

@@ -29,7 +29,7 @@ import org.junit.experimental.categories.Category;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.edm.EdmEntitySet;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
 import io.personium.core.model.ctl.ReceivedMessagePort;
 import io.personium.core.model.impl.es.CellEsImpl;
@@ -396,8 +396,8 @@ public class CellCtlODataProducerTest extends CellCtlODataProducer {
         try {
             getExtCell("https://example.com/'/");
             fail("DcCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR does not occurred.");
-        } catch (DcCoreException e) {
-            DcCoreException expected = DcCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR;
+        } catch (PersoniumCoreException e) {
+            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR;
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());
         }
@@ -416,8 +416,8 @@ public class CellCtlODataProducerTest extends CellCtlODataProducer {
         try {
             breakRelation(docHandler);
             fail("DcCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR does not occurred.");
-        } catch (DcCoreException e) {
-            DcCoreException expected = DcCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR;
+        } catch (PersoniumCoreException e) {
+            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR;
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());
         }
@@ -438,8 +438,8 @@ public class CellCtlODataProducerTest extends CellCtlODataProducer {
             mock.setGetRelationNullFlag(true);
             mock.breakRelationMock(docHandler);
             fail("DcCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS does not occurred.");
-        } catch (DcCoreException e) {
-            DcCoreException expected = DcCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS
+        } catch (PersoniumCoreException e) {
+            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS
                     .params("+:me");
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());
@@ -463,8 +463,8 @@ public class CellCtlODataProducerTest extends CellCtlODataProducer {
             mock.setGetExtCellNullFlag(true);
             mock.breakRelationMock(docHandler);
             fail("DcCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS does not occurred.");
-        } catch (DcCoreException e) {
-            DcCoreException expected = DcCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS
+        } catch (PersoniumCoreException e) {
+            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS
                     .params("https://example.com/test0110/");
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());
@@ -487,8 +487,8 @@ public class CellCtlODataProducerTest extends CellCtlODataProducer {
             CellCtlODataProducerMock mock = new CellCtlODataProducerMock();
             mock.breakRelationMock(docHandler);
             fail("DcCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS does not occurred.");
-        } catch (DcCoreException e) {
-            DcCoreException expected = DcCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS
+        } catch (PersoniumCoreException e) {
+            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS
                     .params("+:me", "https://example.com/test0110/");
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());

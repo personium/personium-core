@@ -23,7 +23,7 @@ import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -54,8 +54,8 @@ public class ResourcePathTest extends AbstractCase {
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
-        assertEquals(DcCoreException.Dav.CELL_NOT_FOUND.getCode(), code);
-        assertEquals(DcCoreException.Dav.CELL_NOT_FOUND.getMessage(), message);
+        assertEquals(PersoniumCoreException.Dav.CELL_NOT_FOUND.getCode(), code);
+        assertEquals(PersoniumCoreException.Dav.CELL_NOT_FOUND.getMessage(), message);
     }
 
     /**
@@ -69,8 +69,8 @@ public class ResourcePathTest extends AbstractCase {
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
-        assertEquals(DcCoreException.Dav.CELL_NOT_FOUND.getCode(), code);
-        assertEquals(DcCoreException.Dav.CELL_NOT_FOUND.getMessage(), message);
+        assertEquals(PersoniumCoreException.Dav.CELL_NOT_FOUND.getCode(), code);
+        assertEquals(PersoniumCoreException.Dav.CELL_NOT_FOUND.getMessage(), message);
     }
 
     /**
@@ -84,9 +84,9 @@ public class ResourcePathTest extends AbstractCase {
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
-        assertEquals(DcCoreException.Dav.BOX_NOT_FOUND.getCode(), code);
+        assertEquals(PersoniumCoreException.Dav.BOX_NOT_FOUND.getCode(), code);
         String expectedUrl = UrlUtils.boxRoot(Setup.TEST_CELL1, "box test");
-        assertEquals(DcCoreException.Dav.BOX_NOT_FOUND.params(expectedUrl).getMessage(), message);
+        assertEquals(PersoniumCoreException.Dav.BOX_NOT_FOUND.params(expectedUrl).getMessage(), message);
     }
 
     /**
@@ -100,9 +100,9 @@ public class ResourcePathTest extends AbstractCase {
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
-        assertEquals(DcCoreException.Dav.BOX_NOT_FOUND.getCode(), code);
+        assertEquals(PersoniumCoreException.Dav.BOX_NOT_FOUND.getCode(), code);
         String expectedUrl = UrlUtils.boxRoot(Setup.TEST_CELL1, "box\ntest");
-        assertEquals(DcCoreException.Dav.BOX_NOT_FOUND.params(expectedUrl).getMessage(), message);
+        assertEquals(PersoniumCoreException.Dav.BOX_NOT_FOUND.params(expectedUrl).getMessage(), message);
     }
 
     /**
@@ -116,8 +116,8 @@ public class ResourcePathTest extends AbstractCase {
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
-        assertEquals(DcCoreException.OData.NO_SUCH_ENTITY.getCode(), code);
-        assertEquals(DcCoreException.OData.NO_SUCH_ENTITY.getMessage(), message);
+        assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode(), code);
+        assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getMessage(), message);
     }
 
     /**
@@ -131,8 +131,8 @@ public class ResourcePathTest extends AbstractCase {
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
-        assertEquals(DcCoreException.OData.NO_SUCH_ENTITY.getCode(), code);
-        assertEquals(DcCoreException.OData.NO_SUCH_ENTITY.getMessage(), message);
+        assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode(), code);
+        assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getMessage(), message);
     }
 
     /**
@@ -146,8 +146,8 @@ public class ResourcePathTest extends AbstractCase {
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
-        assertEquals(DcCoreException.OData.NO_SUCH_ENTITY.getCode(), code);
-        assertEquals(DcCoreException.OData.NO_SUCH_ENTITY.getMessage(), message);
+        assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode(), code);
+        assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getMessage(), message);
     }
 
     /**
@@ -161,7 +161,7 @@ public class ResourcePathTest extends AbstractCase {
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
-        assertEquals(DcCoreException.OData.NO_SUCH_ENTITY.getCode(), code);
-        assertEquals(DcCoreException.OData.NO_SUCH_ENTITY.getMessage(), message);
+        assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode(), code);
+        assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getMessage(), message);
     }
 }

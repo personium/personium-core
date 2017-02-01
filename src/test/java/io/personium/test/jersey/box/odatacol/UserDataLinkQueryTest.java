@@ -27,8 +27,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -49,8 +49,8 @@ import io.personium.test.utils.TResponse;
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataLinkQueryTest extends AbstractUserDataTest {
 
-    int topMaxNum = DcCoreConfig.getTopQueryMaxSize();
-    int skipMaxNum = DcCoreConfig.getSkipQueryMaxSize();
+    int topMaxNum = PersoniumUnitConfig.getTopQueryMaxSize();
+    int skipMaxNum = PersoniumUnitConfig.getSkipQueryMaxSize();
 
     private String toEntityTypeName = "toEntity";
     private String fromEntityTypeName = "fromEntity";
@@ -79,14 +79,14 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                 .with("srcPath", "SalesDetail('userdata000')")
                 .with("trgPath", "test")
                 .with("query", "?\\$top=-1")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_INVALID_ERROR.getCode(),
-                DcCoreException.OData.QUERY_INVALID_ERROR.params("$top", "-1").getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_INVALID_ERROR.getCode(),
+                PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", "-1").getMessage());
     }
 
     /**
@@ -116,7 +116,7 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                     .with("srcPath", "Product" + "('" + fromUserDataId + "')")
                     .with("trgPath", "Sales")
                     .with("query", "?\\$top=0")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -129,10 +129,10 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
             deleteUserDataLinks("Sales", toUserDataId, "Product", fromUserDataId);
             // fromのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Product", fromUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Product", fromUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             // toのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Sales", toUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Sales", toUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -164,7 +164,7 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                     .with("srcPath", "Product" + "('" + fromUserDataId + "')")
                     .with("trgPath", "Sales")
                     .with("query", "?\\$top=" + top)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -177,10 +177,10 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
             deleteUserDataLinks("Sales", toUserDataId, "Product", fromUserDataId);
             // fromのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Product", fromUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Product", fromUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             // toのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Sales", toUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Sales", toUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -211,7 +211,7 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                     .with("srcPath", "Sales" + "('" + fromUserDataId + "')")
                     .with("trgPath", "SalesDetail")
                     .with("query", "?\\$top=0")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -224,10 +224,10 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
             deleteUserDataLinks("SalesDetail", toUserDataId, "Sales", fromUserDataId);
             // fromのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Sales", fromUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Sales", fromUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             // toのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "SalesDetail", toUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "SalesDetail", toUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -259,7 +259,7 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                     .with("srcPath", "Sales" + "('" + fromUserDataId + "')")
                     .with("trgPath", "SalesDetail")
                     .with("query", "?\\$top=" + top)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -272,10 +272,10 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
             deleteUserDataLinks("SalesDetail", toUserDataId, "Sales", fromUserDataId);
             // fromのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Sales", fromUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Sales", fromUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             // toのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "SalesDetail", toUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "SalesDetail", toUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -293,14 +293,14 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                 .with("srcPath", "SalesDetail('userdata000')")
                 .with("trgPath", "test")
                 .with("query", "?\\$top=" + top)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_INVALID_ERROR.getCode(),
-                DcCoreException.OData.QUERY_INVALID_ERROR.params("$top", top).getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_INVALID_ERROR.getCode(),
+                PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", top).getMessage());
     }
 
     /**
@@ -316,14 +316,14 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                 .with("srcPath", "SalesDetail('userdata000')")
                 .with("trgPath", "test")
                 .with("query", "?\\$top=%27test%27")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
-                DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$top").getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
+                PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$top").getMessage());
     }
 
     /**
@@ -339,14 +339,14 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                 .with("srcPath", "SalesDetail('userdata000')")
                 .with("trgPath", "test")
                 .with("query", "?\\$top=")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
-                DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$top").getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
+                PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$top").getMessage());
     }
 
     /**
@@ -362,14 +362,14 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                 .with("srcPath", "SalesDetail('userdata000')")
                 .with("trgPath", "test")
                 .with("query", "?\\$skip=-1")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_INVALID_ERROR.getCode(),
-                DcCoreException.OData.QUERY_INVALID_ERROR.params("$skip", "-1").getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_INVALID_ERROR.getCode(),
+                PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$skip", "-1").getMessage());
     }
 
     /**
@@ -399,7 +399,7 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                     .with("srcPath", "Product" + "('" + fromUserDataId + "')")
                     .with("trgPath", "Sales")
                     .with("query", "?\\$skip=0")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -412,10 +412,10 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
             deleteUserDataLinks("Sales", toUserDataId, "Product", fromUserDataId);
             // fromのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Product", fromUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Product", fromUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             // toのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Sales", toUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Sales", toUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -447,7 +447,7 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                     .with("srcPath", "Product" + "('" + fromUserDataId + "')")
                     .with("trgPath", "Sales")
                     .with("query", "?\\$skip=" + skip)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -460,10 +460,10 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
             deleteUserDataLinks("Sales", toUserDataId, "Product", fromUserDataId);
             // fromのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Product", fromUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Product", fromUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             // toのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Sales", toUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Sales", toUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -494,7 +494,7 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                     .with("srcPath", "Sales" + "('" + fromUserDataId + "')")
                     .with("trgPath", "SalesDetail")
                     .with("query", "?\\$skip=0")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -507,10 +507,10 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
             deleteUserDataLinks("SalesDetail", toUserDataId, "Sales", fromUserDataId);
             // fromのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Sales", fromUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Sales", fromUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             // toのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "SalesDetail", toUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "SalesDetail", toUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -542,7 +542,7 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                     .with("srcPath", "Sales" + "('" + fromUserDataId + "')")
                     .with("trgPath", "SalesDetail")
                     .with("query", "?\\$skip=" + skip)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -555,10 +555,10 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
             deleteUserDataLinks("SalesDetail", toUserDataId, "Sales", fromUserDataId);
             // fromのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Sales", fromUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Sales", fromUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             // toのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "SalesDetail", toUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "SalesDetail", toUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -576,14 +576,14 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                 .with("srcPath", "SalesDetail('userdata000')")
                 .with("trgPath", "test")
                 .with("query", "?\\$skip=" + skip)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_INVALID_ERROR.getCode(),
-                DcCoreException.OData.QUERY_INVALID_ERROR.params("$skip", skip).getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_INVALID_ERROR.getCode(),
+                PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$skip", skip).getMessage());
     }
 
     /**
@@ -599,14 +599,14 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                 .with("srcPath", "SalesDetail('userdata000')")
                 .with("trgPath", "test")
                 .with("query", "?\\$skip=%27test%27")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
-                DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$skip").getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
+                PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$skip").getMessage());
     }
 
     /**
@@ -622,14 +622,14 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                 .with("srcPath", "SalesDetail('userdata000')")
                 .with("trgPath", "test")
                 .with("query", "?\\$skip=")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
-                DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$skip").getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
+                PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$skip").getMessage());
     }
 
     /**
@@ -642,15 +642,15 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
         JSONObject linkBody = new JSONObject();
 
         // エンティティタイプを作成
-        EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(),
                 Setup.TEST_ODATA, toEntityTypeName, HttpStatus.SC_CREATED);
-        EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(),
                 Setup.TEST_ODATA, navPropName, HttpStatus.SC_CREATED);
 
         // AssociationEndを作成
-        AssociationEndUtils.create(DcCoreConfig.getMasterToken(), "*", Setup.TEST_CELL1,
+        AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(), "*", Setup.TEST_CELL1,
                 Setup.TEST_BOX1, Setup.TEST_ODATA, HttpStatus.SC_CREATED, "AssociationEnd", toEntityTypeName);
-        AssociationEndUtils.create(DcCoreConfig.getMasterToken(), "*", Setup.TEST_CELL1,
+        AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(), "*", Setup.TEST_CELL1,
                 Setup.TEST_BOX1, Setup.TEST_ODATA, HttpStatus.SC_CREATED, "LinkAssociationEnd", navPropName);
 
         // AssociationEndを関連付け
@@ -682,7 +682,7 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                 .with("colPath", Setup.TEST_ODATA)
                 .with("srcPath", toEntityTypeName + "('" + toUserDataId + "')")
                 .with("trgPath", navPropName)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("trgUserdataUrl", targetUri)
                 .returns()
                 .debug()
@@ -696,7 +696,7 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                 .with("colPath", Setup.TEST_ODATA)
                 .with("srcPath", toEntityTypeName + "('" + toUserDataId2 + "')")
                 .with("trgPath", navPropName)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("trgUserdataUrl", targetUri)
                 .returns()
                 .debug()
@@ -716,7 +716,7 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                 .with("colPath", Setup.TEST_ODATA)
                 .with("srcPath", toEntity + "('" + toUserDataId + "')")
                 .with("trgPath", fromEntity)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("trgUserdataUrl", targetUri)
                 .returns()
                 .debug()
@@ -735,7 +735,7 @@ public class UserDataLinkQueryTest extends AbstractUserDataTest {
                 .with("navProp", "_" + trgEntityTypeName)
                 .with("navKey", navPropId)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*")
                 .returns();
     }

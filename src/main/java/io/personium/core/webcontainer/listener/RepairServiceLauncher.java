@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.ads.AdsWriteFailureLogException;
 import io.personium.common.ads.AdsWriteFailureLogWriter;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.repair.RepairAds;
 
 /**
@@ -43,15 +43,15 @@ public class RepairServiceLauncher {
         /**
          * RepairAdsを起動するか否かを判定するファイルのパス.
          */
-        String invocationFlagFile = DcCoreConfig.getRepairAdsInvocationFilePath();
+        String invocationFlagFile = PersoniumUnitConfig.getRepairAdsInvocationFilePath();
 
         @Override
         public void run() {
             try {
                 AdsWriteFailureLogWriter adsWriteFailureLogWriter = AdsWriteFailureLogWriter.getInstance(
-                        DcCoreConfig.getAdsWriteFailureLogDir(),
-                        DcCoreConfig.getCoreVersion(),
-                        DcCoreConfig.getAdsWriteFailureLogPhysicalDelete());
+                        PersoniumUnitConfig.getAdsWriteFailureLogDir(),
+                        PersoniumUnitConfig.getCoreVersion(),
+                        PersoniumUnitConfig.getAdsWriteFailureLogPhysicalDelete());
 
                 // 現在出力中のジャーナルログファイルのローテート。
                 adsWriteFailureLogWriter.rotateActiveFile();
@@ -99,11 +99,11 @@ public class RepairServiceLauncher {
         // リペアツールの実行をスケジュールする.
         RepairAdsService service = new RepairAdsService();
         executor.scheduleWithFixedDelay(service,
-                DcCoreConfig.getAdsRepairInitialDelayInSec(),
-                DcCoreConfig.getAdsRepairIntervalInSec(),
+                PersoniumUnitConfig.getAdsRepairInitialDelayInSec(),
+                PersoniumUnitConfig.getAdsRepairIntervalInSec(),
                 TimeUnit.SECONDS);
         logger.info(String.format("RepairAds scheduled with delay interval %d sec.",
-                DcCoreConfig.getAdsRepairIntervalInSec()));
+                PersoniumUnitConfig.getAdsRepairIntervalInSec()));
     }
 
     /**
@@ -114,7 +114,7 @@ public class RepairServiceLauncher {
             logger.info("Shutting down RepairAds scheduler.");
             executor.shutdown();
             try {
-                long awaitShutdownInSec = DcCoreConfig.getAdsRepairAwaitShutdownInSec();
+                long awaitShutdownInSec = PersoniumUnitConfig.getAdsRepairAwaitShutdownInSec();
                 logger.info(String.format("Waiting RepairAds termination up to %d sec.", awaitShutdownInSec));
                 if (executor.awaitTermination(awaitShutdownInSec, TimeUnit.SECONDS)) {
                     logger.info("Completed shutting down RepairAds scheduler.");

@@ -32,9 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.core.DcCoreAuthzException;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreAuthzException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
@@ -50,7 +50,7 @@ import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.ODataResource;
 
 /**
- * Jax-RS Resource handling DC Unit Level Api.
+ * Jax-RS Resource handling Personium Unit Level Api.
  */
 public class UnitCtlResource extends ODataResource {
     UriInfo uriInfo;
@@ -76,14 +76,14 @@ public class UnitCtlResource extends ODataResource {
 
     private void checkReferenceMode(AccessContext accessContext) {
         String unitUserName = accessContext.getSubject();
-        String unitPrefix = DcCoreConfig.getEsUnitPrefix();
+        String unitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
         if (unitUserName == null) {
             unitUserName = "anon";
         } else {
             unitUserName = IndexNameEncoder.encodeEsIndexName(unitUserName);
         }
         if (UnitUserLockManager.hasLockObject(unitPrefix + "_" + unitUserName)) {
-            throw DcCoreException.Server.SERVICE_MENTENANCE_RESTORE;
+            throw PersoniumCoreException.Server.SERVICE_MENTENANCE_RESTORE;
         }
     }
 
@@ -100,11 +100,11 @@ public class UnitCtlResource extends ODataResource {
         } else if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
             ac.throwInvalidTokenException(getAcceptableAuthScheme());
         } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
-            throw DcCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(), getAcceptableAuthScheme());
+            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(), getAcceptableAuthScheme());
         }
 
         // ユニットマスター、ユニットユーザ、ユニットローカルユニットユーザ以外なら権限エラー
-        throw DcCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
+        throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
     }
 
     /**
@@ -172,7 +172,7 @@ public class UnitCtlResource extends ODataResource {
 
             // Cell配下が空っぽじゃなければ409エラー
             if (!cell.isEmpty()) {
-                throw DcCoreException.OData.CONFLICT_HAS_RELATED;
+                throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
             }
 
 
@@ -235,7 +235,7 @@ public class UnitCtlResource extends ODataResource {
         // ユニットユーザトークン、ユニットローカルユニットユーザトークンではオーナーが同じセルに対してのみ操作を許す.
         // Ownerが空の場合はマスタートークン以外許さない
         if (owner == null || !owner.equals(ac.getSubject())) {
-            throw DcCoreException.Auth.NOT_YOURS;
+            throw PersoniumCoreException.Auth.NOT_YOURS;
         }
     }
 

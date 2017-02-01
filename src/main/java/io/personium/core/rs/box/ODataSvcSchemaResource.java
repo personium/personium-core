@@ -45,7 +45,7 @@ import org.odata4j.producer.ODataProducer;
 import org.odata4j.producer.QueryInfo;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
@@ -57,7 +57,7 @@ import io.personium.core.model.ctl.ComplexTypeProperty;
 import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.ctl.EntityType;
 import io.personium.core.model.ctl.Property;
-import io.personium.core.odata.DcOptionsQueryParser;
+import io.personium.core.odata.PersoniumOptionsQueryParser;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.ODataResource;
 import io.personium.core.utils.ODataUtils;
@@ -207,7 +207,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
         if (entityTypeName.equals(Property.EDM_TYPE_NAME)
                 || entityTypeName.equals(ComplexType.EDM_TYPE_NAME)
                 || entityTypeName.equals(ComplexTypeProperty.EDM_TYPE_NAME)) {
-            throw DcCoreException.Misc.METHOD_NOT_IMPLEMENTED;
+            throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
         }
     }
 
@@ -268,11 +268,11 @@ public final class ODataSvcSchemaResource extends ODataResource {
                         && !propValue.equals(EdmSimpleType.DOUBLE.getFullyQualifiedTypeName())
                         && !propValue.equals(EdmSimpleType.DATETIME.getFullyQualifiedTypeName())) {
                     // 登録済みのComplexTypeのチェック
-                    BoolCommonExpression filter = DcOptionsQueryParser.parseFilter("Name eq '" + propValue + "'");
+                    BoolCommonExpression filter = PersoniumOptionsQueryParser.parseFilter("Name eq '" + propValue + "'");
                     QueryInfo query = new QueryInfo(null, null, null, filter, null, null, null, null, null);
                     CountResponse reponse = this.getODataProducer().getEntitiesCount(ComplexType.EDM_TYPE_NAME, query);
                     if (reponse.getCount() == 0) {
-                        throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
                     }
                 }
             } else if (propName.equals(Property.P_COLLECTION_KIND.getName())) {
@@ -280,7 +280,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
                 // None / List
                 if (!propValue.equals(Property.COLLECTION_KIND_NONE)
                         && !propValue.equals(CollectionKind.List.toString())) {
-                    throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
                 }
             } else if (propName.equals(Property.P_DEFAULT_VALUE.getName())) {
                 // DefaultValueのバリデート
@@ -300,7 +300,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
                     result = ODataUtils.validateDateTime(propValue);
                 }
                 if (!result) {
-                    throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
                 }
             }
         }
@@ -321,7 +321,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
                 && targetNavProp.equals(ComplexTypeProperty.EDM_TYPE_NAME))
                 || (sourceEntity.equals(ComplexTypeProperty.EDM_TYPE_NAME)
                 && targetNavProp.equals(ComplexType.EDM_TYPE_NAME))) {
-            throw DcCoreException.OData.NO_SUCH_ASSOCIATION;
+            throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
     }
 

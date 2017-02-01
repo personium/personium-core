@@ -16,7 +16,7 @@
  */
 package io.personium.core.model.lock;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
@@ -38,7 +38,7 @@ public abstract class ReadDeleteModeLockManager extends LockManager {
             String response = singleton.doGetReadDeleteOnlyMode(LOCK_KEY);
             return (response != null);
         } catch (MemcachedClientException e) {
-            throw DcCoreException.Server.SERVER_CONNECTION_ERROR;
+            throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
         }
     }
 }

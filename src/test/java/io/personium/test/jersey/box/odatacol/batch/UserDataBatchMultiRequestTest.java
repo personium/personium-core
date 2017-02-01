@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -73,7 +73,7 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -86,7 +86,7 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
             checkBatchResponseBody(response, expectedBody);
 
             // ユーザデータ取得
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     "SalesDetail", "npTest1", HttpStatus.SC_OK);
             // リンク情報のチェック(SalesDetail→Sales)
             TResponse resList = UserDataUtils.listLink(cellName, boxName, colName,
@@ -104,8 +104,8 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
         } finally {
             ResourceUtils.deleteUserDataLinks("srcKey", "npTest1", "SalesDetail", cellName, boxName, colName,
                     "Sales", -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -115,8 +115,8 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
     @Test
     public final void 正しいリクエストが1つと文法に誤りのあるリクエストが1つ指定された場合$batch全体が400エラーとなること() {
         String path = "Sales('srcKey')/";
-        String code = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
-        String err = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("POST " + path + " HTTP/1.1")
+        String code = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
+        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("POST " + path + " HTTP/1.1")
                 .getMessage();
 
         String body = START_BOUNDARY + retrievePostBody("Sales", "srcKey")
@@ -127,7 +127,7 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .debug()
@@ -135,7 +135,7 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                 .checkErrorResponse(code, err);
 
         // ユーザデータ取得
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "Sales", "srcKey", HttpStatus.SC_NOT_FOUND);
     }
 
@@ -154,7 +154,7 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -167,10 +167,10 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
             checkBatchResponseBody(response, expectedBody);
 
             // ユーザデータ取得
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     "Sales", "srcKey", HttpStatus.SC_OK);
         } finally {
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
         }
     }
@@ -181,8 +181,8 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
     @Test
     public final void 文法に誤りのあるリクエストが1つとデータに誤りのあるリクエストが1つ指定された場合$batch全体が400エラーとなること() {
         String path = "Sales('srcKey')/";
-        String code = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
-        String err = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("POST " + path + " HTTP/1.1")
+        String code = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
+        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("POST " + path + " HTTP/1.1")
                 .getMessage();
         String body = START_BOUNDARY + retrievePostBody("Sales", "__srcKey")
                 + START_BOUNDARY + retrievePostBody(path, "npTest1")
@@ -192,7 +192,7 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .debug()
@@ -225,7 +225,7 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -273,12 +273,12 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                     "Sales", -1);
 
             // UserODataの削除
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest2", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest3", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey1", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey2", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey3", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest2", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest3", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey1", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey2", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey3", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -290,8 +290,8 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
         String path1 = "Sales('srcKey1')/_SalesDetail";
         String invalidPath = "Sales('srcKey2')/";
         String path3 = "Sales('srcKey3')/_SalesDetail";
-        String code = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
-        String err = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("POST " + invalidPath + " HTTP/1.1")
+        String code = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
+        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("POST " + invalidPath + " HTTP/1.1")
                 .getMessage();
 
         String body = START_BOUNDARY + retrievePostBody("Sales", "srcKey1")
@@ -310,7 +310,7 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .debug()
@@ -318,17 +318,17 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                 .checkErrorResponse(code, err);
 
         // ユーザデータが作成されていないことを確認
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "Sales", "srcKey1", HttpStatus.SC_NOT_FOUND);
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "Sales", "srcKey2", HttpStatus.SC_NOT_FOUND);
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "Sales", "srcKey3", HttpStatus.SC_NOT_FOUND);
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "SalesDetail", "npTest1", HttpStatus.SC_NOT_FOUND);
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "SalesDetail", "npTest2", HttpStatus.SC_NOT_FOUND);
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "SalesDetail", "npTest3", HttpStatus.SC_NOT_FOUND);
     }
 
@@ -357,7 +357,7 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -402,11 +402,11 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                     "Sales", -1);
 
             // UserODataの削除
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest3", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey1", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey2", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey3", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest3", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey1", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey2", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey3", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -418,8 +418,8 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
         String path1 = "Sales('srcKey1')/_SalesDetail";
         String invalidEntityPath = "Sales('srcKey3')/_InvalidEntity";
         String invalidPath = "Sales('srcKey2')/";
-        String code = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
-        String err = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("POST " + invalidPath + " HTTP/1.1")
+        String code = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
+        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("POST " + invalidPath + " HTTP/1.1")
                 .getMessage();
 
         String body = START_BOUNDARY + retrievePostBody("Sales", "srcKey1")
@@ -438,7 +438,7 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .debug()
@@ -446,17 +446,17 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                 .checkErrorResponse(code, err);
 
         // ユーザデータが作成されていないことを確認
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "Sales", "srcKey1", HttpStatus.SC_NOT_FOUND);
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "Sales", "srcKey2", HttpStatus.SC_NOT_FOUND);
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "Sales", "srcKey3", HttpStatus.SC_NOT_FOUND);
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "SalesDetail", "npTest1", HttpStatus.SC_NOT_FOUND);
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "SalesDetail", "npTest2", HttpStatus.SC_NOT_FOUND);
-        UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+        UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                 "SalesDetail", "npTest3", HttpStatus.SC_NOT_FOUND);
     }
 

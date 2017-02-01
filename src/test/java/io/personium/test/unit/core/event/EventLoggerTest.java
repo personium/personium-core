@@ -26,7 +26,7 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 
-import io.personium.core.event.DcEvent;
+import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.EventLogger;
 import io.personium.core.model.impl.es.CellEsImpl;
 import io.personium.test.categories.Unit;
@@ -129,7 +129,7 @@ public class EventLoggerTest {
         }
         @Override
         public void info(String msg) {
-            this.loggedLevel = DcEvent.Level.INFO;
+            this.loggedLevel = PersoniumEvent.Level.INFO;
         }
         @Override
         public void info(String format, Object arg) {
@@ -168,7 +168,7 @@ public class EventLoggerTest {
         }
         @Override
         public void warn(String msg) {
-            this.loggedLevel = DcEvent.Level.WARN;
+            this.loggedLevel = PersoniumEvent.Level.WARN;
         }
         @Override
         public void warn(String format, Object arg) {
@@ -207,7 +207,7 @@ public class EventLoggerTest {
         }
         @Override
         public void error(String msg) {
-            this.loggedLevel = DcEvent.Level.ERROR;
+            this.loggedLevel = PersoniumEvent.Level.ERROR;
         }
         @Override
         public void error(String format, Object arg) {
@@ -259,16 +259,16 @@ public class EventLoggerTest {
             defaultLogger = (Logger) baseDir.get(null);
             LoggerForEvent testLogger = new LoggerForEvent();
             baseDir.set(null, testLogger);
-            EventLogger evLogger = new EventLogger(new CellEsImpl(), DcEvent.Level.INFO);
-            assertEquals(DcEvent.Level.INFO, evLogger.getLogLevel());
-            evLogger.log(new DcEvent("", "", DcEvent.Level.ERROR, "", "", "", ""));
-            assertEquals(DcEvent.Level.ERROR, testLogger.getLoggedLevel());
-            evLogger.log(new DcEvent("", "", DcEvent.Level.WARN, "", "", "", ""));
-            assertEquals(DcEvent.Level.WARN, testLogger.getLoggedLevel());
-            evLogger.log(new DcEvent("", "", DcEvent.Level.INFO, "", "", "", ""));
-            assertEquals(DcEvent.Level.INFO, testLogger.getLoggedLevel());
-            evLogger.setLogLevel(DcEvent.Level.ERROR);
-            assertEquals(DcEvent.Level.ERROR, evLogger.getLogLevel());
+            EventLogger evLogger = new EventLogger(new CellEsImpl(), PersoniumEvent.Level.INFO);
+            assertEquals(PersoniumEvent.Level.INFO, evLogger.getLogLevel());
+            evLogger.log(new PersoniumEvent("", "", PersoniumEvent.Level.ERROR, "", "", "", ""));
+            assertEquals(PersoniumEvent.Level.ERROR, testLogger.getLoggedLevel());
+            evLogger.log(new PersoniumEvent("", "", PersoniumEvent.Level.WARN, "", "", "", ""));
+            assertEquals(PersoniumEvent.Level.WARN, testLogger.getLoggedLevel());
+            evLogger.log(new PersoniumEvent("", "", PersoniumEvent.Level.INFO, "", "", "", ""));
+            assertEquals(PersoniumEvent.Level.INFO, testLogger.getLoggedLevel());
+            evLogger.setLogLevel(PersoniumEvent.Level.ERROR);
+            assertEquals(PersoniumEvent.Level.ERROR, evLogger.getLogLevel());
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -291,9 +291,9 @@ public class EventLoggerTest {
      */
     @Test
     public void イベントロガーのログ出力可能レベルが変更できること() {
-            EventLogger evLogger = new EventLogger(new CellEsImpl(), DcEvent.Level.INFO);
-            assertEquals(DcEvent.Level.INFO, evLogger.getLogLevel());
-            evLogger.setLogLevel(DcEvent.Level.ERROR);
-            assertEquals(DcEvent.Level.ERROR, evLogger.getLogLevel());
+            EventLogger evLogger = new EventLogger(new CellEsImpl(), PersoniumEvent.Level.INFO);
+            assertEquals(PersoniumEvent.Level.INFO, evLogger.getLogLevel());
+            evLogger.setLogLevel(PersoniumEvent.Level.ERROR);
+            assertEquals(PersoniumEvent.Level.ERROR, evLogger.getLogLevel());
     }
 }

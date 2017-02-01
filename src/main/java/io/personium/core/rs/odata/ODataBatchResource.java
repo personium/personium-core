@@ -57,19 +57,19 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreAuthzException;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
-import io.personium.core.DcReadDeleteModeManager;
+import io.personium.core.PersoniumCoreAuthzException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumReadDeleteModeManager;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.Privilege;
 import io.personium.core.exceptions.ODataErrorMessage;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.model.impl.es.doc.LinkDocHandler;
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
-import io.personium.core.odata.DcFormatWriterFactory;
+import io.personium.core.odata.PersoniumFormatWriterFactory;
 import io.personium.core.odata.OEntityWrapper;
-import io.personium.core.rs.DcCoreExceptionMapper;
+import io.personium.core.rs.PersoniumCoreExceptionMapper;
 
 /**
  * ODataBatchResourceクラス.
@@ -148,7 +148,7 @@ public class ODataBatchResource extends AbstractODataResource {
 
         long startTime = System.currentTimeMillis();
         // タイムアウト時間 (dc_config.properties io.personium.core.odata.batch.timeoutInSecで設定. 単位は秒)
-        long batchTimeoutInSec = DcCoreConfig.getOdataBatchRequestTimeoutInMillis();
+        long batchTimeoutInSec = PersoniumUnitConfig.getOdataBatchRequestTimeoutInMillis();
 
         // Lockを他プロセスに譲るためにスリープするか否かの拡張ヘッダの値を取得する
         BatchPriority priority = BatchPriority.LOW;
@@ -169,11 +169,11 @@ public class ODataBatchResource extends AbstractODataResource {
         List<BatchBodyPart> bodyParts = parser.parse(boundary, reader, uriInfo.getRequestUri().toString());
         if (bodyParts == null || bodyParts.size() == 0) {
             // パース処理失敗
-            throw DcCoreException.OData.BATCH_BODY_PARSE_ERROR;
+            throw PersoniumCoreException.OData.BATCH_BODY_PARSE_ERROR;
         }
-        if (bodyParts.size() > Integer.parseInt(DcCoreConfig.getOdataBatchBulkRequestMaxSize())) {
+        if (bodyParts.size() > Integer.parseInt(PersoniumUnitConfig.getOdataBatchBulkRequestMaxSize())) {
             // $Batchで指定されたリクエスト数が不正
-            throw DcCoreException.OData.TOO_MANY_REQUESTS.params(bodyParts.size());
+            throw PersoniumCoreException.OData.TOO_MANY_REQUESTS.params(bodyParts.size());
         }
 
         UserDataODataProducer producer = (UserDataODataProducer) this.odataResource.getODataProducer();
@@ -224,7 +224,7 @@ public class ODataBatchResource extends AbstractODataResource {
      */
     private BatchResponse getTimeoutResponse() {
         BatchResponse res = new BatchResponse();
-        res.setErrorResponse(DcCoreException.Misc.SERVER_REQUEST_TIMEOUT);
+        res.setErrorResponse(PersoniumCoreException.Misc.SERVER_REQUEST_TIMEOUT);
         return res;
     }
 
@@ -253,9 +253,9 @@ public class ODataBatchResource extends AbstractODataResource {
             List<NavigationPropertyBulkContext> npBulkContexts,
             BatchBodyPart bodyPart) {
         // ReadDeleteOnlyMode中はGETとDELETEメソッド以外は許可しないため、エラーレスポンスを設定する
-        if (!DcReadDeleteModeManager.isAllowedMethod(bodyPart.getHttpMethod())) {
+        if (!PersoniumReadDeleteModeManager.isAllowedMethod(bodyPart.getHttpMethod())) {
             BatchResponse res = new BatchResponse();
-            res.setErrorResponse(DcCoreException.Server.READ_DELETE_ONLY);
+            res.setErrorResponse(PersoniumCoreException.Server.READ_DELETE_ONLY);
             responseBody.append(getChangesetResponseBody(boundary, bodyPart, res));
             return;
         }
@@ -267,7 +267,7 @@ public class ODataBatchResource extends AbstractODataResource {
         if (!isValidNavigationProperty(bodyPart)) {
             checkAndExecBulk(responseBody, uriInfo, boundary, npBulkContexts);
             BatchResponse res = new BatchResponse();
-            res.setErrorResponse(DcCoreException.OData.KEY_FOR_NAVPROP_SHOULD_NOT_BE_SPECIFIED);
+            res.setErrorResponse(PersoniumCoreException.OData.KEY_FOR_NAVPROP_SHOULD_NOT_BE_SPECIFIED);
             if (HttpMethod.GET.equals(bodyPart.getHttpMethod())) {
                 responseBody.append(getRetrieveResponseBody(boundary, res));
             } else {
@@ -290,10 +290,10 @@ public class ODataBatchResource extends AbstractODataResource {
                     setChangesetTimeoutResponse(responseBody, boundary, bodyPart);
                 }
             } else if (bodyPart.getHttpMethod().equals(HttpMethod.GET)) {
-                res.setErrorResponse(DcCoreException.Misc.METHOD_NOT_IMPLEMENTED);
+                res.setErrorResponse(PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED);
                 responseBody.append(getRetrieveResponseBody(boundary, res));
             } else {
-                res.setErrorResponse(DcCoreException.Misc.METHOD_NOT_IMPLEMENTED);
+                res.setErrorResponse(PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED);
                 responseBody.append(getChangesetResponseBody(boundary, bodyPart, res));
             }
         } else if (bodyPart.getHttpMethod().equals(HttpMethod.POST)) {
@@ -306,7 +306,7 @@ public class ODataBatchResource extends AbstractODataResource {
                         for (Entry<String, BulkRequest> request : bulkRequests.entrySet()) {
                             setChangesetTimeoutResponse(responseBody, boundary, request.getValue().getBodyPart());
                             BatchResponse res = new BatchResponse();
-                            Exception exception = DcCoreException.Misc.SERVER_REQUEST_TIMEOUT;
+                            Exception exception = PersoniumCoreException.Misc.SERVER_REQUEST_TIMEOUT;
                             res.setErrorResponse(exception);
                             responseBody.append(
                                     getChangesetResponseBody(boundary, request.getValue().getBodyPart(), res));
@@ -340,9 +340,9 @@ public class ODataBatchResource extends AbstractODataResource {
                                 npBulkContexts);
                     } else {
                         for (NavigationPropertyBulkContext npBulkContext : npBulkContexts) {
-                            npBulkContext.setException(DcCoreException.Misc.SERVER_REQUEST_TIMEOUT);
+                            npBulkContext.setException(PersoniumCoreException.Misc.SERVER_REQUEST_TIMEOUT);
                             npBulkContext.getBatchResponse().setErrorResponse(
-                                    DcCoreException.Misc.SERVER_REQUEST_TIMEOUT);
+                                    PersoniumCoreException.Misc.SERVER_REQUEST_TIMEOUT);
                             responseBody.append(getChangesetResponseBody(boundary, npBulkContext.getBodyPart(),
                                     npBulkContext.getBatchResponse()));
                         }
@@ -397,7 +397,7 @@ public class ODataBatchResource extends AbstractODataResource {
             }
         } else {
             BatchResponse res = new BatchResponse();
-            res.setErrorResponse(DcCoreException.Misc.METHOD_NOT_ALLOWED);
+            res.setErrorResponse(PersoniumCoreException.Misc.METHOD_NOT_ALLOWED);
             responseBody.append(getChangesetResponseBody(boundary, bodyPart, res));
         }
     }
@@ -407,7 +407,7 @@ public class ODataBatchResource extends AbstractODataResource {
             BatchBodyPart bodyPart) {
         // 直前のPOSTリクエストがTooManyConcurrentだったため、エラーレスポンスを作成する
         BatchResponse res = new BatchResponse();
-        res.setErrorResponse(DcCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS);
+        res.setErrorResponse(PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS);
         responseBody.append(getChangesetResponseBody(boundary, bodyPart, res));
     }
 
@@ -439,7 +439,7 @@ public class ODataBatchResource extends AbstractODataResource {
                 key = docHandler.getEntityTypeId() + ":" + (String) docHandler.getStaticFields().get("__id");
                 if (npBulkRequests.containsKey(key)) {
                     key = PersoniumUUID.randomUUID();
-                    bulkRequest.setError(DcCoreException.OData.ENTITY_ALREADY_EXISTS);
+                    bulkRequest.setError(PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS);
                 }
             }
 
@@ -448,10 +448,10 @@ public class ODataBatchResource extends AbstractODataResource {
 
         try {
             this.odataResource.getODataProducer().bulkCreateEntityViaNavigationProperty(npBulkContexts, npBulkRequests);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             // 503が発生した後の処理を継続させるため、shutterにステータスを設定。
             shutter.updateStatus(e);
-            if (!DcCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS.equals(e)) {
+            if (!PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS.equals(e)) {
                 throw e;
             } else {
                 createTooManyConcurrentResponse(npBulkContexts);
@@ -597,7 +597,7 @@ public class ODataBatchResource extends AbstractODataResource {
             key = docHandler.getEntityTypeId() + ":" + (String) docHandler.getStaticFields().get("__id");
             if (bulkRequests.containsKey(key)) {
                 key = PersoniumUUID.randomUUID();
-                bulkRequest.setError(DcCoreException.OData.ENTITY_ALREADY_EXISTS);
+                bulkRequest.setError(PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS);
             }
         }
 
@@ -613,7 +613,7 @@ public class ODataBatchResource extends AbstractODataResource {
             // 存在しないエンティティセットを指定されたときは404例外を発生する
             EdmEntitySet eSet = this.odataResource.metadata.findEdmEntitySet(entitySetName);
             if (eSet == null) {
-                throw DcCoreException.OData.NO_SUCH_ENTITY_SET;
+                throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
             }
 
             // リクエストボディを生成する
@@ -681,7 +681,7 @@ public class ODataBatchResource extends AbstractODataResource {
         // 存在しないエンティティセットを指定されたときは404例外を発生する
         EdmEntitySet eSet = this.odataResource.metadata.findEdmEntitySet(bodyPart.getEntitySetName());
         if (eSet == null) {
-            throw DcCoreException.OData.NO_SUCH_ENTITY_SET;
+            throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
         }
 
         // Navigationプロパティのスキーマ上の存在確認
@@ -690,7 +690,7 @@ public class ODataBatchResource extends AbstractODataResource {
         OEntityId oEntityId = entityResource.getOEntityId();
         EdmNavigationProperty enp = eSet.getType().findNavigationProperty(bodyPart.getTargetNavigationProperty());
         if (enp == null) {
-            throw DcCoreException.OData.NOT_SUCH_NAVPROP;
+            throw PersoniumCoreException.OData.NOT_SUCH_NAVPROP;
         }
 
         // リクエスト情報作成
@@ -1015,8 +1015,8 @@ public class ODataBatchResource extends AbstractODataResource {
                 }
             } else {
                 for (NavigationPropertyBulkContext npBulkContext : navigationPropertyBulkContexts) {
-                    npBulkContext.setException(DcCoreException.Misc.SERVER_REQUEST_TIMEOUT);
-                    npBulkContext.getBatchResponse().setErrorResponse(DcCoreException.Misc.SERVER_REQUEST_TIMEOUT);
+                    npBulkContext.setException(PersoniumCoreException.Misc.SERVER_REQUEST_TIMEOUT);
+                    npBulkContext.getBatchResponse().setErrorResponse(PersoniumCoreException.Misc.SERVER_REQUEST_TIMEOUT);
                     BatchBodyPart bodyPart = npBulkContext.getBodyPart();
                     responseBody.append(getChangesetResponseBody(boundary, bodyPart,
                             npBulkContext.getBatchResponse()));
@@ -1036,7 +1036,7 @@ public class ODataBatchResource extends AbstractODataResource {
                 } else {
                     for (Entry<String, BulkRequest> request : bulkRequests.entrySet()) {
                         BatchResponse res = new BatchResponse();
-                        Exception exception = DcCoreException.Misc.SERVER_REQUEST_TIMEOUT;
+                        Exception exception = PersoniumCoreException.Misc.SERVER_REQUEST_TIMEOUT;
                         res.setErrorResponse(exception);
                         // レスポンスボディ作成
                         responseBody.append(getChangesetResponseBody(boundary, request.getValue().getBodyPart(), res));
@@ -1062,7 +1062,7 @@ public class ODataBatchResource extends AbstractODataResource {
         try {
             resultList = this.odataResource.getODataProducer().bulkCreateEntity(
                     this.odataResource.metadata, bulkRequests, cellId);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             // 503が発生した後の処理を継続させるため、shutterにステータスを設定。
             shutter.updateStatus(e);
             if (shutter.isShuttered()) {
@@ -1122,7 +1122,7 @@ public class ODataBatchResource extends AbstractODataResource {
     private void createTooManyConcurrentResponse(StringBuilder responseBody, String boundary) {
         for (Entry<String, BulkRequest> request : bulkRequests.entrySet()) {
             BatchResponse res = new BatchResponse();
-            res.setErrorResponse(DcCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS);
+            res.setErrorResponse(PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS);
             // レスポンスボディ作成
             responseBody.append(getChangesetResponseBody(boundary, request.getValue().getBodyPart(), res));
         }
@@ -1135,7 +1135,7 @@ public class ODataBatchResource extends AbstractODataResource {
      */
     private void createTooManyConcurrentResponse(List<NavigationPropertyBulkContext> npBulkContexts) {
         for (NavigationPropertyBulkContext npBulkContext : npBulkContexts) {
-            npBulkContext.setException(DcCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS);
+            npBulkContext.setException(PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS);
         }
     }
 
@@ -1153,7 +1153,7 @@ public class ODataBatchResource extends AbstractODataResource {
             checkReadAccessContext(bodyPart);
             // NavigationProperty経由の一覧取得は 501
             if (bodyPart.hasNavigationProperty()) {
-                throw DcCoreException.Misc.METHOD_NOT_IMPLEMENTED;
+                throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
             }
             ODataEntitiesResource entitiesResource = new ODataEntitiesResource(this.odataResource,
                     bodyPart.getEntitySetName());
@@ -1175,7 +1175,7 @@ public class ODataBatchResource extends AbstractODataResource {
             List<MediaType> acceptableMediaTypes = new ArrayList<MediaType>();
             acceptableMediaTypes.add(MediaType.APPLICATION_JSON_TYPE);
             // TODO 制限事項でQueryは無視するため固定でnullを指定する.
-            FormatWriter<EntitiesResponse> fw = DcFormatWriterFactory.getFormatWriter(EntitiesResponse.class,
+            FormatWriter<EntitiesResponse> fw = PersoniumFormatWriterFactory.getFormatWriter(EntitiesResponse.class,
                     acceptableMediaTypes, null, null);
             UriInfo uriInfo2 = PersoniumCoreUtils.createUriInfo(resUriInfo, 1);
 
@@ -1306,7 +1306,7 @@ public class ODataBatchResource extends AbstractODataResource {
             // 存在しないエンティティセットを指定されたときは即刻エラー
             EdmEntitySet eSet = this.odataResource.metadata.findEdmEntitySet(bodyPart.getEntitySetName());
             if (eSet == null) {
-                throw DcCoreException.OData.NO_SUCH_ENTITY_SET;
+                throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
             }
 
             // アクセス制御
@@ -1314,7 +1314,7 @@ public class ODataBatchResource extends AbstractODataResource {
 
             // $links の POSTでNav Propのキー指定があってはいけない。
             if (bodyPart.getTargetEntityKey().length() > 0) {
-                throw DcCoreException.OData.KEY_FOR_NAVPROP_SHOULD_NOT_BE_SPECIFIED;
+                throw PersoniumCoreException.OData.KEY_FOR_NAVPROP_SHOULD_NOT_BE_SPECIFIED;
             }
 
             OEntityKey oeKey = OEntityKey.parse(bodyPart.getEntityKeyWithParences());
@@ -1362,11 +1362,11 @@ public class ODataBatchResource extends AbstractODataResource {
             if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
                 ac.throwInvalidTokenException(this.odataResource.getAcceptableAuthScheme());
             } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
-                throw DcCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(),
+                throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(),
                         this.odataResource.getAcceptableAuthScheme());
             }
             // $batchとして許可しないprivilegeが指定された場合はここに到達するため403エラーとする
-            throw DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
     }
 
@@ -1383,7 +1383,7 @@ public class ODataBatchResource extends AbstractODataResource {
 
         if (!this.odataResource.hasPrivilege(ac, privilege)) {
             // $batchのリクエストに対し、すでに認証処理は実施済みのため、ここでは認可の判定のみ行う
-            throw DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
 
     }
@@ -1404,7 +1404,7 @@ public class ODataBatchResource extends AbstractODataResource {
             writeAccess.put(priv, batchAccess);
             try {
                 this.checkAccessContextForMimePart(this.odataResource.getAccessContext(), priv);
-            } catch (DcCoreException ex) {
+            } catch (PersoniumCoreException ex) {
                 batchAccess.setAccessContext(ex);
             }
         }
@@ -1428,7 +1428,7 @@ public class ODataBatchResource extends AbstractODataResource {
             readAccess.put(priv, batchAccess);
             try {
                 this.checkAccessContextForMimePart(this.odataResource.getAccessContext(), priv);
-            } catch (DcCoreException ex) {
+            } catch (PersoniumCoreException ex) {
                 batchAccess.setAccessContext(ex);
             }
         }
@@ -1453,7 +1453,7 @@ public class ODataBatchResource extends AbstractODataResource {
      * Batchアクセス情報を管理するクラス.
      */
     static class BatchAccess {
-        private DcCoreException exception = null;
+        private PersoniumCoreException exception = null;
 
         void checkAccessContext() {
             if (this.exception != null) {
@@ -1461,7 +1461,7 @@ public class ODataBatchResource extends AbstractODataResource {
             }
         }
 
-        void setAccessContext(DcCoreException ex) {
+        void setAccessContext(PersoniumCoreException ex) {
             this.exception = ex;
         }
 
@@ -1556,32 +1556,32 @@ public class ODataBatchResource extends AbstractODataResource {
         /**
          * エラー情報を設定.
          * @param res BatchResponse
-         * @param e DcCoreException
+         * @param e PersoniumCoreException
          */
         void setErrorResponse(Exception e) {
             // ログ出力
-            DcCoreExceptionMapper mapper = new DcCoreExceptionMapper();
+            PersoniumCoreExceptionMapper mapper = new PersoniumCoreExceptionMapper();
             mapper.toResponse(e);
 
-            if (e instanceof DcCoreException) {
+            if (e instanceof PersoniumCoreException) {
                 // レスポンス作成
                 setHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-                setResponseCode(((DcCoreException) e).getStatus());
-                setBody(createJsonBody((DcCoreException) e));
+                setResponseCode(((PersoniumCoreException) e).getStatus());
+                setBody(createJsonBody((PersoniumCoreException) e));
             } else {
                 // レスポンス作成
                 setHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-                setResponseCode(DcCoreException.Server.UNKNOWN_ERROR.getStatus());
-                setBody(createJsonBody(DcCoreException.Server.UNKNOWN_ERROR));
+                setResponseCode(PersoniumCoreException.Server.UNKNOWN_ERROR.getStatus());
+                setBody(createJsonBody(PersoniumCoreException.Server.UNKNOWN_ERROR));
             }
         }
 
         /**
          * Json形式のエラーメッセージを作成する.
-         * @param exception DcCoreException
+         * @param exception PersoniumCoreException
          * @return レスポンスボディ用Json形式エラーメッセージ
          */
-        private String createJsonBody(DcCoreException exception) {
+        private String createJsonBody(PersoniumCoreException exception) {
             String code = exception.getCode();
             String message = exception.getMessage();
             LinkedHashMap<String, Object> json = new LinkedHashMap<String, Object>();

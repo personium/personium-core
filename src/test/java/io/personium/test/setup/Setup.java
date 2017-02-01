@@ -41,7 +41,7 @@ import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.common.auth.token.Role;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
@@ -51,7 +51,7 @@ import io.personium.core.model.ctl.Relation;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcRequest;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.UserDataListWithNPTest;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
@@ -798,7 +798,7 @@ public class Setup extends AbstractCase {
         body = new JSONObject();
         userDataId = "userdata001";
         body.put("__id", userDataId);
-        int maxPropNum = DcCoreConfig.getMaxPropertyCountInEntityType();
+        int maxPropNum = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
         for (int i = 0; i < maxPropNum; i++) {
             body.put("dynamicProperty" + i, "dynamicPropertyValue" + i);
         }
@@ -973,7 +973,7 @@ public class Setup extends AbstractCase {
      */
     private static DcResponse createUserDataWithDcClient(String cellName, String boxName, String colName,
             String entityTypeName, JSONObject body) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -1009,7 +1009,7 @@ public class Setup extends AbstractCase {
         Http.request("box/odatacol/create.txt").with("cell", cellName).with("box", boxName).with("collection", colName)
                 .with("entityType", entityTypeName).with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", "Bearer " + DcCoreConfig.getMasterToken()).with("body", body.toJSONString()).returns()
+                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken()).with("body", body.toJSONString()).returns()
                 .debug();
     }
 
@@ -1056,7 +1056,7 @@ public class Setup extends AbstractCase {
             String userDataId) {
         // リクエスト実行
         Http.request("box/odatacol/delete.txt").with("cell", cellName).with("box", boxName).with("collection", colName)
-                .with("entityType", entityTypeName).with("id", userDataId).with("token", DcCoreConfig.getMasterToken())
+                .with("entityType", entityTypeName).with("id", userDataId).with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*").returns();
     }
 
@@ -1241,7 +1241,7 @@ public class Setup extends AbstractCase {
      */
     @SuppressWarnings("unchecked")
     final DcResponse createCell(final Config config) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット

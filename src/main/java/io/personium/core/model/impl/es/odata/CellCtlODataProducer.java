@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.Cell;
@@ -151,7 +151,7 @@ public class CellCtlODataProducer extends EsODataProducer {
         // このBoxが存在するときのみBoxCmpが必要
         BoxCmp davCmp = ModelFactory.boxCmp(box);
         if (!davCmp.isEmpty()) {
-            throw DcCoreException.OData.CONFLICT_HAS_RELATED;
+            throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
         }
         davCmp.delete(null, false);
         // BoxのCacheクリア
@@ -183,7 +183,7 @@ public class CellCtlODataProducer extends EsODataProducer {
             // ESから変更する受信メッセージ情報を取得する
             EntitySetDocHandler entitySetDocHandler = this.retrieveWithKey(entitySet, originalKey);
             if (entitySetDocHandler == null) {
-                throw DcCoreException.OData.NO_SUCH_ENTITY;
+                throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
             }
 
             // TypeとStatusのチェック
@@ -194,7 +194,7 @@ public class CellCtlODataProducer extends EsODataProducer {
             if (!isValidMessageStatus(type, status)
                     || !isValidRelationStatus(type, status)
                     || !isValidCurrentStatus(type, currentStatus)) {
-                throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ReceivedMessage.MESSAGE_COMMAND);
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ReceivedMessage.MESSAGE_COMMAND);
             }
 
             // 関係登録/削除
@@ -286,10 +286,10 @@ public class CellCtlODataProducer extends EsODataProducer {
 
             // n:nの場合
             createLinks(relationEntityId, extCellEntityId);
-        } catch (DcCoreException e) {
-            if (DcCoreException.OData.CONFLICT_LINKS.getCode().equals(e.getCode())) {
+        } catch (PersoniumCoreException e) {
+            if (PersoniumCoreException.OData.CONFLICT_LINKS.getCode().equals(e.getCode())) {
                 // $linksが既に存在する場合
-                throw DcCoreException.ReceiveMessage.REQUEST_RELATION_EXISTS_ERROR;
+                throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_EXISTS_ERROR;
             }
             throw e;
         }
@@ -300,7 +300,7 @@ public class CellCtlODataProducer extends EsODataProducer {
         try {
             extCellOEntityKey = OEntityKey.parse("('" + requestExtCell + "')");
         } catch (IllegalArgumentException e) {
-            throw DcCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR.reason(e);
         }
         return extCellOEntityKey;
     }
@@ -310,7 +310,7 @@ public class CellCtlODataProducer extends EsODataProducer {
         try {
             relationOEntityKey = OEntityKey.parse("('" + relationKey + "')");
         } catch (IllegalArgumentException e) {
-            throw DcCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR.reason(e);
         }
         return relationOEntityKey;
     }
@@ -397,7 +397,7 @@ public class CellCtlODataProducer extends EsODataProducer {
         // setLinksFromOEntity(getMetadata().findEdmEntitySet(Relation.EDM_TYPE_NAME).getType(),
         // oEntityKey, entitySetDocHandler);
         // } catch (NTKPNotFoundException e) {
-        // throw DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(e.getMessage());
+        // throw PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(e.getMessage());
         // }
         // }
 
@@ -422,14 +422,14 @@ public class CellCtlODataProducer extends EsODataProducer {
                 .get(ReceivedMessagePort.P_REQUEST_RELATION.getName()).toString();
         String relationName = getRelationFromRelationClassUrl(reqRelation);
         if (relationName == null) {
-            throw DcCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR;
+            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR;
         }
 
         // 対象のRelationが存在することを確認
         EntitySetDocHandler relation = getRelation(relationName);
         if (relation == null) {
             log.debug(String.format("RequestRelation does not exists. [%s]", relationName));
-            throw DcCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params(relationName);
+            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params(relationName);
         }
 
         // 対象のExtCell(RequestRelationTarget)が存在することを確認
@@ -438,14 +438,14 @@ public class CellCtlODataProducer extends EsODataProducer {
         EntitySetDocHandler extCell = getExtCell(extCellUrl);
         if (extCell == null) {
             log.debug(String.format("RequestRelationTarget does not exists. [%s]", extCellUrl));
-            throw DcCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS.params(extCellUrl);
+            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS.params(extCellUrl);
         }
 
         // RelationとExtCellの関連を削除する
         if (!deleteLinkEntity(relation, extCell)) {
             log.debug(String.format("RequestRelation and RequestRelationTarget does not related. [%s] - [%s]",
                     relationName, extCellUrl));
-            throw DcCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS.params(relationName, extCellUrl);
+            throw PersoniumCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS.params(relationName, extCellUrl);
         }
         log.debug("breakRelation success.");
     }

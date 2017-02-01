@@ -32,8 +32,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -505,8 +505,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(
                             UserDataComplexTypeUtils.ET_CT1ST_PROP).getMessage());
         } finally {
             // 作成したPropertyを削除
@@ -542,8 +542,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(UserDataComplexTypeUtils.ET_CT1ST_PROP)
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(UserDataComplexTypeUtils.ET_CT1ST_PROP)
                             .getMessage());
         } finally {
             // 作成したPropertyを削除
@@ -589,8 +589,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("requiredEntry").getMessage());
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("requiredEntry").getMessage());
         } finally {
             // 作成したユーザデータを削除
             ODataCommon.deleteOdataResource(userdatalocationUrl);
@@ -647,8 +647,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("etListPropSingle").getMessage());
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("etListPropSingle").getMessage());
         } finally {
             ODataCommon.deleteOdataResource(userdatalocationUrl);
             UserDataComplexTypeUtils.deleteSimpleArraySchema();
@@ -700,8 +700,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("requiredStringEntry").getMessage());
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("requiredStringEntry").getMessage());
         } finally {
             ODataCommon.deleteOdataResource(userdatalocationUrl);
             ODataCommon.deleteOdataResource(UrlUtils.complexTypeProperty(
@@ -756,8 +756,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("requiredStringEntry").getMessage());
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("requiredStringEntry").getMessage());
         } finally {
             ODataCommon.deleteOdataResource(userdatalocationUrl);
             ODataCommon.deleteOdataResource(UrlUtils.complexTypeProperty(
@@ -1135,8 +1135,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(checkPropName).getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(checkPropName).getMessage());
         } finally {
             // 作成したユーザデータを削除
             ODataCommon.deleteOdataResource(userdatalocationUrl);
@@ -1186,8 +1186,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(checkPropName).getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(checkPropName).getMessage());
         } finally {
             // 作成したユーザデータを削除
             ODataCommon.deleteOdataResource(userdatalocationUrl);
@@ -1237,8 +1237,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(checkPropName).getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(checkPropName).getMessage());
         } finally {
             // 作成したユーザデータを削除
             ODataCommon.deleteOdataResource(userdatalocationUrl);
@@ -1276,7 +1276,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // 最大要素数+1までデータを追加する。
-            for (int i = 0; i <= DcCoreConfig.getMaxPropertyCountInEntityType() - 3; i++) {
+            for (int i = 0; i <= PersoniumUnitConfig.getMaxPropertyCountInEntityType() - 3; i++) {
                 req.addJsonBody(String.valueOf(i), i);
             }
 
@@ -1286,8 +1286,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED.getCode(),
-                    DcCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED.getMessage());
+                    PersoniumCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED.getCode(),
+                    PersoniumCoreException.OData.ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED.getMessage());
         } finally {
             // 作成したユーザデータを削除
             ODataCommon.deleteOdataResource(userdatalocationUrl);
@@ -1326,7 +1326,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             Map<String, Object> expected = new HashMap<String, Object>();
 
             // 最大要素数までデータを追加する。
-            for (int i = 0; i <= DcCoreConfig.getMaxPropertyCountInEntityType() - 4; i++) {
+            for (int i = 0; i <= PersoniumUnitConfig.getMaxPropertyCountInEntityType() - 4; i++) {
                 req.addJsonBody(String.valueOf(i), String.valueOf(i));
                 expected.put(String.valueOf(i), String.valueOf(i));
             }
@@ -1412,8 +1412,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("etListPropBoolean").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("etListPropBoolean").getMessage());
         } finally {
             UserDataComplexTypeUtils.deleteSimpleArraySchema();
         }
@@ -1469,8 +1469,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("etListPropSingle").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("etListPropSingle").getMessage());
         } finally {
             UserDataComplexTypeUtils.deleteSimpleArraySchema();
         }
@@ -1526,8 +1526,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("etListPropInt").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("etListPropInt").getMessage());
         } finally {
             UserDataComplexTypeUtils.deleteSimpleArraySchema();
         }
@@ -1626,8 +1626,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("requiredStringEntry").getMessage());
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("requiredStringEntry").getMessage());
         } finally {
             ODataCommon.deleteOdataResource(UrlUtils.complexTypeProperty(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "requiredStringEntry", "complexType2nd"));
@@ -1682,8 +1682,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("ctListPropSingle").getMessage());
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("ctListPropSingle").getMessage());
         } finally {
             UserDataComplexTypeUtils.deleteSimpleArraySchemaInComplex();
         }
@@ -1800,8 +1800,8 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("requiredStringEntry").getMessage());
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("requiredStringEntry").getMessage());
         } finally {
             ODataCommon.deleteOdataResource(UrlUtils.complexTypeProperty(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "requiredStringEntry", "ListComplexType"));

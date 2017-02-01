@@ -26,8 +26,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -218,7 +218,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=startswith%28test%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -239,7 +239,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=startswith%28%27test%27%29%2c%27test%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -260,7 +260,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=startswith%28test%2ctest%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -281,7 +281,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=startswith%28number%2c1%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -302,7 +302,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=startswith%28decimal%2c1.1%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -323,7 +323,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=startswith%28null%2cnull%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -340,9 +340,9 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
         // Edm.Stringの検索条件：文字列： "string data"
         String query = "?\\$filter=startswith%28english%2ctrue%29&\\$inlinecount=allpages";
         TResponse res = UserDataUtils.list(cellName, boxName, colName, sdEntityTypeName, query,
-                DcCoreConfig.getMasterToken(), HttpStatus.SC_BAD_REQUEST);
-        res.checkErrorResponse(DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.getCode(),
-                DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params("english").getMessage());
+                PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.getCode(),
+                PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params("english").getMessage());
     }
 
     /**
@@ -360,7 +360,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=startswith%28%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -504,7 +504,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=substringof%28test%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -525,7 +525,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=substringof%28%27test%27%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -546,7 +546,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=substringof%28test%2ctest%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -567,7 +567,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=substringof%281%2cnumber%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -588,7 +588,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=substringof%281.1%2cdecimal%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -609,7 +609,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=substringof%28null%2csample%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -626,9 +626,9 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
         // Edm.Stringの検索条件：文字列： "string data"
         String query = "?\\$filter=substringof%28true%2cenglish%29&\\$inlinecount=allpages";
         TResponse res = UserDataUtils.list(cellName, boxName, colName, sdEntityTypeName, query,
-                DcCoreConfig.getMasterToken(), HttpStatus.SC_BAD_REQUEST);
-        res.checkErrorResponse(DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.getCode(),
-                DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params("english").getMessage());
+                PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.getCode(),
+                PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params("english").getMessage());
     }
 
 }

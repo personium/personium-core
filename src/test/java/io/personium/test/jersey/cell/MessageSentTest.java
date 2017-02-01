@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessagePort;
 import io.personium.core.model.ctl.SentMessage;
@@ -300,9 +300,9 @@ public class MessageSentTest extends ODataCommon {
             response = SentMessageUtils.sent(MASTER_TOKEN_NAME, TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_BAD_REQUEST);
             // エラーメッセージチェック
-            String code = DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode();
+            String code = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode();
             String detail = SentMessage.P_TO.getName() + "," + SentMessage.P_TO_RELATION.getName();
-            String message = DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(detail).getMessage();
+            String message = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(detail).getMessage();
             checkErrorResponse(response.bodyAsJson(), code, message);
 
         } finally {
@@ -725,8 +725,8 @@ public class MessageSentTest extends ODataCommon {
             response = SentMessageUtils.sent(MASTER_TOKEN_NAME, TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_BAD_REQUEST);
             // エラーメッセージチェック
-            String code = DcCoreException.SentMessage.TO_RELATION_NOT_FOUND_ERROR.getCode();
-            String message = DcCoreException.SentMessage.TO_RELATION_NOT_FOUND_ERROR.params("norelation").getMessage();
+            String code = PersoniumCoreException.SentMessage.TO_RELATION_NOT_FOUND_ERROR.getCode();
+            String message = PersoniumCoreException.SentMessage.TO_RELATION_NOT_FOUND_ERROR.params("norelation").getMessage();
             checkErrorResponse(response.bodyAsJson(), code, message);
 
         } finally {
@@ -770,8 +770,8 @@ public class MessageSentTest extends ODataCommon {
             response = SentMessageUtils.sent(MASTER_TOKEN_NAME, TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_BAD_REQUEST);
             // エラーメッセージチェック
-            String code = DcCoreException.SentMessage.RELATED_EXTCELL_NOT_FOUND_ERROR.getCode();
-            String message = DcCoreException.SentMessage.RELATED_EXTCELL_NOT_FOUND_ERROR.params("noExtCellRelation")
+            String code = PersoniumCoreException.SentMessage.RELATED_EXTCELL_NOT_FOUND_ERROR.getCode();
+            String message = PersoniumCoreException.SentMessage.RELATED_EXTCELL_NOT_FOUND_ERROR.params("noExtCellRelation")
                     .getMessage();
             checkErrorResponse(response.bodyAsJson(), code, message);
 

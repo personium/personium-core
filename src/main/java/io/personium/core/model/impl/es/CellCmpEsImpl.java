@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.common.es.response.PersoniumSearchResponse;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
@@ -187,7 +187,7 @@ public class CellCmpEsImpl extends DavCmpEsImpl implements CellCmp {
     }
 
     @Override
-    public DcCoreException getNotFoundException() {
-        return DcCoreException.Dav.CELL_NOT_FOUND;
+    public PersoniumCoreException getNotFoundException() {
+        return PersoniumCoreException.Dav.CELL_NOT_FOUND;
     }
 }

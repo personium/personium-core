@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 import io.personium.common.es.EsClient;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumIndexResponse;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.ads.AdsException;
 import io.personium.core.model.impl.es.ads.JdbcAds;
 import io.personium.core.model.impl.es.doc.LinkDocHandler;
@@ -48,7 +48,7 @@ import io.personium.test.jersey.DcRunner;
 @Category({Unit.class })
 public class ODataLinkAccessorTest {
 
-    private static final String UNIT_PREFIX = DcCoreConfig.getEsUnitPrefix();
+    private static final String UNIT_PREFIX = PersoniumUnitConfig.getEsUnitPrefix();
     private static final String UNIT_USER_NAME = "index_for_test";
     private static final String INDEX_NAME = UNIT_PREFIX + "_" + UNIT_USER_NAME;
     private static final String TYPE_NAME = "TypeForTest";
@@ -62,7 +62,7 @@ public class ODataLinkAccessorTest {
      */
     @Before
     public void setUp() throws Exception {
-        esClient = new EsClient(DcCoreConfig.getEsClusterName(), DcCoreConfig.getEsHosts());
+        esClient = new EsClient(PersoniumUnitConfig.getEsClusterName(), PersoniumUnitConfig.getEsHosts());
     }
 
     /**

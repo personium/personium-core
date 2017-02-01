@@ -33,7 +33,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -78,7 +78,7 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -94,9 +94,9 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
             checkBatchResponseBody(response, expectedBody);
 
             // ユーザデータ取得
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     "SalesDetail", "npTest1", HttpStatus.SC_OK);
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     "SalesDetail", "npTest2", HttpStatus.SC_OK);
             // リンク情報のチェック(SalesDetail→Sales)
             TResponse resList = UserDataUtils.listLink(cellName, boxName, colName,
@@ -123,9 +123,9 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
                     "Sales", -1);
             ResourceUtils.deleteUserDataLinks("srcKey", "npTest2", "SalesDetail", cellName, boxName, colName,
                     "Sales", -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest2", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest2", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -148,7 +148,7 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -164,11 +164,11 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
             checkBatchResponseBody(response, expectedBody);
 
             // ユーザデータ取得
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     "SalesDetail", "npTest1", HttpStatus.SC_NOT_FOUND);
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     "SalesDetail", "npTest2", HttpStatus.SC_OK);
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     "SalesDetail", "npTest3", HttpStatus.SC_OK);
             // リンク情報のチェック(SalesDetail→Sales)
             TResponse resList = UserDataUtils.listLink(cellName, boxName, colName,
@@ -195,9 +195,9 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
                     "Sales", -1);
             ResourceUtils.deleteUserDataLinks("srcKey", "npTest3", "SalesDetail", cellName, boxName, colName,
                     "Sales", -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest2", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest3", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest2", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest3", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -220,7 +220,7 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -236,10 +236,10 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
             checkBatchResponseBody(response, expectedBody);
 
             // ユーザデータ取得
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     "SalesDetail", "npTest1", HttpStatus.SC_NOT_FOUND);
         } finally {
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -265,7 +265,7 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -280,10 +280,10 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
             checkBatchResponseBody(response, expectedBody);
 
             // ユーザデータ取得
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     "SalesDetail", "npTest1", HttpStatus.SC_NOT_FOUND);
         } finally {
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -313,7 +313,7 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -331,10 +331,10 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
             checkBatchResponseBody(response, expectedBody);
 
             // ユーザデータ取得
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     "SalesDetail", "npTest1", HttpStatus.SC_NOT_FOUND);
         } finally {
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 }

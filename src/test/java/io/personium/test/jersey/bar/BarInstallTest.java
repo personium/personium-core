@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.AssociationEnd;
@@ -263,8 +263,8 @@ public class BarInstallTest extends JerseyTest {
 
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
         res.statusCode(HttpStatus.SC_NOT_FOUND);
-        String code = DcCoreException.Dav.CELL_NOT_FOUND.getCode();
-        String message = DcCoreException.Dav.CELL_NOT_FOUND.getMessage();
+        String code = PersoniumCoreException.Dav.CELL_NOT_FOUND.getCode();
+        String message = PersoniumCoreException.Dav.CELL_NOT_FOUND.getMessage();
         res.checkErrorResponse(code, message);
     }
 
@@ -332,8 +332,8 @@ public class BarInstallTest extends JerseyTest {
             BoxUtils.createWithSchema(reqCell, "boxInstallTestBox", AbstractCase.MASTER_TOKEN_NAME, SCHEMA_URL);
             res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
-            String code = DcCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.getCode();
-            String message = DcCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.
+            String code = PersoniumCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.getCode();
+            String message = PersoniumCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.
                     params(SCHEMA_URL).getMessage();
             res.checkErrorResponse(code, message);
         } finally {
@@ -360,8 +360,8 @@ public class BarInstallTest extends JerseyTest {
         try {
             res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
             res.statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED);
-            String code = DcCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.getCode();
-            String message = DcCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.
+            String code = PersoniumCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.getCode();
+            String message = PersoniumCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.
                     params(reqPath).getMessage();
             res.checkErrorResponse(code, message);
         } finally {
@@ -387,8 +387,8 @@ public class BarInstallTest extends JerseyTest {
 
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
         res.statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED);
-        String code = DcCoreException.Misc.METHOD_NOT_ALLOWED.getCode();
-        String message = DcCoreException.Misc.METHOD_NOT_ALLOWED.
+        String code = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED.getCode();
+        String message = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED.
                 params("'" + reqPath + "'").getMessage();
         res.checkErrorResponse(code, message);
     }
@@ -409,8 +409,8 @@ public class BarInstallTest extends JerseyTest {
 
         res = BarInstallTestUtils.request(REQUEST_NOTYPE_FILE, reqCell, reqPath, headers, body);
         res.statusCode(HttpStatus.SC_BAD_REQUEST);
-        String code = DcCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR.getCode();
-        String message = DcCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR.
+        String code = PersoniumCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR.getCode();
+        String message = PersoniumCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR.
                 params(HttpHeaders.CONTENT_TYPE).getMessage();
         res.checkErrorResponse(code, message);
     }
@@ -434,8 +434,8 @@ public class BarInstallTest extends JerseyTest {
 
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
         res.statusCode(HttpStatus.SC_BAD_REQUEST);
-        String code = DcCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR.getCode();
-        String message = DcCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR.
+        String code = PersoniumCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR.getCode();
+        String message = PersoniumCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR.
                 params(HttpHeaders.CONTENT_TYPE).getMessage();
         res.checkErrorResponse(code, message);
     }
@@ -458,8 +458,8 @@ public class BarInstallTest extends JerseyTest {
 
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
         res.statusCode(HttpStatus.SC_BAD_REQUEST);
-        String code = DcCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR.getCode();
-        String message = DcCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR.
+        String code = PersoniumCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR.getCode();
+        String message = PersoniumCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR.
                 params(HttpHeaders.CONTENT_TYPE).getMessage();
         res.checkErrorResponse(code, message);
     }
@@ -480,8 +480,8 @@ public class BarInstallTest extends JerseyTest {
 
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
         res.statusCode(HttpStatus.SC_BAD_REQUEST);
-        String code = DcCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.getCode();
-        String message = DcCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.
+        String code = PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.getCode();
+        String message = PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.
                 params("archive is not a ZIP archive").getMessage();
         res.checkErrorResponse(code, message);
     }
@@ -504,8 +504,8 @@ public class BarInstallTest extends JerseyTest {
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
 
         res.statusCode(HttpStatus.SC_BAD_REQUEST);
-        String code = DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.getCode();
-        String message = DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.
+        String code = PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.getCode();
+        String message = PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.
                 params("bar/ bar/00_meta/ bar/00_meta/00_manifest.json bar/00_meta/90_rootprops.xml").getMessage();
         res.checkErrorResponse(code, message);
     }
@@ -612,8 +612,8 @@ public class BarInstallTest extends JerseyTest {
         try {
             res = BarInstallTestUtils.request(REQUEST_METHOD_OVERRIDE_FILE, reqCell, reqPath, headers, body);
             res.statusCode(HttpStatus.SC_NOT_FOUND);
-            String code = DcCoreException.Dav.BOX_NOT_FOUND.getCode();
-            String message = DcCoreException.Dav.BOX_NOT_FOUND
+            String code = PersoniumCoreException.Dav.BOX_NOT_FOUND.getCode();
+            String message = PersoniumCoreException.Dav.BOX_NOT_FOUND
                     .params(UrlUtils.boxRoot(reqCell, INSTALL_TARGET)).getMessage();
             res.checkErrorResponse(code, message);
         } finally {
@@ -1179,8 +1179,8 @@ public class BarInstallTest extends JerseyTest {
 
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
         res.statusCode(HttpStatus.SC_BAD_REQUEST);
-        String code = DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.getCode();
-        String message = DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.
+        String code = PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.getCode();
+        String message = PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.
                 params("bar/ bar/00_meta/ bar/00_meta/00_manifest.json bar/00_meta/90_rootprops.xml").getMessage();
         res.checkErrorResponse(code, message);
     }
@@ -1238,8 +1238,8 @@ public class BarInstallTest extends JerseyTest {
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
 
         res.statusCode(HttpStatus.SC_BAD_REQUEST);
-        String code = DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.getCode();
-        String message = DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.
+        String code = PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.getCode();
+        String message = PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.
                 params("bar/00_meta/ bar/00_meta/00_manifest.json bar/00_meta/90_rootprops.xml").getMessage();
         res.checkErrorResponse(code, message);
     }
@@ -1262,8 +1262,8 @@ public class BarInstallTest extends JerseyTest {
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
 
         res.statusCode(HttpStatus.SC_BAD_REQUEST);
-        String code = DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.getCode();
-        String message = DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.
+        String code = PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.getCode();
+        String message = PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.
                 params("bar/00_meta/00_manifest.json").getMessage();
         res.checkErrorResponse(code, message);
     }
@@ -1286,8 +1286,8 @@ public class BarInstallTest extends JerseyTest {
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
 
         res.statusCode(HttpStatus.SC_BAD_REQUEST);
-        String code = DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.getCode();
-        String message = DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.
+        String code = PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.getCode();
+        String message = PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.
                 params("bar/00_meta/90_rootprops.xml").getMessage();
         res.checkErrorResponse(code, message);
     }
@@ -1310,8 +1310,8 @@ public class BarInstallTest extends JerseyTest {
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
 
         res.statusCode(HttpStatus.SC_BAD_REQUEST);
-        String code = DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.getCode();
-        String message = DcCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.
+        String code = PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.getCode();
+        String message = PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.
                 params("bar/00_meta/").getMessage();
         res.checkErrorResponse(code, message);
     }
@@ -1920,8 +1920,8 @@ public class BarInstallTest extends JerseyTest {
 
             res = BarInstallTestUtils.request(token, REQUEST_NORM_FILE, reqCellName, reqBoxName, headers, body);
             res.statusCode(HttpStatus.SC_FORBIDDEN);
-            String code = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getCode();
-            String message = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getMessage();
+            String code = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getCode();
+            String message = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getMessage();
             res.checkErrorResponse(code, message);
         } finally {
             Setup.cellBulkDeletion(reqCellName);
@@ -1957,8 +1957,8 @@ public class BarInstallTest extends JerseyTest {
 
             res = BarInstallTestUtils.request(token, REQUEST_NORM_FILE, reqCellName, reqBoxName, headers, body);
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
-            String code = DcCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.getCode();
-            String message = DcCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.
+            String code = PersoniumCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.getCode();
+            String message = PersoniumCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.
                     params(SCHEMA_URL).getMessage();
             res.checkErrorResponse(code, message);
         } finally {
@@ -1994,8 +1994,8 @@ public class BarInstallTest extends JerseyTest {
 
             res = BarInstallTestUtils.request(token, REQUEST_NORM_FILE, reqCellName, reqBoxName, headers, body);
             res.statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED);
-            String code = DcCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.getCode();
-            String message = DcCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.
+            String code = PersoniumCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.getCode();
+            String message = PersoniumCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.
                     params(reqBoxName).getMessage();
             res.checkErrorResponse(code, message);
         } finally {
@@ -2058,8 +2058,8 @@ public class BarInstallTest extends JerseyTest {
         // Boxインストール２回目（既に同じスキーマURLを持つBoxが存在するため400エラー）
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, "anotherBox", headers, body);
         res.statusCode(HttpStatus.SC_BAD_REQUEST);
-        String code = DcCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.getCode();
-        String message = DcCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.
+        String code = PersoniumCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.getCode();
+        String message = PersoniumCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.
                 params("https://fqdn/testcell1/").getMessage();
         res.checkErrorResponse(code, message);
     }

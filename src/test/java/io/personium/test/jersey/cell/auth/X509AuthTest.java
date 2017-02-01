@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.DcRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -99,8 +99,8 @@ public class X509AuthTest extends JerseyTest {
             // トランスセルアクセストークンでのデータアクセス
             BoxUtils.get(Setup.TEST_CELL1, token, Setup.TEST_BOX1, HttpStatus.SC_UNAUTHORIZED);
         } finally {
-            TransCellAccessToken.configureX509(DcCoreConfig.getX509PrivateKey(), DcCoreConfig.getX509Certificate(),
-                    DcCoreConfig.getX509RootCertificate());
+            TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(), PersoniumUnitConfig.getX509Certificate(),
+                    PersoniumUnitConfig.getX509RootCertificate());
         }
     }
 
@@ -171,8 +171,8 @@ public class X509AuthTest extends JerseyTest {
             // トランスセルアクセストークンでのデータアクセス
             BoxUtils.get(Setup.TEST_CELL1, token, Setup.TEST_BOX1, HttpStatus.SC_UNAUTHORIZED);
         } finally {
-            TransCellAccessToken.configureX509(DcCoreConfig.getX509PrivateKey(), DcCoreConfig.getX509Certificate(),
-                    DcCoreConfig.getX509RootCertificate());
+            TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(), PersoniumUnitConfig.getX509Certificate(),
+                    PersoniumUnitConfig.getX509RootCertificate());
         }
 
     }
@@ -217,8 +217,8 @@ public class X509AuthTest extends JerseyTest {
             // トランスセルアクセストークンでのデータアクセス
             BoxUtils.get(Setup.TEST_CELL1, token, Setup.TEST_BOX1, HttpStatus.SC_INTERNAL_SERVER_ERROR);
         } finally {
-            TransCellAccessToken.configureX509(DcCoreConfig.getX509PrivateKey(), DcCoreConfig.getX509Certificate(),
-                    DcCoreConfig.getX509RootCertificate());
+            TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(), PersoniumUnitConfig.getX509Certificate(),
+                    PersoniumUnitConfig.getX509RootCertificate());
         }
 
     }

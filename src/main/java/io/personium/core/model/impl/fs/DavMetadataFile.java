@@ -28,7 +28,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 
 /**
  * a class for handling internal fs file storing Dav metadata.
@@ -136,7 +136,7 @@ public class DavMetadataFile {
             this.json = (JSONObject) parser.parse(reader);
         } catch (IOException | ParseException e) {
             // IO failure or JSON is broken
-            throw DcCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e);
+            throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e);
         }
     }
 

@@ -33,7 +33,7 @@ import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcException;
 import io.personium.test.jersey.DcRequest;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
 import io.personium.test.unit.core.UrlUtils;
 
@@ -527,7 +527,7 @@ public class CellUtils {
         body.put("object", object);
         body.put("result", result);
 
-        DcRestAdapter adaper = new DcRestAdapter();
+        PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);
         return adaper.post(UrlUtils.cellRoot(cellName) + "__event/" + boxName,
@@ -565,7 +565,7 @@ public class CellUtils {
      * @throws DcException DcException
      */
     public static DcResponse getLog(String cellName, String collection, String fileName) throws DcException {
-        DcRestAdapter adaper = new DcRestAdapter();
+        PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         return adaper.get(UrlUtils.cellRoot(cellName) + "__log/" + collection + "/" + fileName, header);
@@ -582,7 +582,7 @@ public class CellUtils {
     public static DcResponse getCurrentLogWithAnyAuth(String cellName,
             String fileName,
             String authorization) throws DcException {
-        DcRestAdapter adaper = new DcRestAdapter();
+        PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);
         return adaper.get(UrlUtils.cellRoot(cellName) + "__log/current/" + fileName, header);
@@ -617,7 +617,7 @@ public class CellUtils {
      */
     public static DcResponse changePassword(String cellName, String newPassword, String authorization)
             throws DcException {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, authorization);
@@ -649,7 +649,7 @@ public class CellUtils {
         String schemaAuthenticatedToken = (String) res.bodyAsJson().get("access_token");
 
         // スキーマ認証(Basic認証)
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         // リクエストヘッダをセット
         String schemaCellUrl = UrlUtils.cellRoot(schemaCell);
         String authorization =
@@ -714,7 +714,7 @@ public class CellUtils {
                 + "&password=" + schemaPassword
                 + "&state=" + state;
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -737,7 +737,7 @@ public class CellUtils {
     public static DcResponse getBoxUrl(String cellName,
             String schemaCell,
             String authorization) throws DcException {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, authorization);

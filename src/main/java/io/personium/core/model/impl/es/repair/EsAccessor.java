@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.response.EsClientException;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.QueryMapFactory;
 
@@ -95,7 +95,7 @@ public class EsAccessor {
      */
     private static EsIndex getEsIndex(final String indexName) {
         final String cellIndexName = EsIndex.CATEGORY_AD;
-        String unitUserName = indexName.replace(DcCoreConfig.getEsUnitPrefix() + "_", "");
+        String unitUserName = indexName.replace(PersoniumUnitConfig.getEsUnitPrefix() + "_", "");
         if (cellIndexName.equals(unitUserName)) {
             return EsModel.idxAdmin();
         } else {

@@ -22,7 +22,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.utils.CacheClient;
 import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
@@ -47,7 +47,7 @@ public class UserDataSchemaCache {
      * @return スキーマ情報を格納したMapオブジェクト。キャッシュに存在しない場合はnull
      */
     public static Map<String, Object> get(String nodeId) {
-        if (!DcCoreConfig.isSchemaCacheEnabled()) {
+        if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
             return null;
         }
         try {
@@ -67,10 +67,10 @@ public class UserDataSchemaCache {
      * @param schema スキーマ情報を格納したMapオブジェクト
      */
     public static void cache(String nodeId, Map<String, Object> schema) {
-        if (!DcCoreConfig.isSchemaCacheEnabled()) {
+        if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
             return;
         }
-        getMcdClient().put(cacheKey(nodeId), DcCoreConfig.getCacheMemcachedExpiresIn(), schema);
+        getMcdClient().put(cacheKey(nodeId), PersoniumUnitConfig.getCacheMemcachedExpiresIn(), schema);
     }
 
     /**
@@ -78,7 +78,7 @@ public class UserDataSchemaCache {
      * @param nodeId ノードID
      */
     public static void clear(String nodeId) {
-        if (!DcCoreConfig.isSchemaCacheEnabled()) {
+        if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
             return;
         }
         getMcdClient().delete(cacheKey(nodeId));
@@ -89,13 +89,13 @@ public class UserDataSchemaCache {
      * @param nodeId ノードID
      */
     public static void disable(String nodeId) {
-        if (!DcCoreConfig.isSchemaCacheEnabled()) {
+        if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
             return;
         }
 
         Map<String, Object> schema = new HashMap<String, Object>();
         schema.put("disabledTime", System.currentTimeMillis());
-        getMcdClient().put(cacheKey(nodeId), DcCoreConfig.getCacheMemcachedExpiresIn(), schema);
+        getMcdClient().put(cacheKey(nodeId), PersoniumUnitConfig.getCacheMemcachedExpiresIn(), schema);
     }
 
     /**
@@ -104,7 +104,7 @@ public class UserDataSchemaCache {
      * @return 無効の場合はtrue,有効の場合はfalse
      */
     public static boolean isDisabled(Map<String, Object> cache) {
-        if (!DcCoreConfig.isSchemaCacheEnabled()) {
+        if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
             return true;
         }
 
@@ -123,7 +123,7 @@ public class UserDataSchemaCache {
      */
     @SuppressWarnings("unchecked")
     public static boolean isChanged(String nodeId, Map<String, Object> cache) {
-        if (!DcCoreConfig.isSchemaCacheEnabled()) {
+        if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
             return false;
         }
 

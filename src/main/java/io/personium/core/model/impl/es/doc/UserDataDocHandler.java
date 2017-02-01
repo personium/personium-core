@@ -158,7 +158,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
                 continue;
             }
             boolean isDynamic = false;
-            NamespacedAnnotation<?> annotation = prop.findAnnotation(Common.DC_NAMESPACE.getUri(),
+            NamespacedAnnotation<?> annotation = prop.findAnnotation(Common.P_NAMESPACE.getUri(),
                     Property.P_IS_DECLARED.getName());
             if (annotation != null && !(Boolean.valueOf(annotation.getValue().toString()))) {
                 isDynamic = true;

@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -105,7 +105,7 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
                     .with("box", Setup.TEST_BOX1)
                     .with("collection", colPath)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", batchBody)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -130,9 +130,9 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "001",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "002",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             EntityTypeUtils.delete(colPath, MASTER_TOKEN_NAME, MediaType.APPLICATION_JSON, entityTypeName,
                     Setup.TEST_BOX1, Setup.TEST_CELL1, -1);
             DavResourceUtils.deleteCollection(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, MASTER_TOKEN_NAME, -1);
@@ -175,7 +175,7 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
                     .with("box", boxName)
                     .with("collection", colPath)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", batchBody)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -200,9 +200,9 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "001",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "002",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             EntityTypeUtils.delete(colPath, MASTER_TOKEN_NAME, MediaType.APPLICATION_JSON, entityTypeName,
                     Setup.TEST_BOX1, Setup.TEST_CELL1, -1);
             DavResourceUtils.deleteCollection(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, MASTER_TOKEN_NAME, -1);
@@ -245,7 +245,7 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
                     .with("box", boxName)
                     .with("collection", colPath)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", batchBody)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -265,9 +265,9 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
                     + entityTypeName, batchBody2, null, null);
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "001",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "002",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             EntityTypeUtils.delete(colPath, MASTER_TOKEN_NAME, MediaType.APPLICATION_JSON, entityTypeName,
                     Setup.TEST_BOX1, Setup.TEST_CELL1, -1);
             DavResourceUtils.deleteCollection(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, MASTER_TOKEN_NAME, -1);
@@ -313,7 +313,7 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
                     .with("box", boxName)
                     .with("collection", colPath)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", batchBody)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -334,9 +334,9 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "001",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "002",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             EntityTypeUtils.delete(colPath, MASTER_TOKEN_NAME, MediaType.APPLICATION_JSON, entityTypeName,
                     Setup.TEST_BOX1, Setup.TEST_CELL1, -1);
             DavResourceUtils.deleteCollection(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, MASTER_TOKEN_NAME, -1);
@@ -382,7 +382,7 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
                     .with("box", boxName)
                     .with("collection", colPath)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", batchBody)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -407,9 +407,9 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "001",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "002",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             EntityTypeUtils.delete(colPath, MASTER_TOKEN_NAME, MediaType.APPLICATION_JSON, entityTypeName,
                     Setup.TEST_BOX1, Setup.TEST_CELL1, -1);
             DavResourceUtils.deleteCollection(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, MASTER_TOKEN_NAME, -1);
@@ -459,7 +459,7 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
                     .with("box", boxName)
                     .with("collection", colPath)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", batchBody)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -488,11 +488,11 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "001",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "002",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, entityTypeName, "003",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             EntityTypeUtils.delete(colPath, MASTER_TOKEN_NAME, MediaType.APPLICATION_JSON, entityTypeName,
                     Setup.TEST_BOX1, Setup.TEST_CELL1, -1);
             DavResourceUtils.deleteCollection(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, MASTER_TOKEN_NAME, -1);

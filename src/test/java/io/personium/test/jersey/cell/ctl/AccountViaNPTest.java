@@ -28,7 +28,7 @@ import org.json.simple.parser.ParseException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.utils.ODataUtils;
 import io.personium.test.categories.Integration;
@@ -182,8 +182,8 @@ public class AccountViaNPTest extends ODataCommon {
             String body = "{\"Name\":\"" + accountName + "\", \"LastAuthenticated\":\"SYSUTCDATE()\"}";
             TResponse res = AccountUtils.createViaNPNonCredential(CELL_NAME, MASTER_TOKEN_NAME, "Role", roleName, body,
                     HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
         } finally {
             // $links削除
             RoleUtils.deleteLink(CELL_NAME, MASTER_TOKEN_NAME, RoleUtils.keyString(roleName),

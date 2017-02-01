@@ -34,8 +34,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -110,7 +110,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -175,7 +175,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -218,7 +218,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -246,7 +246,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -289,7 +289,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -317,7 +317,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -360,7 +360,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -390,7 +390,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
         // リクエストボディを設定
         colName = "setodata";
         String userDataId = "userdata001";
-        int maxPropNum = DcCoreConfig.getMaxPropertyCountInEntityType();
+        int maxPropNum = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
 
         JSONObject body = new JSONObject();
         body.put("__id", userDataId);
@@ -418,7 +418,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -459,7 +459,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
         // リクエストボディを設定
         colName = "setodata";
         String userDataId = "userdata001";
-        int maxPropNum = DcCoreConfig.getMaxPropertyCountInEntityType();
+        int maxPropNum = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
 
         JSONObject body = new JSONObject();
         body.put("__id", userDataId);
@@ -483,7 +483,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -525,7 +525,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -566,7 +566,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -607,7 +607,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -643,7 +643,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("id", userDataId)
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -687,7 +687,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", etag)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -745,7 +745,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", etag)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -801,7 +801,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "W/\"" + String.valueOf(version + 1) + "-" + String.valueOf(updated) + "\"")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_PRECONDITION_FAILED)
@@ -846,7 +846,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "W/\"" + String.valueOf(version) + "-" + String.valueOf(updated + 1) + "\"")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_PRECONDITION_FAILED)
@@ -891,7 +891,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "\"" + String.valueOf(version) + "-" + String.valueOf(updated) + "\"")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_PRECONDITION_FAILED)
@@ -935,7 +935,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", String.valueOf(updated))
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_PRECONDITION_FAILED)
@@ -980,7 +980,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "W/\"" + String.valueOf(version) + String.valueOf(updated) + "\"")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_PRECONDITION_FAILED)
@@ -1024,7 +1024,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "W/\"" + String.valueOf(version) + "-" + "test" + "\"")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", updateBody.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_PRECONDITION_FAILED)
@@ -1078,7 +1078,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -1167,7 +1167,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -1223,7 +1223,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -1279,7 +1279,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -1337,7 +1337,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -1393,7 +1393,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -1449,7 +1449,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -1505,7 +1505,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -1561,7 +1561,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -1617,7 +1617,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
                     .with("ifMatch", "*")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body.toJSONString())
                     .returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -1662,8 +1662,8 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
-                    DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
+                    PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
+                    PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
         } finally {
             deleteUserData(userDataId);
         }
@@ -1761,7 +1761,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                 .with("boxPath", boxName)
                 .with("odataSvcPath", odataName)
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", "Bearer " + DcCoreConfig.getMasterToken())
+                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken())
                 .with("Name", name)
                 .returns()
                 .debug();
@@ -1780,7 +1780,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                 .with("collection", colName)
                 .with("entityType", name)
                 .with("id", userDataId)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*")
                 .returns()
                 .statusCode(HttpStatus.SC_NO_CONTENT);
@@ -1801,7 +1801,7 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
                 .with("entityType", entityType)
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", "Bearer " + DcCoreConfig.getMasterToken())
+                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken())
                 .with("body", body.toJSONString())
                 .returns()
                 .statusCode(sc)

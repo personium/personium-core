@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.CtlSchema;
@@ -79,7 +79,7 @@ import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.ctl.SentMessagePort;
 import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
-import io.personium.core.odata.DcODataProducer;
+import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.core.rs.odata.ODataResource;
@@ -107,7 +107,7 @@ public final class MessageODataResource extends AbstractODataResource {
      * @param producer ODataプロデューサ
      * @param entityTypeName エンティティタイプ名
      */
-    public MessageODataResource(MessageResource odataResource, DcODataProducer producer, String entityTypeName) {
+    public MessageODataResource(MessageResource odataResource, PersoniumODataProducer producer, String entityTypeName) {
         this.odataResource = odataResource;
         setOdataProducer(producer);
         setEntitySetName(entityTypeName);
@@ -164,9 +164,9 @@ public final class MessageODataResource extends AbstractODataResource {
         try {
             body = ResourceUtils.parseBodyAsJSON(reader);
         } catch (IOException e1) {
-            throw DcCoreException.OData.JSON_PARSE_ERROR.reason(e1);
+            throw PersoniumCoreException.OData.JSON_PARSE_ERROR.reason(e1);
         } catch (ParseException e1) {
-            throw DcCoreException.OData.JSON_PARSE_ERROR.reason(e1);
+            throw PersoniumCoreException.OData.JSON_PARSE_ERROR.reason(e1);
         }
 
         String status = (String) body.get(ReceivedMessage.MESSAGE_COMMAND);
@@ -175,7 +175,7 @@ public final class MessageODataResource extends AbstractODataResource {
                 && !ReceivedMessage.STATUS_READ.equals(status)
                 && !ReceivedMessage.STATUS_APPROVED.equals(status)
                 && !ReceivedMessage.STATUS_REJECTED.equals(status)) {
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ReceivedMessage.MESSAGE_COMMAND);
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ReceivedMessage.MESSAGE_COMMAND);
         }
 
         // EdmEntitySetの取得
@@ -187,7 +187,7 @@ public final class MessageODataResource extends AbstractODataResource {
         try {
             oEntityKey = OEntityKey.parse("('" + key + "')");
         } catch (IllegalArgumentException e) {
-            throw DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.reason(e);
         }
 
         // ステータス更新、及び関係登録/削除をProducerに依頼
@@ -354,10 +354,10 @@ public final class MessageODataResource extends AbstractODataResource {
                     oEntityKey,
                     "_" + ExtCell.EDM_TYPE_NAME,
                     query);
-        } catch (DcCoreException e) {
-            if (DcCoreException.OData.NO_SUCH_ENTITY.getCode().equals(e.getCode())) {
+        } catch (PersoniumCoreException e) {
+            if (PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode().equals(e.getCode())) {
                 // ToRelationで指定されたRelationが存在しない場合は400エラーを返却
-                throw DcCoreException.SentMessage.TO_RELATION_NOT_FOUND_ERROR.params(toRelation);
+                throw PersoniumCoreException.SentMessage.TO_RELATION_NOT_FOUND_ERROR.params(toRelation);
             } else {
                 throw e;
             }
@@ -370,7 +370,7 @@ public final class MessageODataResource extends AbstractODataResource {
         }
         if (extCellUrlList.isEmpty()) {
             // ToRelationで指定されたRelationに紐付くExtCellが存在しない場合は400エラーを返却
-            throw DcCoreException.SentMessage.RELATED_EXTCELL_NOT_FOUND_ERROR.params(toRelation);
+            throw PersoniumCoreException.SentMessage.RELATED_EXTCELL_NOT_FOUND_ERROR.params(toRelation);
         }
         return extCellUrlList;
     }
@@ -381,7 +381,7 @@ public final class MessageODataResource extends AbstractODataResource {
      */
     public void checkMaxDestinationsSize(int destinationsSize) {
         if (destinationsSize > MAX_SENT_NUM) {
-            throw DcCoreException.SentMessage.OVER_MAX_SENT_NUM;
+            throw PersoniumCoreException.SentMessage.OVER_MAX_SENT_NUM;
         }
     }
 
@@ -477,7 +477,7 @@ public final class MessageODataResource extends AbstractODataResource {
         try {
             body = new StringEntity(jsonBody.toJSONString(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw DcCoreException.SentMessage.SM_BODY_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.SentMessage.SM_BODY_PARSE_ERROR.reason(e);
         }
         req.setEntity(body);
 
@@ -491,7 +491,7 @@ public final class MessageODataResource extends AbstractODataResource {
         try {
             objResponse = client.execute(req);
         } catch (Exception ioe) {
-            throw DcCoreException.SentMessage.SM_CONNECTION_ERROR.reason(ioe);
+            throw PersoniumCoreException.SentMessage.SM_CONNECTION_ERROR.reason(ioe);
         }
 
         // リクエスト結果の作成
@@ -648,16 +648,16 @@ public final class MessageODataResource extends AbstractODataResource {
             for (String uri : uriList) {
                 if (uri.length() != 0) {
                     if (!ODataUtils.isValidUri(uri)) {
-                        throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propKey);
+                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propKey);
                     }
                 } else {
-                    throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propKey);
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propKey);
                 }
             }
         } else {
             // CSV形式で複数指定されていた場合
             if (!ODataUtils.isValidUri(propValue)) {
-                throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propValue);
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propValue);
             }
         }
     }
@@ -685,11 +685,11 @@ public final class MessageODataResource extends AbstractODataResource {
                 checkBaseUrl += "/";
             } catch (URISyntaxException e) {
                 log.info(e.getMessage());
-                throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(SentMessage.P_TO.getName());
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(SentMessage.P_TO.getName());
             }
 
             if (checkBaseUrl == null || !checkBaseUrl.equals(baseUrl)) {
-                throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(SentMessage.P_TO.getName());
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(SentMessage.P_TO.getName());
             }
         }
 
@@ -702,7 +702,7 @@ public final class MessageODataResource extends AbstractODataResource {
      */
     public static void validateBody(String value, int maxLength) {
         if (value.getBytes().length > maxLength) {
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ReceivedMessage.P_BODY.getName());
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ReceivedMessage.P_BODY.getName());
         }
     }
 
@@ -718,7 +718,7 @@ public final class MessageODataResource extends AbstractODataResource {
                 && !((ReceivedMessage.TYPE_REQ_RELATION_BUILD.equals(type)
                 || ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type))
                 && ReceivedMessage.STATUS_NONE.equals(status))) {
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ReceivedMessage.P_STATUS.getName());
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ReceivedMessage.P_STATUS.getName());
         }
     }
 
@@ -734,7 +734,7 @@ public final class MessageODataResource extends AbstractODataResource {
                 && (requestRelation == null || requestRelationTarget == null)) {
             String detail = ReceivedMessage.P_REQUEST_RELATION.getName()
                     + "," + ReceivedMessage.P_REQUEST_RELATION_TARGET.getName();
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(detail);
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(detail);
         }
     }
 
@@ -746,7 +746,7 @@ public final class MessageODataResource extends AbstractODataResource {
     public static void validateToAndToRelation(String to, String toRelation) {
         if (to == null && toRelation == null) {
             String detail = SentMessage.P_TO.getName() + "," + SentMessage.P_TO_RELATION.getName();
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(detail);
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(detail);
         }
     }
 }

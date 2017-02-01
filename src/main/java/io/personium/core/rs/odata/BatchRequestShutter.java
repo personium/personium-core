@@ -18,7 +18,7 @@ package io.personium.core.rs.odata;
 
 import javax.ws.rs.HttpMethod;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 
 /**
  * Batchリクエスト中にToo Many Concurrentが発生後の実行/スキップを制御するクラス.
@@ -40,7 +40,7 @@ public class BatchRequestShutter {
      * @param e 発生した例外
      */
     public void updateStatus(Exception e) {
-        if (DcCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS.equals(e)) {
+        if (PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS.equals(e)) {
             shuttered = true;
         }
     }

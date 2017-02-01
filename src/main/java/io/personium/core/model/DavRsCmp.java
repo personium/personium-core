@@ -60,8 +60,8 @@ import org.w3c.dom.Element;
 
 import io.personium.common.auth.token.Role;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreAuthzException;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreAuthzException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.OAuth2Helper;
@@ -71,7 +71,7 @@ import io.personium.core.model.jaxb.Acl;
 import io.personium.core.model.jaxb.ObjectIo;
 import io.personium.core.rs.box.DavCollectionResource;
 import io.personium.core.rs.box.DavFileResource;
-import io.personium.core.rs.box.DcEngineSvcCollectionResource;
+import io.personium.core.rs.box.PersoniumEngineSvcCollectionResource;
 import io.personium.core.rs.box.NullResource;
 import io.personium.core.rs.box.ODataSvcCollectionResource;
 import io.personium.core.utils.ResourceUtils;
@@ -136,7 +136,7 @@ public class DavRsCmp {
         } else if (DavCmp.TYPE_COL_ODATA.equals(type)) {
             return new ODataSvcCollectionResource(this, nextCmp);
         } else if (DavCmp.TYPE_COL_SVC.equals(type)) {
-            return new DcEngineSvcCollectionResource(this, nextCmp);
+            return new PersoniumEngineSvcCollectionResource(this, nextCmp);
         }
 
         return null;
@@ -249,7 +249,7 @@ public class DavRsCmp {
                 br = new BufferedReader(requestBodyXml);
                 propfind = Propfind.unmarshal(br);
             } catch (Exception e1) {
-                throw DcCoreException.Dav.XML_ERROR.reason(e1);
+                throw PersoniumCoreException.Dav.XML_ERROR.reason(e1);
             }
         } else {
             log.debug("Content-Length 0");
@@ -258,11 +258,11 @@ public class DavRsCmp {
         // Depthヘッダの有効な値は 0, 1
         // infinityの場合はサポートしないので403で返す
         if ("infinity".equals(depth)) {
-            throw DcCoreException.Dav.PROPFIND_FINITE_DEPTH;
+            throw PersoniumCoreException.Dav.PROPFIND_FINITE_DEPTH;
         } else if (depth == null) {
-            throw DcCoreException.Dav.INVALID_DEPTH_HEADER.params("null");
+            throw PersoniumCoreException.Dav.INVALID_DEPTH_HEADER.params("null");
         } else if (!("0".equals(depth) || "1".equals(depth))) {
-            throw DcCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
+            throw PersoniumCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
         }
 
         String reqUri = this.getUrl();
@@ -331,7 +331,7 @@ public class DavRsCmp {
             br = new BufferedReader(reqBodyXml);
             pu = Propertyupdate.unmarshal(br);
         } catch (Exception e1) {
-            throw DcCoreException.Dav.XML_ERROR.reason(e1);
+            throw PersoniumCoreException.Dav.XML_ERROR.reason(e1);
         }
 
         // 実際の処理
@@ -450,9 +450,9 @@ public class DavRsCmp {
             if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
                 ac.throwInvalidTokenException(allowedAuthScheme);
             } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
-                throw DcCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(), allowedAuthScheme);
+                throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(), allowedAuthScheme);
             }
-            throw DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
     }
 
@@ -620,7 +620,7 @@ public class DavRsCmp {
             ByteArrayInputStream is = new ByteArrayInputStream(value.getBytes(CharEncoding.UTF_8));
             doc = builder.parse(is);
         } catch (Exception e1) {
-            throw DcCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e1);
+            throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e1);
         }
         Element e = doc.getDocumentElement();
         return e;

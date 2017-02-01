@@ -28,7 +28,7 @@ import org.apache.http.HttpStatus;
 
 import io.personium.test.jersey.DcException;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.unit.core.UrlUtils;
 
 /**
@@ -67,7 +67,7 @@ public class BoxUtils {
     public static DcResponse getWithAuthSchema(final String cellName,
             final String boxName,
             final String authorization) throws DcException {
-        DcRestAdapter adaper = new DcRestAdapter();
+        PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);
 
@@ -119,7 +119,7 @@ public class BoxUtils {
     public static DcResponse createWithAuthSchema(final String cellName,
             final String boxName,
             final String authorization) throws DcException {
-        DcRestAdapter adaper = new DcRestAdapter();
+        PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);
 
@@ -207,7 +207,7 @@ public class BoxUtils {
      */
     public static DcResponse listWithAuthSchema(final String cellName,
             final String authorization) throws DcException {
-        DcRestAdapter adaper = new DcRestAdapter();
+        PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);
 
@@ -275,7 +275,7 @@ public class BoxUtils {
             final String boxName,
             final String newName,
             final String authorization) throws DcException {
-        DcRestAdapter adaper = new DcRestAdapter();
+        PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);
 
@@ -332,7 +332,7 @@ public class BoxUtils {
     public static DcResponse deleteWithAuthSchema(final String cellName,
             final String boxName,
             final String authorization) throws DcException {
-        DcRestAdapter adaper = new DcRestAdapter();
+        PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);
 

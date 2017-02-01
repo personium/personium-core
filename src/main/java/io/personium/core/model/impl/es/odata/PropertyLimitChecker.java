@@ -33,7 +33,7 @@ import org.odata4j.edm.EdmType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.doc.ComplexTypePropertyDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyDocHandler;
 
@@ -149,9 +149,9 @@ public class PropertyLimitChecker {
      * default constructor.
      */
     public PropertyLimitChecker() {
-        this.maxPropertyLimitInEntityType = DcCoreConfig.getMaxPropertyCountInEntityType();
-        this.simplePropertyLimits = DcCoreConfig.getUserdataSimpleTypePropertyLimits();
-        this.complexPropertyLimits = DcCoreConfig.getUserdataComplexTypePropertyLimits();
+        this.maxPropertyLimitInEntityType = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
+        this.simplePropertyLimits = PersoniumUnitConfig.getUserdataSimpleTypePropertyLimits();
+        this.complexPropertyLimits = PersoniumUnitConfig.getUserdataComplexTypePropertyLimits();
         this.maxDepth = simplePropertyLimits.length;
 
         int[] maxPropLimitCopy = Arrays.copyOf(simplePropertyLimits, simplePropertyLimits.length);

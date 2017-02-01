@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -117,7 +117,7 @@ public class ServiceSourceAccessControlTest extends JerseyTest {
         // リクエスト実行
         TResponse res = DavResourceUtils.deleteWebDavFile(CELL_NAME, token, BOX_NAME, path);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -156,7 +156,7 @@ public class ServiceSourceAccessControlTest extends JerseyTest {
         // リクエスト実行
         TResponse res = DavResourceUtils.createWebDavFile(token, CELL_NAME, BOX_NAME + "/" + path, "testFileBody",
                 MediaType.TEXT_PLAIN, HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -195,7 +195,7 @@ public class ServiceSourceAccessControlTest extends JerseyTest {
         // リクエスト実行
         TResponse res = DavResourceUtils.createWebDavFile(token, CELL_NAME, BOX_NAME + "/" + path, "testFileBody",
                 MediaType.TEXT_PLAIN, HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -233,7 +233,7 @@ public class ServiceSourceAccessControlTest extends JerseyTest {
 
         // リクエスト実行
         TResponse res = DavResourceUtils.getWebDav(CELL_NAME, token, BOX_NAME, path, HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -278,7 +278,7 @@ public class ServiceSourceAccessControlTest extends JerseyTest {
         // リクエスト実行
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, BOX_NAME + "/" + path, destination,
                 HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -334,7 +334,7 @@ public class ServiceSourceAccessControlTest extends JerseyTest {
         // リクエスト実行
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, BOX_NAME + "/" + path, destination,
                 "*", "T", "infinity", HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -397,7 +397,7 @@ public class ServiceSourceAccessControlTest extends JerseyTest {
         // リクエスト実行
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, BOX_NAME + "/" + path, destination,
                 "*", "T", "infinity", HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -432,7 +432,7 @@ public class ServiceSourceAccessControlTest extends JerseyTest {
         // リクエスト実行
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, BOX_NAME + "/" + path, destination,
                 "*", "T", "infinity", HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -527,7 +527,7 @@ public class ServiceSourceAccessControlTest extends JerseyTest {
         // リクエスト実行
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, BOX_NAME + "/" + path, destination,
                 "*", "T", "infinity", HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -574,7 +574,7 @@ public class ServiceSourceAccessControlTest extends JerseyTest {
 
         // リクエスト実行
         TResponse res = DavResourceUtils.propfind(token, CELL_NAME, path, "1", HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -620,7 +620,7 @@ public class ServiceSourceAccessControlTest extends JerseyTest {
 
         // リクエスト実行
         TResponse res = DavResourceUtils.propfind(token, CELL_NAME, path, "1", HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -638,7 +638,7 @@ public class ServiceSourceAccessControlTest extends JerseyTest {
 
         // リクエスト実行
         TResponse res = DavResourceUtils.setProppatch(token, HttpStatus.SC_FORBIDDEN, CELL_NAME, BOX_NAME, path);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 

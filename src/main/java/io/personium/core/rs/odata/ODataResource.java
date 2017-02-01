@@ -45,12 +45,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
-import io.personium.core.odata.DcODataProducer;
+import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
@@ -59,7 +59,7 @@ import io.personium.core.odata.OEntityWrapper;
  */
 public abstract class ODataResource extends ODataCtlResource {
 
-    DcODataProducer odataProducer;
+    PersoniumODataProducer odataProducer;
     String rootUrl;
     EdmDataServices metadata;
     AccessContext accessContext;
@@ -76,7 +76,7 @@ public abstract class ODataResource extends ODataCtlResource {
      * @param producer ODataProducer
      */
     public ODataResource(final AccessContext accessContext,
-            final String rootUrl, final DcODataProducer producer) {
+            final String rootUrl, final PersoniumODataProducer producer) {
         this.accessContext = accessContext;
         this.odataProducer = producer;
         this.rootUrl = rootUrl;
@@ -239,7 +239,7 @@ public abstract class ODataResource extends ODataCtlResource {
         // 存在しないエンティティセットを指定されたときは即刻エラー
         EdmEntitySet eSet = this.metadata.findEdmEntitySet(entitySetName);
         if (eSet == null) {
-            throw DcCoreException.OData.NO_SUCH_ENTITY_SET;
+            throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
         }
         String method = request.getMethod();
         if (isChangeMethod(method.toUpperCase())) {
@@ -263,7 +263,7 @@ public abstract class ODataResource extends ODataCtlResource {
         // 存在しないエンティティセットを指定されたときは即刻エラー
         EdmEntitySet eSet = this.getMetadataSource().findEdmEntitySet(entitySetName);
         if (eSet == null) {
-            throw DcCoreException.OData.NO_SUCH_ENTITY_SET;
+            throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
         }
         String method = request.getMethod();
         if (isChangeMethod(method.toUpperCase())) {
@@ -289,7 +289,7 @@ public abstract class ODataResource extends ODataCtlResource {
      * このODataサービスのODataProducerを返します.
      * @return ODataProducer of this OData Service
      */
-    public DcODataProducer getODataProducer() {
+    public PersoniumODataProducer getODataProducer() {
         return this.odataProducer;
     }
 
@@ -309,7 +309,7 @@ public abstract class ODataResource extends ODataCtlResource {
         Matcher m = pattern.matcher(etagHeaderValue);
 
         if (!m.matches()) {
-            throw DcCoreException.OData.ETAG_NOT_MATCH;
+            throw PersoniumCoreException.OData.ETAG_NOT_MATCH;
         }
 
         return m.replaceAll("$1");

@@ -59,7 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.event.EventUtils;
@@ -107,7 +107,7 @@ public class LogResource {
     @PROPFIND
     public final Response currentPropfind() {
         // 現状はカレントログの一覧取得は未実装のため、501を返却する
-        throw DcCoreException.Misc.METHOD_NOT_IMPLEMENTED;
+        throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
     }
 
     /**
@@ -134,11 +134,11 @@ public class LogResource {
         // Depthヘッダの有効な値は 0, 1
         // infinityの場合はサポートしないので403で返す
         if ("infinity".equals(depth)) {
-            throw DcCoreException.Dav.PROPFIND_FINITE_DEPTH;
+            throw PersoniumCoreException.Dav.PROPFIND_FINITE_DEPTH;
         } else if (depth == null) {
-            throw DcCoreException.Dav.INVALID_DEPTH_HEADER.params("null");
+            throw PersoniumCoreException.Dav.INVALID_DEPTH_HEADER.params("null");
         } else if (!("0".equals(depth) || "1".equals(depth))) {
-            throw DcCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
+            throw PersoniumCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
         }
 
         // リクエストボディをパースして pfオブジェクトを作成する
@@ -150,11 +150,11 @@ public class LogResource {
                 br = new BufferedReader(requestBodyXml);
                 propfind = Propfind.unmarshal(br);
             } catch (Exception e) {
-                throw DcCoreException.Dav.XML_ERROR.reason(e);
+                throw PersoniumCoreException.Dav.XML_ERROR.reason(e);
             }
         }
         if (null != propfind && !propfind.isAllprop()) {
-            throw DcCoreException.Dav.XML_CONTENT_ERROR;
+            throw PersoniumCoreException.Dav.XML_CONTENT_ERROR;
         }
 
         // archiveコレクションと配下のファイルの情報を収集する
@@ -266,12 +266,12 @@ public class LogResource {
 
         // イベントログのCollection名のチェック
         if (!isValidLogCollection(logCollection)) {
-            throw DcCoreException.Dav.RESOURCE_NOT_FOUND;
+            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
         }
 
         // ファイル名がdefault.log以外の場合は404を返却
         if (!isValidLogFile(logCollection, fileName)) {
-            throw DcCoreException.Dav.RESOURCE_NOT_FOUND;
+            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
         }
 
         String cellId = davRsCmp.getCell().getId();
@@ -296,7 +296,7 @@ public class LogResource {
                 final InputStream isInvariable = new FileInputStream(logFile);
                 return createResponse(isInvariable);
             } catch (FileNotFoundException e) {
-                throw DcCoreException.Dav.RESOURCE_NOT_FOUND;
+                throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
             }
         } else {
             ZipArchiveInputStream zipArchiveInputStream = null;
@@ -314,15 +314,15 @@ public class LogResource {
                 ZipArchiveEntry nextZipEntry = zipArchiveInputStream.getNextZipEntry();
                 if (nextZipEntry == null) {
                     IOUtils.closeQuietly(bis);
-                    throw DcCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN;
+                    throw PersoniumCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN;
                 }
                 return createResponse(bis);
             } catch (FileNotFoundException e1) {
                 // 圧縮ファイルが存在しない場合は404エラーを返却
-                throw DcCoreException.Dav.RESOURCE_NOT_FOUND;
+                throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
             } catch (IOException e) {
                 log.info("Failed to read archive entry : " + e.getMessage());
-                throw DcCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN;
+                throw PersoniumCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN;
             }
         }
     }
@@ -356,7 +356,7 @@ public class LogResource {
     @Path("{logCollection}/{filename}")
     @DELETE
     public final Response deleteLogFile() {
-        throw DcCoreException.Misc.METHOD_NOT_IMPLEMENTED;
+        throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
     }
 
     /**

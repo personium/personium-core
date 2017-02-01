@@ -33,7 +33,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -134,7 +134,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -199,7 +199,7 @@ public class UserDataListTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, additional);
         } finally {
             deleteUserData(cellName, boxName, linkColName, linkEntityTypeName,
-                    "parent", DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "parent", PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
 
         // B(0..1) - A(0..1) | B(1) - D(*)
@@ -223,7 +223,7 @@ public class UserDataListTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, additional);
         } finally {
             deleteUserData(cellName, boxName, linkColName, linkEntityTypeName,
-                    "parent", DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "parent", PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
 
         // C(1) - A(0..1) |C(*) - D(*)
@@ -247,7 +247,7 @@ public class UserDataListTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, additional);
         } finally {
             deleteUserData(cellName, boxName, linkColName, linkEntityTypeName,
-                    "parent", DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "parent", PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
 
         // D(*) - A(0..1) | D(*) - B(1) | D(*) - C(*)
@@ -272,7 +272,7 @@ public class UserDataListTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, additional);
         } finally {
             deleteUserData(cellName, boxName, linkColName, linkEntityTypeName,
-                    "parent", DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "parent", PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -290,7 +290,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -339,7 +339,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -442,7 +442,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$inlinecount=")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -463,7 +463,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$inlinecount=xxx")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -494,7 +494,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$orderby=dynamicProperty")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -542,7 +542,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$format=atom")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -586,7 +586,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$format=json")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -630,7 +630,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "")
                     .with("accept", MediaType.APPLICATION_ATOM_XML)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -673,7 +673,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "")
                     .with("accept", MediaType.APPLICATION_XML)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -722,7 +722,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -786,7 +786,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -850,7 +850,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -914,7 +914,7 @@ public class UserDataListTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();

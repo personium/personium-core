@@ -43,7 +43,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcRunner;
@@ -93,7 +93,7 @@ public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
     String srcId = "id";
 
     // 登録するユーザODataの件数（N:Nの$linksで登録可能な上限値）
-    int maxUserDataCount = DcCoreConfig.getLinksNtoNMaxSize();
+    int maxUserDataCount = PersoniumUnitConfig.getLinksNtoNMaxSize();
     int registUserDataCount = maxUserDataCount - 10;
 
     /**
@@ -120,7 +120,7 @@ public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
                     + retrievePostBody(path, String.format("id%03d", index++)) + END_BOUNDARY;
             TResponse response = Http.request("box/odatacol/batch.txt").with("cell", cellName).with("box", boxName)
                     .with("collection", colName).with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken()).with("body", body).returns().debug()
+                    .with("token", PersoniumUnitConfig.getMasterToken()).with("body", body).returns().debug()
                     .statusCode(HttpStatus.SC_ACCEPTED);
 
             // レスポンスボディのチェック
@@ -183,7 +183,7 @@ public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
                     + retrievePostBody(path, String.format("id%03d", index++)) + END_BOUNDARY;
             TResponse response = Http.request("box/odatacol/batch.txt").with("cell", cellName).with("box", boxName)
                     .with("collection", colName).with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken()).with("body", body).returns().debug()
+                    .with("token", PersoniumUnitConfig.getMasterToken()).with("body", body).returns().debug()
                     .statusCode(HttpStatus.SC_ACCEPTED);
 
             // レスポンスボディのチェック
@@ -244,7 +244,7 @@ public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
                     + retrievePostBody(path, String.format("id%03d", index++)) + END_BOUNDARY;
             TResponse response = Http.request("box/odatacol/batch.txt").with("cell", cellName).with("box", boxName)
                     .with("collection", colName).with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken()).with("body", body).returns().debug()
+                    .with("token", PersoniumUnitConfig.getMasterToken()).with("body", body).returns().debug()
                     .statusCode(HttpStatus.SC_ACCEPTED);
 
             // レスポンスボディのチェック
@@ -319,7 +319,7 @@ public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
                     + END_BOUNDARY;
             TResponse response = Http.request("box/odatacol/batch.txt").with("cell", cellName).with("box", boxName)
                     .with("collection", colName).with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken()).with("body", body).returns().debug()
+                    .with("token", PersoniumUnitConfig.getMasterToken()).with("body", body).returns().debug()
                     .statusCode(HttpStatus.SC_ACCEPTED);
 
             // レスポンスボディのチェック
@@ -389,7 +389,7 @@ public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
                     + END_BOUNDARY;
             TResponse response = Http.request("box/odatacol/batch.txt").with("cell", cellName).with("box", boxName)
                     .with("collection", colName).with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken()).with("body", body).returns().debug()
+                    .with("token", PersoniumUnitConfig.getMasterToken()).with("body", body).returns().debug()
                     .statusCode(HttpStatus.SC_ACCEPTED);
 
             // レスポンスボディのチェック
@@ -466,7 +466,7 @@ public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
                     + END_BOUNDARY;
             TResponse response = Http.request("box/odatacol/batch.txt").with("cell", cellName).with("box", boxName)
                     .with("collection", colName).with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken()).with("body", body).returns().debug()
+                    .with("token", PersoniumUnitConfig.getMasterToken()).with("body", body).returns().debug()
                     .statusCode(HttpStatus.SC_ACCEPTED);
 
             // レスポンスボディのチェック
@@ -530,7 +530,7 @@ public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
                     + retrievePostBody(path, String.format("id%03d", index++)) + END_BOUNDARY;
             TResponse response = Http.request("box/odatacol/batch.txt").with("cell", cellName).with("box", boxName)
                     .with("collection", colName).with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken()).with("body", body).returns().debug()
+                    .with("token", PersoniumUnitConfig.getMasterToken()).with("body", body).returns().debug()
                     .statusCode(HttpStatus.SC_ACCEPTED);
 
             // レスポンスボディのチェック
@@ -582,7 +582,7 @@ public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
                     + END_BOUNDARY;
             TResponse response = Http.request("box/odatacol/batch.txt").with("cell", cellName).with("box", boxName)
                     .with("collection", colName).with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken()).with("body", body).returns().debug()
+                    .with("token", PersoniumUnitConfig.getMasterToken()).with("body", body).returns().debug()
                     .statusCode(HttpStatus.SC_ACCEPTED);
 
             // レスポンスボディのチェック
@@ -644,7 +644,7 @@ public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -727,7 +727,7 @@ public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()

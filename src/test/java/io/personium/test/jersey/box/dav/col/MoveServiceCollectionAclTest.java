@@ -30,8 +30,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreAuthzException;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreAuthzException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -158,7 +158,7 @@ public class MoveServiceCollectionAclTest extends JerseyTest {
         token = "invalid_token";
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination,
                 HttpStatus.SC_UNAUTHORIZED);
-        DcCoreException expectedException = DcCoreAuthzException.TOKEN_PARSE_ERROR;
+        PersoniumCoreException expectedException = PersoniumCoreAuthzException.TOKEN_PARSE_ERROR;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
         AuthTestCommon.waitForAccountLock();
     }
@@ -183,7 +183,7 @@ public class MoveServiceCollectionAclTest extends JerseyTest {
         // read権限→403
         token = getToken(ACCOUNT_READ);
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -278,7 +278,7 @@ public class MoveServiceCollectionAclTest extends JerseyTest {
         token = getToken(ACCOUNT_NO_PRIVILEGE);
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination,
                 HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -333,7 +333,7 @@ public class MoveServiceCollectionAclTest extends JerseyTest {
         token = getToken(ACCOUNT_NO_PRIVILEGE);
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination,
                 HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -385,7 +385,7 @@ public class MoveServiceCollectionAclTest extends JerseyTest {
         // 自身にwrite権限があるが、親がread権限→403
         token = getToken(ACCOUNT_READ);
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -412,7 +412,7 @@ public class MoveServiceCollectionAclTest extends JerseyTest {
         // 自身と親にread権限→403
         token = getToken(ACCOUNT_READ);
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -438,7 +438,7 @@ public class MoveServiceCollectionAclTest extends JerseyTest {
         // 親にwrite権限+移動先の親にread権限→403
         token = getToken(ACCOUNT_WRITE);
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -488,7 +488,7 @@ public class MoveServiceCollectionAclTest extends JerseyTest {
         // 親にread権限+移動先の親にread権限→403
         token = getToken(ACCOUNT_READ);
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -514,7 +514,7 @@ public class MoveServiceCollectionAclTest extends JerseyTest {
         // 親にread権限+移動先の親にwrite権限→403
         token = getToken(ACCOUNT_READ);
         TResponse res = DavResourceUtils.moveWebDav(token, CELL_NAME, path, destination, HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 

@@ -27,7 +27,7 @@ import org.odata4j.producer.QueryInfo;
 
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchResponse;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.ODataLinkAccessor;
 import io.personium.core.model.impl.es.odata.EsQueryHandler;
@@ -49,7 +49,7 @@ public class LinkDocHandler implements EsDocHandler {
     private Long published;
     private Long updated;
 
-    private static final int DEFAULT_TOP_VALUE = DcCoreConfig.getTopQueryDefaultSize();
+    private static final int DEFAULT_TOP_VALUE = PersoniumUnitConfig.getTopQueryDefaultSize();
 
     /**
      * コンストラクタ.

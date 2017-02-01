@@ -83,9 +83,9 @@ import org.w3c.dom.Element;
 
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
-import io.personium.core.DcCoreMessageUtils;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.bar.jackson.JSONExtRoles;
 import io.personium.core.bar.jackson.JSONLinks;
 import io.personium.core.bar.jackson.JSONManifest;
@@ -93,7 +93,7 @@ import io.personium.core.bar.jackson.JSONMappedObject;
 import io.personium.core.bar.jackson.JSONRelations;
 import io.personium.core.bar.jackson.JSONRoles;
 import io.personium.core.bar.jackson.JSONUserDataLinks;
-import io.personium.core.eventbus.DcEventBus;
+import io.personium.core.eventbus.PersoniumEventBus;
 import io.personium.core.eventbus.JSONEvent;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
@@ -118,8 +118,8 @@ import io.personium.core.model.impl.es.odata.UserSchemaODataProducer;
 import io.personium.core.model.progress.Progress;
 import io.personium.core.model.progress.ProgressInfo;
 import io.personium.core.model.progress.ProgressManager;
-import io.personium.core.odata.DcEdmxFormatParser;
-import io.personium.core.odata.DcODataProducer;
+import io.personium.core.odata.PersoniumEdmxFormatParser;
+import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.cell.EventResource;
 import io.personium.core.rs.odata.BulkRequest;
@@ -156,7 +156,7 @@ public class BarFileReadRunner implements Runnable {
     private ZipArchiveInputStream zipArchiveInputStream;
     private final String boxName;
     private final ODataEntityResource odataEntityResource;
-    private final DcODataProducer odataProducer;
+    private final PersoniumODataProducer odataProducer;
     private final String entitySetName;
     private final UriInfo uriInfo;
     private final String requestKey;
@@ -184,12 +184,12 @@ public class BarFileReadRunner implements Runnable {
     private BoxCmp boxCmp;
     private Map<String, DavCmp> davCmpMap;
     private Map<String, String> davFileMap = new HashMap<String, String>();
-    private long linksOutputStreamSize = Long.parseLong(DcCoreConfig
-            .get(DcCoreConfig.BAR.BAR_USERDATA_LINKS_OUTPUT_STREAM_SIZE));
-    private long bulkSize = Long.parseLong(DcCoreConfig
-            .get(DcCoreConfig.BAR.BAR_USERDATA_BULK_SIZE));
+    private long linksOutputStreamSize = Long.parseLong(PersoniumUnitConfig
+            .get(PersoniumUnitConfig.BAR.BAR_USERDATA_LINKS_OUTPUT_STREAM_SIZE));
+    private long bulkSize = Long.parseLong(PersoniumUnitConfig
+            .get(PersoniumUnitConfig.BAR.BAR_USERDATA_BULK_SIZE));
     private Event event;
-    private DcEventBus eventBus;
+    private PersoniumEventBus eventBus;
     private BarInstallProgressInfo progressInfo;
 
     /**
@@ -208,7 +208,7 @@ public class BarFileReadRunner implements Runnable {
             Cell cell,
             String boxName,
             ODataEntityResource odataEntityResource,
-            DcODataProducer producer,
+            PersoniumODataProducer producer,
             String entitySetName,
             UriInfo uriInfo,
             String requestKey) {
@@ -241,11 +241,11 @@ public class BarFileReadRunner implements Runnable {
             try {
                 this.zipArchiveInputStream = new ZipArchiveInputStream(new FileInputStream(barFile));
             } catch (IOException e) {
-                throw DcCoreException.Server.FILE_SYSTEM_ERROR.params(e.getMessage());
+                throw PersoniumCoreException.Server.FILE_SYSTEM_ERROR.params(e.getMessage());
             }
             // ルートディレクトリ("bar/")の存在チェック
             if (!isRootDir()) {
-                String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
                 writeOutputStream(true, "PL-BI-1004", ROOT_DIR, message);
                 isSuccess = false;
                 return;
@@ -253,7 +253,7 @@ public class BarFileReadRunner implements Runnable {
 
             // 00_metaの存在チェック
             if (!isMetadataDir()) {
-                String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
                 writeOutputStream(true, "PL-BI-1004", META_DIR, message);
                 isSuccess = false;
                 return;
@@ -308,7 +308,7 @@ public class BarFileReadRunner implements Runnable {
                 for (String filename : filenameList) {
                     Boolean isNecessary = barFileOrder.get(filename);
                     if (isNecessary && !doneKeys.contains(filename)) {
-                        String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+                        String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
                         writeOutputStream(true, "PL-BI-1004", filename, message);
                         isSuccess = false;
                     }
@@ -324,7 +324,7 @@ public class BarFileReadRunner implements Runnable {
                 writeOutputStream(false, CODE_BAR_INSTALL_COMPLETED, this.cell.getUrl() + boxName, "");
                 this.progressInfo.setStatus(ProgressInfo.STATUS.COMPLETED);
             } else {
-                String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
                 writeOutputStream(false, CODE_BAR_INSTALL_FAILED, this.cell.getUrl() + boxName, message);
                 this.progressInfo.setStatus(ProgressInfo.STATUS.FAILED);
             }
@@ -341,7 +341,7 @@ public class BarFileReadRunner implements Runnable {
      * barインストール処理状況の内部イベント出力用の設定を行う.
      */
     private void setEventBus() {
-        eventBus = new DcEventBus(this.cell);
+        eventBus = new PersoniumEventBus(this.cell);
         JSONEvent reqBody = new JSONEvent();
         reqBody.setAction(WebDAVMethod.MKCOL.toString());
         reqBody.setLevel(LEVEL.INFO);
@@ -423,12 +423,12 @@ public class BarFileReadRunner implements Runnable {
     private long getMaxBarEntryFileSize() {
         long maxBarFileSize;
         try {
-            maxBarFileSize = Long.parseLong(DcCoreConfig
-                    .get(DcCoreConfig.BAR.BAR_ENTRY_MAX_SIZE));
+            maxBarFileSize = Long.parseLong(PersoniumUnitConfig
+                    .get(PersoniumUnitConfig.BAR.BAR_ENTRY_MAX_SIZE));
         } catch (NumberFormatException ne) {
-            log.info("NumberFormatException" + DcCoreConfig
-                    .get(DcCoreConfig.BAR.BAR_ENTRY_MAX_SIZE));
-            throw DcCoreException.Server.UNKNOWN_ERROR;
+            log.info("NumberFormatException" + PersoniumUnitConfig
+                    .get(PersoniumUnitConfig.BAR.BAR_ENTRY_MAX_SIZE));
+            throw PersoniumCoreException.Server.UNKNOWN_ERROR;
         }
         return maxBarFileSize;
     }
@@ -500,7 +500,7 @@ public class BarFileReadRunner implements Runnable {
             List<JSONMappedObject> userDataLinks = new ArrayList<JSONMappedObject>();
             LinkedHashMap<String, BulkRequest> bulkRequests = new LinkedHashMap<String, BulkRequest>();
             Map<String, String> fileNameMap = new HashMap<String, String>();
-            DcODataProducer producer = null;
+            PersoniumODataProducer producer = null;
 
             while ((zae = this.zipArchiveInputStream.getNextZipEntry()) != null) {
                 String entryName = zae.getName();
@@ -576,7 +576,7 @@ public class BarFileReadRunner implements Runnable {
                             continue;
                         } else if (!entryName.endsWith("/")) {
                             // xml,jsonファイル以外のファイルがあった場合はエラーを返却する
-                            String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+                            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
                             log.info(message + " [" + entryName + "]");
                             writeOutputStream(true, "PL-BI-1004", entryName, message);
                             return false;
@@ -601,7 +601,7 @@ public class BarFileReadRunner implements Runnable {
 
                 case TYPE_MISMATCH:
                     // ODataコレクション配下ではなく、かつ、rootpropsに定義されていないエントリ
-                    String message = DcCoreMessageUtils.getMessage("PL-BI-2006");
+                    String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2006");
                     log.info(message + " [" + entryName + "]");
                     writeOutputStream(true, "PL-BI-1004", entryName, message);
                     return false;
@@ -626,7 +626,7 @@ public class BarFileReadRunner implements Runnable {
         } catch (IOException ex) {
             isSuccess = false;
             log.info("IOException: " + ex.getMessage(), ex.fillInStackTrace());
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2000");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2000");
             writeOutputStream(true, CODE_BAR_INSTALL_FAILED, "", message);
 
         }
@@ -640,7 +640,7 @@ public class BarFileReadRunner implements Runnable {
         for (String colName : colList) {
             String filename = colName + METADATA_XML;
             if (!doneKeys.contains(filename)) {
-                String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
                 writeOutputStream(true, "PL-BI-1004", filename, message);
                 isSuccess = false;
             }
@@ -664,7 +664,7 @@ public class BarFileReadRunner implements Runnable {
     }
 
     private boolean setBulkRequests(String entryName,
-            DcODataProducer producer,
+            PersoniumODataProducer producer,
             LinkedHashMap<String, BulkRequest> bulkRequests,
             Map<String, String> fileNameMap) {
         BulkRequest bulkRequest = new BulkRequest();
@@ -673,7 +673,7 @@ public class BarFileReadRunner implements Runnable {
             // entityType名を取得する
             String entityTypeName = getEntityTypeName(entryName);
             if (producer.getMetadata().findEdmEntitySet(entityTypeName) == null) {
-                throw DcCoreException.OData.NO_SUCH_ENTITY_SET;
+                throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
             }
 
             // ZipArchiveImputStreamからユーザデータのJSONをStringReader形式で取得する
@@ -697,7 +697,7 @@ public class BarFileReadRunner implements Runnable {
             key = oEntity.getEntitySetName() + ":" + (String) docHandler.getStaticFields().get("__id");
 
             if (bulkRequests.containsKey(key)) {
-                throw DcCoreException.OData.ENTITY_ALREADY_EXISTS;
+                throw PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS;
             }
 
             // ID指定がない場合はUUIDを払い出す
@@ -738,7 +738,7 @@ public class BarFileReadRunner implements Runnable {
 
     private boolean execBulkRequest(String cellId, LinkedHashMap<String, BulkRequest> bulkRequests,
             Map<String, String> fileNameMap,
-            DcODataProducer producer) {
+            PersoniumODataProducer producer) {
         // バルクで一括登録を実行
         producer.bulkCreateEntity(producer.getMetadata(), bulkRequests, cellId);
 
@@ -746,13 +746,13 @@ public class BarFileReadRunner implements Runnable {
         for (Entry<String, BulkRequest> request : bulkRequests.entrySet()) {
             // エラーが発生していた場合はエラーのレスポンスを返却する
             if (request.getValue().getError() != null) {
-                if (request.getValue().getError() instanceof DcCoreException) {
-                    DcCoreException e = ((DcCoreException) request.getValue().getError());
+                if (request.getValue().getError() instanceof PersoniumCoreException) {
+                    PersoniumCoreException e = ((PersoniumCoreException) request.getValue().getError());
                     writeOutputStream(true, "PL-BI-1004", fileNameMap.get(request.getKey()), e.getMessage());
-                    log.info("DcCoreException: " + e.getMessage());
+                    log.info("PersoniumCoreException: " + e.getMessage());
                 } else {
                     Exception e = request.getValue().getError();
-                    String message = DcCoreMessageUtils.getMessage("PL-BI-2003");
+                    String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2003");
                     writeOutputStream(true, "PL-BI-1004", fileNameMap.get(request.getKey()), message);
                     log.info("Regist Entity Error: " + e.toString());
                     log.info("Regist Entity Error: " + e.getClass().getName());
@@ -828,10 +828,10 @@ public class BarFileReadRunner implements Runnable {
         DavCmp parentCmp = webdavCols.get(colPath);
 
         // 親コレクション内のコレクション・ファイル数のチェック
-        int maxChildResource = DcCoreConfig.getMaxChildResourceCount();
+        int maxChildResource = PersoniumUnitConfig.getMaxChildResourceCount();
         if (parentCmp.getChildrenCount() >= maxChildResource) {
             // コレクション内に作成可能なコレクション・ファイル数の制限を超えたため、エラーとする
-            String message = DcCoreMessageUtils.getMessage("PR400-DV-0007");
+            String message = PersoniumCoreMessageUtils.getMessage("PR400-DV-0007");
             log.info(message);
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             return false;
@@ -852,7 +852,7 @@ public class BarFileReadRunner implements Runnable {
             contentType = this.davFileMap.get(entryName);
             RuntimeDelegate.getInstance().createHeaderDelegate(MediaType.class).fromString(contentType);
         } catch (Exception e) {
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2005");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2005");
             log.info(message + ": " + e.getMessage(), e.fillInStackTrace());
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             return false;
@@ -862,7 +862,7 @@ public class BarFileReadRunner implements Runnable {
         try {
             fileCmp.putForCreate(contentType, new CloseShieldInputStream(inputStream));
         } catch (Exception e) {
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2004");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2004");
             log.info(message + ": " + e.getMessage(), e.fillInStackTrace());
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             return false;
@@ -961,7 +961,7 @@ public class BarFileReadRunner implements Runnable {
                         }
                         if (nodeName.equals("acl")) {
                             if (!BarFileUtils.aclNameSpaceValidate(rootPropsName, element, this.schemaUrl)) {
-                                String message = DcCoreMessageUtils.getMessage("PL-BI-2007");
+                                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2007");
                                 log.info(message + " [" + rootPropsName + "]");
                                 writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                                 return false;
@@ -990,8 +990,8 @@ public class BarFileReadRunner implements Runnable {
                     this.davFileMap.put(entryName, contentType);
                 }
             }
-        } catch (DcCoreException e) {
-            log.info("DcCoreException: " + e.getMessage());
+        } catch (PersoniumCoreException e) {
+            log.info("PersoniumCoreException: " + e.getMessage());
             writeOutputStream(true, "PL-BI-1004", rootPropsName, e.getMessage());
             return false;
         } catch (Exception ex) {
@@ -1016,20 +1016,20 @@ public class BarFileReadRunner implements Runnable {
         for (Response response : multiStatus.getResponse()) {
             List<String> hrefs = response.getHref();
             if (hrefs.size() != 1) {
-                String message = DcCoreMessageUtils.getMessage("PL-BI-2008");
+                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2008");
                 writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                 return false;
             }
             String href = hrefs.get(0);
             // href属性値がない場合は定義エラーとみなす。
             if (href == null || href.length() == 0) {
-                String message = DcCoreMessageUtils.getMessage("PL-BI-2009");
+                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2009");
                 writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                 return false;
             }
             // href属性値として"dcbox:/" で始まらない場合は定義エラーとみなす。
             if (!href.startsWith(DCBOX_NO_SLUSH)) {
-                String message = MessageFormat.format(DcCoreMessageUtils.getMessage("PL-BI-2010"), href);
+                String message = MessageFormat.format(PersoniumCoreMessageUtils.getMessage("PL-BI-2010"), href);
                 writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                 return false;
             }
@@ -1051,7 +1051,7 @@ public class BarFileReadRunner implements Runnable {
             // パス定義が重複している場合は同じデータが登録されてしまうため定義エラーとする。
             // パス末尾の"/"指定有無の条件を無視するため、このタイミングでチェックする。
             if (pathMap.containsKey(href)) {
-                String message = MessageFormat.format(DcCoreMessageUtils.getMessage("PL-BI-2011"), href);
+                String message = MessageFormat.format(PersoniumCoreMessageUtils.getMessage("PL-BI-2011"), href);
                 writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                 return false;
             }
@@ -1074,7 +1074,7 @@ public class BarFileReadRunner implements Runnable {
             // Boxルートパスが定義されていない場合も同様に定義エラーとする。
             String upper = href.substring(0, upperPathposition);
             if (!keySet.contains(upper)) {
-                String message = MessageFormat.format(DcCoreMessageUtils.getMessage("PL-BI-2012"), upper);
+                String message = MessageFormat.format(PersoniumCoreMessageUtils.getMessage("PL-BI-2012"), upper);
                 writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                 return false;
             }
@@ -1082,20 +1082,20 @@ public class BarFileReadRunner implements Runnable {
             String resourceName = href.substring(upperPathposition + 1, href.length());
             if (upperCollectionType == TYPE_ODATA_COLLECTION) {
                 // ODataコレクション：コレクション配下にコレクション／ファイルが定義されていた場合は定義エラーとする。
-                String message = MessageFormat.format(DcCoreMessageUtils.getMessage("PL-BI-2013"), href);
+                String message = MessageFormat.format(PersoniumCoreMessageUtils.getMessage("PL-BI-2013"), href);
                 writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                 return false;
             } else if (upperCollectionType == TYPE_SERVICE_COLLECTION) {
                 // Serviceコレクション：コレクション配下にコレクション／ファイルが定義されていた場合は定義エラーとする。
                 // ただし、"__src"のみは例外として除外する。
                 if (!("__src".equals(resourceName) && currentCollectionType == TYPE_WEBDAV_COLLECTION)) {
-                    String message = MessageFormat.format(DcCoreMessageUtils.getMessage("PL-BI-2014"), href);
+                    String message = MessageFormat.format(PersoniumCoreMessageUtils.getMessage("PL-BI-2014"), href);
                     writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                     return false;
                 }
             } else if (upperCollectionType == TYPE_DAV_FILE) {
                 // WebDAVファイル／Serviceソース配下にコレクション／ファイルが定義されていた場合は定義エラーとする。
-                String message = MessageFormat.format(DcCoreMessageUtils.getMessage("PL-BI-2015"), href);
+                String message = MessageFormat.format(PersoniumCoreMessageUtils.getMessage("PL-BI-2015"), href);
                 writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                 return false;
             }
@@ -1103,7 +1103,7 @@ public class BarFileReadRunner implements Runnable {
             if (currentCollectionType == TYPE_SERVICE_COLLECTION) {
                 String srcPath = href + "/__src";
                 if (!keySet.contains(srcPath) || pathMap.get(srcPath) != TYPE_WEBDAV_COLLECTION) {
-                    String message = MessageFormat.format(DcCoreMessageUtils.getMessage("PL-BI-2016"), href);
+                    String message = MessageFormat.format(PersoniumCoreMessageUtils.getMessage("PL-BI-2016"), href);
                     writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                     return false;
                 }
@@ -1111,7 +1111,7 @@ public class BarFileReadRunner implements Runnable {
 
             // リソース名として正しいことを確認する（コレクション／ファイルの名前フォーマットは共通）。
             if (!DavCommon.isValidResourceName(resourceName)) {
-                String message = MessageFormat.format(DcCoreMessageUtils.getMessage("PL-BI-2017"), resourceName);
+                String message = MessageFormat.format(PersoniumCoreMessageUtils.getMessage("PL-BI-2017"), resourceName);
                 writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                 return false;
             }
@@ -1144,7 +1144,7 @@ public class BarFileReadRunner implements Runnable {
                     } else if (nodeName.equals("p:service")) {
                         return TYPE_SERVICE_COLLECTION;
                     } else {
-                        String message = MessageFormat.format(DcCoreMessageUtils.getMessage("PL-BI-2018"), nodeName);
+                        String message = MessageFormat.format(PersoniumCoreMessageUtils.getMessage("PL-BI-2018"), nodeName);
                         writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                         return TYPE_MISMATCH;
                     }
@@ -1182,27 +1182,27 @@ public class BarFileReadRunner implements Runnable {
                 }
                 log.debug(jsonName);
             } else {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             // JSONファイルのバリデートエラー
             writeOutputStream(true, "PL-BI-1004", entryName, e.getMessage());
-            log.info("DcCoreException" + e.getMessage(), e.fillInStackTrace());
+            log.info("PersoniumCoreException" + e.getMessage(), e.fillInStackTrace());
             return false;
         } catch (JsonParseException e) {
             // JSONファイルの解析エラー
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2002");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2002");
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             log.info("JsonParseException: " + e.getMessage(), e.fillInStackTrace());
             return false;
         } catch (JsonMappingException e) {
             // JSONファイルのデータ定義エラー
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2003");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2003");
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             log.info("JsonMappingException: " + e.getMessage(), e.fillInStackTrace());
             return false;
         } catch (Exception e) {
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2000");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2000");
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             log.info("Exception: " + e.getMessage(), e.fillInStackTrace());
             return false;
@@ -1234,7 +1234,7 @@ public class BarFileReadRunner implements Runnable {
                 token = jp.nextToken();
                 // 配列でなければエラー
                 if (token != JsonToken.START_ARRAY) {
-                    throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(USERDATA_LINKS_JSON);
+                    throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(USERDATA_LINKS_JSON);
                 }
                 token = jp.nextToken();
 
@@ -1242,34 +1242,34 @@ public class BarFileReadRunner implements Runnable {
                     if (token == JsonToken.END_ARRAY) {
                         break;
                     } else if (token != JsonToken.START_OBJECT) {
-                        throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(USERDATA_LINKS_JSON);
+                        throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(USERDATA_LINKS_JSON);
                     }
                     userDataLinks.add(barFileJsonValidate(jp, mapper, USERDATA_LINKS_JSON));
 
                     token = jp.nextToken();
                 }
             } else {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(USERDATA_LINKS_JSON);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(USERDATA_LINKS_JSON);
             }
         } catch (JsonParseException e) {
             // JSONファイルの解析エラー
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2002");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2002");
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             log.info("JsonParseException: " + e.getMessage(), e.fillInStackTrace());
             return null;
         } catch (JsonMappingException e) {
             // JSONファイルのデータ定義エラー
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2003");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2003");
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             log.info("JsonMappingException: " + e.getMessage(), e.fillInStackTrace());
             return null;
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             // JSONファイルのバリデートエラー
             writeOutputStream(true, "PL-BI-1004", entryName, e.getMessage());
-            log.info("DcCoreException" + e.getMessage(), e.fillInStackTrace());
+            log.info("PersoniumCoreException" + e.getMessage(), e.fillInStackTrace());
             return null;
         } catch (IOException e) {
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2000");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2000");
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             log.info("IOException: " + e.getMessage(), e.fillInStackTrace());
             return null;
@@ -1294,7 +1294,7 @@ public class BarFileReadRunner implements Runnable {
         // 不正なファイルでないかをチェック
         if (!barFileOrder.containsKey(entryName)) {
             log.info("[" + entryName + "] invalid file");
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             return false;
         }
@@ -1307,7 +1307,7 @@ public class BarFileReadRunner implements Runnable {
             // 最初のエントリの場合は"00"であることが必須
             if (!entryIndex.equals("00")) {
                 log.info("bar/00_meta/00_manifest.json is not exsist");
-                String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
                 writeOutputStream(true, "PL-BI-1004", entryName, message);
                 return false;
             }
@@ -1319,7 +1319,7 @@ public class BarFileReadRunner implements Runnable {
             // 前回処理したエントリのプレフィックスと比較
             if (entryIndex.compareTo(lastEntryIndex) < 0) {
                 log.info("[" + entryName + "] invalid file");
-                String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
                 writeOutputStream(true, "PL-BI-1004", entryName, message);
                 return false;
             }
@@ -1328,7 +1328,7 @@ public class BarFileReadRunner implements Runnable {
         // [400]barファイル/barファイル内エントリのファイルサイズが上限値を超えている
         if (zae.getSize() > (long) (maxSize * MB)) {
             log.info("Bar file entry size too large invalid file [" + entryName + "]");
-            String message = DcCoreException.BarInstall.BAR_FILE_ENTRY_SIZE_TOO_LARGE
+            String message = PersoniumCoreException.BarInstall.BAR_FILE_ENTRY_SIZE_TOO_LARGE
                     .params(zae.getName(), String.valueOf(zae.getSize())).getMessage();
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             return false;
@@ -1362,7 +1362,7 @@ public class BarFileReadRunner implements Runnable {
             // 00_$metadata.xmlの処理が済んでいるかのチェック
             String meatadataPath = odataColPath + METADATA_XML;
             if (!doneKeys.contains(meatadataPath)) {
-                String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
                 log.info(message + "entryName: " + entryName);
                 writeOutputStream(true, "PL-BI-1004", entryName, message);
                 return false;
@@ -1370,7 +1370,7 @@ public class BarFileReadRunner implements Runnable {
             // 90_data/の処理が済んでいないかのチェック
             String userDataPath = odataColPath + USERDATA_DIR_NAME + "/";
             if (doneKeys.contains(userDataPath)) {
-                String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
                 log.info(message + "entryName: " + entryName);
                 writeOutputStream(true, "PL-BI-1004", entryName, message);
                 return false;
@@ -1380,7 +1380,7 @@ public class BarFileReadRunner implements Runnable {
             // 00_$metadata.xmlの処理が済んでいるかのチェック
             String meatadataPath = odataColPath + METADATA_XML;
             if (!doneKeys.contains(meatadataPath)) {
-                String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
                 log.info(message + "entryName: " + entryName);
                 writeOutputStream(true, "PL-BI-1004", entryName, message);
                 return false;
@@ -1396,7 +1396,7 @@ public class BarFileReadRunner implements Runnable {
         }
         if (dirPath != null && !dirPath.equals(USERDATA_DIR_NAME)) {
             // bar/90_contents/{OData_collection}/{dir}/の場合はエラーとする
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
             log.info(message + "entryName: " + entryName);
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             return false;
@@ -1414,7 +1414,7 @@ public class BarFileReadRunner implements Runnable {
             m = pattern.matcher(fileName);
             if (!m.matches()) {
                 // bar/90_contents/{OData_collection}/{dir}/の場合はエラーとする
-                String message = DcCoreMessageUtils.getMessage("PL-BI-2001");
+                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
                 log.info(message + "entryName: " + entryName);
                 writeOutputStream(true, "PL-BI-1004", entryName, message);
                 return false;
@@ -1441,7 +1441,7 @@ public class BarFileReadRunner implements Runnable {
         token = jp.nextToken();
         // 配列でなければエラー
         if (token != JsonToken.START_ARRAY) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         }
         token = jp.nextToken();
 
@@ -1449,7 +1449,7 @@ public class BarFileReadRunner implements Runnable {
             if (token == JsonToken.END_ARRAY) {
                 break;
             } else if (token != JsonToken.START_OBJECT) {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
 
             // 1件登録処理
@@ -1481,22 +1481,22 @@ public class BarFileReadRunner implements Runnable {
         if (jsonName.equals(EXTROLE_JSON)) {
             JSONExtRoles extRoles = mapper.readValue(jp, JSONExtRoles.class);
             if (extRoles.getExtRole() == null) {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
             if (extRoles.getRelationName() == null) {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
             return extRoles;
         } else if (jsonName.equals(ROLE_JSON)) {
             JSONRoles roles = mapper.readValue(jp, JSONRoles.class);
             if (roles.getName() == null) {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
             return roles;
         } else if (jsonName.equals(RELATION_JSON)) {
             JSONRelations relations = mapper.readValue(jp, JSONRelations.class);
             if (relations.getName() == null) {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
             return relations;
         } else if (jsonName.equals(LINKS_JSON)) {
@@ -1518,39 +1518,39 @@ public class BarFileReadRunner implements Runnable {
      */
     private void linksJsonValidate(String jsonName, JSONLinks links) {
         if (links.getFromType() == null) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         } else {
             if (!links.getFromType().equals(Relation.EDM_TYPE_NAME) && !links.getFromType().equals(Role.EDM_TYPE_NAME)
                     && !links.getFromType().equals(ExtRole.EDM_TYPE_NAME)) {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
         }
         if (links.getFromName() == null) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         } else {
             Map<String, String> fromNameMap = links.getFromName();
             for (Map.Entry<String, String> entry : fromNameMap.entrySet()) {
                 if (entry.getValue() == null) {
-                    throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                    throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
                 }
             }
         }
         if (links.getToType() == null) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         } else {
             if (!links.getToType().equals(Relation.EDM_TYPE_NAME)
                     && !links.getToType().equals(Role.EDM_TYPE_NAME)
                     && !links.getToType().equals(ExtRole.EDM_TYPE_NAME)) {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
         }
         if (links.getToName() == null) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         } else {
             Map<String, String> toNameMap = links.getToName();
             for (Map.Entry<String, String> entry : toNameMap.entrySet()) {
                 if (entry.getValue() == null) {
-                    throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                    throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
                 }
             }
         }
@@ -1563,28 +1563,28 @@ public class BarFileReadRunner implements Runnable {
      */
     private void userDataLinksJsonValidate(String jsonName, JSONUserDataLinks links) {
         if (links.getFromType() == null) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         }
         if (links.getFromId() == null) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         } else {
             Map<String, String> fromIdMap = links.getFromId();
             for (Map.Entry<String, String> entry : fromIdMap.entrySet()) {
                 if (entry.getValue() == null) {
-                    throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                    throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
                 }
             }
         }
         if (links.getToType() == null) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         }
         if (links.getToId() == null) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         } else {
             Map<String, String> toIdMap = links.getToId();
             for (Map.Entry<String, String> entry : toIdMap.entrySet()) {
                 if (entry.getValue() == null) {
-                    throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+                    throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
                 }
             }
         }
@@ -1603,16 +1603,16 @@ public class BarFileReadRunner implements Runnable {
         try {
             manifest = mapper.readValue(jp, JSONManifest.class);
         } catch (UnrecognizedPropertyException ex) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params("manifest.json unrecognized property");
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params("manifest.json unrecognized property");
         }
         if (manifest.getBarVersion() == null) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params("manifest.json#barVersion");
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params("manifest.json#barVersion");
         }
         if (manifest.getBoxVersion() == null) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params("manifest.json#boxVersion");
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params("manifest.json#boxVersion");
         }
         if (manifest.getDefaultPath() == null) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params("manifest.json#DefaultPath");
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params("manifest.json#DefaultPath");
         }
         return manifest;
     }
@@ -1631,7 +1631,7 @@ public class BarFileReadRunner implements Runnable {
                 && !(fieldName.equals("ExtRoles") && jsonName.equals(EXTROLE_JSON))
                 && !(fieldName.equals("Links") && jsonName.equals(LINKS_JSON))
                 && !(fieldName.equals("Links") && jsonName.equals(USERDATA_LINKS_JSON))) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         }
     }
 
@@ -1658,7 +1658,7 @@ public class BarFileReadRunner implements Runnable {
      *        処理失敗時の詳細情報(PL-BI-2xxx)
      */
     private void writeOutputStream(boolean isError, String code, String path, String detail) {
-        String message = DcCoreMessageUtils.getMessage(code);
+        String message = PersoniumCoreMessageUtils.getMessage(code);
         if (detail == null) {
             message = message.replace("{0}", "");
         } else {
@@ -1836,7 +1836,7 @@ public class BarFileReadRunner implements Runnable {
      * 70_$links.jsonに定義されているリンク情報をESへ登録する.
      * @param mappedObject JSONファイルから読み込んだオブジェクト
      */
-    private void createLinks(JSONMappedObject mappedObject, DcODataProducer producer) {
+    private void createLinks(JSONMappedObject mappedObject, PersoniumODataProducer producer) {
         Map<String, String> fromNameMap = ((JSONLinks) mappedObject).getFromName();
         String fromkey =
                 BarFileUtils.getComplexKeyName(((JSONLinks) mappedObject).getFromType(), fromNameMap, this.boxName);
@@ -1856,10 +1856,10 @@ public class BarFileReadRunner implements Runnable {
         producer.createLink(sourceEntity, targetNavProp, newTargetEntity);
     }
 
-    private boolean createUserdataLinks(DcODataProducer producer, List<JSONMappedObject> userDataLinks) {
+    private boolean createUserdataLinks(PersoniumODataProducer producer, List<JSONMappedObject> userDataLinks) {
         int linkSize = userDataLinks.size();
         int linkCount = 0;
-        String message = DcCoreMessageUtils.getMessage("PL-BI-1002");
+        String message = PersoniumCoreMessageUtils.getMessage("PL-BI-1002");
         for (JSONMappedObject json : userDataLinks) {
             linkCount++;
             if (!createUserdataLink(json, producer)) {
@@ -1879,7 +1879,7 @@ public class BarFileReadRunner implements Runnable {
      * 10_odatarelations.jsonに定義されているリンク情報をESへ登録する.
      * @param mappedObject JSONファイルから読み込んだオブジェクト
      */
-    private boolean createUserdataLink(JSONMappedObject mappedObject, DcODataProducer producer) {
+    private boolean createUserdataLink(JSONMappedObject mappedObject, PersoniumODataProducer producer) {
         OEntityId sourceEntity = null;
         OEntityId newTargetEntity = null;
         try {
@@ -1963,13 +1963,13 @@ public class BarFileReadRunner implements Runnable {
             parenEntryName = entryName.substring(0, index + 1);
             parentCmp = this.davCmpMap.get(parenEntryName);
             if (parentCmp == null) {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(entryName);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(entryName);
             } else if (parentCmp.getType().equals(DavCmp.TYPE_COL_ODATA)) {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(entryName);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(entryName);
             } else if (parentCmp.getType().equals(DavCmp.TYPE_COL_SVC)) {
                 String crrName = entryName.substring(index + 1, entryName.length() - 1);
                 if (!"__src".equals(crrName)) {
-                    throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(entryName);
+                    throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(entryName);
                 }
             }
         }
@@ -1980,21 +1980,21 @@ public class BarFileReadRunner implements Runnable {
 //
 //        // currentがすでに親をさし示しているためdepthの初期値は1
 //        int depth = 1;
-//        int maxDepth = DcCoreConfig.getMaxCollectionDepth();
+//        int maxDepth = PersoniumCoreConfig.getMaxCollectionDepth();
 //        while (null != current.getParent()) {
 //            current = (DavCmp) current.getParent();
 //            depth++;
 //        }
 //        if (depth > maxDepth) {
 //            // コレクション数の制限を超えたため、400エラーとする
-//            throw DcCoreException.Dav.COLLECTION_DEPTH_ERROR;
+//            throw PersoniumCoreException.Dav.COLLECTION_DEPTH_ERROR;
 //        }
 //
 //        // 親コレクション内のコレクション・ファイル数のチェック
-//        int maxChildResource = DcCoreConfig.getMaxChildResourceCount();
+//        int maxChildResource = PersoniumCoreConfig.getMaxChildResourceCount();
 //        if (parentCmp.getChildrenCount() >= maxChildResource) {
 //            // コレクション内に作成可能なコレクション・ファイル数の制限を超えたため、400エラーとする
-//            throw DcCoreException.Dav.COLLECTION_CHILDRESOURCE_ERROR;
+//            throw PersoniumCoreException.Dav.COLLECTION_CHILDRESOURCE_ERROR;
 //        }
 
 
@@ -2060,7 +2060,7 @@ public class BarFileReadRunner implements Runnable {
                 Propertyupdate propUpdate = Propertyupdate.unmarshal(propXml);
                 davCmp.proppatch(propUpdate, boxUrl);
             } catch (IOException ex) {
-                throw DcCoreException.Dav.XML_ERROR.reason(ex);
+                throw PersoniumCoreException.Dav.XML_ERROR.reason(ex);
             }
         }
     }
@@ -2113,35 +2113,35 @@ public class BarFileReadRunner implements Runnable {
             XMLFactoryProvider2 provider = StaxXMLFactoryProvider2.getInstance();
             XMLInputFactory2 factory = provider.newXMLInputFactory2();
             XMLEventReader2 reader = factory.createXMLEventReader(isr);
-            DcEdmxFormatParser parser = new DcEdmxFormatParser();
+            PersoniumEdmxFormatParser parser = new PersoniumEdmxFormatParser();
             metadata = parser.parseMetadata(reader);
         } catch (Exception ex) {
             log.info("XMLParseException: " + ex.getMessage(), ex.fillInStackTrace());
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2002");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2002");
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             return false;
         } catch (StackOverflowError tw) {
             // ComplexTypeの循環参照時にStackOverFlowErrorが発生する
             log.info("XMLParseException: " + tw.getMessage(), tw.fillInStackTrace());
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2002");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2002");
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             return false;
         }
         // Entity/Propertyの登録
         // Property/ComplexPropertyはデータ型としてComplexTypeを使用する場合があるため、
         // 一番最初にComplexTypeを登録してから、EntityTypeを登録する
-        // DcODataProducer producer = davCmp.getODataProducer();
+        // PersoniumODataProducer producer = davCmp.getODataProducer();
         try {
             createComplexTypes(metadata, davCmp);
             createEntityTypes(metadata, davCmp);
             createAssociations(metadata, davCmp);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             writeOutputStream(true, "PL-BI-1004", entryName, e.getMessage());
-            log.info("DcCoreException: " + e.getMessage());
+            log.info("PersoniumCoreException: " + e.getMessage());
             return false;
         } catch (Exception e) {
             log.info("Regist Entity Error: " + e.getMessage(), e.fillInStackTrace());
-            String message = DcCoreMessageUtils.getMessage("PL-BI-2003");
+            String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2003");
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             return false;
         }
@@ -2193,7 +2193,7 @@ public class BarFileReadRunner implements Runnable {
      * @param producer ODataプロデューサー
      */
     @SuppressWarnings("unchecked")
-    protected void createProperties(EdmStructuralType entity, DavCmp davCmp, DcODataProducer producer) {
+    protected void createProperties(EdmStructuralType entity, DavCmp davCmp, PersoniumODataProducer producer) {
         Iterable<EdmProperty> properties = entity.getDeclaredProperties();
         EdmDataServices userMetadata = null;
         String edmTypeName = Property.EDM_TYPE_NAME;
@@ -2212,7 +2212,7 @@ public class BarFileReadRunner implements Runnable {
             }
             CollectionKind kind = property.getCollectionKind();
             if (kind != null && !kind.equals(CollectionKind.NONE) && !kind.equals(CollectionKind.List)) {
-                throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(METADATA_XML);
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(METADATA_XML);
             }
             JSONObject json = new JSONObject();
             json.put("Name", property.getName());
@@ -2246,7 +2246,7 @@ public class BarFileReadRunner implements Runnable {
      */
     protected void createAssociations(EdmDataServices metadata, DavCmp davCmp) {
         Iterable<EdmAssociation> associations = metadata.getAssociations();
-        DcODataProducer producer = null;
+        PersoniumODataProducer producer = null;
         EdmDataServices userMetadata = null;
         for (EdmAssociation association : associations) {
             // Association情報をもとに、AssociationEndとAssociationEnd同士のリンクを登録する
@@ -2291,23 +2291,23 @@ public class BarFileReadRunner implements Runnable {
     private String getRealRoleName(String sourceRoleName) {
         String[] tokens = sourceRoleName.split(":");
         if (tokens.length != 2) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(sourceRoleName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(sourceRoleName);
         }
         if (tokens[0].length() <= 0 || tokens[1].length() <= 0) {
-            throw DcCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(sourceRoleName);
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(sourceRoleName);
         }
         return tokens[1];
     }
 
     /**
      * 引数で渡されたAssociationEndを登録する.
-     * @param producer Entity登録用DcODataProcucerオブジェクト
+     * @param producer Entity登録用PersoniumODataProcucerオブジェクト
      * @param userMetadata ユーザ定義用スキーマオブジェクト
      * @param associationEnd 登録用AssociationEndオブジェクト
      * @param associationEndName AssociationEnd名
      */
     @SuppressWarnings("unchecked")
-    protected void createAssociationEnd(DcODataProducer producer,
+    protected void createAssociationEnd(PersoniumODataProducer producer,
             EdmDataServices userMetadata, EdmAssociationEnd associationEnd, String associationEndName) {
         // AssociationEndの名前は、AssociationEndのロール名を使用する
         JSONObject json = new JSONObject();
@@ -2330,7 +2330,7 @@ public class BarFileReadRunner implements Runnable {
     protected void createComplexTypes(EdmDataServices metadata, DavCmp davCmp) {
         // DeclaredPropertyはComplexTypeに紐付いているため、ComplexTypeごとにComplexTypePropertyを登録する
         Iterable<EdmComplexType> complexTypes = metadata.getComplexTypes();
-        DcODataProducer producer = null;
+        PersoniumODataProducer producer = null;
         EdmDataServices userMetadata = null;
         for (EdmComplexType complexType : complexTypes) {
             log.debug("ComplexType: " + complexType.getName());

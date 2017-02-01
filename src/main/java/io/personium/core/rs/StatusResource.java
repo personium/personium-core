@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.EsClient;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.EsModel;
 
 /**
@@ -52,7 +52,7 @@ public class StatusResource {
         StringBuilder sb = new StringBuilder();
 
         // プロパティ一覧
-        Properties props = DcCoreConfig.getProperties();
+        Properties props = PersoniumUnitConfig.getProperties();
         JSONObject responseJson = new JSONObject();
         JSONObject propertiesJson = new JSONObject();
         for (String key : props.stringPropertyNames()) {
@@ -84,7 +84,7 @@ public class StatusResource {
     @POST
     public Response post() {
         // プロパティリロード
-        DcCoreConfig.reload();
+        PersoniumUnitConfig.reload();
         return Response.status(HttpStatus.SC_NO_CONTENT).build();
     }
 
@@ -94,7 +94,7 @@ public class StatusResource {
      */
     Boolean checkAds() {
         try {
-            Properties p = DcCoreConfig.getEsAdsDbcpProps();
+            Properties p = PersoniumUnitConfig.getEsAdsDbcpProps();
             BasicDataSourceFactory.createDataSource(p);
             return true;
         } catch (Exception e) {

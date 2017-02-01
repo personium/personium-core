@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.ads.AbstractAdsWriteFailureLog;
 import io.personium.common.ads.AdsWriteFailureLogException;
 import io.personium.common.ads.AdsWriteFailureLogWriter;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.repair.RepairAds;
 import io.personium.test.categories.Unit;
 
@@ -54,7 +54,7 @@ public class RepairAdsCompleteTest {
     @BeforeClass
     public static void beforeClass() {
         // 他のテスト中で作成されたADS書込み失敗ログの削除
-        File logDir = new File(DcCoreConfig.getAdsWriteFailureLogDir());
+        File logDir = new File(PersoniumUnitConfig.getAdsWriteFailureLogDir());
         File[] files = logDir.listFiles();
         for (File file : files) {
             file.delete();

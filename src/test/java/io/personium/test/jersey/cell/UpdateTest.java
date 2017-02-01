@@ -37,14 +37,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.w3c.dom.NodeList;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -271,8 +271,8 @@ public class UpdateTest extends AbstractCase {
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
-                DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
+                PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
+                PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
     }
 
     /**
@@ -675,7 +675,7 @@ public class UpdateTest extends AbstractCase {
         }
 
         // リクエストボディを生成
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         String data = "\"test\"";
 
@@ -737,7 +737,7 @@ public class UpdateTest extends AbstractCase {
         }
 
         // リクエストボディを生成
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         String data = "\"test\"";
 
@@ -928,7 +928,7 @@ public class UpdateTest extends AbstractCase {
             accept = MediaType.APPLICATION_ATOM_XML;
         }
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         try {
             // リクエストボディを生成
@@ -1264,7 +1264,7 @@ public class UpdateTest extends AbstractCase {
         headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         headers.put(HttpHeaders.IF_MATCH, "*");
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         // リクエスト先のURL文字列を生成
         String cellNameHoge = "hoge" + Long.toString(Calendar.getInstance().getTimeInMillis());
@@ -1389,7 +1389,7 @@ public class UpdateTest extends AbstractCase {
             final JSONObject requestBody,
             final String query) {
         DcResponse ret = null;
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         String data = requestBody.toJSONString();
 
@@ -1429,7 +1429,7 @@ public class UpdateTest extends AbstractCase {
             final JSONObject requestBody,
             final String query) {
         DcResponse ret = null;
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         String data = requestBody.toJSONString();
 
@@ -1459,7 +1459,7 @@ public class UpdateTest extends AbstractCase {
             final JSONObject requestBody,
             final String cellNameStr) {
         DcResponse ret = null;
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         String data = requestBody.toJSONString();
 
@@ -1491,7 +1491,7 @@ public class UpdateTest extends AbstractCase {
     private void deleteCell(String id, Boolean checkStatusCode) {
 
         // Cellを削除
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse delresponse = null;
 
         // リクエストヘッダをセット

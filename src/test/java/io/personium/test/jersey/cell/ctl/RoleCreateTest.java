@@ -25,7 +25,7 @@ import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -525,8 +525,8 @@ public class RoleCreateTest extends ODataCommon {
 
             // メッセージ確認
             ODataCommon.checkErrorResponseBody(res,
-                    DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
-                    DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(boxname).getMessage());
+                    PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
+                    PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(boxname).getMessage());
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);

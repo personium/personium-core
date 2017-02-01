@@ -29,15 +29,15 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
-import io.personium.core.DcCoreMessageUtils;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DaoException;
 import io.personium.test.jersey.DcException;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.DcRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -63,7 +63,7 @@ public class ErrorPageTest extends JerseyTest {
     @Test
     public final void エラーページへのGETで指定したコードに対応するメッセージが返却されること() {
 
-        String code = DcCoreException.OData.JSON_PARSE_ERROR.getCode();
+        String code = PersoniumCoreException.OData.JSON_PARSE_ERROR.getCode();
         DcResponse res = requesttoErrorPage(code);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
@@ -119,7 +119,7 @@ public class ErrorPageTest extends JerseyTest {
     @Test
     public final void コードを指定せずにエラーページを取得しundefinedとなること() {
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -148,8 +148,8 @@ public class ErrorPageTest extends JerseyTest {
     @Test
     public final void エラーページへのPOSTで405となること() {
 
-        String code = DcCoreException.OData.JSON_PARSE_ERROR.getCode();
-        DcRestAdapter rest = new DcRestAdapter();
+        String code = PersoniumCoreException.OData.JSON_PARSE_ERROR.getCode();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -169,8 +169,8 @@ public class ErrorPageTest extends JerseyTest {
     @Test
     public final void エラーページへのPUTで405となること() {
 
-        String code = DcCoreException.OData.JSON_PARSE_ERROR.getCode();
-        DcRestAdapter rest = new DcRestAdapter();
+        String code = PersoniumCoreException.OData.JSON_PARSE_ERROR.getCode();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -190,8 +190,8 @@ public class ErrorPageTest extends JerseyTest {
     @Test
     public final void エラーページへのDELETEで405となること() {
 
-        String code = DcCoreException.OData.JSON_PARSE_ERROR.getCode();
-        DcRestAdapter rest = new DcRestAdapter();
+        String code = PersoniumCoreException.OData.JSON_PARSE_ERROR.getCode();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -210,7 +210,7 @@ public class ErrorPageTest extends JerseyTest {
      * @return レスポンス
      */
     private DcResponse requesttoErrorPage(String code) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -234,11 +234,11 @@ public class ErrorPageTest extends JerseyTest {
     public static void checkResponseBody(DcResponse res, String expectedCode) {
         String body = null;
         String expectedMessage = null;
-        String expectedTitle = DcCoreMessageUtils.getMessage("PS-ER-0001");
+        String expectedTitle = PersoniumCoreMessageUtils.getMessage("PS-ER-0001");
         if (expectedCode == null) {
-            expectedMessage = DcCoreMessageUtils.getMessage("PS-ER-0002");
+            expectedMessage = PersoniumCoreMessageUtils.getMessage("PS-ER-0002");
         } else {
-            expectedMessage = DcCoreMessageUtils.getMessage(expectedCode);
+            expectedMessage = PersoniumCoreMessageUtils.getMessage(expectedCode);
         }
         try {
             body = res.bodyAsString();

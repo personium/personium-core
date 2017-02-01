@@ -25,8 +25,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -188,7 +188,7 @@ public class UserDataDeleteTest extends AbstractUserDataTest {
                     .statusCode(HttpStatus.SC_NO_CONTENT);
         } finally {
             deleteUserData(cellName, boxName, colName, entityTypeName, userDataId,
-                    DcCoreConfig.getMasterToken(), "*", -1);
+                    PersoniumUnitConfig.getMasterToken(), "*", -1);
         }
 
     }
@@ -231,7 +231,7 @@ public class UserDataDeleteTest extends AbstractUserDataTest {
 
         // ユーザデータ取得
         TResponse getRes = getUserData(cellName, boxName, colName, entityTypeName, userDataId,
-                DcCoreConfig.getMasterToken(), HttpStatus.SC_OK);
+                PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_OK);
 
         // ボディからEtag取得
         JSONObject results = (JSONObject) ((JSONObject) createRes.bodyAsJson().get("d")).get("results");
@@ -510,8 +510,8 @@ public class UserDataDeleteTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
-                    DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
+                    PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
+                    PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
         } finally {
             deleteUserData(userdataKey);
         }

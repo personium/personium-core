@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.progress.ProgressInfo;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
@@ -94,7 +94,7 @@ public class CollectionLimitTest extends JerseyTest {
             BoxUtils.create(cellName, boxName, TOKEN, HttpStatus.SC_CREATED);
 
             // コレクションの階層数の最大値を取得
-            int maxCollectionDepth = DcCoreConfig.getMaxCollectionDepth();
+            int maxCollectionDepth = PersoniumUnitConfig.getMaxCollectionDepth();
 
             // 最大値階層分のWebDavコレクションを作成
             String path = "";
@@ -135,7 +135,7 @@ public class CollectionLimitTest extends JerseyTest {
             BoxUtils.create(cellName, boxName, TOKEN, HttpStatus.SC_CREATED);
 
             // コレクションの階層数の最大値を取得
-            int maxCollectionDepth = DcCoreConfig.getMaxCollectionDepth();
+            int maxCollectionDepth = PersoniumUnitConfig.getMaxCollectionDepth();
 
             // 最大値階層分のWebDavコレクションを作成
             String path = "";
@@ -178,7 +178,7 @@ public class CollectionLimitTest extends JerseyTest {
             BoxUtils.create(cellName, boxName, TOKEN, HttpStatus.SC_CREATED);
 
             // コレクションの子要素数の最大値を取得
-            int maxChildCount = DcCoreConfig.getMaxChildResourceCount();
+            int maxChildCount = PersoniumUnitConfig.getMaxChildResourceCount();
 
             // 基底コレクションの作成
             String basePath = "col1";
@@ -222,7 +222,7 @@ public class CollectionLimitTest extends JerseyTest {
             BoxUtils.create(cellName, boxName, TOKEN, HttpStatus.SC_CREATED);
 
             // コレクションの子要素数の最大値を取得
-            int maxChildCount = DcCoreConfig.getMaxChildResourceCount();
+            int maxChildCount = PersoniumUnitConfig.getMaxChildResourceCount();
 
             // 基底コレクションの作成
             String basePath = "col1";

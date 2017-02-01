@@ -180,7 +180,7 @@ public interface Cell {
      */
     EdmProperty.Builder P_PATH_NAME = EdmProperty.newBuilder("Name")
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_NAME)
+            .setAnnotations(Common.P_FORMAT_NAME)
             .setType(EdmSimpleType.STRING);
 
     /**

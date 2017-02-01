@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.ExtCell;
@@ -698,7 +698,7 @@ public class AclTest extends AbstractCase {
                 .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, "role"))
                 .returns()
                 .statusCode(HttpStatus.SC_NOT_FOUND);
-        DcCoreException expectedException = DcCoreException.Dav.CELL_NOT_FOUND;
+        PersoniumCoreException expectedException = PersoniumCoreException.Dav.CELL_NOT_FOUND;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -769,8 +769,8 @@ public class AclTest extends AbstractCase {
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
-        res.checkErrorResponse(DcCoreException.Dav.XML_VALIDATE_ERROR.getCode(),
-                DcCoreException.Dav.XML_VALIDATE_ERROR.getMessage());
+        res.checkErrorResponse(PersoniumCoreException.Dav.XML_VALIDATE_ERROR.getCode(),
+                PersoniumCoreException.Dav.XML_VALIDATE_ERROR.getMessage());
     }
 
     /**

@@ -16,7 +16,7 @@
  */
 package io.personium.test;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 
 /**
  * Coreのテスト用設定を定義するクラス.
@@ -34,7 +34,7 @@ public class DcCoreTestConfig {
      * @return テスト時に指定するターゲットバージョン
      */
     public static String getCoreVersion() {
-        return System.getProperty(PROP_TARGET_VERSION, DcCoreConfig.getCoreVersion());
+        return System.getProperty(PROP_TARGET_VERSION, PersoniumUnitConfig.getCoreVersion());
     }
 
 }

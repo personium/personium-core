@@ -42,8 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreAuthnException;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreAuthnException;
+import io.personium.core.PersoniumCoreException;
 
 /**
  * IdToken.
@@ -105,13 +105,13 @@ public class IdToken {
      * 最終検証結果を返す.
      * @param null
      * @retrun boolean
-     * @throws DcCoreAuthnException dcae
+     * @throws PersoniumCoreAuthnException dcae
      */
-    public void verify() throws DcCoreAuthnException {
+    public void verify() throws PersoniumCoreAuthnException {
         // expireしていないかチェック(60秒くらいは過ぎても良い)
         boolean expired = (exp + VERIFY_WAIT) * VERIFY_SECOND < System.currentTimeMillis();
         if (expired) {
-            throw DcCoreAuthnException.OIDC_EXPIRED_ID_TOKEN.params(exp);
+            throw PersoniumCoreAuthnException.OIDC_EXPIRED_ID_TOKEN.params(exp);
         }
         // 署名検証
         verifySignature();
@@ -132,7 +132,7 @@ public class IdToken {
             boolean verified = sig.verify(PersoniumCoreUtils.decodeBase64Url(this.getSignature()));
             if (!verified) {
                 // 署名検証結果、署名が不正であると認定
-                throw DcCoreAuthnException.OIDC_AUTHN_FAILED;
+                throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
             }
         } catch (NoSuchAlgorithmException e) {
             // 環境がおかしい以外でここには来ない
@@ -146,7 +146,7 @@ public class IdToken {
             // type,
             // if this signature algorithm is unable to process the input data
             // provided, etc.
-            throw DcCoreAuthnException.OIDC_INVALID_ID_TOKEN.params("ID Token sig value is invalid.");
+            throw PersoniumCoreAuthnException.OIDC_INVALID_ID_TOKEN.params("ID Token sig value is invalid.");
         }
     }
 
@@ -169,7 +169,7 @@ public class IdToken {
                     return (RSAPublicKey) kf.generatePublic(rsaPubKey);
                 } catch (NoSuchAlgorithmException e1) {
                     // ktyの値がRSA以外はサポートしない
-                    throw DcCoreException.NetWork.UNEXPECTED_VALUE.params(KTY, "RSA").reason(e1);
+                    throw PersoniumCoreException.NetWork.UNEXPECTED_VALUE.params(KTY, "RSA").reason(e1);
                 } catch (InvalidKeySpecException e1) {
                     // バグ以外でここには来ない
                     throw new RuntimeException(e1);
@@ -177,7 +177,7 @@ public class IdToken {
             }
         }
         // 該当するkidを持つ鍵情報が取れなかった場合
-        throw DcCoreAuthnException.OIDC_INVALID_ID_TOKEN.params("ID Token header value is invalid.");
+        throw PersoniumCoreAuthnException.OIDC_INVALID_ID_TOKEN.params("ID Token header value is invalid.");
     }
 
     /**
@@ -191,7 +191,7 @@ public class IdToken {
         IdToken ret = new IdToken();
         String[] splitIdToken = idTokenStr.split("\\.");
         if (splitIdToken.length != SPLIT_TOKEN_NUM) {
-            throw DcCoreAuthnException.OIDC_INVALID_ID_TOKEN.params("2 periods required.");
+            throw PersoniumCoreAuthnException.OIDC_INVALID_ID_TOKEN.params("2 periods required.");
         }
         ret.header = splitIdToken[0];
         ret.payload = splitIdToken[1];
@@ -210,11 +210,11 @@ public class IdToken {
             ret.exp = (Long) payload.get(EXP);
         } catch (ParseException e) {
             // BASE64はOk.JSONのパースに失敗.
-            throw DcCoreAuthnException.OIDC_INVALID_ID_TOKEN
+            throw PersoniumCoreAuthnException.OIDC_INVALID_ID_TOKEN
                 .params("Header and payload should be Base64 encoded JSON.");
     } catch (Exception e) {
             // BASE64が失敗.
-            throw DcCoreAuthnException.OIDC_INVALID_ID_TOKEN.params("Header and payload should be Base64 encoded.");
+            throw PersoniumCoreAuthnException.OIDC_INVALID_ID_TOKEN.params("Header and payload should be Base64 encoded.");
         }
         return ret;
     }
@@ -251,13 +251,13 @@ public class IdToken {
             return jsonObj;
         } catch (ClientProtocolException e) {
             // HTTPのプロトコル違反
-            throw DcCoreException.NetWork.UNEXPECTED_RESPONSE.params(url, "proper HTTP response", status).reason(e);
+            throw PersoniumCoreException.NetWork.UNEXPECTED_RESPONSE.params(url, "proper HTTP response", status).reason(e);
         } catch (IOException e) {
             // サーバーに接続できない場合に発生
-            throw DcCoreException.NetWork.HTTP_REQUEST_FAILED.params(HttpGet.METHOD_NAME, url).reason(e);
+            throw PersoniumCoreException.NetWork.HTTP_REQUEST_FAILED.params(HttpGet.METHOD_NAME, url).reason(e);
         } catch (ParseException e) {
             // JSONでないものを返してきた
-            throw DcCoreException.NetWork.UNEXPECTED_RESPONSE.params(url, "JSON", status).reason(e);
+            throw PersoniumCoreException.NetWork.UNEXPECTED_RESPONSE.params(url, "JSON", status).reason(e);
         }
     }
 

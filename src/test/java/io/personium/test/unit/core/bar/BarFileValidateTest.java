@@ -46,9 +46,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreConfig.BinaryData;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumUnitConfig.BinaryData;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.bar.BarFileInstaller;
 import io.personium.core.bar.BarFileReadRunner;
 import io.personium.core.bar.jackson.JSONManifest;
@@ -256,7 +256,7 @@ public class BarFileValidateTest {
             jp.nextToken();
             TestBarRunner testBarRunner = new TestBarRunner();
             testBarRunner.barFileJsonValidate(jp, mapper, jsonName);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             return;
         } catch (Exception e) {
             fail(e.getMessage());
@@ -282,7 +282,7 @@ public class BarFileValidateTest {
 
             TestBarRunner testBarRunner = new TestBarRunner();
             testBarRunner.barFileJsonValidate(jp, mapper, jsonName);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             return;
         } catch (Exception e) {
             fail(e.getMessage());
@@ -308,7 +308,7 @@ public class BarFileValidateTest {
             jp.nextToken();
             TestBarRunner testBarRunner = new TestBarRunner();
             testBarRunner.parseJsonEntityData(jp, mapper, jsonName);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             return;
         } catch (IOException e) {
             fail(e.getMessage());
@@ -333,7 +333,7 @@ public class BarFileValidateTest {
             jp.nextToken();
             TestBarRunner testBarRunner = new TestBarRunner();
             testBarRunner.parseJsonEntityData(jp, mapper, jsonName);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             return;
         } catch (IOException e) {
             fail(e.getMessage());
@@ -358,7 +358,7 @@ public class BarFileValidateTest {
             jp.nextToken();
             TestBarRunner testBarRunner = new TestBarRunner();
             testBarRunner.parseJsonEntityData(jp, mapper, jsonName);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             return;
         } catch (IOException e) {
             fail(e.getMessage());
@@ -421,7 +421,7 @@ public class BarFileValidateTest {
                 jp.nextToken();
                 TestBarRunner testBarRunner = new TestBarRunner();
                 testBarRunner.barFileJsonValidate(jp, mapper, jsonName);
-            } catch (DcCoreException e) {
+            } catch (PersoniumCoreException e) {
                 continue;
             } catch (IOException e) {
                 fail(e.getMessage());
@@ -455,7 +455,7 @@ public class BarFileValidateTest {
                 jp.nextToken();
                 TestBarRunner testBarRunner = new TestBarRunner();
                 testBarRunner.barFileJsonValidate(jp, mapper, jsonName);
-            } catch (DcCoreException e) {
+            } catch (PersoniumCoreException e) {
                 continue;
             } catch (IOException e) {
                 fail(e.getMessage());
@@ -500,7 +500,7 @@ public class BarFileValidateTest {
             assertTrue(result.getJson().get("ToName") instanceof JSONObject);
             JSONObject toResult = (JSONObject) result.getJson().get("ToName");
             assertEquals("role1", toResult.get("Name"));
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             fail(e.getMessage());
         } catch (IOException e) {
             fail(e.getMessage());
@@ -546,7 +546,7 @@ public class BarFileValidateTest {
             assertTrue(result.getJson().get("ToId") instanceof JSONObject);
             JSONObject toResult = (JSONObject) result.getJson().get("ToId");
             assertEquals("id_role1", toResult.get("__id"));
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             fail(e.getMessage());
         } catch (IOException e) {
             fail(e.getMessage());
@@ -603,7 +603,7 @@ public class BarFileValidateTest {
 
             TestBarRunner testBarRunner = new TestBarRunner();
             testBarRunner.manifestJsonValidate(jp, mapper);
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             assertEquals(400, dce.getStatus());
             assertEquals("PR400-BI-0006", dce.getCode());
             return;
@@ -632,7 +632,7 @@ public class BarFileValidateTest {
 
             TestBarRunner testBarRunner = new TestBarRunner();
             testBarRunner.manifestJsonValidate(jp, mapper);
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             assertEquals(400, dce.getStatus());
             assertEquals("PR400-BI-0006", dce.getCode());
             return;
@@ -661,7 +661,7 @@ public class BarFileValidateTest {
 
             TestBarRunner testBarRunner = new TestBarRunner();
             testBarRunner.manifestJsonValidate(jp, mapper);
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             assertEquals(400, dce.getStatus());
             assertEquals("PR400-BI-0006", dce.getCode());
             return;
@@ -691,7 +691,7 @@ public class BarFileValidateTest {
 
             TestBarRunner testBarRunner = new TestBarRunner();
             testBarRunner.manifestJsonValidate(jp, mapper);
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             assertEquals(400, dce.getStatus());
             assertEquals("PR400-BI-0006", dce.getCode());
             return;
@@ -752,7 +752,7 @@ public class BarFileValidateTest {
 
             TestBarRunner testBarRunner = new TestBarRunner();
             testBarRunner.manifestJsonValidate(jp, mapper);
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             assertEquals(400, dce.getStatus());
             assertEquals("PR400-BI-0006", dce.getCode());
             return;
@@ -978,7 +978,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertTrue(res); // EntityTypeが1件もないとみなされるため
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1002,7 +1002,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1026,7 +1026,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1050,7 +1050,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertTrue(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1074,7 +1074,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1098,7 +1098,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1122,7 +1122,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1146,7 +1146,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1170,7 +1170,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1194,7 +1194,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1218,7 +1218,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1242,7 +1242,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1266,7 +1266,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1290,7 +1290,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1314,7 +1314,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1338,7 +1338,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1362,7 +1362,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1386,7 +1386,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1410,7 +1410,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1434,7 +1434,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1458,7 +1458,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1482,7 +1482,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1506,7 +1506,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1530,7 +1530,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1554,7 +1554,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1578,7 +1578,7 @@ public class BarFileValidateTest {
             boolean res = testBarRunner.registUserSchema(entryName, fis, null);
             assertFalse(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1602,7 +1602,7 @@ public class BarFileValidateTest {
             List<JSONMappedObject> res = testBarRunner.registJsonLinksUserdata(entryName, fis);
             assertNull(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1626,7 +1626,7 @@ public class BarFileValidateTest {
             List<JSONMappedObject> res = testBarRunner.registJsonLinksUserdata(entryName, fis);
             assertNull(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1650,7 +1650,7 @@ public class BarFileValidateTest {
             List<JSONMappedObject> res = testBarRunner.registJsonLinksUserdata(entryName, fis);
             assertNull(res);
             return;
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             fail("Unexpected exception");
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1692,8 +1692,8 @@ public class BarFileValidateTest {
         try {
             testBarInstaller.checkBarFileSize(file);
             fail("Unexpected exception");
-        } catch (DcCoreException dce) {
-            String code = DcCoreException.BarInstall.BAR_FILE_SIZE_TOO_LARGE.getCode();
+        } catch (PersoniumCoreException dce) {
+            String code = PersoniumCoreException.BarInstall.BAR_FILE_SIZE_TOO_LARGE.getCode();
             assertEquals(code, dce.getCode());
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1721,8 +1721,8 @@ public class BarFileValidateTest {
                 testBarInstaller.checkBarFileEntrySize(zae, zae.getName(), maxBarEntryFileSize);
             }
             fail("Unexpected exception");
-        } catch (DcCoreException dce) {
-            String code = DcCoreException.BarInstall.BAR_FILE_ENTRY_SIZE_TOO_LARGE.getCode();
+        } catch (PersoniumCoreException dce) {
+            String code = PersoniumCoreException.BarInstall.BAR_FILE_ENTRY_SIZE_TOO_LARGE.getCode();
             assertEquals(code, dce.getCode());
         } catch (Exception ex) {
             fail("Unexpected exception");
@@ -1736,8 +1736,8 @@ public class BarFileValidateTest {
      */
     @Test
     public void testStoreTemporaryBarFile() throws Exception {
-        boolean fsyncEnabled = DcCoreConfig.getFsyncEnabled();
-        DcCoreConfig.set(BinaryData.FSYNC_ENABLED, "true");
+        boolean fsyncEnabled = PersoniumUnitConfig.getFsyncEnabled();
+        PersoniumUnitConfig.set(BinaryData.FSYNC_ENABLED, "true");
         try {
             CellEsImpl cell = new CellEsImpl();
             cell.setId("hogeCell");
@@ -1749,7 +1749,7 @@ public class BarFileValidateTest {
             method.invoke(bfi, new FileInputStream("pom.xml"));
             Mockito.verify(bfi, Mockito.atLeast(1)).sync((FileDescriptor) Mockito.anyObject());
         } finally {
-            DcCoreConfig.set(BinaryData.FSYNC_ENABLED, String.valueOf(fsyncEnabled));
+            PersoniumUnitConfig.set(BinaryData.FSYNC_ENABLED, String.valueOf(fsyncEnabled));
         }
     }
 
@@ -1760,8 +1760,8 @@ public class BarFileValidateTest {
      */
     @Test
     public void testStoreTemporaryBarFile2() throws Exception {
-        boolean fsyncEnabled = DcCoreConfig.getFsyncEnabled();
-        DcCoreConfig.set(BinaryData.FSYNC_ENABLED, "false");
+        boolean fsyncEnabled = PersoniumUnitConfig.getFsyncEnabled();
+        PersoniumUnitConfig.set(BinaryData.FSYNC_ENABLED, "false");
         try {
             CellEsImpl cell = new CellEsImpl();
             cell.setId("hogeCell");
@@ -1773,7 +1773,7 @@ public class BarFileValidateTest {
             method.invoke(bfi, new FileInputStream("pom.xml"));
             Mockito.verify(bfi, Mockito.never()).sync((FileDescriptor) Mockito.anyObject());
         } finally {
-            DcCoreConfig.set(BinaryData.FSYNC_ENABLED, String.valueOf(fsyncEnabled));
+            PersoniumUnitConfig.set(BinaryData.FSYNC_ENABLED, String.valueOf(fsyncEnabled));
         }
     }
 }

@@ -71,14 +71,14 @@ public final class CtlSchema {
     }
 
     /**
-     * 複合Uniqueキー制約（DcによるCSDL拡張）のためのCSDL拡張アノテーションを作成して返します.
+     * 複合Uniqueキー制約（PersoniumによるCSDL拡張）のためのCSDL拡張アノテーションを作成して返します.
      * @param name UK名
      * @return Annotationのリスト
      */
     public static List<EdmAnnotation<?>> createNamedUkAnnotation(final String name) {
         List<EdmAnnotation<?>> ret = new ArrayList<EdmAnnotation<?>>();
-        ret.add(new EdmAnnotationAttribute(Common.DC_NAMESPACE.getUri(),
-                Common.DC_NAMESPACE.getPrefix(),
+        ret.add(new EdmAnnotationAttribute(Common.P_NAMESPACE.getUri(),
+                Common.P_NAMESPACE.getPrefix(),
                 "Unique", name));
         return ret;
     }
@@ -90,8 +90,8 @@ public final class CtlSchema {
      */
     public static List<EdmAnnotation<?>> createIsDecleardAnnotation(final String name) {
         List<EdmAnnotation<?>> ret = new ArrayList<EdmAnnotation<?>>();
-        ret.add(new EdmAnnotationAttribute(Common.DC_NAMESPACE.getUri(),
-                Common.DC_NAMESPACE.getPrefix(),
+        ret.add(new EdmAnnotationAttribute(Common.P_NAMESPACE.getUri(),
+                Common.P_NAMESPACE.getPrefix(),
                 "IsDeclared", name));
         return ret;
     }
@@ -103,8 +103,8 @@ public final class CtlSchema {
      */
     public static List<EdmAnnotation<?>> createFormatAnnotation(final String name) {
         List<EdmAnnotation<?>> ret = new ArrayList<EdmAnnotation<?>>();
-        ret.add(new EdmAnnotationAttribute(Common.DC_NAMESPACE.getUri(),
-                Common.DC_NAMESPACE.getPrefix(),
+        ret.add(new EdmAnnotationAttribute(Common.P_NAMESPACE.getUri(),
+                Common.P_NAMESPACE.getPrefix(),
                 "Format", name));
         return ret;
     }
@@ -256,7 +256,7 @@ public final class CtlSchema {
     public static final EdmProperty.Builder P_ID = EdmProperty.newBuilder("__id")
             .setType(EdmSimpleType.STRING).setDefaultValue("UUID()")
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_ID);
+            .setAnnotations(Common.P_FORMAT_ID);
 
     /**
      * UserCtlデータサービスのEdmDataServices オブジェクトを返します.
@@ -436,7 +436,7 @@ public final class CtlSchema {
         }
 
         EdmDataServices.Builder ret = EdmDataServices.newBuilder()
-                .addNamespaces(Enumerable.create(Common.DC_NAMESPACE).toList())
+                .addNamespaces(Enumerable.create(Common.P_NAMESPACE).toList())
                 .addSchemas(schema).setVersion(ODataVersion.V2);
         return ret;
     }

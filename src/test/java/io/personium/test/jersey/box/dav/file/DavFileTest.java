@@ -31,8 +31,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreConfig.BinaryData;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumUnitConfig.BinaryData;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -385,8 +385,8 @@ public class DavFileTest extends JerseyTest {
     @Test
     public final void FileをfsyncでPUTする() {
         // fsyncを有効にする
-        boolean fsyncEnabled = DcCoreConfig.getFsyncEnabled();
-        DcCoreConfig.set(BinaryData.FSYNC_ENABLED, "true");
+        boolean fsyncEnabled = PersoniumUnitConfig.getFsyncEnabled();
+        PersoniumUnitConfig.set(BinaryData.FSYNC_ENABLED, "true");
         try {
             final Http theReq = this.putFileRequest(FILE_NAME, FILE_BODY, null, Setup.TEST_BOX1);
             TResponse resp = theReq.returns()
@@ -429,7 +429,7 @@ public class DavFileTest extends JerseyTest {
         } finally {
             this.deleteFileRequest(FILE_NAME, null, Setup.TEST_BOX1).returns()
                     .statusCode(HttpStatus.SC_NO_CONTENT);
-            DcCoreConfig.set(BinaryData.FSYNC_ENABLED, String.valueOf(fsyncEnabled));
+            PersoniumUnitConfig.set(BinaryData.FSYNC_ENABLED, String.valueOf(fsyncEnabled));
         }
     }
 

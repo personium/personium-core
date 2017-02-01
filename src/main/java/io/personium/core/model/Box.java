@@ -185,7 +185,7 @@ public final class Box {
      * Name Definition of property.
      */
     public static final EdmProperty.Builder P_PATH_NAME = EdmProperty.newBuilder("Name")
-            .setAnnotations(Common.DC_FORMAT_NAME)
+            .setAnnotations(Common.P_FORMAT_NAME)
             .setNullable(false)
             .setType(EdmSimpleType.STRING);
     /**

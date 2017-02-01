@@ -26,7 +26,7 @@ import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.ExtCell;
@@ -136,7 +136,7 @@ public class ResourceUtils {
         TResponse res = Http.request("box/odatacol/delete-link.txt").with("cell", cell).with("box", box)
                 .with("collection", col).with("entityType", entity).with("id", userDataId)
                 .with("navProp", "_" + navProp).with("navKey", navPropId)
-                .with("contentType", MediaType.APPLICATION_JSON).with("token", DcCoreConfig.getMasterToken())
+                .with("contentType", MediaType.APPLICATION_JSON).with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*").returns().statusCode(code);
         return res;
     }
@@ -221,7 +221,7 @@ public class ResourceUtils {
                 .with("colPath", Setup.TEST_ODATA)
                 .with("srcPath", srcEntity + "('" + srcUserId + "')")
                 .with("trgPath", targetEntity)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("trgUserdataUrl", targetUri)
                 .returns()
                 .debug()

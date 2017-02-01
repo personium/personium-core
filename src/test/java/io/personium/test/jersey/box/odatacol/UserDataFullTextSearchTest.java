@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -1099,8 +1099,8 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
                     "?q=");
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            checkErrorResponse(response.bodyAsJson(), DcCoreException.OData.QUERY_INVALID_ERROR.getCode(),
-                    DcCoreException.OData.QUERY_INVALID_ERROR.params("q", "").getMessage());
+            checkErrorResponse(response.bodyAsJson(), PersoniumCoreException.OData.QUERY_INVALID_ERROR.getCode(),
+                    PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("q", "").getMessage());
         } finally {
             // ユーザデータ削除
             deleteUserData(userDataId1);
@@ -1143,8 +1143,8 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
                     "?q=" + qValue);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            checkErrorResponse(response.bodyAsJson(), DcCoreException.OData.QUERY_INVALID_ERROR.getCode(),
-                    DcCoreException.OData.QUERY_INVALID_ERROR.params("q", qValue).getMessage());
+            checkErrorResponse(response.bodyAsJson(), PersoniumCoreException.OData.QUERY_INVALID_ERROR.getCode(),
+                    PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("q", qValue).getMessage());
         } finally {
             // ユーザデータ削除
             deleteUserData(userDataId1);

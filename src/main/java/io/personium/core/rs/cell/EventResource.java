@@ -34,10 +34,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
-import io.personium.core.eventbus.DcEventBus;
+import io.personium.core.eventbus.PersoniumEventBus;
 import io.personium.core.eventbus.JSONEvent;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
@@ -91,7 +91,7 @@ public class EventResource {
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.EVENT);
 
         // X-Personium-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
-        requestKey = validateXDcRequestKey(requestKey);
+        requestKey = validateXPersoniumRequestKey(requestKey);
         // TODO findBugs対策↓
         log.debug(requestKey);
 
@@ -105,7 +105,7 @@ public class EventResource {
         // TODO ログ出力用のデフォルト設定情報を取得
 
         // ログファイル出力
-        DcEventBus eventBus = new DcEventBus(this.cell);
+        PersoniumEventBus eventBus = new PersoniumEventBus(this.cell);
         Event event = createEvent(reqBody, requestKey);
         eventBus.outputEventLog(event);
 
@@ -121,7 +121,7 @@ public class EventResource {
     public final Response updateLogSettings() {
         // TODO アクセス制御
         // this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG);
-        throw DcCoreException.Misc.METHOD_NOT_IMPLEMENTED;
+        throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
     }
 
     /**
@@ -132,7 +132,7 @@ public class EventResource {
     public final Response getLogSettings() {
         // TODO アクセス制御
         // this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG_READ);
-        throw DcCoreException.Misc.METHOD_NOT_IMPLEMENTED;
+        throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
     }
 
     /**
@@ -142,15 +142,15 @@ public class EventResource {
      * @param requestKey リクエストヘッダ
      * @return 正当性チェック通過後の X-Personium-RequetKeyの値
      */
-    public static String validateXDcRequestKey(String requestKey) {
+    public static String validateXPersoniumRequestKey(String requestKey) {
         if (null == requestKey) {
             requestKey = String.format(REQEUST_KEY_DEFAULT_FORMAT, System.currentTimeMillis());
         }
         if (MAXREQUEST_KEY_LENGTH < requestKey.length()) {
-            throw DcCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID;
+            throw PersoniumCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID;
         }
         if (!REQUEST_KEY_PATTERN.matcher(requestKey).matches()) {
-            throw DcCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID;
+            throw PersoniumCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID;
         }
         return requestKey;
     }
@@ -171,10 +171,10 @@ public class EventResource {
             if (token == JsonToken.START_OBJECT) {
                 event = mapper.readValue(jp, JSONEvent.class);
             } else {
-                throw DcCoreException.Event.JSON_PARSE_ERROR;
+                throw PersoniumCoreException.Event.JSON_PARSE_ERROR;
             }
         } catch (IOException e) {
-            throw DcCoreException.Event.JSON_PARSE_ERROR;
+            throw PersoniumCoreException.Event.JSON_PARSE_ERROR;
         }
         return event;
     }
@@ -186,27 +186,27 @@ public class EventResource {
     protected void validateEventProperties(final JSONEvent event) {
         Event.LEVEL level = event.getLevel();
         if (level == null) {
-            throw DcCoreException.Event.INPUT_REQUIRED_FIELD_MISSING.params("level");
+            throw PersoniumCoreException.Event.INPUT_REQUIRED_FIELD_MISSING.params("level");
         } else if (!JSONEvent.validateLevel(level)) {
-            throw DcCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("level");
+            throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("level");
         }
         String action = event.getAction();
         if (action == null) {
-            throw DcCoreException.Event.INPUT_REQUIRED_FIELD_MISSING.params("action");
+            throw PersoniumCoreException.Event.INPUT_REQUIRED_FIELD_MISSING.params("action");
         } else if (!JSONEvent.validateAction(action)) {
-            throw DcCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("action");
+            throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("action");
         }
         String object = event.getObject();
         if (object == null) {
-            throw DcCoreException.Event.INPUT_REQUIRED_FIELD_MISSING.params("object");
+            throw PersoniumCoreException.Event.INPUT_REQUIRED_FIELD_MISSING.params("object");
         } else if (!JSONEvent.validateObject(object)) {
-            throw DcCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("object");
+            throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("object");
         }
         String result = event.getResult();
         if (result == null) {
-            throw DcCoreException.Event.INPUT_REQUIRED_FIELD_MISSING.params("result");
+            throw PersoniumCoreException.Event.INPUT_REQUIRED_FIELD_MISSING.params("result");
         } else if (!JSONEvent.validateResult(result)) {
-            throw DcCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("result");
+            throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("result");
         }
     }
 

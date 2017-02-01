@@ -25,8 +25,8 @@ import javax.ws.rs.WebApplicationException;
 
 import org.apache.commons.io.IOUtils;
 
-import io.personium.core.DcCoreException;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.http.header.ByteRangeSpec;
 import io.personium.core.http.header.RangeHeaderHandler;
 
@@ -66,17 +66,17 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
             long last = brs.getLastBytePos();
             // Rangeの先頭まで読み飛ばし
             if (hardLinkInput.skip(first) != first) {
-                DcCoreLog.Dav.FILE_TOO_SHORT
+                PersoniumCoreLog.Dav.FILE_TOO_SHORT
                         .params("skip failed", fileSize, range.getRangeHeaderField()).writeLog();
-                throw DcCoreException.Dav.FS_INCONSISTENCY_FOUND;
+                throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND;
             }
             // Rangeの終端まで返却
             for (long pos = first; pos < last + 1; pos++) {
                 chr = hardLinkInput.read();
                 if (chr == -1) {
-                    DcCoreLog.Dav.FILE_TOO_SHORT
+                    PersoniumCoreLog.Dav.FILE_TOO_SHORT
                             .params("too short.size", fileSize, range.getRangeHeaderField()).writeLog();
-                    throw DcCoreException.Dav.FS_INCONSISTENCY_FOUND;
+                    throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND;
                 }
                 output.write((char) chr);
             }

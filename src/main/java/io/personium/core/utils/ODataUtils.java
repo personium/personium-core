@@ -34,7 +34,7 @@ import org.odata4j.edm.EdmProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
@@ -137,11 +137,11 @@ public final class ODataUtils {
             ifMatchVersion = Long.parseLong(m.replaceAll("$1"));
             ifMatchUpdated = Long.parseLong(m.replaceAll("$2"));
         } catch (NumberFormatException e) {
-            throw DcCoreException.OData.ETAG_NOT_MATCH.reason(e);
+            throw PersoniumCoreException.OData.ETAG_NOT_MATCH.reason(e);
         }
         // バージョンチェック
         if (ifMatchVersion != oedhExisting.getVersion() || ifMatchUpdated != oedhExisting.getUpdated()) {
-            throw DcCoreException.OData.ETAG_NOT_MATCH;
+            throw PersoniumCoreException.OData.ETAG_NOT_MATCH;
         }
     }
 

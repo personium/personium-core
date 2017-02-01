@@ -36,7 +36,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DcRunner;
 
@@ -56,8 +56,8 @@ public class BinaryDataAccessorTest {
         String filename1 = "PcsInnov1";
         String filename2 = "PcsInnov2";
         String filename3 = "Pcs3nnov3";
-        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(),
-                DcCoreConfig.getFsyncEnabled());
+        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(),
+                PersoniumUnitConfig.getFsyncEnabled());
         try {
             long dataSize = "testhoge".getBytes().length;
             // ディレクトリを作成
@@ -110,8 +110,8 @@ public class BinaryDataAccessorTest {
     @Test
     public void ファイルを物理削除した場合ファイルが削除されていること() throws BinaryDataAccessException {
         String filename1 = "PcsInnovPhysicalDelete1";
-        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(),
-                DcCoreConfig.getFsyncEnabled());
+        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(),
+                PersoniumUnitConfig.getFsyncEnabled());
         try {
             // テンポラリファイルファイル作成
             long dataSize = "testhoge".getBytes().length;
@@ -143,8 +143,8 @@ public class BinaryDataAccessorTest {
     @Test
     public void ファイルの物理削除で存在しないファイルを指定した場合例外がスローされないこと() throws BinaryDataAccessException {
         String filename1 = "PcsInnovPhysicalDelete1";
-        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(),
-                DcCoreConfig.getFsyncEnabled());
+        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(),
+                PersoniumUnitConfig.getFsyncEnabled());
         // 物理削除
         binaryDataAccessor.deletePhysicalFile(filename1);
 
@@ -161,8 +161,8 @@ public class BinaryDataAccessorTest {
     @Test
     public void 物理削除設定を指定していない場合ファイルが論理削除されていること() throws BinaryDataAccessException {
         String filename1 = "PcsInnovPhysicalDelete1";
-        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(),
-                DcCoreConfig.getFsyncEnabled());
+        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(),
+                PersoniumUnitConfig.getFsyncEnabled());
         try {
             // テンポラリファイルファイル作成
             long dataSize = "testhoge".getBytes().length;
@@ -200,8 +200,8 @@ public class BinaryDataAccessorTest {
     public void 物理削除設定の場合ファイルの実体が削除されていること() throws BinaryDataAccessException {
         String filename1 = "PcsInnovPhysicalDelete1";
         boolean isPhysicalDeleteMode = true;
-        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(), null,
-                isPhysicalDeleteMode, DcCoreConfig.getFsyncEnabled());
+        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(), null,
+                isPhysicalDeleteMode, PersoniumUnitConfig.getFsyncEnabled());
         try {
             // テンポラリファイルファイル作成
             long dataSize = "testhoge".getBytes().length;
@@ -239,8 +239,8 @@ public class BinaryDataAccessorTest {
     public void 論理削除設定の場合ファイルが論理削除されていること() throws BinaryDataAccessException {
         String filename1 = "PcsInnovPhysicalDelete1";
         boolean isPhysicalDeleteMode = false;
-        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(), null,
-                isPhysicalDeleteMode, DcCoreConfig.getFsyncEnabled());
+        BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(), null,
+                isPhysicalDeleteMode, PersoniumUnitConfig.getFsyncEnabled());
         try {
             // テンポラリファイルファイル作成
             long dataSize = "testhoge".getBytes().length;

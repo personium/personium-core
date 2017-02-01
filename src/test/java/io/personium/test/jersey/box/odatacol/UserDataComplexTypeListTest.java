@@ -32,7 +32,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -126,7 +126,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
                     .with("entityType", ENTITY_TYPE_NAME)
                     .with("query", "?\\$orderby=__id%20desc")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -227,7 +227,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
                     .with("entityType", ENTITY_TYPE_NAME)
                     .with("query", "?\\$orderby=__id%20desc")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -338,7 +338,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
                     .with("entityType", ENTITY_TYPE_NAME)
                     .with("query", "?\\$orderby=__id%20desc")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -440,7 +440,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
                     .with("entityType", ENTITY_TYPE_NAME)
                     .with("query", "?\\$orderby=__id%20desc")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -554,7 +554,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
                     .with("entityType", ENTITY_TYPE_NAME)
                     .with("query", "?\\$orderby=__id%20desc")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -647,7 +647,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
                     .with("entityType", ENTITY_TYPE_NAME)
                     .with("query", "?\\$orderby=__id%20desc")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();

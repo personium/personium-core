@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -472,7 +472,7 @@ public class AccountRoleLinkTest extends AccountTest {
                 .with("accountKey", accountname)
                 .with("roleKey", "Name='" + rolename + "',_Box.Name=null")
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*")
                 .returns();
     }

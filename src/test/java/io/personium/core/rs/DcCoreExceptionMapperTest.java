@@ -37,7 +37,7 @@ import io.personium.test.jersey.DcRunner;
 @RunWith(DcRunner.class)
 @Category({ Unit.class })
 public final class DcCoreExceptionMapperTest {
-    static Logger log = LoggerFactory.getLogger(DcCoreExceptionMapper.class);
+    static Logger log = LoggerFactory.getLogger(PersoniumCoreExceptionMapper.class);
     // ロガー差し替えをするので、ここに避難させておく.
     static Logger shelterdLogger;
     /**
@@ -45,14 +45,14 @@ public final class DcCoreExceptionMapperTest {
      */
     @BeforeClass
     public static void beforeClass() {
-        shelterdLogger = DcCoreExceptionMapper.log;
+        shelterdLogger = PersoniumCoreExceptionMapper.log;
     }
     /**
      * AfterClass.
      */
     @AfterClass
     public static void afterClass() {
-        DcCoreExceptionMapper.log = shelterdLogger;
+        PersoniumCoreExceptionMapper.log = shelterdLogger;
     }
 
     /**
@@ -60,8 +60,8 @@ public final class DcCoreExceptionMapperTest {
      */
     @Test
     public void toResponseメソッドが() {
-        DcCoreExceptionMapper mapper = new DcCoreExceptionMapper();
-        DcCoreExceptionMapper.log = new TestLogger() {
+        PersoniumCoreExceptionMapper mapper = new PersoniumCoreExceptionMapper();
+        PersoniumCoreExceptionMapper.log = new TestLogger() {
             @Override
             public void error(String msg, Throwable t) {
                 log.debug(msg);

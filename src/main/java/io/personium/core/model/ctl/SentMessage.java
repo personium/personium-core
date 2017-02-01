@@ -49,7 +49,7 @@ public class SentMessage {
     public static final EdmProperty.Builder P_IN_REPLY_TO = EdmProperty.newBuilder("InReplyTo")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.DC_FORMAT_IN_REPLY_TO);
+            .setAnnotations(Common.P_FORMAT_IN_REPLY_TO);
     /**
      * Toプロパティの定義体.
      */
@@ -62,7 +62,7 @@ public class SentMessage {
     public static final EdmProperty.Builder P_TO_RELATION = EdmProperty.newBuilder("ToRelation")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.DC_FORMAT_RELATION_NAME);
+            .setAnnotations(Common.P_FORMAT_RELATION_NAME);
     /**
      * Typeプロパティの定義体.
      */
@@ -70,7 +70,7 @@ public class SentMessage {
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
             .setDefaultValue(ReceivedMessage.TYPE_MESSAGE)
-            .setAnnotations(Common.DC_FORMAT_MESSAGE_TYPE);
+            .setAnnotations(Common.P_FORMAT_MESSAGE_TYPE);
     /**
      * Titleプロパティの定義体.
      */
@@ -78,7 +78,7 @@ public class SentMessage {
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
             .setDefaultValue("")
-            .setAnnotations(Common.DC_FORMAT_MESSAGE_TITLE);
+            .setAnnotations(Common.P_FORMAT_MESSAGE_TITLE);
     /**
      * Bodyプロパティの定義体.
      */
@@ -93,21 +93,21 @@ public class SentMessage {
             .setType(EdmSimpleType.INT32)
             .setNullable(true)
             .setDefaultValue("3")
-            .setAnnotations(Common.DC_FORMAT_MESSAGE_PRIORITY);
+            .setAnnotations(Common.P_FORMAT_MESSAGE_PRIORITY);
     /**
      * RequestRelationプロパティの定義体.
      */
     public static final EdmProperty.Builder P_REQUEST_RELATION = EdmProperty.newBuilder("RequestRelation")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.DC_FORMAT_URI);
+            .setAnnotations(Common.P_FORMAT_URI);
     /**
      * RequestRelationTargetプロパティの定義体.
      */
     public static final EdmProperty.Builder P_REQUEST_RELATION_TARGET = EdmProperty.newBuilder("RequestRelationTarget")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.DC_FORMAT_URI);
+            .setAnnotations(Common.P_FORMAT_URI);
 
     /**
      * Result/Toプロパティの定義体.
@@ -115,7 +115,7 @@ public class SentMessage {
     public static final EdmProperty.Builder P_RESULT_TO = EdmProperty.newBuilder("To")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.DC_FORMAT_URI);
+            .setAnnotations(Common.P_FORMAT_URI);
     /**
     * Result/Codeプロパティの定義体.
     */

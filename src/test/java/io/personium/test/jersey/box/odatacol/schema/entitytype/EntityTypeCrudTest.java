@@ -30,8 +30,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -424,8 +424,8 @@ public class EntityTypeCrudTest extends ODataCommon {
             String entityTypeBody = "{\"Name\": \"" + entityTypeReName + "\"}";
             res = EntityTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     entityTypeName, entityTypeBody, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
         } finally {
             EntityTypeUtils.delete(Setup.TEST_ODATA, MASTER_TOKEN_NAME,
                     ACCEPT, entityTypeName, Setup.TEST_CELL1, -1);
@@ -449,8 +449,8 @@ public class EntityTypeCrudTest extends ODataCommon {
             String entityTypeBody = "{\"Name\": \"" + entityTypeReName + "\"}";
             res = EntityTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     entityTypeName, entityTypeBody, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
         } finally {
             EntityTypeUtils.delete(Setup.TEST_ODATA, MASTER_TOKEN_NAME,
                     ACCEPT, entityTypeName, Setup.TEST_CELL1, -1);
@@ -474,8 +474,8 @@ public class EntityTypeCrudTest extends ODataCommon {
             String entityTypeBody = "{\"Name\": \"" + entityTypeReName + "\"}";
             res = EntityTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     entityTypeName, entityTypeBody, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
         } finally {
             EntityTypeUtils.delete(Setup.TEST_ODATA, MASTER_TOKEN_NAME,
                     ACCEPT, entityTypeName, Setup.TEST_CELL1, -1);
@@ -499,8 +499,8 @@ public class EntityTypeCrudTest extends ODataCommon {
             String entityTypeBody = "{\"Name\": \"" + entityTypeReName + "\"}";
             res = EntityTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     entityTypeName, entityTypeBody, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
         } finally {
             EntityTypeUtils.delete(Setup.TEST_ODATA, MASTER_TOKEN_NAME,
                     ACCEPT, entityTypeName, Setup.TEST_CELL1, -1);
@@ -590,8 +590,8 @@ public class EntityTypeCrudTest extends ODataCommon {
             String entityTypeBody = "{\"Name\": \"" + entityTypeReName + "\"}";
             res = EntityTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     entityTypeName, entityTypeBody, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
         } finally {
             EntityTypeUtils.delete(Setup.TEST_ODATA, MASTER_TOKEN_NAME,
                     ACCEPT, entityTypeName, Setup.TEST_CELL1, -1);
@@ -615,8 +615,8 @@ public class EntityTypeCrudTest extends ODataCommon {
             String entityTypeBody = "{\"Name\": \"" + entityTypeReName + "\"}";
             res = EntityTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     entityTypeName, entityTypeBody, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
         } finally {
             EntityTypeUtils.delete(Setup.TEST_ODATA, MASTER_TOKEN_NAME,
                     ACCEPT, entityTypeName, Setup.TEST_CELL1, -1);
@@ -639,8 +639,8 @@ public class EntityTypeCrudTest extends ODataCommon {
             String entityTypeBody = "{}";
             res = EntityTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     entityTypeName, entityTypeBody, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Name").getMessage());
         } finally {
             EntityTypeUtils.delete(Setup.TEST_ODATA, MASTER_TOKEN_NAME,
                     ACCEPT, entityTypeName, Setup.TEST_CELL1, -1);
@@ -661,8 +661,8 @@ public class EntityTypeCrudTest extends ODataCommon {
             TResponse res = EntityTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA,
                     entityTypeName, entityTypeBody, HttpStatus.SC_NOT_FOUND);
-            res.checkErrorResponse(DcCoreException.OData.NO_SUCH_ENTITY.getCode(),
-                    DcCoreException.OData.NO_SUCH_ENTITY.getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode(),
+                    PersoniumCoreException.OData.NO_SUCH_ENTITY.getMessage());
         } finally {
             EntityTypeUtils.delete(Setup.TEST_ODATA, MASTER_TOKEN_NAME,
                     ACCEPT, entityTypeName, Setup.TEST_CELL1, -1);
@@ -691,8 +691,8 @@ public class EntityTypeCrudTest extends ODataCommon {
             res = EntityTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA,
                     entityTypeName2, entityTypeBody, HttpStatus.SC_CONFLICT);
-            res.checkErrorResponse(DcCoreException.OData.ENTITY_ALREADY_EXISTS.getCode(),
-                    DcCoreException.OData.ENTITY_ALREADY_EXISTS.getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS.getCode(),
+                    PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS.getMessage());
         } finally {
             EntityTypeUtils.delete(Setup.TEST_ODATA, MASTER_TOKEN_NAME,
                     ACCEPT, entityTypeName1, Setup.TEST_CELL1, -1);
@@ -848,7 +848,7 @@ public class EntityTypeCrudTest extends ODataCommon {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$filter=date+eq+'2012/09/21'")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -869,7 +869,7 @@ public class EntityTypeCrudTest extends ODataCommon {
     @Test
     public final void EntityTypeを上限値を超える数作成した場合にエラーが返却される() {
         try {
-            for (int i = 0; i < DcCoreConfig.getUserdataMaxEntityCount(); i++) {
+            for (int i = 0; i < PersoniumUnitConfig.getUserdataMaxEntityCount(); i++) {
                 String entityTypeName = String.format("testEntity%03d", i);
                 createEntityType(entityTypeName, Setup.TEST_ODATA);
             }
@@ -877,7 +877,7 @@ public class EntityTypeCrudTest extends ODataCommon {
             TResponse res = createEntityType(entityTypeName, Setup.TEST_ODATA);
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
-            for (int i = 0; i < DcCoreConfig.getUserdataMaxEntityCount(); i++) {
+            for (int i = 0; i < PersoniumUnitConfig.getUserdataMaxEntityCount(); i++) {
                 String entityTypeName = String.format("testEntity%03d", i);
                 EntityTypeUtils.delete(Setup.TEST_ODATA,
                         MASTER_TOKEN_NAME, "application/json", entityTypeName, Setup.TEST_BOX1, Setup.TEST_CELL1, -1);
@@ -900,7 +900,7 @@ public class EntityTypeCrudTest extends ODataCommon {
                 .with("boxPath", "box1")
                 .with("odataSvcPath", odataName)
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", "Bearer " + DcCoreConfig.getMasterToken())
+                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken())
                 .with("Name", name)
                 .returns()
                 .debug();

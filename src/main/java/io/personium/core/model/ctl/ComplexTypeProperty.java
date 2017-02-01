@@ -42,14 +42,14 @@ public class ComplexTypeProperty {
      */
     public static final EdmProperty.Builder P_NAME = EdmProperty.newBuilder("Name").setType(EdmSimpleType.STRING)
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_NAME);
+            .setAnnotations(Common.P_FORMAT_NAME);
     /**
      * _ComplexType/Nameプロパティの定義体.
      */
     public static final EdmProperty.Builder P_COMPLEXTYPE_NAME = EdmProperty.newBuilder("_ComplexType.Name")
             .setNullable(false)
             .setType(EdmSimpleType.STRING)
-            .setAnnotations(Common.DC_FORMAT_NAME);
+            .setAnnotations(Common.P_FORMAT_NAME);
     /**
      * Typeプロパティの定義体.
      */

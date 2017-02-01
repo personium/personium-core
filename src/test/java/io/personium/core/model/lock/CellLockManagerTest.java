@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DcRunner;
 
@@ -60,7 +60,7 @@ public class CellLockManagerTest {
         try {
             long count = CellLockManager.getReferenceCount("TestingCellId");
             assertEquals(-1, count);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             fail();
         }
     }
@@ -75,7 +75,7 @@ public class CellLockManagerTest {
             assertEquals(1, createdResult);
             long fetchedCount = CellLockManager.getReferenceCount("TestingCellId");
             assertEquals(1, fetchedCount);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             fail();
         }
     }
@@ -94,7 +94,7 @@ public class CellLockManagerTest {
 
             long fetchedCount = CellLockManager.getReferenceCount("TestingCellId");
             assertEquals(2, fetchedCount);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             fail();
         }
     }
@@ -110,7 +110,7 @@ public class CellLockManagerTest {
 
             long fetchedCount = CellLockManager.getReferenceCount("TestingCellId");
             assertEquals(-1, fetchedCount);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             fail();
         }
     }
@@ -135,7 +135,7 @@ public class CellLockManagerTest {
 
             long fetchedCount = CellLockManager.getReferenceCount("TestingCellId");
             assertEquals(-1, fetchedCount);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             fail();
         }
     }
@@ -151,7 +151,7 @@ public class CellLockManagerTest {
 
             long fetchedCount = CellLockManager.getCellStatus("TestingCellId");
             assertEquals(1, fetchedCount);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             fail();
         }
     }
@@ -167,7 +167,7 @@ public class CellLockManagerTest {
 
             long fetchedCount = CellLockManager.getCellStatus("TestingCellId");
             assertEquals(0, fetchedCount);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             fail();
         }
     }
@@ -189,7 +189,7 @@ public class CellLockManagerTest {
 
             fetchedCount = CellLockManager.getCellStatus("TestingCellId");
             assertEquals(1, fetchedCount);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             fail();
         }
     }

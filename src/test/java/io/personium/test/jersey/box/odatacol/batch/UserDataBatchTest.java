@@ -45,8 +45,8 @@ import org.odata4j.core.ODataConstants;
 import org.odata4j.edm.EdmSimpleType;
 import org.odata4j.producer.resources.ODataBatchProvider;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.CompareJSON;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -91,7 +91,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -106,7 +106,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
             Matcher matcher = pattern.matcher(listResponse);
             matcher.find();
             String id = matcher.group(1);
-            deleteUserData(cellName, boxName, colName, "Supplier", id, DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, "Supplier", id, PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
 
         }
@@ -144,7 +144,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -196,7 +196,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -206,7 +206,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     + START_BOUNDARY + BatchUtils.retrieveGetResBody("Supplier", "refresh") + END_BOUNDARY;
             checkBatchResponseBody(response, expectedBody);
         } finally {
-            deleteUserData(cellName, boxName, colName, "Supplier", "refresh", DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, "Supplier", "refresh", PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
         }
     }
@@ -234,7 +234,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -251,7 +251,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
             String expectedBody = START_BOUNDARY + BatchUtils.retrievePutResBody() + END_BOUNDARY;
             checkBatchResponseBody(bulkResponse, expectedBody);
         } finally {
-            deleteUserData(cellName, boxName, colName, "Category", "pubTest", DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, "Category", "pubTest", PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
         }
     }
@@ -280,7 +280,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED);
@@ -320,7 +320,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -341,7 +341,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -379,7 +379,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -436,7 +436,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -489,7 +489,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", reqBody)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -539,7 +539,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -552,7 +552,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -580,7 +580,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -605,7 +605,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -618,7 +618,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -638,8 +638,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
             checkBatchResponseBody(res, expectedBody);
         } finally {
             // UserODataの削除
-            deleteUserData(cellName, boxName, colName, entityTypeName, "testBatch1", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, entityTypeName, "testBatch2", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, entityTypeName, "testBatch1", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, entityTypeName, "testBatch2", PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
 
@@ -674,7 +674,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -690,8 +690,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
 
             checkBatchResponseBody(res, expectedBody);
         } finally {
-            deleteUserData(cellName, boxName, colName, "Sales", "id0001", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -722,7 +722,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -737,14 +737,14 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
             checkBatchResponseBody(res, expectedBody);
 
             // ユーザOData取得
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName, "Sales",
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, "Sales",
                     "id0001", HttpStatus.SC_OK);
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName, "SalesDetail",
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, "SalesDetail",
                     "id0001", HttpStatus.SC_NOT_FOUND);
 
         } finally {
-            deleteUserData(cellName, boxName, colName, "Sales", "id0001", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -768,9 +768,9 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
             super.createUserData(srcBody, HttpStatus.SC_CREATED, cellName, boxName, colName, "SalesDetail");
 
             // 更新前ユーザOData取得
-            TResponse originalSales = UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName,
+            TResponse originalSales = UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName,
                     colName, "Sales", "id0001", HttpStatus.SC_OK);
-            TResponse originalSalesDetail = UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName,
+            TResponse originalSalesDetail = UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName,
                     colName, "SalesDetail", "id0001", HttpStatus.SC_OK);
 
             // $batch
@@ -783,7 +783,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -798,14 +798,14 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
             checkBatchResponseBody(res, expectedBody);
 
             // ユーザOData取得(Salesが更新されていないこと)
-            TResponse afterSales = UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName,
+            TResponse afterSales = UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName,
                     colName, "Sales", "id0001", HttpStatus.SC_OK);
             CompareJSON.Result compareRes = CompareJSON.compareJSON(
                     originalSales.bodyAsJson(), afterSales.bodyAsJson());
             assertNull(compareRes);
 
             // ユーザOData取得(SalesDetailが更新されていること)
-            TResponse afterSalesDetail = UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName,
+            TResponse afterSalesDetail = UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName,
                     colName, "SalesDetail", "id0001", HttpStatus.SC_OK);
             compareRes = CompareJSON.compareJSON(
                     originalSalesDetail.bodyAsJson(), afterSalesDetail.bodyAsJson());
@@ -814,8 +814,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
             assertEquals("updated", compareRes.getMismatchValue("Name"));
 
         } finally {
-            deleteUserData(cellName, boxName, colName, "Sales", "id0001", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -843,7 +843,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -884,14 +884,14 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
     @Test
     public final void $batchの登録で不正フォーマットのデータを指定した場合に400が返却されること() {
         String body = START_BOUNDARY;
-        String code = DcCoreException.OData.BATCH_BODY_PARSE_ERROR.getCode();
-        String err = DcCoreException.OData.BATCH_BODY_PARSE_ERROR.getMessage();
+        String code = PersoniumCoreException.OData.BATCH_BODY_PARSE_ERROR.getCode();
+        String err = PersoniumCoreException.OData.BATCH_BODY_PARSE_ERROR.getMessage();
         Http.request("box/odatacol/batch.txt")
                 .with("cell", cellName)
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -911,7 +911,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED);
@@ -936,14 +936,14 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .debug()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
-                DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
     }
 
     /**
@@ -951,15 +951,15 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
      */
     @Test
     public final void $batchの登録でリクエストヘッダのContentTypeに誤ったバウンダリーを指定した場合に400が返却されること() {
-        String code = DcCoreException.OData.BATCH_BODY_PARSE_ERROR.getCode();
-        String err = DcCoreException.OData.BATCH_BODY_PARSE_ERROR.getMessage();
+        String code = PersoniumCoreException.OData.BATCH_BODY_PARSE_ERROR.getCode();
+        String err = PersoniumCoreException.OData.BATCH_BODY_PARSE_ERROR.getMessage();
         String body = START_BOUNDARY + BatchUtils.retrieveDeleteBody("Supplier('testBatch1')") + END_BOUNDARY;
         Http.request("box/odatacol/batch.txt")
                 .with("cell", cellName)
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", "changeset_cLzcDEEVPwvvoxS3yJTFTpRauSK_FAQ6mQtyo0aby93-SDP3lAs2A19a2uBb")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -973,15 +973,15 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
      */
     @Test
     public final void $batchの登録でリクエストボディの末尾にバウンダリーがない場合に400が返却されること() {
-        String code = DcCoreException.OData.BATCH_BODY_PARSE_ERROR.getCode();
-        String err = DcCoreException.OData.BATCH_BODY_PARSE_ERROR.getMessage();
+        String code = PersoniumCoreException.OData.BATCH_BODY_PARSE_ERROR.getCode();
+        String err = PersoniumCoreException.OData.BATCH_BODY_PARSE_ERROR.getMessage();
         String body = START_BOUNDARY + BatchUtils.retrieveDeleteBody("Supplier('testBatch1')");
         Http.request("box/odatacol/batch.txt")
                 .with("cell", cellName)
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", "changeset_cLzcDEEVPwvvoxS3yJTFTpRauSK_FAQ6mQtyo0aby93-SDP3lAs2A19a2uBb")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -1004,14 +1004,14 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .debug()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
-                DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
     }
 
     /**
@@ -1029,14 +1029,14 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .debug()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
-                DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
     }
 
     /**
@@ -1053,14 +1053,14 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .debug()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
-                DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
     }
 
     /**
@@ -1078,14 +1078,14 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .debug()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
-                DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
     }
 
     /**
@@ -1102,14 +1102,14 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .debug()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.BATCH_BODY_FORMAT_CHANGESET_NEST_ERROR.getCode(),
-                DcCoreException.OData.BATCH_BODY_FORMAT_CHANGESET_NEST_ERROR.getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.BATCH_BODY_FORMAT_CHANGESET_NEST_ERROR.getCode(),
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_CHANGESET_NEST_ERROR.getMessage());
     }
 
     /**
@@ -1133,7 +1133,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -1143,7 +1143,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     + END_BOUNDARY;
             checkBatchResponseBody(response, expectedBody);
         } finally {
-            deleteUserData(cellName, boxName, colName, "Category", "pubTest", DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, "Category", "pubTest", PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
         }
     }
@@ -1168,7 +1168,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -1178,7 +1178,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     + END_BOUNDARY;
             checkBatchResponseBody(response, expectedBody);
         } finally {
-            deleteUserData(cellName, boxName, colName, "Category", "pubTest", DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, "Category", "pubTest", PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
         }
     }
@@ -1203,7 +1203,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -1213,7 +1213,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     + END_BOUNDARY;
             checkBatchResponseBody(response, expectedBody);
         } finally {
-            deleteUserData(cellName, boxName, colName, "Category", "pubTest", DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, "Category", "pubTest", PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
         }
     }
@@ -1234,7 +1234,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED);
@@ -1265,7 +1265,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED);
@@ -1281,8 +1281,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
      */
     @Test
     public final void $batchの登録で不正なMethodを指定した場合に400が返却されること() {
-        String code = DcCoreException.OData.BATCH_BODY_FORMAT_METHOD_ERROR.getCode();
-        String err = DcCoreException.OData.BATCH_BODY_FORMAT_METHOD_ERROR.params("POT").getMessage();
+        String code = PersoniumCoreException.OData.BATCH_BODY_FORMAT_METHOD_ERROR.getCode();
+        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_METHOD_ERROR.params("POT").getMessage();
 
         String body = START_BOUNDARY + BatchUtils.retrievePostBodyNoId("Supplier", "POT")
                 + END_BOUNDARY;
@@ -1291,7 +1291,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -1317,7 +1317,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -1327,7 +1327,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     + END_BOUNDARY;
             checkBatchResponseBody(response, expectedBody);
         } finally {
-            deleteUserData(cellName, boxName, colName, "Supplier", userDataId, DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, "Supplier", userDataId, PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
         }
     }
@@ -1346,7 +1346,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -1356,7 +1356,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     + START_BOUNDARY + BatchUtils.retrieveChangeSetResErrorBody(HttpStatus.SC_CONFLICT) + END_BOUNDARY;
             checkBatchResponseBody(response, expectedBody);
         } finally {
-            deleteUserData(cellName, boxName, colName, "Supplier", "conflict", DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, "Supplier", "conflict", PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
         }
     }
@@ -1376,7 +1376,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED);
@@ -1388,15 +1388,15 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
             checkBatchResponseBody(response, expectedBody);
 
             // ユーザOData取得
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName, "Sales", "id0001",
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, "Sales", "id0001",
                     HttpStatus.SC_OK);
-            UserDataUtils.get(cellName, DcCoreConfig.getMasterToken(), boxName, colName, "Supplier", "id0001",
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, "Supplier", "id0001",
                     HttpStatus.SC_OK);
 
         } finally {
-            deleteUserData(cellName, boxName, colName, "Sales", "id0001", DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, "Sales", "id0001", PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
-            deleteUserData(cellName, boxName, colName, "Supplier", "id0001", DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, "Supplier", "id0001", PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
         }
     }
@@ -1544,15 +1544,15 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
         }
         sb.append(END_BOUNDARY);
 
-        String code = DcCoreException.OData.TOO_MANY_REQUESTS.getCode();
-        String err = DcCoreException.OData.TOO_MANY_REQUESTS.params("1,001").getMessage();
+        String code = PersoniumCoreException.OData.TOO_MANY_REQUESTS.getCode();
+        String err = PersoniumCoreException.OData.TOO_MANY_REQUESTS.params("1,001").getMessage();
 
         Http.request("box/odatacol/batch.txt")
                 .with("cell", cellName)
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", sb.toString())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -1574,7 +1574,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED);
@@ -1591,8 +1591,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
     @Test
     public final void $batchでPOSTメソッドのパスにIDを指定した場合400レスポンスが返却されること() {
         String path = "Sales('srcKey')";
-        String code = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
-        String err = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("POST " + path + " HTTP/1.1")
+        String code = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
+        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("POST " + path + " HTTP/1.1")
                 .getMessage();
 
         String body = START_BOUNDARY
@@ -1603,7 +1603,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -1617,8 +1617,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
     @Test
     public final void $batchでPUTメソッドのパスにIDを指定しない場合400レスポンスが返却されること() {
         String path = "Sales";
-        String code = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
-        String err = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("PUT " + path + " HTTP/1.1")
+        String code = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
+        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("PUT " + path + " HTTP/1.1")
                 .getMessage();
 
         String body = START_BOUNDARY
@@ -1629,7 +1629,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -1643,8 +1643,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
     @Test
     public final void $batchでDELETEメソッドのパスにIDを指定しない場合400レスポンスが返却されること() {
         String path = "Sales";
-        String code = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
-        String err = DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("DELETE " + path + " HTTP/1.1")
+        String code = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
+        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("DELETE " + path + " HTTP/1.1")
                 .getMessage();
 
         String body = START_BOUNDARY
@@ -1655,7 +1655,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -1668,8 +1668,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
      */
     @Test
     public final void $batchで空のバッチリクエストを送信した場合400レスポンスが返却されること() {
-        String code = DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode();
-        String err = DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params("Content-Type")
+        String code = PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode();
+        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params("Content-Type")
                 .getMessage();
         String body = START_BOUNDARY + END_BOUNDARY;
 
@@ -1679,7 +1679,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -1722,7 +1722,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", sbuf.toString())
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED);

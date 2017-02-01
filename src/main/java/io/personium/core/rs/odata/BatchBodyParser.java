@@ -30,8 +30,8 @@ import java.util.regex.Pattern;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import com.sun.jersey.api.uri.UriComponent;
 
 /**
@@ -63,16 +63,16 @@ public class BatchBodyParser {
             body = getBatchBody(br);
         } catch (IOException e) {
             // IOExceptionは重大障害
-            throw DcCoreException.Server.UNKNOWN_ERROR.reason(e);
+            throw PersoniumCoreException.Server.UNKNOWN_ERROR.reason(e);
         }
 
         if (!body.toString().startsWith("--" + boundary + "\n")) {
             // リクエストボディの先頭が「--バウンダリー文字列」で始まっていなければエラーとする
-            throw DcCoreException.OData.BATCH_BODY_PARSE_ERROR;
+            throw PersoniumCoreException.OData.BATCH_BODY_PARSE_ERROR;
         }
         if (!body.toString().trim().endsWith("--" + boundary + "--")) {
             // リクエストボディの最後が「--バウンダリー文字列--」で終わっていなければエラーとする
-            throw DcCoreException.OData.BATCH_BODY_PARSE_ERROR;
+            throw PersoniumCoreException.OData.BATCH_BODY_PARSE_ERROR;
         }
 
         // 個々のリクエストを取得する
@@ -156,7 +156,7 @@ public class BatchBodyParser {
             String type = getContentType(bodyLines);
             if (type == null) {
                 // Content-Typeの指定がない
-                throw DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE);
+                throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE);
             }
 
             // ボディを取得
@@ -170,7 +170,7 @@ public class BatchBodyParser {
 
                 // changesetのネスト指定
                 if (this.parent != null) {
-                    throw DcCoreException.OData.BATCH_BODY_FORMAT_CHANGESET_NEST_ERROR;
+                    throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_CHANGESET_NEST_ERROR;
                 }
 
                 // changesetのバウンダリ文字列を取得
@@ -194,7 +194,7 @@ public class BatchBodyParser {
                 requests.addAll(changesetRequests);
             } else {
                 // Content-Typeが不正
-                throw DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE);
+                throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE);
             }
 
             return requests;
@@ -237,7 +237,7 @@ public class BatchBodyParser {
                 // $links、NP経由系のリクエストはクエリが未サポートのため指定があった場合はエラーとする
                 // TODO 取得のリクエストの制限が解除された場合はクエリを許可すること
                 if (!requestQuery.equals("")) {
-                    throw DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
+                    throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
                 }
                 Pattern linkPathPattern = Pattern
                         .compile("^([^\\(]*)\\('([^']*)'\\)\\/\\$links\\/([^\\(]*)(\\('([^')]*)'\\))?$");
@@ -260,7 +260,7 @@ public class BatchBodyParser {
                     batchBodyPart.setTargetEntitySetName(npMatcher.replaceAll("$3"));
                     batchBodyPart.setUri(collectionUri + "/" + targetNvProName);
                 } else {
-                    throw DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
+                    throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
                 }
             } else {
                 Pattern reqPattern = Pattern.compile("^([^\\(]*)(\\('([^']*)'\\))?$");
@@ -271,16 +271,16 @@ public class BatchBodyParser {
                     if (HttpMethod.POST.equals(method)) {
                         // POSTの場合_ターゲットのIDが指定されていればエラーとする
                         if (null != targetID && !"".equals(targetID)) {
-                            throw DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
+                            throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
                         }
                     } else if (!HttpMethod.GET.equals(method)
                             && (null == targetID || "".equals(targetID))) {
                         // POST,GET以外の場合_ターゲットのIDが指定されていなければエラーとする
-                        throw DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
+                        throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
                     }
                     // GETの場合_一件取得・一覧取得の両方があるため、ターゲットのIDの有無はチェックしない
                 } else {
-                    throw DcCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
+                    throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
                 }
                 batchBodyPart.setUri(collectionUri + "/" + requestPath);
             }
@@ -295,7 +295,7 @@ public class BatchBodyParser {
                 // 各クエリの値のエラーはリクエスト送信時にチェックするため、ここでは例外は無視している
                 try {
                     top = QueryParser.parseTopQuery(UriComponent.decodeQuery(requestQuery, true).getFirst("$top"));
-                } catch (DcCoreException e) {
+                } catch (PersoniumCoreException e) {
                     top = null;
                 }
                 if (top != null) {
@@ -361,7 +361,7 @@ public class BatchBodyParser {
             // 受付可能なメソッドかどうかチェックする
             if (!HttpMethod.POST.equals(method) && !HttpMethod.GET.equals(method) && !HttpMethod.PUT.equals(method)
                     && !HttpMethod.DELETE.equals(method)) {
-                throw DcCoreException.OData.BATCH_BODY_FORMAT_METHOD_ERROR.params(method);
+                throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_METHOD_ERROR.params(method);
             }
             return method;
         }
@@ -431,7 +431,7 @@ public class BatchBodyParser {
             Matcher m = pattern.matcher(contentType);
             // バウンダリの指定が無い
             if (!m.matches()) {
-                throw DcCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE);
+                throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE);
             }
             boundary = m.replaceAll("$1");
 
@@ -445,8 +445,8 @@ public class BatchBodyParser {
          */
         private void checkTopCount(int query) {
             bulkTopCount += query;
-            if (bulkTopCount > DcCoreConfig.getTopQueryMaxSize()) {
-                throw DcCoreException.OData.BATCH_TOTAL_TOP_COUNT_LIMITATION_EXCEEDED;
+            if (bulkTopCount > PersoniumUnitConfig.getTopQueryMaxSize()) {
+                throw PersoniumCoreException.OData.BATCH_TOTAL_TOP_COUNT_LIMITATION_EXCEEDED;
             }
 
         }

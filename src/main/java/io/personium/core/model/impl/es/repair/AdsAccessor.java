@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchResponse;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
 import io.personium.core.model.impl.es.DavNode;
 import io.personium.core.model.impl.es.ads.Ads;
@@ -137,7 +137,7 @@ public class AdsAccessor {
 
                 ads.createEntity(indexName, oedh);
             }
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             throw new AdsException(e);
         }
     }
@@ -184,7 +184,7 @@ public class AdsAccessor {
 
                 ads.updateEntity(indexName, oedh);
             }
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             throw new AdsException(e);
         }
 

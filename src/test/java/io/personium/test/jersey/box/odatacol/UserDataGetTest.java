@@ -33,8 +33,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -140,7 +140,7 @@ public class UserDataGetTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), null, nameSpace, additional);
         } finally {
             deleteUserData(cellName, boxName, linkColName, linkEntityTypeName,
-                    "parent", DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "parent", PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
 
         // B(0..1) - A(0..1) | B(1) - D(*)
@@ -165,7 +165,7 @@ public class UserDataGetTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), null, nameSpace, additional);
         } finally {
             deleteUserData(cellName, boxName, linkColName, linkEntityTypeName,
-                    "parent", DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "parent", PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
 
         // C(1) - A(0..1) | C(*) - D(*)
@@ -190,7 +190,7 @@ public class UserDataGetTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), null, nameSpace, additional);
         } finally {
             deleteUserData(cellName, boxName, linkColName, linkEntityTypeName,
-                    "parent", DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "parent", PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
 
         // D(*) - A(0..1) | D(*) - B(1) | D(*) - C(*)
@@ -216,7 +216,7 @@ public class UserDataGetTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), null, nameSpace, additional);
         } finally {
             deleteUserData(cellName, boxName, linkColName, linkEntityTypeName,
-                    "parent", DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "parent", PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1246,8 +1246,8 @@ public class UserDataGetTest extends AbstractUserDataTest {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
-                    DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
+                    PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getCode(),
+                    PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.getMessage());
         } finally {
             deleteUserData(userdataKey);
         }

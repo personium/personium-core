@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.model.impl.es.DavNode;
 import io.personium.core.model.impl.es.doc.CellDocHandler;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
@@ -67,7 +67,7 @@ public class JdbcAds implements Ads {
 
         try {
             if (ds == null) {
-                Properties p = DcCoreConfig.getEsAdsDbcpProps();
+                Properties p = PersoniumUnitConfig.getEsAdsDbcpProps();
                 ds = BasicDataSourceFactory.createDataSource(p);
             }
         } catch (Exception e) {
@@ -1114,7 +1114,7 @@ public class JdbcAds implements Ads {
                 // なのでDBの選択は個別のSQLに埋め込む設計としている。
                 return con;
             } catch (SQLException e) {
-                DcCoreLog.Server.RDB_CONNECT_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.RDB_CONNECT_FAIL.params(e.getMessage()).reason(e).writeLog();
                 throw new AdsException(e);
             }
         }
@@ -1134,14 +1134,14 @@ public class JdbcAds implements Ads {
                 rs.beforeFirst();
                 return queryResultHandler.handle(rs);
             } catch (SQLException e) {
-                DcCoreLog.Server.EXECUTE_QUERY_SQL_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.EXECUTE_QUERY_SQL_FAIL.params(e.getMessage()).reason(e).writeLog();
                 throw new AdsException(e);
             } finally {
                 try {
                     stmt.close();
                     con.close();
                 } catch (SQLException e) {
-                    DcCoreLog.Server.RDB_DISCONNECT_FAIL.params(e.getMessage()).reason(e).writeLog();
+                    PersoniumCoreLog.Server.RDB_DISCONNECT_FAIL.params(e.getMessage()).reason(e).writeLog();
                     throw new AdsException(e);
                 }
             }
@@ -1155,7 +1155,7 @@ public class JdbcAds implements Ads {
             try {
                 stmt = con.prepareStatement(deleteSql);
                 sp.handle(stmt);
-                DcCoreLog.Server.JDBC_EXEC_SQL.params(
+                PersoniumCoreLog.Server.JDBC_EXEC_SQL.params(
                         ((DelegatingPreparedStatement) stmt).getDelegate().toString()).writeLog();
                 stmt.executeUpdate();
                 if (!AUTO_COMMIT) {
@@ -1167,7 +1167,7 @@ public class JdbcAds implements Ads {
                 try {
                     stmt.close();
                 } catch (SQLException e) {
-                    DcCoreLog.Server.RDB_DISCONNECT_FAIL.params(e.getMessage()).reason(e).writeLog();
+                    PersoniumCoreLog.Server.RDB_DISCONNECT_FAIL.params(e.getMessage()).reason(e).writeLog();
                     throw new AdsException(e);
                 }
             }
@@ -1194,7 +1194,7 @@ public class JdbcAds implements Ads {
                     stmt.close();
                     con.close();
                 } catch (SQLException e) {
-                    DcCoreLog.Server.RDB_DISCONNECT_FAIL.params(e.getMessage()).reason(e).writeLog();
+                    PersoniumCoreLog.Server.RDB_DISCONNECT_FAIL.params(e.getMessage()).reason(e).writeLog();
                     throw new AdsException(e);
                 }
             }
@@ -1220,7 +1220,7 @@ public class JdbcAds implements Ads {
                             + " row is expected to be affected.");
                 }
             } catch (SQLException e) {
-                DcCoreLog.Server.JDBC_EXEC_SQL.params(
+                PersoniumCoreLog.Server.JDBC_EXEC_SQL.params(
                         ((DelegatingPreparedStatement) stmt).getDelegate().toString()).writeLog();
                 throw new AdsException(e);
             } finally {
@@ -1228,7 +1228,7 @@ public class JdbcAds implements Ads {
                     stmt.close();
                     con.close();
                 } catch (SQLException e) {
-                    DcCoreLog.Server.RDB_DISCONNECT_FAIL.params(e.getMessage()).reason(e).writeLog();
+                    PersoniumCoreLog.Server.RDB_DISCONNECT_FAIL.params(e.getMessage()).reason(e).writeLog();
                     throw new AdsException(e);
                 }
             }
@@ -1241,7 +1241,7 @@ public class JdbcAds implements Ads {
             abstract void handle(PreparedStatement stmt) throws SQLException;
 
             void writeLog(PreparedStatement stmt) {
-                DcCoreLog.Server.JDBC_EXEC_SQL.params(
+                PersoniumCoreLog.Server.JDBC_EXEC_SQL.params(
                         ((DelegatingPreparedStatement) stmt).getDelegate().toString()).writeLog();
             }
         }
@@ -1271,7 +1271,7 @@ public class JdbcAds implements Ads {
                 stmt.setLong(Sql.IDX_ENTITY_UPDATED, oedh.getUpdated());
                 stmt.setString(Sql.NUMCOLS_ENTITY, oedh.getId());
                 if (UserDataODataProducer.USER_ODATA_NAMESPACE.equals(oedh.getType())) {
-                    DcCoreLog.Server.JDBC_USER_ODATA_SQL.params(oedh.getUnitUserName(), "ENTITY", oedh.getId(),
+                    PersoniumCoreLog.Server.JDBC_USER_ODATA_SQL.params(oedh.getUnitUserName(), "ENTITY", oedh.getId(),
                             oedh.getType(), oedh.getCellId(), oedh.getBoxId(), oedh.getNodeId(),
                             oedh.getEntityTypeId()).writeLog();
                 } else {

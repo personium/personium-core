@@ -26,7 +26,7 @@ import org.odata4j.core.ODataConstants;
 import org.odata4j.core.ODataVersion;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -49,7 +49,7 @@ public class ExtRoleDeleteTest extends ODataCommon {
 
     private static String cellName = "testcell1";
     private static String testExtRoleName = UrlUtils.roleResource(cellName, "__", "testrole");
-    private final String token = DcCoreConfig.getMasterToken();
+    private final String token = PersoniumUnitConfig.getMasterToken();
 
     /**
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある

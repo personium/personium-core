@@ -34,7 +34,7 @@ import org.apache.http.HttpStatus;
 import org.apache.wink.webdav.WebDAVMethod;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
@@ -96,7 +96,7 @@ public final class DavCollectionResource {
             try {
                 recursive = Boolean.valueOf(recursiveHeader);
             } catch (Exception e) {
-                throw DcCoreException.Misc.PRECONDITION_FAILED.params(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+                throw PersoniumCoreException.Misc.PRECONDITION_FAILED.params(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
             }
         }
         // アクセス制御(親の権限をチェックする)
@@ -148,7 +148,7 @@ public final class DavCollectionResource {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
-        throw DcCoreException.Dav.METHOD_NOT_ALLOWED;
+        throw PersoniumCoreException.Dav.METHOD_NOT_ALLOWED;
     }
 
     /**

@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.EntityType;
 import io.personium.core.model.ctl.Property;
 import io.personium.test.categories.Integration;
@@ -95,8 +95,8 @@ public class PropertyLinkTest extends ODataCommon {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
-                    DcCoreException.OData.NO_SUCH_ASSOCIATION.getMessage());
+                    PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
+                    PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getMessage());
         } finally {
             // Property削除
             ODataCommon.deleteOdataResource(propertyLocationUrl);
@@ -123,8 +123,8 @@ public class PropertyLinkTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.Misc.METHOD_NOT_IMPLEMENTED.getCode(),
-                DcCoreException.Misc.METHOD_NOT_IMPLEMENTED.getMessage());
+                PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED.getCode(),
+                PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED.getMessage());
     }
 
     /**
@@ -144,8 +144,8 @@ public class PropertyLinkTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
-                DcCoreException.OData.NO_SUCH_ASSOCIATION.getMessage());
+                PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
+                PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getMessage());
     }
 
     /**
@@ -225,8 +225,8 @@ public class PropertyLinkTest extends ODataCommon {
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
-                    DcCoreException.OData.NO_SUCH_ASSOCIATION.getMessage());
+                    PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
+                    PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getMessage());
         } finally {
             // EntityType削除
             ODataCommon.deleteOdataResource(entityTypeLocationUrl);
@@ -250,8 +250,8 @@ public class PropertyLinkTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.Misc.METHOD_NOT_IMPLEMENTED.getCode(),
-                DcCoreException.Misc.METHOD_NOT_IMPLEMENTED.getMessage());
+                PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED.getCode(),
+                PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED.getMessage());
     }
 
     /**
@@ -271,8 +271,8 @@ public class PropertyLinkTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
-                DcCoreException.OData.NO_SUCH_ASSOCIATION.getMessage());
+                PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
+                PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getMessage());
     }
 
     /**

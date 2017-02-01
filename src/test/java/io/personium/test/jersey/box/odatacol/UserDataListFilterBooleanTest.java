@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -231,24 +231,24 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
     @SuppressWarnings("unchecked")
     protected void createTestData(String entityTypeName) {
         // Booleanの検索のテスト用エンティティタイプ作成
-        EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+        EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                 HttpStatus.SC_CREATED);
 
         // 真偽値が true / false / null のデータを作成
         JSONObject body = new JSONObject();
         body.put("__id", "boolTrue");
         body.put("bool", true);
-        UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+        UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                 cellName, boxName, colName, entityTypeName);
 
         body.put("__id", "boolFalse");
         body.put("bool", false);
-        UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+        UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                 cellName, boxName, colName, entityTypeName);
 
         body.put("__id", "boolNull");
         body.put("bool", null);
-        UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+        UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                 cellName, boxName, colName, entityTypeName);
     }
 
@@ -258,12 +258,12 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
      */
     protected void deleteTestData(String entityTypeName) {
         // UserODataの削除
-        UserDataUtils.delete(DcCoreConfig.getMasterToken(), -1, entityTypeName, "boolTrue", colName);
-        UserDataUtils.delete(DcCoreConfig.getMasterToken(), -1, entityTypeName, "boolFalse", colName);
-        UserDataUtils.delete(DcCoreConfig.getMasterToken(), -1, entityTypeName, "boolNull", colName);
+        UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), -1, entityTypeName, "boolTrue", colName);
+        UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), -1, entityTypeName, "boolFalse", colName);
+        UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), -1, entityTypeName, "boolNull", colName);
 
         // EntityTypeの削除
-        EntityTypeUtils.delete(colName, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.delete(colName, PersoniumUnitConfig.getMasterToken(),
                 MediaType.APPLICATION_JSON, entityTypeName, boxName, cellName, -1);
     }
 
@@ -281,7 +281,7 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=truth+ge+true&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -302,7 +302,7 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=startswith%28truth%2ctrue%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -323,7 +323,7 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=startswith%28truth%2cfalse%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -344,7 +344,7 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=substringof%28true%2ctruth%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -365,7 +365,7 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=substringof%28false%2ctruth%29")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();

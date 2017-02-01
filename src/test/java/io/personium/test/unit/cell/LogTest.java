@@ -41,7 +41,7 @@ import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.rs.cell.LogResource;
 import io.personium.test.categories.Unit;
 
@@ -376,7 +376,7 @@ public class LogTest {
             fail();
         } catch (Exception e) {
             Throwable t = e.getCause();
-            assertEquals(DcCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN.getMessage(), t.getMessage());
+            assertEquals(PersoniumCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN.getMessage(), t.getMessage());
         }
     }
 

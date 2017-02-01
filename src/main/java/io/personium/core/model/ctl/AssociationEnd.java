@@ -38,7 +38,7 @@ public class AssociationEnd {
     public static final EdmProperty.Builder P_ASSOCIATION_NAME = EdmProperty.newBuilder("Name")
             .setType(EdmSimpleType.STRING)
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_NAME);
+            .setAnnotations(Common.P_FORMAT_NAME);
 
     /**
      * Multiplicityプロパティの定義体.
@@ -46,7 +46,7 @@ public class AssociationEnd {
     public static final EdmProperty.Builder P_MULTIPLICITY = EdmProperty.newBuilder("Multiplicity")
             .setType(EdmSimpleType.STRING)
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_MULTIPLICITY);
+            .setAnnotations(Common.P_FORMAT_MULTIPLICITY);
 
     /**
      * _EntityType/Nameプロパティの定義体.
@@ -54,7 +54,7 @@ public class AssociationEnd {
     public static final EdmProperty.Builder P_ENTITYTYPE_NAME = EdmProperty.newBuilder("_EntityType.Name")
             .setType(EdmSimpleType.STRING)
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_NAME);
+            .setAnnotations(Common.P_FORMAT_NAME);
 
     /**
      * EntityType Builder.

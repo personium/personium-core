@@ -25,8 +25,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.odata4j.expression.ExpressionParser.TokenType;
 
-import io.personium.core.odata.DcExpressionParser;
-import io.personium.core.odata.DcExpressionParser.Token;
+import io.personium.core.odata.PersoniumExpressionParser;
+import io.personium.core.odata.PersoniumExpressionParser.Token;
 import io.personium.test.categories.Unit;
 
 /**
@@ -50,7 +50,7 @@ public class DcExpressionParserTest {
         tokenList.add(t2);
         tokenList.add(t3);
         tokenList.add(t4);
-        List<Token> result = DcExpressionParser.processParentheses(tokenList);
+        List<Token> result = PersoniumExpressionParser.processParentheses(tokenList);
         assertEquals("[[(][test][)]]", result.toString());
     }
 
@@ -68,7 +68,7 @@ public class DcExpressionParserTest {
         tokenList.add(t2);
         tokenList.add(t3);
         tokenList.add(t4);
-        List<Token> result = DcExpressionParser.processParentheses(tokenList);
+        List<Token> result = PersoniumExpressionParser.processParentheses(tokenList);
         assertEquals("[[(][true][)]]", result.toString());
     }
 
@@ -87,7 +87,7 @@ public class DcExpressionParserTest {
         tokenList.add(t3);
         tokenList.add(t4);
         try {
-            DcExpressionParser.processParentheses(tokenList);
+            PersoniumExpressionParser.processParentheses(tokenList);
         } catch (Exception e) {
             assertEquals("expected ':', found: [)]", e.getMessage());
         }
@@ -106,7 +106,7 @@ public class DcExpressionParserTest {
         tokenList.add(t2);
         tokenList.add(t3);
         try {
-            DcExpressionParser.processParentheses(tokenList);
+            PersoniumExpressionParser.processParentheses(tokenList);
         } catch (Exception e) {
             assertEquals("expected ':', found: eof", e.getMessage());
         }
@@ -123,7 +123,7 @@ public class DcExpressionParserTest {
         tokenList.add(t1);
         tokenList.add(t2);
         try {
-            DcExpressionParser.processParentheses(tokenList);
+            PersoniumExpressionParser.processParentheses(tokenList);
         } catch (Exception e) {
             assertEquals("unexpected token: eof", e.getMessage());
         }
@@ -144,7 +144,7 @@ public class DcExpressionParserTest {
         tokenList.add(t2);
         tokenList.add(t3);
         tokenList.add(t4);
-        List<Token> result = DcExpressionParser.processParentheses(tokenList);
+        List<Token> result = PersoniumExpressionParser.processParentheses(tokenList);
         assertEquals("[[/any], [test], [:]]", result.toString());
     }
 
@@ -170,7 +170,7 @@ public class DcExpressionParserTest {
         tokenList.add(t7);
 
         try {
-            DcExpressionParser.processParentheses(tokenList);
+            PersoniumExpressionParser.processParentheses(tokenList);
         } catch (Exception e) {
             assertEquals("illegal any predicate", e.getMessage());
         }
@@ -188,7 +188,7 @@ public class DcExpressionParserTest {
         tokenList.add(t1);
         tokenList.add(t2);
         tokenList.add(t3);
-        List<Token> result = DcExpressionParser.processParentheses(tokenList);
+        List<Token> result = PersoniumExpressionParser.processParentheses(tokenList);
         assertEquals("[[/any][(][)]]", result.toString());
     }
 
@@ -206,7 +206,7 @@ public class DcExpressionParserTest {
         tokenList.add(t2);
         tokenList.add(t3);
         tokenList.add(t4);
-        List<Token> result = DcExpressionParser.processParentheses(tokenList);
+        List<Token> result = PersoniumExpressionParser.processParentheses(tokenList);
         assertEquals("[[/all], [test], [:]]", result.toString());
     }
 

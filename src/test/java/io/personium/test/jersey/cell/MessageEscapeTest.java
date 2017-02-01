@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -238,8 +238,8 @@ public class MessageEscapeTest extends ODataCommon {
 
             // レスポンスボディのチェック
             ODataCommon.checkErrorResponseBody(response,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
                             .params(UrlUtils.cellRoot(targetCell)).getMessage());
 
         } finally {
@@ -282,8 +282,8 @@ public class MessageEscapeTest extends ODataCommon {
 
             // レスポンスボディのチェック
             ODataCommon.checkErrorResponseBody(response,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
                             .params("RequestRelation").getMessage());
 
         } finally {
@@ -327,8 +327,8 @@ public class MessageEscapeTest extends ODataCommon {
 
             // レスポンスボディのチェック
             ODataCommon.checkErrorResponseBody(response,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
                             .params("RequestRelationTarget").getMessage());
 
         } finally {

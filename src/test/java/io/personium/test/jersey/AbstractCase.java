@@ -45,7 +45,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.test.unit.core.UrlUtils;
@@ -63,7 +63,7 @@ public class AbstractCase extends JerseyTest {
     private Log log;
 
     /** マスタートークン. */
-    public static final String MASTER_TOKEN_NAME = DcCoreConfig.getMasterToken();
+    public static final String MASTER_TOKEN_NAME = PersoniumUnitConfig.getMasterToken();
     /** マスタートークン(Bearer + MASTER_TOKEN_NAME). */
     public static final String BEARER_MASTER_TOKEN = "Bearer " + MASTER_TOKEN_NAME;
     /** クエリフォーマット xml. */
@@ -133,7 +133,7 @@ public class AbstractCase extends JerseyTest {
      */
     @SuppressWarnings("unchecked")
     public final DcResponse createCell(final String cellName) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -162,7 +162,7 @@ public class AbstractCase extends JerseyTest {
      */
     @SuppressWarnings("unchecked")
     public final DcResponse createBox(final String cellName, final String boxName) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -189,7 +189,7 @@ public class AbstractCase extends JerseyTest {
      * @return レスポンスオブジェクト
      */
     public final DcResponse restGet(final String url) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         if (this.headers == null) {
@@ -215,7 +215,7 @@ public class AbstractCase extends JerseyTest {
      * @return レスポンスオブジェクト
      */
     public final DcResponse restPost(final String url, final String data) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -238,7 +238,7 @@ public class AbstractCase extends JerseyTest {
      * @return レスポンスオブジェクト
      */
     public final DcResponse restPut(final String url, final String data) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -260,7 +260,7 @@ public class AbstractCase extends JerseyTest {
      * @return レスポンスオブジェクト
      */
     public final DcResponse restDelete(final String url) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -283,7 +283,7 @@ public class AbstractCase extends JerseyTest {
      * @return res
      */
     public static DcResponse request(DcRequest req) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         String method = req.getMethod();
         try {

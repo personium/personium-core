@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -111,7 +111,7 @@ public class WebDAVCollectionAccessControlTest extends JerseyTest {
                 HttpStatus.SC_NOT_FOUND, "noneExistBox", "noneExistCollection",
                 "box/acl-setting.txt", "role", "noneExistBox", "<D:read/>", "");
         String boxUrl = UrlUtils.boxRoot(CELL_NAME, "noneExistBox");
-        DcCoreException expectedException = DcCoreException.Dav.BOX_NOT_FOUND.params(boxUrl);
+        PersoniumCoreException expectedException = PersoniumCoreException.Dav.BOX_NOT_FOUND.params(boxUrl);
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -130,7 +130,7 @@ public class WebDAVCollectionAccessControlTest extends JerseyTest {
         // リクエスト実行
         TResponse res = DavResourceUtils.deleteCollection(CELL_NAME, BOX_NAME, path, token,
                 HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -152,7 +152,7 @@ public class WebDAVCollectionAccessControlTest extends JerseyTest {
         // リクエスト実行
         TResponse res = DavResourceUtils.deleteCollection(CELL_NAME, BOX_NAME, path, token,
                 HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -210,7 +210,7 @@ public class WebDAVCollectionAccessControlTest extends JerseyTest {
         // リクエスト実行
         TResponse res = DavResourceUtils.createWebDavCollection(token, HttpStatus.SC_FORBIDDEN, CELL_NAME, BOX_NAME,
                 path);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -247,7 +247,7 @@ public class WebDAVCollectionAccessControlTest extends JerseyTest {
 
         // リクエスト実行
         TResponse res = DavResourceUtils.propfind(token, CELL_NAME, path, "1", HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -294,7 +294,7 @@ public class WebDAVCollectionAccessControlTest extends JerseyTest {
 
         // リクエスト実行
         TResponse res = DavResourceUtils.propfind(token, CELL_NAME, pathForPropfind, "1", HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -439,7 +439,7 @@ public class WebDAVCollectionAccessControlTest extends JerseyTest {
 
         // リクエスト実行
         TResponse res = DavResourceUtils.propfind(token, CELL_NAME, path, "1", HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -488,7 +488,7 @@ public class WebDAVCollectionAccessControlTest extends JerseyTest {
 
         // リクエスト実行
         TResponse res = DavResourceUtils.propfind(token, CELL_NAME, pathForPropfind, "1", HttpStatus.SC_FORBIDDEN);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -531,7 +531,7 @@ public class WebDAVCollectionAccessControlTest extends JerseyTest {
 
         // リクエスト実行
         TResponse res = DavResourceUtils.setProppatch(token, HttpStatus.SC_FORBIDDEN, CELL_NAME, BOX_NAME, path);
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -610,7 +610,7 @@ public class WebDAVCollectionAccessControlTest extends JerseyTest {
 
         // リクエスト実行
         TResponse res = setAcl(token, HttpStatus.SC_FORBIDDEN, path, ROLE, "write");
-        DcCoreException expectedException = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        PersoniumCoreException expectedException = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 

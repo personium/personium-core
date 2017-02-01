@@ -39,7 +39,7 @@ public class ExtCell {
     public static final EdmProperty.Builder P_URL = EdmProperty
             .newBuilder("Url")
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_CELL_URL)
+            .setAnnotations(Common.P_FORMAT_CELL_URL)
             .setType(EdmSimpleType.STRING);
 
     /**

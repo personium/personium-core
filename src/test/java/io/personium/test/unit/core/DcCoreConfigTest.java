@@ -27,7 +27,7 @@ import java.util.Properties;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 
 /**
@@ -39,7 +39,7 @@ public class DcCoreConfigTest {
     /**
      * ユニットテスト用クラス.
      */
-    public class UnitDcCoreConfig extends DcCoreConfig {
+    public class UnitDcCoreConfig extends PersoniumUnitConfig {
         /**
          * コンストラクタ.
          */

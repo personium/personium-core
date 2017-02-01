@@ -52,13 +52,13 @@ import org.odata4j.producer.InlineCount;
 import org.odata4j.producer.QueryInfo;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
-import io.personium.core.odata.DcFormatWriterFactory;
+import io.personium.core.odata.PersoniumFormatWriterFactory;
 
 /**
  * ODataのEntitiesリソース( id 指定がなくentitySetが指定されたURL）を扱うJAX-RSリソース.
@@ -112,7 +112,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         MediaType contentType = decideOutputFormat(accept, format);
         acceptableMediaTypes.add(contentType);
 
-        FormatWriter<EntitiesResponse> fw = DcFormatWriterFactory.getFormatWriter(EntitiesResponse.class,
+        FormatWriter<EntitiesResponse> fw = PersoniumFormatWriterFactory.getFormatWriter(EntitiesResponse.class,
                 acceptableMediaTypes, null, callback);
         UriInfo uriInfo2 = PersoniumCoreUtils.createUriInfo(uriInfo, 1);
 
@@ -220,13 +220,13 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         // 全文検索クエリqのバリデート
         if (fullTextSearchKeyword != null && (fullTextSearchKeyword.getBytes().length < 1
                 || fullTextSearchKeyword.getBytes().length > Q_MAX_LENGTH)) {
-            throw DcCoreException.OData.QUERY_INVALID_ERROR.params("q", fullTextSearchKeyword);
+            throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("q", fullTextSearchKeyword);
         }
 
         // $expand指定時は$topの最大値が変わるためチェックする
-        if (expand != null && top != null && top > DcCoreConfig.getTopQueryMaxSizeWithExpand()) {
+        if (expand != null && top != null && top > PersoniumUnitConfig.getTopQueryMaxSizeWithExpand()) {
             // Integerでそのまま値を返却すると、カンマが付くため、文字列でエラーメッセージを返却する
-            throw DcCoreException.OData.QUERY_INVALID_ERROR.params("$top", top.toString());
+            throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", top.toString());
         }
 
         Map<String, String> customOptions = new HashMap<String, String>();
@@ -276,7 +276,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         String[] uriPath = uriInfo.getPath().split("/");
         if (ReceivedMessage.EDM_TYPE_NAME.equals(uriPath[(uriPath.length - 1)])
                 || SentMessage.EDM_TYPE_NAME.equals(uriPath[(uriPath.length - 1)])) {
-            throw DcCoreException.Misc.METHOD_NOT_ALLOWED;
+            throw PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         }
     }
 }

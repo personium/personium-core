@@ -26,8 +26,8 @@ import org.apache.wink.webdav.model.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.DavCmp;
@@ -49,7 +49,7 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
     public CellCmpFsImpl(final Cell cell) {
         this.of = new ObjectFactory();
         this.cell = cell;
-        StringBuilder path = new StringBuilder(DcCoreConfig.getBlobStoreRoot());
+        StringBuilder path = new StringBuilder(PersoniumUnitConfig.getBlobStoreRoot());
         path.append(File.separatorChar);
         path.append(this.getCell().getDataBundleName());
         path.append(File.separator);
@@ -110,7 +110,7 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
     }
 
     @Override
-    public DcCoreException getNotFoundException() {
-        return DcCoreException.Dav.CELL_NOT_FOUND;
+    public PersoniumCoreException getNotFoundException() {
+        return PersoniumCoreException.Dav.CELL_NOT_FOUND;
     }
 }

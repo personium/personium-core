@@ -20,7 +20,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpStatus;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -196,7 +196,7 @@ public class AssociationEndUtils {
                 .with("collection", collection)
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", associationEndName)
                 .with("multiplicity", multiplicity)
                 .with("entityTypeName", entityTypeName)

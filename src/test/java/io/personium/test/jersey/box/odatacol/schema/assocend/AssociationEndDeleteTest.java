@@ -26,7 +26,7 @@ import org.odata4j.core.ODataConstants;
 import org.odata4j.core.ODataVersion;
 import org.odata4j.edm.EdmMultiplicity;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -66,7 +66,7 @@ public class AssociationEndDeleteTest extends AbstractCase {
                 .with("cell", "testcell1")
                 .with("box", "box1")
                 .with("collection", "setodata")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("entityTypeName", ENTITY_TYPE_NAME)
                 .with("ifMatch", "*")
@@ -89,7 +89,7 @@ public class AssociationEndDeleteTest extends AbstractCase {
                 .with("cell", "dummyTestCell")
                 .with("box", "box1")
                 .with("collection", "setodata")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("entityTypeName", ENTITY_TYPE_NAME)
                 .with("ifMatch", "*")
@@ -115,7 +115,7 @@ public class AssociationEndDeleteTest extends AbstractCase {
                 .with("cell", "testcell1")
                 .with("box", "test")
                 .with("collection", "setodata")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("entityTypeName", ENTITY_TYPE_NAME)
                 .with("ifMatch", "*")
@@ -141,7 +141,7 @@ public class AssociationEndDeleteTest extends AbstractCase {
                 .with("cell", "testcell1")
                 .with("box", "box1")
                 .with("collection", "test")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("entityTypeName", ENTITY_TYPE_NAME)
                 .with("ifMatch", "*")
@@ -164,7 +164,7 @@ public class AssociationEndDeleteTest extends AbstractCase {
                 .with("cell", "testcell1")
                 .with("box", "box1")
                 .with("collection", "setodata")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", "test")
                 .with("entityTypeName", ENTITY_TYPE_NAME)
                 .with("ifMatch", "*")
@@ -190,7 +190,7 @@ public class AssociationEndDeleteTest extends AbstractCase {
                 .with("cell", "testcell1")
                 .with("box", "box1")
                 .with("collection", "setodata")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("entityTypeName", "test")
                 .with("ifMatch", "*")
@@ -216,7 +216,7 @@ public class AssociationEndDeleteTest extends AbstractCase {
                 .with("collection", "setodata")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("multiplicity", EdmMultiplicity.MANY.getSymbolString())
                 .with("entityTypeName", ENTITY_TYPE_NAME)

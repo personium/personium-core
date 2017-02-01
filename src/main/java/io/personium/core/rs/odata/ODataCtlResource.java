@@ -22,7 +22,7 @@ import org.odata4j.core.OEntityId;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.core.OProperty;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.ExtRole;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.odata.OEntityWrapper;
@@ -112,7 +112,7 @@ public class ODataCtlResource {
         }
         if ((sourceEntity.equals(ExtRole.EDM_TYPE_NAME) && targetNavProp.equals(Relation.EDM_TYPE_NAME))
                 || (sourceEntity.equals(Relation.EDM_TYPE_NAME) && targetNavProp.equals(ExtRole.EDM_TYPE_NAME))) {
-            throw DcCoreException.OData.NO_SUCH_ASSOCIATION;
+            throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
     }
 }

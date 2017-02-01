@@ -52,9 +52,9 @@ import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchHits;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.event.EventBus;
@@ -98,7 +98,7 @@ public final class CellEsImpl implements Cell {
     /**
      * Esの検索結果出力上限.
      */
-    private static final int TOP_NUM = DcCoreConfig.getEsTopNum();
+    private static final int TOP_NUM = PersoniumUnitConfig.getEsTopNum();
 
     /**
      * logger.
@@ -250,7 +250,7 @@ public final class CellEsImpl implements Cell {
         // URLを生成してSet
         StringBuilder urlSb = new StringBuilder();
         UriBuilder uriBuilder = uriInfo.getBaseUriBuilder();
-        uriBuilder.scheme(DcCoreConfig.getUnitScheme());
+        uriBuilder.scheme(PersoniumUnitConfig.getUnitScheme());
         urlSb.append(uriBuilder.build().toASCIIString());
         urlSb.append(cellName);
         urlSb.append("/");
@@ -307,7 +307,7 @@ public final class CellEsImpl implements Cell {
                     log.info("Faild to cache Cell info.");
                 } else {
                     // その他のエラーの場合、サーバエラーとする
-                    throw DcCoreException.Server.SERVER_CONNECTION_ERROR;
+                    throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
                 }
             }
         } else {
@@ -345,7 +345,7 @@ public final class CellEsImpl implements Cell {
         try {
             EntityResponse resp = op.getEntity("Account", key, null);
             oew = (OEntityWrapper) resp.getEntity();
-        } catch (DcCoreException dce) {
+        } catch (PersoniumCoreException dce) {
             log.debug(dce.getMessage());
         }
         return oew;
@@ -503,8 +503,8 @@ public final class CellEsImpl implements Cell {
                     response = (EntitiesResponse) op.getNavProperty(ExtCell.EDM_TYPE_NAME,
                             OEntityKey.create(extCellUrl),
                             "_" + Role.EDM_TYPE_NAME, qi);
-                } catch (DcCoreException dce) {
-                    if (DcCoreException.OData.NO_SUCH_ENTITY != dce) {
+                } catch (PersoniumCoreException dce) {
+                    if (PersoniumCoreException.OData.NO_SUCH_ENTITY != dce) {
                         throw dce;
                     }
                 }
@@ -550,8 +550,8 @@ public final class CellEsImpl implements Cell {
                 response = (EntitiesResponse) op.getNavProperty(ExtCell.EDM_TYPE_NAME,
                         OEntityKey.create(extCellUrl),
                         "_" + Relation.EDM_TYPE_NAME, qi);
-            } catch (DcCoreException dce) {
-                if (DcCoreException.OData.NO_SUCH_ENTITY != dce) {
+            } catch (PersoniumCoreException dce) {
+                if (PersoniumCoreException.OData.NO_SUCH_ENTITY != dce) {
                     throw dce;
                 }
             }
@@ -725,7 +725,7 @@ public final class CellEsImpl implements Cell {
 
     @Override
     public String getDataBundleName() {
-        String unitUserName = DcCoreConfig.getEsUnitPrefix() + "_" + getDataBundleNameWithOutPrefix();
+        String unitUserName = PersoniumUnitConfig.getEsUnitPrefix() + "_" + getDataBundleNameWithOutPrefix();
         return unitUserName;
     }
 
@@ -847,7 +847,7 @@ public final class CellEsImpl implements Cell {
                 rUrl = new URL(roleUrl);
             }
         } catch (MalformedURLException e) {
-            throw DcCoreException.Dav.ROLE_NOT_FOUND.reason(e);
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND.reason(e);
         }
 
         Role role = null;
@@ -855,13 +855,13 @@ public final class CellEsImpl implements Cell {
             role = new Role(rUrl);
         } catch (MalformedURLException e) {
             log.info("Role URL:" + rUrl.toString());
-            throw DcCoreException.Dav.ROLE_NOT_FOUND;
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
 
         // ロールリソースのセルURL部分はACL設定対象のセルURLと異なるものを指定することは許さない
         if (!(this.getUrl().equals(role.getBaseUrl()))) {
-            DcCoreLog.Dav.ROLE_NOT_FOUND.params("Cell different").writeLog();
-            throw DcCoreException.Dav.ROLE_NOT_FOUND;
+            PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Cell different").writeLog();
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
         // Roleの検索
         List<Map<String, Object>> queries = new ArrayList<Map<String, Object>>();
@@ -875,7 +875,7 @@ public final class CellEsImpl implements Cell {
             // Roleがボックスと紐付く場合に、検索クエリを追加
             Box targetBox = this.getBoxForName(role.getBoxName());
             if (targetBox == null) {
-                throw DcCoreException.Dav.BOX_LINKED_BY_ROLE_NOT_FOUND.params(baseUrl);
+                throw PersoniumCoreException.Dav.BOX_LINKED_BY_ROLE_NOT_FOUND.params(baseUrl);
             }
             String boxId = targetBox.getId();
             filters.add(QueryMapFactory.termQuery("l." + Box.EDM_TYPE_NAME, boxId));
@@ -893,13 +893,13 @@ public final class CellEsImpl implements Cell {
 
         // 対象のRoleが存在しない場合はNull
         if (hits == null || hits.getCount() == 0) {
-            DcCoreLog.Dav.ROLE_NOT_FOUND.params("Not Hit").writeLog();
-            throw DcCoreException.Dav.ROLE_NOT_FOUND;
+            PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Not Hit").writeLog();
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
         // 対象のRoleが複数件取得された場合は内部エラーとする
         if (hits.getAllPages() > 1) {
-            DcCoreLog.OData.FOUND_MULTIPLE_RECORDS.params(hits.getAllPages()).writeLog();
-            throw DcCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT;
+            PersoniumCoreLog.OData.FOUND_MULTIPLE_RECORDS.params(hits.getAllPages()).writeLog();
+            throw PersoniumCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT;
         }
 
         PersoniumSearchHit hit = hits.getHits()[0];
@@ -909,8 +909,8 @@ public final class CellEsImpl implements Cell {
     @Override
     public void delete(boolean recursive, String unitUserName) {
         // Cellに対するアクセス数を確認して、アクセスをロックする
-        int maxLoopCount = Integer.valueOf(DcCoreConfig.getCellLockRetryTimes());
-        long interval = Long.valueOf(DcCoreConfig.getCellLockRetryInterval());
+        int maxLoopCount = Integer.valueOf(PersoniumUnitConfig.getCellLockRetryTimes());
+        long interval = Long.valueOf(PersoniumUnitConfig.getCellLockRetryInterval());
         waitCellAccessible(this.id, maxLoopCount, interval);
 
         CellLockManager.setBulkDeletionStatus(this.id);
@@ -947,10 +947,10 @@ public final class CellEsImpl implements Cell {
             try {
                 Thread.sleep(interval);
             } catch (InterruptedException e) {
-                throw DcCoreException.Misc.CONFLICT_CELLACCESS;
+                throw PersoniumCoreException.Misc.CONFLICT_CELLACCESS;
             }
         }
-        throw DcCoreException.Misc.CONFLICT_CELLACCESS;
+        throw PersoniumCoreException.Misc.CONFLICT_CELLACCESS;
     }
 
     private static final int DAVFILE_DEFAULT_FETCH_COUNT = 1000;
@@ -967,8 +967,8 @@ public final class CellEsImpl implements Cell {
 
         // 1000件ずつ、WebDavファイルの管理情報件数まで以下を実施する
         int fetchCount = DAVFILE_DEFAULT_FETCH_COUNT;
-        BinaryDataAccessor accessor = new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(), unitUserNameWithOutPrefix,
-                DcCoreConfig.getPhysicalDeleteMode(), DcCoreConfig.getFsyncEnabled());
+        BinaryDataAccessor accessor = new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(), unitUserNameWithOutPrefix,
+                PersoniumUnitConfig.getPhysicalDeleteMode(), PersoniumUnitConfig.getFsyncEnabled());
         for (int i = 0; i <= davfileCount; i += fetchCount) {
             // WebDavファイルのID一覧を取得する
             List<String> davFileIdList = cellAccessor.getDavFileIdList(this.getId(), unitUserNameWithOutPrefix,

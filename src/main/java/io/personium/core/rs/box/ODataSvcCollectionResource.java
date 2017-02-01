@@ -30,7 +30,7 @@ import javax.ws.rs.core.Response;
 import org.apache.wink.webdav.WebDAVMethod;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
@@ -116,7 +116,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
 
         // ODataのスキーマ・データがすでにある場合、処理を失敗させる。
         if (!this.davRsCmp.getDavCmp().isEmpty()) {
-            throw DcCoreException.Dav.HAS_CHILDREN;
+            throw PersoniumCoreException.Dav.HAS_CHILDREN;
         }
         return this.davRsCmp.getDavCmp().delete(null, false).build();
     }

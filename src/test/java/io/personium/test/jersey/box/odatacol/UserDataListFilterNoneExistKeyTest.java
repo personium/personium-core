@@ -24,8 +24,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -85,14 +85,14 @@ public class UserDataListFilterNoneExistKeyTest extends AbstractUserDataTest {
                     .with("query", "?\\$filter=dynamicProperty+eq+%27dynamicPropertyValue%27"
                             + "+or+noneExistName+eq+%27noneExistValue%27")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
 
             // エラーコードとメッセージのチェック
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.UNKNOWN_QUERY_KEY.getCode(),
-                    DcCoreException.OData.UNKNOWN_QUERY_KEY.params("noneExistName").getMessage());
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.UNKNOWN_QUERY_KEY.getCode(),
+                    PersoniumCoreException.OData.UNKNOWN_QUERY_KEY.params("noneExistName").getMessage());
         } finally {
             // ユーザデータ削除
             deleteUserData(userDataId);
@@ -134,14 +134,14 @@ public class UserDataListFilterNoneExistKeyTest extends AbstractUserDataTest {
                             + "+and+noneExistName+eq+%27noneExistValue%27"
                             + "&\\$inlinecount=allpages")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
 
             // エラーコードとメッセージのチェック
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.UNKNOWN_QUERY_KEY.getCode(),
-                    DcCoreException.OData.UNKNOWN_QUERY_KEY.params("noneExistName").getMessage());
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.UNKNOWN_QUERY_KEY.getCode(),
+                    PersoniumCoreException.OData.UNKNOWN_QUERY_KEY.params("noneExistName").getMessage());
         } finally {
             // ユーザデータ削除
             deleteUserData(userDataId);
@@ -182,14 +182,14 @@ public class UserDataListFilterNoneExistKeyTest extends AbstractUserDataTest {
                     .with("query", "?\\$filter=noneExistName+eq+%27noneExistValue%27"
                             + "&\\$inlinecount=allpages")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
 
             // エラーコードとメッセージのチェック
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.UNKNOWN_QUERY_KEY.getCode(),
-                    DcCoreException.OData.UNKNOWN_QUERY_KEY.params("noneExistName").getMessage());
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.UNKNOWN_QUERY_KEY.getCode(),
+                    PersoniumCoreException.OData.UNKNOWN_QUERY_KEY.params("noneExistName").getMessage());
         } finally {
             // ユーザデータ削除
             deleteUserData(userDataId);
@@ -213,14 +213,14 @@ public class UserDataListFilterNoneExistKeyTest extends AbstractUserDataTest {
                 .with("query", "?\\$filter=noneExistName+eq+%27noneExistValue%27"
                         + "&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
 
         // エラーコードとメッセージのチェック
-        ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.UNKNOWN_QUERY_KEY.getCode(),
-                DcCoreException.OData.UNKNOWN_QUERY_KEY.params("noneExistName").getMessage());
+        ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.UNKNOWN_QUERY_KEY.getCode(),
+                PersoniumCoreException.OData.UNKNOWN_QUERY_KEY.params("noneExistName").getMessage());
     }
 
     /**
@@ -251,7 +251,7 @@ public class UserDataListFilterNoneExistKeyTest extends AbstractUserDataTest {
                 .with("query", "?\\$filter=dynamicProperty+eq+%27noneExistValue%27"
                         + "&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();

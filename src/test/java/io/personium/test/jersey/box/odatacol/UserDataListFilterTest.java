@@ -37,8 +37,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -105,7 +105,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$filter=dynamicProperty+eq+%27dynamicPropertyValue%27")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -176,8 +176,8 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
             res = UserDataUtils.list(cellName, boxName, colName, entityTypeName, query,
                     AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_BAD_REQUEST); // 不正なデータのため400エラーとなること
             ODataCommon.checkErrorResponseBody(res,
-                    DcCoreException.OData.OPERATOR_AND_OPERAND_UNABLE_TO_UNESCAPE.getCode(),
-                    DcCoreException.OData.OPERATOR_AND_OPERAND_UNABLE_TO_UNESCAPE.params("value_\\u001_value")
+                    PersoniumCoreException.OData.OPERATOR_AND_OPERAND_UNABLE_TO_UNESCAPE.getCode(),
+                    PersoniumCoreException.OData.OPERATOR_AND_OPERAND_UNABLE_TO_UNESCAPE.params("value_\\u001_value")
                             .getMessage());
         } finally {
             deleteUserData(userDataId1);
@@ -200,7 +200,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=number+eq+5&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -214,7 +214,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
             String resId = (String) ((JSONObject) result).get("__id");
             // 取得した__idから一件取得する
             TResponse responseUnit = getUserData(cellName, boxName, colName, sdEntityTypeName,
-                    resId, DcCoreConfig.getMasterToken(), "", HttpStatus.SC_OK);
+                    resId, PersoniumUnitConfig.getMasterToken(), "", HttpStatus.SC_OK);
             // レスポンスヘッダからEtag情報を取得する
             etag.put(resId, responseUnit.getHeader(HttpHeaders.ETAG));
         }
@@ -256,7 +256,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=decimal+eq+5.1&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -270,7 +270,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
             String resId = (String) ((JSONObject) result).get("__id");
             // 取得した__idから一件取得する
             TResponse responseUnit = getUserData(cellName, boxName, colName, sdEntityTypeName,
-                    resId, DcCoreConfig.getMasterToken(), "", HttpStatus.SC_OK);
+                    resId, PersoniumUnitConfig.getMasterToken(), "", HttpStatus.SC_OK);
             // レスポンスヘッダからEtag情報を取得する
             etag.put(resId, responseUnit.getHeader(HttpHeaders.ETAG));
         }
@@ -313,7 +313,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=number+eq+null&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -327,7 +327,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
             String resId = (String) ((JSONObject) result).get("__id");
             // 取得した__idから一件取得する
             TResponse responseUnit = getUserData(cellName, boxName, colName, sdEntityTypeName,
-                    resId, DcCoreConfig.getMasterToken(), "", HttpStatus.SC_OK);
+                    resId, PersoniumUnitConfig.getMasterToken(), "", HttpStatus.SC_OK);
             // レスポンスヘッダからEtag情報を取得する
             etag.put(resId, responseUnit.getHeader(HttpHeaders.ETAG));
         }
@@ -372,7 +372,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=__id+eq+%27userdata006%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -424,7 +424,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$filter=dynamicPropertyBoolean+eq+true")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -564,7 +564,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=__id+gt+%27userdata006%27+and+__id+lt+%27userdata008%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -587,7 +587,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=__id+ge+%27userdata006%27+and+__id+le+%27userdata008%27&\\$orderby=__id")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -634,7 +634,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     .with("entityType", sdEntityTypeName)
                     .with("query", "?\\$filter=startswith(__id,%27userdata006%27)&\\$orderby=__id")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -651,7 +651,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
             ODataCommon.checkCommonResponseUri(response.bodyAsJson(), uri);
 
         } finally {
-            deleteUserData(cellName, boxName, colName, sdEntityTypeName, userDataId, DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, sdEntityTypeName, userDataId, PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
             deleteDynamicProperty("dynamicProperty");
         }
@@ -672,7 +672,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=substringof(%27userdata006%27,__id)")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -718,7 +718,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     .with("entityType", sdEntityTypeName)
                     .with("query", "?\\$filter=__published+eq+" + date.substring(6, 19))
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -733,7 +733,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
 
             ODataCommon.checkCommonResponseUri(response.bodyAsJson(), uri);
         } finally {
-            deleteUserData(cellName, boxName, colName, sdEntityTypeName, userDataId, DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, sdEntityTypeName, userDataId, PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
             deleteDynamicProperty("dynamicProperty");
         }
@@ -778,7 +778,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             ODataCommon.checkCommonResponseUri(searchResponse.bodyAsJson(), uri);
         } finally {
-            deleteUserData(cellName, boxName, colName, sdEntityTypeName, userDataId, DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, sdEntityTypeName, userDataId, PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
             deleteDynamicProperty("dynamicProperty");
         }
@@ -813,7 +813,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     .with("entityType", sdEntityTypeName)
                     .with("query", "?\\$filter=__updated+eq+" + date.substring(6, 19))
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -828,7 +828,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
 
             ODataCommon.checkCommonResponseUri(response.bodyAsJson(), uri);
         } finally {
-            deleteUserData(cellName, boxName, colName, sdEntityTypeName, userDataId, DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, sdEntityTypeName, userDataId, PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
             deleteDynamicProperty("dynamicProperty");
         }
@@ -874,7 +874,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             ODataCommon.checkCommonResponseUri(searchResponse.bodyAsJson(), uri);
         } finally {
-            deleteUserData(cellName, boxName, colName, sdEntityTypeName, userDataId, DcCoreConfig.getMasterToken(),
+            deleteUserData(cellName, boxName, colName, sdEntityTypeName, userDataId, PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
             deleteDynamicProperty("dynamicProperty");
         }
@@ -894,7 +894,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=number+ge+5+and+number+lt+6&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -937,7 +937,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=decimal+gt+8.1+or+decimal+le+0.1&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -990,7 +990,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=test+ge+'test5'+and+test+le+'test6'&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -1043,7 +1043,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=test+gt+'test7'+and+number+lt+9&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -1086,7 +1086,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=test+ge+null&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1098,7 +1098,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=test+gt+null&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1110,7 +1110,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=test+le+null&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1122,7 +1122,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=test+lt+null&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1142,7 +1142,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=tes+ge+null&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1154,7 +1154,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=tes+gt+null&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1166,7 +1166,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=tes+le+null&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1178,7 +1178,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=tes+lt+null&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1198,7 +1198,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$filter=test+ge&\\$inlinecount=allpages")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1219,7 +1219,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("query", "?\\$filter=dynamicProperty+eq+%27dynamicPropertyValue1"
                         + "%27+and+sample+eq+%27sample1%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -1273,7 +1273,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("query", "?\\$filter=dynamicProperty+eq+%27dynamicPropertyValue1"
                         + "%27+and+sample+eq+%27sample1%27+and+test+eq+%27test1%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -1332,7 +1332,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "?\\$filter=dynamicProperty+eq+%27dynamicPropertyValue1%27+and")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1351,7 +1351,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "?\\$filter=and+dynamicProperty+eq+%27dynamicPropertyValue1%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1372,7 +1372,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("query", "?\\$filter=dynamicProperty+eq+%27dynamicPropertyValue5%27"
                         + "+or+sample+eq+%27sample7%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -1425,7 +1425,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("query", "?\\$filter=dynamicProperty+eq+%27dynamicPropertyValue5%27"
                         + "+or+sample+eq+%27sample7%27+or+test+eq+%27test9%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -1528,7 +1528,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "?\\$filter=dynamicProperty+eq+%27dynamicPropertyValue1%27+or")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1547,7 +1547,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "?\\$filter=or+dynamicProperty+eq+%27dynamicPropertyValue1%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -1569,7 +1569,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                         + "+and+(dynamicProperty+eq+%27dynamicPropertyValue1%27"
                         + "+or+test+eq+%27test2%27+or+test+eq+%27test6%27)")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -1613,7 +1613,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                         + "+and+dynamicProperty+eq+%27dynamicPropertyValue1%27)"
                         + "+and+(test+eq+%27test1%27+or+sample+eq+%27sample1%27)")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -1668,7 +1668,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                         + "+and+(dynamicProperty+eq+%27dynamicPropertyValue1%27"
                         + "+or+(test+eq+%27test6%27+or+sample+eq+%27sample2%27))")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -1763,7 +1763,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                         + "+and+(dynamicProperty+eq+%27dynamicPropertyValue1%27"
                         + "+or+test+eq+%27test2%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -2178,7 +2178,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", query)
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(code)
                 .debug();

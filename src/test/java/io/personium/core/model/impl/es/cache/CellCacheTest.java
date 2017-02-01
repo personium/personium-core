@@ -36,7 +36,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 import io.personium.test.categories.Unit;
@@ -46,7 +46,7 @@ import io.personium.test.categories.Unit;
  */
 @Category({Unit.class })
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({CellCache.class, DcCoreConfig.class })
+@PrepareForTest({CellCache.class, PersoniumUnitConfig.class })
 public class CellCacheTest {
 
     /**
@@ -69,8 +69,8 @@ public class CellCacheTest {
         PowerMockito.when(CellCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isCellCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isCellCacheEnabled").thenReturn(true);
 
         // getメソッドのテスト
         Map<String, Object> cache = CellCache.get(cellName);
@@ -97,8 +97,8 @@ public class CellCacheTest {
         PowerMockito.when(CellCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isCellCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isCellCacheEnabled").thenReturn(true);
 
         // getメソッドのテスト
         Map<String, Object> cache = CellCache.get(cellName);
@@ -125,8 +125,8 @@ public class CellCacheTest {
         PowerMockito.when(CellCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を無効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isCellCacheEnabled").thenReturn(false);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isCellCacheEnabled").thenReturn(false);
 
         // キャッシュ登録されないこと
         CellCache.cache(cellName, cellToCache);
@@ -157,8 +157,8 @@ public class CellCacheTest {
         PowerMockito.when(CellCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isCellCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isCellCacheEnabled").thenReturn(true);
 
         // 事前にキャッシュを登録
         CellCache.cache(cellName, cellToCache);
@@ -167,8 +167,8 @@ public class CellCacheTest {
         assertThat(cellFromCache).isEqualTo(cellFromCache);
 
         // キャッシュの設定を無効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isCellCacheEnabled").thenReturn(false);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isCellCacheEnabled").thenReturn(false);
 
         // キャッシュを取得できないこと
         cellFromCache = CellCache.get(cellName);
@@ -199,8 +199,8 @@ public class CellCacheTest {
         PowerMockito.when(CellCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isCellCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isCellCacheEnabled").thenReturn(true);
 
         // キャッシュに登録できること
         CellCache.cache(cellName, cellToCache);

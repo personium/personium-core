@@ -29,7 +29,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.common.utils.PersoniumCoreUtils.HttpHeaders;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.test.categories.Integration;
@@ -105,7 +105,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/__ctl")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -120,7 +120,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/__ctl")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -135,7 +135,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/__ctl/\\$metadata")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -150,7 +150,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/__ctl/\\$metadata")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -165,7 +165,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/__ctl/Cell")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -180,7 +180,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/__ctl/Cell")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -195,7 +195,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/__ctl/Cell('hoho')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -210,7 +210,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/__ctl/Cell('hoho')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_NOT_FOUND)
                         .debug();
@@ -225,7 +225,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__auth")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -240,7 +240,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__auth")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED)
                         .debug();
@@ -255,7 +255,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -270,7 +270,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -285,7 +285,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -300,7 +300,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -315,7 +315,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/Account")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -330,7 +330,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/Account")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -345,7 +345,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/Account('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -360,7 +360,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/Account('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_NOT_FOUND)
                         .debug();
@@ -375,7 +375,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/" + SentMessage.EDM_TYPE_NAME + "('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -390,7 +390,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/" + SentMessage.EDM_TYPE_NAME + "('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_NOT_FOUND)
                         .debug();
@@ -405,7 +405,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/" + SentMessage.EDM_TYPE_NAME)
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -420,7 +420,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/" + SentMessage.EDM_TYPE_NAME)
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -435,7 +435,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/" + ReceivedMessage.EDM_TYPE_NAME)
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -450,7 +450,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/" + ReceivedMessage.EDM_TYPE_NAME)
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -465,7 +465,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/" + ReceivedMessage.EDM_TYPE_NAME + "('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -480,7 +480,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/" + ReceivedMessage.EDM_TYPE_NAME + "('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_NOT_FOUND)
                         .debug();
@@ -495,7 +495,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/ExtRole")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -510,7 +510,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/ExtRole")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -525,7 +525,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/ExtRole('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -540,7 +540,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/ExtRole('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_NOT_FOUND)
                         .debug();
@@ -555,7 +555,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/Relation")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -570,7 +570,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/Relation")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -585,7 +585,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/Relation('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -600,7 +600,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/Relation('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_NOT_FOUND)
                         .debug();
@@ -615,7 +615,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/Role")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -630,7 +630,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/Role")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -645,7 +645,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/Role('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -660,7 +660,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/Role('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_NOT_FOUND)
                         .debug();
@@ -675,7 +675,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/Account('account14')/\\$links/_Role")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -690,7 +690,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/Account('account4')/\\$links/_Role")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -705,7 +705,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/Box")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -720,7 +720,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/Box")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -735,7 +735,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/Box('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -750,7 +750,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/Box('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_NOT_FOUND)
                         .debug();
@@ -765,7 +765,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/ExtCell")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -780,7 +780,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/ExtCell")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -795,7 +795,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/__ctl/ExtCell('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -810,7 +810,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/__ctl/ExtCell('id')")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_NOT_FOUND)
                         .debug();
@@ -825,7 +825,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/box1")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -840,7 +840,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/box1")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -859,7 +859,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight.txt")
                             .with("path", "/testcell1/box1/servicecol")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_OK)
                             .debug();
@@ -882,7 +882,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                             .with("path", "/testcell1/box1/servicecol")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED)
                             .debug();
@@ -907,7 +907,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight.txt")
                             .with("path", "/testcell1/box1/servicecol/service")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_OK)
                             .debug();
@@ -932,7 +932,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                             .with("path", "/testcell1/box1/servicecol/service")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED)
                             .debug();
@@ -955,7 +955,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight.txt")
                             .with("path", "/testcell1/box1/davcol")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_OK)
                             .debug();
@@ -978,7 +978,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                             .with("path", "/testcell1/box1/davcol")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_OK)
                             .debug();
@@ -1001,7 +1001,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight.txt")
                             .with("path", "/testcell1/box1/davcol/test.txt")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_OK)
                             .debug();
@@ -1024,7 +1024,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                             .with("path", "/testcell1/box1/davcol/test.txt")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_NOT_FOUND)
                             .debug();
@@ -1047,7 +1047,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight.txt")
                             .with("path", "/testcell1/box1/odatacol")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_OK)
                             .debug();
@@ -1070,7 +1070,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                             .with("path", "/testcell1/box1/odatacol")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_OK)
                             .debug();
@@ -1093,7 +1093,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight.txt")
                             .with("path", "/testcell1/box1/odatacol/\\$metadata")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_OK)
                             .debug();
@@ -1116,7 +1116,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                             .with("path", "/testcell1/box1/odatacol/\\$metadata")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_OK)
                             .debug();
@@ -1138,20 +1138,20 @@ public class CrossDomainTest extends JerseyTest {
             createODataCollection();
 
             // EntityTypeの作成
-            EntityTypeUtils.create(TEST_CELL1, DcCoreConfig.getMasterToken(), ODATA_COL,
+            EntityTypeUtils.create(TEST_CELL1, PersoniumUnitConfig.getMasterToken(), ODATA_COL,
                     entSetName, HttpStatus.SC_CREATED);
 
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight.txt")
                             .with("path", "/testcell1/box1/odatacol/entity")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_OK)
                             .debug();
             checkXHR2Header(response, "OPTIONS, GET, POST");
         } finally {
             // EntityTypeの削除
-            EntityTypeUtils.delete(ODATA_COL, DcCoreConfig.getMasterToken(), "application/xml",
+            EntityTypeUtils.delete(ODATA_COL, PersoniumUnitConfig.getMasterToken(), "application/xml",
                     entSetName, TEST_CELL1, -1);
             // コレクションの削除
             deleteODataCollection();
@@ -1169,20 +1169,20 @@ public class CrossDomainTest extends JerseyTest {
             createODataCollection();
 
             // EntityTypeの作成
-            EntityTypeUtils.create(TEST_CELL1, DcCoreConfig.getMasterToken(), ODATA_COL,
+            EntityTypeUtils.create(TEST_CELL1, PersoniumUnitConfig.getMasterToken(), ODATA_COL,
                     entSetName, HttpStatus.SC_CREATED);
 
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                             .with("path", "/testcell1/box1/odatacol/entity")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_OK)
                             .debug();
             checkXHR2HeaderOnlyOrigin(response);
         } finally {
             // EntityTypeの削除
-            EntityTypeUtils.delete(ODATA_COL, DcCoreConfig.getMasterToken(), "application/xml",
+            EntityTypeUtils.delete(ODATA_COL, PersoniumUnitConfig.getMasterToken(), "application/xml",
                     entSetName, TEST_CELL1, -1);
             // コレクションの削除
             deleteODataCollection();
@@ -1202,20 +1202,20 @@ public class CrossDomainTest extends JerseyTest {
             createODataCollection();
 
             // EntityTypeの作成
-            EntityTypeUtils.create(TEST_CELL1, DcCoreConfig.getMasterToken(), ODATA_COL,
+            EntityTypeUtils.create(TEST_CELL1, PersoniumUnitConfig.getMasterToken(), ODATA_COL,
                     entSetName, HttpStatus.SC_CREATED);
 
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight.txt")
                             .with("path", "/testcell1/box1/odatacol/id")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_OK)
                             .debug();
             checkXHR2Header(response, "OPTIONS, GET, PUT, MERGE, DELETE");
         } finally {
             // EntityTypeの削除
-            EntityTypeUtils.delete(ODATA_COL, DcCoreConfig.getMasterToken(), "application/xml",
+            EntityTypeUtils.delete(ODATA_COL, PersoniumUnitConfig.getMasterToken(), "application/xml",
                     entSetName, TEST_CELL1, -1);
             // コレクションの削除
             deleteODataCollection();
@@ -1235,7 +1235,7 @@ public class CrossDomainTest extends JerseyTest {
             TResponse response =
                     Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                             .with("path", "/testcell1/box1/odatacol/entity('id')")
-                            .with("token", DcCoreConfig.getMasterToken())
+                            .with("token", PersoniumUnitConfig.getMasterToken())
                             .returns()
                             .statusCode(HttpStatus.SC_NOT_FOUND)
                             .debug();
@@ -1254,7 +1254,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/box1/setodata/SalesDetail('userdata001')/_Sales")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -1269,7 +1269,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
                         .with("path", "/testcell1/box1/odatacol/SalesDetail('userdata001')/_Sales")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_NOT_FOUND)
                         .debug();
@@ -1284,7 +1284,7 @@ public class CrossDomainTest extends JerseyTest {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
                         .with("path", "/testcell1/box1/setodata/SalesDetail('userdata001')/_Sales")
-                        .with("token", DcCoreConfig.getMasterToken())
+                        .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
@@ -1393,8 +1393,8 @@ public class CrossDomainTest extends JerseyTest {
      * @params allowMethod 許可メソッド
      */
     private void checkDcVersionHeader(TResponse response) {
-        if (DcCoreConfig.getCoreVersion().compareTo("1.1.0") >= 0) {
-            response.checkHeader(HttpHeaders.X_PERSONIUM_VERSION, DcCoreConfig.getCoreVersion());
+        if (PersoniumUnitConfig.getCoreVersion().compareTo("1.1.0") >= 0) {
+            response.checkHeader(HttpHeaders.X_PERSONIUM_VERSION, PersoniumUnitConfig.getCoreVersion());
         } else {
             // Versionが1.1.0より古い場合は、X-Personium-Versionヘッダーを返さない
             response.checkHeader(HttpHeaders.X_PERSONIUM_VERSION, null);

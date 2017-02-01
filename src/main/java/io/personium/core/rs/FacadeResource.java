@@ -31,7 +31,7 @@ import org.apache.commons.codec.CharEncoding;
 import org.apache.http.HttpHeaders;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Cell;
 import io.personium.core.model.ModelFactory;
@@ -62,7 +62,7 @@ public class FacadeResource {
      * @param authzHeaderValue Authorization ヘッダ
      * @param host Host ヘッダ
      * @param uriInfo UriInfo
-     * @param xDcUnitUser X-Personium-UnitUserヘッダ
+     * @param xPersoniumUnitUser X-Personium-UnitUserヘッダ
      * @param httpServletRequest HttpServletRequest
      * @return CellResourceオブジェクトまたはResponseオブジェクト
      */
@@ -72,20 +72,20 @@ public class FacadeResource {
             @QueryParam(COOKIE_PEER_QUERY_KEY) final String cookiePeer,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeaderValue,
             @HeaderParam(HttpHeaders.HOST) final String host,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_UNIT_USER) final String xDcUnitUser,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_UNIT_USER) final String xPersoniumUnitUser,
             @Context final UriInfo uriInfo,
             @Context HttpServletRequest httpServletRequest) {
         Cell cell = ModelFactory.cell(uriInfo);
         AccessContext ac = AccessContext.create(authzHeaderValue,
                 uriInfo, cookiePeer, cookieAuthValue, cell, uriInfo.getBaseUri().toString(),
-                host, xDcUnitUser);
+                host, xPersoniumUnitUser);
         if (cell == null) {
-            throw DcCoreException.Dav.CELL_NOT_FOUND;
+            throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
         }
 
         long cellStatus = CellLockManager.getCellStatus(cell.getId());
         if (cellStatus == CellLockManager.CELL_STATUS_BULK_DELETION) {
-            throw DcCoreException.Dav.CELL_NOT_FOUND;
+            throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
         }
 
         CellLockManager.incrementReferenceCount(cell.getId());
@@ -98,7 +98,7 @@ public class FacadeResource {
      * @param cookiePeer p_cookie_peerクエリに指定された値
      * @param authzHeaderValue Authorization ヘッダ
      * @param host Host ヘッダ
-     * @param xDcUnitUser ヘッダ
+     * @param xPersoniumUnitUser ヘッダ
      * @param uriInfo UriInfo
      * @return UnitCtlResourceオブジェクト
      */
@@ -108,18 +108,18 @@ public class FacadeResource {
             @QueryParam(COOKIE_PEER_QUERY_KEY) final String cookiePeer,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeaderValue,
             @HeaderParam(HttpHeaders.HOST) final String host,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_UNIT_USER) final String xDcUnitUser,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_UNIT_USER) final String xPersoniumUnitUser,
             @Context final UriInfo uriInfo) {
         AccessContext ac = AccessContext.create(authzHeaderValue,
                 uriInfo, cookiePeer, cookieAuthValue, null, uriInfo.getBaseUri().toString(),
-                host, xDcUnitUser);
+                host, xPersoniumUnitUser);
         return new UnitCtlResource(ac, uriInfo);
     }
 
     /**
      * @param authzHeaderValue Authorization ヘッダ
      * @param host Host ヘッダ
-     * @param xDcUnitUser ヘッダ
+     * @param xPersoniumUnitUser ヘッダ
      * @param uriInfo UriInfo
      * @return UnitCtlResourceオブジェクト
      */
@@ -127,7 +127,7 @@ public class FacadeResource {
     public final StatusResource status(
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeaderValue,
             @HeaderParam(HttpHeaders.HOST) final String host,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_UNIT_USER) final String xDcUnitUser,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_UNIT_USER) final String xPersoniumUnitUser,
             @Context final UriInfo uriInfo) {
         return new StatusResource();
     }

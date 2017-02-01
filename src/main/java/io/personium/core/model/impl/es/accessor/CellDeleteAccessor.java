@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.ads.AdsWriteFailureLogException;
 import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.ads.AdsWriteFailureLogWriter;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.model.impl.es.ads.Ads;
 import io.personium.core.model.impl.es.ads.AdsConnectionException;
 import io.personium.core.model.impl.es.ads.AdsException;
@@ -44,15 +44,15 @@ public class CellDeleteAccessor {
      */
     public CellDeleteAccessor() {
         try {
-            if (DcCoreConfig.getEsAdsType().equals(DcCoreConfig.ES.ADS.TYPE_JDBC)) {
+            if (PersoniumUnitConfig.getEsAdsType().equals(PersoniumUnitConfig.ES.ADS.TYPE_JDBC)) {
                 ads = new JdbcAds();
             } else {
                 ads = null;
             }
         } catch (AdsConnectionException e) {
             // 接続エラー時は接続エラーのログを出力する.
-            DcCoreLog.Server.ADS_CONNECTION_ERROR.params(e.getMessage()).reason(e).writeLog();
-            throw DcCoreException.Server.ADS_CONNECTION_ERROR;
+            PersoniumCoreLog.Server.ADS_CONNECTION_ERROR.params(e.getMessage()).reason(e).writeLog();
+            throw PersoniumCoreException.Server.ADS_CONNECTION_ERROR;
         }
     }
 
@@ -100,17 +100,17 @@ public class CellDeleteAccessor {
             // Cell再帰削除のときは、DB名、Cell IDのみログに書込む
             // ※Cell再帰削除時にAdsに登録する情報としては、他にTable名があるが、ここでは意識しない
             AdsWriteFailureLogWriter adsWriteFailureLogWriter = AdsWriteFailureLogWriter.getInstance(
-                    DcCoreConfig.getAdsWriteFailureLogDir(),
-                    DcCoreConfig.getCoreVersion(),
-                    DcCoreConfig.getAdsWriteFailureLogPhysicalDelete());
+                    PersoniumUnitConfig.getAdsWriteFailureLogDir(),
+                    PersoniumUnitConfig.getCoreVersion(),
+                    PersoniumUnitConfig.getAdsWriteFailureLogPhysicalDelete());
             AdsWriteFailureLogInfo loginfo = new AdsWriteFailureLogInfo(
                     dbName, null, null, null, cellId,
                     AdsWriteFailureLogInfo.OperationKind.PCS_MANAGEMENT_INSERT, 0, 0);
             try {
                 adsWriteFailureLogWriter.writeActiveFile(loginfo);
             } catch (AdsWriteFailureLogException e2) {
-                DcCoreLog.Server.WRITE_ADS_FAILURE_LOG_ERROR.reason(e2).writeLog();
-                DcCoreLog.Server.WRITE_ADS_FAILURE_LOG_INFO.params(loginfo.toString());
+                PersoniumCoreLog.Server.WRITE_ADS_FAILURE_LOG_ERROR.reason(e2).writeLog();
+                PersoniumCoreLog.Server.WRITE_ADS_FAILURE_LOG_INFO.params(loginfo.toString());
             }
 
         }

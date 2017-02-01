@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -104,7 +104,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -120,11 +120,11 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -170,7 +170,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -186,11 +186,11 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, DcCoreConfig.getMasterToken(), -1);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), -1);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), -1);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -236,7 +236,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -256,11 +256,11 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId + 1, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -306,7 +306,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -322,11 +322,11 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -372,7 +372,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -392,11 +392,11 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId + 1, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -442,7 +442,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -458,11 +458,11 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -508,7 +508,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -524,11 +524,11 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -574,7 +574,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -594,11 +594,11 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId + 1, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -639,7 +639,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -652,10 +652,10 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                 ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                         Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, HttpStatus.SC_NO_CONTENT);
                 deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                        targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                        targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             }
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -696,7 +696,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -709,10 +709,10 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                 ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                         Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, HttpStatus.SC_NO_CONTENT);
                 deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                        targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                        targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             }
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -753,7 +753,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -766,10 +766,10 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                 ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                         Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, HttpStatus.SC_NO_CONTENT);
                 deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                        targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                        targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             }
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -808,7 +808,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -820,9 +820,9 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -861,7 +861,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -873,9 +873,9 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -914,7 +914,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -926,9 +926,9 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -967,7 +967,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -979,9 +979,9 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1020,7 +1020,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1032,9 +1032,9 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1073,7 +1073,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1085,9 +1085,9 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1126,7 +1126,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1138,9 +1138,9 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1179,7 +1179,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1191,9 +1191,9 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1223,7 +1223,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
             // $links先のユーザデータ削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
 
             // $links一覧取得
             TResponse resList = Http.request("box/odatacol/list-link.txt")
@@ -1232,7 +1232,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1243,7 +1243,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ODataCommon.checkLinResponseBody(resList.bodyAsJson(), expectedUriList);
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1273,7 +1273,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
             // $links先のユーザデータ削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
 
             // $links一覧取得
             TResponse resList = Http.request("box/odatacol/list-link.txt")
@@ -1282,7 +1282,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1293,7 +1293,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ODataCommon.checkLinResponseBody(resList.bodyAsJson(), expectedUriList);
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1323,7 +1323,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
             // $links先のユーザデータ削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
 
             // $links一覧取得
             TResponse resList = Http.request("box/odatacol/list-link.txt")
@@ -1332,7 +1332,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1343,7 +1343,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ODataCommon.checkLinResponseBody(resList.bodyAsJson(), expectedUriList);
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1373,7 +1373,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
             // $links先のユーザデータ削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
 
             // $links一覧取得
             TResponse resList = Http.request("box/odatacol/list-link.txt")
@@ -1382,7 +1382,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1393,7 +1393,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ODataCommon.checkLinResponseBody(resList.bodyAsJson(), expectedUriList);
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1423,7 +1423,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
             // $links先のユーザデータ削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
 
             // $links一覧取得
             TResponse resList = Http.request("box/odatacol/list-link.txt")
@@ -1432,7 +1432,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1442,7 +1442,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ODataCommon.checkLinResponseBody(resList.bodyAsJson(), expectedUriList);
         } finally {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1472,7 +1472,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
             // $links先のユーザデータ削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_CONFLICT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CONFLICT);
 
             // $links一覧取得
             TResponse resList = Http.request("box/odatacol/list-link.txt")
@@ -1481,7 +1481,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1495,9 +1495,9 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1527,7 +1527,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
             // $links先のユーザデータ削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_CONFLICT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CONFLICT);
 
             // $links一覧取得
             TResponse resList = Http.request("box/odatacol/list-link.txt")
@@ -1536,7 +1536,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1550,9 +1550,9 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1582,7 +1582,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
             // $links先のユーザデータ削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_CONFLICT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CONFLICT);
 
             // $links一覧取得
             TResponse resList = Http.request("box/odatacol/list-link.txt")
@@ -1591,7 +1591,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", srcEntityType + "('" + srcUserDataId + "')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1605,9 +1605,9 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1637,7 +1637,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", "Sales" + "('" + toUserDataId + "')")
                     .with("trgPath", "SalesDetail")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1654,10 +1654,10 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             deleteUserDataLinks("Sales", toUserDataId, "SalesDetail", fromUserDataId);
             // fromのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "SalesDetail", fromUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "SalesDetail", fromUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             // toのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Sales", toUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Sales", toUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1678,7 +1678,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", toEntityTypeName + "('" + toUserDataId + "')")
                     .with("trgPath", navPropName)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1722,7 +1722,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", "SalesDetail" + "('" + fromUserDataId + "')")
                     .with("trgPath", "Sales")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("accept", MediaType.APPLICATION_JSON)
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
@@ -1739,10 +1739,10 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             deleteUserDataLinks("Sales", toUserDataId, "SalesDetail", fromUserDataId);
             // fromのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "SalesDetail", fromUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "SalesDetail", fromUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             // toのユーザデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    "Sales", toUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    "Sales", toUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -1756,15 +1756,15 @@ public class UserDataLinkTest extends AbstractUserDataTest {
         JSONObject linkBody = new JSONObject();
 
         // エンティティタイプを作成
-        EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(),
                 Setup.TEST_ODATA, toEntityTypeName, HttpStatus.SC_CREATED);
-        EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(),
                 Setup.TEST_ODATA, navPropName, HttpStatus.SC_CREATED);
 
         // AssociationEndを作成
-        AssociationEndUtils.create(DcCoreConfig.getMasterToken(), "*", Setup.TEST_CELL1,
+        AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(), "*", Setup.TEST_CELL1,
                 Setup.TEST_BOX1, Setup.TEST_ODATA, HttpStatus.SC_CREATED, "AssociationEnd", toEntityTypeName);
-        AssociationEndUtils.create(DcCoreConfig.getMasterToken(), "*", Setup.TEST_CELL1,
+        AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(), "*", Setup.TEST_CELL1,
                 Setup.TEST_BOX1, Setup.TEST_ODATA, HttpStatus.SC_CREATED, "LinkAssociationEnd", navPropName);
 
         // AssociationEndを関連付け
@@ -1796,7 +1796,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                 .with("colPath", Setup.TEST_ODATA)
                 .with("srcPath", toEntityTypeName + "('" + toUserDataId + "')")
                 .with("trgPath", navPropName)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("trgUserdataUrl", targetUri)
                 .returns()
                 .debug()
@@ -1810,7 +1810,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                 .with("colPath", Setup.TEST_ODATA)
                 .with("srcPath", toEntityTypeName + "('" + toUserDataId2 + "')")
                 .with("trgPath", navPropName)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("trgUserdataUrl", targetUri)
                 .returns()
                 .debug()
@@ -1829,7 +1829,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                 .with("colPath", Setup.TEST_ODATA)
                 .with("srcPath", toEntity + "('" + toUserDataId + "')")
                 .with("trgPath", fromEntity)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("trgUserdataUrl", targetUri)
                 .returns()
                 .debug()
@@ -1848,13 +1848,13 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
         // ユーザデータを削除
         deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                toEntityTypeName, toUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                toEntityTypeName, toUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                navPropName, fromUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                navPropName, fromUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                toEntityTypeName, toUserDataId2, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                toEntityTypeName, toUserDataId2, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                navPropName, fromUserDataId2, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                navPropName, fromUserDataId2, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
 
         // AssociationEndLinkを削除
         AssociationEndUtils.deleteLink(Setup.TEST_CELL1, Setup.TEST_ODATA,
@@ -1868,9 +1868,9 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                 Setup.TEST_ODATA, navPropName, Setup.TEST_BOX1, "LinkAssociationEnd", HttpStatus.SC_NO_CONTENT);
 
         // エンティティタイプを削除
-        EntityTypeUtils.delete(Setup.TEST_ODATA, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.delete(Setup.TEST_ODATA, PersoniumUnitConfig.getMasterToken(),
                 "application/json", toEntityTypeName, Setup.TEST_CELL1, HttpStatus.SC_NO_CONTENT);
-        EntityTypeUtils.delete(Setup.TEST_ODATA, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.delete(Setup.TEST_ODATA, PersoniumUnitConfig.getMasterToken(),
                 "application/json", navPropName, Setup.TEST_CELL1, HttpStatus.SC_NO_CONTENT);
     }
 
@@ -1886,7 +1886,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                 .with("navProp", "_" + trgEntityTypeName)
                 .with("navKey", navPropId)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*")
                 .returns();
     }

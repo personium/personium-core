@@ -36,7 +36,7 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.ReceivedMessagePort;
 import io.personium.core.model.ctl.SentMessagePort;
-import io.personium.core.odata.DcODataProducer;
+import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.odata.ODataCtlResource;
 
 /**
@@ -82,7 +82,7 @@ public final class MessageResource extends ODataCtlResource {
         this.davRsCmp.checkAccessContext(this.accessContext, CellPrivilege.MESSAGE);
 
         // データ登録
-        DcODataProducer producer = ModelFactory.ODataCtl.cellCtl(this.accessContext.getCell());
+        PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(this.accessContext.getCell());
         MessageODataResource moResource = new MessageODataResource(this, producer, SentMessagePort.EDM_TYPE_NAME);
         moResource.setVersion(version);
         Response respose = moResource.createMessage(uriInfo, reader);
@@ -104,7 +104,7 @@ public final class MessageResource extends ODataCtlResource {
         this.accessContext.checkCellIssueToken(this.davRsCmp.getAcceptableAuthScheme());
 
         // 受信メッセージの登録
-        DcODataProducer producer = ModelFactory.ODataCtl.cellCtl(this.accessContext.getCell());
+        PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(this.accessContext.getCell());
         MessageODataResource moResource = new MessageODataResource(this, producer, ReceivedMessagePort.EDM_TYPE_NAME);
         Response respose = moResource.createMessage(uriInfo, reader);
         return respose;
@@ -124,7 +124,7 @@ public final class MessageResource extends ODataCtlResource {
         this.davRsCmp.checkAccessContext(this.accessContext, CellPrivilege.MESSAGE);
 
         // 受信メッセージの承認
-        DcODataProducer producer = ModelFactory.ODataCtl.cellCtl(this.accessContext.getCell());
+        PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(this.accessContext.getCell());
         MessageODataResource moResource = new MessageODataResource(this, producer, ReceivedMessagePort.EDM_TYPE_NAME);
         Response respose = moResource.changeMessageStatus(reader, key);
         return respose;

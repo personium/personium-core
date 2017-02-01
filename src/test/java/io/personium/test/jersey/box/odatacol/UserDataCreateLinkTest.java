@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -67,16 +67,16 @@ public class UserDataCreateLinkTest extends AbstractUserDataTest {
 
         try {
             // 128文字のエンティティタイプを作成
-            EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(),
+            EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(),
                     Setup.TEST_ODATA, entityTypeName, HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(),
+            EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(),
                     Setup.TEST_ODATA, navPropName, HttpStatus.SC_CREATED);
 
             // AssociationEndを作成
-            AssociationEndUtils.create(DcCoreConfig.getMasterToken(), "*", Setup.TEST_CELL1,
+            AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(), "*", Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, HttpStatus.SC_CREATED,
                     "AssociationEnd", entityTypeName);
-            AssociationEndUtils.create(DcCoreConfig.getMasterToken(), "*", Setup.TEST_CELL1,
+            AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(), "*", Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, HttpStatus.SC_CREATED,
                     "LinkAssociationEnd", navPropName);
 
@@ -105,7 +105,7 @@ public class UserDataCreateLinkTest extends AbstractUserDataTest {
                     .with("colPath", Setup.TEST_ODATA)
                     .with("srcPath", entityTypeName + "('" + userDataId + "')")
                     .with("trgPath", navPropName)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("trgUserdataUrl", targetUri)
                     .returns()
                     .debug()
@@ -116,9 +116,9 @@ public class UserDataCreateLinkTest extends AbstractUserDataTest {
 
             // ユーザーデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    entityTypeName, userDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    entityTypeName, userDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    navPropName, linkUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    navPropName, linkUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
 
             // AssociationEndLinkを削除
             AssociationEndUtils
@@ -134,9 +134,9 @@ public class UserDataCreateLinkTest extends AbstractUserDataTest {
                     Setup.TEST_ODATA, navPropName, Setup.TEST_BOX1, "LinkAssociationEnd", HttpStatus.SC_NO_CONTENT);
 
             // エンティティタイプを削除
-            EntityTypeUtils.delete(Setup.TEST_ODATA, DcCoreConfig.getMasterToken(),
+            EntityTypeUtils.delete(Setup.TEST_ODATA, PersoniumUnitConfig.getMasterToken(),
                     "application/json", entityTypeName, Setup.TEST_CELL1, -1);
-            EntityTypeUtils.delete(Setup.TEST_ODATA, DcCoreConfig.getMasterToken(),
+            EntityTypeUtils.delete(Setup.TEST_ODATA, PersoniumUnitConfig.getMasterToken(),
                     "application/json", navPropName, Setup.TEST_CELL1, -1);
         }
     }
@@ -169,7 +169,7 @@ public class UserDataCreateLinkTest extends AbstractUserDataTest {
                     .with("colPath", colName)
                     .with("srcPath", "Category('userdata001')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("trgUserdataUrl", targetUri)
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -178,7 +178,7 @@ public class UserDataCreateLinkTest extends AbstractUserDataTest {
             // ユーザデータの削除
             deleteUserData(userDataId);
             deleteUserData(cellName, boxName, colName, targetEntityType,
-                    userDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    userDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -210,7 +210,7 @@ public class UserDataCreateLinkTest extends AbstractUserDataTest {
                     .with("colPath", colName)
                     .with("srcPath", "Category('userdata001')")
                     .with("trgPath", targetEntityType)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("trgUserdataUrl", targetUri)
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -219,7 +219,7 @@ public class UserDataCreateLinkTest extends AbstractUserDataTest {
             // ユーザデータの削除
             deleteUserData(userDataId);
             deleteUserData(cellName, boxName, colName, targetEntityType,
-                    userDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    userDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
     }
 
@@ -244,16 +244,16 @@ public class UserDataCreateLinkTest extends AbstractUserDataTest {
 
         try {
             // 128文字のエンティティタイプを作成
-            EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(),
+            EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(),
                     Setup.TEST_ODATA, entityTypeName, HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(),
+            EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(),
                     Setup.TEST_ODATA, navPropName, HttpStatus.SC_CREATED);
 
             // AssociationEndを作成
-            AssociationEndUtils.create(DcCoreConfig.getMasterToken(), "*", Setup.TEST_CELL1,
+            AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(), "*", Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, HttpStatus.SC_CREATED,
                     "AssociationEnd", entityTypeName);
-            AssociationEndUtils.create(DcCoreConfig.getMasterToken(), "*", Setup.TEST_CELL1,
+            AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(), "*", Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, HttpStatus.SC_CREATED,
                     "LinkAssociationEnd", navPropName);
 
@@ -287,9 +287,9 @@ public class UserDataCreateLinkTest extends AbstractUserDataTest {
 
             // ユーザーデータを削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    entityTypeName, userDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    entityTypeName, userDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    navPropName, linkUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    navPropName, linkUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
 
             // AssociationEndLinkを削除
             AssociationEndUtils
@@ -305,9 +305,9 @@ public class UserDataCreateLinkTest extends AbstractUserDataTest {
                     Setup.TEST_ODATA, navPropName, Setup.TEST_BOX1, "LinkAssociationEnd", HttpStatus.SC_NO_CONTENT);
 
             // エンティティタイプを削除
-            EntityTypeUtils.delete(Setup.TEST_ODATA, DcCoreConfig.getMasterToken(),
+            EntityTypeUtils.delete(Setup.TEST_ODATA, PersoniumUnitConfig.getMasterToken(),
                     "application/json", entityTypeName, Setup.TEST_CELL1, -1);
-            EntityTypeUtils.delete(Setup.TEST_ODATA, DcCoreConfig.getMasterToken(),
+            EntityTypeUtils.delete(Setup.TEST_ODATA, PersoniumUnitConfig.getMasterToken(),
                     "application/json", navPropName, Setup.TEST_CELL1, -1);
         }
     }

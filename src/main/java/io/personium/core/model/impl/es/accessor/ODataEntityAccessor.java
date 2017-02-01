@@ -20,7 +20,7 @@ import java.sql.SQLException;
 
 import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.es.EsIndex;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.model.impl.es.ads.AdsException;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.model.lock.Lock;
@@ -55,12 +55,12 @@ public class ODataEntityAccessor extends AbstractEntitySetAccessor {
                 // Indexが存在しない場合はインデックスを作成する。
                 if (e.getCause() instanceof SQLException
                         && MYSQL_BAD_TABLE_ERROR.equals(((SQLException) e.getCause()).getSQLState())) {
-                    DcCoreLog.Server.ES_INDEX_NOT_EXIST.params(indexName).writeLog();
+                    PersoniumCoreLog.Server.ES_INDEX_NOT_EXIST.params(indexName).writeLog();
                     createAdsIndex(indexName);
                     try {
                         getAds().createEntity(indexName, docHandler);
                     } catch (AdsException e1) {
-                        DcCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e1.getMessage()).reason(e1).writeLog();
+                        PersoniumCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e1.getMessage()).reason(e1).writeLog();
 
                         // Adsの登録に失敗した場合は、専用のログに書込む
                         String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
@@ -72,7 +72,7 @@ public class ODataEntityAccessor extends AbstractEntitySetAccessor {
                         recordAdsWriteFailureLog(loginfo);
                     }
                 } else {
-                    DcCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                    PersoniumCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                     // Adsの登録に失敗した場合は、専用のログに書込む
                     String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
@@ -98,7 +98,7 @@ public class ODataEntityAccessor extends AbstractEntitySetAccessor {
             try {
                 getAds().updateEntity(getIndex().getName(), docHandler);
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_UPDATE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_UPDATE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 // Adsの登録に失敗した場合は、専用のログに書込む
                 String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
@@ -126,7 +126,7 @@ public class ODataEntityAccessor extends AbstractEntitySetAccessor {
             try {
                 getAds().deleteEntity(getIndex().getName(), id);
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 // Adsの登録に失敗した場合は、専用のログに書込む
                 String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,

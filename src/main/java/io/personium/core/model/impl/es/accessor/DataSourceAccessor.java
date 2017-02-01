@@ -40,9 +40,9 @@ import io.personium.common.es.response.PersoniumMultiSearchResponse;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.response.EsClientException;
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.ads.AdsConnectionException;
 import io.personium.core.model.impl.es.ads.AdsException;
@@ -71,15 +71,15 @@ public class DataSourceAccessor {
     public DataSourceAccessor(EsIndex index) {
         this.index = index;
         try {
-            if (DcCoreConfig.getEsAdsType().equals(DcCoreConfig.ES.ADS.TYPE_JDBC)) {
+            if (PersoniumUnitConfig.getEsAdsType().equals(PersoniumUnitConfig.ES.ADS.TYPE_JDBC)) {
                 ads = new JdbcAds();
             } else {
                 ads = null;
             }
         } catch (AdsConnectionException ex) {
             // 初回接続エラー時は接続エラーのログを出力する.
-            DcCoreLog.Server.ADS_CONNECTION_ERROR.params(ex.getMessage()).reason(ex).writeLog();
-            throw DcCoreException.Server.ADS_CONNECTION_ERROR;
+            PersoniumCoreLog.Server.ADS_CONNECTION_ERROR.params(ex.getMessage()).reason(ex).writeLog();
+            throw PersoniumCoreException.Server.ADS_CONNECTION_ERROR;
         }
     }
 
@@ -91,20 +91,20 @@ public class DataSourceAccessor {
      */
     protected DataSourceAccessor(EsIndex index, String name, String routingId) {
         this.index = index;
-        int times = Integer.valueOf(DcCoreConfig.getESRetryTimes());
-        int interval = Integer.valueOf(DcCoreConfig.getESRetryInterval());
+        int times = Integer.valueOf(PersoniumUnitConfig.getESRetryTimes());
+        int interval = Integer.valueOf(PersoniumUnitConfig.getESRetryInterval());
         this.type = EsModel.type(index.getName(), name, routingId, times, interval);
         this.routingid = routingId;
         try {
-            if (DcCoreConfig.getEsAdsType().equals(DcCoreConfig.ES.ADS.TYPE_JDBC)) {
+            if (PersoniumUnitConfig.getEsAdsType().equals(PersoniumUnitConfig.ES.ADS.TYPE_JDBC)) {
                 ads = new JdbcAds();
             } else {
                 ads = null;
             }
         } catch (AdsConnectionException ex) {
             // 初回接続エラー時は接続エラーのログを出力する.
-            DcCoreLog.Server.ADS_CONNECTION_ERROR.params(ex.getMessage()).reason(ex).writeLog();
-            throw DcCoreException.Server.ADS_CONNECTION_ERROR;
+            PersoniumCoreLog.Server.ADS_CONNECTION_ERROR.params(ex.getMessage()).reason(ex).writeLog();
+            throw PersoniumCoreException.Server.ADS_CONNECTION_ERROR;
         }
     }
 
@@ -157,7 +157,7 @@ public class DataSourceAccessor {
         try {
             return this.type.get(id);
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
     }
 
@@ -195,18 +195,18 @@ public class DataSourceAccessor {
         try {
             return this.type.create(id, data);
         } catch (EsClientException.EsSchemaMismatchException e) {
-            throw DcCoreException.OData.SCHEMA_MISMATCH;
+            throw PersoniumCoreException.OData.SCHEMA_MISMATCH;
         } catch (EsClientException.EsIndexMissingException e) {
-            DcCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
+            PersoniumCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
             try {
                 this.index.create();
                 createAdsIndex(null);
                 return this.type.create(id, data);
             } catch (EsClientException.EsNoResponseException esRetry) {
-                throw DcCoreException.Server.ES_RETRY_OVER.params(esRetry.getMessage());
+                throw PersoniumCoreException.Server.ES_RETRY_OVER.params(esRetry.getMessage());
             }
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
     }
 
@@ -222,18 +222,18 @@ public class DataSourceAccessor {
         try {
             return this.type.create(id, data);
         } catch (EsClientException.EsSchemaMismatchException e) {
-            throw DcCoreException.OData.SCHEMA_MISMATCH;
+            throw PersoniumCoreException.OData.SCHEMA_MISMATCH;
         } catch (EsClientException.EsIndexMissingException e) {
-            DcCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
+            PersoniumCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
             try {
                 this.index.create();
                 createAdsIndex(docHandler.getUnitUserName());
                 return this.type.create(id, data);
             } catch (EsClientException.EsNoResponseException esRetry) {
-                throw DcCoreException.Server.ES_RETRY_OVER.params(esRetry.getMessage());
+                throw PersoniumCoreException.Server.ES_RETRY_OVER.params(esRetry.getMessage());
             }
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
     }
 
@@ -249,18 +249,18 @@ public class DataSourceAccessor {
         try {
             return this.type.update(id, data, version);
         } catch (EsClientException.EsSchemaMismatchException e) {
-            throw DcCoreException.OData.SCHEMA_MISMATCH;
+            throw PersoniumCoreException.OData.SCHEMA_MISMATCH;
         } catch (EsClientException.EsIndexMissingException e) {
-            DcCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
+            PersoniumCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
             try {
                 this.index.create();
                 createAdsIndex(null);
                 return this.type.update(id, data, version);
             } catch (EsClientException.EsNoResponseException esRetry) {
-                throw DcCoreException.Server.ES_RETRY_OVER.params(esRetry.getMessage());
+                throw PersoniumCoreException.Server.ES_RETRY_OVER.params(esRetry.getMessage());
             }
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
     }
 
@@ -292,7 +292,7 @@ public class DataSourceAccessor {
             PersoniumSearchResponse hit = this.type.search(requestQuery);
             return hit.getHits().getAllPages();
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
     }
 
@@ -315,7 +315,7 @@ public class DataSourceAccessor {
         try {
             return this.type.search(requestQuery);
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
     }
 
@@ -329,7 +329,7 @@ public class DataSourceAccessor {
         try {
             return this.type.multiSearch(queryList);
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
 
     }
@@ -353,7 +353,7 @@ public class DataSourceAccessor {
         try {
             return this.index.search(null, requestQuery);
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
     }
 
@@ -367,10 +367,10 @@ public class DataSourceAccessor {
         try {
             return this.type.delete(docId, version);
         } catch (EsClientException.EsIndexMissingException e) {
-            DcCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
+            PersoniumCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
             return null;
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
     }
 
@@ -392,13 +392,13 @@ public class DataSourceAccessor {
         try {
             response = this.index.bulkRequest(routingId, esBulkRequest, false);
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
         if (this.ads != null) {
             try {
                 this.ads.bulkEntity(this.index.getName(), adsBulkRequest);
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_BULK_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_BULK_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 for (EntitySetDocHandler docHandler : adsBulkRequest) {
                     // Adsの登録に失敗した場合は、専用のログに書込む
@@ -435,7 +435,7 @@ public class DataSourceAccessor {
         try {
             response = this.index.bulkRequest(routingId, esBulkRequest, false);
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
         if (this.ads != null) {
             try {
@@ -444,7 +444,7 @@ public class DataSourceAccessor {
                     this.ads.bulkUpdateEntity(this.index.getName(), adsBulkEntityRequest);
                 }
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_BULK_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_BULK_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 // Adsの登録に失敗した場合は、専用のログに書込む
                 // ESでのバージョン情報を取得するためにesBulkRequestをループさせている
@@ -474,7 +474,7 @@ public class DataSourceAccessor {
                     this.ads.bulkCreateLink(this.index.getName(), adsBulkLinkRequest);
                 }
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_BULK_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_BULK_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 for (LinkDocHandler docHandler : adsBulkLinkRequest) {
                     // Adsの登録に失敗した場合は、専用のログに書込む
@@ -527,12 +527,12 @@ public class DataSourceAccessor {
                     PersoniumSearchResponse hit = this.index.search(routingId, query);
                     query.put("size", hit.getHits().getAllPages());
                 } catch (EsClientException.EsNoResponseException e) {
-                    throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+                    throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
                 }
             }
             return this.index.search(routingId, query);
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
     }
 
@@ -546,7 +546,7 @@ public class DataSourceAccessor {
         try {
             return this.index.multiSearch(routingId, queryList);
         } catch (EsClientException.EsNoResponseException e) {
-            throw DcCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
     }
 
@@ -566,7 +566,7 @@ public class DataSourceAccessor {
             ads.createIndex(indexName);
         } catch (AdsException adsEx) {
             // TODO エラー処理が必要？参照モードにする必要があるのでは？要検討。
-            DcCoreLog.Server.FAILED_TO_CREATE_ADS.params(indexName).reason(adsEx).writeLog();
+            PersoniumCoreLog.Server.FAILED_TO_CREATE_ADS.params(indexName).reason(adsEx).writeLog();
         }
     }
 
@@ -588,8 +588,8 @@ public class DataSourceAccessor {
             }
         } catch (AdsException e) {
             // 接続に失敗した場合はエラーレスポンスを返却する
-            DcCoreLog.Server.ADS_CONNECTION_ERROR.params(e.getMessage()).reason(e).writeLog();
-            throw DcCoreException.Server.ADS_CONNECTION_ERROR.reason(e);
+            PersoniumCoreLog.Server.ADS_CONNECTION_ERROR.params(e.getMessage()).reason(e).writeLog();
+            throw PersoniumCoreException.Server.ADS_CONNECTION_ERROR.reason(e);
         }
     }
 
@@ -599,14 +599,14 @@ public class DataSourceAccessor {
      */
     protected void recordAdsWriteFailureLog(AdsWriteFailureLogInfo loginfo) {
         AdsWriteFailureLogWriter adsWriteFailureLogWriter = AdsWriteFailureLogWriter.getInstance(
-                DcCoreConfig.getAdsWriteFailureLogDir(),
-                DcCoreConfig.getCoreVersion(),
-                DcCoreConfig.getAdsWriteFailureLogPhysicalDelete());
+                PersoniumUnitConfig.getAdsWriteFailureLogDir(),
+                PersoniumUnitConfig.getCoreVersion(),
+                PersoniumUnitConfig.getAdsWriteFailureLogPhysicalDelete());
         try {
             adsWriteFailureLogWriter.writeActiveFile(loginfo);
         } catch (AdsWriteFailureLogException e2) {
-            DcCoreLog.Server.WRITE_ADS_FAILURE_LOG_ERROR.reason(e2).writeLog();
-            DcCoreLog.Server.WRITE_ADS_FAILURE_LOG_INFO.params(loginfo.toString());
+            PersoniumCoreLog.Server.WRITE_ADS_FAILURE_LOG_ERROR.reason(e2).writeLog();
+            PersoniumCoreLog.Server.WRITE_ADS_FAILURE_LOG_INFO.params(loginfo.toString());
         }
     }
 

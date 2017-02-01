@@ -45,12 +45,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.bar.BarFileInstaller;
-import io.personium.core.eventbus.DcEventBus;
+import io.personium.core.eventbus.PersoniumEventBus;
 import io.personium.core.eventbus.JSONEvent;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
@@ -123,7 +123,7 @@ public final class BoxResource {
             }
             // Unless the HTTP method is MKCOL, respond with 404.
             if (!("MKCOL".equals(jaxRsRequest.getMethod()) && reqPathInfo.endsWith(pathForBox))) {
-                throw DcCoreException.Dav.BOX_NOT_FOUND.params(this.cell.getUrl() + boxName);
+                throw PersoniumCoreException.Dav.BOX_NOT_FOUND.params(this.cell.getUrl() + boxName);
             }
         }
 
@@ -203,7 +203,7 @@ public final class BoxResource {
         try {
             jsonObj = (JSONObject) (new JSONParser()).parse(jsonString);
         } catch (ParseException e) {
-            throw DcCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
+            throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
         }
 
         // キャッシュから取得できたが、boxインストールの処理状況ではない場合
@@ -327,7 +327,7 @@ public final class BoxResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             final InputStream inStream) {
 
-        DcEventBus eventBus = new DcEventBus(this.cell);
+        PersoniumEventBus eventBus = new PersoniumEventBus(this.cell);
         Event event = null;
         Response res = null;
         try {
@@ -338,7 +338,7 @@ public final class BoxResource {
             reqBody.setObject(this.cell.getUrl() + boxName);
             reqBody.setResult("");
             // X-Personium-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
-            requestKey = EventResource.validateXDcRequestKey(requestKey);
+            requestKey = EventResource.validateXPersoniumRequestKey(requestKey);
             // TODO findBugs対策↓
             log.debug(requestKey);
 
@@ -346,7 +346,7 @@ public final class BoxResource {
             // eventBus.outputEventLog(event);
 
             if (Box.DEFAULT_BOX_NAME.equals(this.boxName)) {
-                throw DcCoreException.Misc.METHOD_NOT_ALLOWED;
+                throw PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
             }
 
             // Boxを作成するためにCellCtlResource、ODataEntityResource(ODataProducer)が必要
@@ -367,9 +367,9 @@ public final class BoxResource {
             event.setResult(Integer.toString(res.getStatus()));
         } catch (RuntimeException e) {
             // TODO 内部イベントの正式対応が必要
-            if (e instanceof DcCoreException) {
-                event.setResult(Integer.toString(((DcCoreException) e).getStatus()));
-                if (((DcCoreException) e).getStatus() > HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+            if (e instanceof PersoniumCoreException) {
+                event.setResult(Integer.toString(((PersoniumCoreException) e).getStatus()));
+                if (((PersoniumCoreException) e).getStatus() > HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                     event.setLevel(LEVEL.WARN);
                 } else {
                     event.setLevel(LEVEL.ERROR);
@@ -397,6 +397,6 @@ public final class BoxResource {
 
         // Boxリソースに対するMOVEメソッドは使用禁止
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
-        throw DcCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_BOX;
+        throw PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_BOX;
     }
 }

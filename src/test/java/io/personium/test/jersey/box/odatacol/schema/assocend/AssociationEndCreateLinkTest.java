@@ -27,8 +27,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmMultiplicity;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -313,8 +313,8 @@ public class AssociationEndCreateLinkTest extends AbstractCase {
 
             // メッセージチェック
             ODataCommon.checkErrorResponseBody(response,
-                    DcCoreException.OData.NOT_FOUND.getCode(),
-                    DcCoreException.OData.NOT_FOUND.getMessage());
+                    PersoniumCoreException.OData.NOT_FOUND.getCode(),
+                    PersoniumCoreException.OData.NOT_FOUND.getMessage());
         } finally {
             // AssociationEndの削除
             deleteAssociationEnd(linkName, linkEntityTypeName);
@@ -352,8 +352,8 @@ public class AssociationEndCreateLinkTest extends AbstractCase {
 
             // メッセージチェック
             ODataCommon.checkErrorResponseBody(response,
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri").getMessage());
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri").getMessage());
         } finally {
             // AssociationEndの削除
             deleteAssociationEnd(name, entityTypeName);
@@ -403,8 +403,8 @@ public class AssociationEndCreateLinkTest extends AbstractCase {
 
             // メッセージチェック
             ODataCommon.checkErrorResponseBody(response,
-                    DcCoreException.OData.INVALID_MULTIPLICITY.getCode(),
-                    DcCoreException.OData.INVALID_MULTIPLICITY.getMessage());
+                    PersoniumCoreException.OData.INVALID_MULTIPLICITY.getCode(),
+                    PersoniumCoreException.OData.INVALID_MULTIPLICITY.getMessage());
 
         } finally {
             // AssociationEnd削除
@@ -573,8 +573,8 @@ public class AssociationEndCreateLinkTest extends AbstractCase {
                     AbstractCase.MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     entityType1, entityType2, assocEntity1of2, assocEntity2of2, HttpStatus.SC_CONFLICT);
             ODataCommon.checkErrorResponseBody(res,
-                    DcCoreException.OData.CONFLICT_DUPLICATED_ENTITY_RELATION.getCode(),
-                    DcCoreException.OData.CONFLICT_DUPLICATED_ENTITY_RELATION.getMessage());
+                    PersoniumCoreException.OData.CONFLICT_DUPLICATED_ENTITY_RELATION.getCode(),
+                    PersoniumCoreException.OData.CONFLICT_DUPLICATED_ENTITY_RELATION.getMessage());
 
             // UserOData登録
             JSONObject body1 = (JSONObject) new JSONParser().parse("{\"__id\":\"id\", \"name\":\"pochi\"}");
@@ -739,7 +739,7 @@ public class AssociationEndCreateLinkTest extends AbstractCase {
     private void createAssociationEnd(String name, String entityTypeName) {
         Http.request("box/odatacol/schema/assocend/create.txt").with("cell", "testcell1").with("box", "box1")
                 .with("collection", "setodata").with("accept", MediaType.APPLICATION_JSON)
-                .with("contentType", MediaType.APPLICATION_JSON).with("token", DcCoreConfig.getMasterToken())
+                .with("contentType", MediaType.APPLICATION_JSON).with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", name).with("multiplicity", EdmMultiplicity.MANY.getSymbolString())
                 .with("entityTypeName", entityTypeName).returns().statusCode(HttpStatus.SC_CREATED).debug();
     }
@@ -749,7 +749,7 @@ public class AssociationEndCreateLinkTest extends AbstractCase {
      */
     private void deleteAssociationEnd(String name, String entityTypeName) {
         Http.request("box/odatacol/schema/assocend/delete.txt").with("cell", "testcell1").with("box", "box1")
-                .with("collection", "setodata").with("token", DcCoreConfig.getMasterToken()).with("name", name)
+                .with("collection", "setodata").with("token", PersoniumUnitConfig.getMasterToken()).with("name", name)
                 .with("entityTypeName", entityTypeName).with("ifMatch", "*").returns()
                 .statusCode(HttpStatus.SC_NO_CONTENT).debug();
     }

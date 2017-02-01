@@ -33,7 +33,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.Property;
 import io.personium.test.categories.Integration;
@@ -167,8 +167,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING
+                PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING
                         .params(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY)
                         .getMessage());
     }
@@ -195,8 +195,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY)
                         .getMessage());
     }
 
@@ -304,8 +304,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY)
                         .getMessage());
     }
 
@@ -372,8 +372,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY)
                         .getMessage());
     }
 
@@ -399,8 +399,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY)
                         .getMessage());
     }
 
@@ -426,8 +426,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY)
                         .getMessage());
     }
 
@@ -458,8 +458,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
 
             // レスポンスチェック
             checkErrorResponse(response.bodyAsJson(),
-                    DcCoreException.OData.ENTITY_ALREADY_EXISTS.getCode(),
-                    DcCoreException.OData.ENTITY_ALREADY_EXISTS.getMessage());
+                    PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS.getCode(),
+                    PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS.getMessage());
 
         } finally {
             // 作成したComplexTypePropertyを削除
@@ -489,8 +489,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(
+                PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY)
                         .getMessage());
     }
@@ -518,8 +518,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY).getMessage());
     }
 
@@ -648,8 +648,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY).getMessage());
     }
 
@@ -728,8 +728,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY).getMessage());
     }
 
@@ -756,8 +756,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY).getMessage());
     }
 
@@ -784,8 +784,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY).getMessage());
     }
 
@@ -813,8 +813,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
-                DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(complexTypeName).getMessage());
+                PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
+                PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(complexTypeName).getMessage());
     }
 
     /**
@@ -1003,8 +1003,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ComplexTypePropertyUtils.CT_PROPERTY_TYPE_KEY)
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ComplexTypePropertyUtils.CT_PROPERTY_TYPE_KEY)
                         .getMessage());
     }
 
@@ -1175,8 +1175,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_NULLABLE_KEY)
                         .getMessage());
     }
@@ -1245,8 +1245,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_DEFAULT_VALUE_KEY).getMessage());
     }
 
@@ -1355,8 +1355,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_DEFAULT_VALUE_KEY).getMessage());
     }
 
@@ -1424,8 +1424,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_DEFAULT_VALUE_KEY).getMessage());
     }
 
@@ -1452,8 +1452,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_DEFAULT_VALUE_KEY).getMessage());
     }
 
@@ -1562,8 +1562,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_DEFAULT_VALUE_KEY).getMessage());
     }
 
@@ -1671,8 +1671,8 @@ public class ComplexTypePropertyCreateTest extends ODataCommon {
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(
                 response.bodyAsJson(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         ComplexTypePropertyUtils.CT_PROPERTY_COLLECTION_KIND_KEY).getMessage());
     }
 

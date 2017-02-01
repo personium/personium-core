@@ -31,7 +31,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -67,7 +67,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -110,7 +110,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -156,7 +156,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -202,7 +202,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -252,7 +252,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -299,7 +299,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -345,7 +345,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -391,7 +391,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -435,7 +435,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -446,7 +446,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             JSONObject body = new JSONObject();
             body.put("__id", "doubleInt");
             body.put(propertyName, 1);
-            UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+            UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                     cellName, boxName, colName, entityTypeName);
 
             // プロパティの更新
@@ -500,7 +500,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -511,7 +511,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             JSONObject body = new JSONObject();
             body.put("__id", "doubleInt");
             body.put(propertyName, 2);
-            UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+            UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                     cellName, boxName, colName, entityTypeName);
 
             // プロパティの更新
@@ -567,7 +567,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -631,7 +631,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -696,7 +696,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -707,7 +707,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             JSONObject body = new JSONObject();
             body.put("__id", "doubleInt");
             body.put(propertyName, 1);
-            UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+            UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                     cellName, boxName, colName, entityTypeName);
 
             // プロパティの更新
@@ -777,7 +777,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -824,7 +824,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -872,7 +872,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -883,7 +883,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             JSONObject body = new JSONObject();
             body.put("__id", "doubleInt");
             body.put(propertyName, 1);
-            UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+            UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                     cellName, boxName, colName, entityTypeName);
 
             // プロパティの更新
@@ -931,7 +931,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         String propertyName = "doubleProp";
         try {
             // Doubleの検索のテスト用エンティティタイプ作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName, entityTypeName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, entityTypeName,
                     HttpStatus.SC_CREATED);
 
             // プロパティの登録
@@ -942,7 +942,7 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             JSONObject body = new JSONObject();
             body.put("__id", "doubleInt");
             body.put(propertyName, 1);
-            UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+            UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                     cellName, boxName, colName, entityTypeName);
 
             // プロパティの更新
@@ -994,42 +994,42 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
         JSONObject body = new JSONObject();
         body.put("__id", "doubleMax");
         body.put(propertyName, 1.79E308);
-        UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+        UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                 cellName, boxName, colName, entityTypeName);
 
         body.put("__id", "double");
         body.put(propertyName, 12345.12345);
-        UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+        UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                 cellName, boxName, colName, entityTypeName);
 
         body.put("__id", "doubleString");
         body.put(propertyName, "1.2345");
-        UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+        UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                 cellName, boxName, colName, entityTypeName);
 
         body.put("__id", "doubleNatural");
         body.put(propertyName, 1);
-        UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+        UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                 cellName, boxName, colName, entityTypeName);
 
         body.put("__id", "doubleDecimal");
         body.put(propertyName, 1.0);
-        UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+        UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                 cellName, boxName, colName, entityTypeName);
 
         body.put("__id", "doubleZero");
         body.put(propertyName, 0.0);
-        UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+        UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                 cellName, boxName, colName, entityTypeName);
 
         body.put("__id", "doubleMin");
         body.put(propertyName, -1.79e308);
-        UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+        UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                 cellName, boxName, colName, entityTypeName);
 
         body.put("__id", "doubleNull");
         body.put(propertyName, null);
-        UserDataUtils.create(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
+        UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, body,
                 cellName, boxName, colName, entityTypeName);
     }
 
@@ -1040,20 +1040,20 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
      */
     protected void deleteTestData(String entityTypeName, String propertyName) {
         // UserODataの削除
-        UserDataUtils.delete(DcCoreConfig.getMasterToken(), -1, entityTypeName, "doubleInt", colName);
-        UserDataUtils.delete(DcCoreConfig.getMasterToken(), -1, entityTypeName, "double", colName);
-        UserDataUtils.delete(DcCoreConfig.getMasterToken(), -1, entityTypeName, "doubleZero", colName);
-        UserDataUtils.delete(DcCoreConfig.getMasterToken(), -1, entityTypeName, "doubleNull", colName);
-        UserDataUtils.delete(DcCoreConfig.getMasterToken(), -1, entityTypeName, "doubleMax", colName);
-        UserDataUtils.delete(DcCoreConfig.getMasterToken(), -1, entityTypeName, "doubleMin", colName);
-        UserDataUtils.delete(DcCoreConfig.getMasterToken(), -1, entityTypeName, "doubleString", colName);
-        UserDataUtils.delete(DcCoreConfig.getMasterToken(), -1, entityTypeName, "doubleNatural", colName);
-        UserDataUtils.delete(DcCoreConfig.getMasterToken(), -1, entityTypeName, "doubleDecimal", colName);
+        UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), -1, entityTypeName, "doubleInt", colName);
+        UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), -1, entityTypeName, "double", colName);
+        UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), -1, entityTypeName, "doubleZero", colName);
+        UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), -1, entityTypeName, "doubleNull", colName);
+        UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), -1, entityTypeName, "doubleMax", colName);
+        UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), -1, entityTypeName, "doubleMin", colName);
+        UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), -1, entityTypeName, "doubleString", colName);
+        UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), -1, entityTypeName, "doubleNatural", colName);
+        UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), -1, entityTypeName, "doubleDecimal", colName);
 
         PropertyUtils.delete(AbstractCase.BEARER_MASTER_TOKEN, cellName, boxName, colName, entityTypeName,
                 propertyName, -1);
         // EntityTypeの削除
-        EntityTypeUtils.delete(colName, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.delete(colName, PersoniumUnitConfig.getMasterToken(),
                 MediaType.APPLICATION_JSON, entityTypeName, boxName, cellName, -1);
     }
 

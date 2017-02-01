@@ -81,7 +81,7 @@ public final class Mkcol {
      * @return ColType文字列
      * @throws RequestException 例外
      */
-    public String getDcColType() throws RequestException {
+    public String getWebdavColType() throws RequestException {
         Resourcetype rt = this.getResourcetype();
         if (rt == null) {
             throw new RequestException("resourcetype should be defined in mkcol request, See RFC5689 : extended MKCOL");

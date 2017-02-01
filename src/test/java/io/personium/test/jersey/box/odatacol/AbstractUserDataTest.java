@@ -32,11 +32,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcRequest;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -85,7 +85,7 @@ public abstract class AbstractUserDataTest extends AbstractCase {
                 .with("entityType", entityTypeName)
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", "Bearer " + DcCoreConfig.getMasterToken())
+                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken())
                 .with("body", body.toJSONString())
                 .returns()
                 .statusCode(sc)
@@ -173,7 +173,7 @@ public abstract class AbstractUserDataTest extends AbstractCase {
                 .with("entityType", entityType)
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", "Bearer " + DcCoreConfig.getMasterToken())
+                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken())
                 .with("body", body.toJSONString())
                 .returns()
                 .statusCode(sc)
@@ -201,7 +201,7 @@ public abstract class AbstractUserDataTest extends AbstractCase {
                 .with("entityType", entityType)
                 .with("query", "")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -229,7 +229,7 @@ public abstract class AbstractUserDataTest extends AbstractCase {
                 .with("entityType", entityType)
                 .with("query", query)
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -250,12 +250,12 @@ public abstract class AbstractUserDataTest extends AbstractCase {
             String col,
             String targetEntityTypeName,
             String query) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
-        requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+        requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
         requestheaders.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
 
         // リクエストを実行する
@@ -335,7 +335,7 @@ public abstract class AbstractUserDataTest extends AbstractCase {
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
                 .with("ifMatch", "*")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body.toJSONString())
                 .returns()
                 .statusCode(HttpStatus.SC_NO_CONTENT)
@@ -357,7 +357,7 @@ public abstract class AbstractUserDataTest extends AbstractCase {
             String col,
             String entityType,
             JSONObject body) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -392,7 +392,7 @@ public abstract class AbstractUserDataTest extends AbstractCase {
                 .with("navPropName", "_" + navPropName)
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body.toJSONString())
                 .returns()
                 .statusCode(sc)
@@ -433,7 +433,7 @@ public abstract class AbstractUserDataTest extends AbstractCase {
                 .with("collection", colName)
                 .with("entityType", entityTypeName)
                 .with("id", userDataId)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*")
                 .returns()
                 .statusCode(-1);
@@ -507,7 +507,7 @@ public abstract class AbstractUserDataTest extends AbstractCase {
                 .with("navProp", "_" + navPropName)
                 .with("navKey", navPropId)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*")
                 .returns()
                 .statusCode(HttpStatus.SC_NO_CONTENT);
@@ -535,7 +535,7 @@ public abstract class AbstractUserDataTest extends AbstractCase {
                 .with("path", "\\$metadata")
                 .with("col", col)
                 .with("accept", "application/xml")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();

@@ -43,7 +43,7 @@ import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.LocalToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Cell;
 import io.personium.core.odata.OEntityWrapper;
@@ -61,7 +61,7 @@ public class AccessContextTest {
     /**
      * マスタートークン.
      */
-    public static final String MASTER_TOKEN = DcCoreConfig.getMasterToken();
+    public static final String MASTER_TOKEN = PersoniumUnitConfig.getMasterToken();
 
     /**
      * baseUrl.

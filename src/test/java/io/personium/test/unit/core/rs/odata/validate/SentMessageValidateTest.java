@@ -24,7 +24,7 @@ import org.odata4j.core.OProperties;
 import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
@@ -47,7 +47,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * InReplyToが31文字の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void InReplyToが31文字の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(SentMessage.P_IN_REPLY_TO.build(),
                 SentMessage.P_IN_REPLY_TO.getName(),
@@ -67,7 +67,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * InReplyToが33文字の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void InReplyToが33文字の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(SentMessage.P_IN_REPLY_TO.build(),
                 SentMessage.P_IN_REPLY_TO.getName(),
@@ -107,7 +107,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * ToがURL形式でない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void ToがURL形式でない場合にDcCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(), "ftp://example.com/test");
 
@@ -116,7 +116,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * ToがCSV複数URL形式とURL形式でない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void ToがCSV複数URL形式とURL形式でない場合にDcCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(),
                 "http://example.com/test,ftp://example.com/test");
@@ -125,7 +125,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * Toが不正なCSV形式の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Toが不正なCSV形式の場合にDcCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(),
                 "http://example.com/test,,http://example.com/test");
@@ -146,7 +146,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * ToRelationが0文字の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void ToRelationが0文字の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(
                 SentMessage.P_TO_RELATION.build(),
@@ -179,7 +179,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * ToRelationが129文字の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void ToRelationが129文字の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(
                 SentMessage.P_TO_RELATION.build(),
@@ -201,7 +201,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * ToRelationがアンダーバー始まりの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void ToRelationがアンダーバー始まりの場合にDcCoreExceptionが発生すること() {
         this.validateProperty(
                 SentMessage.P_TO_RELATION.build(),
@@ -212,7 +212,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * ToRelationがコロン始まりの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void ToRelationがコロン始まりの場合にDcCoreExceptionが発生すること() {
         this.validateProperty(
                 SentMessage.P_TO_RELATION.build(),
@@ -265,7 +265,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * Typeがsocial_messageの場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Typeがsocial_messageの場合にDcCoreExceptionが発生すること() {
         this.validateProperty(SentMessage.P_TYPE.build(),
                 SentMessage.P_TYPE.getName(),
@@ -310,7 +310,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * Titleが257文字の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Titleが257文字の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(
                 SentMessage.P_TITLE.build(),
@@ -369,7 +369,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * Bodyが64Kbyteを超える場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Bodyが64Kbyteを超える場合にDcCoreExceptionが発生すること() {
         char[] buff = new char[65537];
         for (int i = 0; i < buff.length; i++) {
@@ -383,7 +383,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * Priorityが0の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Priorityが0の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(
                 SentMessage.P_PRIORITY.build(),
@@ -444,7 +444,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * Priorityが6の場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Priorityが6の場合にDcCoreExceptionが発生すること() {
         this.validateProperty(
                 SentMessage.P_PRIORITY.build(),
@@ -477,7 +477,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * RequestRelationがURL形式でない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void RequestRelationがURL形式でない場合にDcCoreExceptionが発生すること() {
         this.validateProperty(SentMessage.P_REQUEST_RELATION.build(),
                 SentMessage.P_REQUEST_RELATION.getName(),
@@ -509,7 +509,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * RequestRelationTargetがURL形式でない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void RequestRelationTargetがURL形式でない場合にDcCoreExceptionが発生すること() {
         this.validateProperty(SentMessage.P_REQUEST_RELATION_TARGET.build(),
                 SentMessage.P_REQUEST_RELATION_TARGET.getName(),
@@ -532,7 +532,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * ToもToRelationも存在しない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void ToもToRelationも存在しない場合にDcCoreExceptionが発生すること() {
         String to = (String) OProperties.null_(SentMessage.P_TO.getName(),
                 EdmSimpleType.STRING).getValue();
@@ -576,7 +576,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * Typeが関係登録依頼でRequestRelationがない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Typeが関係登録依頼でRequestRelationがない場合にDcCoreExceptionが発生すること() {
         String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
         String requestRelation = (String) OProperties.null_(
@@ -600,7 +600,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * Typeが関係削除依頼でRequestRelationがない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Typeが関係削除依頼でRequestRelationがない場合にDcCoreExceptionが発生すること() {
         String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
         String requestRelation = (String) OProperties.null_(
@@ -624,7 +624,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * Typeが関係登録依頼でRequestRelationTargetがない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Typeが関係登録依頼でRequestRelationTargetがない場合にDcCoreExceptionが発生すること() {
         String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
         String requestRelation = "http://example.com/reqRelation";
@@ -648,7 +648,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * Typeが関係削除依頼でRequestRelationTargetがない場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void Typeが関係削除依頼でRequestRelationTargetがない場合にDcCoreExceptionが発生すること() {
         String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
         String requestRelation = "http://example.com/reqRelation";
@@ -672,7 +672,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     /**
      * 送信先URLが最大送信許可数を超えている場合にDcCoreExceptionが発生すること.
      */
-    @Test(expected = DcCoreException.class)
+    @Test(expected = PersoniumCoreException.class)
     public final void 送信先URLが最大送信許可数を超えている場合にDcCoreExceptionが発生すること() {
         MessageODataResource mor = new MessageODataResource(null, null, null);
         mor.checkMaxDestinationsSize(1001);

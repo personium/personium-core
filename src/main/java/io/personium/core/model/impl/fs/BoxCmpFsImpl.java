@@ -22,8 +22,8 @@ import org.apache.wink.webdav.model.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.DavCmp;
@@ -46,7 +46,7 @@ public class BoxCmpFsImpl extends DavCmpFsImpl implements BoxCmp {
         this.of = new ObjectFactory();
         this.box = box;
         this.cell = box.getCell();
-        StringBuilder path = new StringBuilder(DcCoreConfig.getBlobStoreRoot());
+        StringBuilder path = new StringBuilder(PersoniumUnitConfig.getBlobStoreRoot());
         path.append(File.separatorChar);
         path.append(this.getCell().getDataBundleName());
         path.append(File.separatorChar);
@@ -79,8 +79,8 @@ public class BoxCmpFsImpl extends DavCmpFsImpl implements BoxCmp {
     }
 
     @Override
-    public DcCoreException getNotFoundException() {
-        return DcCoreException.Dav.BOX_NOT_FOUND;
+    public PersoniumCoreException getNotFoundException() {
+        return PersoniumCoreException.Dav.BOX_NOT_FOUND;
     }
 
     @Override

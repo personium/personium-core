@@ -42,15 +42,15 @@ public class EventLogger {
      * イベントの情報をログに出力する.
      * @param ev ログに出力するイベント
      */
-    public void log(final DcEvent ev) {
+    public void log(final PersoniumEvent ev) {
         int evLv = ev.getLevel();
         if (evLv >=  this.logLevel) {
             // Do Logging
-            if (evLv == DcEvent.Level.ERROR) {
+            if (evLv == PersoniumEvent.Level.ERROR) {
                 log.error(cell.getId() + ev.toLogMessage());
-            } else if (evLv == DcEvent.Level.WARN) {
+            } else if (evLv == PersoniumEvent.Level.WARN) {
                 log.warn(cell.getId() + ev.toLogMessage());
-            } else if (evLv == DcEvent.Level.INFO) {
+            } else if (evLv == PersoniumEvent.Level.INFO) {
                 log.info(cell.getId() + ev.toLogMessage());
             }
         }

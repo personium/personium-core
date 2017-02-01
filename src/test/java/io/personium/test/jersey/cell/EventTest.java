@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -206,7 +206,7 @@ public class EventTest extends ODataCommon {
                         .with("requestKey", "abc#123")
                         .with("json", "")
                         .returns();
-        response.checkErrorResponse("PR400-EV-0002", DcCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID.getMessage());
+        response.checkErrorResponse("PR400-EV-0002", PersoniumCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID.getMessage());
         response.statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 

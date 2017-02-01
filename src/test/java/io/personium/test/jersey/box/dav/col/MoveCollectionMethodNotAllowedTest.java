@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.EntityType;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -72,7 +72,7 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         DcResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
-        DcCoreException expectedException = DcCoreException.Misc.METHOD_NOT_ALLOWED;
+        PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -92,7 +92,7 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         DcResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
-        DcCoreException expectedException = DcCoreException.Misc.METHOD_NOT_ALLOWED;
+        PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -112,7 +112,7 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         DcResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
-        DcCoreException expectedException = DcCoreException.Misc.METHOD_NOT_ALLOWED;
+        PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -133,7 +133,7 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         DcResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
-        DcCoreException expectedException = DcCoreException.Misc.METHOD_NOT_ALLOWED;
+        PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -153,7 +153,7 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         DcResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
-        DcCoreException expectedException = DcCoreException.Misc.METHOD_NOT_ALLOWED;
+        PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -173,7 +173,7 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         DcResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
-        DcCoreException expectedException = DcCoreException.Misc.METHOD_NOT_ALLOWED;
+        PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -193,7 +193,7 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         DcResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
-        DcCoreException expectedException = DcCoreException.Misc.METHOD_NOT_ALLOWED;
+        PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -213,7 +213,7 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         DcResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
-        DcCoreException expectedException = DcCoreException.Misc.METHOD_NOT_ALLOWED;
+        PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -233,7 +233,7 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         DcResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
-        DcCoreException expectedException = DcCoreException.Misc.METHOD_NOT_ALLOWED;
+        PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -260,7 +260,7 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
             DcResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
-            DcCoreException expectedException = DcCoreException.Misc.METHOD_NOT_ALLOWED;
+            PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteCollection(CELL_NAME, BOX_NAME, srcCol, TOKEN, -1);

@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DcRunner;
 
@@ -68,8 +68,8 @@ public class LockManagerTest {
         try {
             lock = LockManager.getLock(Lock.CATEGORY_ODATA, lockName, null, null);
             lock2 = LockManager.getLock(Lock.CATEGORY_ODATA, lockName, null, null);
-        } catch (DcCoreException e) {
-            assertEquals(DcCoreException.class, e.getClass());
+        } catch (PersoniumCoreException e) {
+            assertEquals(PersoniumCoreException.class, e.getClass());
         } finally {
             lock.release();
             if (lock2 != null) {
@@ -160,8 +160,8 @@ public class LockManagerTest {
         RetryCountingLockManager rclm = (RetryCountingLockManager) LockManager.singleton;
         try {
             LockManager.getLock(Lock.CATEGORY_ODATA, "aaa", null, null);
-        } catch (DcCoreException e) {
-            assertEquals(DcCoreException.class, e.getClass());
+        } catch (PersoniumCoreException e) {
+            assertEquals(PersoniumCoreException.class, e.getClass());
         } finally {
             // doGetLock呼び出し回数 は 最初の呼び出しの１回と ＋ リトライ回数 となる
             assertEquals(LockManager.getLockRetryTimes() + 1, rclm.getCount);

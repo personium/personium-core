@@ -36,7 +36,7 @@ import org.junit.runner.RunWith;
 import io.personium.common.es.EsClient;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumIndexResponse;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.ads.AdsException;
 import io.personium.core.model.impl.es.ads.JdbcAds;
 import io.personium.core.model.impl.es.doc.CellDocHandler;
@@ -64,7 +64,7 @@ public class CellAccessorTest {
      */
     @Before
     public void setUp() throws Exception {
-        esClient = new EsClient(DcCoreConfig.getEsClusterName(), DcCoreConfig.getEsHosts());
+        esClient = new EsClient(PersoniumUnitConfig.getEsClusterName(), PersoniumUnitConfig.getEsHosts());
     }
 
     /**
@@ -73,7 +73,7 @@ public class CellAccessorTest {
      */
     @After
     public void tearDown() throws Exception {
-        String esUnitPrefix = DcCoreConfig.getEsUnitPrefix() + "_";
+        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
         EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
         try {
             index.delete();
@@ -116,7 +116,7 @@ public class CellAccessorTest {
     @Test
     public void create処理が正常に終了する() {
         // 事前準備
-        String esUnitPrefix = DcCoreConfig.getEsUnitPrefix() + "_";
+        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
         EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
         assertNotNull(index);
         CellAccessor cellAccessor = new CellAccessor(index, TYPE_NAME, ROUTING_ID_NAME);
@@ -150,7 +150,7 @@ public class CellAccessorTest {
     @Test
     public void create処理にてAdsが例外を上げた場合でも正常に終了すること() {
         // 事前準備
-        String esUnitPrefix = DcCoreConfig.getEsUnitPrefix() + "_";
+        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
         EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
         assertNotNull(index);
         CellAccessor cellAccessor = new CellAccessor(index, TYPE_NAME, ROUTING_ID_NAME);
@@ -175,7 +175,7 @@ public class CellAccessorTest {
     @Test
     public void update処理が正常に終了する() {
         // 事前準備
-        String esUnitPrefix = DcCoreConfig.getEsUnitPrefix() + "_";
+        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
         EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
         assertNotNull(index);
         CellAccessor cellAccessor = new CellAccessor(index, TYPE_NAME, ROUTING_ID_NAME);
@@ -218,7 +218,7 @@ public class CellAccessorTest {
     @Test
     public void update処理にてAdsが例外を上げた場合でも正常に終了すること() {
         // 事前準備
-        String esUnitPrefix = DcCoreConfig.getEsUnitPrefix() + "_";
+        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
         EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
         assertNotNull(index);
         CellAccessor cellAccessor = new CellAccessor(index, TYPE_NAME, ROUTING_ID_NAME);
@@ -250,7 +250,7 @@ public class CellAccessorTest {
     @Test
     public void delete処理が正常に終了する() {
         // 事前準備
-        String esUnitPrefix = DcCoreConfig.getEsUnitPrefix() + "_";
+        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
         EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
         assertNotNull(index);
         CellAccessor cellAccessor = new CellAccessor(index, TYPE_NAME, ROUTING_ID_NAME);
@@ -280,7 +280,7 @@ public class CellAccessorTest {
     @Test
     public void delete処理にてAdsが例外を上げた場合でも正常に終了すること() {
         // 事前準備
-        String esUnitPrefix = DcCoreConfig.getEsUnitPrefix() + "_";
+        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
         EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
         assertNotNull(index);
         CellAccessor cellAccessor = new CellAccessor(index, TYPE_NAME, ROUTING_ID_NAME);

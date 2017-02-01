@@ -45,7 +45,7 @@ import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.common.es.response.EsClientException;
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.file.BinaryDataAccessException;
 import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.model.impl.es.DavNode;
@@ -62,13 +62,13 @@ import io.personium.test.jersey.DcRunner;
 public class DavNodeAccessorTest {
 
     private static final String UNIT_USER_NAME = "index_for_test";
-    private static final String UNIT_PREFIX = DcCoreConfig.getEsUnitPrefix();
+    private static final String UNIT_PREFIX = PersoniumUnitConfig.getEsUnitPrefix();
     private static final String INDEX_NAME = UNIT_PREFIX + "_" + UNIT_USER_NAME;
     private static final String TYPE_NAME = "TypeForTest";
     private static final String ROUTING_ID = "RoutingIdTest";
 
-    private BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(DcCoreConfig.getBlobStoreRoot(),
-            "index_for_test", DcCoreConfig.getFsyncEnabled());
+    private BinaryDataAccessor binaryDataAccessor = new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(),
+            "index_for_test", PersoniumUnitConfig.getFsyncEnabled());
     private static EsClient esClient;
 
     /**
@@ -77,7 +77,7 @@ public class DavNodeAccessorTest {
      */
     @Before
     public void setUp() throws Exception {
-        esClient = new EsClient(DcCoreConfig.getEsClusterName(), DcCoreConfig.getEsHosts());
+        esClient = new EsClient(PersoniumUnitConfig.getEsClusterName(), PersoniumUnitConfig.getEsHosts());
     }
 
     /**

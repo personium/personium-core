@@ -27,8 +27,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -148,7 +148,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_NOT_FOUND);
-            DcCoreException expectedException = DcCoreException.Dav.RESOURCE_NOT_FOUND;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {
@@ -180,7 +180,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
-            DcCoreException expectedException = DcCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destination);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destination);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {
@@ -197,7 +197,7 @@ public class MoveServiceSourceTest extends JerseyTest {
         final String colName = "serviceColforMOVE";
         final String destFileName = "destFile.txt";
         final String destination = String.format("%s://%s/%s/%s/%s",
-                DcCoreConfig.getUnitScheme(), "fqdn", CELL_NAME, BOX_NAME, destFileName);
+                PersoniumUnitConfig.getUnitScheme(), "fqdn", CELL_NAME, BOX_NAME, destFileName);
         try {
             // 事前準備
             DavResourceUtils.createServiceCollection(AbstractCase.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED,
@@ -214,7 +214,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            DcCoreException expectedException = DcCoreException.Dav.INVALID_REQUEST_HEADER.params(
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     HttpHeaders.DESTINATION, destination);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
@@ -249,7 +249,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            DcCoreException expectedException = DcCoreException.Dav.INVALID_REQUEST_HEADER.params(
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     HttpHeaders.DESTINATION, destination);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
@@ -285,7 +285,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CONFLICT);
-            DcCoreException expectedException = DcCoreException.Dav.HAS_NOT_PARENT.params(invalidColName);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.HAS_NOT_PARENT.params(invalidColName);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteWebDavFile(CELL_NAME, TOKEN, BOX_NAME, colName + "/__src/" + FILE_NAME);
@@ -317,7 +317,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            DcCoreException expectedException = DcCoreException.Dav.INVALID_REQUEST_HEADER.params(
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     HttpHeaders.DESTINATION, destination);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
@@ -351,7 +351,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            DcCoreException expectedException = DcCoreException.Dav.INVALID_REQUEST_HEADER.params(
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     HttpHeaders.DESTINATION, destination);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
@@ -390,7 +390,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            DcCoreException expectedException = DcCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteWebDavFile(CELL_NAME, TOKEN, BOX_NAME, svcColName + "/__src/" + FILE_NAME);
@@ -427,7 +427,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_PRECONDITION_FAILED);
-            DcCoreException expectedException = DcCoreException.Dav.DESTINATION_ALREADY_EXISTS;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_ALREADY_EXISTS;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteWebDavFile(CELL_NAME, TOKEN, BOX_NAME, svcColName + "/__src/" + FILE_NAME);
@@ -464,7 +464,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            DcCoreException expectedException = DcCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_FILE;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_FILE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteWebDavFile(CELL_NAME, TOKEN, BOX_NAME, parentFileName);
@@ -597,7 +597,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_PRECONDITION_FAILED);
-            DcCoreException expectedException = DcCoreException.Dav.DESTINATION_ALREADY_EXISTS;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_ALREADY_EXISTS;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
             // 移動元ファイルを取得できること
@@ -818,7 +818,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_PRECONDITION_FAILED);
-            DcCoreException expectedException = DcCoreException.Dav.DESTINATION_ALREADY_EXISTS;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_ALREADY_EXISTS;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
             // 移動元ファイルを取得できること

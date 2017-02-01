@@ -37,7 +37,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.progress.ProgressInfo;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -1703,7 +1703,7 @@ public class BarInstallUserDataTest extends JerseyTest {
             String colName,
             String entityName) throws Exception {
         final String query = "?$orderby=__id";
-        final String token = DcCoreConfig.getMasterToken();
+        final String token = PersoniumUnitConfig.getMasterToken();
         DcResponse res = UserDataUtils.listEntities(cellName, boxName, colName, entityName, query, token,
                 HttpStatus.SC_OK);
         String resString = res.bodyAsString();

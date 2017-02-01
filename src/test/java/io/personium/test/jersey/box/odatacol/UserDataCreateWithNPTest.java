@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -190,7 +190,7 @@ public class UserDataCreateWithNPTest extends AbstractUserDataTest {
         JSONObject bodyNp = new JSONObject();
         bodyNp.put("__id", userDataNpId);
 
-        int maxPropNum = DcCoreConfig.getMaxPropertyCountInEntityType();
+        int maxPropNum = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
         for (int i = 0; i < maxPropNum; i++) {
             bodyNp.put("dynamicProperty" + i, "dynamicPropertyValue" + i);
         }
@@ -220,7 +220,7 @@ public class UserDataCreateWithNPTest extends AbstractUserDataTest {
         JSONObject bodyNp = new JSONObject();
         bodyNp.put("__id", userDataNpId);
 
-        int maxPropNum = DcCoreConfig.getMaxPropertyCountInEntityType();
+        int maxPropNum = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
         for (int i = 0; i < maxPropNum + 1; i++) {
             bodyNp.put("dynamicProperty" + i, "dynamicPropertyValue" + i);
         }
@@ -245,7 +245,7 @@ public class UserDataCreateWithNPTest extends AbstractUserDataTest {
         JSONObject bodyNp = new JSONObject();
         bodyNp.put("__id", userDataNpId);
 
-        int maxPropNum = DcCoreConfig.getMaxPropertyCountInEntityType();
+        int maxPropNum = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
         for (int i = 0; i < maxPropNum; i++) {
             bodyNp.put("dynamicProperty" + i, "dynamicPropertyValue" + i);
         }
@@ -276,7 +276,7 @@ public class UserDataCreateWithNPTest extends AbstractUserDataTest {
         JSONObject bodyNp = new JSONObject();
         bodyNp.put("__id", userDataNpId);
 
-        int maxPropNum = DcCoreConfig.getMaxPropertyCountInEntityType();
+        int maxPropNum = PersoniumUnitConfig.getMaxPropertyCountInEntityType();
         for (int i = 0; i < maxPropNum + 1; i++) {
             bodyNp.put("dynamicProperty" + i, "dynamicPropertyValue" + i);
         }
@@ -906,7 +906,7 @@ public class UserDataCreateWithNPTest extends AbstractUserDataTest {
         if (expectedSC == HttpStatus.SC_CREATED) {
             // 登録データを一件取得し、レスポンスヘッダからETAGを取得する
             TResponse getres = getUserData("testcell1", "box1", "setodata", navPropName,
-                    userDataNpId, DcCoreConfig.getMasterToken(), "", HttpStatus.SC_OK);
+                    userDataNpId, PersoniumUnitConfig.getMasterToken(), "", HttpStatus.SC_OK);
             String etag = getres.getHeader(HttpHeaders.ETAG);
 
             // レスポンスヘッダーのチェック

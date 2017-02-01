@@ -36,7 +36,7 @@ import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmProperty;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.odata.OEntityWrapper;
@@ -70,7 +70,7 @@ public class ODataMergeResource extends ODataEntityResource {
         try {
             this.oEntityKey = OEntityKey.parse(this.keyString);
         } catch (IllegalArgumentException e) {
-            throw DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.reason(e);
         }
     }
 

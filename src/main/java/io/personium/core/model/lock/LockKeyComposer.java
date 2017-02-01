@@ -16,7 +16,7 @@
  */
 package io.personium.core.model.lock;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 
 /**
  * Lockキーを生成するクラス.
@@ -62,7 +62,7 @@ public class LockKeyComposer {
             return cellId;
         } else {
             // CellIDがNullの場合はunitPrefix
-            return DcCoreConfig.getEsUnitPrefix();
+            return PersoniumUnitConfig.getEsUnitPrefix();
         }
     }
 

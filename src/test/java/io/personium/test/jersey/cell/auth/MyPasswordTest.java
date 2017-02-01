@@ -37,7 +37,7 @@ import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcException;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.DcRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -418,7 +418,7 @@ public class MyPasswordTest extends JerseyTest {
         // セルローカルトークンを取得する
         String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -442,7 +442,7 @@ public class MyPasswordTest extends JerseyTest {
      */
     private DcResponse requesttoMypassword(String headerAuthorization, String headerCredential,
             String requestCellName) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         if (headerAuthorization == null) {

@@ -17,7 +17,7 @@
 package io.personium.core.model.lock;
 
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
@@ -44,7 +44,7 @@ public abstract class AccountLockManager extends LockManager {
         if (success) {
             return;
         }
-        throw DcCoreException.Server.SERVER_CONNECTION_ERROR;
+        throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
     }
 
     /**
@@ -59,7 +59,7 @@ public abstract class AccountLockManager extends LockManager {
             String lockPublic = singleton.doGetAccountLock(key);
             return (lockPublic != null);
         } catch (MemcachedClientException e) {
-            throw DcCoreException.Server.SERVER_CONNECTION_ERROR;
+            throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
         }
     }
 }

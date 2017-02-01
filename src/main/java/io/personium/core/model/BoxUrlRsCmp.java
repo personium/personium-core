@@ -16,8 +16,8 @@
  */
 package io.personium.core.model;
 
-import io.personium.core.DcCoreAuthzException;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreAuthzException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
@@ -66,9 +66,9 @@ public class BoxUrlRsCmp extends BoxRsCmp {
             if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
                 ac.throwInvalidTokenException(allowedAuthScheme);
             } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
-                throw DcCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(), allowedAuthScheme);
+                throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(), allowedAuthScheme);
             }
-            throw DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
     }
 

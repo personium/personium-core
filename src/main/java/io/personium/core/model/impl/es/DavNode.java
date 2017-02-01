@@ -25,7 +25,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import io.personium.common.es.EsBulkRequest;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 
 /**
  * DavのNodeデータを扱うクラス.
@@ -131,7 +131,7 @@ public class DavNode implements EsBulkRequest {
             source = (JSONObject) parser.parse(jsonStr);
         } catch (ParseException e) {
             // ESのJSONが壊れている状態。
-            throw DcCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e);
+            throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e);
         }
         DavNode davNode = new DavNode();
         davNode.setId(id);

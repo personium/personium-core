@@ -39,7 +39,7 @@ public class EntityType {
     public static final EdmProperty.Builder P_ENTITYTYPE_NAME = EdmProperty.newBuilder("Name")
             .setType(EdmSimpleType.STRING)
             .setNullable(false)
-            .setAnnotations(Common.DC_FORMAT_NAME);
+            .setAnnotations(Common.P_FORMAT_NAME);
 
     /**
      * EntityType Builder.

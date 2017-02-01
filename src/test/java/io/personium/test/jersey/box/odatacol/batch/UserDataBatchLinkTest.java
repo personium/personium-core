@@ -36,8 +36,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -85,7 +85,7 @@ public class UserDataBatchLinkTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -110,8 +110,8 @@ public class UserDataBatchLinkTest extends AbstractUserDataBatchTest {
         } finally {
             ResourceUtils.deleteUserDataLinks(
                     "srcKey", "tgtKey", "Supplier", cellName, boxName, colName, "Sales", -1);
-            deleteUserData(cellName, boxName, colName, "Supplier", "tgtKey", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Supplier", "tgtKey", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -166,7 +166,7 @@ public class UserDataBatchLinkTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -178,48 +178,48 @@ public class UserDataBatchLinkTest extends AbstractUserDataBatchTest {
                     + retrievePostResBodyToSetODataCol("Supplier", "tgtKey", true)
                     // $links元に存在しないEntitySet名を指定
                     + START_BOUNDARY + retrieveChangesetErrorResponse(HttpStatus.SC_NOT_FOUND,
-                            DcCoreException.OData.NO_SUCH_ENTITY_SET.getCode(),
-                            DcCoreException.OData.NO_SUCH_ENTITY_SET.getMessage())
+                            PersoniumCoreException.OData.NO_SUCH_ENTITY_SET.getCode(),
+                            PersoniumCoreException.OData.NO_SUCH_ENTITY_SET.getMessage())
                     // $links元に存在しないEntityキーを指定
                     + START_BOUNDARY + retrieveChangesetErrorResponse(HttpStatus.SC_NOT_FOUND,
-                            DcCoreException.OData.NOT_FOUND.getCode(),
-                            DcCoreException.OData.NOT_FOUND.getMessage())
+                            PersoniumCoreException.OData.NOT_FOUND.getCode(),
+                            PersoniumCoreException.OData.NOT_FOUND.getMessage())
                     // $links先に存在しないEntitySet名を指定
                     + START_BOUNDARY + retrieveChangesetErrorResponse(HttpStatus.SC_BAD_REQUEST,
-                            DcCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
-                            DcCoreException.OData.NO_SUCH_ASSOCIATION.getMessage())
+                            PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
+                            PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getMessage())
                     // リクエストボディに空文字を指定
                     + START_BOUNDARY + retrieveChangesetErrorResponse(HttpStatus.SC_BAD_REQUEST,
-                            DcCoreException.OData.JSON_PARSE_ERROR.getCode(),
-                            DcCoreException.OData.JSON_PARSE_ERROR.getMessage())
+                            PersoniumCoreException.OData.JSON_PARSE_ERROR.getCode(),
+                            PersoniumCoreException.OData.JSON_PARSE_ERROR.getMessage())
                     // リクエストボディにuri以外のキーを指定
                     + START_BOUNDARY + retrieveChangesetErrorResponse(HttpStatus.SC_BAD_REQUEST,
-                            DcCoreException.OData.JSON_PARSE_ERROR.getCode(),
-                            DcCoreException.OData.JSON_PARSE_ERROR.getMessage())
+                            PersoniumCoreException.OData.JSON_PARSE_ERROR.getCode(),
+                            PersoniumCoreException.OData.JSON_PARSE_ERROR.getMessage())
                     // リクエストボディの値が空文字
                     + START_BOUNDARY + retrieveChangesetErrorResponse(HttpStatus.SC_BAD_REQUEST,
-                            DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                            DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri").getMessage())
+                            PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                            PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri").getMessage())
                     // リクエストボディがurl形式でない
                     + START_BOUNDARY + retrieveChangesetErrorResponse(HttpStatus.SC_BAD_REQUEST,
-                            DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                            DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri").getMessage())
+                            PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                            PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri").getMessage())
                     // リクエストボディで指定したEntitySetが存在しない
                     + START_BOUNDARY + retrieveChangesetErrorResponse(HttpStatus.SC_BAD_REQUEST,
-                            DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                            DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri").getMessage())
+                            PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                            PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri").getMessage())
                     // リクエストボディで指定したEntityキーが存在しない
                     + START_BOUNDARY + retrieveChangesetErrorResponse(HttpStatus.SC_BAD_REQUEST,
-                            DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                            DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri").getMessage())
+                            PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                            PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri").getMessage())
                     + END_BOUNDARY;
             checkBatchResponseBody(response, expectedBody);
 
         } finally {
             ResourceUtils.deleteUserDataLinks(
                     "srcKey", "tgtKey", "Supplier", cellName, boxName, colName, "Sales", -1);
-            deleteUserData(cellName, boxName, colName, "Supplier", "tgtKey", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Supplier", "tgtKey", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -250,7 +250,7 @@ public class UserDataBatchLinkTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .debug()
@@ -261,24 +261,24 @@ public class UserDataBatchLinkTest extends AbstractUserDataBatchTest {
                     + START_BOUNDARY + retrievePostResBodyToSetODataCol("Supplier", "tgtKey", true)
                     // $links の一覧取得
                     + START_BOUNDARY + retrieveQueryOperationResErrorBody(HttpStatus.SC_NOT_IMPLEMENTED,
-                            DcCoreException.Misc.METHOD_NOT_IMPLEMENTED.getCode(),
-                            DcCoreException.Misc.METHOD_NOT_IMPLEMENTED.getMessage())
+                            PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED.getCode(),
+                            PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED.getMessage())
                     // $links の更新
                     + START_BOUNDARY + retrieveChangesetErrorResponse(HttpStatus.SC_NOT_IMPLEMENTED,
-                            DcCoreException.Misc.METHOD_NOT_IMPLEMENTED.getCode(),
-                            DcCoreException.Misc.METHOD_NOT_IMPLEMENTED.getMessage())
+                            PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED.getCode(),
+                            PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED.getMessage())
                     // $links の削除
                     + START_BOUNDARY + retrieveChangesetErrorResponse(HttpStatus.SC_NOT_IMPLEMENTED,
-                            DcCoreException.Misc.METHOD_NOT_IMPLEMENTED.getCode(),
-                            DcCoreException.Misc.METHOD_NOT_IMPLEMENTED.getMessage())
+                            PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED.getCode(),
+                            PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED.getMessage())
                     + END_BOUNDARY;
             checkBatchResponseBody(response, expectedBody);
 
         } finally {
             ResourceUtils.deleteUserDataLinks(
                     "srcKey", "tgtKey", "Supplier", cellName, boxName, colName, "Sales", -1);
-            deleteUserData(cellName, boxName, colName, "Supplier", "tgtKey", DcCoreConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", DcCoreConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Supplier", "tgtKey", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -296,7 +296,7 @@ public class UserDataBatchLinkTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED);

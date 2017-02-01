@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.ComplexTypeProperty;
 import io.personium.test.categories.Integration;
@@ -71,8 +71,8 @@ public class ComplexTypePropertyLinkTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
-                DcCoreException.OData.NO_SUCH_ASSOCIATION.getMessage());
+                PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
+                PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getMessage());
     }
 
     /**
@@ -92,8 +92,8 @@ public class ComplexTypePropertyLinkTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.Misc.METHOD_NOT_IMPLEMENTED.getCode(),
-                DcCoreException.Misc.METHOD_NOT_IMPLEMENTED.getMessage());
+                PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED.getCode(),
+                PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED.getMessage());
     }
 
     /**
@@ -113,8 +113,8 @@ public class ComplexTypePropertyLinkTest extends ODataCommon {
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
-                DcCoreException.OData.NO_SUCH_ASSOCIATION.getMessage());
+                PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getCode(),
+                PersoniumCoreException.OData.NO_SUCH_ASSOCIATION.getMessage());
     }
 
     /**

@@ -26,8 +26,8 @@ import org.odata4j.expression.CommonExpression;
 import org.odata4j.expression.EntitySimpleProperty;
 import org.odata4j.expression.OrderByExpression;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 
@@ -54,7 +54,7 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
     public void visit(OrderByExpression expr) {
         log.debug("visit(OrderByExpression expr)");
         if (!(expr.getExpression() instanceof EntitySimpleProperty)) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR;
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
 
         // ソート対象のプロパティスキーマを取得する
@@ -68,7 +68,7 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
 
         // 配列に対するソート指定時はエラーとする
         if (CollectionKind.List.equals(edmProperty.getCollectionKind())) {
-            throw DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY;
+            throw PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY;
         }
 
         if (!isUntouched(name, edmProperty)) {
@@ -78,7 +78,7 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
             String key = getSearchKey(expr.getExpression(), true);
             String orderOption = getOrderOption(expr.getDirection());
             Map<String, Object> orderByValue = null;
-            if (DcCoreConfig.getOrderbySortOrder()) {
+            if (PersoniumUnitConfig.getOrderbySortOrder()) {
                 orderByValue = UserDataQueryHandlerHelper.getOrderByValueForMissingFirst(orderOption, key);
             } else {
                 orderByValue = UserDataQueryHandlerHelper.getOrderByValue(orderOption, key);

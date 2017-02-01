@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreMessageUtils;
+import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.auth.OAuth2Helper.Key;
 
 /**
@@ -66,13 +66,13 @@ public class ErrorHtmlResource {
      * @return HTML string
      */
     private String htmlForCode(String code) {
-        String title = DcCoreMessageUtils.getMessage("PS-ER-0001");
+        String title = PersoniumCoreMessageUtils.getMessage("PS-ER-0001");
         String msg = null;
         try {
-            msg = DcCoreMessageUtils.getMessage(code);
+            msg = PersoniumCoreMessageUtils.getMessage(code);
         } catch (Exception e) {
             log.info(e.getMessage());
-            msg = DcCoreMessageUtils.getMessage("PS-ER-0002");
+            msg = PersoniumCoreMessageUtils.getMessage("PS-ER-0002");
         }
 
         String html = PersoniumCoreUtils.readStringResource("html/error.html", CharEncoding.UTF_8);

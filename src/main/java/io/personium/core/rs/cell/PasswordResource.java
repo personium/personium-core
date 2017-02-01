@@ -26,13 +26,13 @@ import org.odata4j.edm.EdmEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
-import io.personium.core.odata.DcODataProducer;
+import io.personium.core.odata.PersoniumODataProducer;
 
 /**
  * リソースクラスでパスワード変更処理を司るJAX-RSリソース.
@@ -83,11 +83,11 @@ public class PasswordResource {
         try {
             this.oEntityKey = OEntityKey.parse(this.keyString);
         } catch (IllegalArgumentException e) {
-            throw DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.reason(e);
         }
 
         // Accountのスキーマ情報を取得する
-        DcODataProducer producer = ModelFactory.ODataCtl.cellCtl(accessContext.getCell());
+        PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(accessContext.getCell());
         EdmEntitySet esetAccount = producer.getMetadata().getEdmEntitySet(Account.EDM_TYPE_NAME);
 
         // パスワードの変更をProducerに依頼

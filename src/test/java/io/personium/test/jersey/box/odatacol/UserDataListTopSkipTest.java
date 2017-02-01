@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -48,8 +48,8 @@ import io.personium.test.utils.TResponse;
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataListTopSkipTest extends AbstractUserDataTest {
 
-    int topMaxNum = DcCoreConfig.getTopQueryMaxSize();
-    int skipMaxNum = DcCoreConfig.getSkipQueryMaxSize();
+    int topMaxNum = PersoniumUnitConfig.getTopQueryMaxSize();
+    int skipMaxNum = PersoniumUnitConfig.getSkipQueryMaxSize();
 
     /**
      * コンストラクタ.
@@ -71,12 +71,12 @@ public class UserDataListTopSkipTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "?\\$top=-1")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_INVALID_ERROR.getCode(),
-                DcCoreException.OData.QUERY_INVALID_ERROR.params("$top", -1).getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_INVALID_ERROR.getCode(),
+                PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", -1).getMessage());
     }
 
     /**
@@ -106,7 +106,7 @@ public class UserDataListTopSkipTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$top=0")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -147,7 +147,7 @@ public class UserDataListTopSkipTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$top=" + top)
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -174,12 +174,12 @@ public class UserDataListTopSkipTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "?\\$top=" + top)
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_INVALID_ERROR.getCode(),
-                DcCoreException.OData.QUERY_INVALID_ERROR.params("$top", top).getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_INVALID_ERROR.getCode(),
+                PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", top).getMessage());
     }
 
     /**
@@ -195,12 +195,12 @@ public class UserDataListTopSkipTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "?\\$top=%27test%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
-                DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$top").getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
+                PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$top").getMessage());
     }
 
     /**
@@ -216,12 +216,12 @@ public class UserDataListTopSkipTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "?\\$top=")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
-                DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$top").getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
+                PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$top").getMessage());
     }
 
     /**
@@ -237,12 +237,12 @@ public class UserDataListTopSkipTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "?\\$skip=-1")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_INVALID_ERROR.getCode(),
-                DcCoreException.OData.QUERY_INVALID_ERROR.params("$skip", "-1").getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_INVALID_ERROR.getCode(),
+                PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$skip", "-1").getMessage());
     }
 
     /**
@@ -272,7 +272,7 @@ public class UserDataListTopSkipTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$skip=0")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -313,7 +313,7 @@ public class UserDataListTopSkipTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$skip=" + skip)
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -340,12 +340,12 @@ public class UserDataListTopSkipTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "?\\$skip=" + skip)
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_INVALID_ERROR.getCode(),
-                DcCoreException.OData.QUERY_INVALID_ERROR.params("$skip", skip).getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_INVALID_ERROR.getCode(),
+                PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$skip", skip).getMessage());
     }
 
     /**
@@ -361,12 +361,12 @@ public class UserDataListTopSkipTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "?\\$skip=%27test%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
-                DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$skip").getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
+                PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$skip").getMessage());
     }
 
     /**
@@ -382,11 +382,11 @@ public class UserDataListTopSkipTest extends AbstractUserDataTest {
                 .with("entityType", entityTypeName)
                 .with("query", "?\\$skip=")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
-        ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
-                DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$skip").getMessage());
+        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.getCode(),
+                PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$skip").getMessage());
     }
 }

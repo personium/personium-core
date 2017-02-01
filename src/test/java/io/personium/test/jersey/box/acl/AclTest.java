@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -609,7 +609,7 @@ public class AclTest extends JerseyTest {
         TResponse res = DavResourceUtils.setACLwithBox(TEST_CELL1, TOKEN, HttpStatus.SC_NOT_FOUND, "noneExistBox", "",
                 ACL_SETTING_TEST, "role", "noneExistBox", "<D:read/>", "");
         String boxUrl = UrlUtils.boxRoot(TEST_CELL1, "noneExistBox");
-        DcCoreException expectedException = DcCoreException.Dav.BOX_NOT_FOUND.params(boxUrl);
+        PersoniumCoreException expectedException = PersoniumCoreException.Dav.BOX_NOT_FOUND.params(boxUrl);
         ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
     }
 
@@ -720,8 +720,8 @@ public class AclTest extends JerseyTest {
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
-        res.checkErrorResponse(DcCoreException.Dav.XML_VALIDATE_ERROR.getCode(),
-                DcCoreException.Dav.XML_VALIDATE_ERROR.getMessage());
+        res.checkErrorResponse(PersoniumCoreException.Dav.XML_VALIDATE_ERROR.getCode(),
+                PersoniumCoreException.Dav.XML_VALIDATE_ERROR.getMessage());
     }
 
     /**

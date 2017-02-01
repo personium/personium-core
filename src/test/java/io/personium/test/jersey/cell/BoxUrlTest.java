@@ -29,8 +29,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreAuthzException;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreAuthzException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
@@ -39,7 +39,7 @@ import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcException;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.DcRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
@@ -83,7 +83,7 @@ public class BoxUrlTest extends ODataCommon {
     @Test
     public final void 指定したschemaのBoxURLが取得できること() {
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -113,7 +113,7 @@ public class BoxUrlTest extends ODataCommon {
                     UriUtils.SCHEME_UNIT_URI + Setup.TEST_CELL_SCHEMA1 + "/", HttpStatus.SC_NO_CONTENT);
 
             // テスト実施
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -143,7 +143,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void schemaパラメタとしてlocalunitURLの指定でhttpURLをschemaとするBoxが取得できること() {
         try {
             // Setupを流用
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -167,7 +167,7 @@ public class BoxUrlTest extends ODataCommon {
     @Test
     public final void 指定したローカルユニットschemaのBoxURLが不正な場合にエラーで返却されること() {
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -191,7 +191,7 @@ public class BoxUrlTest extends ODataCommon {
     @Test
     public final void BoxURL取得でPOST以外のメソッドを指定した場合に405が返却されること() {
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -200,7 +200,7 @@ public class BoxUrlTest extends ODataCommon {
             res = rest.del(UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
-            DcCoreException e = DcCoreException.Misc.METHOD_NOT_ALLOWED;
+            PersoniumCoreException e = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
         } catch (DcException e) {
             fail(e.getMessage());
@@ -213,7 +213,7 @@ public class BoxUrlTest extends ODataCommon {
     @Test
     public final void schemaが空指定の場合に400が返却されること() {
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -221,7 +221,7 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1, ""), requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            DcCoreException e = DcCoreException.OData.QUERY_INVALID_ERROR.params("schema", "");
+            PersoniumCoreException e = PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("schema", "");
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
         } catch (DcException e) {
             fail(e.getMessage());
@@ -234,7 +234,7 @@ public class BoxUrlTest extends ODataCommon {
     @Test
     public final void URI形式でないschemaを指定した場合に400が返却されること() {
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -242,7 +242,7 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1, "test"), requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-            DcCoreException e = DcCoreException.OData.QUERY_INVALID_ERROR.params("schema", "test");
+            PersoniumCoreException e = PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("schema", "test");
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
         } catch (DcException e) {
             fail(e.getMessage());
@@ -255,7 +255,7 @@ public class BoxUrlTest extends ODataCommon {
     @Test
     public final void 指定したschemaのBoxが存在しない場合に403が返却されること() {
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -265,7 +265,7 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
-            DcCoreException e = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
         } catch (DcException e) {
             fail(e.getMessage());
@@ -278,14 +278,14 @@ public class BoxUrlTest extends ODataCommon {
     @Test
     public final void マスタートークンを使用してschema指定がない場合に403が返却されること() {
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
-            DcCoreException e = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
         } catch (DcException e) {
             fail(e.getMessage());
@@ -311,7 +311,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -349,7 +349,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -360,7 +360,7 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
-            DcCoreException e = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
         } catch (DcException e) {
             fail(e.getMessage());
@@ -388,7 +388,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -426,7 +426,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -470,7 +470,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -516,7 +516,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -554,7 +554,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -591,7 +591,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -601,7 +601,7 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_UNAUTHORIZED, res.getStatusCode());
-            DcCoreException e = DcCoreAuthzException.TOKEN_PARSE_ERROR;
+            PersoniumCoreException e = PersoniumCoreAuthzException.TOKEN_PARSE_ERROR;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
         } catch (DcException e) {
             fail(e.getMessage());
@@ -629,7 +629,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -668,7 +668,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -707,7 +707,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -746,7 +746,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -784,7 +784,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -824,7 +824,7 @@ public class BoxUrlTest extends ODataCommon {
 
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -864,7 +864,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -874,7 +874,7 @@ public class BoxUrlTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
-            DcCoreException e = DcCoreException.Auth.SCHEMA_MISMATCH;
+            PersoniumCoreException e = PersoniumCoreException.Auth.SCHEMA_MISMATCH;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
         } catch (DcException e) {
             fail(e.getMessage());
@@ -904,7 +904,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -914,7 +914,7 @@ public class BoxUrlTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
-            DcCoreException e = DcCoreException.Auth.SCHEMA_MISMATCH;
+            PersoniumCoreException e = PersoniumCoreException.Auth.SCHEMA_MISMATCH;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
         } catch (DcException e) {
             fail(e.getMessage());
@@ -944,7 +944,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -953,7 +953,7 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
-            DcCoreException e = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
 
         } catch (DcException e) {
@@ -983,7 +983,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -992,7 +992,7 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
-            DcCoreException e = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
 
         } catch (DcException e) {
@@ -1022,7 +1022,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1031,7 +1031,7 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
-            DcCoreException e = DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
 
         } catch (DcException e) {
@@ -1060,7 +1060,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1099,7 +1099,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1138,7 +1138,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1176,7 +1176,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1185,7 +1185,7 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
-            DcCoreException e = DcCoreException.Auth.INSUFFICIENT_SCHEMA_AUTHZ_LEVEL;
+            PersoniumCoreException e = PersoniumCoreException.Auth.INSUFFICIENT_SCHEMA_AUTHZ_LEVEL;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
 
         } catch (DcException e) {
@@ -1215,7 +1215,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1254,7 +1254,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1293,7 +1293,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1332,7 +1332,7 @@ public class BoxUrlTest extends ODataCommon {
                     + "</D:acl>";
             beforeACLTest(aclXml);
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1383,7 +1383,7 @@ public class BoxUrlTest extends ODataCommon {
      */
     private String deleteApplicationCell(String role) {
         String token = null;
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
@@ -1395,7 +1395,7 @@ public class BoxUrlTest extends ODataCommon {
 
         // アカウント削除
         try {
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
             rest.del(UrlUtils.cellCtl("boxUrlTestSchema", "Account", "account1"), requestheaders);
         } catch (DcException e) {
             System.out.println("boxUrlTestSchema/__ctl/Account('account1') delete Fail : " + e.getMessage());
@@ -1403,7 +1403,7 @@ public class BoxUrlTest extends ODataCommon {
 
         // アプリセル削除
         try {
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
             rest.del(UrlUtils.unitCtl("Cell", "boxUrlTestSchema"), requestheaders);
 
         } catch (DcException e) {
@@ -1420,7 +1420,7 @@ public class BoxUrlTest extends ODataCommon {
     private void beforeACLTest(String aclXml) {
         try {
             // Box作成
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -1431,7 +1431,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
 
             // BoxACL設定
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
             res = null;
             requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -1447,7 +1447,7 @@ public class BoxUrlTest extends ODataCommon {
      * ACL関連のテスト後処理.
      */
     private void afterACLTest() {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1464,7 +1464,7 @@ public class BoxUrlTest extends ODataCommon {
 
     @SuppressWarnings("unchecked")
     private void createAppCell() throws DcException {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         JSONObject body = new JSONObject();
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1477,7 +1477,7 @@ public class BoxUrlTest extends ODataCommon {
 
     @SuppressWarnings("unchecked")
     private void createAccountForAppCell() throws DcException {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         JSONObject body = new JSONObject();
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1491,7 +1491,7 @@ public class BoxUrlTest extends ODataCommon {
 
     @SuppressWarnings("unchecked")
     private void createRoleForAppCell(String roleName) throws DcException {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         JSONObject body = new JSONObject();
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1503,7 +1503,7 @@ public class BoxUrlTest extends ODataCommon {
     }
 
     private void linkAccountRole(String roleName) throws DcException {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
 
@@ -1519,7 +1519,7 @@ public class BoxUrlTest extends ODataCommon {
         if (cell == null) {
             cell = "boxUrlTestSchema";
         }
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
 
@@ -1541,7 +1541,7 @@ public class BoxUrlTest extends ODataCommon {
     }
 
     private void unlinkAccountRole(String roleName) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
@@ -1556,7 +1556,7 @@ public class BoxUrlTest extends ODataCommon {
     }
 
     private void deleteRoleForAppCell(String roleName) {
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 

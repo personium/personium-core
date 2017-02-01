@@ -25,7 +25,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmMultiplicity;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -426,7 +426,7 @@ public class AssociationEndDeleteLinkTest extends AbstractCase {
     private void createAssociationEnd(String name, String entityTypeName) {
         Http.request("box/odatacol/schema/assocend/create.txt").with("cell", "testcell1").with("box", "box1")
                 .with("collection", "setodata").with("accept", MediaType.APPLICATION_JSON)
-                .with("contentType", MediaType.APPLICATION_JSON).with("token", DcCoreConfig.getMasterToken())
+                .with("contentType", MediaType.APPLICATION_JSON).with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", name).with("multiplicity", EdmMultiplicity.MANY.getSymbolString())
                 .with("entityTypeName", entityTypeName).returns().statusCode(HttpStatus.SC_CREATED).debug();
     }
@@ -436,7 +436,7 @@ public class AssociationEndDeleteLinkTest extends AbstractCase {
      */
     private void deleteAssociationEnd(String name, String entityTypeName) {
         Http.request("box/odatacol/schema/assocend/delete.txt").with("cell", "testcell1").with("box", "box1")
-                .with("collection", "setodata").with("token", DcCoreConfig.getMasterToken()).with("name", name)
+                .with("collection", "setodata").with("token", PersoniumUnitConfig.getMasterToken()).with("name", name)
                 .with("entityTypeName", entityTypeName).with("ifMatch", "*").returns()
                 .statusCode(HttpStatus.SC_NO_CONTENT).debug();
     }

@@ -16,8 +16,8 @@
  */
 package io.personium.core.model.progress;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
@@ -28,12 +28,12 @@ import io.personium.core.utils.MemcachedClient.MemcachedClientException;
  */
 public abstract class ProgressManager {
     static volatile ProgressManager singleton;
-    static volatile String storeType = DcCoreConfig.getLockType();
-    static volatile long retryInterval = Long.valueOf(DcCoreConfig.getLockRetryInterval());
-    static volatile int retryTimes = Integer.valueOf(DcCoreConfig.getLockRetryTimes());
-    static volatile String memcachedHost = DcCoreConfig.getLockMemcachedHost();
-    static volatile String memcachedPort = DcCoreConfig.getLockMemcachedPort();
-    static volatile int lifeTime = Integer.valueOf(DcCoreConfig.getBarInstallProgressLifeTimeExpireInSec());
+    static volatile String storeType = PersoniumUnitConfig.getLockType();
+    static volatile long retryInterval = Long.valueOf(PersoniumUnitConfig.getLockRetryInterval());
+    static volatile int retryTimes = Integer.valueOf(PersoniumUnitConfig.getLockRetryTimes());
+    static volatile String memcachedHost = PersoniumUnitConfig.getLockMemcachedHost();
+    static volatile String memcachedPort = PersoniumUnitConfig.getLockMemcachedPort();
+    static volatile int lifeTime = Integer.valueOf(PersoniumUnitConfig.getBarInstallProgressLifeTimeExpireInSec());
 
     /**
      * Memcached タイプ.
@@ -69,7 +69,7 @@ public abstract class ProgressManager {
             return progress;
         } catch (MemcachedClientException e) {
             MemcachedClient.reportError();
-            throw DcCoreException.Server.GET_LOCK_STATE_ERROR;
+            throw PersoniumCoreException.Server.GET_LOCK_STATE_ERROR;
         }
     }
 

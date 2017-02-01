@@ -34,8 +34,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -116,7 +116,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$orderby=__id")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -151,7 +151,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$orderby=__published")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -196,7 +196,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$orderby=__updated")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -399,7 +399,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$orderby=%27test%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -420,7 +420,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$orderby=test%20%27asc%27")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -441,7 +441,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$orderby=")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -462,7 +462,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$orderby=test%20test")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -483,7 +483,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 .with("entityType", sdEntityTypeName)
                 .with("query", "?\\$orderby=test%20ASC")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .debug();
@@ -756,8 +756,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /**
@@ -776,8 +776,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /**
@@ -796,8 +796,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /**
@@ -816,8 +816,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /************************************************************************************************************/
@@ -949,8 +949,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /**
@@ -969,8 +969,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /**
@@ -989,8 +989,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /**
@@ -1009,8 +1009,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /************************************************************************************************************/
@@ -1142,8 +1142,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /**
@@ -1162,8 +1162,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /**
@@ -1182,8 +1182,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /**
@@ -1202,8 +1202,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /************************************************************************************************************/
@@ -1318,8 +1318,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /**
@@ -1338,8 +1338,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /**
@@ -1358,8 +1358,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /**
@@ -1378,8 +1378,8 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
                 UserDataUtils.list(cell, box, collection, entityType, query, MASTER_TOKEN_NAME,
                         HttpStatus.SC_BAD_REQUEST);
         checkErrorResponse(response.bodyAsJson(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
-                DcCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getCode(),
+                PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY.getMessage());
     }
 
     /************************************************************************************************************/

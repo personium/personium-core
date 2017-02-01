@@ -28,8 +28,8 @@ import net.spy.memcached.DefaultConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreLog;
 
 /**
  * 本アプリでのMemcachedアクセスを司るClient.
@@ -52,9 +52,9 @@ public class MemcachedClient implements CacheClient {
 
             this.spyClient = new net.spy.memcached.MemcachedClient(cfb.build(), addrs);
         } catch (NumberFormatException e) {
-            DcCoreLog.Server.MEMCACHED_PORT_FORMAT_ERROR.params(e.getMessage()).reason(e).writeLog();
+            PersoniumCoreLog.Server.MEMCACHED_PORT_FORMAT_ERROR.params(e.getMessage()).reason(e).writeLog();
         } catch (IOException e) {
-            DcCoreLog.Server.MEMCACHED_CONNECTO_FAIL.params(host, port, e.getMessage()).reason(e).writeLog();
+            PersoniumCoreLog.Server.MEMCACHED_CONNECTO_FAIL.params(host, port, e.getMessage()).reason(e).writeLog();
         } catch (RuntimeException e) {
             log.info(e.getMessage(), e);
             throw new MemcachedClientException(e);
@@ -97,9 +97,9 @@ public class MemcachedClient implements CacheClient {
         try {
             return this.spyClient.add(key, expiresIn, object).get();
         } catch (InterruptedException e) {
-            DcCoreLog.Server.MEMCACHED_SET_FAIL.params(e.getMessage()).reason(e).writeLog();
+            PersoniumCoreLog.Server.MEMCACHED_SET_FAIL.params(e.getMessage()).reason(e).writeLog();
         } catch (ExecutionException e) {
-            DcCoreLog.Server.MEMCACHED_SET_FAIL.params(e.getMessage()).reason(e).writeLog();
+            PersoniumCoreLog.Server.MEMCACHED_SET_FAIL.params(e.getMessage()).reason(e).writeLog();
         } catch (RuntimeException e) {
             log.info(e.getMessage(), e);
             throw new MemcachedClientException(e);
@@ -133,9 +133,9 @@ public class MemcachedClient implements CacheClient {
                 return this.spyClient.add(key, expiresIn, object).get();
             }
         } catch (InterruptedException e) {
-            DcCoreLog.Server.MEMCACHED_SET_FAIL.params(e.getMessage()).reason(e).writeLog();
+            PersoniumCoreLog.Server.MEMCACHED_SET_FAIL.params(e.getMessage()).reason(e).writeLog();
         } catch (ExecutionException e) {
-            DcCoreLog.Server.MEMCACHED_SET_FAIL.params(e.getMessage()).reason(e).writeLog();
+            PersoniumCoreLog.Server.MEMCACHED_SET_FAIL.params(e.getMessage()).reason(e).writeLog();
         } catch (RuntimeException e) {
             log.info(e.getMessage(), e);
             throw new MemcachedClientException(e);
@@ -150,9 +150,9 @@ public class MemcachedClient implements CacheClient {
         try {
             this.spyClient.flush().get();
         } catch (InterruptedException e) {
-            DcCoreLog.Server.MEMCACHED_CLEAR_FAIL.params(e.getMessage()).reason(e).writeLog();
+            PersoniumCoreLog.Server.MEMCACHED_CLEAR_FAIL.params(e.getMessage()).reason(e).writeLog();
         } catch (ExecutionException e) {
-            DcCoreLog.Server.MEMCACHED_CLEAR_FAIL.params(e.getMessage()).reason(e).writeLog();
+            PersoniumCoreLog.Server.MEMCACHED_CLEAR_FAIL.params(e.getMessage()).reason(e).writeLog();
         } catch (RuntimeException e) {
             log.info(e.getMessage(), e);
             throw new MemcachedClientException(e);
@@ -168,9 +168,9 @@ public class MemcachedClient implements CacheClient {
         try {
             this.spyClient.delete(key).get();
         } catch (InterruptedException e) {
-            DcCoreLog.Server.MEMCACHED_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
+            PersoniumCoreLog.Server.MEMCACHED_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
         } catch (ExecutionException e) {
-            DcCoreLog.Server.MEMCACHED_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
+            PersoniumCoreLog.Server.MEMCACHED_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
         } catch (RuntimeException e) {
             log.info(e.getMessage(), e);
             throw new MemcachedClientException(e);
@@ -251,15 +251,15 @@ public class MemcachedClient implements CacheClient {
     static Logger log = LoggerFactory.getLogger(MemcachedClient.class);
 
     static {
-        if ("memcached".equals(DcCoreConfig.getCacheType())) {
-            cacheClient = new MemcachedClient(DcCoreConfig.getCacheMemcachedHost(),
-                    DcCoreConfig.getCacheMemcachedPort(),
-                    DcCoreConfig.getCacheMemcachedOpTimeout());
+        if ("memcached".equals(PersoniumUnitConfig.getCacheType())) {
+            cacheClient = new MemcachedClient(PersoniumUnitConfig.getCacheMemcachedHost(),
+                    PersoniumUnitConfig.getCacheMemcachedPort(),
+                    PersoniumUnitConfig.getCacheMemcachedOpTimeout());
         }
-        if ("memcached".equals(DcCoreConfig.getLockType())) {
-            lockClient = new MemcachedClient(DcCoreConfig.getLockMemcachedHost(),
-                    DcCoreConfig.getLockMemcachedPort(),
-                    DcCoreConfig.getLockMemcachedOpTimeout());
+        if ("memcached".equals(PersoniumUnitConfig.getLockType())) {
+            lockClient = new MemcachedClient(PersoniumUnitConfig.getLockMemcachedHost(),
+                    PersoniumUnitConfig.getLockMemcachedPort(),
+                    PersoniumUnitConfig.getLockMemcachedOpTimeout());
         }
     }
     /**

@@ -29,14 +29,14 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmMultiplicity;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcException;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.DcRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -120,7 +120,7 @@ public class AssociationEndReadLinkTest extends AbstractCase {
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
             String linksNavKey = URLEncoder.encode("'"
                     + UrlUtils.associationEnd(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, linkName,
@@ -128,7 +128,7 @@ public class AssociationEndReadLinkTest extends AbstractCase {
             String requestUrl = UrlUtils.associationEnd(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, name,
                     entityTypeName) + "/$links/_AssociationEnd(" + linksNavKey + ")";
 
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = rest.getAcceptEncodingGzip(requestUrl, requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
 
@@ -167,7 +167,7 @@ public class AssociationEndReadLinkTest extends AbstractCase {
      * AssociationEndを新規作成.
      */
     private void createAssociationEnd(String name, String entityTypeName) {
-        AssociationEndUtils.create(DcCoreConfig.getMasterToken(),
+        AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(),
                 EdmMultiplicity.MANY.getSymbolString(),
                 Setup.TEST_CELL1,
                 Setup.TEST_BOX1,

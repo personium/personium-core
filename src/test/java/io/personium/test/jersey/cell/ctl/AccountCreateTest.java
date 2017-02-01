@@ -28,7 +28,7 @@ import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.utils.ODataUtils;
 import io.personium.test.categories.Integration;
@@ -434,8 +434,8 @@ public class AccountCreateTest extends ODataCommon {
             TResponse res = AccountUtils.create(MASTER_TOKEN_NAME, cellName, testAccountName,
                     testAccountPass, "SYSUTCDATETIME",
                     HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
             AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_NOT_FOUND, cellName, testAccountName);
         } finally {
             AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
@@ -453,8 +453,8 @@ public class AccountCreateTest extends ODataCommon {
         try {
             TResponse res = AccountUtils.create(MASTER_TOKEN_NAME, cellName, testAccountName,
                     testAccountPass, "", HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
             AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_NOT_FOUND, cellName, testAccountName);
         } finally {
             AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
@@ -472,8 +472,8 @@ public class AccountCreateTest extends ODataCommon {
         try {
             TResponse res = AccountUtils.create(MASTER_TOKEN_NAME, cellName, testAccountName,
                     testAccountPass, "/Date(1359340262406)", HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
 
             AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_NOT_FOUND, cellName, testAccountName);
         } finally {
@@ -544,8 +544,8 @@ public class AccountCreateTest extends ODataCommon {
         try {
             TResponse res = AccountUtils.create(MASTER_TOKEN_NAME, cellName, testAccountName,
                     testAccountPass, "/Date(" + (ODataUtils.DATETIME_MAX + 1) + ")/", HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
 
             AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_NOT_FOUND, cellName, testAccountName);
         } finally {
@@ -564,8 +564,8 @@ public class AccountCreateTest extends ODataCommon {
         try {
             TResponse res = AccountUtils.create(MASTER_TOKEN_NAME, cellName, testAccountName,
                     testAccountPass, "/Date(" + (ODataUtils.DATETIME_MIN - 1) + ")/", HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
 
             AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_NOT_FOUND, cellName, testAccountName);
         } finally {

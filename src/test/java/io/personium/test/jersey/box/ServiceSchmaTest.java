@@ -45,7 +45,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -98,7 +98,7 @@ public class ServiceSchmaTest extends JerseyTest {
                 .with("path", "\\$metadata")
                 .with("col", "setodata")
                 .with("accept", "application/atomsvc+xml")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -129,7 +129,7 @@ public class ServiceSchmaTest extends JerseyTest {
                 .with("path", "\\$metadata\\?\\$format=atomsvc")
                 .with("col", "setodata")
                 .with("accept", "application/xml")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
@@ -165,7 +165,7 @@ public class ServiceSchmaTest extends JerseyTest {
                     .with("path", "\\$metadata")
                     .with("col", "setodata")
                     .with("accept", "application/xml")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -239,7 +239,7 @@ public class ServiceSchmaTest extends JerseyTest {
                     .with("box", boxName)
                     .with("col", colName)
                     .with("accept", "application/xml")
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -346,7 +346,7 @@ public class ServiceSchmaTest extends JerseyTest {
         String multiplicity = "1";
         try {
             // EntityTypeの作成
-            EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(),
+            EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(),
                     odataSvcName, entityTypeName, HttpStatus.SC_CREATED);
 
             // 上のEntityTypeと結びつくAssociationEnd作成
@@ -422,7 +422,7 @@ public class ServiceSchmaTest extends JerseyTest {
                 .with("path", "\\$metadata/\\$metadata")
                 .with("col", "setodata")
                 .with("accept", "application/xml")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();

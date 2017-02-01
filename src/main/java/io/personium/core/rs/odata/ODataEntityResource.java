@@ -50,14 +50,14 @@ import org.odata4j.producer.EntityResponse;
 import org.odata4j.producer.resources.OptionsQueryParser;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.MERGE;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
-import io.personium.core.odata.DcODataProducer;
-import io.personium.core.odata.DcOptionsQueryParser;
+import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.odata.PersoniumOptionsQueryParser;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
@@ -131,13 +131,13 @@ public class ODataEntityResource extends AbstractODataResource {
         try {
             this.oEntityKey = OEntityKey.parse(this.keyString);
         } catch (IllegalArgumentException e) {
-            throw DcCoreException.OData.ENTITY_KEY_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.reason(e);
         }
 
         EdmDataServices metadata = getOdataProducer().getMetadata();
         EdmEntitySet edmEntitySet = metadata.findEdmEntitySet(entitySetName);
         if (edmEntitySet == null) {
-            throw DcCoreException.OData.NO_SUCH_ENTITY_SET;
+            throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
         }
         EdmEntityType edmEntityType = edmEntitySet.getType();
         validatePrimaryKey(oEntityKey, edmEntityType);
@@ -230,25 +230,25 @@ public class ODataEntityResource extends AbstractODataResource {
 
         // $select
         if ("".equals(select)) {
-            throw DcCoreException.OData.SELECT_PARSE_ERROR;
+            throw PersoniumCoreException.OData.SELECT_PARSE_ERROR;
         }
         if ("*".equals(select)) {
             select = null;
         }
         try {
-            selects = DcOptionsQueryParser.parseSelect(select);
+            selects = PersoniumOptionsQueryParser.parseSelect(select);
         } catch (Exception e) {
-            throw DcCoreException.OData.SELECT_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.OData.SELECT_PARSE_ERROR.reason(e);
         }
 
         try {
-            expands = DcOptionsQueryParser.parseExpand(expand);
+            expands = PersoniumOptionsQueryParser.parseExpand(expand);
         } catch (Exception e) {
-            throw DcCoreException.OData.EXPAND_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.OData.EXPAND_PARSE_ERROR.reason(e);
         }
         // $expandに指定されたプロパティ数の上限チェック
-        if (expands != null && expands.size() > DcCoreConfig.getExpandPropertyMaxSizeForRetrieve()) {
-            throw DcCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED;
+        if (expands != null && expands.size() > PersoniumUnitConfig.getExpandPropertyMaxSizeForRetrieve()) {
+            throw PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED;
         }
 
         EntityQueryInfo queryInfo = new EntityQueryInfo(null,
@@ -360,7 +360,7 @@ public class ODataEntityResource extends AbstractODataResource {
         String etag = ODataResource.parseEtagHeader(ifMatch);
 
         // 削除処理
-        DcODataProducer op = this.getOdataProducer();
+        PersoniumODataProducer op = this.getOdataProducer();
         op.deleteEntity(getEntitySetName(), this.oEntityKey, etag);
 
         // 削除後処理
@@ -399,7 +399,7 @@ public class ODataEntityResource extends AbstractODataResource {
                 targetEntityKey = OEntityKey.parse(targetKey);
             }
         } catch (IllegalArgumentException e) {
-            throw DcCoreException.OData.ENTITY_KEY_LINKS_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.OData.ENTITY_KEY_LINKS_PARSE_ERROR.reason(e);
         }
         OEntityId oeId = OEntityIds.create(getEntitySetName(), this.oEntityKey);
         return new ODataLinksResource(this.odataResource, oeId, targetNavProp, targetEntityKey);
@@ -424,7 +424,7 @@ public class ODataEntityResource extends AbstractODataResource {
     @Path("{navProp: _.+}({targetId})")
     public ODataPropertyResource getNavProperty(@PathParam("navProp") final String navProp,
             @PathParam("targetId") final String targetId) {
-        throw DcCoreException.OData.KEY_FOR_NAVPROP_SHOULD_NOT_BE_SPECIFIED;
+        throw PersoniumCoreException.OData.KEY_FOR_NAVPROP_SHOULD_NOT_BE_SPECIFIED;
     }
 
     /**
@@ -451,7 +451,7 @@ public class ODataEntityResource extends AbstractODataResource {
     protected void checkNotAllowedMethod() {
         if (ReceivedMessage.EDM_TYPE_NAME.equals(getEntitySetName())
                 || SentMessage.EDM_TYPE_NAME.equals(getEntitySetName())) {
-            throw DcCoreException.Misc.METHOD_NOT_ALLOWED;
+            throw PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         }
     }
 }

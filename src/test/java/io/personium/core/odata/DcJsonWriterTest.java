@@ -118,7 +118,7 @@ public class DcJsonWriterTest {
             StringWriter writer = null;
             try {
                 writer = new StringWriter();
-                DcJsonWriter jsonWriter = new DcJsonWriter(writer);
+                PersoniumJsonWriter jsonWriter = new PersoniumJsonWriter(writer);
                 jsonWriter.writeNumber(f.inputValue);
                 String actual = writer.toString();
                 assertEquals(f.testComment, f.expectedReturnValue, actual);

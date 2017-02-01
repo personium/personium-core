@@ -40,8 +40,8 @@ import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumSearchHits;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.response.EsClientException;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
 import io.personium.core.model.impl.es.ads.AdsException;
 import io.personium.core.model.lock.Lock;
@@ -148,9 +148,9 @@ public class RepairAds {
      */
     private void rotateRetryAndErrorLog() {
         AdsWriteFailureLogWriter errorlog = AdsWriteFailureLogWriter.getInstanceforError(
-                adsLogBaseDir.getAbsolutePath(), pcsVersion, DcCoreConfig.getAdsWriteFailureLogPhysicalDelete());
+                adsLogBaseDir.getAbsolutePath(), pcsVersion, PersoniumUnitConfig.getAdsWriteFailureLogPhysicalDelete());
         AdsWriteFailureLogWriter retrylog = AdsWriteFailureLogWriter.getInstanceforRetry(
-                adsLogBaseDir.getAbsolutePath(), pcsVersion, DcCoreConfig.getAdsWriteFailureLogPhysicalDelete());
+                adsLogBaseDir.getAbsolutePath(), pcsVersion, PersoniumUnitConfig.getAdsWriteFailureLogPhysicalDelete());
         // エラー用ADS書き込み失敗ログをローテートする
         try {
             if (errorlog.isExistsAdsWriteFailureLogs()) {
@@ -173,11 +173,11 @@ public class RepairAds {
      * プロパティ情報を読み込む.
      */
     private void readProperties() {
-        pcsVersion = DcCoreConfig.getCoreVersion();
-        adsLogBaseDirPath = DcCoreConfig.getAdsWriteFailureLogDir();
+        pcsVersion = PersoniumUnitConfig.getCoreVersion();
+        adsLogBaseDirPath = PersoniumUnitConfig.getAdsWriteFailureLogDir();
         adsLogBaseDir = new File(adsLogBaseDirPath);
-        physicalDelete = DcCoreConfig.getAdsWriteFailureLogPhysicalDelete();
-        logCountPerIteration = DcCoreConfig.getAdsWriteFailureLogCountPerIteration();
+        physicalDelete = PersoniumUnitConfig.getAdsWriteFailureLogPhysicalDelete();
+        logCountPerIteration = PersoniumUnitConfig.getAdsWriteFailureLogCountPerIteration();
     }
 
     /**
@@ -369,9 +369,9 @@ public class RepairAds {
                 if (null != lockKey && !lockKey.isEmpty()) {
                     try {
                         lock = lock(lockKey);
-                    } catch (DcCoreException e) {
-                        if (e.getCode().equals(DcCoreException.Server.GET_LOCK_STATE_ERROR.getCode())
-                                || e.getCode().equals(DcCoreException.Server.DATA_STORE_UNKNOWN_ERROR.getCode())) {
+                    } catch (PersoniumCoreException e) {
+                        if (e.getCode().equals(PersoniumCoreException.Server.GET_LOCK_STATE_ERROR.getCode())
+                                || e.getCode().equals(PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.getCode())) {
                             // 全体を異常終了させる
                             throw e;
                         } else {
@@ -395,7 +395,7 @@ public class RepairAds {
                 try {
                     // TypeがCellである場合は、Elasticsearchのインデックス名を「{UnitPrefix}_ad」に変更する
                     if (Cell.EDM_TYPE_NAME.equals(logInfo.getType())) {
-                        indexName = DcCoreConfig.getEsUnitPrefix() + "_" + EsIndex.CATEGORY_AD;
+                        indexName = PersoniumUnitConfig.getEsUnitPrefix() + "_" + EsIndex.CATEGORY_AD;
                     }
                     // ES/ADSへの検索は、一括検索ができるようなAPIを使用しているが、今のところは1件ずつ処理することを前提としている。
                     PersoniumSearchResponse esResponse = EsAccessor.search(indexName, routingId, idList, logInfo.getType());
@@ -449,7 +449,7 @@ public class RepairAds {
      * @param logInfo ログから読み込んだADS書き込み失敗情報
      * @param esResponse Elasticsearchにリペア対象のデータを検索した結果
      * @param adsResponse ADSにリペア対象のデータを検索した結果
-     * @throws RepairAdsException DcRepairAdsException
+     * @throws RepairAdsException RepairAdsException
      */
     public void repairToAds(
             AdsWriteFailureLogInfo logInfo,
@@ -499,7 +499,7 @@ public class RepairAds {
                 logger.info("No operation performed for repair log recordID : " + repairId);
             }
         } catch (AdsException e) {
-            if (e.getCause() instanceof DcCoreException) {
+            if (e.getCause() instanceof PersoniumCoreException) {
                 // 該当行を不正ログファイルに退避する
                 // MySQLへのリペア用データの作成に失敗した場合(Elasticsearchから取得したデータのパースに失敗)
                 writeAdsErrorLog(logInfo.toString());
@@ -522,7 +522,7 @@ public class RepairAds {
         AdsWriteFailureLogWriter writer = AdsWriteFailureLogWriter.getInstance(
                 this.adsLogBaseDir.getAbsolutePath(),
                 this.pcsVersion,
-                DcCoreConfig.getAdsWriteFailureLogPhysicalDelete());
+                PersoniumUnitConfig.getAdsWriteFailureLogPhysicalDelete());
         Map<Long, File> logFilesMap = collectAdsWriteFailureLogFiles();
         if (logFilesMap.isEmpty() && !writer.isExistsAdsWriteFailureLogs()
                 && !existsErrorLog() && !existsActiveLog()) {
@@ -538,7 +538,7 @@ public class RepairAds {
     private void writeAdsRetryLog(String logInfo) {
         AdsWriteFailureLogWriter retryLog = AdsWriteFailureLogWriter.getInstanceforRetry(
                 adsLogBaseDir.getPath(), pcsVersion,
-                DcCoreConfig.getAdsWriteFailureLogPhysicalDelete());
+                PersoniumUnitConfig.getAdsWriteFailureLogPhysicalDelete());
         try {
             retryLog.openActiveFile(createTime);
             retryLog.writeActiveFile(logInfo);
@@ -554,7 +554,7 @@ public class RepairAds {
     private void writeAdsErrorLog(String logInfo) {
         AdsWriteFailureLogWriter errorLog = AdsWriteFailureLogWriter.getInstanceforError(
                 adsLogBaseDir.getPath(), pcsVersion,
-                DcCoreConfig.getAdsWriteFailureLogPhysicalDelete());
+                PersoniumUnitConfig.getAdsWriteFailureLogPhysicalDelete());
         try {
             errorLog.openActiveFile(createTime);
             errorLog.writeActiveFile(logInfo);

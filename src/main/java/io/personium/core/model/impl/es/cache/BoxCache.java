@@ -22,7 +22,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.utils.CacheClient;
@@ -50,7 +50,7 @@ public class BoxCache {
      * @return Boxオブジェクト。キャッシュに存在しない場合はnull
      */
     public static Box get(String boxName, Cell cell) {
-        if (!DcCoreConfig.isBoxCacheEnabled()) {
+        if (!PersoniumUnitConfig.isBoxCacheEnabled()) {
             return null;
         }
 
@@ -78,7 +78,7 @@ public class BoxCache {
      * @param box Boxオブジェクト
      */
     public static void cache(Box box) {
-        if (!DcCoreConfig.isBoxCacheEnabled()) {
+        if (!PersoniumUnitConfig.isBoxCacheEnabled()) {
             return;
         }
 
@@ -88,7 +88,7 @@ public class BoxCache {
         obj.put("schema", box.getSchema());
         obj.put("published", box.getPublished());
 
-        getMcdClient().put(cacheKey(box.getName(), box.getCell()), DcCoreConfig.getCacheMemcachedExpiresIn(), obj);
+        getMcdClient().put(cacheKey(box.getName(), box.getCell()), PersoniumUnitConfig.getCacheMemcachedExpiresIn(), obj);
     }
 
     /**
@@ -97,7 +97,7 @@ public class BoxCache {
      * @param cell Cellオブジェクト
      */
     public static void clear(String boxName, Cell cell) {
-        if (!DcCoreConfig.isBoxCacheEnabled()) {
+        if (!PersoniumUnitConfig.isBoxCacheEnabled()) {
             return;
         }
         getMcdClient().delete(cacheKey(boxName, cell));

@@ -37,7 +37,7 @@ import org.json.simple.parser.ParseException;
 
 import io.personium.common.auth.token.Role;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.CellPrivilege;
@@ -122,9 +122,9 @@ public final class Acl {
             ObjectIo.toJson(this, sw);
             return sw.toString();
         } catch (IOException e) {
-            throw DcCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
+            throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
         } catch (JAXBException e) {
-            throw DcCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
+            throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
         }
     }
     static final String KEY_REQUIRE_SCHEMA_AUTHZ = "@requireSchemaAuthz";
@@ -143,11 +143,11 @@ public final class Acl {
             ret.setRequireSchemaAuthz((String) j.get(KEY_REQUIRE_SCHEMA_AUTHZ));
             return ret;
         } catch (IOException e) {
-            throw DcCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
+            throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
         } catch (JAXBException e) {
-            throw DcCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
+            throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
         } catch (ParseException e) {
-            throw DcCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
+            throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
         }
     }
 

@@ -6,7 +6,7 @@
 
 <suppressions>
   <suppress checks="." files="net[\\/]oauth[\\/]"/>
-  <suppress checks="Header" files="com[\\/]fujitsu[\\/]dc[\\/]core[\\/]odata[\\/]Dc.*\.java"/>
+  <suppress checks="Header" files="io[\\/]personium[\\/]core[\\/]odata[\\/]Personium.*\.java"/>
   <suppress checks="MethodName" files=".*Test\.java"/>
   <suppress checks="MagicNumber" files=".*Test\.java"/>
   <suppress checks="JavadocPackage" files="[\\/]test[\\/]"/>

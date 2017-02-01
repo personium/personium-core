@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.LocalToken;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 
 /**
  * IT用テストランナークラス.
@@ -56,9 +56,9 @@ public class DcRunner extends BlockJUnit4ClassRunner {
             InvalidKeySpecException, CertificateException, IOException, javax.security.cert.CertificateException {
         super(klass);
         // トークン処理ライブラリの初期設定.
-        TransCellAccessToken.configureX509(DcCoreConfig.getX509PrivateKey(), DcCoreConfig.getX509Certificate(),
-                DcCoreConfig.getX509RootCertificate());
-        LocalToken.setKeyString(DcCoreConfig.getTokenSecretKey());
+        TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(), PersoniumUnitConfig.getX509Certificate(),
+                PersoniumUnitConfig.getX509RootCertificate());
+        LocalToken.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
     }
 
     @Override

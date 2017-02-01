@@ -30,7 +30,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Property;
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 import io.personium.test.categories.Integration;
@@ -441,8 +441,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             ODataCommon
-                    .checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                            DcCoreException.OData.OPERATION_NOT_SUPPORTED
+                    .checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                            PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                                     .params("ComplexTypeProperty 'Type' change from [Edm.String] to [Edm.Double]")
                                     .getMessage());
 
@@ -509,8 +509,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             ODataCommon
-                    .checkErrorResponseBody(response, DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                            DcCoreException.OData.OPERATION_NOT_SUPPORTED
+                    .checkErrorResponseBody(response, PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                            PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                                     .params("ComplexTypeProperty 'Type' change from [Edm.Int32] to [Edm.Single]")
                                     .getMessage());
 
@@ -581,8 +581,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Type").getMessage());
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Type").getMessage());
 
             // ComplexTypePropertyが更新されていないことの確認
             response = ComplexTypePropertyUtils.get(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
@@ -651,8 +651,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Name").getMessage());
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Name").getMessage());
 
             // ComplexTypePropertyが更新されていないことの確認
             response = ComplexTypePropertyUtils.get(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
@@ -1065,8 +1065,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("_ComplexType.Name").getMessage());
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("_ComplexType.Name").getMessage());
 
             // ComplexTypePropertyが更新されていないことの確認
             response = ComplexTypePropertyUtils.get(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
@@ -1134,8 +1134,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             ODataCommon.checkErrorResponseBody(
                     response,
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("ComplexTypeProperty '_ComplexType.Name' change")
                             .getMessage());
 
@@ -1203,8 +1203,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             ODataCommon.checkErrorResponseBody(
                     response,
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("ComplexTypeProperty 'Nullable' change from [true] to [false]")
                             .getMessage());
 
@@ -1345,8 +1345,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             ODataCommon.checkErrorResponseBody(
                     response,
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("ComplexTypeProperty 'Nullable' change from [false] to [true]")
                             .getMessage());
 
@@ -1413,8 +1413,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             ODataCommon.checkErrorResponseBody(
                     response,
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("ComplexTypeProperty 'DefaultValue' change from [null] to [12345]")
                             .getMessage());
 
@@ -1555,8 +1555,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             ODataCommon.checkErrorResponseBody(
                     response,
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("ComplexTypeProperty 'DefaultValue' change from [12345] to [null]")
                             .getMessage());
 
@@ -1623,8 +1623,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             ODataCommon.checkErrorResponseBody(
                     response,
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("ComplexTypeProperty 'CollectionKind' change from [None] to [List]")
                             .getMessage());
 
@@ -1765,8 +1765,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             ODataCommon.checkErrorResponseBody(
                     response,
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
-                    DcCoreException.OData.OPERATION_NOT_SUPPORTED
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED.getCode(),
+                    PersoniumCoreException.OData.OPERATION_NOT_SUPPORTED
                             .params("ComplexTypeProperty 'CollectionKind' change from [List] to [None]")
                             .getMessage());
 

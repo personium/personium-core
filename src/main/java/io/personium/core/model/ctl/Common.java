@@ -64,17 +64,17 @@ public class Common {
     public static final EdmProperty.Builder P_ID = EdmProperty.newBuilder("__id")
             .setType(EdmSimpleType.STRING).setDefaultValue("UUID()");
     /** 拡張スキーマFormat定義. */
-    public static final String DC_FORMAT = "Format";
+    public static final String P_FORMAT = "Format";
     /** 拡張スキーマFormat正規表現定義. */
-    public static final String DC_FORMAT_PATTERN_REGEX = "regEx";
+    public static final String P_FORMAT_PATTERN_REGEX = "regEx";
     /** 拡張スキーマFormat定義. */
-    public static final String DC_FORMAT_PATTERN_URI = "uri";
+    public static final String P_FORMAT_PATTERN_URI = "uri";
     /** 拡張スキーマFormat定義. */
-    public static final String DC_FORMAT_PATTERN_SCHEMA_URI = "schema-uri";
+    public static final String P_FORMAT_PATTERN_SCHEMA_URI = "schema-uri";
     /** 拡張スキーマFormat定義. */
-    public static final String DC_FORMAT_PATTERN_CELL_URL = "cell-url";
+    public static final String P_FORMAT_PATTERN_CELL_URL = "cell-url";
     /** 拡張スキーマFormat定義.1つ以上のスペース区切り英数字. */
-    public static final String DC_FORMAT_PATTERN_USUSST = "unordered-set-of-unique-space-separated-tokens";
+    public static final String P_FORMAT_PATTERN_USUSST = "unordered-set-of-unique-space-separated-tokens";
     /** 先頭が-,_以外で始まる半角英数大小文字,-,_が1文字から128文字. */
     public static final String PATTERN_NAME = "^[a-zA-Z0-9][a-zA-Z0-9-_]{0,127}$";
     /** 先頭が半角記号以外で始まる半角英数大小文字,半角記号(-_!#$%*+/=^`{|}~.@)が1文字から128文字. */
@@ -112,60 +112,60 @@ public class Common {
     /**
      * Name項目に対するp:Formatの定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_NAME = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_NAME = new ArrayList<EdmAnnotation<?>>();
     /**
      * 半角記号を許容する項目に対するp:Formatの定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_NAME_WITH_SIGN = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_NAME_WITH_SIGN = new ArrayList<EdmAnnotation<?>>();
     /**
      * RelationのName項目に対するp:Formatの定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_RELATION_NAME = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_RELATION_NAME = new ArrayList<EdmAnnotation<?>>();
     /**
      * p:FormatのURI定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_URI = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_URI = new ArrayList<EdmAnnotation<?>>();
     /**
      * p:FormatのSchema URI定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_SCHEMA_URI = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_SCHEMA_URI = new ArrayList<EdmAnnotation<?>>();
     /**
      * p:FormatのCell URL定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_CELL_URL = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_CELL_URL = new ArrayList<EdmAnnotation<?>>();
     /**
      * Multiplicity項目に対するp:Formatの定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_MULTIPLICITY = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_MULTIPLICITY = new ArrayList<EdmAnnotation<?>>();
     /**
      * ID項目に対するp:Formatの定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_ID = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_ID = new ArrayList<EdmAnnotation<?>>();
     /**
      * InReplyTo項目に対するp:Formatの定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_IN_REPLY_TO = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_IN_REPLY_TO = new ArrayList<EdmAnnotation<?>>();
     /**
      * MessageType項目に対するp:Formatの定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_MESSAGE_TYPE = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_TYPE = new ArrayList<EdmAnnotation<?>>();
     /**
      * MessageTitle項目に対するp:Formatの定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_MESSAGE_TITLE = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_TITLE = new ArrayList<EdmAnnotation<?>>();
     /**
      * MessagePriority項目に対するp:Formatの定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_MESSAGE_PRIORITY = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_PRIORITY = new ArrayList<EdmAnnotation<?>>();
     /**
      * AccountType項目に対するp:Formatの定義.
      */
-    public static final List<EdmAnnotation<?>> DC_FORMAT_ACCOUNT_TYPE = new ArrayList<EdmAnnotation<?>>();
+    public static final List<EdmAnnotation<?>> P_FORMAT_ACCOUNT_TYPE = new ArrayList<EdmAnnotation<?>>();
 
     /**
      * DC名前空間.
      */
-    public static final PrefixedNamespace DC_NAMESPACE = new PrefixedNamespace(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
+    public static final PrefixedNamespace P_NAMESPACE = new PrefixedNamespace(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
             PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
 
     /**
@@ -180,19 +180,19 @@ public class Common {
             .setType(EdmSimpleType.DATETIME).setDefaultValue(SYSUTCDATETIME).setPrecision(3);
 
     static {
-        DC_FORMAT_NAME.add(createFormatNameAnnotation());
-        DC_FORMAT_NAME_WITH_SIGN.add(createFormatNameWithSignAnnotation());
-        DC_FORMAT_URI.add(createFormatUriAnnotation());
-        DC_FORMAT_SCHEMA_URI.add(createFormatSchemaUriAnnotation());
-        DC_FORMAT_CELL_URL.add(createFormatCellUrlAnnotation());
-        DC_FORMAT_MULTIPLICITY.add(createFormatMultiplicityAnnotation());
-        DC_FORMAT_ID.add(createFormatIdAnnotation());
-        DC_FORMAT_RELATION_NAME.add(createFormatRelationNameAnnotation());
-        DC_FORMAT_IN_REPLY_TO.add(createFormatInReplyToAnnotation());
-        DC_FORMAT_MESSAGE_TYPE.add(createFormatMessageTypeAnnotation());
-        DC_FORMAT_MESSAGE_TITLE.add(createFormatMessageTitleAnnotation());
-        DC_FORMAT_MESSAGE_PRIORITY.add(createFormatMessagePriorityAnnotation());
-        DC_FORMAT_ACCOUNT_TYPE.add(createFormatAccountTypeAnnotation());
+        P_FORMAT_NAME.add(createFormatNameAnnotation());
+        P_FORMAT_NAME_WITH_SIGN.add(createFormatNameWithSignAnnotation());
+        P_FORMAT_URI.add(createFormatUriAnnotation());
+        P_FORMAT_SCHEMA_URI.add(createFormatSchemaUriAnnotation());
+        P_FORMAT_CELL_URL.add(createFormatCellUrlAnnotation());
+        P_FORMAT_MULTIPLICITY.add(createFormatMultiplicityAnnotation());
+        P_FORMAT_ID.add(createFormatIdAnnotation());
+        P_FORMAT_RELATION_NAME.add(createFormatRelationNameAnnotation());
+        P_FORMAT_IN_REPLY_TO.add(createFormatInReplyToAnnotation());
+        P_FORMAT_MESSAGE_TYPE.add(createFormatMessageTypeAnnotation());
+        P_FORMAT_MESSAGE_TITLE.add(createFormatMessageTitleAnnotation());
+        P_FORMAT_MESSAGE_PRIORITY.add(createFormatMessagePriorityAnnotation());
+        P_FORMAT_ACCOUNT_TYPE.add(createFormatAccountTypeAnnotation());
     }
 
     /**
@@ -201,8 +201,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatNameAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_NAME + "')");
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_NAME + "')");
     }
 
     /**
@@ -211,8 +211,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatNameWithSignAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_NAME_WITH_SIGN + "')");
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_NAME_WITH_SIGN + "')");
     }
 
     /**
@@ -221,8 +221,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatRelationNameAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_RELATION_NAME + "')");
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_RELATION_NAME + "')");
     }
 
     /**
@@ -231,8 +231,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatUriAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_URI);
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_URI);
     }
 
     /**
@@ -241,8 +241,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatSchemaUriAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_SCHEMA_URI);
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_SCHEMA_URI);
     }
 
     /**
@@ -251,8 +251,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatCellUrlAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_CELL_URL);
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_CELL_URL);
     }
 
     /**
@@ -261,8 +261,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatMultiplicityAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MULTIPLICITY + "')");
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MULTIPLICITY + "')");
     }
 
     /**
@@ -271,8 +271,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatIdAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_ID + "')");
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_ID + "')");
     }
 
     /**
@@ -281,8 +281,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatInReplyToAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_IN_REPLY_TO + "')");
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_IN_REPLY_TO + "')");
     }
 
     /**
@@ -291,8 +291,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatMessageTypeAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MESSAGE_TYPE + "')");
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MESSAGE_TYPE + "')");
     }
 
     /**
@@ -301,8 +301,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatMessageTitleAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MESSAGE_TITLE + "')");
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MESSAGE_TITLE + "')");
     }
 
     /**
@@ -311,8 +311,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatMessagePriorityAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MESSAGE_PRIORITY + "')");
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MESSAGE_PRIORITY + "')");
     }
 
     /**
@@ -321,8 +321,8 @@ public class Common {
      */
     public static EdmAnnotation<?> createFormatAccountTypeAnnotation() {
         return new EdmAnnotationAttribute(
-                DC_NAMESPACE.getUri(), DC_NAMESPACE.getPrefix(),
-                DC_FORMAT, DC_FORMAT_PATTERN_USUSST + "('" + Account.TYPE_VALUE_BASIC + "', '"
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_USUSST + "('" + Account.TYPE_VALUE_BASIC + "', '"
                 + Account.TYPE_VALUE_OIDC_GOOGLE + "')");
     }
 }

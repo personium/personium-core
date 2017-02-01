@@ -34,8 +34,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcRunner;
@@ -85,7 +85,7 @@ public class UserDataCreateLinkLimitTest extends JerseyTest {
     String srcId = "id";
 
     // 登録するユーザODataの件数（N:Nの$linksで登録可能な上限値）
-    int registUserDataCount = DcCoreConfig.getLinksNtoNMaxSize();
+    int registUserDataCount = PersoniumUnitConfig.getLinksNtoNMaxSize();
 
     /**
      * コンストラクタ.
@@ -246,8 +246,8 @@ public class UserDataCreateLinkLimitTest extends JerseyTest {
                     targetEntityTypeName, id, HttpStatus.SC_BAD_REQUEST);
 
             // エラーメッセージのチェック
-            ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getCode(),
-                    DcCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getMessage());
+            ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getCode(),
+                    PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getMessage());
 
             // 登録済み件数が増加していないことのチェック
             String query = String.format("?\\$top=%s&\\$inlinecount=allpages", 0);
@@ -270,8 +270,8 @@ public class UserDataCreateLinkLimitTest extends JerseyTest {
                     srcEntityTypeName, srcId, HttpStatus.SC_BAD_REQUEST);
 
             // エラーメッセージのチェック
-            ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getCode(),
-                    DcCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getMessage());
+            ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getCode(),
+                    PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getMessage());
 
             // 登録済み件数が増加していないことのチェック
             query = String.format("?\\$top=%s&\\$inlinecount=allpages", 0);

@@ -25,7 +25,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreAuthnException;
+import io.personium.core.PersoniumCoreAuthnException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Error;
 import io.personium.test.categories.Integration;
@@ -208,8 +208,8 @@ public class AuthErrorTest extends JerseyTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(passRes);
-        String code = DcCoreAuthnException.AUTH_HEADER_IS_INVALID.getCode();
-        String message = DcCoreAuthnException.AUTH_HEADER_IS_INVALID.getMessage();
+        String code = PersoniumCoreAuthnException.AUTH_HEADER_IS_INVALID.getCode();
+        String message = PersoniumCoreAuthnException.AUTH_HEADER_IS_INVALID.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(passRes, Error.INVALID_CLIENT, errDesc);
@@ -244,8 +244,8 @@ public class AuthErrorTest extends JerseyTest {
                         .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(tokenRes);
-        String code = DcCoreAuthnException.AUTH_HEADER_IS_INVALID.getCode();
-        String message = DcCoreAuthnException.AUTH_HEADER_IS_INVALID.getMessage();
+        String code = PersoniumCoreAuthnException.AUTH_HEADER_IS_INVALID.getCode();
+        String message = PersoniumCoreAuthnException.AUTH_HEADER_IS_INVALID.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(tokenRes, Error.INVALID_CLIENT, errDesc);
@@ -277,8 +277,8 @@ public class AuthErrorTest extends JerseyTest {
                 .debug();
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(tokenRes);
-        String code = DcCoreAuthnException.AUTH_HEADER_IS_INVALID.getCode();
-        String message = DcCoreAuthnException.AUTH_HEADER_IS_INVALID.getMessage();
+        String code = PersoniumCoreAuthnException.AUTH_HEADER_IS_INVALID.getCode();
+        String message = PersoniumCoreAuthnException.AUTH_HEADER_IS_INVALID.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(tokenRes, Error.INVALID_CLIENT, errDesc);
@@ -299,8 +299,8 @@ public class AuthErrorTest extends JerseyTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(passRes);
-        String code = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
+        String code = PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
+        String message = PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(passRes, Error.INVALID_CLIENT, errDesc);
@@ -323,8 +323,8 @@ public class AuthErrorTest extends JerseyTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(passRes);
-        String code = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
+        String code = PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
+        String message = PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(passRes, Error.INVALID_CLIENT, errDesc);
@@ -360,8 +360,8 @@ public class AuthErrorTest extends JerseyTest {
                         .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(tokenRes);
-        String code = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
+        String code = PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
+        String message = PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(tokenRes, Error.INVALID_CLIENT, errDesc);
@@ -399,8 +399,8 @@ public class AuthErrorTest extends JerseyTest {
                         .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(tokenRes);
-        String code = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
+        String code = PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
+        String message = PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(tokenRes, Error.INVALID_CLIENT, errDesc);
@@ -433,8 +433,8 @@ public class AuthErrorTest extends JerseyTest {
                 .debug();
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(tokenRes);
-        String code = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
+        String code = PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
+        String message = PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(tokenRes, Error.INVALID_CLIENT, errDesc);
@@ -469,8 +469,8 @@ public class AuthErrorTest extends JerseyTest {
                 .debug();
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(tokenRes);
-        String code = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
+        String code = PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getCode();
+        String message = PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(tokenRes, Error.INVALID_CLIENT, errDesc);
@@ -490,8 +490,8 @@ public class AuthErrorTest extends JerseyTest {
                 .debug();
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(tokenRes);
-        String code = DcCoreAuthnException.TOKEN_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.TOKEN_PARSE_ERROR.getMessage();
+        String code = PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.getCode();
+        String message = PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(tokenRes, Error.INVALID_GRANT, errDesc);
@@ -511,8 +511,8 @@ public class AuthErrorTest extends JerseyTest {
                 .debug();
 
         AuthTestCommon.checkAuthenticateHeaderNotExists(tokenRes);
-        String code = DcCoreAuthnException.TOKEN_PARSE_ERROR.getCode();
-        String message = DcCoreAuthnException.TOKEN_PARSE_ERROR.getMessage();
+        String code = PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.getCode();
+        String message = PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.getMessage();
         String errDesc = String.format("[%s] - %s", code, message);
 
         checkErrorResponseBody(tokenRes, Error.INVALID_GRANT, errDesc);

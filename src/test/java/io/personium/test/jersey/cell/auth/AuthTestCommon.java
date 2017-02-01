@@ -28,7 +28,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DcResponse;
 import io.personium.test.jersey.box.odatacol.UserDataListFilterTest;
@@ -1390,7 +1390,7 @@ public class AuthTestCommon extends JerseyTest {
      */
     public static void waitForAccountLock() {
         try {
-            Thread.sleep(Long.parseLong(DcCoreConfig.getAccountLockLifetime()) * SLEEP_MILLES);
+            Thread.sleep(Long.parseLong(PersoniumUnitConfig.getAccountLockLifetime()) * SLEEP_MILLES);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

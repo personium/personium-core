@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.jersey.filter.DcCoreContainerFilter;
+import io.personium.core.jersey.filter.PersoniumCoreContainerFilter;
 import io.personium.test.categories.Unit;
 import com.sun.jersey.core.header.InBoundHeaders;
 import com.sun.jersey.spi.container.ContainerRequest;
@@ -56,7 +56,7 @@ public class DcCoreContainerFilterTest {
     @Test
     public void testFilterContainerRequest() throws URISyntaxException {
         // 被テストオブジェクトを準備
-        DcCoreContainerFilter containerFilter = new DcCoreContainerFilter();
+        PersoniumCoreContainerFilter containerFilter = new PersoniumCoreContainerFilter();
         // ContainerRequiestを準備
         WebApplication wa = mock(WebApplication.class);
         InBoundHeaders headers = new InBoundHeaders();
@@ -112,7 +112,7 @@ public class DcCoreContainerFilterTest {
     @Test
     public void testFilterContainerRequestContainerResponse() {
         // 被テストオブジェクトを準備
-        DcCoreContainerFilter containerFilter = new DcCoreContainerFilter();
+        PersoniumCoreContainerFilter containerFilter = new PersoniumCoreContainerFilter();
         // ContainerRequiestモックを準備
         ContainerRequest mockRequest = mock(ContainerRequest.class);
         HttpServletRequest mockServletRequest = mock(HttpServletRequest.class);

@@ -31,8 +31,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.utils.ODataUtils;
 import io.personium.test.categories.Integration;
@@ -177,8 +177,8 @@ public class UserDataPropertyDateTimeTest extends AbstractUserDataTest {
             // ユーザデータ作成
             TResponse response = createUserData(body, HttpStatus.SC_BAD_REQUEST,
                     cellName, boxName, COL_NAME, ENTITY_TYPE_NAME);
-            String code = DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode();
-            String message = DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PROP_NAME).getMessage();
+            String code = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode();
+            String message = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PROP_NAME).getMessage();
             checkErrorResponse(response.bodyAsJson(), code, message);
 
         } finally {
@@ -251,8 +251,8 @@ public class UserDataPropertyDateTimeTest extends AbstractUserDataTest {
             TResponse response = createUserData(body, HttpStatus.SC_BAD_REQUEST,
                     cellName, boxName, COL_NAME, ENTITY_TYPE_NAME);
 
-            String code = DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode();
-            String message = DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PROP_NAME).getMessage();
+            String code = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode();
+            String message = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(PROP_NAME).getMessage();
             checkErrorResponse(response.bodyAsJson(), code, message);
 
         } finally {
@@ -694,7 +694,7 @@ public class UserDataPropertyDateTimeTest extends AbstractUserDataTest {
                 .with("boxPath", boxName)
                 .with("odataSvcPath", odataName)
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", "Bearer " + DcCoreConfig.getMasterToken())
+                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken())
                 .with("Name", name)
                 .returns()
                 .debug();
@@ -704,7 +704,7 @@ public class UserDataPropertyDateTimeTest extends AbstractUserDataTest {
      * テストに必要なEntityを作成する.
      */
     protected void createEntities() {
-        DavResourceUtils.createODataCollection(DcCoreConfig.getMasterToken(), HttpStatus.SC_CREATED, cellName, boxName,
+        DavResourceUtils.createODataCollection(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, cellName, boxName,
                 COL_NAME);
         createEntityType(ENTITY_TYPE_NAME, COL_NAME);
 
@@ -766,7 +766,7 @@ public class UserDataPropertyDateTimeTest extends AbstractUserDataTest {
                 .with("collection", COL_NAME)
                 .with("entityType", ENTITY_TYPE_NAME)
                 .with("id", userDataId)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*")
                 .returns()
                 .debug();
@@ -781,7 +781,7 @@ public class UserDataPropertyDateTimeTest extends AbstractUserDataTest {
         EntityTypeUtils.delete(COL_NAME, MASTER_TOKEN_NAME,
                 "application/json", ENTITY_TYPE_NAME, cellName, -1);
         // コレクションを削除
-        DavResourceUtils.deleteCollection(cellName, boxName, COL_NAME, DcCoreConfig.getMasterToken(), -1);
+        DavResourceUtils.deleteCollection(cellName, boxName, COL_NAME, PersoniumUnitConfig.getMasterToken(), -1);
     }
 
     /**

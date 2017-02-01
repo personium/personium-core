@@ -43,13 +43,13 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreAuthzException;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreAuthzException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
-import io.personium.core.event.DcEvent;
+import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.EventBus;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
@@ -81,12 +81,12 @@ public final class CellResource {
         this.accessContext = accessContext;
         this.cell = this.accessContext.getCell();
         if (this.cell == null) {
-            throw DcCoreException.Dav.CELL_NOT_FOUND;
+            throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
         }
         this.cellCmp = ModelFactory.cellCmp(this.cell);
         if (!this.cellCmp.exists()) {
             // クリティカルなタイミングでCellが削除された場合
-            throw DcCoreException.Dav.CELL_NOT_FOUND;
+            throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
         }
 
         this.cellRsCmp = new CellRsCmp(this.cellCmp, this.cell, this.accessContext);
@@ -95,7 +95,7 @@ public final class CellResource {
 
     private void checkReferenceMode() {
         Cell cellObj = accessContext.getCell();
-        String unitPrefix = DcCoreConfig.getEsUnitPrefix();
+        String unitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
         String owner = cellObj.getOwner();
 
         if (owner == null) {
@@ -104,7 +104,7 @@ public final class CellResource {
             owner = IndexNameEncoder.encodeEsIndexName(owner);
         }
         if (UnitUserLockManager.hasLockObject(unitPrefix + "_" + owner)) {
-            throw DcCoreException.Server.SERVICE_MENTENANCE_RESTORE;
+            throw PersoniumCoreException.Server.SERVICE_MENTENANCE_RESTORE;
         }
     }
 
@@ -140,7 +140,7 @@ public final class CellResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         // X-Personium-Recursiveヘッダの指定が"true"でない場合はエラーとする
         if (!"true".equals(recursiveHeader)) {
-            throw DcCoreException.Misc.PRECONDITION_FAILED.params(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+            throw PersoniumCoreException.Misc.PRECONDITION_FAILED.params(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
         }
         // アクセス権限の確認を実施する
         // ユニットマスター、ユニットユーザ、ユニットローカルユニットユーザ以外は権限エラーとする
@@ -171,18 +171,18 @@ public final class CellResource {
         if (AccessContext.TYPE_INVALID.equals(accessType)) {
             this.accessContext.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
         } else if (AccessContext.TYPE_ANONYMOUS.equals(accessType)) {
-            throw DcCoreAuthzException.AUTHORIZATION_REQUIRED.realm(accessContext.getRealm(),
+            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(accessContext.getRealm(),
                     this.cellRsCmp.getAcceptableAuthScheme());
         } else if (!AccessContext.TYPE_UNIT_MASTER.equals(accessType)
                 && !AccessContext.TYPE_UNIT_USER.equals(accessType)
                 && !AccessContext.TYPE_UNIT_LOCAL.equals(accessType)) {
-            throw DcCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
+            throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
         } else if (AccessContext.TYPE_UNIT_USER.equals(accessType)
                 || AccessContext.TYPE_UNIT_LOCAL.equals(accessType)) {
             // ユニットユーザ、ユニットローカルユニットユーザの場合はセルオーナとアクセス主体が一致するかチェック
             String subject = this.accessContext.getSubject();
             if (cellOwner == null || !cellOwner.equals(subject)) {
-                throw DcCoreException.Auth.NOT_YOURS;
+                throw PersoniumCoreException.Auth.NOT_YOURS;
             }
         }
     }
@@ -280,7 +280,7 @@ public final class CellResource {
         if (box != null) {
             schema = box.getSchema();
         }
-        // Bodyを解釈してDcEventオブジェクトをつくる。
+        // Bodyを解釈してPersoniumEventオブジェクトをつくる。
         JSONParser parser = new JSONParser();
         try {
             JSONObject evJson = (JSONObject) parser.parse(reader);
@@ -288,22 +288,22 @@ public final class CellResource {
             String action = (String) evJson.get("action");
             String object = (String) evJson.get("object");
             String result = (String) evJson.get("result");
-            int level = DcEvent.Level.INFO;
+            int level = PersoniumEvent.Level.INFO;
             if ("warn".equalsIgnoreCase(levelStr)) {
-                level = DcEvent.Level.WARN;
+                level = PersoniumEvent.Level.WARN;
             } else if ("error".equalsIgnoreCase(levelStr)) {
-                level = DcEvent.Level.ERROR;
+                level = PersoniumEvent.Level.ERROR;
             }
-            DcEvent ev = new DcEvent("client", schema, level, subject, action, object, result);
+            PersoniumEvent ev = new PersoniumEvent("client", schema, level, subject, action, object, result);
 
-            // DcEventオブジェクトをEventBusオブジェクトに流す.
+            // PersoniumEventオブジェクトをEventBusオブジェクトに流す.
             EventBus eventBus = this.cell.getEventBus();
             eventBus.post(ev);
             return Response.ok().build();
         } catch (IOException e) {
-            throw DcCoreException.Server.UNKNOWN_ERROR.reason(e);
+            throw PersoniumCoreException.Server.UNKNOWN_ERROR.reason(e);
         } catch (ParseException e) {
-            throw DcCoreException.Event.JSON_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.Event.JSON_PARSE_ERROR.reason(e);
         }
 
     }
@@ -396,13 +396,13 @@ public final class CellResource {
         if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
             ac.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
         } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
-            throw DcCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(),
+            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(),
                     this.cellRsCmp.getAcceptableAuthScheme());
         }
 
         // アクセス制御 CellレベルPROPPATCHはユニットユーザのみ可能とする
         if (!ac.isUnitUserToken()) {
-            throw DcCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
+            throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
         }
         return this.cellRsCmp.doProppatch(requestBodyXml);
     }

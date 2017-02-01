@@ -36,9 +36,9 @@ import org.odata4j.expression.CommonExpression;
 import org.odata4j.expression.ExpressionParser;
 import org.odata4j.producer.QueryInfo;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.impl.es.odata.EsQueryHandler;
-import io.personium.core.odata.DcOptionsQueryParser;
+import io.personium.core.odata.PersoniumOptionsQueryParser;
 import io.personium.test.categories.Unit;
 
 /**
@@ -67,7 +67,7 @@ public class EsQueryHandlerTest {
     @Test
     public void スキーマ定義上の項目を完全一致クエリを指定してelasitcsearch用のクエリに変換可能であること() {
         String filterStr = "item eq 'itemValue'";
-        BoolCommonExpression filterExp = DcOptionsQueryParser.parseFilter(filterStr);
+        BoolCommonExpression filterExp = PersoniumOptionsQueryParser.parseFilter(filterStr);
 
         // ESQueryHandlerでVisitする
         QueryInfo queryInfo = new QueryInfo(null, null, null, filterExp, null, null, null, null, null);
@@ -100,7 +100,7 @@ public class EsQueryHandlerTest {
     @Test
     public void スキーマ定義外の完全一致クエリを指定してelasitcsearch用のクエリに変換可能であること() {
         String filterStr = "itemKey eq 'itemValue'";
-        BoolCommonExpression filterExp = DcOptionsQueryParser.parseFilter(filterStr);
+        BoolCommonExpression filterExp = PersoniumOptionsQueryParser.parseFilter(filterStr);
 
         // ESQueryHandlerでVisitする
         QueryInfo queryInfo = new QueryInfo(null, null, null, filterExp, null, null, null, null, null);
@@ -134,16 +134,16 @@ public class EsQueryHandlerTest {
     @Test
     public void 完全一致クエリの検索語をシングルクオート無しで指定してDcCoreExceptionが発生すること() {
         String filterStr = "itemKey eq itemValue";
-        BoolCommonExpression filterExp = DcOptionsQueryParser.parseFilter(filterStr);
+        BoolCommonExpression filterExp = PersoniumOptionsQueryParser.parseFilter(filterStr);
 
         // ESQueryHandlerでVisitする
         EsQueryHandler esQueryHandler = new EsQueryHandler(entityType);
         try {
             filterExp.visit(esQueryHandler);
             fail("Not Throw Exception.");
-        } catch (DcCoreException e) {
-            assertEquals(DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.getCode(), e.getCode());
-            String message = DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params("itemKey").getMessage();
+        } catch (PersoniumCoreException e) {
+            assertEquals(PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.getCode(), e.getCode());
+            String message = PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params("itemKey").getMessage();
             assertEquals(message, e.getMessage());
         } catch (Exception e) {
             fail(e.getMessage());
@@ -156,7 +156,7 @@ public class EsQueryHandlerTest {
     @Test
     public void andクエリを指定してelasitcsearch用のクエリに変換可能であること() {
         String filterStr = "itemKey eq 'itemValue' and itemKey2 eq 'itemValue2'";
-        BoolCommonExpression filterExp = DcOptionsQueryParser.parseFilter(filterStr);
+        BoolCommonExpression filterExp = PersoniumOptionsQueryParser.parseFilter(filterStr);
 
         // ESQueryHandlerでVisitする
         QueryInfo queryInfo = new QueryInfo(null, null, null, filterExp, null, null, null, null, null);
@@ -203,7 +203,7 @@ public class EsQueryHandlerTest {
     @Test
     public void andクエリを複数指定してelasitcsearch用のクエリに変換可能であること() {
         String filterStr = "itemKey eq 'itemValue' and itemKey2 eq 'itemValue2' and itemKey3 eq 'itemValue3'";
-        BoolCommonExpression filterExp = DcOptionsQueryParser.parseFilter(filterStr);
+        BoolCommonExpression filterExp = PersoniumOptionsQueryParser.parseFilter(filterStr);
 
         // ESQueryHandlerでVisitする
         QueryInfo queryInfo = new QueryInfo(null, null, null, filterExp, null, null, null, null, null);
@@ -262,7 +262,7 @@ public class EsQueryHandlerTest {
     @Test
     public void orクエリを指定してelasitcsearch用のクエリに変換可能であること() {
         String filterStr = "itemKey eq 'itemValue' or itemKey2 eq 'itemValue2'";
-        BoolCommonExpression filterExp = DcOptionsQueryParser.parseFilter(filterStr);
+        BoolCommonExpression filterExp = PersoniumOptionsQueryParser.parseFilter(filterStr);
 
         // ESQueryHandlerでVisitする
         QueryInfo queryInfo = new QueryInfo(null, null, null, filterExp, null, null, null, null, null);
@@ -309,7 +309,7 @@ public class EsQueryHandlerTest {
     @Test
     public void orクエリを複数指定してelasitcsearch用のクエリに変換可能であること() {
         String filterStr = "itemKey eq 'itemValue' or itemKey2 eq 'itemValue2' or itemKey3 eq 'itemValue3'";
-        BoolCommonExpression filterExp = DcOptionsQueryParser.parseFilter(filterStr);
+        BoolCommonExpression filterExp = PersoniumOptionsQueryParser.parseFilter(filterStr);
 
         // ESQueryHandlerでVisitする
         QueryInfo queryInfo = new QueryInfo(null, null, null, filterExp, null, null, null, null, null);
@@ -368,7 +368,7 @@ public class EsQueryHandlerTest {
     @Test
     public void 部分一致クエリを指定してelasitcsearch用のクエリに変換可能であること() {
         String filterStr = "substringof('itemValue', itemKey)";
-        BoolCommonExpression filterExp = DcOptionsQueryParser.parseFilter(filterStr);
+        BoolCommonExpression filterExp = PersoniumOptionsQueryParser.parseFilter(filterStr);
 
         // ESQueryHandlerでVisitする
         QueryInfo queryInfo = new QueryInfo(null, null, null, filterExp, null, null, null, null, null);
@@ -411,7 +411,7 @@ public class EsQueryHandlerTest {
     public void 括弧検索クエリを指定してelasitcsearch用のクエリに変換可能であること() {
         String filterStr = "itemKey eq 'itemValue' and (itemKey2 eq 'itemValue2' or itemKey3 eq 'itemValue3')";
 
-        BoolCommonExpression filterExp = DcOptionsQueryParser.parseFilter(filterStr);
+        BoolCommonExpression filterExp = PersoniumOptionsQueryParser.parseFilter(filterStr);
 
         // ESQueryHandlerでVisitする
         QueryInfo queryInfo = new QueryInfo(null, null, null, filterExp, null, null, null, null, null);
@@ -486,10 +486,10 @@ public class EsQueryHandlerTest {
                 filterExp.visit(esQueryHandler);
                 fail("Not Throw Exception, operator = " + operator);
             } catch (Exception e) {
-                String code = DcCoreException.OData.UNSUPPORTED_QUERY_OPERATOR.params(operator).getCode();
-                String message = DcCoreException.OData.UNSUPPORTED_QUERY_OPERATOR.params(operator).getMessage();
-                assertEquals(code, ((DcCoreException) e).getCode());
-                assertEquals(message, ((DcCoreException) e).getMessage());
+                String code = PersoniumCoreException.OData.UNSUPPORTED_QUERY_OPERATOR.params(operator).getCode();
+                String message = PersoniumCoreException.OData.UNSUPPORTED_QUERY_OPERATOR.params(operator).getMessage();
+                assertEquals(code, ((PersoniumCoreException) e).getCode());
+                assertEquals(message, ((PersoniumCoreException) e).getMessage());
             }
         }
     }
@@ -512,13 +512,13 @@ public class EsQueryHandlerTest {
             String operator = entry.getKey();
             String filterExp = entry.getValue();
             try {
-                DcOptionsQueryParser.parseFilter(filterExp);
+                PersoniumOptionsQueryParser.parseFilter(filterExp);
                 fail("Not Throw Exception, operator = " + operator);
             } catch (Exception e) {
-                String code = DcCoreException.OData.UNSUPPORTED_QUERY_OPERATOR.getCode();
-                String message = DcCoreException.OData.UNSUPPORTED_QUERY_OPERATOR.getMessage();
-                assertEquals(code, ((DcCoreException) e).getCode());
-                assertEquals(message, ((DcCoreException) e).getMessage());
+                String code = PersoniumCoreException.OData.UNSUPPORTED_QUERY_OPERATOR.getCode();
+                String message = PersoniumCoreException.OData.UNSUPPORTED_QUERY_OPERATOR.getMessage();
+                assertEquals(code, ((PersoniumCoreException) e).getCode());
+                assertEquals(message, ((PersoniumCoreException) e).getMessage());
             }
         }
     }
@@ -540,10 +540,10 @@ public class EsQueryHandlerTest {
                 filterExp.visit(esQueryHandler);
                 fail("Not Throw Exception, function = " + function);
             } catch (Exception e) {
-                String code = DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION.getCode();
-                String message = DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION.getMessage();
-                assertEquals(code, ((DcCoreException) e).getCode());
-                assertEquals(message, ((DcCoreException) e).getMessage());
+                String code = PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION.getCode();
+                String message = PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION.getMessage();
+                assertEquals(code, ((PersoniumCoreException) e).getCode());
+                assertEquals(message, ((PersoniumCoreException) e).getMessage());
             }
         }
     }
@@ -578,13 +578,13 @@ public class EsQueryHandlerTest {
             String operator = entry.getKey();
             String filterExp = entry.getValue();
             try {
-                DcOptionsQueryParser.parseFilter(filterExp);
+                PersoniumOptionsQueryParser.parseFilter(filterExp);
                 fail("Not Throw Exception, function = " + operator);
             } catch (Exception e) {
-                String code = DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION.getCode();
-                String message = DcCoreException.OData.UNSUPPORTED_QUERY_FUNCTION.getMessage();
-                assertEquals(code, ((DcCoreException) e).getCode());
-                assertEquals(message, ((DcCoreException) e).getMessage());
+                String code = PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION.getCode();
+                String message = PersoniumCoreException.OData.UNSUPPORTED_QUERY_FUNCTION.getMessage();
+                assertEquals(code, ((PersoniumCoreException) e).getCode());
+                assertEquals(message, ((PersoniumCoreException) e).getMessage());
             }
         }
     }

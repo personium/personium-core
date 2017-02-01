@@ -33,9 +33,9 @@ import org.junit.runner.RunWith;
 
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.core.DcCoreAuthzException;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreAuthzException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
@@ -47,7 +47,7 @@ import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DaoException;
 import io.personium.test.jersey.DcException;
 import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRestAdapter;
+import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.DcRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
@@ -91,7 +91,7 @@ public class MessageReceivedTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             // リクエストヘッダをセット
@@ -148,7 +148,7 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Priority", 3);
         body.put("Status", "unread");
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -163,8 +163,8 @@ public class MessageReceivedTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(
                             ReceivedMessage.P_ID.getName()).getMessage());
         } catch (DcException e) {
             e.printStackTrace();
@@ -187,13 +187,13 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Priority", 3);
         body.put("Status", "unread");
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         // Authorizationヘッダ
-        requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + DcCoreConfig.getMasterToken());
+        requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
 
         try {
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
@@ -201,8 +201,8 @@ public class MessageReceivedTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getCode(),
-                    DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getMessage());
+                    PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getCode(),
+                    PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getMessage());
         } catch (DcException e) {
             e.printStackTrace();
         }
@@ -225,7 +225,7 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Priority", 3);
         body.put("Status", "unread");
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -237,8 +237,8 @@ public class MessageReceivedTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_UNAUTHORIZED, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    DcCoreAuthzException.AUTHORIZATION_REQUIRED.getCode(),
-                    DcCoreAuthzException.AUTHORIZATION_REQUIRED.getMessage());
+                    PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.getCode(),
+                    PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.getMessage());
         } catch (DcException e) {
             e.printStackTrace();
         }
@@ -260,7 +260,7 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Priority", 3);
         body.put("Status", "unread");
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -274,8 +274,8 @@ public class MessageReceivedTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_UNAUTHORIZED, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    DcCoreAuthzException.TOKEN_PARSE_ERROR.getCode(),
-                    DcCoreAuthzException.TOKEN_PARSE_ERROR.getMessage());
+                    PersoniumCoreAuthzException.TOKEN_PARSE_ERROR.getCode(),
+                    PersoniumCoreAuthzException.TOKEN_PARSE_ERROR.getMessage());
         } catch (DcException e) {
             e.printStackTrace();
         }
@@ -297,7 +297,7 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Priority", 3);
         body.put("Status", "unread");
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット
@@ -316,8 +316,8 @@ public class MessageReceivedTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getCode(),
-                    DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getMessage());
+                    PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getCode(),
+                    PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getMessage());
 
         } catch (DcException e) {
             e.printStackTrace();
@@ -341,7 +341,7 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Priority", 3);
         body.put("Status", "none");
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -355,8 +355,8 @@ public class MessageReceivedTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                             ReceivedMessage.P_STATUS.getName()).getMessage());
         } catch (DcException e) {
             e.printStackTrace();
@@ -386,7 +386,7 @@ public class MessageReceivedTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcRestAdapter rest = new DcRestAdapter();
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
             DcResponse res = null;
 
             // リクエストヘッダをセット
@@ -437,8 +437,8 @@ public class MessageReceivedTest extends ODataCommon {
     @Test
     public final void 受信メッセージの一覧取得ができること() {
 
-        DcRestAdapter rest1 = new DcRestAdapter();
-        DcRestAdapter rest2 = new DcRestAdapter();
+        PersoniumRestAdapter rest1 = new PersoniumRestAdapter();
+        PersoniumRestAdapter rest2 = new PersoniumRestAdapter();
         DcResponse res1 = null;
         DcResponse res2 = null;
 
@@ -506,7 +506,7 @@ public class MessageReceivedTest extends ODataCommon {
     @Test
     public final void 受信メッセージの一件取得ができること() {
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストボディ作成
@@ -553,7 +553,7 @@ public class MessageReceivedTest extends ODataCommon {
     @Test
     public final void 受信メッセージの削除ができること() {
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         String id = null;
 
@@ -602,7 +602,7 @@ public class MessageReceivedTest extends ODataCommon {
         String locationHeader = null;
         String messageId = null;
         String accountName = "account1";
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
@@ -623,7 +623,7 @@ public class MessageReceivedTest extends ODataCommon {
             assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
             // $links取得
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
             res = null;
             res = rest.getAcceptEncodingGzip(requestUrl, requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
@@ -637,7 +637,7 @@ public class MessageReceivedTest extends ODataCommon {
                         Setup.TEST_CELL1, ReceivedMessage.EDM_TYPE_NAME, messageId,
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, accountName);
                 try {
-                    rest = new DcRestAdapter();
+                    rest = new PersoniumRestAdapter();
                     res = null;
                     res = rest.del(requestUrl, requestheaders);
                 } catch (DcException e) {
@@ -660,7 +660,7 @@ public class MessageReceivedTest extends ODataCommon {
         String locationHeader = null;
         String messageId = null;
         String accountName = "account1";
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
@@ -697,7 +697,7 @@ public class MessageReceivedTest extends ODataCommon {
         String locationHeader = null;
         String messageId = null;
         String accountName = "account1";
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
@@ -718,7 +718,7 @@ public class MessageReceivedTest extends ODataCommon {
             assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
             // $links取得
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
             res = null;
             res = rest.getAcceptEncodingGzip(requestUrl, requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
@@ -732,7 +732,7 @@ public class MessageReceivedTest extends ODataCommon {
                         Setup.TEST_CELL1, Account.EDM_TYPE_NAME, accountName,
                         Account.EDM_NPNAME_FOR_RECEIVED_MESSAGE, messageId);
                 try {
-                    rest = new DcRestAdapter();
+                    rest = new PersoniumRestAdapter();
                     res = null;
                     res = rest.del(requestUrl, requestheaders);
                 } catch (DcException e) {
@@ -796,7 +796,7 @@ public class MessageReceivedTest extends ODataCommon {
                     receiveAccountName));
 
             try {
-                DcRestAdapter restAdapterForCreateLink = new DcRestAdapter();
+                PersoniumRestAdapter restAdapterForCreateLink = new PersoniumRestAdapter();
                 DcResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
                         bodyForCreateLink.toJSONString(), requestheaders);
                 assertEquals(HttpStatus.SC_NO_CONTENT, linkCreateResponse.getStatusCode());
@@ -806,7 +806,7 @@ public class MessageReceivedTest extends ODataCommon {
 
             // $links取得
             try {
-                DcRestAdapter restAdapterForGetLink = new DcRestAdapter();
+                PersoniumRestAdapter restAdapterForGetLink = new PersoniumRestAdapter();
                 DcResponse linkRetreiveResponse = restAdapterForGetLink.getAcceptEncodingGzip(
                         requestUrl, requestheaders);
                 assertEquals(HttpStatus.SC_OK, linkRetreiveResponse.getStatusCode());
@@ -820,7 +820,7 @@ public class MessageReceivedTest extends ODataCommon {
                         messageReceivedCell, ReceivedMessage.EDM_TYPE_NAME, messageId,
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, receiveAccountName);
                 try {
-                    DcRestAdapter restAdapterForDeleteLink = new DcRestAdapter();
+                    PersoniumRestAdapter restAdapterForDeleteLink = new PersoniumRestAdapter();
                     DcResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
                     assertEquals(HttpStatus.SC_NO_CONTENT, linkDeleteResponse.getStatusCode());
                 } catch (DcException e) {
@@ -887,7 +887,7 @@ public class MessageReceivedTest extends ODataCommon {
                     receiveAccountName));
 
             try {
-                DcRestAdapter restAdapterForCreateLink = new DcRestAdapter();
+                PersoniumRestAdapter restAdapterForCreateLink = new PersoniumRestAdapter();
                 DcResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
                         bodyForCreateLink.toJSONString(), requestheaders);
                 assertEquals(HttpStatus.SC_NO_CONTENT, linkCreateResponse.getStatusCode());
@@ -897,7 +897,7 @@ public class MessageReceivedTest extends ODataCommon {
 
             // $links取得
             try {
-                DcRestAdapter restAdapterForGetLink = new DcRestAdapter();
+                PersoniumRestAdapter restAdapterForGetLink = new PersoniumRestAdapter();
                 DcResponse linkRetreiveResponse = restAdapterForGetLink.getAcceptEncodingGzip(requestUrl,
                         requestheaders);
                 assertEquals(HttpStatus.SC_OK, linkRetreiveResponse.getStatusCode());
@@ -911,7 +911,7 @@ public class MessageReceivedTest extends ODataCommon {
                         messageReceivedCell, ReceivedMessage.EDM_TYPE_NAME, messageId,
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, receiveAccountName);
                 try {
-                    DcRestAdapter restAdapterForDeleteLink = new DcRestAdapter();
+                    PersoniumRestAdapter restAdapterForDeleteLink = new PersoniumRestAdapter();
                     DcResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
                     assertEquals(HttpStatus.SC_NO_CONTENT, linkDeleteResponse.getStatusCode());
                 } catch (DcException e) {
@@ -978,7 +978,7 @@ public class MessageReceivedTest extends ODataCommon {
                     receiveAccountName));
 
             try {
-                DcRestAdapter restAdapterForCreateLink = new DcRestAdapter();
+                PersoniumRestAdapter restAdapterForCreateLink = new PersoniumRestAdapter();
                 DcResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
                         bodyForCreateLink.toJSONString(), requestheaders);
                 assertEquals(HttpStatus.SC_FORBIDDEN, linkCreateResponse.getStatusCode());
@@ -1046,7 +1046,7 @@ public class MessageReceivedTest extends ODataCommon {
                     messageId));
 
             try {
-                DcRestAdapter restAdapterForCreateLink = new DcRestAdapter();
+                PersoniumRestAdapter restAdapterForCreateLink = new PersoniumRestAdapter();
                 DcResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
                         bodyForCreateLink.toJSONString(), requestheaders);
                 assertEquals(HttpStatus.SC_NO_CONTENT, linkCreateResponse.getStatusCode());
@@ -1056,7 +1056,7 @@ public class MessageReceivedTest extends ODataCommon {
 
             // $links取得
             try {
-                DcRestAdapter restAdapterForGetLink = new DcRestAdapter();
+                PersoniumRestAdapter restAdapterForGetLink = new PersoniumRestAdapter();
                 DcResponse linkRetreiveResponse = restAdapterForGetLink.getAcceptEncodingGzip(requestUrl,
                         requestheaders);
                 assertEquals(HttpStatus.SC_OK, linkRetreiveResponse.getStatusCode());
@@ -1070,7 +1070,7 @@ public class MessageReceivedTest extends ODataCommon {
                         messageReceivedCell, ReceivedMessage.EDM_TYPE_NAME, messageId,
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, receiveAccountName);
                 try {
-                    DcRestAdapter restAdapterForDeleteLink = new DcRestAdapter();
+                    PersoniumRestAdapter restAdapterForDeleteLink = new PersoniumRestAdapter();
                     DcResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
                     assertEquals(HttpStatus.SC_NO_CONTENT, linkDeleteResponse.getStatusCode());
                 } catch (DcException e) {
@@ -1138,7 +1138,7 @@ public class MessageReceivedTest extends ODataCommon {
                     ReceivedMessage.EDM_TYPE_NAME, messageId));
 
             try {
-                DcRestAdapter restAdapterForCreateLink = new DcRestAdapter();
+                PersoniumRestAdapter restAdapterForCreateLink = new PersoniumRestAdapter();
                 DcResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
                         bodyForCreateLink.toJSONString(), requestheaders);
                 assertEquals(HttpStatus.SC_NO_CONTENT, linkCreateResponse.getStatusCode());
@@ -1148,7 +1148,7 @@ public class MessageReceivedTest extends ODataCommon {
 
             // $links取得
             try {
-                DcRestAdapter restAdapterForGetLink = new DcRestAdapter();
+                PersoniumRestAdapter restAdapterForGetLink = new PersoniumRestAdapter();
                 DcResponse linkRetreiveResponse = restAdapterForGetLink.getAcceptEncodingGzip(requestUrl,
                         requestheaders);
                 assertEquals(HttpStatus.SC_OK, linkRetreiveResponse.getStatusCode());
@@ -1162,7 +1162,7 @@ public class MessageReceivedTest extends ODataCommon {
                         messageReceivedCell, ReceivedMessage.EDM_TYPE_NAME, messageId,
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, receiveAccountName);
                 try {
-                    DcRestAdapter restAdapterForDeleteLink = new DcRestAdapter();
+                    PersoniumRestAdapter restAdapterForDeleteLink = new PersoniumRestAdapter();
                     DcResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
                     assertEquals(HttpStatus.SC_NO_CONTENT, linkDeleteResponse.getStatusCode());
                 } catch (DcException e) {
@@ -1230,7 +1230,7 @@ public class MessageReceivedTest extends ODataCommon {
                     ReceivedMessage.EDM_TYPE_NAME, messageId));
 
             try {
-                DcRestAdapter restAdapterForCreateLink = new DcRestAdapter();
+                PersoniumRestAdapter restAdapterForCreateLink = new PersoniumRestAdapter();
                 DcResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
                         bodyForCreateLink.toJSONString(), requestheaders);
                 assertEquals(HttpStatus.SC_FORBIDDEN, linkCreateResponse.getStatusCode());
@@ -1256,7 +1256,7 @@ public class MessageReceivedTest extends ODataCommon {
         String locationHeader = null;
         String messageId = null;
         String accountName = "account1";
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
@@ -1277,7 +1277,7 @@ public class MessageReceivedTest extends ODataCommon {
             assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
             // ReceivedMessage基準 NavigationProperty経由
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
             requestUrl = UrlUtils.cellCtlNagvigationProperty(
                     Setup.TEST_CELL1, ReceivedMessage.EDM_TYPE_NAME, messageId,
                     ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT);
@@ -1285,7 +1285,7 @@ public class MessageReceivedTest extends ODataCommon {
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
             // Account基準 NavigationProperty経由
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
             requestUrl = UrlUtils.cellCtlNagvigationProperty(
                     Setup.TEST_CELL1, Account.EDM_TYPE_NAME, accountName,
                     Account.EDM_NPNAME_FOR_RECEIVED_MESSAGE);
@@ -1301,7 +1301,7 @@ public class MessageReceivedTest extends ODataCommon {
                         Setup.TEST_CELL1, ReceivedMessage.EDM_TYPE_NAME, messageId,
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, accountName);
                 try {
-                    rest = new DcRestAdapter();
+                    rest = new PersoniumRestAdapter();
                     res = null;
                     res = rest.del(requestUrl, requestheaders);
                 } catch (DcException e) {
@@ -1324,7 +1324,7 @@ public class MessageReceivedTest extends ODataCommon {
         String locationHeader = null;
         String messageId = null;
         String accountName = "account1";
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
@@ -1345,7 +1345,7 @@ public class MessageReceivedTest extends ODataCommon {
             assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
             // ReceivedMessage取得
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
             requestUrl = UrlUtils.cellCtl(Setup.TEST_CELL1, ReceivedMessage.EDM_TYPE_NAME)
                     + "?$format=json&$expand=" + ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT;
             res = rest.getAcceptEncodingGzip(requestUrl, requestheaders);
@@ -1358,7 +1358,7 @@ public class MessageReceivedTest extends ODataCommon {
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
             // Account取得
-            rest = new DcRestAdapter();
+            rest = new PersoniumRestAdapter();
             requestUrl = UrlUtils.cellCtl(Setup.TEST_CELL1, Account.EDM_TYPE_NAME)
                     + "?$format=json&$expand=" + Account.EDM_NPNAME_FOR_RECEIVED_MESSAGE;
             res = rest.getAcceptEncodingGzip(requestUrl, requestheaders);
@@ -1379,7 +1379,7 @@ public class MessageReceivedTest extends ODataCommon {
                         Setup.TEST_CELL1, ReceivedMessage.EDM_TYPE_NAME, messageId,
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, accountName);
                 try {
-                    rest = new DcRestAdapter();
+                    rest = new PersoniumRestAdapter();
                     res = null;
                     res = rest.del(requestUrl, requestheaders);
                 } catch (DcException e) {
@@ -1434,7 +1434,7 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Priority", 3);
         body.put("Status", "unread");
 
-        DcRestAdapter rest = new DcRestAdapter();
+        PersoniumRestAdapter rest = new PersoniumRestAdapter();
         DcResponse res = null;
 
         // リクエストヘッダをセット

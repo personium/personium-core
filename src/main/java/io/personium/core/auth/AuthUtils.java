@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.CharEncoding;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.OEntityWrapper;
 
@@ -57,7 +57,7 @@ public final class AuthUtils {
 
         // DC0 Ruby Code
         // Digest::SHA256.hexdigest(pw + "Password hash salt value")
-        String str2hash = passwd + DcCoreConfig.getAuthPasswordSalt();
+        String str2hash = passwd + PersoniumUnitConfig.getAuthPasswordSalt();
         try {
             MessageDigest md = MessageDigest.getInstance(MD_ALGORITHM);
             byte[] digestBytes = md.digest(str2hash.getBytes(CharEncoding.UTF_8));
@@ -85,10 +85,10 @@ public final class AuthUtils {
                     Pattern pattern = Pattern.compile(regex);
                     Matcher m = pattern.matcher(dcCredHeader);
                     if (!m.find()) {
-                        throw DcCoreException.Auth.PASSWORD_INVALID;
+                        throw PersoniumCoreException.Auth.PASSWORD_INVALID;
                     }
                 } else {
-                    throw DcCoreException.Auth.PASSWORD_INVALID;
+                    throw PersoniumCoreException.Auth.PASSWORD_INVALID;
                 }
             }
             String hPassStr = AuthUtils.hashPassword(dcCredHeader);

@@ -59,8 +59,8 @@ import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchHitField;
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.Property;
@@ -311,7 +311,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
                                 this.staticFields.put(prop.getName(),
                                         getSimpleList(edmProperty.getType(), (OCollection<OObject>) value));
                             } else {
-                                throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(prop.getName());
+                                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(prop.getName());
                             }
                         } else {
                             value = getSimpleValue(prop, edmProperty.getType());
@@ -377,7 +377,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
         }
         // Adsアクセス用にUnitUser名を設定する
         String owner = (String) hiddenFieldsMap.get("Owner");
-        this.unitUserName = DcCoreConfig.getEsUnitPrefix() + "_";
+        this.unitUserName = PersoniumUnitConfig.getEsUnitPrefix() + "_";
         if (owner == null) {
             this.unitUserName += AccessContext.TYPE_ANONYMOUS;
         } else {
@@ -491,7 +491,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
                         complex.put(prop.getName(),
                                 getSimpleList(edmProp.getType(), (OCollection<OObject>) prop.getValue()));
                     } else {
-                        throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(prop.getName());
+                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(prop.getName());
                     }
                 } else {
                     Object value = getSimpleValue(prop, edmProp.getType());
@@ -595,7 +595,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
             }
 
             boolean isDynamic = false;
-            NamespacedAnnotation<?> annotation = prop.findAnnotation(Common.DC_NAMESPACE.getUri(),
+            NamespacedAnnotation<?> annotation = prop.findAnnotation(Common.P_NAMESPACE.getUri(),
                     Property.P_IS_DECLARED.getName());
             if (annotation != null && !(Boolean.valueOf(annotation.getValue().toString()))) {
                 isDynamic = true;

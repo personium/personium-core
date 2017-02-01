@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Property;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -127,8 +127,8 @@ public class ComplexTypeUpdateTest extends ODataCommon {
             // 変名
             TResponse res = ComplexTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, complexTypeName, complexTypeRename, HttpStatus.SC_CONFLICT);
-            res.checkErrorResponse(DcCoreException.OData.CONFLICT_HAS_RELATED.getCode(),
-                    DcCoreException.OData.CONFLICT_HAS_RELATED.getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.CONFLICT_HAS_RELATED.getCode(),
+                    PersoniumCoreException.OData.CONFLICT_HAS_RELATED.getMessage());
         } finally {
             PropertyUtils.delete(BEARER_MASTER_TOKEN, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     Setup.TEST_ENTITYTYPE_M1, "testProperty", -1);
@@ -163,8 +163,8 @@ public class ComplexTypeUpdateTest extends ODataCommon {
             // 変名
             TResponse res = ComplexTypeUtils.update(token, cell, box, col,
                     complex2nd, complex2nd, HttpStatus.SC_CONFLICT);
-            res.checkErrorResponse(DcCoreException.OData.CONFLICT_HAS_RELATED.getCode(),
-                    DcCoreException.OData.CONFLICT_HAS_RELATED.getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.CONFLICT_HAS_RELATED.getCode(),
+                    PersoniumCoreException.OData.CONFLICT_HAS_RELATED.getMessage());
         } finally {
             ComplexTypePropertyUtils.delete(cell, box, col, "1stProp", complex1st, -1);
             PropertyUtils.delete(btoken, cell, box, col, "testEntity", "property", -1);
@@ -202,8 +202,8 @@ public class ComplexTypeUpdateTest extends ODataCommon {
             // 変名
             TResponse res = ComplexTypeUtils.update(token, cell, box, col,
                     complex3rd, complex3rd, HttpStatus.SC_CONFLICT);
-            res.checkErrorResponse(DcCoreException.OData.CONFLICT_HAS_RELATED.getCode(),
-                    DcCoreException.OData.CONFLICT_HAS_RELATED.getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.CONFLICT_HAS_RELATED.getCode(),
+                    PersoniumCoreException.OData.CONFLICT_HAS_RELATED.getMessage());
         } finally {
             ComplexTypePropertyUtils.delete(cell, box, col, "3rdProp", complex3rd, -1);
             ComplexTypePropertyUtils.delete(cell, box, col, "2ndProp", complex2nd, -1);
@@ -261,8 +261,8 @@ public class ComplexTypeUpdateTest extends ODataCommon {
             // 変名
             TResponse res = ComplexTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, complexTypeName, complexTypeRename, HttpStatus.SC_CONFLICT);
-            res.checkErrorResponse(DcCoreException.OData.ENTITY_ALREADY_EXISTS.getCode(),
-                    DcCoreException.OData.ENTITY_ALREADY_EXISTS.getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS.getCode(),
+                    PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS.getMessage());
         } finally {
             ComplexTypeUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     complexTypeName, -1);
@@ -285,8 +285,8 @@ public class ComplexTypeUpdateTest extends ODataCommon {
             // ComplexTypeの更新(400になること)
             TResponse res = ComplexTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, complexTypeName, new JSONObject(), HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
-                    DcCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Name").getMessage());
         } finally {
             ComplexTypeUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     complexTypeName, -1);
@@ -302,8 +302,8 @@ public class ComplexTypeUpdateTest extends ODataCommon {
         // ComplexTypeの更新
         TResponse res = ComplexTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1,
                 Setup.TEST_ODATA, complexTypeName, complexTypeName, HttpStatus.SC_NOT_FOUND);
-        res.checkErrorResponse(DcCoreException.OData.NO_SUCH_ENTITY.getCode(),
-                DcCoreException.OData.NO_SUCH_ENTITY.getMessage());
+        res.checkErrorResponse(PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode(),
+                PersoniumCoreException.OData.NO_SUCH_ENTITY.getMessage());
     }
 
     /**
@@ -322,8 +322,8 @@ public class ComplexTypeUpdateTest extends ODataCommon {
             // ComplexTypeの更新
             TResponse res = ComplexTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, complexTypeName, complexTypeRename, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
         } finally {
             ComplexTypeUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     complexTypeName, -1);
@@ -346,8 +346,8 @@ public class ComplexTypeUpdateTest extends ODataCommon {
             // ComplexTypeの更新
             TResponse res = ComplexTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, complexTypeName, complexTypeRename, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
         } finally {
             ComplexTypeUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     complexTypeName, -1);
@@ -370,8 +370,8 @@ public class ComplexTypeUpdateTest extends ODataCommon {
             // ComplexTypeの更新
             TResponse res = ComplexTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, complexTypeName, complexTypeRename, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
         } finally {
             ComplexTypeUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     complexTypeName, -1);
@@ -394,8 +394,8 @@ public class ComplexTypeUpdateTest extends ODataCommon {
             // ComplexTypeの更新
             TResponse res = ComplexTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, complexTypeName, complexTypeRename, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
         } finally {
             ComplexTypeUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     complexTypeName, -1);
@@ -455,8 +455,8 @@ public class ComplexTypeUpdateTest extends ODataCommon {
             // ComplexTypeの更新
             TResponse res = ComplexTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, complexTypeName, complexTypeRename, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
         } finally {
             ComplexTypeUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     complexTypeName, -1);
@@ -514,8 +514,8 @@ public class ComplexTypeUpdateTest extends ODataCommon {
             // ComplexTypeの更新
             TResponse res = ComplexTypeUtils.update(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, complexTypeName, complexTypeRename, HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
+            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("Name").getMessage());
         } finally {
             ComplexTypeUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     complexTypeName, -1);

@@ -29,7 +29,7 @@ import org.odata4j.expression.IntegralLiteral;
 import org.odata4j.expression.NullLiteral;
 import org.odata4j.expression.StringLiteral;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.utils.ODataUtils;
 
 
@@ -72,7 +72,7 @@ public class FilterConditionValidator {
         // 真偽値やNULLは大小比較ができないため、許容しない。
         if (searchValue instanceof BooleanLiteral
                 || searchValue instanceof NullLiteral) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR;
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
 
         // スキーマ定義されているプロパティのデータ型として検索条件の値が評価できることを検証する。
@@ -80,7 +80,7 @@ public class FilterConditionValidator {
         if (edmProperty != null) {
             AbstractValidator validator = validatorMap.get(edmProperty.getType());
             if (null == validator) {
-                throw DcCoreException.OData.FILTER_PARSE_ERROR;
+                throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
             }
             validator.validate(searchValue, edmProperty.getName());
         }
@@ -105,7 +105,7 @@ public class FilterConditionValidator {
         if (edmProperty != null) {
             AbstractValidator validator = validatorMap.get(edmProperty.getType());
             if (null == validator) {
-                throw DcCoreException.OData.FILTER_PARSE_ERROR;
+                throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
             }
             validator.validate(searchValue, edmProperty.getName());
         }
@@ -122,7 +122,7 @@ public class FilterConditionValidator {
     static void validateFilterFuncCondition(EdmProperty edmProperty, CommonExpression searchValue) {
         // 関数（substringof/startswith）共通で許容するデータ： 文字列
         if (!(searchValue instanceof StringLiteral)) {
-            throw DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(edmProperty.getName());
+            throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(edmProperty.getName());
         }
 
         // スキーマ定義されているプロパティのデータ型として検索条件の値が評価できることを検証する。
@@ -130,7 +130,7 @@ public class FilterConditionValidator {
         if (edmProperty != null
                 && !EdmSimpleType.STRING.getFullyQualifiedTypeName().equals(
                         edmProperty.getType().getFullyQualifiedTypeName())) {
-                throw DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(edmProperty.getName());
+                throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(edmProperty.getName());
         }
     }
 
@@ -157,7 +157,7 @@ public class FilterConditionValidator {
                     || searchValue instanceof NullLiteral) {
                 return;
             }
-            throw DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
+            throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
         }
     }
 
@@ -171,7 +171,7 @@ public class FilterConditionValidator {
                     || searchValue instanceof NullLiteral) {
                 return;
             }
-            throw DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
+            throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
         }
     }
 
@@ -189,12 +189,12 @@ public class FilterConditionValidator {
             } else if (searchValue instanceof NullLiteral) {
                 value = 0;
             } else {
-                throw DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
+                throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
             }
 
             // 値の範囲チェック
             if (value > Integer.MAX_VALUE || value < Integer.MIN_VALUE) {
-                throw DcCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params(propertyName);
+                throw PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params(propertyName);
             }
         }
     }
@@ -211,7 +211,7 @@ public class FilterConditionValidator {
                     || searchValue instanceof NullLiteral) {
                 return;
             }
-            throw DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
+            throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
         }
     }
 
@@ -231,12 +231,12 @@ public class FilterConditionValidator {
             } else if (searchValue instanceof NullLiteral) {
                 value = 0;
             } else {
-                throw DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
+                throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
             }
 
             // 値の範囲チェック
             if (!ODataUtils.validateSingle(String.valueOf(value))) {
-                throw DcCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params(propertyName);
+                throw PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params(propertyName);
             }
         }
     }
@@ -255,12 +255,12 @@ public class FilterConditionValidator {
             } else if (searchValue instanceof NullLiteral) {
                 value = 0;
             } else {
-                throw DcCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
+                throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
             }
 
             // 値の範囲チェック
             if (value > ODataUtils.DATETIME_MAX || value < ODataUtils.DATETIME_MIN) {
-                throw DcCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params(propertyName);
+                throw PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params(propertyName);
             }
         }
     }

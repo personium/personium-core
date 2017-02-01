@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import org.odata4j.core.OProperties;
 import org.odata4j.core.OProperty;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Unit;
 
 /**
@@ -117,9 +117,9 @@ public class AbstractODataResourceTest {
             try {
                 method.invoke(resource, property);
             } catch (InvocationTargetException ex) {
-                if (ex.getCause() instanceof DcCoreException) {
-                    DcCoreException e = (DcCoreException) ex.getCause();
-                    if (DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode().equals(e.getCode())) {
+                if (ex.getCause() instanceof PersoniumCoreException) {
+                    PersoniumCoreException e = (PersoniumCoreException) ex.getCause();
+                    if (PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode().equals(e.getCode())) {
                         valildResult = false;
                     } else {
                         fail(f.testComment + ": 期待したエラーコードではない. 例外コード:[" + e.getCode() + "]");

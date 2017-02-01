@@ -41,7 +41,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.jersey.filter.DcCoreContainerFilter;
+import io.personium.core.jersey.filter.PersoniumCoreContainerFilter;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -100,7 +100,7 @@ public class OptionsMethodTest extends JerseyTest {
     @Test
     public void 認証なしのOPTIONSメソッドがリクエストされた場合にpersoniumで受け付けている全メソッドが返却されること() throws URISyntaxException {
         // 被テストオブジェクトを準備
-        DcCoreContainerFilter containerFilter = new DcCoreContainerFilter();
+        PersoniumCoreContainerFilter containerFilter = new PersoniumCoreContainerFilter();
         // ContainerRequiestを準備
         WebApplication wa = mock(WebApplication.class);
         InBoundHeaders headers = new InBoundHeaders();

@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -93,7 +93,7 @@ public class MoveServiceSourceHeaderValidateTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            DcCoreException expectedException = DcCoreException.Dav.REQUIRED_REQUEST_HEADER_NOT_EXIST.params(
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.REQUIRED_REQUEST_HEADER_NOT_EXIST.params(
                     HttpHeaders.DESTINATION);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
@@ -129,7 +129,7 @@ public class MoveServiceSourceHeaderValidateTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            DcCoreException expectedException = DcCoreException.Dav.INVALID_REQUEST_HEADER.params(
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     HttpHeaders.OVERWRITE, "Y");
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
@@ -171,7 +171,7 @@ public class MoveServiceSourceHeaderValidateTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            DcCoreException expectedException = DcCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
             // 移動元のファイルが存在すること
@@ -219,7 +219,7 @@ public class MoveServiceSourceHeaderValidateTest extends JerseyTest {
             // リクエスト実行
             DcResponse response = AbstractCase.request(req);
             assertEquals(HttpStatus.SC_PRECONDITION_FAILED, response.getStatusCode());
-            DcCoreException expectedException = DcCoreException.Dav.ETAG_NOT_MATCH;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.ETAG_NOT_MATCH;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
             // 移動元のファイルが存在すること

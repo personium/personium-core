@@ -34,7 +34,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 import io.personium.test.categories.Unit;
@@ -44,7 +44,7 @@ import io.personium.test.categories.Unit;
  */
 @Category({Unit.class })
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({UserDataSchemaCache.class, DcCoreConfig.class })
+@PrepareForTest({UserDataSchemaCache.class, PersoniumUnitConfig.class })
 public class UserDataSchemaCacheTest {
 
     /**
@@ -68,8 +68,8 @@ public class UserDataSchemaCacheTest {
         PowerMockito.when(UserDataSchemaCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(true);
 
         // getメソッドのテスト
         Map<String, Object> cache = UserDataSchemaCache.get(nodeId);
@@ -98,8 +98,8 @@ public class UserDataSchemaCacheTest {
         PowerMockito.when(UserDataSchemaCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(true);
 
         // getメソッドのテスト
         Map<String, Object> cache = UserDataSchemaCache.get(nodeId);
@@ -130,8 +130,8 @@ public class UserDataSchemaCacheTest {
         PowerMockito.when(UserDataSchemaCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(true);
 
         // isChangedメソッドのテスト
         boolean isChanged = UserDataSchemaCache.isChanged(nodeId, data);
@@ -161,8 +161,8 @@ public class UserDataSchemaCacheTest {
         PowerMockito.when(UserDataSchemaCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(true);
 
         // isChangedメソッドのテスト
         boolean isChanged = UserDataSchemaCache.isChanged(nodeId, data);
@@ -188,8 +188,8 @@ public class UserDataSchemaCacheTest {
         PowerMockito.when(UserDataSchemaCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を無効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(false);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(false);
 
         // キャッシュ登録されないこと
         UserDataSchemaCache.cache(nodeId, schemaToCache);
@@ -220,8 +220,8 @@ public class UserDataSchemaCacheTest {
         PowerMockito.when(UserDataSchemaCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(true);
 
         // 事前にキャッシュを登録
         UserDataSchemaCache.cache(nodeId, schemaToCache);
@@ -230,8 +230,8 @@ public class UserDataSchemaCacheTest {
         assertThat(schemaFromCache).isEqualTo(schemaFromCache);
 
         // キャッシュの設定を無効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(false);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(false);
 
         // キャッシュを取得できないこと
         schemaFromCache = UserDataSchemaCache.get(nodeId);
@@ -260,8 +260,8 @@ public class UserDataSchemaCacheTest {
         PowerMockito.when(UserDataSchemaCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を無効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(false);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(false);
 
         // isChanged?
         Map<String, Object> schemaToCacheNew = new HashMap<String, Object>();
@@ -288,8 +288,8 @@ public class UserDataSchemaCacheTest {
         PowerMockito.when(UserDataSchemaCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(true);
 
         // 事前にキャッシュを登録する
         UserDataSchemaCache.cache(nodeId, schemaToCache);
@@ -319,8 +319,8 @@ public class UserDataSchemaCacheTest {
         PowerMockito.when(UserDataSchemaCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(true);
 
         // isChanged?
         Map<String, Object> schemaToCacheNew = new HashMap<String, Object>();
@@ -347,8 +347,8 @@ public class UserDataSchemaCacheTest {
         PowerMockito.when(UserDataSchemaCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(true);
 
         // 事前にキャッシュを登録する
         UserDataSchemaCache.cache(nodeId, schemaToCache);
@@ -378,8 +378,8 @@ public class UserDataSchemaCacheTest {
         PowerMockito.when(UserDataSchemaCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(true);
 
         // 事前にキャッシュを登録する
         UserDataSchemaCache.cache(nodeId, schemaToCache);
@@ -411,8 +411,8 @@ public class UserDataSchemaCacheTest {
         PowerMockito.when(UserDataSchemaCache.class, "getMcdClient").thenReturn(mockMemcachedClient);
 
         // キャッシュの設定を有効にする
-        PowerMockito.spy(DcCoreConfig.class);
-        PowerMockito.when(DcCoreConfig.class, "isSchemaCacheEnabled").thenReturn(true);
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.when(PersoniumUnitConfig.class, "isSchemaCacheEnabled").thenReturn(true);
 
         // キャッシュに登録できること
         UserDataSchemaCache.cache(nodeId, schemaToCache);

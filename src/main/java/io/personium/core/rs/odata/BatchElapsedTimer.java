@@ -19,8 +19,8 @@ package io.personium.core.rs.odata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.rs.odata.ODataBatchResource.BatchPriority;
 
 /**
@@ -34,8 +34,8 @@ public class BatchElapsedTimer {
     private long lastSleepTimeStamp;
     private BatchPriority priority = BatchPriority.LOW;
 
-    private long sleep = DcCoreConfig.getOdataBatchSleepInMillis();
-    private long sleepInterval = DcCoreConfig.getOdataBatchSleepIntervalInMillis();
+    private long sleep = PersoniumUnitConfig.getOdataBatchSleepInMillis();
+    private long sleepInterval = PersoniumUnitConfig.getOdataBatchSleepIntervalInMillis();
 
     /**
      * Lockを他プロセスに譲るためにスリープするか否かを指定するための列挙型.
@@ -74,7 +74,7 @@ public class BatchElapsedTimer {
                 Thread.sleep(sleep);
             } catch (InterruptedException e) {
                 log.warn("Batch request interrupted.", e);
-                throw DcCoreException.Server.UNKNOWN_ERROR;
+                throw PersoniumCoreException.Server.UNKNOWN_ERROR;
             }
             current = System.currentTimeMillis();
             lastSleepTimeStamp = current;

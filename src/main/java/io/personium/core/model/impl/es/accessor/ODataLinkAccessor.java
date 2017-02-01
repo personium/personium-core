@@ -21,7 +21,7 @@ import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumDeleteResponse;
 import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.core.DcCoreLog;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.ads.AdsException;
 import io.personium.core.model.impl.es.doc.LinkDocHandler;
@@ -78,7 +78,7 @@ public class ODataLinkAccessor extends DataSourceAccessor {
             try {
                 getAds().createLink(getIndex().getName(), docHandler);
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 // Adsの登録に失敗した場合は、専用のログに書込む
                 String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
@@ -128,7 +128,7 @@ public class ODataLinkAccessor extends DataSourceAccessor {
             try {
                 getAds().updateLink(getIndex().getName(), docHandler);
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_UPDATE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_UPDATE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 // Adsの登録に失敗した場合は、専用のログに書込む
                 String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
@@ -180,7 +180,7 @@ public class ODataLinkAccessor extends DataSourceAccessor {
             try {
                 getAds().deleteLink(getIndex().getName(), id);
             } catch (AdsException e) {
-                DcCoreLog.Server.DATA_STORE_ENTITY_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
+                PersoniumCoreLog.Server.DATA_STORE_ENTITY_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
 
                 // Adsの登録に失敗した場合は、専用のログに書込む
                 String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,

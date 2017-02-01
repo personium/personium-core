@@ -29,8 +29,8 @@ import org.junit.runner.RunWith;
 import org.odata4j.core.ODataConstants;
 import org.odata4j.edm.EdmMultiplicity;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -76,7 +76,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                 .with("collection", "setodata")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("multiplicity", EdmMultiplicity.MANY.getSymbolString())
                 .with("entityTypeName", ENTITY_TYPE_NAME)
@@ -109,7 +109,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                 .with("collection", "setodata")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("multiplicity", EdmMultiplicity.MANY.getSymbolString())
                 .with("entityTypeName", ENTITY_TYPE_NAME)
@@ -136,7 +136,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                 .with("collection", "setodata")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("multiplicity", EdmMultiplicity.MANY.getSymbolString())
                 .with("entityTypeName", ENTITY_TYPE_NAME)
@@ -164,7 +164,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                 .with("collection", "test")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("multiplicity", EdmMultiplicity.MANY.getSymbolString())
                 .with("entityTypeName", ENTITY_TYPE_NAME)
@@ -188,7 +188,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                 .with("collection", "setodata")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("multiplicity", EdmMultiplicity.MANY.getSymbolString())
                 .with("entityTypeName", ENTITY_TYPE_NAME)
@@ -202,7 +202,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                 .with("collection", "setodata")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("multiplicity", EdmMultiplicity.MANY.getSymbolString())
                 .with("entityTypeName", ENTITY_TYPE_NAME)
@@ -236,7 +236,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                 .with("collection", "setodata")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body.toJSONString())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -261,7 +261,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                 .with("collection", "setodata")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body.toJSONString())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -286,7 +286,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                 .with("collection", "setodata")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body.toJSONString())
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -776,7 +776,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                     .with("collection", "setodata")
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("contentType", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("name", assocName)
                     .with("multiplicity", multiplicity)
                     .with("entityTypeName", entityTypeName)
@@ -788,8 +788,8 @@ public class AssociationEndCreateTest extends ODataCommon {
 
             // メッセージチェック
             ODataCommon.checkErrorResponseBody(res,
-                    DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
-                    DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(entityTypeName).getMessage());
+                    PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.getCode(),
+                    PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(entityTypeName).getMessage());
 
         } finally {
             if (locationHeader != null) {
@@ -809,7 +809,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                 .with("boxPath", "box1")
                 .with("odataSvcPath", "setodata")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", "Bearer " + DcCoreConfig.getMasterToken())
+                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken())
                 .with("Name", entityTypeName)
                 .returns()
                 .debug();
@@ -829,7 +829,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                 .with("collection", "setodata")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", assocName)
                 .with("multiplicity", multiplicity)
                 .with("entityTypeName", entityTypeName)
@@ -845,7 +845,7 @@ public class AssociationEndCreateTest extends ODataCommon {
                 .with("cell", "testcell1")
                 .with("box", "box1")
                 .with("collection", "setodata")
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("name", ASSOCIATION_END_NAME)
                 .with("entityTypeName", ENTITY_TYPE_NAME)
                 .with("ifMatch", "*")

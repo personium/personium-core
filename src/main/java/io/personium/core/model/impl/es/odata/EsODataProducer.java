@@ -68,10 +68,10 @@ import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchHits;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.response.EsClientException;
-import io.personium.common.es.response.EsClientException.DcSearchPhaseExecutionException;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
-import io.personium.core.DcCoreLog;
+import io.personium.common.es.response.EsClientException.PersoniumSearchPhaseExecutionException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.model.ctl.AssociationEnd;
 import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.ComplexTypeProperty;
@@ -91,7 +91,7 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.odata.EsNavigationTargetKeyProperty.NTKPNotFoundException;
 import io.personium.core.model.lock.Lock;
 import io.personium.core.model.lock.LockManager;
-import io.personium.core.odata.DcODataProducer;
+import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.core.rs.odata.BulkRequest;
@@ -103,7 +103,7 @@ import io.personium.core.utils.ODataUtils;
  * ElasticSearchでODataを扱うProducer. 全体として、スキーマチェックは呼び出し側で行われた上で呼び出される前提とし、 本クラスでは無駄な２重チェックを行わないために、スキーマチェックは行わない。
  * 本クラスはElasticSearchでODataを扱う上での特有の処理に特化する。
  */
-public abstract class EsODataProducer implements DcODataProducer {
+public abstract class EsODataProducer implements PersoniumODataProducer {
 
     static Logger log = LoggerFactory.getLogger(EsODataProducer.class);
 
@@ -391,14 +391,14 @@ public abstract class EsODataProducer implements DcODataProducer {
     public EntityResponse getEntity(final String entitySetName,
             final OEntityKey entityKey,
             final EntityQueryInfo queryInfo) {
-        final int expandMaxNum = DcCoreConfig.getMaxExpandSizeForRetrive();
+        final int expandMaxNum = PersoniumUnitConfig.getMaxExpandSizeForRetrive();
 
         // 注）EntitySetの存在保証は予め呼び出し側で行われているため、ここではチェックしない。
         EdmEntitySet eSet = this.getMetadata().findEdmEntitySet(entitySetName);
         EntitySetDocHandler oedh = this.retrieveWithKey(eSet, entityKey, queryInfo);
 
         if (oedh == null) {
-            throw DcCoreException.OData.NO_SUCH_ENTITY;
+            throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
         }
 
         ExpandEntitiesMapCreator creator = new ExpandEntitiesMapCreator(queryInfo, eSet.getType(), expandMaxNum);
@@ -428,7 +428,7 @@ public abstract class EsODataProducer implements DcODataProducer {
      */
     public OEntity getEntityByInternalId(final String entitySetName,
             final String internalId) {
-        final int expandMaxNum = DcCoreConfig.getMaxExpandSizeForRetrive();
+        final int expandMaxNum = PersoniumUnitConfig.getMaxExpandSizeForRetrive();
 
         // 注）EntitySetの存在保証は予め呼び出し側で行われているため、ここではチェックしない。
         EdmEntitySet eSet = this.getMetadata().findEdmEntitySet(entitySetName);
@@ -642,8 +642,8 @@ public abstract class EsODataProducer implements DcODataProducer {
         }
         // データが２件以上返ったら異常事態
         if (hits.getAllPages() > 1) {
-            DcCoreLog.OData.FOUND_MULTIPLE_RECORDS.params(hits.getAllPages()).writeLog();
-            throw DcCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(new RuntimeException("multiple records ("
+            PersoniumCoreLog.OData.FOUND_MULTIPLE_RECORDS.params(hits.getAllPages()).writeLog();
+            throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(new RuntimeException("multiple records ("
                     + hits.getAllPages() + ") found for the key ."));
         }
         // ここで晴れてhit数は１であることが保証されるのでその１件を返す。
@@ -762,7 +762,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             EdmEntitySet eSet,
             EntitySetAccessor esType,
             List<Map<String, Object>> implicitFilters) {
-        final int expandMaxNum = DcCoreConfig.getMaxExpandSizeForList();
+        final int expandMaxNum = PersoniumUnitConfig.getMaxExpandSizeForList();
 
         // 条件検索等。
         ODataQueryHandler visitor = getODataQueryHandler(queryInfo, eSet.getType(), implicitFilters);
@@ -772,8 +772,8 @@ public abstract class EsODataProducer implements DcODataProducer {
         try {
             res = esType.search(source);
         } catch (EsClientException ex) {
-            if (ex.getCause() instanceof DcSearchPhaseExecutionException) {
-                throw DcCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);
+            if (ex.getCause() instanceof PersoniumSearchPhaseExecutionException) {
+                throw PersoniumCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);
             }
         }
         // inlinecountの指定がallpagesの場合のみヒット件数を返却する
@@ -890,8 +890,8 @@ public abstract class EsODataProducer implements DcODataProducer {
             String key = "Name='" + propertyName + "'," + entityTypeKey + "='" + entityTypeName + "'";
             if (processedPropertyAlias.contains(key)) {
                 // プロパティ名の重複を検出
-                DcCoreLog.OData.DUPLICATED_PROPERTY_NAME.params(entityTypeId, key).writeLog();
-                throw DcCoreException.OData.DUPLICATED_PROPERTY_NAME.params(propertyName);
+                PersoniumCoreLog.OData.DUPLICATED_PROPERTY_NAME.params(entityTypeId, key).writeLog();
+                throw PersoniumCoreException.OData.DUPLICATED_PROPERTY_NAME.params(propertyName);
             }
             processedPropertyAlias.add(key);
             this.propertyAliasMap.put(key, new PropertyAlias(linkTypeName, propertyName, propertyType, propertyAlias));
@@ -1013,7 +1013,7 @@ public abstract class EsODataProducer implements DcODataProducer {
 
             // データが存在しないときは404を返す
             if (hit == null) {
-                throw DcCoreException.OData.NO_SUCH_ENTITY;
+                throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
             }
             // If-MatchヘッダとEtagの値が等しいかチェック
             ODataUtils.checkEtag(etag, hit);
@@ -1021,7 +1021,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             // Linkデータの有無を確認する
             for (EdmNavigationProperty np : srcType.getDeclaredNavigationProperties().toList()) {
                 if (this.findMultiPoint(np, entityKey) || this.findLinks(np, entityKey)) {
-                    throw DcCoreException.OData.CONFLICT_HAS_RELATED;
+                    throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
                 }
             }
 
@@ -1053,7 +1053,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             res = esType.delete(hit);
 
             if (res == null) {
-                throw DcCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(new RuntimeException("not found"));
+                throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(new RuntimeException("not found"));
             }
             // TransportClient内でリトライ処理が行われた場合、レスポンスとしてNotFoundが返却される。
             // このため、ここではそのチェックは行わず、NotFoundが返却されても正常終了とする。
@@ -1139,7 +1139,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             try {
                 setLinksFromOEntity(entity, oedh);
             } catch (NTKPNotFoundException e) {
-                throw DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(e.getMessage());
+                throw PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(e.getMessage());
             }
         }
 
@@ -1231,7 +1231,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             EntitySetDocHandler srcDh = this.retrieveWithKey(eSet, entityKey);
             if (srcDh == null) {
                 // src側のりソースが存在しなかったら404 エラーとする
-                throw DcCoreException.OData.NO_SUCH_ENTITY;
+                throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
             }
             // 関連のタイプ (NN/1N/N1/11) を判定
 
@@ -1259,7 +1259,7 @@ public abstract class EsODataProducer implements DcODataProducer {
 
         EdmNavigationProperty srcNavProp = getEdmNavigationProperty(srcSetName, targetNavProp);
         if (srcNavProp == null) {
-            throw DcCoreException.OData.NO_SUCH_ASSOCIATION;
+            throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
         // n:1かn:nの切り分けを行う
         EdmAssociation assoc = srcNavProp.getRelationship();
@@ -1270,12 +1270,12 @@ public abstract class EsODataProducer implements DcODataProducer {
             EntitySetDocHandler src = this.retrieveWithKey(sourceEntity);
             // データが存在しない場合は404
             if (src == null) {
-                throw DcCoreException.OData.NOT_FOUND;
+                throw PersoniumCoreException.OData.NOT_FOUND;
             }
             EntitySetDocHandler tgt = this.retrieveWithKey(targetEntity);
             // ターゲットが存在しない場合は400
             if (tgt == null) {
-                throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
             }
             createLinks(sourceEntity, srcNavProp, assoc, src, tgt);
         } finally {
@@ -1297,13 +1297,13 @@ public abstract class EsODataProducer implements DcODataProducer {
         EdmNavigationProperty srcNavProp = getEdmNavigationProperty(srcSetName, targetNavProp);
 
         if (srcNavProp == null) {
-            throw DcCoreException.OData.NO_SUCH_ASSOCIATION;
+            throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
 
         EntitySetDocHandler src = navigationPropertyContext.getSourceDocHandler();
         // データが存在しない場合は404
         if (src == null) {
-            throw DcCoreException.OData.NOT_FOUND;
+            throw PersoniumCoreException.OData.NOT_FOUND;
         }
 
         // 1:1の関連は存在し得ないので、AssociationEnd - AssociationEndの$linksで1:1の登録をしようとした場合はエラーとする
@@ -1427,7 +1427,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         EdmEntityType srcType = srcSet.getType();
         EdmNavigationProperty srcNavProp = srcType.findNavigationProperty(targetNavProp);
         if (srcNavProp == null) {
-            throw DcCoreException.OData.NO_SUCH_ASSOCIATION;
+            throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
 
         EntityResponse res;
@@ -1440,11 +1440,11 @@ public abstract class EsODataProducer implements DcODataProducer {
             // sourceデータが存在しない場合は404
             EntitySetDocHandler sourceDocHandler = this.retrieveWithKey(sourceOEntity);
             if (sourceDocHandler == null) {
-                throw DcCoreException.OData.NOT_FOUND;
+                throw PersoniumCoreException.OData.NOT_FOUND;
             }
             EntitySetDocHandler targetEntity = this.retrieveWithKey(entity);
             if (targetEntity != null) {
-                throw DcCoreException.OData.CONFLICT_LINKS;
+                throw PersoniumCoreException.OData.CONFLICT_LINKS;
             }
 
             // 1:1の関連は存在し得ないので、AssociationEnd - AssociationEndの$linksで1:1の登録をしようとした場合はエラーとする
@@ -1465,7 +1465,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             }
             EntitySetDocHandler retrievedEntity = this.retrieveWithKey(entity);
             if (retrievedEntity == null) {
-                throw DcCoreException.Server.UNKNOWN_ERROR;
+                throw PersoniumCoreException.Server.UNKNOWN_ERROR;
             }
 
             // $linksの登録
@@ -1505,8 +1505,8 @@ public abstract class EsODataProducer implements DcODataProducer {
                 targetEntityTypeId);
         log.info("Registered links count: [" + count + "]");
 
-        if (count >= (long) DcCoreConfig.getLinksNtoNMaxSize()) {
-            throw DcCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED;
+        if (count >= (long) PersoniumUnitConfig.getLinksNtoNMaxSize()) {
+            throw PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED;
         }
     }
 
@@ -1579,7 +1579,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             String tgtMulti = entity.getProperty(AssociationEnd.P_MULTIPLICITY.getName()).getValue().toString();
             if (EdmMultiplicity.ONE.getSymbolString().equals(srcMulti)
                     && EdmMultiplicity.ONE.getSymbolString().equals(tgtMulti)) {
-                throw DcCoreException.OData.INVALID_MULTIPLICITY;
+                throw PersoniumCoreException.OData.INVALID_MULTIPLICITY;
             }
         }
     }
@@ -1691,12 +1691,12 @@ public abstract class EsODataProducer implements DcODataProducer {
         EntitySetDocHandler src = this.retrieveWithKey(sourceEntity);
         // データが存在しない場合は404
         if (src == null) {
-            throw DcCoreException.OData.NOT_FOUND;
+            throw PersoniumCoreException.OData.NOT_FOUND;
         }
         EntitySetDocHandler tgt = this.retrieveWithKey(targetEntity);
         // ターゲットが存在しない場合は400
         if (tgt == null) {
-            throw DcCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
         }
         // NNLink情報の ES保存時の一意キー作成
         LinkDocHandler docHandler = this.getLinkDocHandler(src, tgt);
@@ -1731,7 +1731,7 @@ public abstract class EsODataProducer implements DcODataProducer {
 
         if (EdmMultiplicity.ONE.getSymbolString().equals(srcMultiplicity)
                 && EdmMultiplicity.ONE.getSymbolString().equals(tgtMultiplicity)) {
-            throw DcCoreException.OData.INVALID_MULTIPLICITY;
+            throw PersoniumCoreException.OData.INVALID_MULTIPLICITY;
         }
 
         checkInvalidLinks(sourceEntity, targetEntity);
@@ -1812,9 +1812,9 @@ public abstract class EsODataProducer implements DcODataProducer {
         String fromLinksKey = getLinkskey(srcNavProp.getFromRole().getType().getName());
         Map<String, Object> sourceLinks = source.getManyToOnelinkId();
         if (sourceLinks.get(toLinksKey) != null) {
-            throw DcCoreException.OData.CONFLICT_LINKS;
+            throw PersoniumCoreException.OData.CONFLICT_LINKS;
         } else if (target != null && target.getManyToOnelinkId().get(fromLinksKey) != null) {
-            throw DcCoreException.OData.CONFLICT_LINKS;
+            throw PersoniumCoreException.OData.CONFLICT_LINKS;
         }
     }
 
@@ -1870,7 +1870,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         PersoniumGetResponse gRes = esType.get(docid);
         if (gRes != null && gRes.exists()) {
             // 既に該当LINKが存在する
-            throw DcCoreException.OData.CONFLICT_LINKS;
+            throw PersoniumCoreException.OData.CONFLICT_LINKS;
         }
     }
 
@@ -1889,7 +1889,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         if (sourceEntity != null) {
             Map<String, Object> links = sourceEntity.getManyToOnelinkId();
             if (links != null && links.get(linksKey) != null) {
-                throw DcCoreException.OData.CONFLICT_LINKS;
+                throw PersoniumCoreException.OData.CONFLICT_LINKS;
             }
         }
     }
@@ -1905,7 +1905,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         if (targetEntity != null) {
             Map<String, Object> links = targetEntity.getManyToOnelinkId();
             if (links != null && links.get(linksKey) != null) {
-                throw DcCoreException.OData.CONFLICT_LINKS;
+                throw PersoniumCoreException.OData.CONFLICT_LINKS;
             }
         }
 
@@ -1922,7 +1922,7 @@ public abstract class EsODataProducer implements DcODataProducer {
                 param = sourceOEntity.getEntitySetName() + "('" + targetEntity.getStaticFields().get("Name") + "', '"
                         + sourceEntity.getStaticFields().get("Name") + "')";
             }
-            throw DcCoreException.OData.CONFLICT_DUPLICATED_ENTITY.params(param);
+            throw PersoniumCoreException.OData.CONFLICT_DUPLICATED_ENTITY.params(param);
         }
     }
 
@@ -1987,7 +1987,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         EdmNavigationProperty navProp = srcType.findNavigationProperty(targetNavProp);
         if (navProp == null) {
             // TODO 本来はリクエストされたリソースが存在しないことになるため404エラーを返却すべき
-            throw DcCoreException.OData.NO_SUCH_ASSOCIATION;
+            throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
         EdmEntitySet tgtSet = this.getMetadata().findEdmEntitySet(navProp.getToRole().getType().getName());
 
@@ -2010,7 +2010,7 @@ public abstract class EsODataProducer implements DcODataProducer {
                 EntitySetDocHandler target = this.retrieveWithKey(tgtSet, targetEntityKey);
                 // 該当データが存在しない場合は404
                 if (source == null || target == null) {
-                    throw DcCoreException.OData.NOT_FOUND;
+                    throw PersoniumCoreException.OData.NOT_FOUND;
                 }
 
                 // 取得したデータ同士の関連付けをチェックし、関連付いていないリンクを削除しようとした場合は400を返却する
@@ -2048,7 +2048,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         Map<String, Object> links = source.getManyToOnelinkId();
         String linksKey = getLinkskey(entitySet.getName());
         if (!links.containsKey(linksKey) || !target.getId().equals(links.get(linksKey))) {
-            throw DcCoreException.OData.NOT_FOUND;
+            throw PersoniumCoreException.OData.NOT_FOUND;
         }
     }
 
@@ -2065,13 +2065,13 @@ public abstract class EsODataProducer implements DcODataProducer {
 
         // 該当データが存在しない場合は404
         if (src == null || tgt == null) {
-            throw DcCoreException.OData.NOT_FOUND;
+            throw PersoniumCoreException.OData.NOT_FOUND;
         }
 
         // リンクエンティティを削除する
         if (!deleteLinkEntity(src, tgt)) {
             // 該当LINKが存在しない場合はエラーにする
-            throw DcCoreException.OData.NOT_FOUND;
+            throw PersoniumCoreException.OData.NOT_FOUND;
         }
     }
 
@@ -2137,13 +2137,13 @@ public abstract class EsODataProducer implements DcODataProducer {
 
         // 該当データが存在しない場合は404
         if (src == null || tgt == null) {
-            throw DcCoreException.OData.NOT_FOUND;
+            throw PersoniumCoreException.OData.NOT_FOUND;
         }
 
         // 削除対象のlinksが存在しない場合は404とする
         Map<String, Object> links = tgt.getManyToOnelinkId();
         if (!src.getId().equals(links.get(linksKey))) {
-            throw DcCoreException.OData.NOT_FOUND;
+            throw PersoniumCoreException.OData.NOT_FOUND;
         }
 
         // 登録用のlinksオブジェクトを生成して、登録対象のオブジェクトに設定する
@@ -2161,7 +2161,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         boolean uniqueness = checkUniquenessEntityKey(sourceEntitySetName, tgt, linksKey, esType);
         if (!uniqueness) {
             String param = sourceEntitySetName + "('" + tgt.getStaticFields().get("Name") + "')";
-            throw DcCoreException.OData.CONFLICT_UNLINKED_ENTITY.params(param);
+            throw PersoniumCoreException.OData.CONFLICT_UNLINKED_ENTITY.params(param);
         }
 
         esType.update(tgt.getId(), tgt);
@@ -2260,7 +2260,7 @@ public abstract class EsODataProducer implements DcODataProducer {
     }
 
     /** N:1の最大リンク取得件数. */
-    private static final int DEFAULT_TOP_VALUE = DcCoreConfig.getTopQueryDefaultSize();
+    private static final int DEFAULT_TOP_VALUE = PersoniumUnitConfig.getTopQueryDefaultSize();
 
     /**
      * Returns the value of an entity's navigation property as a collection of entity links (or a single link if the
@@ -2288,7 +2288,7 @@ public abstract class EsODataProducer implements DcODataProducer {
 
         EntitySetDocHandler src = this.retrieveWithKey(sourceEntity);
         if (src == null) {
-            throw DcCoreException.OData.NO_SUCH_ENTITY;
+            throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
         }
 
         // srcTypeからtgtTypeへN:N Assocが定義されているか調べる
@@ -2297,7 +2297,7 @@ public abstract class EsODataProducer implements DcODataProducer {
 
         EdmNavigationProperty navProp = srcType.findNavigationProperty(targetNavProp);
         if (navProp == null) {
-            throw DcCoreException.OData.NO_SUCH_ASSOCIATION;
+            throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
 
         // n:1かn:nの切り分けを行う
@@ -2317,7 +2317,7 @@ public abstract class EsODataProducer implements DcODataProducer {
                 && assoc.getEnd2().getMultiplicity() == EdmMultiplicity.MANY) {
             // N:Nのlinkの登録数の上限値1万に合わせて、最大1万件を取得する
             EntitySetAccessor tgtEsType = this.getAccessorForEntitySet(targetSetName);
-            QueryInfo qi = QueryInfo.newBuilder().setTop(DcCoreConfig.getTopQueryMaxSize())
+            QueryInfo qi = QueryInfo.newBuilder().setTop(PersoniumUnitConfig.getTopQueryMaxSize())
                     .setInlineCount(InlineCount.NONE).build();
             List<String> idvals = LinkDocHandler.query(this.getAccessorForLink(),
                     src, tgtEsType.getType(), targetEntityTypeId, qi);
@@ -2466,7 +2466,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         // EntitySetの取得を行う
         EntitySetDocHandler source = this.retrieveWithKey(sourceSet, entityKey);
         if (source == null) {
-            throw DcCoreException.OData.NO_SUCH_ENTITY;
+            throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
         }
 
         // ユーザデータの$links取得の場合、targetのEntityTypeの_idを取得する
@@ -2484,7 +2484,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             // N:Nの場合はType[Link]を検索して、NavigationPropertyのID一覧を取得する
             Map<String, Object> idsQuery = new HashMap<String, Object>();
             // N:Nのlinkの登録数の上限値1万に合わせて、最大1万件を取得する
-            QueryInfo qi = QueryInfo.newBuilder().setTop(DcCoreConfig.getTopQueryMaxSize())
+            QueryInfo qi = QueryInfo.newBuilder().setTop(PersoniumUnitConfig.getTopQueryMaxSize())
                     .setInlineCount(InlineCount.NONE).build();
 
             List<String> value = LinkDocHandler.query(this.getAccessorForLink(),
@@ -2617,7 +2617,7 @@ public abstract class EsODataProducer implements DcODataProducer {
         // まずは存在確認をする。存在しないときはNullが返ってくる。
         EntitySetDocHandler oedhExisting = this.retrieveWithKey(oEntityWrapper.getEntitySet(), originalKey);
         if (oedhExisting == null) {
-            throw DcCoreException.OData.NO_SUCH_ENTITY;
+            throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
         }
 
         // If-MatchヘッダとEtagの値が等しいかチェック
@@ -2651,7 +2651,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             try {
                 setLinksFromOEntity(oEntityWrapper, oedhNew);
             } catch (NTKPNotFoundException e) {
-                throw DcCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(e.getMessage());
+                throw PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(e.getMessage());
             }
         }
 
@@ -2733,7 +2733,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             // ESから変更するAccount情報を取得する
             EntitySetDocHandler oedhNew = this.retrieveWithKey(entitySet, originalKey);
             if (oedhNew == null) {
-                throw DcCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+                throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             }
             // 取得したAccountのパスワードと更新日を上書きする
             ODataProducerUtils.createRequestPassword(oedhNew, dcCredHeader);
@@ -2766,7 +2766,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             PersoniumGetResponse PersoniumGetResponseNew = esType.get(accountId);
             if (PersoniumGetResponseNew == null) {
                 // 認証から最終ログイン時刻更新までにAccountが削除された場合は、更新対象が存在しないため、正常終了する。
-                DcCoreLog.Auth.ACCOUNT_ALREADY_DELETED.params(originalKey.toKeyString()).writeLog();
+                PersoniumCoreLog.Auth.ACCOUNT_ALREADY_DELETED.params(originalKey.toKeyString()).writeLog();
                 return;
             }
             EntitySetDocHandler oedhNew = new OEntityDocHandler(PersoniumGetResponseNew);
@@ -2822,8 +2822,8 @@ public abstract class EsODataProducer implements DcODataProducer {
             try {
                 tmpCount = esType.count(source);
             } catch (EsClientException ex) {
-                if (ex.getCause() instanceof DcSearchPhaseExecutionException) {
-                    throw DcCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);
+                if (ex.getCause() instanceof PersoniumSearchPhaseExecutionException) {
+                    throw PersoniumCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);
                 }
             }
         }
@@ -2857,7 +2857,7 @@ public abstract class EsODataProducer implements DcODataProducer {
 
             EntitySetAccessor esType = this.getAccessorForEntitySet(fromEntitySetName);
             tmpCount = esType.count(source);
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             tmpCount = 0;
         }
         final long count = tmpCount;
@@ -2900,8 +2900,8 @@ public abstract class EsODataProducer implements DcODataProducer {
                         // データチェックをする
                         validateLinkForNavigationPropertyContext(npBulkContext);
                         if (isConflictLinks(npBulkContexts, npBulkContext)) {
-                            npBulkRequest.setError(DcCoreException.OData.CONFLICT_LINKS);
-                            npBulkContext.setException(DcCoreException.OData.CONFLICT_LINKS);
+                            npBulkRequest.setError(PersoniumCoreException.OData.CONFLICT_LINKS);
+                            npBulkContext.setException(PersoniumCoreException.OData.CONFLICT_LINKS);
                         }
                     } catch (Exception e) {
                         npBulkRequest.setError(e);
@@ -3066,7 +3066,7 @@ public abstract class EsODataProducer implements DcODataProducer {
                         .get(OEntityDocHandler.KEY_STATIC_FIELDS);
                 String entityTypeId = (String) hit.getSource().get(OEntityDocHandler.KEY_ENTITY_ID);
                 String key = entityTypeId + ":" + (String) staticFields.get("__id");
-                bulkRequests.get(key).setError(DcCoreException.OData.ENTITY_ALREADY_EXISTS);
+                bulkRequests.get(key).setError(PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS);
             }
         }
 
@@ -3106,9 +3106,9 @@ public abstract class EsODataProducer implements DcODataProducer {
                     response.add(Responses.entity(oEntity));
                 }
             }
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             // バルクリクエストが失敗した場合は、バルクで登録に使用したデータすべてにエラーを設定する
-            DcCoreLog.OData.BULK_INSERT_FAIL.reason(e).writeLog();
+            PersoniumCoreLog.OData.BULK_INSERT_FAIL.reason(e).writeLog();
             for (EsBulkRequest request : esBulkRequest) {
                 HashMap<String, Object> staticFields = (HashMap<String, Object>) request.getSource()
                         .get(OEntityDocHandler.KEY_STATIC_FIELDS);
@@ -3117,7 +3117,7 @@ public abstract class EsODataProducer implements DcODataProducer {
             }
         } catch (EsClientException e) {
             // バルクリクエストが失敗した場合は、バルクで登録に使用したデータすべてにエラーを設定する
-            DcCoreLog.OData.BULK_INSERT_FAIL.reason(e).writeLog();
+            PersoniumCoreLog.OData.BULK_INSERT_FAIL.reason(e).writeLog();
             for (EsBulkRequest request : esBulkRequest) {
                 HashMap<String, Object> staticFields = (HashMap<String, Object>) request.getSource()
                         .get(OEntityDocHandler.KEY_STATIC_FIELDS);

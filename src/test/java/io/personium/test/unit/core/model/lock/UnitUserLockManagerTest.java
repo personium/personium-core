@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.lock.UnitUserLockManager;
 import io.personium.test.categories.Unit;
 
@@ -39,7 +39,7 @@ public class UnitUserLockManagerTest {
      */
     @Test
     public void ロックされている場合にTRUEを返すこと() {
-        String unitPrefix = DcCoreConfig.getEsUnitPrefix();
+        String unitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
         String unitUserName = unitPrefix + "_unituserlocktest";
         try {
             UnitUserLockManager.registLockObjct(unitUserName);
@@ -54,7 +54,7 @@ public class UnitUserLockManagerTest {
      */
     @Test
     public void ロックされていない場合にFALSEを返すこと() {
-        String unitPrefix = DcCoreConfig.getEsUnitPrefix();
+        String unitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
         String unitUserName = unitPrefix + "_unituserlocktest";
         assertFalse(UnitUserLockManager.hasLockObject(unitUserName));
     }
@@ -64,7 +64,7 @@ public class UnitUserLockManagerTest {
      */
     @Test
     public void 異なるUnitUserでロックされている場合にFALSEを返すこと() {
-        String unitPrefix = DcCoreConfig.getEsUnitPrefix();
+        String unitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
         String unitUserName = unitPrefix + "_unituserlocktest";
         try {
             UnitUserLockManager.registLockObjct(unitUserName + "XX");

@@ -35,8 +35,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreConfig.OData;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumUnitConfig.OData;
 import io.personium.core.model.progress.ProgressInfo;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DcRunner;
@@ -74,7 +74,7 @@ public class BarInstallUserDataLinksLimitTest extends JerseyTest {
 
     private static int linkNtoNMaxSize = 40;
 
-    private static final int DEFAULT_LINKS_NTON_MAX_SIZE = DcCoreConfig.getLinksNtoNMaxSize();
+    private static final int DEFAULT_LINKS_NTON_MAX_SIZE = PersoniumUnitConfig.getLinksNtoNMaxSize();
 
     /**
      * コンストラクタ.
@@ -88,7 +88,7 @@ public class BarInstallUserDataLinksLimitTest extends JerseyTest {
      */
     @BeforeClass
     public static void beforeClass() {
-        DcCoreConfig.set(OData.NN_LINKS_MAX_NUM,
+        PersoniumUnitConfig.set(OData.NN_LINKS_MAX_NUM,
                 String.valueOf(linkNtoNMaxSize));
     }
 
@@ -97,7 +97,7 @@ public class BarInstallUserDataLinksLimitTest extends JerseyTest {
      */
     @AfterClass
     public static void afterClass() {
-        DcCoreConfig.set(OData.NN_LINKS_MAX_NUM,
+        PersoniumUnitConfig.set(OData.NN_LINKS_MAX_NUM,
                 String.valueOf(DEFAULT_LINKS_NTON_MAX_SIZE));
     }
 

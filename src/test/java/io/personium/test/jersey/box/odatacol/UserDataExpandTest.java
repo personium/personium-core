@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -102,7 +102,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("entityType", navPropName + "('" + fromUserDataId + "')")
                     .with("query", "?\\$expand=" + "_" + toEntityTypeName)
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -149,7 +149,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("entityType", navPropName)
                     .with("query", "?\\$expand=" + "_" + toEntityTypeName)
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -213,7 +213,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("query",
                             "?\\$filter=__id+eq+%27" + fromUserDataId + "%27&\\$expand=" + "_" + toEntityTypeName)
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -267,7 +267,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
             TResponse response = Http.request("box/odatacol/list.txt").with("cell", Setup.TEST_CELL1)
                     .with("box", Setup.TEST_BOX1).with("collection", Setup.TEST_ODATA).with("entityType", navPropName)
                     .with("query", "?\\$expand=" + "_" + toEntityTypeName).with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken()).returns().statusCode(HttpStatus.SC_OK).debug();
+                    .with("token", PersoniumUnitConfig.getMasterToken()).returns().statusCode(HttpStatus.SC_OK).debug();
 
             // レスポンスボディーのチェック
             Map<String, Map<String, Object>> additional = new HashMap<String, Map<String, Object>>();
@@ -339,7 +339,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("entityType", navPropName + "('" + fromUserDataId + "')")
                     .with("query", "?\\$expand=")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -378,7 +378,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("entityType", navPropName)
                     .with("query", "?\\$expand=")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -439,7 +439,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("entityType", navPropName + "('" + fromUserDataId + "')")
                     .with("query", "?\\$expand=" + toEntityTypeName)
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
@@ -468,7 +468,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("entityType", navPropName)
                     .with("query", "?\\$expand=" + toEntityTypeName)
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
@@ -497,7 +497,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("entityType", navPropName + "('" + fromUserDataId + "')")
                     .with("query", "?\\$expand=_")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
@@ -526,7 +526,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("entityType", navPropName)
                     .with("query", "?\\$expand=_")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
@@ -555,7 +555,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("entityType", navPropName + "('" + fromUserDataId + "')")
                     .with("query", "?\\$expand=_test")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
@@ -584,7 +584,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("entityType", navPropName)
                     .with("query", "?\\$expand=_test")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
@@ -613,7 +613,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("entityType", navPropName + "('" + fromUserDataId + "')")
                     .with("query", "?\\$expand=" + "_" + toEntityTypeName + ",_test")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
@@ -642,7 +642,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                     .with("entityType", navPropName)
                     .with("query", "?\\$expand=" + "_" + toEntityTypeName + ",_test")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
@@ -663,15 +663,15 @@ public class UserDataExpandTest extends AbstractUserDataTest {
         JSONObject linkBody = new JSONObject();
 
         // エンティティタイプを作成
-        EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(),
                 Setup.TEST_ODATA, toEntityTypeName, HttpStatus.SC_CREATED);
-        EntityTypeUtils.create(Setup.TEST_CELL1, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.create(Setup.TEST_CELL1, PersoniumUnitConfig.getMasterToken(),
                 Setup.TEST_ODATA, navPropName, HttpStatus.SC_CREATED);
 
         // AssociationEndを作成
-        AssociationEndUtils.create(DcCoreConfig.getMasterToken(), "*", Setup.TEST_CELL1,
+        AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(), "*", Setup.TEST_CELL1,
                 Setup.TEST_BOX1, Setup.TEST_ODATA, HttpStatus.SC_CREATED, "AssociationEnd", toEntityTypeName);
-        AssociationEndUtils.create(DcCoreConfig.getMasterToken(), "*", Setup.TEST_CELL1,
+        AssociationEndUtils.create(PersoniumUnitConfig.getMasterToken(), "*", Setup.TEST_CELL1,
                 Setup.TEST_BOX1, Setup.TEST_ODATA, HttpStatus.SC_CREATED, "LinkAssociationEnd", navPropName);
 
         // AssociationEndを関連付け
@@ -703,7 +703,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                 .with("colPath", Setup.TEST_ODATA)
                 .with("srcPath", toEntityTypeName + "('" + toUserDataId + "')")
                 .with("trgPath", navPropName)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("trgUserdataUrl", targetUri)
                 .returns()
                 .debug()
@@ -717,7 +717,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                 .with("colPath", Setup.TEST_ODATA)
                 .with("srcPath", toEntityTypeName + "('" + toUserDataId2 + "')")
                 .with("trgPath", navPropName)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("trgUserdataUrl", targetUri)
                 .returns()
                 .debug()
@@ -736,13 +736,13 @@ public class UserDataExpandTest extends AbstractUserDataTest {
 
         // ユーザデータを削除
         deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                toEntityTypeName, toUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                toEntityTypeName, toUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                navPropName, fromUserDataId, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                navPropName, fromUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                toEntityTypeName, toUserDataId2, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                toEntityTypeName, toUserDataId2, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                navPropName, fromUserDataId2, DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                navPropName, fromUserDataId2, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
 
         // AssociationEndLinkを削除
         AssociationEndUtils.deleteLink(Setup.TEST_CELL1, Setup.TEST_ODATA,
@@ -756,9 +756,9 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                 Setup.TEST_ODATA, navPropName, Setup.TEST_BOX1, "LinkAssociationEnd", HttpStatus.SC_NO_CONTENT);
 
         // エンティティタイプを削除
-        EntityTypeUtils.delete(Setup.TEST_ODATA, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.delete(Setup.TEST_ODATA, PersoniumUnitConfig.getMasterToken(),
                 "application/json", toEntityTypeName, Setup.TEST_CELL1, HttpStatus.SC_NO_CONTENT);
-        EntityTypeUtils.delete(Setup.TEST_ODATA, DcCoreConfig.getMasterToken(),
+        EntityTypeUtils.delete(Setup.TEST_ODATA, PersoniumUnitConfig.getMasterToken(),
                 "application/json", navPropName, Setup.TEST_CELL1, HttpStatus.SC_NO_CONTENT);
     }
 
@@ -771,7 +771,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
 
         // ユーザデータを削除
         deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, fromEntityTypeName, "noneNP",
-                DcCoreConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
 
     }
 
@@ -977,8 +977,8 @@ public class UserDataExpandTest extends AbstractUserDataTest {
         TResponse response = listUserODataWithExpand(cellName, boxName, colName, fromEntity, expands, top,
                 HttpStatus.SC_BAD_REQUEST);
 
-        ODataCommon.checkErrorResponseBody(response, DcCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getCode(),
-                DcCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getMessage());
+        ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getCode(),
+                PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getMessage());
 
     }
 
@@ -987,7 +987,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
      */
     @Test
     public final void 一覧取得でexpand指定時にtopに取得件数最大数を指定した場合正常に取得できること() {
-        final int top = DcCoreConfig.getMaxExpandSizeForList();
+        final int top = PersoniumUnitConfig.getMaxExpandSizeForList();
 
         String cellName = Setup.TEST_CELL1;
         String boxName = Setup.TEST_BOX1;
@@ -1007,7 +1007,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
      */
     @Test
     public final void 一覧取得でexpand指定時にtopに取得件数最大数を超える値を指定した場合400エラーとなること() {
-        final int top = DcCoreConfig.getMaxExpandSizeForList() + 1;
+        final int top = PersoniumUnitConfig.getMaxExpandSizeForList() + 1;
 
         String cellName = Setup.TEST_CELL1;
         String boxName = Setup.TEST_BOX1;
@@ -1023,8 +1023,8 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                 HttpStatus.SC_BAD_REQUEST);
 
         ODataCommon.checkErrorResponseBody(response,
-                DcCoreException.OData.QUERY_INVALID_ERROR.params("$top", String.valueOf(top)).getCode(),
-                DcCoreException.OData.QUERY_INVALID_ERROR.params("$top", String.valueOf(top)).getMessage());
+                PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", String.valueOf(top)).getCode(),
+                PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", String.valueOf(top)).getMessage());
 
     }
 
@@ -1042,7 +1042,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
 
         String userDataId = "userdata000";
 
-        int maxPropertyNum = DcCoreConfig.getExpandPropertyMaxSizeForRetrieve();
+        int maxPropertyNum = PersoniumUnitConfig.getExpandPropertyMaxSizeForRetrieve();
 
         try {
             // 事前準備
@@ -1106,7 +1106,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
 
         String userDataId = "userdata000";
 
-        int maxPropertyNum = DcCoreConfig.getExpandPropertyMaxSizeForRetrieve() + 1;
+        int maxPropertyNum = PersoniumUnitConfig.getExpandPropertyMaxSizeForRetrieve() + 1;
 
         try {
             // 事前準備
@@ -1150,8 +1150,8 @@ public class UserDataExpandTest extends AbstractUserDataTest {
             String expands = expandBuilder.toString();
             TResponse res = UserDataUtils.getWithQuery(cellName, MASTER_TOKEN_NAME, boxName, colName,
                     fromEntity, expands, userDataId, HttpStatus.SC_BAD_REQUEST);
-            ODataCommon.checkErrorResponseBody(res, DcCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getCode(),
-                    DcCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getMessage());
+            ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getCode(),
+                    PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getMessage());
 
         } finally {
             Setup.cellBulkDeletion(cellName);
@@ -1183,7 +1183,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
      * @param col コレクション名
      */
     private void createExpandData(String cell, String box, String col) {
-        final String token = DcCoreConfig.getMasterToken();
+        final String token = PersoniumUnitConfig.getMasterToken();
         // 1. 制御オブジェクトの作成
         CellUtils.create(cell, token, HttpStatus.SC_CREATED);
         BoxUtils.create(cell, box, token, HttpStatus.SC_CREATED);
@@ -1263,7 +1263,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
     @SuppressWarnings("unchecked")
     private void createExpandUserODataByNP(String cell, String box, String col,
             String baseEntity, String id, String navPropName, int records) {
-        final String token = DcCoreConfig.getMasterToken();
+        final String token = PersoniumUnitConfig.getMasterToken();
 
         // 引数で渡された件数分のユーザODataを作成する。
         for (int i = 0; i < records; i++) {
@@ -1293,7 +1293,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
                 .with("entityType", baseEntity)
                 .with("query", "?\\$expand=" + expands + "&\\$top=" + top + "&\\$orderby=__id")
                 .with("accept", MediaType.APPLICATION_JSON)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .returns()
                 .statusCode(status)
                 .debug();

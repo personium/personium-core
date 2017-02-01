@@ -39,7 +39,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -156,8 +156,8 @@ public class CollectionTest extends JerseyTest {
         // Http http = Http.request("box/mkcol-custom.txt").with("path", path).with("token", TOKEN);
         try {
             // XML不正
-            String code = DcCoreException.Dav.XML_ERROR.getCode();
-            String message = DcCoreException.Dav.XML_ERROR.getMessage();
+            String code = PersoniumCoreException.Dav.XML_ERROR.getCode();
+            String message = PersoniumCoreException.Dav.XML_ERROR.getMessage();
             sb = new StringBuilder();
             sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             sb.append("<D:mkcol xmlns:D=\"DAV:\" xmlns:p=\"urn:x-personium:xmlns\">");
@@ -708,8 +708,8 @@ public class CollectionTest extends JerseyTest {
 
             // Odataの削除→子供（deleteEntType）があるため削除出来ない
             TResponse response = deleteTest(odataName, HttpStatus.SC_FORBIDDEN);
-            String code = DcCoreException.Dav.HAS_CHILDREN.getCode();
-            String message = DcCoreException.Dav.HAS_CHILDREN.getMessage();
+            String code = PersoniumCoreException.Dav.HAS_CHILDREN.getCode();
+            String message = PersoniumCoreException.Dav.HAS_CHILDREN.getMessage();
             response.checkErrorResponse(code, message);
 
             // EntityTypeの削除
@@ -746,8 +746,8 @@ public class CollectionTest extends JerseyTest {
 
             // Odataの削除→子供（ComplexType）があるため削除出来ない
             TResponse response = deleteTest(odataName, HttpStatus.SC_FORBIDDEN);
-            String code = DcCoreException.Dav.HAS_CHILDREN.getCode();
-            String message = DcCoreException.Dav.HAS_CHILDREN.getMessage();
+            String code = PersoniumCoreException.Dav.HAS_CHILDREN.getCode();
+            String message = PersoniumCoreException.Dav.HAS_CHILDREN.getMessage();
             response.checkErrorResponse(code, message);
 
             // ComplexTypePropertyの作成
@@ -756,8 +756,8 @@ public class CollectionTest extends JerseyTest {
 
             // Odataの削除→子供（ComplexType + ComplexTypeProeprty）があるため削除出来ない
             response = deleteTest(odataName, HttpStatus.SC_FORBIDDEN);
-            code = DcCoreException.Dav.HAS_CHILDREN.getCode();
-            message = DcCoreException.Dav.HAS_CHILDREN.getMessage();
+            code = PersoniumCoreException.Dav.HAS_CHILDREN.getCode();
+            message = PersoniumCoreException.Dav.HAS_CHILDREN.getMessage();
             response.checkErrorResponse(code, message);
 
             // ComplexTypePropertyの削除
@@ -803,8 +803,8 @@ public class CollectionTest extends JerseyTest {
 
             // serviceコレクションの削除→子供（__src/davFile.js）があるため削除出来ない
             TResponse response = deleteTest(sriveceName, HttpStatus.SC_FORBIDDEN);
-            String code = DcCoreException.Dav.HAS_CHILDREN.getCode();
-            String message = DcCoreException.Dav.HAS_CHILDREN.getMessage();
+            String code = PersoniumCoreException.Dav.HAS_CHILDREN.getCode();
+            String message = PersoniumCoreException.Dav.HAS_CHILDREN.getMessage();
             response.checkErrorResponse(code, message);
 
             // ファイルの削除

@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreAuthzException;
+import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -153,8 +153,8 @@ public class AuthBasicTest extends JerseyTest {
             assertThat(headers).contains(expectedBasic);
 
             // レスポンスボディのチェック
-            ODataCommon.checkErrorResponseBody(res, DcCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getCode(),
-                    DcCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getMessage());
+            ODataCommon.checkErrorResponseBody(res, PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getCode(),
+                    PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getMessage());
             AuthTestCommon.waitForAccountLock();
         } finally {
             // Cellを再帰的削除
@@ -198,8 +198,8 @@ public class AuthBasicTest extends JerseyTest {
             assertThat(headers).contains(expectedBasic);
 
             // レスポンスボディのチェック
-            ODataCommon.checkErrorResponseBody(res, DcCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getCode(),
-                    DcCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getMessage());
+            ODataCommon.checkErrorResponseBody(res, PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getCode(),
+                    PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED.getMessage());
 
             // Accountロック後のBasic認証(正しい認証情報)で401エラーとなること
             res = UserDataUtils.createWithBasic(TEST_ACCOUNT, TEST_ACCOUNT_PASSWORD, HttpStatus.SC_UNAUTHORIZED, body,
@@ -212,8 +212,8 @@ public class AuthBasicTest extends JerseyTest {
 
             // レスポンスボディのチェック
             ODataCommon.checkErrorResponseBody(res,
-                    DcCoreAuthzException.BASIC_AUTHENTICATION_FAILED_IN_ACCOUNT_LOCK.getCode(),
-                    DcCoreAuthzException.BASIC_AUTHENTICATION_FAILED_IN_ACCOUNT_LOCK.getMessage());
+                    PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED_IN_ACCOUNT_LOCK.getCode(),
+                    PersoniumCoreAuthzException.BASIC_AUTHENTICATION_FAILED_IN_ACCOUNT_LOCK.getMessage());
 
             // Accountロック解除後のBasic認証(正しい認証情報)で作成できること
             AuthTestCommon.waitForAccountLock();
@@ -259,8 +259,8 @@ public class AuthBasicTest extends JerseyTest {
             assertThat(headers).contains(expectedBasic);
 
             // レスポンスボディのチェック
-            ODataCommon.checkErrorResponseBody(res, DcCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.getCode(),
-                    DcCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.getMessage());
+            ODataCommon.checkErrorResponseBody(res, PersoniumCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.getCode(),
+                    PersoniumCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.getMessage());
         } finally {
             // Cellを再帰的削除
             Setup.cellBulkDeletion(MY_CELL);
@@ -309,8 +309,8 @@ public class AuthBasicTest extends JerseyTest {
             assertThat(headers).contains(expectedBasic);
 
             // レスポンスボディのチェック
-            ODataCommon.checkErrorResponseBody(res, DcCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.getCode(),
-                    DcCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.getMessage());
+            ODataCommon.checkErrorResponseBody(res, PersoniumCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.getCode(),
+                    PersoniumCoreAuthzException.BASIC_AUTH_FORMAT_ERROR.getMessage());
         } finally {
             // Cellを再帰的削除
             Setup.cellBulkDeletion(MY_CELL);
@@ -365,8 +365,8 @@ public class AuthBasicTest extends JerseyTest {
             List<String> headers = res.getHeaders(HttpHeaders.WWW_AUTHENTICATE);
             assertEquals(1, headers.size());
             assertThat(headers).contains(expected);
-            ODataCommon.checkErrorResponseBody(res, DcCoreAuthzException.AUTHORIZATION_REQUIRED.getCode(),
-                    DcCoreAuthzException.AUTHORIZATION_REQUIRED.getMessage());
+            ODataCommon.checkErrorResponseBody(res, PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.getCode(),
+                    PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.getMessage());
         } finally {
             // Cellを再帰的削除
             Setup.cellBulkDeletion(MY_CELL);
@@ -400,8 +400,8 @@ public class AuthBasicTest extends JerseyTest {
             List<String> headers = res.getHeaders(HttpHeaders.WWW_AUTHENTICATE);
             assertEquals(1, headers.size());
             assertThat(headers).contains(expected);
-            ODataCommon.checkErrorResponseBody(res, DcCoreAuthzException.AUTHORIZATION_REQUIRED.getCode(),
-                    DcCoreAuthzException.AUTHORIZATION_REQUIRED.getMessage());
+            ODataCommon.checkErrorResponseBody(res, PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.getCode(),
+                    PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.getMessage());
             AuthTestCommon.waitForAccountLock();
         } finally {
             UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1, TEST_CELL1, TEST_BOX1, TEST_ODATA, entityType,

@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Performance;
 import io.personium.test.jersey.DcRunner;
 import io.personium.test.jersey.ODataCommon;
@@ -112,7 +112,7 @@ public class UserDataListPerformanceTest extends AbstractUserDataTest {
                     .with("entityType", "Category")
                     .with("query", "")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();

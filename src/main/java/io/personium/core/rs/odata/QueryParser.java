@@ -29,10 +29,10 @@ import org.odata4j.producer.InlineCount;
 import org.odata4j.producer.QueryInfo;
 import org.odata4j.producer.resources.OptionsQueryParser;
 
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
-import io.personium.core.odata.DcOptionsQueryParser;
+import io.personium.core.odata.PersoniumOptionsQueryParser;
 import com.sun.jersey.api.uri.UriComponent;
 
 /**
@@ -53,11 +53,11 @@ public class QueryParser {
         try {
             skip = OptionsQueryParser.parseTop(query);
         } catch (Exception e) {
-            throw DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$skip").reason(e);
+            throw PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$skip").reason(e);
         }
-        if (skip != null && (0 > skip || skip > DcCoreConfig.getSkipQueryMaxSize())) {
+        if (skip != null && (0 > skip || skip > PersoniumUnitConfig.getSkipQueryMaxSize())) {
             // Integerでそのまま値を返却すると、カンマが付くため、文字列でエラーメッセージを返却する
-            throw DcCoreException.OData.QUERY_INVALID_ERROR.params("$skip", skip.toString());
+            throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$skip", skip.toString());
         }
         return skip;
     }
@@ -72,11 +72,11 @@ public class QueryParser {
         try {
             top = OptionsQueryParser.parseTop(query);
         } catch (Exception e) {
-            throw DcCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$top").reason(e);
+            throw PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$top").reason(e);
         }
-        if (top != null && (0 > top || top > DcCoreConfig.getTopQueryMaxSize())) {
+        if (top != null && (0 > top || top > PersoniumUnitConfig.getTopQueryMaxSize())) {
             // Integerでそのまま値を返却すると、カンマが付くため、文字列でエラーメッセージを返却する
-            throw DcCoreException.OData.QUERY_INVALID_ERROR.params("$top", top.toString());
+            throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", top.toString());
         }
         return top;
     }
@@ -90,11 +90,11 @@ public class QueryParser {
         List<OrderByExpression> orderBy = null;
         try {
             if (query != null && query.equals("")) {
-                throw DcCoreException.OData.ORDERBY_PARSE_ERROR;
+                throw PersoniumCoreException.OData.ORDERBY_PARSE_ERROR;
             }
-            orderBy = DcOptionsQueryParser.parseOrderBy(query);
+            orderBy = PersoniumOptionsQueryParser.parseOrderBy(query);
         } catch (Exception e) {
-            throw DcCoreException.OData.ORDERBY_PARSE_ERROR;
+            throw PersoniumCoreException.OData.ORDERBY_PARSE_ERROR;
         }
         return orderBy;
     }
@@ -109,7 +109,7 @@ public class QueryParser {
         try {
             skipToken = OptionsQueryParser.parseSkipToken(query);
         } catch (Exception e) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR;
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         return skipToken;
     }
@@ -128,7 +128,7 @@ public class QueryParser {
             // パースをして有効値以外が返却された場合はパースエラーとする
             inlineCount = OptionsQueryParser.parseInlineCount(query);
             if (inlineCount == null) {
-                throw DcCoreException.OData.INLINECOUNT_PARSE_ERROR.params(query);
+                throw PersoniumCoreException.OData.INLINECOUNT_PARSE_ERROR.params(query);
             }
         }
         return inlineCount;
@@ -142,13 +142,13 @@ public class QueryParser {
     public static List<EntitySimpleProperty> parseExpandQuery(String query) {
         List<EntitySimpleProperty> expand = null;
         try {
-            expand = DcOptionsQueryParser.parseExpand(query);
+            expand = PersoniumOptionsQueryParser.parseExpand(query);
         } catch (Exception e) {
-            throw DcCoreException.OData.EXPAND_PARSE_ERROR;
+            throw PersoniumCoreException.OData.EXPAND_PARSE_ERROR;
         }
         // $expandに指定されたプロパティ数の上限チェック
-        if (expand != null && expand.size() > DcCoreConfig.getExpandPropertyMaxSizeForList()) {
-            throw DcCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED;
+        if (expand != null && expand.size() > PersoniumUnitConfig.getExpandPropertyMaxSizeForList()) {
+            throw PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED;
         }
         return expand;
     }
@@ -161,13 +161,13 @@ public class QueryParser {
     public static List<EntitySimpleProperty> parseSelectQuery(String query) {
         List<EntitySimpleProperty> select = null;
         if ("".equals(query)) {
-            throw DcCoreException.OData.SELECT_PARSE_ERROR;
+            throw PersoniumCoreException.OData.SELECT_PARSE_ERROR;
         }
         if (!"*".equals(query)) {
             try {
-                select = DcOptionsQueryParser.parseSelect(query);
+                select = PersoniumOptionsQueryParser.parseSelect(query);
             } catch (Exception e) {
-                throw DcCoreException.OData.SELECT_PARSE_ERROR.reason(e);
+                throw PersoniumCoreException.OData.SELECT_PARSE_ERROR.reason(e);
             }
         }
         return select;
@@ -181,9 +181,9 @@ public class QueryParser {
     public static BoolCommonExpression parseFilterQuery(String query) {
         BoolCommonExpression filter = null;
         try {
-            filter = DcOptionsQueryParser.parseFilter(query);
+            filter = PersoniumOptionsQueryParser.parseFilter(query);
         } catch (Exception e) {
-            throw DcCoreException.OData.FILTER_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.OData.FILTER_PARSE_ERROR.reason(e);
         }
         return filter;
     }
@@ -196,7 +196,7 @@ public class QueryParser {
         // 全文検索クエリqのバリデート
         if (fullTextSearchKeyword != null && (fullTextSearchKeyword.getBytes().length < 1
                 || fullTextSearchKeyword.getBytes().length > Common.MAX_Q_VALUE_LENGTH)) {
-            throw DcCoreException.OData.QUERY_INVALID_ERROR.params("q", fullTextSearchKeyword);
+            throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("q", fullTextSearchKeyword);
         }
     }
 
@@ -218,9 +218,9 @@ public class QueryParser {
         parseFullTextSearchQuery(queryParams.getFirst("q"));
 
         // $expand指定時は$topの最大値が変わるためチェックする
-        if (expand != null && top != null && top > DcCoreConfig.getTopQueryMaxSizeWithExpand()) {
+        if (expand != null && top != null && top > PersoniumUnitConfig.getTopQueryMaxSizeWithExpand()) {
             // Integerでそのまま値を返却すると、カンマが付くため、文字列でエラーメッセージを返却する
-            throw DcCoreException.OData.QUERY_INVALID_ERROR.params("$top", top.toString());
+            throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", top.toString());
         }
 
         Map<String, String> customOptions = new HashMap<String, String>();

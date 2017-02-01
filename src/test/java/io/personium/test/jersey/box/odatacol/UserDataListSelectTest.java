@@ -34,7 +34,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -133,7 +133,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=dynamicProperty1")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -187,7 +187,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=intProperty")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -240,7 +240,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=floatProperty")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -293,7 +293,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=trueProperty")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -350,7 +350,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=__id")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -396,7 +396,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=__published")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -442,7 +442,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=__updated")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -488,7 +488,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=__metadata")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -536,7 +536,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=__id,__published,__updated,dynamicProperty1,dynamicProperty3")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -584,7 +584,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=onlyExistProperty201")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -635,7 +635,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=dummyProperty")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -686,7 +686,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=dummyProperty")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -741,7 +741,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                             + "falseProperty,nullStringProperty,intStringProperty,"
                             + "floatStringProperty,trueStringProperty,falseStringProperty")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -816,7 +816,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=dynamicProperty1,dinamicProperty2")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -869,7 +869,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=noneExistProperty1,noneExistProperty2")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -919,7 +919,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=*")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -976,7 +976,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
@@ -1003,7 +1003,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=!")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
@@ -1034,7 +1034,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                                     + "dynamicProperty2+eq+%27dynamicPropertyValueB%27"
                                     + "&\\$select=dynamicProperty1,dynamicProperty2")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -1086,7 +1086,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                                     + "dynamicProperty2+eq+%27dynamicPropertyValue2%27"
                                     + "&\\$select=dynamicProperty1,dynamicProperty2")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -1559,7 +1559,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select='dynamicProperty1'")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
@@ -1607,7 +1607,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=" + propertyDouble)
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -1697,7 +1697,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=" + propertyDouble)
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -1794,7 +1794,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=" + propertyDouble + "&\\$orderby=dynamicProperty1")
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
@@ -1897,7 +1897,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
                     .with("entityType", entityTypeName)
                     .with("query", "?\\$select=" + propertyDouble)
                     .with("accept", MediaType.APPLICATION_JSON)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
                     .statusCode(HttpStatus.SC_OK)
                     .debug();

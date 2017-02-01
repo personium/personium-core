@@ -42,7 +42,7 @@ import org.odata4j.core.ODataConstants;
 import org.odata4j.edm.EdmSimpleType;
 import org.odata4j.producer.resources.ODataBatchProvider;
 
-import io.personium.core.DcCoreConfig;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -62,8 +62,8 @@ import io.personium.test.utils.UserDataUtils;
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
 
-    int topMaxNum = DcCoreConfig.getTopQueryMaxSize();
-    int skipMaxNum = DcCoreConfig.getSkipQueryMaxSize();
+    int topMaxNum = PersoniumUnitConfig.getTopQueryMaxSize();
+    int skipMaxNum = PersoniumUnitConfig.getSkipQueryMaxSize();
 
     /**
      * コンストラクタ.
@@ -82,7 +82,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -96,7 +96,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -117,9 +117,9 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         } finally {
             // UserODataの削除
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "1",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "2",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
 
@@ -139,7 +139,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -167,7 +167,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -195,7 +195,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -220,7 +220,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -235,7 +235,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -257,9 +257,9 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         } finally {
             // UserODataの削除
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "1",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "2",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
 
@@ -281,7 +281,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
@@ -298,7 +298,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -312,7 +312,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -333,9 +333,9 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         } finally {
             // UserODataの削除
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "1",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "2",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
 
@@ -355,7 +355,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -383,7 +383,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -411,7 +411,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -436,7 +436,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -449,7 +449,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -469,7 +469,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         } finally {
             // UserODataの削除
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "1",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
         }
@@ -488,7 +488,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -513,7 +513,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -527,7 +527,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -549,9 +549,9 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         } finally {
             // UserODataの削除
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "11",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "21",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
         }
@@ -567,7 +567,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -581,7 +581,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -603,9 +603,9 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         } finally {
             // UserODataの削除
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "11",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "21",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
 
@@ -625,7 +625,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -650,7 +650,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -664,7 +664,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -686,9 +686,9 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         } finally {
             // UserODataの削除
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "1",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "2",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
         }
@@ -707,7 +707,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -732,7 +732,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -746,7 +746,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -767,10 +767,10 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         } finally {
             // UserODataの削除
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "111",
-                    DcCoreConfig.getMasterToken(),
+                    PersoniumUnitConfig.getMasterToken(),
                     -1);
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "211",
-                    DcCoreConfig.getMasterToken(),
+                    PersoniumUnitConfig.getMasterToken(),
                     -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
@@ -790,7 +790,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -836,7 +836,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", bodyBatch)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -895,7 +895,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", bodyBatch)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -947,7 +947,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", bodyBatch)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -978,7 +978,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         String targetEntity2 = "Product";
 
         String userDataId = "npdata";
-        int top = DcCoreConfig.getTopQueryMaxSizeWithExpand();
+        int top = PersoniumUnitConfig.getTopQueryMaxSizeWithExpand();
 
         try {
             // 事前にデータを登録する
@@ -996,7 +996,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", bodyBatch)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1030,7 +1030,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         String targetEntity2 = "Product";
 
         String userDataId = "npdata";
-        int top = DcCoreConfig.getTopQueryMaxSizeWithExpand() + 1;
+        int top = PersoniumUnitConfig.getTopQueryMaxSizeWithExpand() + 1;
 
         try {
             // 事前にデータを登録する
@@ -1048,7 +1048,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", bodyBatch)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1081,7 +1081,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1106,7 +1106,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -1120,7 +1120,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1142,9 +1142,9 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         } finally {
             // UserODataの削除
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "1",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "2",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
         }
@@ -1163,7 +1163,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1188,7 +1188,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -1202,7 +1202,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1223,9 +1223,9 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         } finally {
             // UserODataの削除
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "11",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "21",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
         }
@@ -1247,7 +1247,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("boundary", BOUNDARY)
-                .with("token", DcCoreConfig.getMasterToken())
+                .with("token", PersoniumUnitConfig.getMasterToken())
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1272,7 +1272,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -1286,7 +1286,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1307,9 +1307,9 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         } finally {
             // UserODataの削除
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "11",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "21",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
         }
@@ -1325,7 +1325,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         try {
             // 事前準備
             // EntityType作成
-            EntityTypeUtils.create(cellName, DcCoreConfig.getMasterToken(), boxName, colName,
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     entityTypeName,
                     HttpStatus.SC_CREATED);
 
@@ -1339,7 +1339,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1360,9 +1360,9 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
         } finally {
             // UserODataの削除
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "1",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, entityTypeName, entityIdPrefix + "2",
-                    DcCoreConfig.getMasterToken(), -1);
+                    PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
         }
@@ -1408,7 +1408,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", reqBody)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1431,7 +1431,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1443,7 +1443,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1500,7 +1500,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", reqBody)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1524,7 +1524,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1536,7 +1536,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1593,7 +1593,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", reqBody)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1617,7 +1617,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1629,7 +1629,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1686,7 +1686,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", reqBody)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1710,7 +1710,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1722,7 +1722,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1779,7 +1779,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", reqBody)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1802,7 +1802,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)
@@ -1814,7 +1814,7 @@ public class UserDataBatchListQueryTest extends AbstractUserDataBatchTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("boundary", BOUNDARY)
-                    .with("token", DcCoreConfig.getMasterToken())
+                    .with("token", PersoniumUnitConfig.getMasterToken())
                     .with("body", body)
                     .returns()
                     .statusCode(HttpStatus.SC_ACCEPTED)

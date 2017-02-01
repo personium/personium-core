@@ -31,7 +31,7 @@ import org.odata4j.producer.QueryInfo;
 import io.personium.common.es.response.PersoniumItem;
 import io.personium.common.es.response.PersoniumMultiSearchResponse;
 import io.personium.common.es.response.PersoniumSearchHit;
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Property;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.DataSourceAccessor;
@@ -88,7 +88,7 @@ public final class ExpandEntitiesMapCreator {
             EdmNavigationProperty edmNavProp = edmType.findNavigationProperty(navigationPropertyName);
             // スキーマに存在しないNavigationPropertyを指定した場合はエラーとする
             if (edmNavProp == null) {
-                throw DcCoreException.OData.EXPAND_NTKP_NOT_FOUND_ERROR.params(navigationPropertyName);
+                throw PersoniumCoreException.OData.EXPAND_NTKP_NOT_FOUND_ERROR.params(navigationPropertyName);
             }
             this.navigationPropertyList.add(navigationPropertyName);
         }

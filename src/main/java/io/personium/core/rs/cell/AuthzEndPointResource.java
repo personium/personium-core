@@ -69,11 +69,11 @@ import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.DcCoreAuthnException;
-import io.personium.core.DcCoreConfig;
-import io.personium.core.DcCoreException;
-import io.personium.core.DcCoreLog;
-import io.personium.core.DcCoreMessageUtils;
+import io.personium.core.PersoniumCoreAuthnException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
+import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
@@ -85,7 +85,7 @@ import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
-import io.personium.core.odata.DcODataProducer;
+import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.OEntityWrapper;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
@@ -114,17 +114,17 @@ public class AuthzEndPointResource {
     /**
      * ログインフォーム_初期表示メッセージ.
      */
-    private final String passFormMsg = DcCoreMessageUtils.getMessage("PS-AU-0002");
+    private final String passFormMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0002");
 
     /**
      * ログインフォーム_ユーザID・パスワード未入力のメッセージ.
      */
-    private final String noIdPassMsg = DcCoreMessageUtils.getMessage("PS-AU-0003");
+    private final String noIdPassMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0003");
 
     /**
      * Cookie認証失敗時のメッセージ.
      */
-    private final String missCookieMsg = DcCoreMessageUtils.getMessage("PS-AU-0005");
+    private final String missCookieMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0005");
 
     /**
      * パスワード認証時に使用するAccountのUUID。パスワード認証後に最終ログイン時刻の更新に使用する.
@@ -221,14 +221,14 @@ public class AuthzEndPointResource {
         // clientIdで指定されたセルURLをスキーマに持つBoxが存在するかチェック
         //
         if (!checkAuthorization(normalizedClientId)) {
-            log.debug(DcCoreMessageUtils.getMessage("PS-ER-0003"));
+            log.debug(PersoniumCoreMessageUtils.getMessage("PS-ER-0003"));
             return this.returnErrorRedirect(cell.getUrl() + "__html/error", "PS-ER-0003");
         }
 
         // clientIdとredirectUriパラメタチェック
         try {
             this.checkImplicitParam(normalizedClientId, normalizedRedirectUri, uriInfo.getBaseUri());
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             log.debug(e.getMessage());
             if ((username == null && password == null)
                     && (assertion == null || "".equals(assertion))
@@ -243,7 +243,7 @@ public class AuthzEndPointResource {
         if ("1".equals(isCancel)) {
             // redirect_uriへリダイレクト
             return this.returnErrorRedirect(redirectUri, OAuth2Helper.Error.UNAUTHORIZED_CLIENT,
-                    DcCoreMessageUtils.getMessage("PR401-AZ-0001"), state, "PR401-AZ-0001");
+                    PersoniumCoreMessageUtils.getMessage("PR401-AZ-0001"), state, "PR401-AZ-0001");
         }
 
         String schema = clientId;
@@ -303,9 +303,9 @@ public class AuthzEndPointResource {
 
     }
 
-    private void checkDcTarget(final String dcTarget) {
-        String target = dcTarget;
-        if (target != null && !"".equals(dcTarget)) {
+    private void checkPTarget(final String pTarget) {
+        String target = pTarget;
+        if (target != null && !"".equals(pTarget)) {
             try {
                 new URL(target);
                 if (!target.endsWith("/")) {
@@ -313,11 +313,11 @@ public class AuthzEndPointResource {
                 }
                 if (target.contains("\n") || target.contains("\r")) {
                     // p_targetがURLでない場合はエラー
-                    throw DcCoreAuthnException.INVALID_TARGET;
+                    throw PersoniumCoreAuthnException.INVALID_TARGET;
                 }
             } catch (MalformedURLException e) {
                 // p_targetがURLでない場合はエラー
-                throw DcCoreAuthnException.INVALID_TARGET;
+                throw PersoniumCoreAuthnException.INVALID_TARGET;
             }
         }
     }
@@ -343,13 +343,13 @@ public class AuthzEndPointResource {
         }
 
         // タイトル
-        paramsList.add(DcCoreMessageUtils.getMessage("PS-AU-0001"));
+        paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
         // アプリセルのprofile.json
         paramsList.add(clientId + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
         // データセルのprofile.json
         paramsList.add(cell.getUrl() + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
         // タイトル
-        paramsList.add(DcCoreMessageUtils.getMessage("PS-AU-0001"));
+        paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
         // 呼び出し先
         paramsList.add(cell.getUrl() + "__authz");
         // メッセージ表示領域
@@ -412,7 +412,7 @@ public class AuthzEndPointResource {
         OEntityWrapper oew = cell.getAccount(username);
         if (oew == null) {
             String resCode = "PS-AU-0004";
-            String missIdPassMsg = DcCoreMessageUtils.getMessage(resCode);
+            String missIdPassMsg = PersoniumCoreMessageUtils.getMessage(resCode);
             log.info("MessageCode : " + resCode);
             log.info("responseMessage : " + missIdPassMsg);
             ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
@@ -430,7 +430,7 @@ public class AuthzEndPointResource {
                 // memcachedのロック時間を更新
                 AuthResourceUtils.registAccountLock(accountId);
                 String resCode = "PS-AU-0006";
-                String accountLockMsg = DcCoreMessageUtils.getMessage(resCode);
+                String accountLockMsg = PersoniumCoreMessageUtils.getMessage(resCode);
                 log.info("MessageCode : " + resCode);
                 log.info("responseMessage : " + accountLockMsg);
                 ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
@@ -444,14 +444,14 @@ public class AuthzEndPointResource {
                 // memcachedにロックを作成
                 AuthResourceUtils.registAccountLock(accountId);
                 String resCode = "PS-AU-0004";
-                String missIdPassMsg = DcCoreMessageUtils.getMessage(resCode);
+                String missIdPassMsg = PersoniumCoreMessageUtils.getMessage(resCode);
                 log.info("MessageCode : " + resCode);
                 log.info("responseMessage : " + missIdPassMsg);
                 ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
                 return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state, dcTarget, dcOwner))
                         .header("Content-Type", "text/html; charset=UTF-8").build();
             }
-        } catch (DcCoreException e) {
+        } catch (PersoniumCoreException e) {
             return this.returnErrorRedirect(redirectUriStr, e.getMessage(),
                     e.getMessage(), state, e.getCode());
         }
@@ -535,17 +535,17 @@ public class AuthzEndPointResource {
             tcToken = TransCellAccessToken.parse(assertion);
         } catch (TokenParseException e) {
             // パース失敗時
-            DcCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
+            PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
             return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.ACCESS_DENIED,
                     OAuth2Helper.Error.ACCESS_DENIED, state, "PR401-AZ-0002");
         } catch (TokenDsigException e) {
             // 署名検証でエラー
-            DcCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
+            PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
             return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.ACCESS_DENIED,
                     OAuth2Helper.Error.ACCESS_DENIED, state, "PR401-AZ-0002");
         } catch (TokenRootCrtException e) {
             // ルートCA証明書の設定エラー
-            DcCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
+            PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
             return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.ACCESS_DENIED,
                     OAuth2Helper.Error.ACCESS_DENIED, state, "PR401-AZ-0002");
         }
@@ -674,15 +674,15 @@ public class AuthzEndPointResource {
 
         } catch (TokenParseException e) {
             // パースに失敗したので
-            DcCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
+            PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
             return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, dcTarget, dcOwner);
         } catch (TokenDsigException e) {
             // 証明書検証に失敗したので
-            DcCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
+            PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
             return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, dcTarget, dcOwner);
         } catch (TokenRootCrtException e) {
             // ルートCA証明書の設定エラー
-            DcCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
+            PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
             return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, dcTarget, dcOwner);
         }
         // Cookieでの認証成功
@@ -726,8 +726,8 @@ public class AuthzEndPointResource {
 
         // p_target がURLでない場合はヘッダInjectionの脆弱性を産んでしまう。(改行コードが入っているなど)
         try {
-            this.checkDcTarget(dcTarget);
-        } catch (DcCoreAuthnException e) {
+            this.checkPTarget(dcTarget);
+        } catch (PersoniumCoreAuthnException e) {
             return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.INVALID_REQUEST,
                     e.getMessage(), state, "code");
         }
@@ -740,10 +740,10 @@ public class AuthzEndPointResource {
             Response response = this.handleImplicitFlowPassWord(dcTarget, redirectUriStr, clientId,
                     username, password, keepLogin, state, dcOwner, host);
 
-            if (DcCoreConfig.getAccountLastAuthenticatedEnable()
+            if (PersoniumUnitConfig.getAccountLastAuthenticatedEnable()
                     && isSuccessAuthorization(response)) {
                 // Accountのスキーマ情報を取得する
-                DcODataProducer producer = ModelFactory.ODataCtl.cellCtl(cell);
+                PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(cell);
                 EdmEntitySet esetAccount = producer.getMetadata().getEdmEntitySet(Account.EDM_TYPE_NAME);
                 OEntityKey originalKey = OEntityKey.parse("('" + username + "')");
                 // 最終ログイン時刻の変更をProducerに依頼(このメソッド内でロックを取得・解放)
@@ -833,13 +833,13 @@ public class AuthzEndPointResource {
             // 実行環境がhttpsの場合のみ、secureフラグを立てる
             if (OAuth2Helper.Key.TRUE_STR.equals(keepLogin)) {
                 // Cookieの有効期限を24時間に設定
-                cookies = new NewCookie(cookie, "", COOKIE_MAX_AGE, DcCoreConfig.isHttps());
+                cookies = new NewCookie(cookie, "", COOKIE_MAX_AGE, PersoniumUnitConfig.isHttps());
             } else {
                 // Cookieの有効期限を設定しない
-                cookies = new NewCookie(cookie, "", -1, DcCoreConfig.isHttps());
+                cookies = new NewCookie(cookie, "", -1, PersoniumUnitConfig.isHttps());
             }
         } else {
-            cookies = new NewCookie(cookie, "", 0, DcCoreConfig.isHttps());
+            cookies = new NewCookie(cookie, "", 0, PersoniumUnitConfig.isHttps());
         }
         return rb.entity("").cookie(cookies).build();
     }
@@ -959,7 +959,7 @@ public class AuthzEndPointResource {
     private void checkImplicitParam(String clientId, String redirectUri, URI baseUri) {
         if (redirectUri == null || clientId == null) {
             // TODO 一方がnullの場合はエラー。メッセージ変更の必要あり
-            throw DcCoreAuthnException.INVALID_TARGET;
+            throw PersoniumCoreAuthnException.INVALID_TARGET;
         }
 
         URL objClientId = null;
@@ -967,19 +967,19 @@ public class AuthzEndPointResource {
         try {
             objClientId = new URL(clientId);
         } catch (MalformedURLException e) {
-            throw DcCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
+            throw PersoniumCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
         }
         try {
             objRedirectUri = new URL(redirectUri);
         } catch (MalformedURLException e) {
-            throw DcCoreException.Auth.REQUEST_PARAM_REDIRECT_INVALID;
+            throw PersoniumCoreException.Auth.REQUEST_PARAM_REDIRECT_INVALID;
         }
 
         if ((redirectUri.contains("\n") || redirectUri.contains("\r"))) {
-            throw DcCoreException.Auth.REQUEST_PARAM_REDIRECT_INVALID;
+            throw PersoniumCoreException.Auth.REQUEST_PARAM_REDIRECT_INVALID;
         }
         if ((clientId.contains("\n") || clientId.contains("\r"))) {
-            throw DcCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
+            throw PersoniumCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
         }
 
         // baseurlのパスを取得する
@@ -997,12 +997,12 @@ public class AuthzEndPointResource {
         // セルのURLまでの比較
         if (!objClientId.getAuthority().equals(objRedirectUri.getAuthority())
                 || !cPaths[0].equals(rPaths[0])) {
-            throw DcCoreException.Auth.REQUEST_PARAM_REDIRECT_INVALID;
+            throw PersoniumCoreException.Auth.REQUEST_PARAM_REDIRECT_INVALID;
         }
 
         // client_idとリクエストされたCellの名前を比較し、セルが同じ場合はエラー
         if (cPaths[0].equals(this.cell.getName())) {
-            throw DcCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
+            throw PersoniumCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
         }
 
     }

@@ -20,7 +20,7 @@ import org.apache.wink.webdav.model.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.DcCoreException;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.DavCmp;
@@ -76,7 +76,7 @@ public class BoxCmpEsImpl extends DavCmpEsImpl implements BoxCmp {
     }
 
     @Override
-    public DcCoreException getNotFoundException() {
-        return DcCoreException.Dav.BOX_NOT_FOUND;
+    public PersoniumCoreException getNotFoundException() {
+        return PersoniumCoreException.Dav.BOX_NOT_FOUND;
     }
 }
