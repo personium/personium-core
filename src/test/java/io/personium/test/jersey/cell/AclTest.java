@@ -33,6 +33,7 @@ import org.w3c.dom.NodeList;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.ExtCell;
@@ -145,6 +146,228 @@ public class AclTest extends AbstractCase {
                     .statusCode(HttpStatus.SC_OK);
         }
     }
+
+    /**
+     * CellとBoxのACLを設定しBoxにアクセスできることを確認テスト.
+     */
+    @Test
+    public final void CellとBoxにBoxレベルACLを設定しBoxにアクセスできることを確認() {
+        String testBox1 = "testAclBox";
+
+        try {
+            // CellのACL設定 role4を含むACLをtestcell1
+            Http.request("cell/acl-setting-cell-box.txt")
+                    .with("url", TEST_CELL1)
+                    .with("token", TOKEN)
+                    .with("role1", TEST_ROLE1)
+                    .with("role2", TEST_ROLE2)
+                    .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, "")).returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            // 設定の確認 PROPFINDでtestcell1のACLを取得
+            TResponse tresponse = Http.request("cell/propfind-cell-allprop.txt")
+                    .with("url", TEST_CELL1)
+                    .with("depth", "0")
+                    .with("token", TOKEN)
+                    .returns();
+            tresponse.statusCode(HttpStatus.SC_MULTI_STATUS);
+
+            // PROPFOINDレスポンスボディの確認
+            List<Map<String, List<String>>> list = new ArrayList<Map<String, List<String>>>();
+            Map<String, List<String>> map1 = new HashMap<String, List<String>>();
+            List<String> rolList1 = new ArrayList<String>();
+            rolList1.add("auth");
+            rolList1.add("auth-read");
+            rolList1.add("read");
+            map1.put(TEST_ROLE1, rolList1);
+            list.add(map1);
+
+            List<String> rolList2 = new ArrayList<String>();
+            Map<String, List<String>> map2 = new HashMap<String, List<String>>();
+            rolList2.add("root");
+            map2.put(TEST_ROLE2, rolList2);
+            list.add(map2);
+            String resorce = UrlUtils.cellRoot(TEST_CELL1);
+            Element root = tresponse.bodyAsXml().getDocumentElement();
+
+            StringBuffer sb = new StringBuffer(resorce);
+            sb.deleteCharAt(resorce.length() - 1);
+            TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
+                     UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+
+            // Boxの作成
+            BoxUtils.create(TEST_CELL1, testBox1, TOKEN);
+
+            // ACLをbox1に設定すればできるのは従来からの機能
+            // Principal:all Privilege:read
+            // Principal:role1 Privilege:write
+            setAclAllandRole(TEST_CELL1, TOKEN, HttpStatus.SC_OK, TEST_CELL1 + "/" + testBox1,
+                "box/acl-setting-all-role.txt", "role1", "<D:read/>", "<D:write/>", "");
+
+            // PROPFINDでACLの確認
+            CellUtils.propfind(TEST_CELL1 + "/" + testBox1, TOKEN, "0", HttpStatus.SC_MULTI_STATUS);
+
+            // 認証
+            JSONObject json = ResourceUtils.getLocalTokenByPassAuth(TEST_CELL1, "account1", "password1", -1);
+            // トークン取得
+            String tokenStr = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // account1でbox1を操作
+            // リソースを取得 Box1に対してGET
+            ResourceUtils.accessResource("", tokenStr, HttpStatus.SC_OK, testBox1, TEST_CELL1);
+
+            // コレクションの作成 Box1に対してPUT
+            DavResourceUtils.createWebDavFile(TEST_CELL1, tokenStr, "box/dav-put.txt", "hoge", testBox1,
+                    "text.txt", HttpStatus.SC_CREATED);
+
+        } finally {
+            // コレクションの削除
+            DavResourceUtils.deleteWebDavFile("box/dav-delete.txt", TEST_CELL1, TOKEN, "text.txt", -1, testBox1);
+
+            // Box1の削除
+            BoxUtils.delete(TEST_CELL1, TOKEN, testBox1);
+
+            // Box ACLの設定を元に戻す
+            Http.request("box/acl-authtest.txt")
+                    .with("cellPath", TEST_CELL1)
+                    .with("colname", "")
+                    .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
+                    .with("token", TOKEN)
+                    .with("level", "")
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            // Cell ACLの設定を元に戻す
+            Http.request("cell/acl-default.txt").with("url", TEST_CELL1)
+                    .with("token", TOKEN)
+                    .with("role1", TEST_ROLE1)
+                    .with("role2", TEST_ROLE2)
+                    .with("box", testBox1)
+                    .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
+                    .with("level", "")
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+        }
+    }
+
+    /**
+     * CellにBoxレベルACLを設定しBoxにアクセスできることを確認.
+     */
+    @Test
+    public final void CellにBoxレベルACLを設定しBoxにアクセスできることを確認() {
+        String testBox1 = "testNoAclBox";
+        String testRole1 = "role1";
+        String testRole2 = "role2";
+
+        try {
+            // role4,role5を含むACLをtestcell1に設定
+            Http.request("cell/acl-setting-cell-none-box.txt")
+                    .with("url", TEST_CELL1)
+                    .with("token", TOKEN)
+                    .with("role1", testRole1)
+                    .with("role2", testRole2)
+                    .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, "")).returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            // PROPFINDでtestcell1のACLを取得
+            TResponse tresponse = Http.request("cell/propfind-cell-allprop.txt")
+                    .with("url", TEST_CELL1)
+                    .with("depth", "0")
+                    .with("token", TOKEN)
+                    .returns();
+            tresponse.statusCode(HttpStatus.SC_MULTI_STATUS);
+
+            // PROPFOINDレスポンスボディの確認
+            List<Map<String, List<String>>> list = new ArrayList<Map<String, List<String>>>();
+            Map<String, List<String>> map1 = new HashMap<String, List<String>>();
+            List<String> rolList1 = new ArrayList<String>();
+            rolList1.add("auth");
+            rolList1.add("auth-read");
+            rolList1.add("read");
+            rolList1.add("write");
+            map1.put(testRole1, rolList1);
+            list.add(map1);
+
+            List<String> rolList2 = new ArrayList<String>();
+            Map<String, List<String>> map2 = new HashMap<String, List<String>>();
+            rolList2.add("root");
+            map2.put(testRole2, rolList2);
+            list.add(map2);
+            String resorce = UrlUtils.cellRoot(TEST_CELL1);
+            Element root = tresponse.bodyAsXml().getDocumentElement();
+
+            StringBuffer sb = new StringBuffer(resorce);
+            sb.deleteCharAt(resorce.length() - 1);
+            TestMethodUtils.aclResponseTest(root, sb.toString(), list, 1,
+                     UrlUtils.roleResource(TEST_CELL1, Box.DEFAULT_BOX_NAME, ""), null);
+
+            // Boxの作成
+            BoxUtils.create(TEST_CELL1, testBox1, TOKEN);
+
+            // 認証
+            JSONObject json = ResourceUtils.getLocalTokenByPassAuth(TEST_CELL1, "account1", "password1", -1);
+            // トークン取得
+            String tokenStr = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // account1でbox1を操作
+            // リソースを取得 Box1に対してGET
+            ResourceUtils.accessResource("", tokenStr, HttpStatus.SC_OK, testBox1, TEST_CELL1);
+
+            // リソースの作成 Box1に対してPUT
+            DavResourceUtils.createWebDavFile(TEST_CELL1, tokenStr, "box/dav-put.txt", "hoge", testBox1,
+                    "text.txt", HttpStatus.SC_CREATED);
+
+        } finally {
+            // リソースの削除
+            DavResourceUtils.deleteWebDavFile("box/dav-delete.txt", TEST_CELL1, TOKEN, "text.txt", -1, testBox1);
+
+            // Box1の削除
+            BoxUtils.delete(TEST_CELL1, TOKEN, testBox1);
+
+            // Cell ACLの設定を元に戻す
+            Http.request("cell/acl-default.txt").with("url", TEST_CELL1)
+                    .with("token", TOKEN)
+                    .with("role1", TEST_ROLE1)
+                    .with("role2", TEST_ROLE2)
+                    .with("box", testBox1)
+                    .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
+                    .with("level", "")
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+        }
+    }
+
+    /**
+     * ACL設定.
+     * @param cell セル名
+     * @param token トークン
+     * @param code 期待するレスポンスコード
+     * @param path 対象のコレクションのパス
+     * @param settingFile ACLリクエストファイル
+     * @param role ACLに設定するPrincipal（Role）
+     * @param privilege1 ACLに設定する権限1
+     * @param privilege2 ACLに設定する権限2
+     * @param level スキーマ認証level
+     * @return レスポンス
+     */
+    private static TResponse setAclAllandRole(String cell, String token, int code, String path,
+            String settingFile, String role, String privilege1, String privilege2, String level) {
+        TResponse tresponseWebDav = null;
+        // ACLの設定
+        tresponseWebDav = Http.request(settingFile)
+                .with("cellPath", cell)
+                .with("colname", path)
+                .with("token", token)
+                .with("role", role)
+                .with("privilege1", privilege1)
+                .with("privilege2", privilege2)
+                .with("roleBaseUrl", UrlUtils.roleResource(cell, null, ""))
+                .with("level", level)
+                .returns()
+                .statusCode(code);
+        return tresponseWebDav;
+    }
+
 
     /**
      * 既にBoxに紐づかない同名のRoleが存在する状態でBoxに紐づかないRoleでのCellレベルACL設定の確認テスト.
