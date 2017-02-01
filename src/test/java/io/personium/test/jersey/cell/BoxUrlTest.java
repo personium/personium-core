@@ -60,11 +60,11 @@ public class BoxUrlTest extends ODataCommon {
         INIT_PARAMS.put("com.sun.jersey.config.property.packages",
                 "io.personium.core.rs");
         INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.DcCoreContainerFilter");
+                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
         INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.DcCoreContainerFilter");
+                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
         INIT_PARAMS.put("javax.ws.rs.Application",
-                "io.personium.core.rs.DcCoreApplication");
+                "io.personium.core.rs.PersoniumCoreApplication");
         INIT_PARAMS.put("com.sun.jersey.config.feature.DisableWADL",
                 "true");
 

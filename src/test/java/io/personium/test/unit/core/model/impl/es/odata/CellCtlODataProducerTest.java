@@ -395,7 +395,7 @@ public class CellCtlODataProducerTest extends CellCtlODataProducer {
     public void extCellの存在確認でOEntityKeyのパースに失敗した場合はREQUEST_RELATION_TARGET_PARSE_ERRORが発生すること() {
         try {
             getExtCell("https://example.com/'/");
-            fail("DcCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR does not occurred.");
+            fail("PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR does not occurred.");
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR;
             assertEquals(expected.getCode(), e.getCode());
@@ -415,7 +415,7 @@ public class CellCtlODataProducerTest extends CellCtlODataProducer {
         docHandler.setStaticFields(staticFields);
         try {
             breakRelation(docHandler);
-            fail("DcCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR does not occurred.");
+            fail("PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR does not occurred.");
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR;
             assertEquals(expected.getCode(), e.getCode());
@@ -437,7 +437,7 @@ public class CellCtlODataProducerTest extends CellCtlODataProducer {
             CellCtlODataProducerMock mock = new CellCtlODataProducerMock();
             mock.setGetRelationNullFlag(true);
             mock.breakRelationMock(docHandler);
-            fail("DcCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS does not occurred.");
+            fail("PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS does not occurred.");
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS
                     .params("+:me");
@@ -462,7 +462,7 @@ public class CellCtlODataProducerTest extends CellCtlODataProducer {
             CellCtlODataProducerMock mock = new CellCtlODataProducerMock();
             mock.setGetExtCellNullFlag(true);
             mock.breakRelationMock(docHandler);
-            fail("DcCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS does not occurred.");
+            fail("PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS does not occurred.");
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS
                     .params("https://example.com/test0110/");
@@ -486,7 +486,7 @@ public class CellCtlODataProducerTest extends CellCtlODataProducer {
         try {
             CellCtlODataProducerMock mock = new CellCtlODataProducerMock();
             mock.breakRelationMock(docHandler);
-            fail("DcCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS does not occurred.");
+            fail("PersoniumCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS does not occurred.");
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS
                     .params("+:me", "https://example.com/test0110/");

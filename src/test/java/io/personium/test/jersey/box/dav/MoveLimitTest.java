@@ -66,9 +66,9 @@ public class MoveLimitTest extends JerseyTest {
         INIT_PARAMS.put("com.sun.jersey.config.property.packages",
                 "io.personium.core.rs");
         INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.DcCoreContainerFilter");
+                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
         INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.DcCoreContainerFilter");
+                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
     }
 
     /**
@@ -325,7 +325,7 @@ public class MoveLimitTest extends JerseyTest {
             // TResponse res = DavResourceUtils.moveWebDav(TOKEN, CELL_NAME, BOX_NAME + "/" + srcCol, destUrl,
             // HttpStatus.SC_BAD_REQUEST);
             // // エラーコード確認
-            // expectedException = DcCoreException.Dav.COLLECTION_DEPTH_ERROR;
+            // expectedException = PersoniumCoreException.Dav.COLLECTION_DEPTH_ERROR;
             // ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
 
         } finally {
@@ -376,7 +376,7 @@ public class MoveLimitTest extends JerseyTest {
             // TResponse res = DavResourceUtils.moveWebDav(TOKEN, CELL_NAME, BOX_NAME + "/" + srcCol, destUrl,
             // HttpStatus.SC_BAD_REQUEST);
             // // エラーコード確認
-            // DcCoreException expectedException = DcCoreException.Dav.COLLECTION_DEPTH_ERROR;
+            // PersoniumCoreException expectedException = PersoniumCoreException.Dav.COLLECTION_DEPTH_ERROR;
             // ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
 
         } finally {

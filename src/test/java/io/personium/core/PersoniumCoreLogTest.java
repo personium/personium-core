@@ -148,10 +148,10 @@ public class PersoniumCoreLogTest {
     }
 
     /**
-     * ログレベル設定を切り替えてDcCoreLogを生成する.
+     * ログレベル設定を切り替えてPersoniumCoreLogを生成する.
      */
     @Test
-    public void ログレベル設定を切り替えてDcCoreLogを生成する() {
+    public void ログレベル設定を切り替えてPersoniumCoreLogを生成する() {
         final String errorMsg = "ERROR Message.";
         final String warningMsg = "WARNING Message.";
         final String infoMsg = "INFO Message.";

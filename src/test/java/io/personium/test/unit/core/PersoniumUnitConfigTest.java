@@ -39,11 +39,11 @@ public class PersoniumUnitConfigTest {
     /**
      * ユニットテスト用クラス.
      */
-    public class UnitDcCoreConfig extends PersoniumUnitConfig {
+    public class UnitTestPersoniumUnitConfig extends PersoniumUnitConfig {
         /**
          * コンストラクタ.
          */
-        public UnitDcCoreConfig() {
+        public UnitTestPersoniumUnitConfig() {
             super();
         }
 
@@ -62,11 +62,11 @@ public class PersoniumUnitConfigTest {
      */
     @Test
     public void 存在するプロパティファイルのパスを指定した場合_指定したパスのプロパティファイルを読み込むこと() {
-        UnitDcCoreConfig dcCoreConfig = new UnitDcCoreConfig();
+        UnitTestPersoniumUnitConfig pUnitConfig = new UnitTestPersoniumUnitConfig();
         Properties properties = new Properties();
         String configFilePath = ClassLoader.getSystemResource("personium-unit-config.properties.unit").getPath();
         try {
-            properties.load(dcCoreConfig.unitGetConfigFileInputStream(configFilePath));
+            properties.load(pUnitConfig.unitGetConfigFileInputStream(configFilePath));
         } catch (IOException e) {
             fail("properties load failuer");
         }
@@ -78,10 +78,10 @@ public class PersoniumUnitConfigTest {
      */
     @Test
     public void 存在しないプロパティファイルのパスを指定した場合_クラスパス上のプロパティを読み込むこと() {
-        UnitDcCoreConfig dcCoreConfig = new UnitDcCoreConfig();
+        UnitTestPersoniumUnitConfig pUnitConfig = new UnitTestPersoniumUnitConfig();
         Properties properties = new Properties();
         try {
-            properties.load(dcCoreConfig.unitGetConfigFileInputStream("personium-unit-config.properties.unitx"));
+            properties.load(pUnitConfig.unitGetConfigFileInputStream("personium-unit-config.properties.unitx"));
         } catch (IOException e) {
             fail("properties load failuer");
         }

@@ -129,10 +129,10 @@ public class EsQueryHandlerTest {
     }
 
     /**
-     * 完全一致クエリの検索語をシングルクオート無しで指定してDcCoreExceptionが発生すること.
+     * 完全一致クエリの検索語をシングルクオート無しで指定してPersoniumCoreExceptionが発生すること.
      */
     @Test
-    public void 完全一致クエリの検索語をシングルクオート無しで指定してDcCoreExceptionが発生すること() {
+    public void 完全一致クエリの検索語をシングルクオート無しで指定してPersoniumCoreExceptionが発生すること() {
         String filterStr = "itemKey eq itemValue";
         BoolCommonExpression filterExp = PersoniumOptionsQueryParser.parseFilter(filterStr);
 

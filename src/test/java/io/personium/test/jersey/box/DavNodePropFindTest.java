@@ -61,9 +61,9 @@ public class DavNodePropFindTest extends JerseyTest {
         INIT_PARAMS.put("com.sun.jersey.config.property.packages",
                 "io.personium.core.rs");
         INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.DcCoreContainerFilter");
+                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
         INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.DcCoreContainerFilter");
+                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
     }
 
     private static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
@@ -72,7 +72,7 @@ public class DavNodePropFindTest extends JerseyTest {
 
     /**
      * コンストラクタ.
-     * DcCoreContainerFilterクラスを設定しておく
+     * PersoniumCoreContainerFilterクラスを設定しておく
      */
     public DavNodePropFindTest() {
         super(new WebAppDescriptor.Builder(DavNodePropFindTest.INIT_PARAMS).build());

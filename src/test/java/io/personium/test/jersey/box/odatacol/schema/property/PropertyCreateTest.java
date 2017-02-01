@@ -330,7 +330,7 @@ public class PropertyCreateTest extends ODataCommon {
     @Test
     @Ignore
     public final void Property制限値より１つ少ないPropertyを持つEntityTypeに_Propertyを１つ追加して_正常終了すること() throws Exception {
-        // 実際には 400プロパティが登録されているEntityTypeしか存在しないので、DcCoreConfigをだまして、
+        // 実際には 400プロパティが登録されているEntityTypeしか存在しないので、PersoniumUnitConfigをだまして、
         // SimplePropertyの最大値が 401であるように扱う。
         Field singletonField = PersoniumUnitConfig.class.getDeclaredField("singleton");
         singletonField.setAccessible(true);

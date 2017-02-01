@@ -43,70 +43,70 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * idが31文字の場合にDcCoreExceptionが発生すること.
+     * idが31文字の場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void idが31文字の場合にDcCoreExceptionが発生すること() {
+    public final void idが31文字の場合にPersoniumCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_ID.build(),
                 ReceivedMessage.P_ID.getName(),
                 OProperties.string(ReceivedMessage.P_ID.getName(), "1234567890123456789012345678901"));
     }
 
     /**
-     * idが32文字の場合にDcCoreExceptionが発生しないこと.
+     * idが32文字の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void idが32文字の場合にDcCoreExceptionが発生しないこと() {
+    public final void idが32文字の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_ID.build(),
                 ReceivedMessage.P_ID.getName(),
                 OProperties.string(ReceivedMessage.P_ID.getName(), "12345678901234567890123456789012"));
     }
 
     /**
-     * idが33文字の場合にDcCoreExceptionが発生すること.
+     * idが33文字の場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void idが33文字の場合にDcCoreExceptionが発生すること() {
+    public final void idが33文字の場合にPersoniumCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_ID.build(),
                 ReceivedMessage.P_ID.getName(),
                 OProperties.string(ReceivedMessage.P_ID.getName(), "123456789012345678901234567890123"));
     }
 
     /**
-     * idがNullの場合にDcCoreExceptionが発生すること.
+     * idがNullの場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void idがNullの場合にDcCoreExceptionが発生すること() {
+    public final void idがNullの場合にPersoniumCoreExceptionが発生すること() {
         this.setDefaultValue(ReceivedMessage.P_ID.build(),
                 ReceivedMessage.P_ID.getName(),
                 OProperties.string(ReceivedMessage.P_ID.getName(), ""));
     }
 
     /**
-     * InReplyToが31文字の場合にDcCoreExceptionが発生すること.
+     * InReplyToが31文字の場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void InReplyToが31文字の場合にDcCoreExceptionが発生すること() {
+    public final void InReplyToが31文字の場合にPersoniumCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_IN_REPLY_TO.build(),
                 ReceivedMessage.P_IN_REPLY_TO.getName(),
                 OProperties.string(ReceivedMessage.P_IN_REPLY_TO.getName(), "1234567890123456789012345678901"));
     }
 
     /**
-     * InReplyToが32文字の場合にDcCoreExceptionが発生しないこと.
+     * InReplyToが32文字の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void InReplyToが32文字の場合にDcCoreExceptionが発生しないこと() {
+    public final void InReplyToが32文字の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_IN_REPLY_TO.build(),
                 ReceivedMessage.P_IN_REPLY_TO.getName(),
                 OProperties.string(ReceivedMessage.P_IN_REPLY_TO.getName(), "12345678901234567890123456789012"));
     }
 
     /**
-     * InReplyToが33文字の場合にDcCoreExceptionが発生すること.
+     * InReplyToが33文字の場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void InReplyToが33文字の場合にDcCoreExceptionが発生すること() {
+    public final void InReplyToが33文字の場合にPersoniumCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_IN_REPLY_TO.build(),
                 ReceivedMessage.P_IN_REPLY_TO.getName(),
                 OProperties.string(ReceivedMessage.P_IN_REPLY_TO.getName(), "123456789012345678901234567890123"));
@@ -126,90 +126,90 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * FromがURL形式の場合にDcCoreExceptionが発生しないこと.
+     * FromがURL形式の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void FromがURL形式の場合にDcCoreExceptionが発生しないこと() {
+    public final void FromがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_FROM.build(),
                 ReceivedMessage.P_FROM.getName(),
                 OProperties.string(ReceivedMessage.P_FROM.getName(), "http://example.com/test"));
     }
 
     /**
-     * FromがURL形式でない場合にDcCoreExceptionが発生すること.
+     * FromがURL形式でない場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void FromがURL形式でない場合にDcCoreExceptionが発生すること() {
+    public final void FromがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_FROM.build(),
                 ReceivedMessage.P_FROM.getName(),
                 OProperties.string(ReceivedMessage.P_FROM.getName(), "ftp://example.com/test"));
     }
 
     /**
-     * FromがNullの場合にDcCoreExceptionが発生すること.
+     * FromがNullの場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void FromがNullの場合にDcCoreExceptionが発生すること() {
+    public final void FromがNullの場合にPersoniumCoreExceptionが発生すること() {
         this.setDefaultValue(ReceivedMessage.P_FROM.build(),
                 ReceivedMessage.P_FROM.getName(),
                 OProperties.string(ReceivedMessage.P_FROM.getName(), ""));
     }
 
     /**
-     * Typeがmessageの場合にDcCoreExceptionが発生しないこと.
+     * Typeがmessageの場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Typeがmessageの場合にDcCoreExceptionが発生しないこと() {
+    public final void Typeがmessageの場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_TYPE.build(),
                 ReceivedMessage.P_TYPE.getName(),
                 OProperties.string(ReceivedMessage.P_TYPE.getName(), "message"));
     }
 
     /**
-     * Typeがreq.relation.buildの場合にDcCoreExceptionが発生しないこと.
+     * Typeがreq.relation.buildの場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Typeがreq_relation_buildeの場合にDcCoreExceptionが発生しないこと() {
+    public final void Typeがreq_relation_buildeの場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_TYPE.build(),
                 ReceivedMessage.P_TYPE.getName(),
                 OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.relation.build"));
     }
 
     /**
-     * Typeがreq.relation.breakの場合にDcCoreExceptionが発生しないこと.
+     * Typeがreq.relation.breakの場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Typeがreq_relation_breakの場合にDcCoreExceptionが発生しないこと() {
+    public final void Typeがreq_relation_breakの場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_TYPE.build(),
                 ReceivedMessage.P_TYPE.getName(),
                 OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.relation.break"));
     }
 
     /**
-     * Typeがsocial_messageの場合にDcCoreExceptionが発生すること.
+     * Typeがsocial_messageの場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void Typeがsocial_messageの場合にDcCoreExceptionが発生すること() {
+    public final void Typeがsocial_messageの場合にPersoniumCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_TYPE.build(),
                 ReceivedMessage.P_TYPE.getName(),
                 OProperties.string(ReceivedMessage.P_TYPE.getName(), "social.message"));
     }
 
     /**
-     * Typeがnullの場合にDcCoreExceptionが発生すること.
+     * Typeがnullの場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void Typeがnullの場合にDcCoreExceptionが発生すること() {
+    public final void Typeがnullの場合にPersoniumCoreExceptionが発生すること() {
         this.setDefaultValue(ReceivedMessage.P_TYPE.build(),
                 ReceivedMessage.P_TYPE.getName(),
                 OProperties.string(ReceivedMessage.P_TYPE.getName(), ""));
     }
 
     /**
-     * Titleが0文字の場合にDcCoreExceptionが発生しないこと.
+     * Titleが0文字の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Titleが0文字の場合にDcCoreExceptionが発生しないこと() {
+    public final void Titleが0文字の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(
                 ReceivedMessage.P_TITLE.build(),
                 ReceivedMessage.P_TITLE.getName(),
@@ -217,10 +217,10 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Titleが256文字の場合にDcCoreExceptionが発生しないこと.
+     * Titleが256文字の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Titleが256文字の場合にDcCoreExceptionが発生しないこと() {
+    public final void Titleが256文字の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(
                 ReceivedMessage.P_TITLE.build(),
                 ReceivedMessage.P_TITLE.getName(),
@@ -229,10 +229,10 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Titleが257文字の場合にDcCoreExceptionが発生すること.
+     * Titleが257文字の場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void Titleが257文字の場合にDcCoreExceptionが発生すること() {
+    public final void Titleが257文字の場合にPersoniumCoreExceptionが発生すること() {
         this.validateProperty(
                 ReceivedMessage.P_TITLE.build(),
                 ReceivedMessage.P_TITLE.getName(),
@@ -241,20 +241,20 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Titleがnullの場合にDcCoreExceptionが発生すること.
+     * Titleがnullの場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void Titleがnullの場合にDcCoreExceptionが発生すること() {
+    public final void Titleがnullの場合にPersoniumCoreExceptionが発生すること() {
         this.setDefaultValue(ReceivedMessage.P_TITLE.build(),
                 ReceivedMessage.P_TITLE.getName(),
                 OProperties.string(ReceivedMessage.P_TITLE.getName(), ""));
     }
 
     /**
-     * Priorityが0の場合にDcCoreExceptionが発生すること.
+     * Priorityが0の場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void Priorityが0の場合にDcCoreExceptionが発生すること() {
+    public final void Priorityが0の場合にPersoniumCoreExceptionが発生すること() {
         this.validateProperty(
                 ReceivedMessage.P_PRIORITY.build(),
                 ReceivedMessage.P_PRIORITY.getName(),
@@ -262,60 +262,60 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Priorityが1の場合にDcCoreExceptionが発生しないこと.
+     * Priorityが1の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Priorityが1の場合にDcCoreExceptionが発生しないこと() {
+    public final void Priorityが1の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_PRIORITY.build(),
                 ReceivedMessage.P_PRIORITY.getName(),
                 OProperties.int32(ReceivedMessage.P_PRIORITY.getName(), 1));
     }
 
     /**
-     * Priorityが2の場合にDcCoreExceptionが発生しないこと.
+     * Priorityが2の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Priorityが2の場合にDcCoreExceptionが発生しないこと() {
+    public final void Priorityが2の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_PRIORITY.build(),
                 ReceivedMessage.P_PRIORITY.getName(),
                 OProperties.int32(ReceivedMessage.P_PRIORITY.getName(), 2));
     }
 
     /**
-     * Priorityが3の場合にDcCoreExceptionが発生しないこと.
+     * Priorityが3の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Priorityが3の場合にDcCoreExceptionが発生しないこと() {
+    public final void Priorityが3の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_PRIORITY.build(),
                 ReceivedMessage.P_PRIORITY.getName(),
                 OProperties.int32(ReceivedMessage.P_PRIORITY.getName(), 3));
     }
 
     /**
-     * Priorityが4の場合にDcCoreExceptionが発生しないこと.
+     * Priorityが4の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Priorityが4の場合にDcCoreExceptionが発生しないこと() {
+    public final void Priorityが4の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_PRIORITY.build(),
                 ReceivedMessage.P_PRIORITY.getName(),
                 OProperties.int32(ReceivedMessage.P_PRIORITY.getName(), 4));
     }
 
     /**
-     * Priorityが5の場合にDcCoreExceptionが発生しないこと.
+     * Priorityが5の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Priorityが5の場合にDcCoreExceptionが発生しないこと() {
+    public final void Priorityが5の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_PRIORITY.build(),
                 ReceivedMessage.P_PRIORITY.getName(),
                 OProperties.int32(ReceivedMessage.P_PRIORITY.getName(), 5));
     }
 
     /**
-     * Priorityが6の場合にDcCoreExceptionが発生すること.
+     * Priorityが6の場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void Priorityが6の場合にDcCoreExceptionが発生すること() {
+    public final void Priorityが6の場合にPersoniumCoreExceptionが発生すること() {
         this.validateProperty(
                 ReceivedMessage.P_PRIORITY.build(),
                 ReceivedMessage.P_PRIORITY.getName(),
@@ -323,30 +323,30 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Priorityがnullの場合にDcCoreExceptionが発生すること.
+     * Priorityがnullの場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void Priorityがnullの場合にDcCoreExceptionが発生すること() {
+    public final void Priorityがnullの場合にPersoniumCoreExceptionが発生すること() {
         this.setDefaultValue(ReceivedMessage.P_PRIORITY.build(),
                 ReceivedMessage.P_PRIORITY.getName(),
                 OProperties.string(ReceivedMessage.P_PRIORITY.getName(), ""));
     }
 
     /**
-     * RequestRelationがURL形式の場合にDcCoreExceptionが発生しないこと.
+     * RequestRelationがURL形式の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void RequestRelationがURL形式の場合にDcCoreExceptionが発生しないこと() {
+    public final void RequestRelationがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_REQUEST_RELATION.build(),
                 ReceivedMessage.P_REQUEST_RELATION.getName(),
                 OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), "http://example.com/test"));
     }
 
     /**
-     * RequestRelationがURL形式でない場合にDcCoreExceptionが発生すること.
+     * RequestRelationがURL形式でない場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void RequestRelationがURL形式でない場合にDcCoreExceptionが発生すること() {
+    public final void RequestRelationがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_REQUEST_RELATION.build(),
                 ReceivedMessage.P_REQUEST_RELATION.getName(),
                 OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), "ftp://example.com/test"));
@@ -365,20 +365,20 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * RequestRelationTargetがURL形式の場合にDcCoreExceptionが発生しないこと.
+     * RequestRelationTargetがURL形式の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void RequestRelationTargetがURL形式の場合にDcCoreExceptionが発生しないこと() {
+    public final void RequestRelationTargetがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_REQUEST_RELATION_TARGET.build(),
                 ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
                 OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://example.com/test"));
     }
 
     /**
-     * RequestRelationTargetがURL形式でない場合にDcCoreExceptionが発生すること.
+     * RequestRelationTargetがURL形式でない場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void RequestRelationTargetがURL形式でない場合にDcCoreExceptionが発生すること() {
+    public final void RequestRelationTargetがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_REQUEST_RELATION_TARGET.build(),
                 ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
                 OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "ftp://example.com/test"));
@@ -398,45 +398,45 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * MulticastToがURL形式の場合にDcCoreExceptionが発生しないこと.
+     * MulticastToがURL形式の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void MulticastToがURL形式の場合にDcCoreExceptionが発生しないこと() {
+    public final void MulticastToがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "http://example.com/test");
     }
 
     /**
-     * MulticastToがCSV複数URL形式の場合にDcCoreExceptionが発生しないこと.
+     * MulticastToがCSV複数URL形式の場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void MulticastToがCSV複数URL形式の場合にDcCoreExceptionが発生しないこと() {
+    public final void MulticastToがCSV複数URL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
                 "http://example.com/test,http://example.com/test");
     }
 
     /**
-     * MulticastToがURL形式でない場合にDcCoreExceptionが発生すること.
+     * MulticastToがURL形式でない場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void MulticastToがURL形式でない場合にDcCoreExceptionが発生すること() {
+    public final void MulticastToがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "ftp://example.com/test");
 
     }
 
     /**
-     * MulticastToがCSV複数URL形式とURL形式でない場合にDcCoreExceptionが発生すること.
+     * MulticastToがCSV複数URL形式とURL形式でない場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void MulticastToがCSV複数URL形式とURL形式でない場合にDcCoreExceptionが発生すること() {
+    public final void MulticastToがCSV複数URL形式とURL形式でない場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
                 "http://example.com/test,ftp://example.com/test");
     }
 
     /**
-     * MulticastToが不正なCSV形式の場合にDcCoreExceptionが発生すること.
+     * MulticastToが不正なCSV形式の場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void MulticastToが不正なCSV形式の場合にDcCoreExceptionが発生すること() {
+    public final void MulticastToが不正なCSV形式の場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
                 "http://example.com/test,,http://example.com/test");
     }
@@ -454,82 +454,82 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * TypeがmessageでStatusがunreadの場合にDcCoreExceptionが発生しないこと.
+     * TypeがmessageでStatusがunreadの場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void TypeがmessageでStatusがunreadの場合にDcCoreExceptionが発生しないこと() {
+    public final void TypeがmessageでStatusがunreadの場合にPersoniumCoreExceptionが発生しないこと() {
         MessageODataResource.validateStatus("message", "unread");
     }
 
     /**
-     * TypeがmessageでStatusがnoneの場合にDcCoreExceptionが発生すること.
+     * TypeがmessageでStatusがnoneの場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void TypeがmessageでStatusがnoneの場合にDcCoreExceptionが発生すること() {
+    public final void TypeがmessageでStatusがnoneの場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateStatus("message", "none");
     }
 
     /**
-     * Typeがreq.relation.buildでStatusがnoneの場合にDcCoreExceptionが発生しないこと.
+     * Typeがreq.relation.buildでStatusがnoneの場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Typeがreq_relation_buildでStatusがnoneの場合にDcCoreExceptionが発生しないこと() {
+    public final void Typeがreq_relation_buildでStatusがnoneの場合にPersoniumCoreExceptionが発生しないこと() {
         MessageODataResource.validateStatus("req.relation.build", "none");
     }
 
     /**
-     * Typeがreq.relation.breakでStatusがnoneの場合にDcCoreExceptionが発生しないこと.
+     * Typeがreq.relation.breakでStatusがnoneの場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Typeがreq_relation_breakでStatusがnoneの場合にDcCoreExceptionが発生しないこと() {
+    public final void Typeがreq_relation_breakでStatusがnoneの場合にPersoniumCoreExceptionが発生しないこと() {
         MessageODataResource.validateStatus("req.relation.break", "none");
     }
 
     /**
-     * Typeがreq.relation.buildでStatusがunreadの場合にDcCoreExceptionが発生すること.
+     * Typeがreq.relation.buildでStatusがunreadの場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void Typeがreq_relation_buildでStatusがunreadの場合にDcCoreExceptionが発生すること() {
+    public final void Typeがreq_relation_buildでStatusがunreadの場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateStatus("req.relation.build", "unread");
     }
 
     /**
-     * Typeがreq.relation.breakでStatusがunreadの場合にDcCoreExceptionが発生すること.
+     * Typeがreq.relation.breakでStatusがunreadの場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void Typeがreq_relation_breakでStatusがunreadの場合にDcCoreExceptionが発生すること() {
+    public final void Typeがreq_relation_breakでStatusがunreadの場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateStatus("req.relation.break", "unread");
     }
 
     /**
-     * Typeがreq.relation.breakでRequestRelationとRequestRelationTargetの指定がある場合にDcCoreExceptionが発生しないこと.
+     * Typeがreq.relation.breakでRequestRelationとRequestRelationTargetの指定がある場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Typeがreq_relation_breakでRequestRelationとRequestRelationTargetの指定がある場合にDcCoreExceptionが発生しないこと() {
+    public final void Typeがreq_relation_breakでRequestRelationとRequestRelationTargetの指定がある場合にPersoniumCoreExceptionが発生しないこと() {
         MessageODataResource.validateReqRelation("req.relation.break", "http://xxx.com/xx", "http://xxx.com/xx");
     }
 
     /**
-     * Typeがreq.relation.breakでRequestRelationがnullの場合にDcCoreExceptionが発生すること.
+     * Typeがreq.relation.breakでRequestRelationがnullの場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void Typeがreq_relation_breakでRequestRelationがnullの場合にDcCoreExceptionが発生すること() {
+    public final void Typeがreq_relation_breakでRequestRelationがnullの場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateReqRelation("req.relation.break", null, "http://example.com/test");
     }
 
     /**
-     * Typeがreq.relation.breakでRequestRelationTargetがnullの場合にDcCoreExceptionが発生すること.
+     * Typeがreq.relation.breakでRequestRelationTargetがnullの場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
-    public final void Typeがreq_relation_breakでRequestRelationTargetがnullの場合にDcCoreExceptionが発生すること() {
+    public final void Typeがreq_relation_breakでRequestRelationTargetがnullの場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateReqRelation("req.relation.break", "http://example.com/test", null);
     }
 
     /**
-     * TypeがmessageでRequestRelationがnullの場合にDcCoreExceptionが発生しないこと.
+     * TypeがmessageでRequestRelationがnullの場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void TypeがmessageでRequestRelationがnullの場合にDcCoreExceptionが発生しないこと() {
+    public final void TypeがmessageでRequestRelationがnullの場合にPersoniumCoreExceptionが発生しないこと() {
         MessageODataResource.validateReqRelation("message", null, "http://example.com/test");
     }
 

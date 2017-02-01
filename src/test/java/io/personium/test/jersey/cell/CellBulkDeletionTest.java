@@ -60,9 +60,9 @@ public class CellBulkDeletionTest extends AbstractCase {
         INIT_PARAMS.put("com.sun.jersey.config.property.packages",
                 "io.personium.core.rs");
         INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.DcCoreContainerFilter");
+                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
         INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.DcCoreContainerFilter");
+                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
     }
 
     /**

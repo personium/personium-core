@@ -49,7 +49,7 @@ public class BinaryDataAccessorTest {
 
     /**
      * 既存ディレクトリにファイルの登録が可能な事を確認する.
-     * DcCoreConfigを利用するため、coreにテストを記述する
+     * PersoniumUnitConfingを利用するため、coreにテストを記述する
      */
     @Test
     public void 既存ディレクトリにファイルの登録が可能な事を確認する() {
@@ -104,7 +104,7 @@ public class BinaryDataAccessorTest {
 
     /**
      * ファイルを物理削除した場合ファイルが削除されていること.
-     * DcCoreConfigを利用するため、coreにテストを記述する
+     * PersoniumUnitConfingを利用するため、coreにテストを記述する
      * @throws BinaryDataAccessException バイナリアクセスに失敗
      */
     @Test
@@ -137,7 +137,7 @@ public class BinaryDataAccessorTest {
 
     /**
      * ファイルの物理削除で存在しないファイルを指定した場合例外がスローされないこと.
-     * DcCoreConfigを利用するため、coreにテストを記述する
+     * PersoniumUnitConfingを利用するため、coreにテストを記述する
      * @throws BinaryDataAccessException バイナリアクセスに失敗
      */
     @Test
@@ -155,7 +155,7 @@ public class BinaryDataAccessorTest {
 
     /**
      * 物理削除設定を指定していない場合ファイルが論理削除されていること.
-     * DcCoreConfigを利用するため、coreにテストを記述する
+     * PersoniumUnitConfingを利用するため、coreにテストを記述する
      * @throws BinaryDataAccessException バイナリアクセスに失敗
      */
     @Test
@@ -193,7 +193,7 @@ public class BinaryDataAccessorTest {
 
     /**
      * 物理削除設定の場合ファイルの実体が削除されていること.
-     * DcCoreConfigを利用するため、coreにテストを記述する
+     * PersoniumUnitConfingを利用するため、coreにテストを記述する
      * @throws BinaryDataAccessException バイナリアクセスに失敗
      */
     @Test
@@ -232,7 +232,7 @@ public class BinaryDataAccessorTest {
 
     /**
      * 論理削除設定の場合ファイルが論理削除されていること.
-     * DcCoreConfigを利用するため、coreにテストを記述する
+     * PersoniumUnitConfingを利用するため、coreにテストを記述する
      * @throws BinaryDataAccessException バイナリアクセスに失敗
      */
     @Test

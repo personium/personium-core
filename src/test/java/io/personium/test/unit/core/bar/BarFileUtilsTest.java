@@ -74,7 +74,7 @@ public class BarFileUtilsTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -105,7 +105,7 @@ public class BarFileUtilsTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -136,7 +136,7 @@ public class BarFileUtilsTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -167,7 +167,7 @@ public class BarFileUtilsTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -198,7 +198,7 @@ public class BarFileUtilsTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -229,7 +229,7 @@ public class BarFileUtilsTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
 }

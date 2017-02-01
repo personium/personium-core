@@ -41,11 +41,11 @@ import io.personium.core.model.lock.ReadDeleteModeLockManager;
 @PrepareForTest(ReadDeleteModeLockManager.class)
 public class PersoniumReadDeleteModeManagerTest {
     /**
-     * ReadDeleteOnlyモード時にGETメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモード時にGETメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモード時にGETメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモード時にGETメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
@@ -57,11 +57,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時にDELETEメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモード時にDELETEメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモード時にDELETEメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモード時にDELETEメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
@@ -73,11 +73,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時にPROPFINDメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモード時にPROPFINDメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモード時にPROPFINDメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモード時にPROPFINDメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
@@ -90,11 +90,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時にOPTIONSメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモード時にOPTIONSメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモード時にOPTIONSメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモード時にOPTIONSメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
@@ -106,11 +106,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時にHEADメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモード時にHEADメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモード時にHEADメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモード時にHEADメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
@@ -122,11 +122,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時にREPORTメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモード時にREPORTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモード時にREPORTメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモード時にREPORTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
@@ -138,7 +138,7 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時にPOSTメソッドが実行された場合はDcCoreExceptionが発生すること.
+     * ReadDeleteOnlyモード時にPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生すること.
      * @throws Exception .
      */
     @Test(expected = PersoniumCoreException.class)
@@ -150,7 +150,7 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時にPUTメソッドが実行された場合はDcCoreExceptionが発生すること.
+     * ReadDeleteOnlyモード時にPUTメソッドが実行された場合はPersoniumCoreExceptionが発生すること.
      * @throws Exception .
      */
     @Test(expected = PersoniumCoreException.class)
@@ -162,7 +162,7 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時にMERGEメソッドが実行された場合はDcCoreExceptionが発生すること.
+     * ReadDeleteOnlyモード時にMERGEメソッドが実行された場合はPersoniumCoreExceptionが発生すること.
      * @throws Exception .
      */
     @Test(expected = PersoniumCoreException.class)
@@ -175,7 +175,7 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時にMKCOLメソッドが実行された場合はDcCoreExceptionが発生すること.
+     * ReadDeleteOnlyモード時にMKCOLメソッドが実行された場合はPersoniumCoreExceptionが発生すること.
      * @throws Exception .
      */
     @Test(expected = PersoniumCoreException.class)
@@ -188,7 +188,7 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時にPROPPATCHメソッドが実行された場合はDcCoreExceptionが発生すること.
+     * ReadDeleteOnlyモード時にPROPPATCHメソッドが実行された場合はPersoniumCoreExceptionが発生すること.
      * @throws Exception .
      */
     @Test(expected = PersoniumCoreException.class)
@@ -201,7 +201,7 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時にACLメソッドが実行された場合はDcCoreExceptionが発生すること.
+     * ReadDeleteOnlyモード時にACLメソッドが実行された場合はPersoniumCoreExceptionが発生すること.
      * @throws Exception .
      */
     @Test(expected = PersoniumCoreException.class)
@@ -214,11 +214,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモードではない状態でPOSTメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモードではない状態でPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモードではない状態でPOSTメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモードではない状態でPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(false);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
@@ -230,11 +230,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモードではない状態でPUTメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモードではない状態でPUTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモードではない状態でPUTメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモードではない状態でPUTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(false);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
@@ -246,11 +246,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモードではない状態でMERGEメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモードではない状態でMERGEメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモードではない状態でMERGEメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモードではない状態でMERGEメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(false);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
@@ -263,11 +263,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモードではない状態でMKCOLメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモードではない状態でMKCOLメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモードではない状態でMKCOLメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモードではない状態でMKCOLメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(false);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
@@ -280,11 +280,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモードではない状態でPROPPATCHメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモードではない状態でPROPPATCHメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモードではない状態でPROPPATCHメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモードではない状態でPROPPATCHメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(false);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
@@ -297,11 +297,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモードではない状態でACLメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモードではない状態でACLメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモードではない状態でACLメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモードではない状態でACLメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(false);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
@@ -314,11 +314,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時に__authに対するPOSTメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモード時に__authに対するPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモード時に__authに対するPOSTメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモード時に__authに対するPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "__auth" });
@@ -330,11 +330,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時に__authzに対するPOSTメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモード時に__authzに対するPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモード時に__authzに対するPOSTメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモード時に__authzに対するPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "__authz" });
@@ -346,11 +346,11 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時に$batchに対するPOSTメソッドが実行された場合はDcCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモード時に$batchに対するPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモード時に$batchに対するPOSTメソッドが実行された場合はDcCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモード時に$batchに対するPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         try {

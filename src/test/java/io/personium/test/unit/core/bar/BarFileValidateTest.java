@@ -265,11 +265,11 @@ public class BarFileValidateTest {
     }
 
     /**
-     * 30_extroles.jsonに_relation.Nameがない場合_DcCoreExceptionが返却されること.
+     * 30_extroles.jsonに_relation.Nameがない場合_PersoniumCoreExceptionが返却されること.
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void バリデートテスト_30_extRole_jsonに_relation_Nameがない場合_DcCoreExceptionが返却されること() {
+    public void バリデートテスト_30_extRole_jsonに_relation_Nameがない場合_PersoniumCoreExceptionが返却されること() {
         JSONObject json = new JSONObject();
         json.put("ExtRole", "https://fqdn/cellName/__role/__/role2");
 
@@ -287,14 +287,14 @@ public class BarFileValidateTest {
         } catch (Exception e) {
             fail(e.getMessage());
         }
-        fail("DcCoreException not throw");
+        fail("PersoniumCoreException not throw");
     }
 
     /**
-     * 10_relations.jsonが配列形式でない場合_DcCoreExceptionが返却されること.
+     * 10_relations.jsonが配列形式でない場合_PersoniumCoreExceptionが返却されること.
      */
     @Test
-    public void バリデートテスト_10_relations_jsonが配列形式でない場合_DcCoreExceptionが返却されること() {
+    public void バリデートテスト_10_relations_jsonが配列形式でない場合_PersoniumCoreExceptionが返却されること() {
 
         URL fileUrl = ClassLoader.getSystemResource(RESOURCE_PATH + "/10_relations_not_array.json");
         File file = new File(fileUrl.getPath());
@@ -313,14 +313,14 @@ public class BarFileValidateTest {
         } catch (IOException e) {
             fail(e.getMessage());
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
-     * 10_relations.jsonの内容が異なるファイルである場合_DcCoreExceptionが返却されること.
+     * 10_relations.jsonの内容が異なるファイルである場合_PersoniumCoreExceptionが返却されること.
      */
     @Test
-    public void バリデートテスト_10_relations_jsonの内容が異なるファイルである場合_DcCoreExceptionが返却されること() {
+    public void バリデートテスト_10_relations_jsonの内容が異なるファイルである場合_PersoniumCoreExceptionが返却されること() {
         URL fileUrl = ClassLoader.getSystemResource(RESOURCE_PATH + "/10_relations_different_json.json");
         File file = new File(fileUrl.getPath());
         JsonFactory f = new JsonFactory();
@@ -338,14 +338,14 @@ public class BarFileValidateTest {
         } catch (IOException e) {
             fail(e.getMessage());
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
-     * 10_relations.jsonの配列内がオブジェクトでない場合_DcCoreExceptionが返却されること.
+     * 10_relations.jsonの配列内がオブジェクトでない場合_PersoniumCoreExceptionが返却されること.
      */
     @Test
-    public void バリデートテスト_10_relations_jsonの配列内がオブジェクトでない場合_DcCoreExceptionが返却されること() {
+    public void バリデートテスト_10_relations_jsonの配列内がオブジェクトでない場合_PersoniumCoreExceptionが返却されること() {
         URL fileUrl = ClassLoader.getSystemResource(RESOURCE_PATH + "/10_relations_not_object.json");
         File file = new File(fileUrl.getPath());
         JsonFactory f = new JsonFactory();
@@ -363,7 +363,7 @@ public class BarFileValidateTest {
         } catch (IOException e) {
             fail(e.getMessage());
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -396,10 +396,10 @@ public class BarFileValidateTest {
     }
 
     /**
-     * バリデートテスト_70_link_jsonに必須項目がない場合_DcCoreExceptionが返却されること.
+     * バリデートテスト_70_link_jsonに必須項目がない場合_PersoniumCoreExceptionが返却されること.
      */
     @Test
-    public void バリデートテスト_70_link_jsonに必須項目がない場合_DcCoreExceptionが返却されること() {
+    public void バリデートテスト_70_link_jsonに必須項目がない場合_PersoniumCoreExceptionが返却されること() {
 
         String[] files = {"/70_$links_no_fromtype.json",
                 "/70_$links_no_fromname.json",
@@ -431,10 +431,10 @@ public class BarFileValidateTest {
     }
 
     /**
-     * バリデートテスト_70_link_jsonのToTypeにAccount_ExtCell_Boxを指定した場合_DcCoreExceptionが返却されること.
+     * バリデートテスト_70_link_jsonのToTypeにAccount_ExtCell_Boxを指定した場合_PersoniumCoreExceptionが返却されること.
      */
     @Test
-    public void バリデートテスト_70_link_jsonのToTypeにAccount_ExtCell_Boxを指定した場合_DcCoreExceptionが返却されること() {
+    public void バリデートテスト_70_link_jsonのToTypeにAccount_ExtCell_Boxを指定した場合_PersoniumCoreExceptionが返却されること() {
 
         String[] files = {"/70_$links_totype_Account.json",
                "/70_$links_totype_ExtCell.json",
@@ -610,7 +610,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -639,7 +639,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -668,7 +668,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -698,7 +698,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -759,7 +759,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -983,7 +983,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1007,7 +1007,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1031,7 +1031,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1055,7 +1055,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1079,7 +1079,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1103,7 +1103,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1127,7 +1127,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1151,7 +1151,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1175,7 +1175,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1199,7 +1199,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1223,7 +1223,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1247,7 +1247,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1271,7 +1271,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1295,7 +1295,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1319,7 +1319,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1343,7 +1343,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1367,7 +1367,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1391,7 +1391,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1415,7 +1415,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1439,7 +1439,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1463,7 +1463,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1487,7 +1487,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1511,7 +1511,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1535,7 +1535,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1559,7 +1559,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1583,7 +1583,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1607,7 +1607,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1631,7 +1631,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
     /**
@@ -1655,7 +1655,7 @@ public class BarFileValidateTest {
         } catch (Exception ex) {
             fail("Unexpected exception");
         }
-        fail("DcCoreExceptionが返却されない");
+        fail("PersoniumCoreExceptionが返却されない");
     }
 
 

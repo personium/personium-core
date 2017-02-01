@@ -47,7 +47,7 @@ public class UnitCtlODataProducerTest {
      */
     @Test
     public void testGetAccessorForEntitySetString() {
-//        EsClient.setConnectionConfiguration(DcCoreConfig.getEsClusterName(), DcCoreConfig.getEsHosts());
+//        EsClient.setConnectionConfiguration(PersoniumUnitConfig.getEsClusterName(), PersoniumUnitConfig.getEsHosts());
         UnitCtlODataProducer producer = new UnitCtlODataProducer(null);
         assertNotNull(producer.getAccessorForEntitySet("Cell"));
     }

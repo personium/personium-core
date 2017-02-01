@@ -1301,7 +1301,7 @@ public class MoveCollectionTest extends JerseyTest {
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             // TODO Serviceコレクション配下への移動の制限追加時にエラーコードのチェックをする
-            // DcCoreException expectedException = DcCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
+            // PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
             // ODataCommon.checkErrorResponseBody(response, expectedException.getCode(),
             // expectedException.getMessage());
         } finally {
@@ -1822,7 +1822,7 @@ public class MoveCollectionTest extends JerseyTest {
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             // TODO Serviceコレクション配下への移動の制限追加時にエラーコードのチェックをする
-            // DcCoreException expectedException = DcCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
+            // PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
             // ODataCommon.checkErrorResponseBody(response, expectedException.getCode(),
             // expectedException.getMessage());
         } finally {
