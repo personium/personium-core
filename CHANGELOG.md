@@ -1,3 +1,26 @@
+## 1.4.2
+
+BREAKING CHANGES:
+
+ - Rename package name and some parameters from `com.fujitsu.dc` or `dc` to `io.personium` or `personium` . ([#1](https://github.com/personium/personium-core/issues/1))
+
+  * Changed parameters' names are below:
+
+ |#  |Name           | V1.4.1 and previous | 1.4.2 or later | Example or Usage |
+ |:-:|:--------------|:------------------------|:---------------|:---------|
+ | 1 |Unit Configuration file name|dc-config.properties|personium-unit-config.properties||
+ | 2 |XML name space/URN|`xmlns:dc='urn:x-dc1:xmlns'` |`xmlns:p='urn:x-personium:xmlns'`| WebDAV Property data, bar file document or Authn API|
+ | 3 |HTTP request header|`X-Dc-Xxxxx`|`X-Personium-Xxxxx`| All APIs with original request header |
+ | 4 |POST request parameters' key|`dc_xxxxx`|`p_xxxxx`| APIs with post parameters  | 
+ | 5 |Core APIs for Engine Javascript|`dc.xxxx`|`_p.xxxxx`| Engine service script (server-side logic)|
+
+IMPROVEMENTS:
+ - Cell level ACL inherits to all Boxes in Cells when you set Box previliges to Cell. ([#2](https://github.com/personium/personium-core/issues/2))
+   * Enabled to set the Box previleges (ex. `D:read` or `D:write` ) to Cell ACL.
+   * In addition, renamed Cell administoration previlege name from `dc:all` to `p:root`.
+
+
+ 
 ## 1.4.1
 
 IMPROVEMENTS:
