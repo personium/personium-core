@@ -5,7 +5,7 @@ Connection: close
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer ${token}
-X-Dc-Credential: ${password}
+X-Personium-Credential: ${password}
 If-Match: *
 
 ${body}

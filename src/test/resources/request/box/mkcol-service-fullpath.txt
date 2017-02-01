@@ -7,12 +7,12 @@ Content-Type: application/xml
 Authorization: ${token}
 
 <?xml version="1.0" encoding="utf-8"?>
-<D:mkcol xmlns:D="DAV:" xmlns:dc="urn:x-dc1:xmlns">
+<D:mkcol xmlns:D="DAV:" xmlns:p="urn:x-personium:xmlns">
   <D:set>
     <D:prop>
       <D:resourcetype>
         <D:collection/>
-        <dc:service/>
+        <p:service/>
       </D:resourcetype>
     </D:prop>
   </D:set>

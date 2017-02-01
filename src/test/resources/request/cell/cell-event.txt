@@ -3,6 +3,6 @@ Host: ?
 Content-Length: ?
 Connection: close
 Authorization: Bearer ${token}
-X-Dc-RequestKey: ${requestKey}
+X-Personium-RequestKey: ${requestKey}
 
 ${json}

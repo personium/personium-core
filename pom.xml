@@ -4,7 +4,7 @@
 	<artifactId>personium-core</artifactId>
 	<packaging>war</packaging>
 	<version>1.4.2-SNAPSHOT</version>
-	<name>personiu-core Maven Webapp</name>
+	<name>personium-core Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<licenses>
 		<license>
@@ -20,25 +20,23 @@
 		<java.target.version>1.8</java.target.version>
 		<logback.version>1.0.12</logback.version>
 		<slf4j.version>1.7.6</slf4j.version>
-		<jacoco.include.package>com.fujitsu.*</jacoco.include.package>
-		<!-- <jacoco.include.package>io.personium.*</jacoco.include.package> -->
+		<jacoco.include.package>io.personium.*</jacoco.include.package>
 	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>io.personium</groupId>
-			<artifactId>personium-lib-es-adaptor</artifactId>
-			<version>1.4.1</version>
+			<artifactId>personium-lib-es-adapter</artifactId>
+			<version>1.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.personium</groupId>
 			<artifactId>personium-lib-common</artifactId>
-			<version>1.4.1</version>
+			<version>1.4.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.personium</groupId>
 			<artifactId>personium-client-java</artifactId>
-			<version>1.4.1</version>
+			<version>1.4.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -372,13 +370,13 @@
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<configuration>
-					<header>../copyright.txt</header>
+					<header>copyright.txt</header>
 					<excludes>
 						<exclude>.checkstyle</exclude>
 						<exclude>checkstyle.header</exclude>
 						<exclude>checkstyle_maven.properties</exclude>
 						<exclude>checkstyle-suppressions.xml</exclude>
-						<exclude>dc-checks.xml</exclude>
+						<exclude>personium-checkstyle.xml</exclude>
 						<exclude>findbugs-exclude.xml</exclude>
 						<exclude>pom.xml</exclude>
 						<exclude>NOTICE.txt</exclude>
@@ -442,7 +440,7 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<configLocation>dc-checks.xml</configLocation>
+					<configLocation>personium-checkstyle.xml</configLocation>
 					<propertiesLocation>checkstyle_maven.properties</propertiesLocation>
 				</configuration>
 				<reportSets>
