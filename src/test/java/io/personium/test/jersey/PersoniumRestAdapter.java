@@ -362,7 +362,7 @@ public class PersoniumRestAdapter {
     /**
      * Reponseボディを受ける場合のHTTPリクエストを行う.
      * @param httpReq HTTPリクエスト
-     * @return DCレスポンスオブジェクト
+     * @return Personiumレスポンスオブジェクト
      * @throws PersoniumException DAO例外
      */
     private PersoniumResponse request(final HttpUriRequest httpReq) throws PersoniumException {
