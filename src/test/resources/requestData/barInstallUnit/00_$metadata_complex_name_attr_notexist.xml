@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<edmx:Edmx Version='1.0' xmlns:edmx='http://schemas.microsoft.com/ado/2007/06/edmx' xmlns:d='http://schemas.microsoft.com/ado/2007/08/dataservices' xmlns:m='http://schemas.microsoft.com/ado/2007/08/dataservices/metadata' xmlns:dc='urn:x-dc1:xmlns'>
+<edmx:Edmx Version='1.0' xmlns:edmx='http://schemas.microsoft.com/ado/2007/06/edmx' xmlns:d='http://schemas.microsoft.com/ado/2007/08/dataservices' xmlns:m='http://schemas.microsoft.com/ado/2007/08/dataservices/metadata' xmlns:p='urn:x-personium:xmlns'>
   <edmx:DataServices m:DataServiceVersion='1.0'>
     <Schema xmlns='http://schemas.microsoft.com/ado/2006/04/edm' Namespace='UserData'>
       <ComplexType />

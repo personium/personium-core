@@ -7,13 +7,13 @@ Content-Type: application/xml
 Authorization: Bearer ${token}
 
 <?xml version="1.0" encoding="utf-8" ?>
-<D:acl xmlns:D="DAV:" xmlns:dc="urn:x-dc1:xmlns" xml:base="${roleBaseUrl}">
+<D:acl xmlns:D="DAV:" xmlns:p="urn:x-personium:xmlns" xml:base="${roleBaseUrl}">
     <D:ace>
         <D:principal>
             <D:href>role10</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:auth/></D:privilege>
+            <D:privilege><p:auth/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -21,7 +21,7 @@ Authorization: Bearer ${token}
             <D:href>role11</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:message/></D:privilege>
+            <D:privilege><p:message/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -29,7 +29,7 @@ Authorization: Bearer ${token}
             <D:href>role12</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:event/></D:privilege>
+            <D:privilege><p:event/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -37,7 +37,7 @@ Authorization: Bearer ${token}
             <D:href>role13</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:social/></D:privilege>
+            <D:privilege><p:social/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -45,7 +45,7 @@ Authorization: Bearer ${token}
             <D:href>role14</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:box/></D:privilege>
+            <D:privilege><p:box/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -53,7 +53,7 @@ Authorization: Bearer ${token}
             <D:href>role15</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:acl/></D:privilege>
+            <D:privilege><p:acl/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -61,7 +61,7 @@ Authorization: Bearer ${token}
             <D:href>role17</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:propfind/></D:privilege>
+            <D:privilege><p:propfind/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -69,8 +69,8 @@ Authorization: Bearer ${token}
             <D:href>role18</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:propfind/></D:privilege>
-            <D:privilege><dc:acl/></D:privilege>
+            <D:privilege><p:propfind/></D:privilege>
+            <D:privilege><p:acl/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -78,8 +78,8 @@ Authorization: Bearer ${token}
             <D:href>role19</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:social/></D:privilege>
-            <D:privilege><dc:auth/></D:privilege>
+            <D:privilege><p:social/></D:privilege>
+            <D:privilege><p:auth/></D:privilege>
         </D:grant>
     </D:ace>
      <D:ace>
@@ -87,7 +87,7 @@ Authorization: Bearer ${token}
             <D:href>role20</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:root/></D:privilege>
+            <D:privilege><p:root/></D:privilege>
         </D:grant>
     </D:ace>
      <D:ace>
@@ -95,7 +95,7 @@ Authorization: Bearer ${token}
             <D:href>role21</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:auth-read/></D:privilege>
+            <D:privilege><p:auth-read/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -103,7 +103,7 @@ Authorization: Bearer ${token}
             <D:href>role22</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:message-read/></D:privilege>
+            <D:privilege><p:message-read/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -111,7 +111,7 @@ Authorization: Bearer ${token}
             <D:href>role23</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:event-read/></D:privilege>
+            <D:privilege><p:event-read/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -119,7 +119,7 @@ Authorization: Bearer ${token}
             <D:href>role24</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:social-read/></D:privilege>
+            <D:privilege><p:social-read/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -127,7 +127,7 @@ Authorization: Bearer ${token}
             <D:href>role25</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:box-read/></D:privilege>
+            <D:privilege><p:box-read/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -135,7 +135,7 @@ Authorization: Bearer ${token}
             <D:href>role26</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:acl-read/></D:privilege>
+            <D:privilege><p:acl-read/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -143,7 +143,7 @@ Authorization: Bearer ${token}
             <D:href>role27</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:box-install/></D:privilege>
+            <D:privilege><p:box-install/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -151,8 +151,8 @@ Authorization: Bearer ${token}
             <D:href>role28</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:message/></D:privilege>
-            <D:privilege><dc:social/></D:privilege>
+            <D:privilege><p:message/></D:privilege>
+            <D:privilege><p:social/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -160,7 +160,7 @@ Authorization: Bearer ${token}
             <D:href>role29</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:log/></D:privilege>
+            <D:privilege><p:log/></D:privilege>
         </D:grant>
     </D:ace>
     <D:ace>
@@ -168,7 +168,7 @@ Authorization: Bearer ${token}
             <D:href>role30</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:log-read/></D:privilege>
+            <D:privilege><p:log-read/></D:privilege>
         </D:grant>
     </D:ace>
 </D:acl>

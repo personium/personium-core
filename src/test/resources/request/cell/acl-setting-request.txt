@@ -7,14 +7,14 @@ Content-Type: application/xml
 Authorization: Bearer ${token}
 
 <?xml version="1.0" encoding="utf-8" ?>
-<D:acl xmlns:D="DAV:" xmlns:dc="urn:x-dc1:xmlns" xml:base="${roleBaseUrl}">
+<D:acl xmlns:D="DAV:" xmlns:p="urn:x-personium:xmlns" xml:base="${roleBaseUrl}">
      <D:ace>
         <D:principal>
             <D:href>${roleBaseUrl}${role1}</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:auth/></D:privilege>
-            <D:privilege><dc:auth-read/></D:privilege>
+            <D:privilege><p:auth/></D:privilege>
+            <D:privilege><p:auth-read/></D:privilege>
             <D:privilege><D:read/></D:privilege>
         </D:grant>
     </D:ace>
@@ -23,7 +23,7 @@ Authorization: Bearer ${token}
             <D:href>${roleBaseUrl}${role2}</D:href>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:root/></D:privilege>
+            <D:privilege><p:root/></D:privilege>
         </D:grant>
     </D:ace>
 </D:acl>

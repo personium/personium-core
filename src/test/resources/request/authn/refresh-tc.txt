@@ -5,4 +5,4 @@ Content-Length: ?
 Accept: application/json
 Connection: close
 
-grant_type=refresh_token&refresh_token=${refresh_token}&dc_target=${dc_target}
+grant_type=refresh_token&refresh_token=${refresh_token}&p_target=${p_target}

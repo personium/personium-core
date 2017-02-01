@@ -7,13 +7,13 @@ Content-Type: application/xml
 Authorization: ${token}
 
 <?xml version="1.0" encoding="utf-8" ?>
-<D:acl xmlns:D="DAV:" xmlns:dc="urn:x-dc1:xmlns" xml:base="${roleBaseUrl}">
+<D:acl xmlns:D="DAV:" xmlns:p="urn:x-personium:xmlns" xml:base="${roleBaseUrl}">
      <D:ace>
         <D:principal>
             <D:all/>
         </D:principal>
         <D:grant>
-            <D:privilege><dc:root/></D:privilege>
+            <D:privilege><p:root/></D:privilege>
         </D:grant>
     </D:ace>
 </D:acl>

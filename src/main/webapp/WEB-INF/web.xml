@@ -21,27 +21,27 @@
 	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
-	<display-name>dc1-core</display-name>
+	<display-name>personium-core</display-name>
 
     <listener>
-        <listener-class>com.fujitsu.dc.core.webcontainer.listener.WebContainerListenerForAdsRepair</listener-class>
+        <listener-class>io.personium.core.webcontainer.listener.WebContainerListenerForAdsRepair</listener-class>
     </listener>
 
 	<!-- Servlet  -->
 	<servlet>
-		<servlet-name>DcCoreApp</servlet-name>
+		<servlet-name>PersoniumCoreApp</servlet-name>
 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
 		<init-param>
 			<param-name>javax.ws.rs.Application</param-name>
-			<param-value>com.fujitsu.dc.core.rs.DcCoreApplication</param-value>
+			<param-value>io.personium.core.rs.PersoniumCoreApplication</param-value>
 		</init-param>
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-            <param-value>com.fujitsu.dc.core.jersey.filter.DcCoreContainerFilter</param-value>
+            <param-value>io.personium.core.jersey.filter.PersoniumCoreContainerFilter</param-value>
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-            <param-value>com.fujitsu.dc.core.jersey.filter.DcCoreContainerFilter</param-value>
+            <param-value>io.personium.core.jersey.filter.PersoniumCoreContainerFilter</param-value>
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.config.feature.DisableWADL</param-name>
@@ -50,7 +50,7 @@
      	<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>DcCoreApp</servlet-name>
+		<servlet-name>PersoniumCoreApp</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 </web-app>

@@ -4,6 +4,6 @@ Content-Length: ?
 Connection: close
 Content-Type: application/json
 Authorization: Bearer ${token}
-X-Dc-Unit-User: ${owner}
+X-Personium-Unit-User: ${owner}
 If-Match: *
 

@@ -26,20 +26,20 @@
     </appender>
     <!-- EventAPIの出力先を別ファイルに分けるための暫定対応 -->
     <appender name="FILE_USER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>dc1-user.log</file>
+    <file>personium-user.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
         <!-- daily rollover -->
-        <fileNamePattern>dc1-user.log.%d{yyyy-MM-dd}</fileNamePattern>
+        <fileNamePattern>personium-core-user.log.%d{yyyy-MM-dd}</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %logger{0} %msg%n</pattern>
         </encoder>
     </appender>
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>dc1-core.log</file>
+        <file>personium-core.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
         <!-- daily rollover -->
-        <fileNamePattern>dc1-core.log.%d{yyyy-MM-dd}</fileNamePattern>
+        <fileNamePattern>personium-core.log.%d{yyyy-MM-dd}</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %logger{0} %msg%n</pattern>
@@ -58,9 +58,9 @@
         </discriminator>
         <sift>
             <appender name="FILE-${eventlog_path}" class="ch.qos.logback.core.rolling.RollingFileAppender">
-                <file>/personium_nfs/dc-core/eventlog/${eventlog_path}/current/default.log</file>
-                <rollingPolicy class="com.fujitsu.dc.logging.rolling.DcFixedWindowRollingPolicy">
-                    <fileNamePattern>/personium_nfs/dc-core/eventlog/${eventlog_path}/archive/default.log.%i.zip</fileNamePattern>
+                <file>/personium_nfs/personium-core/eventlog/${eventlog_path}/current/default.log</file>
+                <rollingPolicy class="io.personium.logging.rolling.PersoniumFixedWindowRollingPolicy">
+                    <fileNamePattern>/personium_nfs/personium-core/eventlog/${eventlog_path}/archive/default.log.%i.zip</fileNamePattern>
                     <minIndex>1</minIndex>
                     <maxIndex>12</maxIndex>
                 </rollingPolicy>
@@ -85,13 +85,13 @@
         </encoder>
     </appender>
 
-     <logger  name="com.fujitsu.dc.core.event" additivity="false">
+     <logger  name="io.personium.core.event" additivity="false">
         <level value="DEBUG" />
         <appender-ref ref="FILE_USER" />
         <appender-ref ref="stdout" />
     </logger>
 
-    <logger  name="com.fujitsu.dc">
+    <logger  name="io.personium">
         <level value="DEBUG" />
         <appender-ref ref="file" />    <appender-ref ref="stdout" />
     </logger>
@@ -107,13 +107,13 @@
        <appender-ref ref="file" />
        <appender-ref ref="stdout" />
     </logger>
-    <logger name="com.fujitsu.dc.core.eventbus" additivity="false">
+    <logger name="io.personium.core.eventbus" additivity="false">
         <level value="INFO" />
         <appender-ref ref="SIFT" />
         <appender-ref ref="stdout" />
     </logger>
 
-    <logger name="com.fujitsu.dc.logging" additivity="false">
+    <logger name="io.personium.logging" additivity="false">
         <level value="INFO" />
         <appender-ref ref="FILE_LOGBACK" />
         <appender-ref ref="stdout" />

@@ -8,12 +8,12 @@ Authorization: Bearer ${token}
 
 <?xml version="1.0" encoding="utf-8" ?>
 <D:propertyupdate xmlns:D="DAV:"
-    xmlns:dc="urn:x-dc1:xmlns" 
+    xmlns:p="urn:x-personium:xmlns" 
     xmlns:Z="http://www.w3.com/standards/z39.50/">
     <D:remove>
         <D:prop>
             <Z:Author/>
-            <dc:hoge/>
+            <p:hoge/>
         </D:prop>
     </D:remove>
 </D:propertyupdate>

@@ -17,14 +17,14 @@
     limitations under the License.
 
 -->
-<edmx:Edmx Version='1.0' xmlns:edmx='http://schemas.microsoft.com/ado/2007/06/edmx' xmlns:d='http://schemas.microsoft.com/ado/2007/08/dataservices' xmlns:m='http://schemas.microsoft.com/ado/2007/08/dataservices/metadata' xmlns:dc='urn:x-dc1:xmlns'>
+<edmx:Edmx Version='1.0' xmlns:edmx='http://schemas.microsoft.com/ado/2007/06/edmx' xmlns:d='http://schemas.microsoft.com/ado/2007/08/dataservices' xmlns:m='http://schemas.microsoft.com/ado/2007/08/dataservices/metadata' xmlns:p='urn:x-personium:xmlns'>
   <edmx:DataServices m:DataServiceVersion='1.0'>
     <Schema xmlns='http://schemas.microsoft.com/ado/2006/04/edm' Namespace='UserData'>
       <EntityType Name='' OpenType='true'>
         <Key>
           <PropertyRef Name='__id'/>
         </Key>
-        <Property Name='__id' Type='Edm.String' Nullable='false' DefaultValue='UUID()' dc:Format='regEx(&apos;^[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}$&apos;)'/>
+        <Property Name='__id' Type='Edm.String' Nullable='false' DefaultValue='UUID()' p:Format='regEx(&apos;^[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}$&apos;)'/>
         <Property Name='__published' Type='Edm.DateTime' Nullable='false' DefaultValue='SYSUTCDATETIME()' Precision='3'/>
         <Property Name='__updated' Type='Edm.DateTime' Nullable='false' DefaultValue='SYSUTCDATETIME()' Precision='3'/>
       </EntityType>
@@ -32,7 +32,7 @@
         <Key>
           <PropertyRef Name='__id'/>
         </Key>
-        <Property Name='__id' Type='Edm.String' Nullable='false' DefaultValue='UUID()' dc:Format='regEx(&apos;^[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}$&apos;)'/>
+        <Property Name='__id' Type='Edm.String' Nullable='false' DefaultValue='UUID()' p:Format='regEx(&apos;^[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}$&apos;)'/>
         <Property Name='__published' Type='Edm.DateTime' Nullable='false' DefaultValue='SYSUTCDATETIME()' Precision='3'/>
         <Property Name='__updated' Type='Edm.DateTime' Nullable='false' DefaultValue='SYSUTCDATETIME()' Precision='3'/>
       </EntityType>
