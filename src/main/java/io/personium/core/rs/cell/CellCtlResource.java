@@ -47,19 +47,19 @@ import io.personium.core.rs.odata.ODataResource;
  */
 public final class CellCtlResource extends ODataResource {
 
-    String dcCredHeader;
+    String pCredHeader;
     DavRsCmp davRsCmp;
 
     /**
      * constructor.
      * @param accessContext AccessContext
-     * @param dcCredHeader X-Personium-Credentialヘッダ
+     * @param pCredHeader X-Personium-Credentialヘッダ
      * @param davRsCmp davRsCmp
      */
-    public CellCtlResource(final AccessContext accessContext, final String dcCredHeader, DavRsCmp davRsCmp) {
+    public CellCtlResource(final AccessContext accessContext, final String pCredHeader, DavRsCmp davRsCmp) {
         super(accessContext, accessContext.getCell().getUrl() + "__ctl/", ModelFactory.ODataCtl.cellCtl(accessContext
                 .getCell()));
-        this.dcCredHeader = dcCredHeader;
+        this.pCredHeader = pCredHeader;
         this.davRsCmp = davRsCmp;
     }
 
@@ -89,7 +89,7 @@ public final class CellCtlResource extends ODataResource {
     @Override
     public void beforeCreate(final OEntityWrapper oEntityWrapper) {
         String entitySetName = oEntityWrapper.getEntitySet().getName();
-        String hPassStr = AuthUtils.checkValidatePassword(dcCredHeader, entitySetName);
+        String hPassStr = AuthUtils.checkValidatePassword(pCredHeader, entitySetName);
         if (hPassStr != null) {
             oEntityWrapper.put("HashedCredential", hPassStr);
         }
@@ -98,7 +98,7 @@ public final class CellCtlResource extends ODataResource {
     @Override
     public void beforeUpdate(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
         String entitySetName = oEntityWrapper.getEntitySet().getName();
-        String hPassStr = AuthUtils.checkValidatePassword(dcCredHeader, entitySetName);
+        String hPassStr = AuthUtils.checkValidatePassword(pCredHeader, entitySetName);
         if (hPassStr != null) {
             oEntityWrapper.put("HashedCredential", hPassStr);
         }

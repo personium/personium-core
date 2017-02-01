@@ -111,11 +111,11 @@ public class RoleResource {
 //                    "_role",  null);
             // TODO Bodyの生成
             return Response.ok().entity(boxName).build();
-        } catch (PersoniumCoreException dce) {
-            if (PersoniumCoreException.OData.NO_SUCH_ENTITY == dce) {
+        } catch (PersoniumCoreException pce) {
+            if (PersoniumCoreException.OData.NO_SUCH_ENTITY == pce) {
                 throw PersoniumCoreException.Dav.BOX_NOT_FOUND;
             }
-            throw dce;
+            throw pce;
         }
     }
     /**

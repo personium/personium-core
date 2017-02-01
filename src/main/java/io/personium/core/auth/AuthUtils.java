@@ -72,18 +72,18 @@ public final class AuthUtils {
 
     /**
      * パスワードのバリデートチェックをする.
-     * @param dcCredHeader dcCredHeader
+     * @param pCredHeader pCredHeader
      * @param entitySetName entitySetName
      * @return Hash文字列化されたパスワード
      */
-    public static String checkValidatePassword(final String dcCredHeader, String entitySetName) {
+    public static String checkValidatePassword(final String pCredHeader, String entitySetName) {
         if (Account.EDM_TYPE_NAME.equals(entitySetName)) {
-            if (dcCredHeader != null) {
-                if ((dcCredHeader.length() >= MIN_PASSWORD_LENGTH)
-                        && (dcCredHeader.length() <= MAX_PASSWORD_LENGTH)) {
+            if (pCredHeader != null) {
+                if ((pCredHeader.length() >= MIN_PASSWORD_LENGTH)
+                        && (pCredHeader.length() <= MAX_PASSWORD_LENGTH)) {
                     String regex = "^[a-zA-Z0-9-_]{0,}$";
                     Pattern pattern = Pattern.compile(regex);
-                    Matcher m = pattern.matcher(dcCredHeader);
+                    Matcher m = pattern.matcher(pCredHeader);
                     if (!m.find()) {
                         throw PersoniumCoreException.Auth.PASSWORD_INVALID;
                     }
@@ -91,7 +91,7 @@ public final class AuthUtils {
                     throw PersoniumCoreException.Auth.PASSWORD_INVALID;
                 }
             }
-            String hPassStr = AuthUtils.hashPassword(dcCredHeader);
+            String hPassStr = AuthUtils.hashPassword(pCredHeader);
             return hPassStr;
         }
         return null;

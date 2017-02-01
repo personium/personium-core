@@ -154,9 +154,9 @@ public final class OAuth2Helper {
          */
         public static final String REFRESH_TOKEN = "refresh_token";
         /**
-         * dc1-oidc google.
+         * Grant Type URN for oidc google.
          */
-        public static final String DC1_OIDC_GOOGLE = "urn:x-personium:oidc:google";
+        public static final String URN_OIDC_GOOGLE = "urn:x-personium:oidc:google";
 
     }
 

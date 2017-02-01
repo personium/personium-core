@@ -67,9 +67,9 @@ public interface PersoniumODataProducer extends ODataProducer {
      * Accountのパスワード変更.
      * @param entitySetName entitySetName
      * @param originalKey 更新対象キー
-     * @param dcCredHeader dcCredHeader
+     * @param pCredHeader dcCredHeader
      */
-    void updatePassword(final EdmEntitySet entitySetName, final OEntityKey originalKey, final String dcCredHeader);
+    void updatePassword(final EdmEntitySet entitySetName, final OEntityKey originalKey, final String pCredHeader);
 
     /**
      * Accountの最終ログイン時刻変更.

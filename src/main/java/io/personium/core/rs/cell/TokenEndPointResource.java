@@ -114,13 +114,13 @@ public class TokenEndPointResource {
      * @param grantType クエリパラメタ
      * @param username クエリパラメタ
      * @param password クエリパラメタ
-     * @param dcTarget クエリパラメタ
-     * @param dcOwner クエリパラメタ
+     * @param pTarget クエリパラメタ
+     * @param pOwner クエリパラメタ
      * @param assertion クエリパラメタ
      * @param refreshToken クエリパラメタ
      * @param clientId クエリパラメタ
      * @param clientSecret クエリパラメタ
-     * @param dcCookie クエリパラメタ
+     * @param pCookie クエリパラメタ
      * @param idToken IDトークン
      * @param host Hostヘッダ
      * @return JAX-RS Response Object
@@ -131,25 +131,25 @@ public class TokenEndPointResource {
             @FormParam(Key.GRANT_TYPE) final String grantType,
             @FormParam(Key.USERNAME) final String username,
             @FormParam(Key.PASSWORD) final String password,
-            @FormParam(Key.TARGET) final String dcTarget,
-            @FormParam(Key.OWNER) final String dcOwner,
+            @FormParam(Key.TARGET) final String pTarget,
+            @FormParam(Key.OWNER) final String pOwner,
             @FormParam(Key.ASSERTION) final String assertion,
             @FormParam(Key.REFRESH_TOKEN) final String refreshToken,
             @FormParam(Key.CLIENT_ID) final String clientId,
             @FormParam(Key.CLIENT_SECRET) final String clientSecret,
-            @FormParam("p_cookie") final String dcCookie,
+            @FormParam("p_cookie") final String pCookie,
             @FormParam(Key.ID_TOKEN) final String idToken,
             @HeaderParam(HttpHeaders.HOST) final String host) {
 
         // Accept unit local scheme url.
-        String target = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), dcTarget);
+        String target = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), pTarget);
         // p_target がURLでない場合はヘッダInjectionの脆弱性を産んでしまう。(改行コードが入っているなど)
         target = this.checkPTarget(target);
 
-        if (null != dcTarget) {
+        if (null != pTarget) {
             issueCookie = false;
         } else {
-            issueCookie = Boolean.parseBoolean(dcCookie);
+            issueCookie = Boolean.parseBoolean(pCookie);
             requestURIInfo = uriInfo;
         }
 
@@ -162,7 +162,7 @@ public class TokenEndPointResource {
 
         if (OAuth2Helper.GrantType.PASSWORD.equals(grantType)) {
             // 通常のパスワード認証
-            Response response = this.handlePassword(target, dcOwner, host, schema, username, password);
+            Response response = this.handlePassword(target, pOwner, host, schema, username, password);
 
             // パスワード認証が成功した場合はアカウントの最終ログイン時刻を更新する
             // パスワード認証が成功した場合のみ、ここを通る(handlePassword内でエラーが発生すると、例外がthrowされる)
@@ -176,11 +176,11 @@ public class TokenEndPointResource {
             }
             return response;
         } else if (OAuth2Helper.GrantType.SAML2_BEARER.equals(grantType)) {
-            return this.receiveSaml2(target, dcOwner, schema, assertion);
+            return this.receiveSaml2(target, pOwner, schema, assertion);
         } else if (OAuth2Helper.GrantType.REFRESH_TOKEN.equals(grantType)) {
-            return this.receiveRefresh(target, dcOwner, host, refreshToken);
-        } else if (OAuth2Helper.GrantType.DC1_OIDC_GOOGLE.equals(grantType)) {
-            return this.receiveIdTokenGoogle(target, dcOwner, schema, username, idToken, host);
+            return this.receiveRefresh(target, pOwner, host, refreshToken);
+        } else if (OAuth2Helper.GrantType.URN_OIDC_GOOGLE.equals(grantType)) {
+            return this.receiveIdTokenGoogle(target, pOwner, schema, username, idToken, host);
         } else {
             throw PersoniumCoreAuthnException.UNSUPPORTED_GRANT_TYPE.realm(this.cell.getUrl());
         }
@@ -460,8 +460,8 @@ public class TokenEndPointResource {
         if (issueCookie) {
             String tokenString = accessToken.toTokenString();
             // p_cookie_peerとして、ランダムなUUIDを設定する
-            String dcCookiePeer = UUID.randomUUID().toString();
-            String cookieValue = dcCookiePeer + "\t" + tokenString;
+            String pCookiePeer = UUID.randomUUID().toString();
+            String cookieValue = pCookiePeer + "\t" + tokenString;
             // ヘッダに返却するp_cookie値は、暗号化する
             String encodedCookieValue = LocalToken.encode(cookieValue,
                     UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(requestURIInfo.getBaseUri())));
@@ -474,7 +474,7 @@ public class TokenEndPointResource {
                     version);
             rb.cookie(new NewCookie(cookie, "", -1, PersoniumUnitConfig.isHttps()));
             // レスポンスボディの"p_cookie_peer"を返却する
-            resp.put("p_cookie_peer", dcCookiePeer);
+            resp.put("p_cookie_peer", pCookiePeer);
         }
         return rb.entity(resp.toJSONString()).build();
     }
@@ -596,7 +596,7 @@ public class TokenEndPointResource {
     /**
      * Google認証連携処理.
      * @param target
-     * @param dcOwner
+     * @param pOwner
      * @param schema
      * @param username
      * @param idToken
@@ -604,7 +604,7 @@ public class TokenEndPointResource {
      * @return
      */
 
-    private Response receiveIdTokenGoogle(String target, String dcOwner,
+    private Response receiveIdTokenGoogle(String target, String pOwner,
         String schema, String username, String idToken, String host) {
 
         // usernameのCheck処理
@@ -663,7 +663,7 @@ public class TokenEndPointResource {
         }
 
         // トークンを発行
-        return this.issueToken(target, dcOwner, host, schema, mail);
+        return this.issueToken(target, pOwner, host, schema, mail);
     }
 
 }

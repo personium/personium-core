@@ -23,8 +23,8 @@
         xmlns = {
                 // "DAV:"はプレフィックス指定なしの場合、marshall実行時にJAXBが"ns1"のように機械的なプレフィックスを付けるため、空白文字を指定
                 @javax.xml.bind.annotation.XmlNs(prefix = "", namespaceURI = "DAV:"),
-                // "urn:x-personium:xmlns"は"dc"で固定
-                @javax.xml.bind.annotation.XmlNs(prefix = "dc", namespaceURI = "urn:x-personium:xmlns")
+                // "urn:x-personium:xmlns"は"p"で固定
+                @javax.xml.bind.annotation.XmlNs(prefix = "p", namespaceURI = "urn:x-personium:xmlns")
         }
 )
 package io.personium.core.model.jaxb;

@@ -677,18 +677,18 @@ public abstract class AbstractODataResource {
     protected void validateProperty(EdmProperty ep, String propName, OProperty<?> op) {
         for (NamespacedAnnotation<?> annotation : ep.getAnnotations()) {
             if (annotation.getName().equals(Common.P_FORMAT)) {
-                String dcFormat = annotation.getValue().toString();
+                String pFormat = annotation.getValue().toString();
                 // 正規表現チェックの場合
-                if (dcFormat.startsWith(Common.P_FORMAT_PATTERN_REGEX)) {
-                    validatePropertyRegEx(propName, op, dcFormat);
-                } else if (dcFormat.equals(Common.P_FORMAT_PATTERN_URI)) {
+                if (pFormat.startsWith(Common.P_FORMAT_PATTERN_REGEX)) {
+                    validatePropertyRegEx(propName, op, pFormat);
+                } else if (pFormat.equals(Common.P_FORMAT_PATTERN_URI)) {
                     validatePropertyUri(propName, op);
-                } else if (dcFormat.startsWith(Common.P_FORMAT_PATTERN_SCHEMA_URI)) {
+                } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_SCHEMA_URI)) {
                     validatePropertySchemaUri(propName, op);
-                } else if (dcFormat.startsWith(Common.P_FORMAT_PATTERN_CELL_URL)) {
+                } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_CELL_URL)) {
                     validatePropertyCellUrl(propName, op);
-                } else if (dcFormat.startsWith(Common.P_FORMAT_PATTERN_USUSST)) {
-                    validatePropertyUsusst(propName, op, dcFormat);
+                } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_USUSST)) {
+                    validatePropertyUsusst(propName, op, pFormat);
                 }
             }
         }
@@ -750,17 +750,17 @@ public abstract class AbstractODataResource {
      * プロパティ項目の値を正規表現でチェックする.
      * @param propName プロパティ名
      * @param op OProperty
-     * @param dcFormat dcFormatの値
+     * @param pFormat pFormatの値
      */
-    protected void validatePropertyRegEx(String propName, OProperty<?> op, String dcFormat) {
+    protected void validatePropertyRegEx(String propName, OProperty<?> op, String pFormat) {
         // regEx('正規表現')から正規表現を抜き出す
         Pattern formatPattern = Pattern.compile(Common.P_FORMAT_PATTERN_REGEX + "\\('(.+)'\\)");
-        Matcher formatMatcher = formatPattern.matcher(dcFormat);
+        Matcher formatMatcher = formatPattern.matcher(pFormat);
         formatMatcher.matches();
-        dcFormat = formatMatcher.group(1);
+        pFormat = formatMatcher.group(1);
 
         // フォーマットのチェックを行う
-        Pattern pattern = Pattern.compile(dcFormat);
+        Pattern pattern = Pattern.compile(pFormat);
         Matcher matcher = pattern.matcher(op.getValue().toString());
         if (!matcher.matches()) {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
@@ -804,16 +804,16 @@ public abstract class AbstractODataResource {
      * プロパティ項目の値を、1つ以上のスペース区切り文字列にマッチするかチェックする.
      * @param propName プロパティ名
      * @param op OProperty
-     * @param dcFormat dcFormatの値
+     * @param pFormat pFormatの値
      */
-    protected void validatePropertyUsusst(String propName, OProperty<?> op, String dcFormat) {
-        // dcFormatから候補をリストとして抽出.
+    protected void validatePropertyUsusst(String propName, OProperty<?> op, String pFormat) {
+        // pFormatから候補をリストとして抽出.
         Pattern formatPattern = Pattern.compile(Common.P_FORMAT_PATTERN_USUSST + "\\((.+)\\)");
-        Matcher formatMatcher = formatPattern.matcher(dcFormat);
+        Matcher formatMatcher = formatPattern.matcher(pFormat);
         formatMatcher.matches();
-        dcFormat = formatMatcher.group(1);
+        pFormat = formatMatcher.group(1);
 
-        String[] allowedTokens = dcFormat.split(", ");
+        String[] allowedTokens = pFormat.split(", ");
         for (int i = 0; i < allowedTokens.length; i++) {
             //remove single quotations.
             allowedTokens[i] = allowedTokens[i].replaceAll("\'(.+)\'", "$1");

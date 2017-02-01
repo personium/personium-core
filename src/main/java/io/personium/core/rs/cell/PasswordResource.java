@@ -39,7 +39,7 @@ import io.personium.core.odata.PersoniumODataProducer;
  */
 public class PasswordResource {
 
-    String dcCredHeader;
+    String pCredHeader;
     AccessContext accessContext;
     Cell cell;
 
@@ -53,15 +53,15 @@ public class PasswordResource {
     /**
      * constructor.
      * @param accessContext accessContext
-     * @param dcCredHeader dcCredHeader
+     * @param pCredHeader pCredHeader
      * @param cell cell
      * @param davRsCmp DavRsCmp
      */
     public PasswordResource(final AccessContext accessContext,
-            final String dcCredHeader,
+            final String pCredHeader,
             Cell cell, DavRsCmp davRsCmp) {
         this.accessContext = accessContext;
-        this.dcCredHeader = dcCredHeader;
+        this.pCredHeader = pCredHeader;
         this.cell = cell;
         this.davRsCmp = davRsCmp;
     }
@@ -91,7 +91,7 @@ public class PasswordResource {
         EdmEntitySet esetAccount = producer.getMetadata().getEdmEntitySet(Account.EDM_TYPE_NAME);
 
         // パスワードの変更をProducerに依頼
-        producer.updatePassword(esetAccount, this.oEntityKey, this.dcCredHeader);
+        producer.updatePassword(esetAccount, this.oEntityKey, this.pCredHeader);
 
         // レスポンス返却
         return Response.noContent()

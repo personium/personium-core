@@ -105,7 +105,7 @@ public class IdToken {
      * 最終検証結果を返す.
      * @param null
      * @retrun boolean
-     * @throws PersoniumCoreAuthnException dcae
+     * @throws PersoniumCoreAuthnException pcae
      */
     public void verify() throws PersoniumCoreAuthnException {
         // expireしていないかチェック(60秒くらいは過ぎても良い)

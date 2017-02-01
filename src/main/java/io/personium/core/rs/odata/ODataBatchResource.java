@@ -147,7 +147,7 @@ public class ODataBatchResource extends AbstractODataResource {
             Reader reader) {
 
         long startTime = System.currentTimeMillis();
-        // タイムアウト時間 (dc_config.properties io.personium.core.odata.batch.timeoutInSecで設定. 単位は秒)
+        // タイムアウト時間 (personium-unit-config.properties io.personium.core.odata.batch.timeoutInSecで設定. 単位は秒)
         long batchTimeoutInSec = PersoniumUnitConfig.getOdataBatchRequestTimeoutInMillis();
 
         // Lockを他プロセスに譲るためにスリープするか否かの拡張ヘッダの値を取得する

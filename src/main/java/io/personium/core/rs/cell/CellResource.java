@@ -188,23 +188,23 @@ public final class CellResource {
     }
 
     /**
-     * @param dcCredHeader dcCredHeader X-Personium-Credentialヘッダ
+     * @param pCredHeader pCredHeader X-Personium-Credentialヘッダ
      * @return CellCtlResource
      */
     @Path("__ctl")
-    public CellCtlResource ctl(@HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String dcCredHeader) {
-        return new CellCtlResource(this.accessContext, dcCredHeader, this.cellRsCmp);
+    public CellCtlResource ctl(@HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader) {
+        return new CellCtlResource(this.accessContext, pCredHeader, this.cellRsCmp);
     }
 
     /**
      * パスワード変更APIのエンドポイント.
-     * @param dcCredHeader dcCredHeader
+     * @param pCredHeader pCredHeader
      * @return Response
      */
     @Path("__mypassword")
     public PasswordResource mypassword(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String dcCredHeader) {
-        return new PasswordResource(this.accessContext, dcCredHeader, this.cell, this.cellRsCmp);
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader) {
+        return new PasswordResource(this.accessContext, pCredHeader, this.cell, this.cellRsCmp);
     }
 
     /**

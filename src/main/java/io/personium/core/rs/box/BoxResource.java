@@ -311,7 +311,7 @@ public final class BoxResource {
     /**
      * MKCOLメソッドの処理. boxインストールを行う.
      * @param uriInfo UriInfo
-     * @param dcCredHeader dcCredHeader
+     * @param pCredHeader dcCredHeader
      * @param contentType Content-Typeヘッダの値
      * @param contentLength Content-Lengthヘッダの値
      * @param requestKey イベントログに出力するRequestKeyフィールドの値
@@ -321,7 +321,7 @@ public final class BoxResource {
     @WebDAVMethod.MKCOL
     public Response mkcol(
             @Context final UriInfo uriInfo,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String dcCredHeader,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader,
             @HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final String contentLength,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
