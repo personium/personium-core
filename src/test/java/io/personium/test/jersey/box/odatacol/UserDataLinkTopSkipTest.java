@@ -36,7 +36,7 @@ import org.junit.runner.RunWith;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -54,7 +54,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * ユーザODataの$links取得で、$top・$skipクエリを指定した場合のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
 // 本テストでは1回につき25件のユーザODataを作成する。IT以降のテストの時間短縮のため、コミットビルドでのみ動作するようにしている。
 public class UserDataLinkTopSkipTest extends JerseyTest {

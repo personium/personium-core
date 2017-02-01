@@ -36,9 +36,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.EntityTypeUtils;
@@ -47,7 +47,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserDataのDouble型への検索テスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
 
@@ -81,10 +81,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=" + propertyName + "+eq+12345.12345&$inlinecount=allpages";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -124,10 +124,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=" + propertyName + "+eq+1&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -170,10 +170,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=" + propertyName + "+eq+1.0&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -216,10 +216,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=" + propertyName + "+gt+1.0&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -266,10 +266,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=" + propertyName + "+le+0&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -313,10 +313,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=" + propertyName + "+eq+null&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -359,10 +359,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=" + propertyName + "+eq+1.79E308&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -405,10 +405,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=" + propertyName + "+eq+--1.79E308&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -463,10 +463,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=" + propertyName + "+eq+1.0&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -528,10 +528,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=" + propertyName + "+gt+1.234&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -581,10 +581,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$orderby=" + propertyName + "+asc,__id&$inlinecount=allpages";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -645,10 +645,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$orderby=" + propertyName + "+desc,__id&$inlinecount=allpages";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -724,10 +724,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$orderby=" + propertyName + ",__id&$inlinecount=allpages";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -791,10 +791,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?q=1.79E308&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -838,10 +838,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?q=-1.79E308&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -900,10 +900,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?q=1&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -959,10 +959,10 @@ public class UserDataListDeclaredDoubleTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?q=1.0&$inlinecount=allpages&$orderby=__id";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 

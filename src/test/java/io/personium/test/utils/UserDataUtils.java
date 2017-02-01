@@ -27,8 +27,8 @@ import org.json.simple.JSONObject;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.box.odatacol.schema.complextypeproperty.ComplexTypePropertyUtils;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.setup.Setup;
@@ -51,12 +51,12 @@ public class UserDataUtils {
      * @param complexTypeName コンプレックスタイプ名
      * @return レスポンス
      */
-    public static DcResponse createComplexType(final String cellName,
+    public static PersoniumResponse createComplexType(final String cellName,
             final String boxName,
             final String odataSvcPath,
             final String complexTypeName) {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(UrlUtils.complexType(cellName, boxName, odataSvcPath, null));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.complexType(cellName, boxName, odataSvcPath, null));
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.addJsonBody("Name", complexTypeName);
 
@@ -79,7 +79,7 @@ public class UserDataUtils {
      * @param uniqueKey ユニークキー
      * @return レスポンス
      */
-    public static DcResponse createProperty(final String cellName,
+    public static PersoniumResponse createProperty(final String cellName,
             final String boxName,
             final String odataSvcPath,
             final String propName,
@@ -91,7 +91,7 @@ public class UserDataUtils {
             final boolean isKey,
             final String uniqueKey) {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(UrlUtils.property(cellName, boxName, odataSvcPath, null, null));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.property(cellName, boxName, odataSvcPath, null, null));
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, entityTypeName);
@@ -119,7 +119,7 @@ public class UserDataUtils {
      * @param collectionKind 配列指定
      * @return レスポンス
      */
-    public static DcResponse createComplexTypeProperty(final String cellName,
+    public static PersoniumResponse createComplexTypeProperty(final String cellName,
             final String boxName,
             final String odataSvcPath,
             final String propName,
@@ -129,7 +129,7 @@ public class UserDataUtils {
             final String defaultValue,
             final String collectionKind) {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(UrlUtils.complexTypeProperty(cellName, boxName, odataSvcPath, null, null));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.complexTypeProperty(cellName, boxName, odataSvcPath, null, null));
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY, propName);
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY, complexTypeName);
@@ -325,7 +325,7 @@ public class UserDataUtils {
      * @param code 期待するレスポンスコード
      * @return レスポンス
      */
-    public static DcResponse listEntities(String cell,
+    public static PersoniumResponse listEntities(String cell,
             String box,
             String col,
             String entityType,
@@ -333,10 +333,10 @@ public class UserDataUtils {
             String token,
             int code) {
         String reqUrl = UrlUtils.userData(cell, box, col, entityType) + query;
-        DcRequest req = DcRequest.get(reqUrl);
+        PersoniumRequest req = PersoniumRequest.get(reqUrl);
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
-        DcResponse res = AbstractCase.request(req);
+        PersoniumResponse res = AbstractCase.request(req);
         if (-1 != code) {
             assertEquals(code, res.getStatusCode());
         }

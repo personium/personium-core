@@ -37,10 +37,10 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -51,7 +51,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * BoxURL取得 APIのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class BoxUrlTest extends ODataCommon {
 
@@ -84,7 +84,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void 指定したschemaのBoxURLが取得できること() {
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -94,7 +94,7 @@ public class BoxUrlTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         }
     }
@@ -114,7 +114,7 @@ public class BoxUrlTest extends ODataCommon {
 
             // テスト実施
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -126,7 +126,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1),
                     res.getFirstHeader(HttpHeaders.LOCATION));
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             // Box Schema更新（元に戻す）
@@ -144,7 +144,7 @@ public class BoxUrlTest extends ODataCommon {
         try {
             // Setupを流用
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -155,7 +155,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1),
                     res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         }
     }
@@ -168,7 +168,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void 指定したローカルユニットschemaのBoxURLが不正な場合にエラーで返却されること() {
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -180,7 +180,7 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(boxUrl, requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         }
     }
@@ -192,7 +192,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void BoxURL取得でPOST以外のメソッドを指定した場合に405が返却されること() {
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -202,7 +202,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         }
     }
@@ -214,7 +214,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void schemaが空指定の場合に400が返却されること() {
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -223,7 +223,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("schema", "");
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         }
     }
@@ -235,7 +235,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void URI形式でないschemaを指定した場合に400が返却されること() {
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -244,7 +244,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("schema", "test");
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         }
     }
@@ -256,7 +256,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void 指定したschemaのBoxが存在しない場合に403が返却されること() {
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -267,7 +267,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         }
     }
@@ -279,7 +279,7 @@ public class BoxUrlTest extends ODataCommon {
     public final void マスタートークンを使用してschema指定がない場合に403が返却されること() {
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -287,7 +287,7 @@ public class BoxUrlTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         }
     }
@@ -312,7 +312,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             String token = ResourceUtils.getMyCellLocalToken(Setup.TEST_CELL1, "account1", "password1");
@@ -323,7 +323,7 @@ public class BoxUrlTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             afterACLTest();
@@ -350,7 +350,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             String token = ResourceUtils.getMyCellLocalToken(Setup.TEST_CELL1, "account2", "password2");
@@ -362,7 +362,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             afterACLTest();
@@ -389,7 +389,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             String token = ResourceUtils.getMyCellLocalToken(Setup.TEST_CELL1, "account1", "password1");
@@ -400,7 +400,7 @@ public class BoxUrlTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             afterACLTest();
@@ -427,7 +427,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
 
@@ -436,7 +436,7 @@ public class BoxUrlTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             afterACLTest();
@@ -471,7 +471,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             String token = ResourceUtils.getMyCellLocalToken(Setup.TEST_CELL1, "account1", "password1");
@@ -482,7 +482,7 @@ public class BoxUrlTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             afterACLTest();
@@ -517,7 +517,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             String token = ResourceUtils.getMyCellLocalToken(Setup.TEST_CELL1, "account1", "password1");
@@ -528,7 +528,7 @@ public class BoxUrlTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             afterACLTest();
@@ -555,7 +555,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer test");
@@ -565,7 +565,7 @@ public class BoxUrlTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             afterACLTest();
@@ -592,7 +592,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer test");
@@ -603,7 +603,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_UNAUTHORIZED, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreAuthzException.TOKEN_PARSE_ERROR;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             afterACLTest();
@@ -630,7 +630,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -640,7 +640,7 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell("client");
@@ -669,7 +669,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -679,7 +679,7 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell("client");
@@ -708,7 +708,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -718,7 +718,7 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell("client");
@@ -747,7 +747,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -757,7 +757,7 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell(OAuth2Helper.Key.CONFIDENTIAL_ROLE_NAME);
@@ -785,7 +785,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -795,7 +795,7 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell("client");
@@ -825,7 +825,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -836,7 +836,7 @@ public class BoxUrlTest extends ODataCommon {
 
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell("client");
@@ -865,7 +865,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -876,7 +876,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreException.Auth.SCHEMA_MISMATCH;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell("client");
@@ -905,7 +905,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -916,7 +916,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreException.Auth.SCHEMA_MISMATCH;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell(OAuth2Helper.Key.CONFIDENTIAL_ROLE_NAME);
@@ -945,7 +945,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             String token = ResourceUtils.getMyCellLocalToken(Setup.TEST_CELL1, "account1", "password1");
@@ -956,7 +956,7 @@ public class BoxUrlTest extends ODataCommon {
             PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             afterACLTest();
@@ -984,7 +984,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             String token = ResourceUtils.getMyCellLocalToken(Setup.TEST_CELL1, "account1", "password1");
@@ -995,7 +995,7 @@ public class BoxUrlTest extends ODataCommon {
             PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             afterACLTest();
@@ -1023,7 +1023,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             String token = ResourceUtils.getMyCellLocalToken(Setup.TEST_CELL1, "account1", "password1");
@@ -1034,7 +1034,7 @@ public class BoxUrlTest extends ODataCommon {
             PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             afterACLTest();
@@ -1061,7 +1061,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -1071,7 +1071,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell("client");
@@ -1100,7 +1100,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -1110,7 +1110,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell("client");
@@ -1139,7 +1139,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + getSchemaToken("client"));
@@ -1148,7 +1148,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell("client");
@@ -1177,7 +1177,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -1188,7 +1188,7 @@ public class BoxUrlTest extends ODataCommon {
             PersoniumCoreException e = PersoniumCoreException.Auth.INSUFFICIENT_SCHEMA_AUTHZ_LEVEL;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell("client");
@@ -1216,7 +1216,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -1226,7 +1226,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell(OAuth2Helper.Key.CONFIDENTIAL_ROLE_NAME);
@@ -1255,7 +1255,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -1265,7 +1265,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell(OAuth2Helper.Key.CONFIDENTIAL_ROLE_NAME);
@@ -1294,7 +1294,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -1304,7 +1304,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell(OAuth2Helper.Key.CONFIDENTIAL_ROLE_NAME);
@@ -1333,7 +1333,7 @@ public class BoxUrlTest extends ODataCommon {
             beforeACLTest(aclXml);
 
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer "
@@ -1343,7 +1343,7 @@ public class BoxUrlTest extends ODataCommon {
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
             deleteApplicationCell(OAuth2Helper.Key.CONFIDENTIAL_ROLE_NAME);
@@ -1372,7 +1372,7 @@ public class BoxUrlTest extends ODataCommon {
             // スキーマ認証トークンを返却する
             token = getSchemaAuthz(null);
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail("getConfidentialSchemaToken Fail : " + e.getMessage());
         }
         return token;
@@ -1397,7 +1397,7 @@ public class BoxUrlTest extends ODataCommon {
         try {
             rest = new PersoniumRestAdapter();
             rest.del(UrlUtils.cellCtl("boxUrlTestSchema", "Account", "account1"), requestheaders);
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             System.out.println("boxUrlTestSchema/__ctl/Account('account1') delete Fail : " + e.getMessage());
         }
 
@@ -1406,7 +1406,7 @@ public class BoxUrlTest extends ODataCommon {
             rest = new PersoniumRestAdapter();
             rest.del(UrlUtils.unitCtl("Cell", "boxUrlTestSchema"), requestheaders);
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             System.out.println("boxUrlTestSchema delete Fail : " + e.getMessage());
         }
         return token;
@@ -1421,7 +1421,7 @@ public class BoxUrlTest extends ODataCommon {
         try {
             // Box作成
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             JSONObject body = new JSONObject();
@@ -1438,7 +1438,7 @@ public class BoxUrlTest extends ODataCommon {
             requestheaders.put("X-HTTP-Method-Override", "ACL");
             res = rest.post(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), aclXml, requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail("beforeACLTest Fail : " + e.getMessage());
         }
     }
@@ -1448,7 +1448,7 @@ public class BoxUrlTest extends ODataCommon {
      */
     private void afterACLTest() {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -1457,15 +1457,15 @@ public class BoxUrlTest extends ODataCommon {
         try {
             res = rest.del(UrlUtils.cellCtl(Setup.TEST_CELL1, "Box", "boxUrlTest"), requestheaders);
             assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             fail("afterACLTest Fail : " + e.getMessage());
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void createAppCell() throws DcException {
+    private void createAppCell() throws PersoniumException {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         JSONObject body = new JSONObject();
         HashMap<String, String> requestheaders = new HashMap<String, String>();
 
@@ -1476,9 +1476,9 @@ public class BoxUrlTest extends ODataCommon {
     }
 
     @SuppressWarnings("unchecked")
-    private void createAccountForAppCell() throws DcException {
+    private void createAccountForAppCell() throws PersoniumException {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         JSONObject body = new JSONObject();
         HashMap<String, String> requestheaders = new HashMap<String, String>();
 
@@ -1490,9 +1490,9 @@ public class BoxUrlTest extends ODataCommon {
     }
 
     @SuppressWarnings("unchecked")
-    private void createRoleForAppCell(String roleName) throws DcException {
+    private void createRoleForAppCell(String roleName) throws PersoniumException {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         JSONObject body = new JSONObject();
         HashMap<String, String> requestheaders = new HashMap<String, String>();
 
@@ -1502,9 +1502,9 @@ public class BoxUrlTest extends ODataCommon {
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
     }
 
-    private void linkAccountRole(String roleName) throws DcException {
+    private void linkAccountRole(String roleName) throws PersoniumException {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
 
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -1515,12 +1515,12 @@ public class BoxUrlTest extends ODataCommon {
         assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
     }
 
-    private String getSchemaAuthz(String cell) throws DcException {
+    private String getSchemaAuthz(String cell) throws PersoniumException {
         if (cell == null) {
             cell = "boxUrlTestSchema";
         }
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
 
         // クライアントシークレット取得
@@ -1549,7 +1549,7 @@ public class BoxUrlTest extends ODataCommon {
         try {
             rest.del(UrlUtils.getBaseUrl() + "/boxUrlTestSchema/__ctl/Account('account1')/$links/_Role('"
                     + roleName + "')", requestheaders);
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             System.out.println("/boxUrlTestSchema/__ctl/Account('account1')/$links/_Role('"
                     + roleName + "') delete Fail : " + e.getMessage());
         }
@@ -1563,7 +1563,7 @@ public class BoxUrlTest extends ODataCommon {
         // ロール削除
         try {
             rest.del(UrlUtils.cellCtl("boxUrlTestSchema", "Role", roleName), requestheaders);
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             System.out.println("/boxUrlTestSchema/__ctl/Role('" + roleName + "') delete Fail : " + e.getMessage());
         }
 

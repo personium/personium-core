@@ -34,13 +34,13 @@ import io.personium.core.model.impl.es.accessor.DavNodeAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.accessor.ODataLinkAccessor;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 /**
  * EsModelの単体テストケース.
  */
 @Ignore
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public class EsModelTest {
 

@@ -40,7 +40,7 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.cell.auth.AuthTestCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -57,7 +57,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 /**
  * UnitUserでCellをCRUDするテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UnitUserCellCRUDTest extends JerseyTest {
 

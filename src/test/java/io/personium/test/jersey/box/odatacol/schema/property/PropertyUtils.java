@@ -29,8 +29,8 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.EntityType;
 import io.personium.core.model.ctl.Property;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
@@ -177,14 +177,14 @@ public class PropertyUtils {
      * @param code 期待するレスポンスコード
      * @return レスポンス
      */
-    public static DcResponse create(
+    public static PersoniumResponse create(
             String token, String cell, String box, String collection,
             String entityTypeName, String propertyName,
             String type, boolean nullable, Object defaultValue, String collectionKind,
             boolean isKey, String uniqueKey, int code) {
 
         String url = UrlUtils.property(cell, box, collection, null, null);
-        DcRequest req = DcRequest.post(url);
+        PersoniumRequest req = PersoniumRequest.post(url);
         req.header(HttpHeaders.AUTHORIZATION, token);
         req.addJsonBody(PROPERTY_NAME_KEY, propertyName);
         req.addJsonBody(PROPERTY_ENTITYTYPE_NAME_KEY, entityTypeName);
@@ -196,7 +196,7 @@ public class PropertyUtils {
         req.addJsonBody(PROPERTY_UNIQUE_KEY_KEY, uniqueKey);
 
         // リクエスト実行
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
         if (code != -1) {
             assertEquals(code, response.getStatusCode());
         }
@@ -227,12 +227,12 @@ public class PropertyUtils {
      * @param entityTypeName EntityType名
      * @return レスポンス
      */
-    public static DcResponse get(String token, String cell, String box,
+    public static PersoniumResponse get(String token, String cell, String box,
             String collection, String propertyName, String entityTypeName) {
         String locationUrl = UrlUtils.property(cell, box, collection, propertyName, entityTypeName);
 
         // Property取得
-        DcRequest req = DcRequest.get(locationUrl);
+        PersoniumRequest req = PersoniumRequest.get(locationUrl);
         req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         req.header(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER + " " + token);
         return AbstractCase.request(req);
@@ -246,7 +246,7 @@ public class PropertyUtils {
      * @param collection コレクション名
      * @return レスポンス
      */
-    public static DcResponse list(
+    public static PersoniumResponse list(
             String token,
             String cell,
             String box,
@@ -263,7 +263,7 @@ public class PropertyUtils {
      * @param query クエリ
      * @return レスポンス
      */
-    public static DcResponse list(
+    public static PersoniumResponse list(
             String token,
             String cell,
             String box,
@@ -275,7 +275,7 @@ public class PropertyUtils {
         }
 
         // Property取得
-        DcRequest req = DcRequest.get(locationUrl);
+        PersoniumRequest req = PersoniumRequest.get(locationUrl);
         req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         req.header(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER + " " + token);
         return AbstractCase.request(req);
@@ -301,7 +301,7 @@ public class PropertyUtils {
      * @return レスポンス
      */
     @SuppressWarnings("unchecked")
-    public static DcResponse update(
+    public static PersoniumResponse update(
             String token, String cell, String box,
             String collection, String srcPropertyName,
             String srcEntityTypeName, String propertyName,
@@ -334,13 +334,13 @@ public class PropertyUtils {
      * @param body リクエストボディ
      * @return レスポンス
      */
-    public static DcResponse update(
+    public static PersoniumResponse update(
             String token, String cell, String box,
             String collection, String srcPropertyName,
             String srcEntityTypeName, JSONObject body) {
 
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.put(UrlUtils.property(cell, box, collection,
+        PersoniumRequest req = PersoniumRequest.put(UrlUtils.property(cell, box, collection,
                 srcPropertyName, srcEntityTypeName));
         req.header(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER + " " + token);
         req.header(HttpHeaders.IF_MATCH, "*");
@@ -362,16 +362,16 @@ public class PropertyUtils {
      * @param code 期待するレスポンスコード
      * @return レスポンス
      */
-    public static DcResponse delete(
+    public static PersoniumResponse delete(
             String token, String cell, String box, String collection,
             String entityTypeName, String propertyName, int code) {
 
         String url = UrlUtils.property(cell, box, collection, propertyName, entityTypeName);
-        DcRequest req = DcRequest.delete(url);
+        PersoniumRequest req = PersoniumRequest.delete(url);
         req.header(HttpHeaders.AUTHORIZATION, token);
 
         // リクエスト実行
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
         if (code != -1) {
             assertEquals(code, response.getStatusCode());
         }

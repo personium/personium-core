@@ -43,8 +43,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -55,7 +55,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserData一覧のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataListFilterTest extends AbstractUserDataTest {
 
@@ -463,7 +463,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
         String sdEntityTypeName = "SalesDetail";
         // ユーザデータの一覧取得
         String query = "?$inlinecount=allpages";
-        DcResponse res = UserDataUtils.listEntities(cellName, boxName, colName, sdEntityTypeName, query,
+        PersoniumResponse res = UserDataUtils.listEntities(cellName, boxName, colName, sdEntityTypeName, query,
                 AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK);
         JSONObject json = res.bodyAsJson();
         int count = Integer.parseInt((String) ((JSONObject) json.get("d")).get("__count"));
@@ -487,7 +487,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
         String sdEntityTypeName = "SalesDetail";
         // ユーザデータの一覧取得
         String query = "?$inlinecount=allpages";
-        DcResponse res = UserDataUtils.listEntities(cellName, boxName, colName, sdEntityTypeName, query,
+        PersoniumResponse res = UserDataUtils.listEntities(cellName, boxName, colName, sdEntityTypeName, query,
                 AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK);
         JSONObject json = res.bodyAsJson();
         int count = Integer.parseInt((String) ((JSONObject) json.get("d")).get("__count"));
@@ -514,7 +514,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
         String sdEntityTypeName = "SalesDetail";
         // ユーザデータの一覧取得
         String query = "?$inlinecount=allpages";
-        DcResponse res = UserDataUtils.listEntities(cellName, boxName, colName, sdEntityTypeName, query,
+        PersoniumResponse res = UserDataUtils.listEntities(cellName, boxName, colName, sdEntityTypeName, query,
                 AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK);
         JSONObject json = res.bodyAsJson();
         int count = Integer.parseInt((String) ((JSONObject) json.get("d")).get("__count"));
@@ -762,7 +762,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
             long date = parseDateStringToLong(dateStr);
 
             // ユーザデータの一覧取得
-            DcResponse searchResponse = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+            PersoniumResponse searchResponse = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                     "?$filter=__published+ge+" + date + "+and+__published+le+" + (date + 1000));
 
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
@@ -858,7 +858,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
             long date = parseDateStringToLong(dateStr);
 
             // ユーザデータの一覧取得
-            DcResponse searchResponse = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+            PersoniumResponse searchResponse = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                     "?$filter=__updated+ge+" + date + "+and+__updated+le+" + (date + 1000));
 
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
@@ -1311,7 +1311,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                 "?$filter=japanese+eq+%27部分一致検索テスト%27"
                         + "+and+japanese+eq+%27部分一致検索漢字のテスト%27");
 
@@ -1481,7 +1481,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                 "?$filter=japanese+eq+%27部分一致検索テスト%27"
                         + "+or+japanese+eq+%27部分一致検索漢字のテスト%27");
 
@@ -1882,7 +1882,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     body, cellName, boxName, colName, entityType);
 
             // ユーザデータの一覧取得
-            DcResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
+            PersoniumResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
                     entityType,
                     "?$filter=dynamicProperty+eq+%27" + value + "%27&$inlinecount=allpages");
 
@@ -1921,7 +1921,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     body, cellName, boxName, colName, entityType);
 
             // ユーザデータの一覧取得
-            DcResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
+            PersoniumResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
                     entityType,
                     "?$filter=dynamicProperty+eq+%27" + value + "%27&$inlinecount=allpages");
 
@@ -1958,7 +1958,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     body, cellName, boxName, colName, entityType);
 
             // ユーザデータの一覧取得 gt
-            DcResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
+            PersoniumResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
                     entityType,
                     "?$filter=dynamicProperty+gt+%27" + UserDataUtils.createString(queryLength - 1) + "0"
                             + "%27&$inlinecount=allpages");
@@ -2019,7 +2019,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     body, cellName, boxName, colName, entityType);
 
             // ユーザデータの一覧取得 gt
-            DcResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
+            PersoniumResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
                     entityType,
                     "?$filter=dynamicProperty+gt+%27" + UserDataUtils.createString(queryLength - 1) + "0"
                             + "%27&$inlinecount=allpages");
@@ -2076,7 +2076,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     body, cellName, boxName, colName, entityType);
 
             // ユーザデータの一覧取得 startswith
-            DcResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
+            PersoniumResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
                     entityType,
                     "?$filter=startswith(dynamicProperty,%27" + value + "%27)&$inlinecount=allpages");
             // ヒット数のチェック
@@ -2115,7 +2115,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     body, cellName, boxName, colName, entityType);
 
             // ユーザデータの一覧取得 startswith
-            DcResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
+            PersoniumResponse response = UserDataListFilterTest.getUserDataWithDcClient(cellName, boxName, colName,
                     entityType,
                     "?$filter=startswith(dynamicProperty,%27" + value + "%27)&$inlinecount=allpages");
             // ヒット数のチェック

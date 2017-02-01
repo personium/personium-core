@@ -42,8 +42,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.box.acl.jaxb.Acl;
 import io.personium.test.jersey.box.odatacol.schema.complextype.ComplexTypeUtils;
 import io.personium.test.jersey.box.odatacol.schema.complextypeproperty.ComplexTypePropertyUtils;
@@ -66,7 +66,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
  * BOXレベル-スキーマ変更に関するACLのテスト.<br />
  * ※データの存在チェックよりも権限チェックの方が先に行われるため、事前にデータを作成せずに行っている.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class AclAlterSchemaTest extends JerseyTest {
 
@@ -316,7 +316,7 @@ public class AclAlterSchemaTest extends JerseyTest {
         PropertyUtils.create(OAuth2Helper.Scheme.BEARER + " " + token, CELL_NAME, BOX_NAME, COL_NAME,
                 entityTypeName, propertyName, "Edm.Int32", true, null, "None", false, null,
                 HttpStatus.SC_FORBIDDEN);
-        DcResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
+        PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_NOT_FOUND);
         res = PropertyUtils.list(token, CELL_NAME, BOX_NAME, COL_NAME);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
@@ -451,7 +451,7 @@ public class AclAlterSchemaTest extends JerseyTest {
         // 参照系: OK 更新系: NG
         ComplexTypePropertyUtils.createWithToken(token, CELL_NAME, BOX_NAME, COL_NAME, complexTypePropertyName,
                 complexTypeName, "Edm.Int32", HttpStatus.SC_FORBIDDEN);
-        DcResponse res = ComplexTypePropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME,
+        PersoniumResponse res = ComplexTypePropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME,
                 complexTypePropertyName, complexTypeName);
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_NOT_FOUND);
         ComplexTypePropertyUtils.list(token, CELL_NAME, BOX_NAME, COL_NAME, HttpStatus.SC_OK);
@@ -657,7 +657,7 @@ public class AclAlterSchemaTest extends JerseyTest {
             UserDataUtils.create(MASTER_TOKEN, HttpStatus.SC_CREATED, body, CELL_NAME, BOX_NAME, COL_NAME,
                     entityTypeName);
             // ダイナミックプロパティに対する確認
-            DcResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
+            PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
             res = PropertyUtils.list(token, CELL_NAME, BOX_NAME, COL_NAME);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
@@ -679,7 +679,7 @@ public class AclAlterSchemaTest extends JerseyTest {
             UserDataUtils.create(MASTER_TOKEN, HttpStatus.SC_CREATED, body, CELL_NAME, BOX_NAME, COL_NAME,
                     entityTypeName);
             // ダイナミックプロパティに対する確認
-            DcResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
+            PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
             res = PropertyUtils.list(token, CELL_NAME, BOX_NAME, COL_NAME);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
@@ -701,7 +701,7 @@ public class AclAlterSchemaTest extends JerseyTest {
             UserDataUtils.create(MASTER_TOKEN, HttpStatus.SC_CREATED, body, CELL_NAME, BOX_NAME, COL_NAME,
                     entityTypeName);
             // ダイナミックプロパティに対する確認
-            DcResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
+            PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
             res = PropertyUtils.list(token, CELL_NAME, BOX_NAME, COL_NAME);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
@@ -723,7 +723,7 @@ public class AclAlterSchemaTest extends JerseyTest {
             UserDataUtils.create(MASTER_TOKEN, HttpStatus.SC_CREATED, body, CELL_NAME, BOX_NAME, COL_NAME,
                     entityTypeName);
             // ダイナミックプロパティに対する確認
-            DcResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
+            PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
             res = PropertyUtils.list(token, CELL_NAME, BOX_NAME, COL_NAME);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);

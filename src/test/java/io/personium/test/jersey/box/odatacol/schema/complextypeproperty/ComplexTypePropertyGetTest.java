@@ -40,9 +40,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DaoException;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -50,7 +50,7 @@ import io.personium.test.unit.core.UrlUtils;
 /**
  * ComplexTypeProperty1件取得のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class ComplexTypePropertyGetTest extends ODataCommon {
 
@@ -81,7 +81,7 @@ public class ComplexTypePropertyGetTest extends ODataCommon {
     public void before() {
         // ComplexType作成
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(ComplexTypePropertyUtils.CT_REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(ComplexTypePropertyUtils.CT_REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(COMPLEX_TYPE_NAME_KEY, COMPLEX_TYPE_NAME);
         // リクエスト実行
@@ -107,7 +107,7 @@ public class ComplexTypePropertyGetTest extends ODataCommon {
 
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY, CT_PROPERTY_NAME);
             req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY, COMPLEX_TYPE_NAME);
@@ -115,17 +115,17 @@ public class ComplexTypePropertyGetTest extends ODataCommon {
                     EdmSimpleType.STRING.getFullyQualifiedTypeName());
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // 作成時のetag
             String etag = getEtag(response);
 
             // ComplexTypeProperty取得
-            req = DcRequest.get(ctplocationUrl);
+            req = PersoniumRequest.get(ctplocationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse resGet = request(req);
+            PersoniumResponse resGet = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -154,9 +154,9 @@ public class ComplexTypePropertyGetTest extends ODataCommon {
                 CT_PROPERTY_NAME, COMPLEX_TYPE_NAME);
 
         // ComplexTypeProperty取得
-        DcRequest req = DcRequest.get(ctplocationUrl);
+        PersoniumRequest req = PersoniumRequest.get(ctplocationUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse resGet = request(req);
+        PersoniumResponse resGet = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_NOT_FOUND, resGet.getStatusCode());
@@ -173,7 +173,7 @@ public class ComplexTypePropertyGetTest extends ODataCommon {
                 CT_PROPERTY_NAME, "test");
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY, CT_PROPERTY_NAME);
             req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY, COMPLEX_TYPE_NAME);
@@ -181,13 +181,13 @@ public class ComplexTypePropertyGetTest extends ODataCommon {
                     EdmSimpleType.STRING.getFullyQualifiedTypeName());
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // ComplexTypeProperty取得
-            req = DcRequest.get(ctplocationUrlGet);
+            req = PersoniumRequest.get(ctplocationUrlGet);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse resGet = request(req);
+            PersoniumResponse resGet = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_NOT_FOUND, resGet.getStatusCode());
@@ -208,7 +208,7 @@ public class ComplexTypePropertyGetTest extends ODataCommon {
 
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY, CT_PROPERTY_NAME);
             req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY, COMPLEX_TYPE_NAME);
@@ -219,14 +219,14 @@ public class ComplexTypePropertyGetTest extends ODataCommon {
             req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_COLLECTION_KIND_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // ComplexTypeProperty取得
-            req = DcRequest.get(ctplocationUrl);
+            req = PersoniumRequest.get(ctplocationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse resGet = request(req);
+            PersoniumResponse resGet = request(req);
 
             // レスポンスチェック
             String resBody = resGet.bodyAsString();

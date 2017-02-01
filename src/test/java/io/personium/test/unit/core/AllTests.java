@@ -25,7 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    DcCoreConfigTest.class
+    PersoniumUnitConfigTest.class
     })
 public class AllTests {
 }

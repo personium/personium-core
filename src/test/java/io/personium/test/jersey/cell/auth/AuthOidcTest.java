@@ -27,7 +27,7 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
 import com.sun.jersey.test.framework.JerseyTest;
@@ -39,7 +39,7 @@ import com.sun.jersey.test.framework.JerseyTest;
  * 検証可能なIDTokenを用いた異常系のテストも同様に未実装.
  * <TODO>: 正常系テスト
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class AuthOidcTest extends JerseyTest {
 

@@ -36,9 +36,9 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DaoException;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -48,7 +48,7 @@ import io.personium.test.utils.TResponse;
 /**
  * Event APIのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class EventTest extends ODataCommon {
 
@@ -233,11 +233,11 @@ public class EventTest extends ODataCommon {
                 .statusCode(HttpStatus.SC_OK);
 
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.get(UrlUtils.log(Setup.TEST_CELL1) + "/current/default.log");
+        PersoniumRequest req = PersoniumRequest.get(UrlUtils.log(Setup.TEST_CELL1) + "/current/default.log");
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
         assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
         String responseBody;

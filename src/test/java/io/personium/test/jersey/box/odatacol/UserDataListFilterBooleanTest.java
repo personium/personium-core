@@ -32,9 +32,9 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
@@ -43,7 +43,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserDataのBoolean型への検索テスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
 
@@ -68,10 +68,10 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=bool+eq+true&$inlinecount=allpages";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -102,10 +102,10 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=bool+eq+false&$inlinecount=allpages";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -136,10 +136,10 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                     + "?$filter=bool+eq+null&$inlinecount=allpages";
-            DcRequest req = DcRequest.get(searchRequestUrl);
+            PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse searchResponse = request(req);
+            PersoniumResponse searchResponse = request(req);
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             JSONObject responseBody = searchResponse.bodyAsJson();
 
@@ -166,10 +166,10 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
         String entityTypeName = "SalesDetail";
         String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                 + "?$filter=truth+eq+%27true%27&$inlinecount=allpages";
-        DcRequest req = DcRequest.get(searchRequestUrl);
+        PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
         req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse searchResponse = request(req);
+        PersoniumResponse searchResponse = request(req);
         assertEquals(HttpStatus.SC_BAD_REQUEST, searchResponse.getStatusCode());
     }
 
@@ -183,10 +183,10 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
         String entityTypeName = "SalesDetail";
         String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                 + "?$filter=truth+eq+%27false%27&$inlinecount=allpages";
-        DcRequest req = DcRequest.get(searchRequestUrl);
+        PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
         req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse searchResponse = request(req);
+        PersoniumResponse searchResponse = request(req);
         assertEquals(HttpStatus.SC_BAD_REQUEST, searchResponse.getStatusCode());
     }
 
@@ -200,10 +200,10 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
         String entityTypeName = "SalesDetail";
         String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                 + "?$filter=truth+eq+%27null%27&$inlinecount=allpages";
-        DcRequest req = DcRequest.get(searchRequestUrl);
+        PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
         req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse searchResponse = request(req);
+        PersoniumResponse searchResponse = request(req);
         assertEquals(HttpStatus.SC_BAD_REQUEST, searchResponse.getStatusCode());
     }
 
@@ -217,10 +217,10 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
         String entityTypeName = "SalesDetail";
         String searchRequestUrl = UrlUtils.userData(cellName, boxName, colName, entityTypeName)
                 + "?$filter=truth+eq+%27hoge%27&$inlinecount=allpages";
-        DcRequest req = DcRequest.get(searchRequestUrl);
+        PersoniumRequest req = PersoniumRequest.get(searchRequestUrl);
         req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse searchResponse = request(req);
+        PersoniumResponse searchResponse = request(req);
         assertEquals(HttpStatus.SC_BAD_REQUEST, searchResponse.getStatusCode());
     }
 

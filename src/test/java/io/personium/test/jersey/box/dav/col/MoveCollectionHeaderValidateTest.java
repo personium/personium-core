@@ -30,9 +30,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.DavResourceUtils;
@@ -49,7 +49,7 @@ import com.sun.jersey.test.framework.JerseyTest;
  * </ul>
  * @see io.personium.test.jersey.box.dav.file.MoveFileTest
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class MoveCollectionHeaderValidateTest extends JerseyTest {
     private static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
@@ -75,9 +75,9 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.REQUIRED_REQUEST_HEADER_NOT_EXIST.params(
@@ -101,10 +101,10 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.REQUIRED_REQUEST_HEADER_NOT_EXIST.params(
@@ -132,10 +132,10 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
@@ -164,10 +164,10 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
@@ -196,10 +196,10 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
             // 移動元のコレクションが存在しないこと
@@ -226,11 +226,11 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.OVERWRITE, "");
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
@@ -261,11 +261,11 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.OVERWRITE, "Y");
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
@@ -296,11 +296,11 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.OVERWRITE, "T");
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
             // 移動元のコレクションが存在しないこと
@@ -328,11 +328,11 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.DEPTH, depth);
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
@@ -363,11 +363,11 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.DEPTH, depth);
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
             // 移動元のコレクションが存在しないこと
@@ -395,11 +395,11 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.DEPTH, depth);
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
             // 移動元のコレクションが存在しないこと
@@ -427,11 +427,11 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.DEPTH, depth);
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
@@ -461,12 +461,12 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.OVERWRITE, "T");
             req.header(HttpHeaders.DEPTH, "infinity");
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
             // 移動元のコレクションが存在しないこと
@@ -493,13 +493,13 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.DEPTH, "infinity");
             req.header(HttpHeaders.OVERWRITE, "T");
             req.header(HttpHeaders.IF_MATCH, "");
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertEquals(HttpStatus.SC_PRECONDITION_FAILED, response.getStatusCode());
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.ETAG_NOT_MATCH;
@@ -529,13 +529,13 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.OVERWRITE, "T");
             req.header(HttpHeaders.DEPTH, "infinity");
             req.header(HttpHeaders.IF_MATCH, "*");
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
             // 移動元のコレクションが存在しないこと
@@ -564,13 +564,13 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.DEPTH, "infinity");
             req.header(HttpHeaders.OVERWRITE, "T");
             req.header(HttpHeaders.IF_MATCH, etag + "dummy");
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertEquals(HttpStatus.SC_PRECONDITION_FAILED, response.getStatusCode());
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.ETAG_NOT_MATCH;
@@ -602,13 +602,13 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
 
             // 移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.DEPTH, "infinity");
             req.header(HttpHeaders.OVERWRITE, "T");
             req.header(HttpHeaders.IF_MATCH, etag);
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
             // 移動元のコレクションが存在しないこと

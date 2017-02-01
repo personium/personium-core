@@ -41,21 +41,21 @@ import org.xml.sax.SAXException;
 /**
  * DAVのレスポンス型.
  */
-public class DcResponse {
+public class PersoniumResponse {
     /** レスポンスオブジェクト. */
     private HttpResponse response;
 
     /**
      * コンストラクタ.
      */
-    public DcResponse() {
+    public PersoniumResponse() {
     }
 
     /**
      * コンストラクタ.
      * @param resObj レスポンスオブジェクト
      */
-    public DcResponse(final HttpResponse resObj) {
+    public PersoniumResponse(final HttpResponse resObj) {
         this.response = resObj;
     }
 

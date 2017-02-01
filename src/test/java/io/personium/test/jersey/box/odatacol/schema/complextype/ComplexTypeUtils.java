@@ -27,8 +27,8 @@ import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ComplexType;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
@@ -53,16 +53,16 @@ public class ComplexTypeUtils {
      * @param code 期待するレスポンスコード
      * @return レスポンス
      */
-    public static DcResponse create(
+    public static PersoniumResponse create(
             String cell, String box, String col,
             String complexTypeName, int code) {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(UrlUtils.complexType(cell, box, col, null));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.complexType(cell, box, col, null));
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.addJsonBody(ComplexType.P_COMPLEXTYPE_NAME.getName(), complexTypeName);
 
         // リクエスト実行
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
         if (code != -1) {
             assertEquals(code, response.getStatusCode());
         }
@@ -79,7 +79,7 @@ public class ComplexTypeUtils {
      * @param code 期待するレスポンスコード
      * @return レスポンス
      */
-    public static DcResponse createWithToken(
+    public static PersoniumResponse createWithToken(
             String token,
             String cell,
             String box,
@@ -87,12 +87,12 @@ public class ComplexTypeUtils {
             String complexTypeName,
             int code) {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(UrlUtils.complexType(cell, box, col, null));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.complexType(cell, box, col, null));
         req.header(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER + " " + token);
         req.addJsonBody(ComplexType.P_COMPLEXTYPE_NAME.getName(), complexTypeName);
 
         // リクエスト実行
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
         if (code != -1) {
             assertEquals(code, response.getStatusCode());
         }
@@ -269,15 +269,15 @@ public class ComplexTypeUtils {
      * @param code 期待するレスポンスコード
      * @return レスポンス
      */
-    public static DcResponse delete(
+    public static PersoniumResponse delete(
             String token, String cell, String box, String col, String complexTypeName, int code) {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.delete(UrlUtils.complexType(
+        PersoniumRequest req = PersoniumRequest.delete(UrlUtils.complexType(
                 cell, box, col, complexTypeName));
         req.header(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER + " " + token);
 
         // リクエスト実行
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
         if (code != -1) {
             assertEquals(code, response.getStatusCode());
         }

@@ -40,9 +40,9 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DaoException;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -52,7 +52,7 @@ import io.personium.test.utils.TResponse;
 /**
  * UserData取得のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataGetTest extends AbstractUserDataTest {
 
@@ -891,7 +891,7 @@ public class UserDataGetTest extends AbstractUserDataTest {
             body.put("complexProperty", complexBody);
             body.put("dynamicProperty", "dynamicStringProperty");
             complexBody.put("complexStringProperty", "complexStringProprty");
-            DcResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "selectTestEntity", body);
             userdataUrl = createResponse.getFirstHeader(HttpHeaders.LOCATION);
 
@@ -937,7 +937,7 @@ public class UserDataGetTest extends AbstractUserDataTest {
             body.put("complexProperty", complexBody);
             body.put("dynamicProperty", "dynamicStringProperty");
             complexBody.put("complexStringProperty", "complexStringProprty");
-            DcResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "selectTestEntity", body);
             userdataUrl = createResponse.getFirstHeader(HttpHeaders.LOCATION);
 
@@ -984,7 +984,7 @@ public class UserDataGetTest extends AbstractUserDataTest {
             body.put("complexProperty", complexBody);
             body.put("dynamicProperty", "dynamicStringProperty");
             complexBody.put("complexStringProperty", "complexStringProprty");
-            DcResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "selectTestEntity", body);
             userdataUrl = createResponse.getFirstHeader(HttpHeaders.LOCATION);
 
@@ -1031,7 +1031,7 @@ public class UserDataGetTest extends AbstractUserDataTest {
             body.put("complexProperty", complexBody);
             body.put("dynamicProperty", "dynamicStringProperty");
             complexBody.put("complexStringProperty", "complexStringProprty");
-            DcResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "selectTestEntity", body);
             userdataUrl = createResponse.getFirstHeader(HttpHeaders.LOCATION);
 
@@ -1078,7 +1078,7 @@ public class UserDataGetTest extends AbstractUserDataTest {
             body.put("complexProperty", complexBody);
             body.put("dynamicProperty", "dynamicStringProperty");
             complexBody.put("complexStringProperty", "complexStringProprty");
-            DcResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "selectTestEntity", body);
             userdataUrl = createResponse.getFirstHeader(HttpHeaders.LOCATION);
 
@@ -1125,7 +1125,7 @@ public class UserDataGetTest extends AbstractUserDataTest {
             body.put("complexProperty", complexBody);
             body.put("dynamicProperty", "dynamicStringProperty");
             complexBody.put("complexStringProperty", "complexStringProprty");
-            DcResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "selectTestEntity", body);
             userdataUrl = createResponse.getFirstHeader(HttpHeaders.LOCATION);
 
@@ -1171,10 +1171,10 @@ public class UserDataGetTest extends AbstractUserDataTest {
             // ユーザデータの一件取得
             String url = String.format("%s/%s/%s/%s/%s('%s')",
                     UrlUtils.getBaseUrl(), cellName, boxName, colName, entityTypeName, userDataId);
-            DcRequest request = DcRequest.get(url);
+            PersoniumRequest request = PersoniumRequest.get(url);
             request.header("Accept", "application/json");
             request.header("Authorization", "Bearer " + AbstractCase.MASTER_TOKEN_NAME);
-            DcResponse dres = ODataCommon.request(request);
+            PersoniumResponse dres = ODataCommon.request(request);
             assertEquals(dres.getStatusCode(), HttpStatus.SC_OK);
 
             // レスポンスボディーのチェック
@@ -1206,10 +1206,10 @@ public class UserDataGetTest extends AbstractUserDataTest {
             // ユーザデータの一覧取得
             String url = String.format("%s/%s/%s/%s/%s",
                     UrlUtils.getBaseUrl(), cellName, boxName, colName, entityTypeName);
-            DcRequest request = DcRequest.get(url);
+            PersoniumRequest request = PersoniumRequest.get(url);
             request.header("Accept", "application/json");
             request.header("Authorization", "Bearer " + AbstractCase.MASTER_TOKEN_NAME);
-            DcResponse dres = ODataCommon.request(request);
+            PersoniumResponse dres = ODataCommon.request(request);
             assertEquals(dres.getStatusCode(), HttpStatus.SC_OK);
 
             // レスポンスボディーのチェック
@@ -1236,12 +1236,12 @@ public class UserDataGetTest extends AbstractUserDataTest {
             // ユーザデータ更新
             String requestURL =
                     UrlUtils.userdata(cellName, boxName, colName, entityTypeName + "(" + userdataKey + ")", null);
-            DcRequest req = DcRequest.get(requestURL);
+            PersoniumRequest req = PersoniumRequest.get(requestURL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.IF_MATCH, "*");
 
             // リクエスト実行
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());

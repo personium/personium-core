@@ -30,9 +30,9 @@ import org.json.simple.JSONObject;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
 import io.personium.test.unit.core.UrlUtils;
@@ -345,9 +345,9 @@ public class CellUtils {
      * @param cellName 対象セル名
      * @return レスポンス
      */
-    public static DcResponse bulkDeletion(final String tokenWithAuthSchema, final String cellName) {
+    public static PersoniumResponse bulkDeletion(final String tokenWithAuthSchema, final String cellName) {
         // セル再帰的削除APIを実行する
-        DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
+        PersoniumRequest request = PersoniumRequest.delete(UrlUtils.cellRoot(cellName));
         request.header(HttpHeaders.AUTHORIZATION, tokenWithAuthSchema)
                 .header("X-Personium-Recursive", "true");
         return AbstractCase.request(request);
@@ -511,16 +511,16 @@ public class CellUtils {
      * @param object イベントの対象オブジェクト
      * @param result イベントの結果
      * @return レスポンス
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @SuppressWarnings("unchecked")
-    public static DcResponse eventUnderBox(String authorization,
+    public static PersoniumResponse eventUnderBox(String authorization,
             String cellName,
             String boxName,
             String level,
             String action,
             String object,
-            String result) throws DcException {
+            String result) throws PersoniumException {
         JSONObject body = new JSONObject();
         body.put("level", level);
         body.put("action", action);
@@ -562,9 +562,9 @@ public class CellUtils {
      * @param collection ログの種別（"current" or "archive")
      * @param fileName ログのパス("default.log" or "default.log.{no}")
      * @return レスポンス DcResponse
-     * @throws DcException DcException
+     * @throws PersoniumException DcException
      */
-    public static DcResponse getLog(String cellName, String collection, String fileName) throws DcException {
+    public static PersoniumResponse getLog(String cellName, String collection, String fileName) throws PersoniumException {
         PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
@@ -577,11 +577,11 @@ public class CellUtils {
      * @param fileName ログのパス("default.log" or "default.log.{no}")
      * @param authorization auth-schemaを含むAuthorizationヘッダの値
      * @return レスポンス DcResponse
-     * @throws DcException DcException
+     * @throws PersoniumException DcException
      */
-    public static DcResponse getCurrentLogWithAnyAuth(String cellName,
+    public static PersoniumResponse getCurrentLogWithAnyAuth(String cellName,
             String fileName,
-            String authorization) throws DcException {
+            String authorization) throws PersoniumException {
         PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);
@@ -613,10 +613,10 @@ public class CellUtils {
      * @param newPassword 新しいパスワード
      * @param authorization auth-schemaを含むAuthorizationヘッダの値
      * @return レスポンス
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
-    public static DcResponse changePassword(String cellName, String newPassword, String authorization)
-            throws DcException {
+    public static PersoniumResponse changePassword(String cellName, String newPassword, String authorization)
+            throws PersoniumException {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -635,15 +635,15 @@ public class CellUtils {
      * @param schemaAccount スキーマ認証元Cellに登録されたアカウント
      * @param schemaPassword スキーマ認証元Cellに登録されたパスワード
      * @return レスポンス
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
-    public static DcResponse schemaAuthenticateWithBasic(
+    public static PersoniumResponse schemaAuthenticateWithBasic(
             String cellName,
             String account,
             String password,
             String schemaCell,
             String schemaAccount,
-            String schemaPassword) throws DcException {
+            String schemaPassword) throws PersoniumException {
         // スキーマ認証元Cellでトークン認証
         TResponse res = tokenAuthenticationWithTarget(schemaCell, schemaAccount, schemaPassword, cellName);
         String schemaAuthenticatedToken = (String) res.bodyAsJson().get("access_token");
@@ -694,15 +694,15 @@ public class CellUtils {
      * @param state リクエストとコールバックの間で状態を維持するために使用するランダムな値
      * @param addHeader 追加のヘッダ情報
      * @return レスポンス
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
-    public static DcResponse implicitflowAuthenticate(String cellName,
+    public static PersoniumResponse implicitflowAuthenticate(String cellName,
             String schemaCell,
             String schemaAccount,
             String schemaPassword,
             String redirectPath,
             String state,
-            HashMap<String, String> addHeader) throws DcException {
+            HashMap<String, String> addHeader) throws PersoniumException {
         String clientId = UrlUtils.cellRoot(schemaCell);
         if (null == redirectPath) {
             redirectPath = "__/redirect.html";
@@ -732,11 +732,11 @@ public class CellUtils {
      * @param schemaCell schemaCell名
      * @param authorization auth-schemaを含むAuthorizationヘッダの値
      * @return レスポンス
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
-    public static DcResponse getBoxUrl(String cellName,
+    public static PersoniumResponse getBoxUrl(String cellName,
             String schemaCell,
-            String authorization) throws DcException {
+            String authorization) throws PersoniumException {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         HashMap<String, String> requestheaders = new HashMap<String, String>();

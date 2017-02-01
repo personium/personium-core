@@ -37,8 +37,8 @@ import io.personium.core.model.Cell;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 
@@ -93,7 +93,7 @@ public class ReadListTest extends ODataCommon {
             cellNameList[i] = CELL_NAME_PREFIX + i + Long.toString(Calendar.getInstance().getTimeInMillis());
 
             // Cellを作成
-            DcResponse res;
+            PersoniumResponse res;
             res = createCell(cellNameList[i]);
 
             // Cell作成のレスポンスチェック
@@ -124,7 +124,7 @@ public class ReadListTest extends ODataCommon {
     @Test
     public final void Cellの一覧取得の正常系のテスト() {
         cellCreate(DEF_CELL_NUM);
-        DcRequest req = DcRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         req.header("Accept", MediaType.APPLICATION_JSON);
         this.cellListNormal(req);
     }
@@ -135,7 +135,7 @@ public class ReadListTest extends ODataCommon {
     @Test
     public final void Cellの一覧取得のAcceptヘッダ無しのテスト() {
         cellCreate(DEF_CELL_NUM);
-        DcRequest req = DcRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         this.cellListNormalXml(req);
     }
 
@@ -146,7 +146,7 @@ public class ReadListTest extends ODataCommon {
     @Test
     public final void Cellの一覧取得でAcceptヘッダにATOM_XMLを指定した場合XML形式で返却されること() {
         cellCreate(DEF_CELL_NUM);
-        DcRequest req = DcRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         // 制限によりATOM_XMLを指定してもjson形式で返却される.
         req.header("Accept", MediaType.APPLICATION_ATOM_XML);
         this.cellListNormalXml(req);
@@ -159,10 +159,10 @@ public class ReadListTest extends ODataCommon {
     @Test
     public final void Cellの一覧取得のAcceptを不正値指定するテスト() {
         cellCreate(DEF_CELL_NUM);
-        DcRequest req = DcRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         req.header("Accept", MediaType.APPLICATION_OCTET_STREAM);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 未対応のAcceptを指定した場合はUnsupportedMediaType
         assertEquals(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE, res.getStatusCode());
@@ -174,7 +174,7 @@ public class ReadListTest extends ODataCommon {
     @Test
     public final void Cellの一覧取得のQueryを無視するのテスト() {
         cellCreate(DEF_CELL_NUM);
-        DcRequest req = DcRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         req.header("Accept", MediaType.APPLICATION_JSON);
         // 制限としているQueryを指定しても無視される事
         req.query("$skiptoken=13S35K");
@@ -187,7 +187,7 @@ public class ReadListTest extends ODataCommon {
     @Test
     public final void Cellの一覧取得の不正なQueryを無視するのテスト() {
         cellCreate(DEF_CELL_NUM);
-        DcRequest req = DcRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         req.header("Accept", MediaType.APPLICATION_JSON);
         // 不正なQueryを指定しても無視される事
         req.query("query=test");
@@ -200,7 +200,7 @@ public class ReadListTest extends ODataCommon {
     @Test
     public final void Cellの一覧取得の不正なメソッドPUTのテスト() {
         cellCreate(DEF_CELL_NUM);
-        DcRequest req = DcRequest.put(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.put(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         this.cellErrorInvalidMethod(req);
     }
 
@@ -210,7 +210,7 @@ public class ReadListTest extends ODataCommon {
     @Test
     public final void Cellの一覧取得のAuthorizationヘッダ無しのテスト() {
         cellCreate(DEF_CELL_NUM);
-        DcRequest req = DcRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         this.cellErrorAuthNone(req);
     }
 
@@ -220,7 +220,7 @@ public class ReadListTest extends ODataCommon {
     @Test
     public final void Cellの一覧取得のAuthorizationヘッダが不正なパターンのテスト() {
         cellCreate(DEF_CELL_NUM);
-        DcRequest req = DcRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         this.cellErrorAuthInvalid(req);
     }
 }

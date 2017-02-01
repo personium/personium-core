@@ -57,7 +57,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 /**
  * OPTIONSメソッドに関するテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class OptionsMethodTest extends JerseyTest {
 

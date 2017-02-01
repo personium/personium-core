@@ -33,9 +33,9 @@ import io.personium.core.model.ctl.ComplexType;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -43,7 +43,7 @@ import io.personium.test.unit.core.UrlUtils;
 /**
  * ComplexType登録のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class ComplexTypeCreateTest extends ODataCommon {
 
@@ -76,12 +76,12 @@ public class ComplexTypeCreateTest extends ODataCommon {
                 UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, COMPLEX_TYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(COMPLEX_TYPE_NAME_KEY, COMPLEX_TYPE_NAME);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -100,12 +100,12 @@ public class ComplexTypeCreateTest extends ODataCommon {
     @Test
     public final void ComplexTypeのName属性がない場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addStringBody("{}");
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -120,12 +120,12 @@ public class ComplexTypeCreateTest extends ODataCommon {
     @Test
     public final void ComplexTypeのNameが空文字の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(COMPLEX_TYPE_NAME_KEY, "");
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -144,12 +144,12 @@ public class ComplexTypeCreateTest extends ODataCommon {
                 UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, complexTypeName);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(COMPLEX_TYPE_NAME_KEY, complexTypeName);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -172,12 +172,12 @@ public class ComplexTypeCreateTest extends ODataCommon {
                 UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, complexTypeName);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(COMPLEX_TYPE_NAME_KEY, complexTypeName);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -196,12 +196,12 @@ public class ComplexTypeCreateTest extends ODataCommon {
     @Test
     public final void ComplexTypeのNameが129文字の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(COMPLEX_TYPE_NAME_KEY, STRING_LENGTH_129);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -220,12 +220,12 @@ public class ComplexTypeCreateTest extends ODataCommon {
                 UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, complexTypeName);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(COMPLEX_TYPE_NAME_KEY, complexTypeName);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -244,12 +244,12 @@ public class ComplexTypeCreateTest extends ODataCommon {
     @Test
     public final void ComplexTypeのNameが半角英数字以外の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(COMPLEX_TYPE_NAME_KEY, "Ad.*s");
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -264,12 +264,12 @@ public class ComplexTypeCreateTest extends ODataCommon {
     @Test
     public final void ComplexTypeのNameが先頭文字がハイフンの場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(COMPLEX_TYPE_NAME_KEY, "-Address");
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -284,12 +284,12 @@ public class ComplexTypeCreateTest extends ODataCommon {
     @Test
     public final void ComplexTypeのNameが先頭文字がアンダーバーの場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(COMPLEX_TYPE_NAME_KEY, "_Address");
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -307,12 +307,12 @@ public class ComplexTypeCreateTest extends ODataCommon {
                 UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, COMPLEX_TYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(COMPLEX_TYPE_NAME_KEY, COMPLEX_TYPE_NAME);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // リクエスト実行

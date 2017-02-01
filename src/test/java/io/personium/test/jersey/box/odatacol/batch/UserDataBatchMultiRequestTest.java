@@ -36,7 +36,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
@@ -47,7 +47,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserData$batch内に複数のリクエストが指定された場合のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
 

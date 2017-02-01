@@ -44,10 +44,10 @@ import com.sun.jersey.spi.container.WebApplication;
 
 
 /**
- * DcCoreContainerFilterユニットテストクラス.
+ * PersoniumCoreContainerFilterユニットテストクラス.
  */
 @Category({ Unit.class })
-public class DcCoreContainerFilterTest {
+public class PersoniumCoreContainerFilterTest {
     /**
      * リクエストフィルタとしてメソッド/ヘッダオーバライドを実施していることを確認.
      * X-FORWARDED-PROTO、X-FORWARDED-HOSTヘッダでリクエストUri, Base UriのPROTO, HOST部が書き換わることを確認。

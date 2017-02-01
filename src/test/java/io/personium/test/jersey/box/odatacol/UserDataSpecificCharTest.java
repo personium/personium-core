@@ -31,9 +31,9 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DaoException;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.TResponse;
@@ -42,7 +42,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserDataの特殊文字のレスポンスチェックのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataSpecificCharTest extends AbstractUserDataTest {
 
@@ -124,10 +124,10 @@ public class UserDataSpecificCharTest extends AbstractUserDataTest {
                 // ユーザデータの一件取得
                 String url = String.format("%s/%s/%s/%s/%s('%s')",
                         UrlUtils.getBaseUrl(), cellName, boxName, colName, entityTypeName, userDataId);
-                DcRequest request = DcRequest.get(url);
+                PersoniumRequest request = PersoniumRequest.get(url);
                 request.header("Accept", "application/json");
                 request.header("Authorization", "Bearer " + AbstractCase.MASTER_TOKEN_NAME);
-                DcResponse dres = ODataCommon.request(request);
+                PersoniumResponse dres = ODataCommon.request(request);
                 assertEquals(f.testComment, dres.getStatusCode(), HttpStatus.SC_OK);
 
                 // レスポンスボディーのチェック
@@ -138,7 +138,7 @@ public class UserDataSpecificCharTest extends AbstractUserDataTest {
                 // ユーザデータの一覧取得
                 url = String.format("%s/%s/%s/%s/%s",
                         UrlUtils.getBaseUrl(), cellName, boxName, colName, entityTypeName);
-                DcRequest listRequest = DcRequest.get(url);
+                PersoniumRequest listRequest = PersoniumRequest.get(url);
                 listRequest.header("Accept", "application/json");
                 listRequest.header("Authorization", "Bearer " + AbstractCase.MASTER_TOKEN_NAME);
                 dres = ODataCommon.request(listRequest);

@@ -46,8 +46,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
@@ -139,9 +139,9 @@ public class AccountTest extends ODataCommon {
         // TODO 一件取得が無いのはバグ。
         log.debug("koooooooo");
 
-        DcRequest req = DcRequest.get(UrlUtils.accountLinks(cellName, testAccountName))
+        PersoniumRequest req = PersoniumRequest.get(UrlUtils.accountLinks(cellName, testAccountName))
                 .header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).header(HttpHeaders.ACCEPT, "application/json");
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         JSONObject linkJson = res.bodyAsJson();
         JSONArray linksResults = getResultsFromEntitysResponse(linkJson);
@@ -158,7 +158,7 @@ public class AccountTest extends ODataCommon {
 
         // パスワード認証。セルトークン取得。
         // grant_type=password&username={username}&password={password}
-        req = DcRequest.post(UrlUtils.auth(cellName));
+        req = PersoniumRequest.post(UrlUtils.auth(cellName));
         String authBody =
                 String.format("grant_type=password&username=%s&password=%s", testAccountName, testAccountPass);
         req.header(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded").addStringBody(authBody);
@@ -168,7 +168,7 @@ public class AccountTest extends ODataCommon {
         assertNotNull(token);
 
         // パスワード認証。トランスセルトークン取得
-        req = DcRequest.post(UrlUtils.auth(cellName));
+        req = PersoniumRequest.post(UrlUtils.auth(cellName));
         authBody = String.format("grant_type=password&username=%s&password=%s&p_target=%s",
                 testAccountName, testAccountPass, "https://example.com/testcell");
         req.header(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded").addStringBody(authBody);
@@ -189,20 +189,20 @@ public class AccountTest extends ODataCommon {
         // アカウント・ロールの紐付けのD
         String roleId = roleUrl.substring(roleUrl.indexOf("'") + 1);
         roleId = roleId.substring(0, roleId.indexOf("'"));
-        req = DcRequest.delete(UrlUtils.accountLink(cellName, testAccountName, roleId))
+        req = PersoniumRequest.delete(UrlUtils.accountLink(cellName, testAccountName, roleId))
                 .header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         res = request(req);
         assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
         // RoleのD
-        req = DcRequest.delete(roleUrl)
+        req = PersoniumRequest.delete(roleUrl)
                 .header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
                 .header(HttpHeaders.IF_MATCH, "*");
         res = request(req);
         assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
         // AccountのD
-        req = DcRequest.delete(accUrl)
+        req = PersoniumRequest.delete(accUrl)
                 .header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
                 .header(HttpHeaders.IF_MATCH, "*");
         res = request(req);
@@ -337,12 +337,12 @@ public class AccountTest extends ODataCommon {
      */
     protected String createBox2(final String boxName, final String boxSchema) {
         // BOXのC
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(cellName, Box.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(cellName, Box.EDM_TYPE_NAME));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", boxName);
         if (boxSchema != null) {
             req.addJsonBody("Schema", boxSchema);
         }
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
         String url = res.getFirstHeader(HttpHeaders.LOCATION);
         assertNotNull(url);

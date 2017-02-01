@@ -42,13 +42,13 @@ import io.personium.core.model.impl.es.ads.JdbcAds;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.unit.core.UrlUtils;
 
 /**
  * ODataEntityAccessorTestの単体テストケース.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
 public class ODataEntityAccessorTest {
 

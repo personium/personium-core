@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.AssociationEndUtils;
@@ -51,7 +51,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
  * UserDataのNavigationProperty経由一覧のテスト.
  * たくさんデータを登録するので、「Integration.class, Regression.class」では動作しない。
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
 public class UserDataListWithNPLimitTest extends JerseyTest {
     private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();

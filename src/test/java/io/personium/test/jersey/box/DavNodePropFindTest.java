@@ -39,7 +39,7 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
@@ -51,7 +51,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * PROPFINDのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class DavNodePropFindTest extends JerseyTest {
     // セル再帰的削除を使うための設定

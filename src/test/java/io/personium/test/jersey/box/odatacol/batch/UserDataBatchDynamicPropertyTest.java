@@ -37,9 +37,9 @@ import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -51,7 +51,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserData$batchのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest {
 
@@ -112,10 +112,10 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
 
             // Property一覧
             String locationUrlGet = UrlUtils.property(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, null, null);
-            DcRequest req = DcRequest.get(locationUrlGet + "?$inlinecount=allpages");
+            PersoniumRequest req = PersoniumRequest.get(locationUrlGet + "?$inlinecount=allpages");
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
             ODataCommon.checkResponseBodyCount(res.bodyAsJson(), 1);
 
             // UserData取得
@@ -182,10 +182,10 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
 
             // Property一覧
             String locationUrlGet = UrlUtils.property(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, null, null);
-            DcRequest req = DcRequest.get(locationUrlGet + "?$inlinecount=allpages");
+            PersoniumRequest req = PersoniumRequest.get(locationUrlGet + "?$inlinecount=allpages");
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
             ODataCommon.checkResponseBodyCount(res.bodyAsJson(), 1);
 
             // UserData取得
@@ -252,10 +252,10 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
 
             // Property一覧
             String locationUrlGet = UrlUtils.property(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, null, null);
-            DcRequest req = DcRequest.get(locationUrlGet + "?$inlinecount=allpages");
+            PersoniumRequest req = PersoniumRequest.get(locationUrlGet + "?$inlinecount=allpages");
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
             ODataCommon.checkResponseBodyCount(res.bodyAsJson(), 1);
 
             // UserData取得
@@ -320,10 +320,10 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
 
             // Property一覧
             String locationUrlGet = UrlUtils.property(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, null, null);
-            DcRequest req = DcRequest.get(locationUrlGet + "?$inlinecount=allpages");
+            PersoniumRequest req = PersoniumRequest.get(locationUrlGet + "?$inlinecount=allpages");
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
             ODataCommon.checkResponseBodyCount(res.bodyAsJson(), 1);
 
             // UserData取得
@@ -389,10 +389,10 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
 
             // Property一覧
             String locationUrlGet = UrlUtils.property(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, null, null);
-            DcRequest req = DcRequest.get(locationUrlGet + "?$inlinecount=allpages");
+            PersoniumRequest req = PersoniumRequest.get(locationUrlGet + "?$inlinecount=allpages");
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
             ODataCommon.checkResponseBodyCount(res.bodyAsJson(), 1);
 
             // UserData取得
@@ -466,10 +466,10 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
 
             // Property一覧
             String locationUrlGet = UrlUtils.property(Setup.TEST_CELL1, Setup.TEST_BOX1, colPath, null, null);
-            DcRequest req = DcRequest.get(locationUrlGet + "?$inlinecount=allpages");
+            PersoniumRequest req = PersoniumRequest.get(locationUrlGet + "?$inlinecount=allpages");
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
             ODataCommon.checkResponseBodyCount(res.bodyAsJson(), 2);
 
             // UserData取得

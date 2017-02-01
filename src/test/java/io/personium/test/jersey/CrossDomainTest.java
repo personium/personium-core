@@ -44,7 +44,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * 認証のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class CrossDomainTest extends JerseyTest {
 

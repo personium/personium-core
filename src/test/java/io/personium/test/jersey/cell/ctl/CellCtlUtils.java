@@ -22,7 +22,7 @@ import org.json.simple.JSONObject;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
+import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 
@@ -42,7 +42,7 @@ public class CellCtlUtils {
      * @param url URL
      */
     static void deleteOdataResource(String url) {
-        DcRequest req = DcRequest.delete(url)
+        PersoniumRequest req = PersoniumRequest.delete(url)
                 .header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN)
                 .header(HttpHeaders.IF_MATCH, "*");
         AbstractCase.request(req);

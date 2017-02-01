@@ -43,7 +43,7 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
@@ -59,7 +59,7 @@ public class UpdateTest extends AbstractCase {
 
     private String cellName;
     private String cellNameToDelete;
-    private DcResponse res;
+    private PersoniumResponse res;
     private static String eTag = "";
     private static String published = "";
 
@@ -101,7 +101,7 @@ public class UpdateTest extends AbstractCase {
         JSONObject requestBody = new JSONObject();
         requestBody.put("Name", cellName);
 
-        DcResponse beforeres = createCell(headers, requestBody);
+        PersoniumResponse beforeres = createCell(headers, requestBody);
 
         // 更新したCellのIDを保持する
         // Header[] resHeadersLocate = beforeres.getResponseHeaders(HttpHeaders.LOCATION);
@@ -148,7 +148,7 @@ public class UpdateTest extends AbstractCase {
         cellNameToDelete = updateCellName;
 
         // __publishedを取得する
-        DcResponse getResp = restGet(getUrl(updateCellName));
+        PersoniumResponse getResp = restGet(getUrl(updateCellName));
         String resPublished = ODataCommon.getPublished(getResp);
 
         // Cell更新のレスポンスチェック
@@ -218,7 +218,7 @@ public class UpdateTest extends AbstractCase {
         cellNameToDelete = updateCellName;
 
         // __publishedを取得する
-        DcResponse getResp = restGet(getUrl(updateCellName));
+        PersoniumResponse getResp = restGet(getUrl(updateCellName));
         String resPublished = ODataCommon.getPublished(getResp);
 
         // Cell更新のレスポンスチェック
@@ -267,7 +267,7 @@ public class UpdateTest extends AbstractCase {
         // Acceptヘッダ なし
         String cellNameAsInteger = "123456";
         String url = getUrlWithOutQuote(cellNameAsInteger, null);
-        DcResponse response = this.restPut(url, "");
+        PersoniumResponse response = this.restPut(url, "");
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
         checkErrorResponse(response.bodyAsJson(),
@@ -1003,12 +1003,12 @@ public class UpdateTest extends AbstractCase {
         requestBody.put("Name", conflictName);
 
         // Cellを作成
-        DcResponse beforeres = createCell(headers, requestBody);
+        PersoniumResponse beforeres = createCell(headers, requestBody);
         // 201になることを確認
         assertEquals(HttpStatus.SC_CREATED, beforeres.getStatusCode());
 
         // 新規作成したCellと同一のNameを指定して更新を実行する
-        DcResponse resConflict;
+        PersoniumResponse resConflict;
         headers.put(HttpHeaders.IF_MATCH, "*");
         resConflict = updateCell(headers, requestBody);
         this.cellNameToDelete = conflictName;
@@ -1374,7 +1374,7 @@ public class UpdateTest extends AbstractCase {
      * @param requestBody リクエストボディ
      * @return Cell更新時のレスポンスオブジェクト
      */
-    private static DcResponse createCell(final HashMap<String, String> headers, final JSONObject requestBody) {
+    private static PersoniumResponse createCell(final HashMap<String, String> headers, final JSONObject requestBody) {
         return createCellQuery(headers, requestBody, null);
     }
 
@@ -1385,10 +1385,10 @@ public class UpdateTest extends AbstractCase {
      * @param query クエリ文字列
      * @return Cell更新時のレスポンスオブジェクト
      */
-    private static DcResponse createCellQuery(final HashMap<String, String> headers,
+    private static PersoniumResponse createCellQuery(final HashMap<String, String> headers,
             final JSONObject requestBody,
             final String query) {
-        DcResponse ret = null;
+        PersoniumResponse ret = null;
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         String data = requestBody.toJSONString();
@@ -1414,7 +1414,7 @@ public class UpdateTest extends AbstractCase {
      * @param requestBody リクエストボディ
      * @return Cell更新時のレスポンスオブジェクト
      */
-    private DcResponse updateCell(final HashMap<String, String> headers, final JSONObject requestBody) {
+    private PersoniumResponse updateCell(final HashMap<String, String> headers, final JSONObject requestBody) {
         return updateCellQuery(headers, requestBody, null);
     }
 
@@ -1425,10 +1425,10 @@ public class UpdateTest extends AbstractCase {
      * @param query クエリ文字列
      * @return Cell更新時のレスポンスオブジェクト
      */
-    private DcResponse updateCellQuery(final HashMap<String, String> headers,
+    private PersoniumResponse updateCellQuery(final HashMap<String, String> headers,
             final JSONObject requestBody,
             final String query) {
-        DcResponse ret = null;
+        PersoniumResponse ret = null;
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         String data = requestBody.toJSONString();
@@ -1455,10 +1455,10 @@ public class UpdateTest extends AbstractCase {
      * @param cellNameStr 更新前セル名
      * @return Cell更新時のレスポンスオブジェクト
      */
-    private DcResponse updateCellName(final HashMap<String, String> headers,
+    private PersoniumResponse updateCellName(final HashMap<String, String> headers,
             final JSONObject requestBody,
             final String cellNameStr) {
-        DcResponse ret = null;
+        PersoniumResponse ret = null;
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
 
         String data = requestBody.toJSONString();
@@ -1492,7 +1492,7 @@ public class UpdateTest extends AbstractCase {
 
         // Cellを削除
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse delresponse = null;
+        PersoniumResponse delresponse = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();

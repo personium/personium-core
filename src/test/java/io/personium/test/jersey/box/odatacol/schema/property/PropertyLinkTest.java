@@ -32,9 +32,9 @@ import io.personium.core.model.ctl.Property;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -44,7 +44,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * ComplexTypeのLinksテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class PropertyLinkTest extends ODataCommon {
 
@@ -82,7 +82,7 @@ public class PropertyLinkTest extends ODataCommon {
 
             // EntityType - Property $links一覧取得
             String key = String.format("Name='%s',_EntityType.Name='%s'", propertyName, entityTypeName);
-            DcRequest req = DcRequest.post(
+            PersoniumRequest req = PersoniumRequest.post(
                     UrlUtils.schemaLinks(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                             Property.EDM_TYPE_NAME, key, EntityType.EDM_TYPE_NAME, null));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -90,7 +90,7 @@ public class PropertyLinkTest extends ODataCommon {
                     UrlUtils.entityType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, entityTypeName));
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -112,13 +112,13 @@ public class PropertyLinkTest extends ODataCommon {
     @Test
     public final void PropertyとEntityTypeのLink更新は501が返却される事() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.put(
+        PersoniumRequest req = PersoniumRequest.put(
                 UrlUtils.schemaLinksWithSingleQuote(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                         Property.EDM_TYPE_NAME, "id", EntityType.EDM_TYPE_NAME, "id"));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, response.getStatusCode());
@@ -133,13 +133,13 @@ public class PropertyLinkTest extends ODataCommon {
     @Test
     public final void PropertyとEntityTypeのLink削除は400が返却される事() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.delete(
+        PersoniumRequest req = PersoniumRequest.delete(
                 UrlUtils.schemaLinksWithSingleQuote(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                         Property.EDM_TYPE_NAME, "id", EntityType.EDM_TYPE_NAME, "id"));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -175,11 +175,11 @@ public class PropertyLinkTest extends ODataCommon {
 
             // Property - EntityType $links一覧取得
             String propertyKey = String.format("Name='%s',_EntityType.Name='%s'", propertyName, entityTypeName);
-            DcRequest req = DcRequest.get(
+            PersoniumRequest req = PersoniumRequest.get(
                     UrlUtils.schemaLinks(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                             Property.EDM_TYPE_NAME, propertyKey, EntityType.EDM_TYPE_NAME, null));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_OK, response.getStatusCode());
@@ -212,7 +212,7 @@ public class PropertyLinkTest extends ODataCommon {
                     .getLocationHeader();
 
             // EntityType - Property $links登録
-            DcRequest req = DcRequest.post(
+            PersoniumRequest req = PersoniumRequest.post(
                     UrlUtils.schemaLinksWithSingleQuote(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                             EntityType.EDM_TYPE_NAME, entityTypeName, Property.EDM_TYPE_NAME, null));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -220,7 +220,7 @@ public class PropertyLinkTest extends ODataCommon {
                     "dummyProperty", entityTypeName));
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -239,13 +239,13 @@ public class PropertyLinkTest extends ODataCommon {
     @Test
     public final void EntityTypeとPropertyのLink更新は501が返却される事() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.put(
+        PersoniumRequest req = PersoniumRequest.put(
                 UrlUtils.schemaLinksWithSingleQuote(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                         EntityType.EDM_TYPE_NAME, "id", Property.EDM_TYPE_NAME, "id"));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, response.getStatusCode());
@@ -260,13 +260,13 @@ public class PropertyLinkTest extends ODataCommon {
     @Test
     public final void EntityTypeとPropertyのLink削除は400が返却される事() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.delete(
+        PersoniumRequest req = PersoniumRequest.delete(
                 UrlUtils.schemaLinksWithSingleQuote(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                         EntityType.EDM_TYPE_NAME, "id", Property.EDM_TYPE_NAME, "id"));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -301,11 +301,11 @@ public class PropertyLinkTest extends ODataCommon {
                     .getFirstHeader(HttpHeaders.LOCATION);
 
             // EntityType - Property $links一覧取得
-            DcRequest req = DcRequest.get(
+            PersoniumRequest req = PersoniumRequest.get(
                     UrlUtils.schemaLinksWithSingleQuote(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                             EntityType.EDM_TYPE_NAME, entityTypeName, Property.EDM_TYPE_NAME, null));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_OK, response.getStatusCode());

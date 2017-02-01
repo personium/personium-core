@@ -29,8 +29,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
@@ -40,7 +40,7 @@ import io.personium.test.utils.TResponse;
 /**
  * AccountとRoleのリンクテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class AccountRoleLinkTest extends AccountTest {
 
@@ -390,14 +390,14 @@ public class AccountRoleLinkTest extends AccountTest {
     }
 
     private void deleteAccount(String accountUrl) {
-        DcRequest req = DcRequest.delete(accountUrl)
+        PersoniumRequest req = PersoniumRequest.delete(accountUrl)
                 .header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
                 .header(HttpHeaders.IF_MATCH, "*");
         request(req);
     }
 
     private void deleteRole(String roleUrl) {
-        DcRequest req = DcRequest.delete(roleUrl)
+        PersoniumRequest req = PersoniumRequest.delete(roleUrl)
                 .header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
                 .header(HttpHeaders.IF_MATCH, "*");
         request(req);

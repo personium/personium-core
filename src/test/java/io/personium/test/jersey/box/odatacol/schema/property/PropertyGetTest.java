@@ -37,9 +37,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DaoException;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -47,7 +47,7 @@ import io.personium.test.unit.core.UrlUtils;
 /**
  * Property1件取得のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class PropertyGetTest extends ODataCommon {
 
@@ -73,7 +73,7 @@ public class PropertyGetTest extends ODataCommon {
                 PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, PROPERTY_NAME);
@@ -81,17 +81,17 @@ public class PropertyGetTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_TYPE_KEY, EdmSimpleType.STRING.getFullyQualifiedTypeName());
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // etag取得
             String etag = getEtag(response);
 
             // Property取得
-            req = DcRequest.get(locationUrl);
+            req = PersoniumRequest.get(locationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse resGet = request(req);
+            PersoniumResponse resGet = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -119,9 +119,9 @@ public class PropertyGetTest extends ODataCommon {
         String locationUrl = UrlUtils.property(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, PROPERTY_NAME,
                 PROPERTY_ENTITYTYPE_NAME);
         // Property取得
-        DcRequest req = DcRequest.get(locationUrl);
+        PersoniumRequest req = PersoniumRequest.get(locationUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse resGet = request(req);
+        PersoniumResponse resGet = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_NOT_FOUND, resGet.getStatusCode());
@@ -138,20 +138,20 @@ public class PropertyGetTest extends ODataCommon {
                 "test");
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, PROPERTY_NAME);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
             req.addJsonBody(PropertyUtils.PROPERTY_TYPE_KEY, EdmSimpleType.STRING.getFullyQualifiedTypeName());
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // Property取得
-            req = DcRequest.get(locationUrlGet);
+            req = PersoniumRequest.get(locationUrlGet);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse resGet = request(req);
+            PersoniumResponse resGet = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_NOT_FOUND, resGet.getStatusCode());
@@ -171,7 +171,7 @@ public class PropertyGetTest extends ODataCommon {
                 PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, PROPERTY_NAME);
@@ -184,14 +184,14 @@ public class PropertyGetTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // Property取得
-            req = DcRequest.get(locationUrl);
+            req = PersoniumRequest.get(locationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse resGet = request(req);
+            PersoniumResponse resGet = request(req);
 
             // レスポンスチェック
             String resBody = resGet.bodyAsString();
@@ -199,7 +199,7 @@ public class PropertyGetTest extends ODataCommon {
             assertFalse(resBody.contains("\u0000"));
 
             // Property取得(2回目：キャッシュされた場合の動作を確認する)
-            req = DcRequest.get(locationUrl);
+            req = PersoniumRequest.get(locationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             resGet = request(req);

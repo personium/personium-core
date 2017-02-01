@@ -37,7 +37,7 @@ import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
@@ -47,7 +47,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 /**
  * トークンのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class TokenTest extends JerseyTest {
     static final String TEST_CELL1 = "testcell1";

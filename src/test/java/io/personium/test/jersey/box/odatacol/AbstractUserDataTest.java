@@ -34,8 +34,8 @@ import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
@@ -245,13 +245,13 @@ public abstract class AbstractUserDataTest extends AbstractCase {
      * @param query リクエストクエリ
      * @return ユーザーデータ取得時のレスポンスオブジェクト
      */
-    protected static DcResponse getUserDataWithDcClient(String cell,
+    protected static PersoniumResponse getUserDataWithDcClient(String cell,
             String box,
             String col,
             String targetEntityTypeName,
             String query) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -352,13 +352,13 @@ public abstract class AbstractUserDataTest extends AbstractCase {
      * @param body リクエストボディ
      * @return ユーザーデータ作成時のレスポンスオブジェクト
      */
-    protected DcResponse createUserDataWithDcClient(String cell,
+    protected PersoniumResponse createUserDataWithDcClient(String cell,
             String box,
             String col,
             String entityType,
             JSONObject body) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -407,12 +407,12 @@ public abstract class AbstractUserDataTest extends AbstractCase {
      * @param reqBody リクエストボディ
      * @return レスポンス
      */
-    protected DcResponse createComplexTypeUserDataWithNP(String id, HashMap<String, Object> reqBody) {
+    protected PersoniumResponse createComplexTypeUserDataWithNP(String id, HashMap<String, Object> reqBody) {
         // UserData作成
         String requestUrl = UrlUtils.userdataNP(Setup.TEST_CELL1, Setup.TEST_BOX1,
                 UserDataListWithNPTest.ODATA_COLLECTION,
                 entityTypeName, id, navPropName);
-        DcRequest req = DcRequest.post(requestUrl);
+        PersoniumRequest req = PersoniumRequest.post(requestUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         for (String key : reqBody.keySet()) {
             req.addJsonBody(key, reqBody.get(key));

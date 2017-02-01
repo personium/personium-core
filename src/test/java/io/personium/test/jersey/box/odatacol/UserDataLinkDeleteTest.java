@@ -39,8 +39,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -52,7 +52,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * $expandクエリ指定のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataLinkDeleteTest extends AbstractUserDataTest {
 
@@ -492,7 +492,7 @@ public class UserDataLinkDeleteTest extends AbstractUserDataTest {
     private void verifyUserDataLinkRemoval(final String cell, final String box,
             final String col, final String srcUserDataId, final String tgtUserDataId) {
         // ユーザデータ間の$linksが削除されたことをNP経由のユーザデータ一覧取得で確認する
-        DcResponse res = ODataCommon.getOdataResource(
+        PersoniumResponse res = ODataCommon.getOdataResource(
                 UrlUtils.userdataNP(cell, box, col, "srcEntity", srcUserDataId, "tgtEntity"));
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         JSONArray array = (JSONArray) ((JSONObject) res.bodyAsJson().get("d")).get("results");

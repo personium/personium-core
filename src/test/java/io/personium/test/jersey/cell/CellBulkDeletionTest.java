@@ -37,8 +37,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -109,10 +109,10 @@ public class CellBulkDeletionTest extends AbstractCase {
         // テスト用セル準備 ---------------------
 
         // セルの一括削除APIを実行する
-        DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
+        PersoniumRequest request = PersoniumRequest.delete(UrlUtils.cellRoot(cellName));
         request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
                 .header("X-Personium-Recursive", "true");
-        DcResponse response = request(request);
+        PersoniumResponse response = request(request);
 
         // セル削除APIを実行して、204が返却されることを確認
         assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
@@ -124,7 +124,7 @@ public class CellBulkDeletionTest extends AbstractCase {
             System.out.println("");
         }
         // セルが削除されていることを確認する
-        request = DcRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME, cellName));
+        request = PersoniumRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME, cellName));
         request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         response = request(request);
         assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusCode());
@@ -140,9 +140,9 @@ public class CellBulkDeletionTest extends AbstractCase {
         CellUtils.create(cellName, MASTER_TOKEN_NAME, -1);
 
         // セルの一括削除APIを実行する
-        DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
+        PersoniumRequest request = PersoniumRequest.delete(UrlUtils.cellRoot(cellName));
         request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse response = request(request);
+        PersoniumResponse response = request(request);
 
         // セル削除APIを実行して、412が返却されることを確認
         try {
@@ -168,10 +168,10 @@ public class CellBulkDeletionTest extends AbstractCase {
         CellUtils.create(cellName, MASTER_TOKEN_NAME, -1);
 
         // セルの一括削除APIを実行する
-        DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
+        PersoniumRequest request = PersoniumRequest.delete(UrlUtils.cellRoot(cellName));
         request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
                 .header("X-Personium-Recursive", "false");
-        DcResponse response = request(request);
+        PersoniumResponse response = request(request);
 
         // セル削除APIを実行して、412が返却されることを確認
         try {
@@ -198,13 +198,13 @@ public class CellBulkDeletionTest extends AbstractCase {
         CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, Setup.OWNER_VET, HttpStatus.SC_CREATED);
 
         // セルの一括削除APIを実行する（マスタートークンのヘッダ指定での降格を利用）
-        DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
+        PersoniumRequest request = PersoniumRequest.delete(UrlUtils.cellRoot(cellName));
         request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
                 .header("X-Personium-Recursive", "true")
                 .header("X-Personium-Unit-User", Setup.OWNER_VET);
 
         // セル削除APIを実行して、204が返却されることを確認
-        DcResponse response = request(request);
+        PersoniumResponse response = request(request);
         assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
     }
 
@@ -220,15 +220,15 @@ public class CellBulkDeletionTest extends AbstractCase {
 
         try {
             // セルの一括削除APIを実行する（マスタートークンのヘッダ指定での降格を利用）
-            DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
+            PersoniumRequest request = PersoniumRequest.delete(UrlUtils.cellRoot(cellName));
             request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
                     .header("X-Personium-Recursive", "true")
                     .header("X-Personium-Unit-User", Setup.OWNER_HMC);
-            DcResponse response = request(request);
+            PersoniumResponse response = request(request);
             assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatusCode());
         } finally {
             // セルを削除する
-            DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
+            PersoniumRequest request = PersoniumRequest.delete(UrlUtils.cellRoot(cellName));
             request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
                     .header("X-Personium-Recursive", "true");
             request(request);
@@ -266,16 +266,16 @@ public class CellBulkDeletionTest extends AbstractCase {
             CellUtils.create(cellName, uluutString, -1);
 
             // セルの一括削除APIを実行する
-            DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
+            PersoniumRequest request = PersoniumRequest.delete(UrlUtils.cellRoot(cellName));
             request.header(HttpHeaders.AUTHORIZATION, "Bearer " + uluutString)
                     .header("X-Personium-Recursive", "true");
-            DcResponse response = request(request);
+            PersoniumResponse response = request(request);
             assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
         } catch (TokenParseException e) {
             e.printStackTrace();
         } finally {
             // セルを削除する
-            DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
+            PersoniumRequest request = PersoniumRequest.delete(UrlUtils.cellRoot(cellName));
             request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
                     .header("X-Personium-Recursive", "true");
             request(request);

@@ -36,9 +36,9 @@ import io.personium.core.model.ctl.Property;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -47,7 +47,7 @@ import io.personium.test.utils.EntityTypeUtils;
 /**
  * Property登録のバリデートテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class PropertyCreateValidateTest extends ODataCommon {
 
@@ -78,7 +78,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのName属性がない場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
         req.addJsonBody(PropertyUtils.PROPERTY_TYPE_KEY, EdmSimpleType.STRING.getFullyQualifiedTypeName());
@@ -89,7 +89,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -105,7 +105,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのNameが空文字の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, "");
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -117,7 +117,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -137,7 +137,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propertyName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -149,7 +149,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -180,7 +180,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propertyName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -192,7 +192,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -218,7 +218,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのNameが129文字の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, STRING_LENGTH_129);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -230,7 +230,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -250,7 +250,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propertyName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -262,7 +262,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -288,7 +288,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのNameが半角英数字以外の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, "Ad.*s");
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -300,7 +300,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -315,7 +315,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのNameが先頭文字がハイフンの場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, "-p_name");
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -327,7 +327,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -342,7 +342,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのNameが先頭文字がアンダーバーの場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, "_p_name");
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -354,7 +354,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -369,7 +369,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void Propertyの_EntityTypeName属性がない場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_TYPE_KEY, EdmSimpleType.STRING.getFullyQualifiedTypeName());
@@ -380,7 +380,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -396,7 +396,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void Propertyの_EntityTypeNameが空文字の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, "");
@@ -408,7 +408,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -431,7 +431,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                     Setup.TEST_ODATA, entityTypeName, HttpStatus.SC_CREATED);
 
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, entityTypeName);
@@ -443,7 +443,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -478,7 +478,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                     Setup.TEST_ODATA, entityTypeName, HttpStatus.SC_CREATED);
 
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, entityTypeName);
@@ -490,7 +490,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -517,7 +517,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void Propertyの_EntityTypeNameが129文字の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, STRING_LENGTH_129);
@@ -529,7 +529,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -551,7 +551,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                 Setup.TEST_ODATA, entityTypeName, HttpStatus.SC_CREATED);
 
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, entityTypeName);
@@ -563,7 +563,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         Map<String, Object> expected = new HashMap<String, Object>();
@@ -581,7 +581,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void Propertyの_EntityTypeNameが半角英数字以外の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, "Ad.*s");
@@ -593,7 +593,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -609,7 +609,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void Propertyの_EntityTypeNameが先頭文字がハイフンの場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, "-SalesDetail");
@@ -621,7 +621,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -637,7 +637,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void Propertyの_EntityTypeNameが先頭文字がアンダーバーの場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, "_SalesDetail");
@@ -649,7 +649,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -667,7 +667,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         String entityTypeName = "xxx";
 
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, entityTypeName);
@@ -679,7 +679,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -698,7 +698,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -710,7 +710,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -740,7 +740,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -752,7 +752,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -782,7 +782,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -794,7 +794,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -823,7 +823,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                 PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -835,7 +835,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -861,7 +861,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのTypeが不正な値の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -873,7 +873,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -894,17 +894,17 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
+            PersoniumRequest req = PersoniumRequest.post(UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     null));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("Name", "propTest");
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // リクエストパラメータ設定
-            req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -948,7 +948,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -960,7 +960,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -995,7 +995,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             EntityTypeUtils.create(Setup.TEST_CELL1, MASTER_TOKEN_NAME,
                     Setup.TEST_ODATA, entityTypeName, HttpStatus.SC_CREATED);
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, entityTypeName);
@@ -1007,7 +1007,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1035,7 +1035,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのNullableが不正な値の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1047,7 +1047,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1067,7 +1067,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
 
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1079,7 +1079,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1109,7 +1109,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1121,7 +1121,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1147,7 +1147,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのCollectionKindが不正な値の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1159,7 +1159,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1179,7 +1179,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
 
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1191,7 +1191,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1221,7 +1221,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1233,7 +1233,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1259,7 +1259,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのIsKeyが不正な値の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1271,7 +1271,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1287,7 +1287,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのUniqueKeyが空文字の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1299,7 +1299,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, "");
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1320,7 +1320,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1332,7 +1332,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, uniqueKey);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1363,7 +1363,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1375,7 +1375,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, uniqueKey);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1401,7 +1401,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのuniqueKeyが129文字の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1413,7 +1413,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, STRING_LENGTH_129);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1434,7 +1434,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
                         PROPERTY_ENTITYTYPE_NAME);
         try {
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1446,7 +1446,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
             req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, uniqueKey);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1472,7 +1472,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのuniqueKeyが半角英数字以外の場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1484,7 +1484,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, "Ad.*s");
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1500,7 +1500,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのuniqueKeyが先頭文字がハイフンの場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1512,7 +1512,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, "-p_name");
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1528,7 +1528,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
     @Test
     public final void PropertyのuniqueKeyが先頭文字がアンダーバーの場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(PropertyUtils.REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, PROPERTY_ENTITYTYPE_NAME);
@@ -1540,7 +1540,7 @@ public class PropertyCreateValidateTest extends ODataCommon {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, "_p_name");
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());

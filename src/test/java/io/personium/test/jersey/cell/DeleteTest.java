@@ -41,7 +41,7 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
@@ -70,7 +70,7 @@ public class DeleteTest extends ODataCommon {
         /** テストCell ID. */
         private String cellId = null;
         /** テストCell レスポンス. */
-        private DcResponse resCell;
+        private PersoniumResponse resCell;
         /** テストBox名 . */
         private String boxName = null;
 
@@ -135,7 +135,7 @@ public class DeleteTest extends ODataCommon {
      */
     @After
     public final void afterCell() {
-        DcResponse res = null;
+        PersoniumResponse res = null;
         if (this.cellInfo.cellId != null) {
             if (this.cellInfo.boxName != null) {
                 // テストBox 削除
@@ -159,7 +159,7 @@ public class DeleteTest extends ODataCommon {
     public final void Cell削除の正常系のテスト() {
         // Cellを削除
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -185,7 +185,7 @@ public class DeleteTest extends ODataCommon {
         // Acceptヘッダ なし
         String cellName = "123456";
         String url = getUrlWithOutQuote(cellName, null);
-        DcResponse res = this.restDelete(url);
+        PersoniumResponse res = this.restDelete(url);
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
         checkErrorResponse(res.bodyAsJson(),
@@ -200,7 +200,7 @@ public class DeleteTest extends ODataCommon {
     public final void Cell削除の存在しないCellId指定のテスト() {
         // Cellを削除
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -233,7 +233,7 @@ public class DeleteTest extends ODataCommon {
 
         // Cellを削除
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -256,7 +256,7 @@ public class DeleteTest extends ODataCommon {
     public final void Cell削除の不正Authorizationのテスト() {
         // Cellを削除
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, "Illegal Authorization");
@@ -282,7 +282,7 @@ public class DeleteTest extends ODataCommon {
 
         // Cellを削除
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -315,7 +315,7 @@ public class DeleteTest extends ODataCommon {
 
             // Cellを削除
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -416,7 +416,7 @@ public class DeleteTest extends ODataCommon {
 
             // Cellを削除
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -463,7 +463,7 @@ public class DeleteTest extends ODataCommon {
 
             // Cellを削除
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -522,7 +522,7 @@ public class DeleteTest extends ODataCommon {
 
             // Cellを削除
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
@@ -577,7 +577,7 @@ public class DeleteTest extends ODataCommon {
 
             // Cellを削除
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);

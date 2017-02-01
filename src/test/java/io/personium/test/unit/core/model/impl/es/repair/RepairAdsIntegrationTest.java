@@ -59,7 +59,7 @@ import io.personium.core.model.lock.LockKeyComposer;
 import io.personium.core.webcontainer.listener.RepairServiceLauncher;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
@@ -70,7 +70,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * マスタ自動復旧機能のcoreとの結合テストクラス.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
 public class RepairAdsIntegrationTest extends AbstractCase {
 

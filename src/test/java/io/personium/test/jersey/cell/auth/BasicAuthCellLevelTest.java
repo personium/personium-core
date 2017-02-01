@@ -36,9 +36,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -54,7 +54,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 /**
  * Basic認証のCellレベルのリソースに対するテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class BasicAuthCellLevelTest extends JerseyTest {
 
@@ -82,17 +82,17 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証_認証APIの操作_正常系.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証_認証APIの操作_正常系() throws DcException {
+    public final void Basic認証_認証APIの操作_正常系() throws PersoniumException {
         String authTargetCell = Setup.TEST_CELL1;
         String authSchemaCell = Setup.TEST_CELL_SCHEMA1;
         String authSchemaAccount = "account0";
         String authSchemaPassword = "password0";
 
         // __auth(スキーマ認証)
-        DcResponse dcRes = CellUtils.schemaAuthenticateWithBasic(
+        PersoniumResponse dcRes = CellUtils.schemaAuthenticateWithBasic(
                 authTargetCell, "account4", "password4",
                 authSchemaCell, authSchemaAccount, authSchemaPassword);
         assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
@@ -109,10 +109,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証_認証APIの操作_異常系.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証_認証APIの操作_異常系() throws DcException {
+    public final void Basic認証_認証APIの操作_異常系() throws PersoniumException {
         String authTargetCell = Setup.TEST_CELL1;
         String authSchemaCell = Setup.TEST_CELL_SCHEMA1;
         String authSchemaAccount = "account0";
@@ -120,7 +120,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
         // __auth(スキーマ認証)
         // 認証失敗時：400が返却され、WWW-Authenticateヘッダー(Auth Scheme: Basic)が付与される。
-        DcResponse dcRes = CellUtils.schemaAuthenticateWithBasic(
+        PersoniumResponse dcRes = CellUtils.schemaAuthenticateWithBasic(
                 authTargetCell, "account4", "invlid_password",
                 authSchemaCell, authSchemaAccount, authSchemaPassword);
         assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
@@ -143,10 +143,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証ーBoxURL取得の操作.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーBoxURL取得の操作() throws DcException {
+    public final void Basic認証ーBoxURL取得の操作() throws PersoniumException {
         String schemaCell = Setup.TEST_CELL_SCHEMA1;
         String schemaBox = "schemaBox";
 
@@ -156,7 +156,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
                     UrlUtils.cellRoot(schemaCell));
 
             // 401エラーとなること
-            DcResponse dcRes = CellUtils.getBoxUrl(cellName, schemaCell, authorization);
+            PersoniumResponse dcRes = CellUtils.getBoxUrl(cellName, schemaCell, authorization);
             assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(dcRes, OAuth2Helper.Scheme.BEARER, cellName);
 
@@ -174,10 +174,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証ーBoxインストールの操作.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーBoxインストールの操作() throws DcException {
+    public final void Basic認証ーBoxインストールの操作() throws PersoniumException {
         String boxName = "installBox";
 
         String location = null;
@@ -204,13 +204,13 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証ー__mypasswordの操作.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ー__mypasswordの操作() throws DcException {
+    public final void Basic認証ー__mypasswordの操作() throws PersoniumException {
         try {
             // 401エラーとなること
-            DcResponse dcRes = CellUtils.changePassword(cellName, "newPassword", authorization);
+            PersoniumResponse dcRes = CellUtils.changePassword(cellName, "newPassword", authorization);
             assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(dcRes, OAuth2Helper.Scheme.BEARER, cellName);
 
@@ -227,10 +227,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証ーaclの操作.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーaclの操作() throws DcException {
+    public final void Basic認証ーaclの操作() throws PersoniumException {
         // 401エラーとなること
         TResponse res = CellUtils.setAclPriviriegeAllPrincipalAll(cellName, authorization).statusCode(
                 HttpStatus.SC_UNAUTHORIZED);
@@ -246,10 +246,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証ーpropfindの操作.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーpropfindの操作() throws DcException {
+    public final void Basic認証ーpropfindの操作() throws PersoniumException {
         // 401エラーとなること
         TResponse res = CellUtils.propfindWithAnyAuthSchema(cellName, authorization, "1", HttpStatus.SC_UNAUTHORIZED);
         AuthTestCommon.checkAuthenticateHeader(res, OAuth2Helper.Scheme.BEARER, cellName);
@@ -263,10 +263,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証ーproppatchの操作.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーproppatchの操作() throws DcException {
+    public final void Basic認証ーproppatchの操作() throws PersoniumException {
         // 401エラーとなること
         TResponse res = CellUtils.proppatchWithAnyAuthSchema(cellName, authorization, HttpStatus.SC_UNAUTHORIZED,
                 "hoge", "huga");
@@ -283,10 +283,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証ー__messageの操作.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ー__messageの操作() throws DcException {
+    public final void Basic認証ー__messageの操作() throws PersoniumException {
         String title = "BasicAuthCellLevelTest";
         String messageBody = "BasicAuthCellLevelTest000000000000";
         String targetCell = Setup.TEST_CELL1;
@@ -316,10 +316,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証ー__eventの操作.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ー__eventの操作() throws DcException {
+    public final void Basic認証ー__eventの操作() throws PersoniumException {
         // 401エラーとなること
         TResponse res = CellUtils.eventWithAnyAuthSchema(authorization, HttpStatus.SC_UNAUTHORIZED, cellName, "INFO",
                 "authSchema", "/cell/app", "success");
@@ -335,10 +335,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証ーボックスの__eventの操作.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーボックスの__eventの操作() throws DcException {
+    public final void Basic認証ーボックスの__eventの操作() throws PersoniumException {
         String boxName = "boxName";
 
         try {
@@ -346,7 +346,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
             BoxUtils.create(cellName, boxName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
 
             // 401エラーとなること
-            DcResponse dcRes = CellUtils.eventUnderBox(authorization, cellName, boxName,
+            PersoniumResponse dcRes = CellUtils.eventUnderBox(authorization, cellName, boxName,
                     "info", "Action", null, null);
             assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(dcRes, OAuth2Helper.Scheme.BEARER, cellName);
@@ -365,13 +365,13 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証ー__logの操作.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ー__logの操作() throws DcException {
+    public final void Basic認証ー__logの操作() throws PersoniumException {
         // 401エラーとなること
         // ログ取得
-        DcResponse dcRes = CellUtils.getCurrentLogWithAnyAuth(cellName, "default.log", authorization);
+        PersoniumResponse dcRes = CellUtils.getCurrentLogWithAnyAuth(cellName, "default.log", authorization);
         assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
         AuthTestCommon.checkAuthenticateHeader(dcRes, OAuth2Helper.Scheme.BEARER, cellName);
 
@@ -394,10 +394,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証ーOPTIONSの操作.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーOPTIONSの操作() throws DcException {
+    public final void Basic認証ーOPTIONSの操作() throws PersoniumException {
         // 401エラーとなること
         TResponse res = ResourceUtils.requestUtilWithAuthSchema("OPTIONS", authorization, "/" + cellName,
                 HttpStatus.SC_UNAUTHORIZED);
@@ -413,10 +413,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
 
     /**
      * Basic認証ーCell再帰削除.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーCell再帰削除() throws DcException {
+    public final void Basic認証ーCell再帰削除() throws PersoniumException {
         String testCell = "BasicTestCellForBulkDeletion";
         try {
             // 事前準備
@@ -424,7 +424,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
             CellUtils.create(testCell, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
 
             // 401エラーとなること
-            DcResponse dcRes = CellUtils.bulkDeletion(authorization, testCell);
+            PersoniumResponse dcRes = CellUtils.bulkDeletion(authorization, testCell);
             assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(dcRes, OAuth2Helper.Scheme.BEARER, testCell);
 
@@ -444,14 +444,14 @@ public class BasicAuthCellLevelTest extends JerseyTest {
     /**
      * Basic認証ーCell制御オブジェクトの作成. <br />
      * （共通ロジックのためBoxのみ実施）
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーCell制御オブジェクトの作成() throws DcException {
+    public final void Basic認証ーCell制御オブジェクトの作成() throws PersoniumException {
         String testBox = "BasicTestBox";
         try {
             // 401エラーとなること
-            DcResponse dcRes = BoxUtils.createWithAuthSchema(cellName, testBox, authorization);
+            PersoniumResponse dcRes = BoxUtils.createWithAuthSchema(cellName, testBox, authorization);
             assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(dcRes, OAuth2Helper.Scheme.BEARER, cellName);
 
@@ -470,14 +470,14 @@ public class BasicAuthCellLevelTest extends JerseyTest {
     /**
      * Basic認証ーCell制御オブジェクトの取得. <br />
      * （共通ロジックのためBoxのみ実施）
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーCell制御オブジェクトの取得() throws DcException {
+    public final void Basic認証ーCell制御オブジェクトの取得() throws PersoniumException {
         String testBox = Setup.TEST_BOX1;
 
         // 401エラーとなること
-        DcResponse dcRes = BoxUtils.getWithAuthSchema(cellName, testBox, authorization);
+        PersoniumResponse dcRes = BoxUtils.getWithAuthSchema(cellName, testBox, authorization);
         assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
         AuthTestCommon.checkAuthenticateHeader(dcRes, OAuth2Helper.Scheme.BEARER, cellName);
 
@@ -492,12 +492,12 @@ public class BasicAuthCellLevelTest extends JerseyTest {
     /**
      * Basic認証ーCell制御オブジェクトの一覧取得. <br />
      * （共通ロジックのためBoxのみ実施）
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーCell制御オブジェクトの一覧取得() throws DcException {
+    public final void Basic認証ーCell制御オブジェクトの一覧取得() throws PersoniumException {
         // 401エラーとなること
-        DcResponse dcRes = BoxUtils.listWithAuthSchema(cellName, authorization);
+        PersoniumResponse dcRes = BoxUtils.listWithAuthSchema(cellName, authorization);
         AuthTestCommon.checkAuthenticateHeader(dcRes, OAuth2Helper.Scheme.BEARER, cellName);
 
         // ACL all-all の場合正常終了すること
@@ -511,10 +511,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
     /**
      * Basic認証ーCell制御オブジェクトの更新. <br />
      * （共通ロジックのためBoxのみ実施）
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーCell制御オブジェクトの更新() throws DcException {
+    public final void Basic認証ーCell制御オブジェクトの更新() throws PersoniumException {
         String testBox = "BasicTestBox";
         String newBox = "BasicTestBoxNew";
         try {
@@ -522,7 +522,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
             BoxUtils.create(cellName, testBox, AbstractCase.MASTER_TOKEN_NAME);
 
             // 401エラーとなること
-            DcResponse dcRes = BoxUtils.updateWithAuthSchema(cellName, testBox, newBox, authorization);
+            PersoniumResponse dcRes = BoxUtils.updateWithAuthSchema(cellName, testBox, newBox, authorization);
             assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(dcRes, OAuth2Helper.Scheme.BEARER, cellName);
 
@@ -542,17 +542,17 @@ public class BasicAuthCellLevelTest extends JerseyTest {
     /**
      * Basic認証ーCell制御オブジェクトの削除. <br />
      * （共通ロジックのためBoxのみ実施）
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーCell制御オブジェクトの削除() throws DcException {
+    public final void Basic認証ーCell制御オブジェクトの削除() throws PersoniumException {
         String testBox = "BasicTestBox";
         try {
             // 事前準備
             BoxUtils.create(cellName, testBox, AbstractCase.MASTER_TOKEN_NAME);
 
             // 401エラーとなること
-            DcResponse dcRes = BoxUtils.deleteWithAuthSchema(cellName, testBox, authorization);
+            PersoniumResponse dcRes = BoxUtils.deleteWithAuthSchema(cellName, testBox, authorization);
             assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
             AuthTestCommon.checkAuthenticateHeader(dcRes, OAuth2Helper.Scheme.BEARER, cellName);
 
@@ -571,10 +571,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
     /**
      * Basic認証ーCell制御オブジェクトのNP登録. <br />
      * （共通ロジックのためBox -> Roleのみ実施）
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーCell制御オブジェクトのNP登録() throws DcException {
+    public final void Basic認証ーCell制御オブジェクトのNP登録() throws PersoniumException {
         String testBox = Setup.TEST_BOX1;
         String testRole = "BasicTestRole";
         try {
@@ -598,10 +598,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
     /**
      * Basic認証ーCell制御オブジェクトのNP一覧. <br />
      * （共通ロジックのためBox -> Roleのみ実施）
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーCell制御オブジェクトのNP一覧() throws DcException {
+    public final void Basic認証ーCell制御オブジェクトのNP一覧() throws PersoniumException {
         String testBox = Setup.TEST_BOX1;
 
         // 401エラーとなること
@@ -620,10 +620,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
     /**
      * Basic認証ーCell制御オブジェクトのlinks登録. <br />
      * （共通ロジックのためBox -> Roleのみ実施）
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーCell制御オブジェクトのlinks登録() throws DcException {
+    public final void Basic認証ーCell制御オブジェクトのlinks登録() throws PersoniumException {
         String testBox = Setup.TEST_BOX1;
         String testRole = "BasicTestRole";
         try {
@@ -651,10 +651,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
     /**
      * Basic認証ーCell制御オブジェクトのlinks一覧. <br />
      * （共通ロジックのためBox -> Roleのみ実施）
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーCell制御オブジェクトのlinks一覧() throws DcException {
+    public final void Basic認証ーCell制御オブジェクトのlinks一覧() throws PersoniumException {
         String testBox = Setup.TEST_BOX1;
         // 401エラーとなること
         TResponse res = RoleUtils.listLinkWithAuthSchema(cellName, authorization, "Box", testBox,
@@ -671,10 +671,10 @@ public class BasicAuthCellLevelTest extends JerseyTest {
     /**
      * Basic認証ーCell制御オブジェクトのlinks削除. <br />
      * （共通ロジックのためBox -> Roleのみ実施）
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ーCell制御オブジェクトのlinks削除() throws DcException {
+    public final void Basic認証ーCell制御オブジェクトのlinks削除() throws PersoniumException {
         String testBox = Setup.TEST_BOX1;
         String testRole = "BasicTestRole";
         String testRoleKey = RoleUtils.keyString(testRole, testBox);

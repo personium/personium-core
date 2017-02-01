@@ -31,11 +31,11 @@ import org.junit.runner.RunWith;
 import io.personium.test.categories.Unit;
 
 /**
- * DcJsonWriterユニットテストクラス.
+ * PersoniumJsonWriterユニットテストクラス.
  */
 @RunWith(Enclosed.class)
 @Category({Unit.class })
-public class DcJsonWriterTest {
+public class PersoniumJsonWriterTest {
 
     /**
      * テスト用Fixture。

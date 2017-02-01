@@ -48,7 +48,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * ODataリソース関連の共通テスト処理.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Ignore
 public class ODataCommon extends AbstractCase {
 
@@ -58,7 +58,7 @@ public class ODataCommon extends AbstractCase {
     public static final int COUNT_NONE = -1;
 
     /** DcResponseオブジェクト. */
-    private DcResponse res = null;
+    private PersoniumResponse res = null;
 
     /** リクエスト送信先URLを取得するプロパティのキー. */
     public static final String ERROR_RESPONSE_LANG_EN = "en";
@@ -90,7 +90,7 @@ public class ODataCommon extends AbstractCase {
      * DcResponseヘッダのsetter.
      * @param value 値
      */
-    public void setResponse(DcResponse value) {
+    public void setResponse(PersoniumResponse value) {
         res = value;
     }
 
@@ -99,10 +99,10 @@ public class ODataCommon extends AbstractCase {
      * @param url URL
      * @return レスポンス
      */
-    public static DcResponse getOdataResource(String url) {
-        DcResponse dcRes = null;
+    public static PersoniumResponse getOdataResource(String url) {
+        PersoniumResponse dcRes = null;
         if (url != null) {
-            DcRequest req = DcRequest.get(url)
+            PersoniumRequest req = PersoniumRequest.get(url)
                     .header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN)
                     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             dcRes = request(req);
@@ -116,10 +116,10 @@ public class ODataCommon extends AbstractCase {
      * @param url URL
      * @return レスポンス
      */
-    public static DcResponse deleteOdataResource(String url) {
-        DcResponse dcRes = null;
+    public static PersoniumResponse deleteOdataResource(String url) {
+        PersoniumResponse dcRes = null;
         if (url != null) {
-            DcRequest req = DcRequest.delete(url)
+            PersoniumRequest req = PersoniumRequest.delete(url)
                     .header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN)
                     .header(HttpHeaders.IF_MATCH, "*");
             dcRes = request(req);
@@ -139,7 +139,7 @@ public class ODataCommon extends AbstractCase {
      * テストで作成したセルを削除する.
      * @param response DcResponseオブジェクト
      */
-    public void cellDelete(DcResponse response) {
+    public void cellDelete(PersoniumResponse response) {
         if (response.getStatusCode() == HttpStatus.SC_CREATED) {
             // 作成したCellのIDを抽出
             String cellId = response.getResponseHeaders(HttpHeaders.LOCATION)[0].getValue().split("'")[1];
@@ -149,7 +149,7 @@ public class ODataCommon extends AbstractCase {
             StringBuilder cellUrl = new StringBuilder(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME, cellId));
 
             // Cellを削除
-            DcResponse resDel = restDelete(cellUrl.toString());
+            PersoniumResponse resDel = restDelete(cellUrl.toString());
             assertEquals(HttpStatus.SC_NO_CONTENT, resDel.getStatusCode());
         }
     }
@@ -165,7 +165,7 @@ public class ODataCommon extends AbstractCase {
         StringBuilder cellUrl = new StringBuilder(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME, cellId));
 
         // Cellを削除
-        DcResponse resDel = restDelete(cellUrl.toString());
+        PersoniumResponse resDel = restDelete(cellUrl.toString());
 
         if (checkStatusCode) {
             assertEquals(HttpStatus.SC_NO_CONTENT, resDel.getStatusCode());
@@ -195,7 +195,7 @@ public class ODataCommon extends AbstractCase {
      * @param req DcRequestオブジェクト
      * @param name 作成するCellの名前
      */
-    public void cellNormal(DcRequest req, String name) {
+    public void cellNormal(PersoniumRequest req, String name) {
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", name);
         this.res = request(req);
         checkSuccessResponse(res, MediaType.APPLICATION_JSON_TYPE);
@@ -207,7 +207,7 @@ public class ODataCommon extends AbstractCase {
      * @param name 作成するCellの名前
      * @return res this.resオブジェクト
      */
-    public DcResponse cellNormalResponse(DcRequest req, String name) {
+    public PersoniumResponse cellNormalResponse(PersoniumRequest req, String name) {
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", name);
         this.res = request(req);
         checkSuccessResponse(res, MediaType.APPLICATION_JSON_TYPE);
@@ -220,7 +220,7 @@ public class ODataCommon extends AbstractCase {
      * @param name 作成するCellの名前
      * @return res this.resオブジェクト
      */
-    public DcResponse domainNormalResponse(DcRequest req, String name) {
+    public PersoniumResponse domainNormalResponse(PersoniumRequest req, String name) {
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", name);
         req.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         this.res = request(req);
@@ -236,7 +236,7 @@ public class ODataCommon extends AbstractCase {
      * @param errValue エラー値
      * @param errSc 期待するエラーステータスコード
      */
-    public void domainErrResponse(DcRequest req, String name, String errKey, String errValue, int errSc) {
+    public void domainErrResponse(PersoniumRequest req, String name, String errKey, String errValue, int errSc) {
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
                 .addJsonBody("Name", name)
                 .addJsonBody(errKey, errValue);
@@ -249,7 +249,7 @@ public class ODataCommon extends AbstractCase {
      * Cellの一覧取得の正常系のテスト.
      * @param req DcRequestオブジェクト
      */
-    public void cellListNormal(DcRequest req) {
+    public void cellListNormal(PersoniumRequest req) {
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         this.res = request(req);
         checkCellListResponse(res, MediaType.APPLICATION_JSON_TYPE);
@@ -259,7 +259,7 @@ public class ODataCommon extends AbstractCase {
      * Cellの一覧取得の正常系のテスト(XML).
      * @param req DcRequestオブジェクト
      */
-    public void cellListNormalXml(DcRequest req) {
+    public void cellListNormalXml(PersoniumRequest req) {
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         this.res = request(req);
         String resContentType = res.getFirstHeader(HttpHeaders.CONTENT_TYPE);
@@ -270,7 +270,7 @@ public class ODataCommon extends AbstractCase {
      * Domainの一覧取得の正常系のテスト.
      * @param req DcRequestオブジェクト
      */
-    public void domainListNormal(DcRequest req) {
+    public void domainListNormal(PersoniumRequest req) {
         req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         this.res = request(req);
@@ -282,7 +282,7 @@ public class ODataCommon extends AbstractCase {
      * @param req DcRequestオブジェクト
      * @param name 作成するCellの名前
      */
-    public void cellErrorInvalidMethod(DcRequest req, String name) {
+    public void cellErrorInvalidMethod(PersoniumRequest req, String name) {
 
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", name);
         this.res = request(req);
@@ -299,7 +299,7 @@ public class ODataCommon extends AbstractCase {
      * メソッドが不正なパターンのテスト.
      * @param req DcRequestオブジェクト
      */
-    public void cellErrorInvalidMethod(DcRequest req) {
+    public void cellErrorInvalidMethod(PersoniumRequest req) {
 
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
@@ -316,7 +316,7 @@ public class ODataCommon extends AbstractCase {
      * @param req DcRequestオブジェクト
      * @param name 作成するCellの名前
      */
-    public void cellConflict(DcRequest req, String name) {
+    public void cellConflict(PersoniumRequest req, String name) {
 
         // 1回目
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", name);
@@ -327,7 +327,7 @@ public class ODataCommon extends AbstractCase {
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
 
         // 2回目の要求
-        DcResponse resConflict = request(req);
+        PersoniumResponse resConflict = request(req);
 
         // Cell作成のレスポンスチェック
         // 409になることを確認
@@ -349,7 +349,7 @@ public class ODataCommon extends AbstractCase {
      * @param name1 １つ目に作成するCellの名前
      * @param name2 ２つ目に作成するCellの名前
      */
-    public void cellCreateResCheck(DcRequest req, String method, String url, String name1, String name2) {
+    public void cellCreateResCheck(PersoniumRequest req, String method, String url, String name1, String name2) {
 
         // 1回目
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", name1);
@@ -360,12 +360,12 @@ public class ODataCommon extends AbstractCase {
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
 
         // 2回目の要求
-        DcRequest req2 = null;
+        PersoniumRequest req2 = null;
         if (method.equals(HttpMethod.POST)) {
-            req2 = DcRequest.post(url);
+            req2 = PersoniumRequest.post(url);
         }
         req2.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", name2);
-        DcResponse resConflict = request(req2);
+        PersoniumResponse resConflict = request(req2);
 
         // Cell作成のレスポンスチェック
         try {
@@ -387,7 +387,7 @@ public class ODataCommon extends AbstractCase {
      * リクエストボディが未指定のパターンのテスト.
      * @param req DcRequestオブジェクト
      */
-    public void cellErrorEmptyBody(DcRequest req) {
+    public void cellErrorEmptyBody(PersoniumRequest req) {
         // Cellを作成
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         this.res = request(req);
@@ -404,7 +404,7 @@ public class ODataCommon extends AbstractCase {
      * @param req DcRequestオブジェクト
      * @param name Cell名
      */
-    public void cellErrorInvalidJson(DcRequest req, String name) {
+    public void cellErrorInvalidJson(PersoniumRequest req, String name) {
         // Cellを作成
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addStringBody(name);
         this.res = request(req);
@@ -422,7 +422,7 @@ public class ODataCommon extends AbstractCase {
      * @param req DcRequestオブジェクト
      * @param name Cell名
      */
-    public void cellErrorInvalidXml(DcRequest req, String name) {
+    public void cellErrorInvalidXml(PersoniumRequest req, String name) {
         // Cellを作成
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addStringBody(name);
         this.res = request(req);
@@ -440,7 +440,7 @@ public class ODataCommon extends AbstractCase {
      * @param req DcRequestオブジェクト
      * @param name Cell名
      */
-    public void cellErrorInvalidField(DcRequest req, String name) {
+    public void cellErrorInvalidField(PersoniumRequest req, String name) {
         // Cellを作成
         String[] key = {"Name", "testKey" };
         String[] value = {name, "testValue" };
@@ -461,7 +461,7 @@ public class ODataCommon extends AbstractCase {
      * @param name Cell名
      * @return レスポンスオブジェクト
      */
-    private void cellErrorInvalidName(DcRequest req, String name) {
+    private void cellErrorInvalidName(PersoniumRequest req, String name) {
         // Cellを作成
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", name);
         this.res = request(req);
@@ -476,7 +476,7 @@ public class ODataCommon extends AbstractCase {
      * Cell名が0バイトのパターンのテスト.
      * @param req DcRequestオブジェクト
      */
-    public void cellErrorName0(DcRequest req) {
+    public void cellErrorName0(PersoniumRequest req) {
         cellErrorInvalidName(req, "");
 
         // ボディのチェック
@@ -487,7 +487,7 @@ public class ODataCommon extends AbstractCase {
      * Cell名が129バイトのパターンのテスト.
      * @param req DcRequestオブジェクト
      */
-    public void cellErrorName129(DcRequest req) {
+    public void cellErrorName129(PersoniumRequest req) {
         String name = "01234567890123456789012345678901234567890123456789"
                 + "0123456789012345678901234567890123456789012345678901234567890123456789012345678";
         cellErrorInvalidName(req, name);
@@ -500,7 +500,7 @@ public class ODataCommon extends AbstractCase {
      * Cell名がa～zと0～9と‐と_以外のパターンのテスト.
      * @param req DcRequestオブジェクト
      */
-    public void cellErrorNameCharacter(DcRequest req) {
+    public void cellErrorNameCharacter(PersoniumRequest req) {
         String name = "テスト";
         cellErrorInvalidName(req, name);
 
@@ -512,7 +512,7 @@ public class ODataCommon extends AbstractCase {
      * Cell名が「__」のパターンのテスト.
      * @param req DcRequestオブジェクト
      */
-    public void cellErrorNameUnderbaer(DcRequest req) {
+    public void cellErrorNameUnderbaer(PersoniumRequest req) {
         String name = "__";
         cellErrorInvalidName(req, name);
 
@@ -524,7 +524,7 @@ public class ODataCommon extends AbstractCase {
      * Cell名が「__ctl」のパターンのテスト.
      * @param req DcRequestオブジェクト
      */
-    public void cellErrorNameUnderbaerCtl(DcRequest req) {
+    public void cellErrorNameUnderbaerCtl(PersoniumRequest req) {
         String name = "__ctl";
         cellErrorInvalidName(req, name);
 
@@ -537,7 +537,7 @@ public class ODataCommon extends AbstractCase {
      * @param req DcRequestオブジェクト
      * @param keyName 管理キー名
      */
-    public void cellErrorBodyDateCtl(DcRequest req, String keyName) {
+    public void cellErrorBodyDateCtl(PersoniumRequest req, String keyName) {
         // Cellを作成
         String[] key = {"Name", keyName };
         String[] value = {"testCell", "/Date(0)/" };
@@ -555,7 +555,7 @@ public class ODataCommon extends AbstractCase {
      * @param req DcRequestオブジェクト
      * @param keyName 管理キー名
      */
-    public void cellErrorBodyMetadataCtl(DcRequest req, String keyName) {
+    public void cellErrorBodyMetadataCtl(PersoniumRequest req, String keyName) {
         // Cellを作成
         String[] key = {"Name", keyName };
         String[] value = {"testCell", "test" };
@@ -572,7 +572,7 @@ public class ODataCommon extends AbstractCase {
      * Cellの作成のNameが1文字のパターンのテスト.
      * @param req DcRequestオブジェクト.
      */
-    public void cellName1(DcRequest req) {
+    public void cellName1(PersoniumRequest req) {
         String id = "0";
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", id);
         this.res = request(req);
@@ -583,7 +583,7 @@ public class ODataCommon extends AbstractCase {
      * Cellの作成のNameが128文字のパターンのテスト.
      * @param req DcRequestオブジェクト.
      */
-    public void cellName128(DcRequest req) {
+    public void cellName128(PersoniumRequest req) {
         String id = "01234567890123456789012345678901234567890123456789"
                 + "012345678901234567890123456789012345678901234567890123456789012345678901234567";
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", id);
@@ -595,7 +595,7 @@ public class ODataCommon extends AbstractCase {
      * 認証エラーの処理.Authorizationヘッダがない.
      * @param req DcRequestオブジェクト.
      */
-    private void cellErrorAccess(DcRequest req) {
+    private void cellErrorAccess(PersoniumRequest req) {
         this.res = request(req);
 
         // Cell作成のレスポンスチェック
@@ -610,7 +610,7 @@ public class ODataCommon extends AbstractCase {
      * 認証エラーの処理.Authorizationヘッダが異常.
      * @param req DcRequestオブジェクト.
      */
-    private void cellErrorAuth(DcRequest req) {
+    private void cellErrorAuth(PersoniumRequest req) {
         this.res = request(req);
 
         // Cell作成のレスポンスチェック
@@ -625,7 +625,7 @@ public class ODataCommon extends AbstractCase {
      * 認証ヘッダが無いパターンのテスト.
      * @param req DcRequestオブジェクト
      */
-    public void cellErrorAuthNone(DcRequest req) {
+    public void cellErrorAuthNone(PersoniumRequest req) {
         cellErrorAccess(req);
     }
 
@@ -633,7 +633,7 @@ public class ODataCommon extends AbstractCase {
      * 不正なトークンでの認証エラーテスト.
      * @param req DcRequestオブジェクト
      */
-    public void cellErrorAuthInvalid(DcRequest req) {
+    public void cellErrorAuthInvalid(PersoniumRequest req) {
         req.header(HttpHeaders.AUTHORIZATION, "test");
         cellErrorAuth(req);
     }
@@ -643,7 +643,7 @@ public class ODataCommon extends AbstractCase {
      * @param response response
      * @param contentType ContentType
      */
-    private void checkSuccessResponse(DcResponse response, MediaType contentType) {
+    private void checkSuccessResponse(PersoniumResponse response, MediaType contentType) {
         // Cell作成のレスポンスチェック
         // 201になることを確認
         assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
@@ -686,7 +686,7 @@ public class ODataCommon extends AbstractCase {
      * @param response response
      * @param contentType ContentType
      */
-    private void checkDomainSuccessResponse(DcResponse response, MediaType contentType) {
+    private void checkDomainSuccessResponse(PersoniumResponse response, MediaType contentType) {
         // Cell作成のレスポンスチェック
         // 201になることを確認
         assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
@@ -834,7 +834,7 @@ public class ODataCommon extends AbstractCase {
      * @param expectedCode 期待するエラーコード
      * @param expectedMessage 期待するメッセージ
      */
-    public static final void checkErrorResponseBody(DcResponse res, String expectedCode, String expectedMessage) {
+    public static final void checkErrorResponseBody(PersoniumResponse res, String expectedCode, String expectedMessage) {
         JSONObject body = (JSONObject) res.bodyAsJson();
         String code = (String) body.get("code");
         String message = (String) ((JSONObject) body.get("message")).get("value");
@@ -1288,7 +1288,7 @@ public class ODataCommon extends AbstractCase {
      * @param response response
      * @return publishedの値
      */
-    public static String getPublished(DcResponse response) {
+    public static String getPublished(PersoniumResponse response) {
         JSONObject results = (JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results");
         return (String) results.get("__published");
     }
@@ -1298,7 +1298,7 @@ public class ODataCommon extends AbstractCase {
      * @param response response
      * @return Etagの値
      */
-    public static String getEtag(DcResponse response) {
+    public static String getEtag(PersoniumResponse response) {
         return response.getResponseHeaders(HttpHeaders.ETAG)[0].getValue();
     }
 

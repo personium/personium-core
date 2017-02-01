@@ -35,10 +35,10 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
@@ -52,7 +52,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 /**
  * パスワード変更APIのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class MyPasswordTest extends JerseyTest {
 
@@ -82,7 +82,7 @@ public class MyPasswordTest extends JerseyTest {
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
             Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "PasswordTest");
-            DcResponse res = requesttoMypassword(tokenStr, "newPassword", Setup.TEST_CELL1);
+            PersoniumResponse res = requesttoMypassword(tokenStr, "newPassword", Setup.TEST_CELL1);
             assertEquals(204, res.getStatusCode());
             AuthTestCommon.accountLastAuthenticatedNotUpdatedCheck(
                     Setup.TEST_CELL1, "PasswordTest", lastAuthenticatedTime);
@@ -125,7 +125,7 @@ public class MyPasswordTest extends JerseyTest {
             // セルローカルトークンを取得する
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-            DcResponse res = requesttoMypassword(tokenStr, "newPassword", Setup.TEST_CELL1);
+            PersoniumResponse res = requesttoMypassword(tokenStr, "newPassword", Setup.TEST_CELL1);
             assertEquals(204, res.getStatusCode());
 
             // 確認
@@ -166,7 +166,7 @@ public class MyPasswordTest extends JerseyTest {
         JSONObject json = res.bodyAsJson();
         String transCellAccessToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-        DcResponse response = requesttoMypassword(transCellAccessToken, "newPassword", Setup.TEST_CELL1);
+        PersoniumResponse response = requesttoMypassword(transCellAccessToken, "newPassword", Setup.TEST_CELL1);
         assertEquals(403, response.getStatusCode());
     }
 
@@ -193,7 +193,7 @@ public class MyPasswordTest extends JerseyTest {
         String uluut = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
         // ユニットローカルユニットユーザトークンを取得する
-        DcResponse res = requesttoMypassword(uluut, "password3", Setup.TEST_CELL1);
+        PersoniumResponse res = requesttoMypassword(uluut, "password3", Setup.TEST_CELL1);
         assertEquals(403, res.getStatusCode());
     }
 
@@ -223,7 +223,7 @@ public class MyPasswordTest extends JerseyTest {
             JSONObject json = res.bodyAsJson();
             String unitUserToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-            DcResponse response = requesttoMypassword(unitUserToken, "newPassword", Setup.TEST_CELL1);
+            PersoniumResponse response = requesttoMypassword(unitUserToken, "newPassword", Setup.TEST_CELL1);
             assertEquals(403, response.getStatusCode());
         } finally {
             // アカウント削除
@@ -240,7 +240,7 @@ public class MyPasswordTest extends JerseyTest {
      */
     @Test
     public final void マスタトークン認証でパスワード変更を実行し403が返ること() throws TokenParseException {
-        DcResponse res = requesttoMypassword(MASTER_TOKEN, "password3", Setup.TEST_CELL1);
+        PersoniumResponse res = requesttoMypassword(MASTER_TOKEN, "password3", Setup.TEST_CELL1);
         assertEquals(403, res.getStatusCode());
     }
 
@@ -250,7 +250,7 @@ public class MyPasswordTest extends JerseyTest {
      */
     @Test
     public final void 不正なトークンでパスワード変更を実行し401が返却されること() throws TokenParseException {
-        DcResponse res = requesttoMypassword("passwordhoge", "accountpass", Setup.TEST_CELL1);
+        PersoniumResponse res = requesttoMypassword("passwordhoge", "accountpass", Setup.TEST_CELL1);
         assertEquals(401, res.getStatusCode());
     }
 
@@ -266,7 +266,7 @@ public class MyPasswordTest extends JerseyTest {
         // セルローカルトークンを取得する
         String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-        DcResponse res = requesttoMypassword(tokenStr, "hogea", Setup.TEST_CELL1);
+        PersoniumResponse res = requesttoMypassword(tokenStr, "hogea", Setup.TEST_CELL1);
         assertEquals(400, res.getStatusCode());
     }
 
@@ -285,7 +285,7 @@ public class MyPasswordTest extends JerseyTest {
             // セルローカルトークンを取得する
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-            DcResponse res = requesttoMypassword(tokenStr, "hogeaa", Setup.TEST_CELL1);
+            PersoniumResponse res = requesttoMypassword(tokenStr, "hogeaa", Setup.TEST_CELL1);
             assertEquals(204, res.getStatusCode());
             // 確認
             // TODO 仕様の問題で変更前のトークンが有効となっているため確認未実施
@@ -321,7 +321,7 @@ public class MyPasswordTest extends JerseyTest {
             // セルローカルトークンを取得する
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-            DcResponse res = requesttoMypassword(tokenStr, "12345678901234567890123456789012", Setup.TEST_CELL1);
+            PersoniumResponse res = requesttoMypassword(tokenStr, "12345678901234567890123456789012", Setup.TEST_CELL1);
             assertEquals(204, res.getStatusCode());
             // 変更前のパスワードのセルローカルトークンを使用して403となること
             // 確認
@@ -355,7 +355,7 @@ public class MyPasswordTest extends JerseyTest {
         // セルローカルトークンを取得する
         String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-        DcResponse res = requesttoMypassword(tokenStr, "123456789012345678901234567890123", Setup.TEST_CELL1);
+        PersoniumResponse res = requesttoMypassword(tokenStr, "123456789012345678901234567890123", Setup.TEST_CELL1);
         assertEquals(400, res.getStatusCode());
     }
 
@@ -380,7 +380,7 @@ public class MyPasswordTest extends JerseyTest {
             // セルローカルトークンを取得する
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-            DcResponse res = requesttoMypassword(tokenStr, "password1", cellName1);
+            PersoniumResponse res = requesttoMypassword(tokenStr, "password1", cellName1);
             assertEquals(401, res.getStatusCode());
         } finally {
             AccountUtils.delete(cellName1, MASTER_TOKEN, "PasswordTest", 204);
@@ -402,7 +402,7 @@ public class MyPasswordTest extends JerseyTest {
         // セルローカルトークンを取得する
         String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-        DcResponse res = requesttoMypassword(tokenStr, null, Setup.TEST_CELL1);
+        PersoniumResponse res = requesttoMypassword(tokenStr, null, Setup.TEST_CELL1);
         assertEquals(400, res.getStatusCode());
     }
 
@@ -419,7 +419,7 @@ public class MyPasswordTest extends JerseyTest {
         String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + tokenStr);
@@ -427,7 +427,7 @@ public class MyPasswordTest extends JerseyTest {
         try {
             res = rest.put(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__mypassword", "",
                     requestheaders);
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
         assertEquals(400, res.getStatusCode());
@@ -440,10 +440,10 @@ public class MyPasswordTest extends JerseyTest {
      * @param requestCellName cell名
      * @return レスポンス
      */
-    private DcResponse requesttoMypassword(String headerAuthorization, String headerCredential,
+    private PersoniumResponse requesttoMypassword(String headerAuthorization, String headerCredential,
             String requestCellName) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         if (headerAuthorization == null) {
             headerAuthorization = "";
@@ -460,7 +460,7 @@ public class MyPasswordTest extends JerseyTest {
         try {
             res = rest.put(UrlUtils.cellRoot(requestCellName) + "__mypassword", "",
                     requestheaders);
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
         return res;

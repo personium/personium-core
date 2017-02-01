@@ -37,7 +37,7 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.acl.jaxb.Acl;
 import io.personium.test.unit.core.UrlUtils;
@@ -54,7 +54,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * ファイルに対する親子関係のアクセス制御のテスト.<br />
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class FileAccessControlTest extends JerseyTest {
 

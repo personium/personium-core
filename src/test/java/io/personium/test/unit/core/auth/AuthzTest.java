@@ -36,14 +36,14 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.rs.cell.AuthzEndPointResource;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.unit.core.UrlUtils;
 import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * AccessContext ユニットテストクラス.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public class AuthzTest {
 

@@ -31,8 +31,8 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
@@ -42,7 +42,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserData一覧のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
 
@@ -63,7 +63,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
     public final void UserDataに前方一致検索クエリに英語キーワードを指定して対象のデータのみ取得できること() {
         // englishプロパティの先頭が大文字Testの値のみ取得する
         String sdEntityTypeName = "SalesDetail";
-        DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                 "?$filter=startswith%28english%2c%27Test%27%29&$inlinecount=allpages");
 
         // レスポンスボディーのチェック
@@ -117,7 +117,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                 "?$filter=startswith%28english%2c%27Search+substr%27%29");
 
         // レスポンスボディーのチェック
@@ -148,7 +148,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                 "?$filter=startswith%28english%2c%27substringof%27%29&$inlinecount=allpages");
 
         // レスポンスボディーのチェック
@@ -164,7 +164,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                 "?$filter=startswith%28japanese%2c%27部分一致検索漢字の%27%29");
 
         // レスポンスボディーのチェック
@@ -195,7 +195,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                 "?$filter=startswith%28japanese%2c%27一致検索%27%29&$inlinecount=allpages");
 
         // レスポンスボディーのチェック
@@ -373,7 +373,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
     public final void UserDataに部分一致検索クエリに英語キーワードを指定して対象のデータのみ取得できること() {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
-        DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                 "?$filter=substringof%28%27value%27%2cenglish%29");
 
         // レスポンスボディーのチェック
@@ -404,7 +404,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                 "?$filter=substringof%28%27Search+substringof%27%2cenglish%29");
 
         // レスポンスボディーのチェック
@@ -435,7 +435,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                 "?$filter=substringof%28%27部分一致検索漢字%27%2cjapanese%29");
 
         // レスポンスボディーのチェック
@@ -466,7 +466,7 @@ public class UserDataListFilterFunctionTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
                 "?$filter=substringof%28%27けんさく%27%2cjapanese%29");
 
         // レスポンスボディーのチェック

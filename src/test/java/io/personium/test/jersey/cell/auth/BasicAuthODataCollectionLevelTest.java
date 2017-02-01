@@ -35,8 +35,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.box.odatacol.batch.AbstractUserDataBatchTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -50,7 +50,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 /**
  * Basic認証のBoxレベルのリソースに対するテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class BasicAuthODataCollectionLevelTest extends JerseyTest {
 
@@ -95,10 +95,10 @@ public class BasicAuthODataCollectionLevelTest extends JerseyTest {
 
     /**
      * Basic認証ー$batchでのUserODataの操作.
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
     @Test
-    public final void Basic認証ー$batchでのUserODataの操作() throws DcException {
+    public final void Basic認証ー$batchでのUserODataの操作() throws PersoniumException {
         // ※$batchは通常のODataの操作とは別ルートでの処理になっているため、テストも分離。
         try {
             // $batchのボディ(ユーザOData 作成 - 取得 - 削除)を作成

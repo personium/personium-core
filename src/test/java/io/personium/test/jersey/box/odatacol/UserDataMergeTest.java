@@ -38,8 +38,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.EntityTypeUtils;
@@ -50,7 +50,7 @@ import io.personium.test.utils.TResponse;
 /**
  * UserData更新のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataMergeTest extends AbstractUserDataTest {
 
@@ -686,7 +686,7 @@ public class UserDataMergeTest extends AbstractUserDataTest {
         String locationUserData = null, locationProperty = null;
 
         // Nullable=flaseのPropertyを追加
-        DcResponse resProperty = UserDataUtils.createProperty(cellName, boxName, Setup.TEST_ODATA, propName,
+        PersoniumResponse resProperty = UserDataUtils.createProperty(cellName, boxName, Setup.TEST_ODATA, propName,
                 "Category", "Edm.String", false, "", "None", false, null);
         locationProperty = resProperty.getFirstHeader(HttpHeaders.LOCATION);
 
@@ -750,7 +750,7 @@ public class UserDataMergeTest extends AbstractUserDataTest {
         String locationUserData = null, locationProperty = null;
 
         // Nullable=flaseのPropertyを追加
-        DcResponse resProperty = UserDataUtils.createProperty(cellName, boxName, Setup.TEST_ODATA, propName,
+        PersoniumResponse resProperty = UserDataUtils.createProperty(cellName, boxName, Setup.TEST_ODATA, propName,
                 "Category", "Edm.String", false, "", "None", false, null);
         locationProperty = resProperty.getFirstHeader(HttpHeaders.LOCATION);
 

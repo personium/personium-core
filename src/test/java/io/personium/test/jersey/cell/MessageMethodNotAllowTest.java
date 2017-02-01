@@ -35,10 +35,10 @@ import io.personium.core.model.ctl.SentMessage;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -48,7 +48,7 @@ import io.personium.test.utils.TResponse;
 /**
  * MessageAPIのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class MessageMethodNotAllowTest extends ODataCommon {
 
@@ -78,7 +78,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
 
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -90,7 +90,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
                 res = rest.post(requestUrl, body.toJSONString(),
                         requestheaders);
                 assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
-            } catch (DcException e) {
+            } catch (PersoniumException e) {
                 e.printStackTrace();
             }
 
@@ -120,7 +120,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
 
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -132,7 +132,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
                 res = rest.put(requestUrl, body.toJSONString(),
                         requestheaders);
                 assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
-            } catch (DcException e) {
+            } catch (PersoniumException e) {
                 e.printStackTrace();
             }
 
@@ -197,7 +197,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
 
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -209,7 +209,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
                 res = rest.post(requestUrl, body.toJSONString(),
                         requestheaders);
                 assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
-            } catch (DcException e) {
+            } catch (PersoniumException e) {
                 e.printStackTrace();
             }
 
@@ -239,7 +239,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
 
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -251,7 +251,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
                 res = rest.put(requestUrl, body.toJSONString(),
                         requestheaders);
                 assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
-            } catch (DcException e) {
+            } catch (PersoniumException e) {
                 e.printStackTrace();
             }
 
@@ -316,7 +316,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
 
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -328,7 +328,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
                 res = rest.post(requestUrl, body.toJSONString(),
                         requestheaders);
                 assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
-            } catch (DcException e) {
+            } catch (PersoniumException e) {
                 e.printStackTrace();
             }
 
@@ -358,7 +358,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
 
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -370,7 +370,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
                 res = rest.put(requestUrl, body.toJSONString(),
                         requestheaders);
                 assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
-            } catch (DcException e) {
+            } catch (PersoniumException e) {
                 e.printStackTrace();
             }
 
@@ -435,7 +435,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
 
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -447,7 +447,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
                 res = rest.post(requestUrl, body.toJSONString(),
                         requestheaders);
                 assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
-            } catch (DcException e) {
+            } catch (PersoniumException e) {
                 e.printStackTrace();
             }
 
@@ -477,7 +477,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
 
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -489,7 +489,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
                 res = rest.put(requestUrl, body.toJSONString(),
                         requestheaders);
                 assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
-            } catch (DcException e) {
+            } catch (PersoniumException e) {
                 e.printStackTrace();
             }
 

@@ -43,8 +43,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -59,7 +59,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 /**
  * ユーザデータ向けのbarファイルインストール用テスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class BarInstallUserDataTest extends JerseyTest {
 
@@ -1676,7 +1676,7 @@ public class BarInstallUserDataTest extends JerseyTest {
      */
     private void checkUserData(String cellName, String boxName, String colName, String entityName, String userId) {
         String url = UrlUtils.userdata(cellName, boxName, colName, entityName, userId);
-        DcResponse res = ODataCommon.getOdataResource(url);
+        PersoniumResponse res = ODataCommon.getOdataResource(url);
         JSONObject json = res.bodyAsJson();
         JSONObject results = (JSONObject) ((JSONObject) json.get("d")).get("results");
         String value = results.get("__id").toString();
@@ -1704,7 +1704,7 @@ public class BarInstallUserDataTest extends JerseyTest {
             String entityName) throws Exception {
         final String query = "?$orderby=__id";
         final String token = PersoniumUnitConfig.getMasterToken();
-        DcResponse res = UserDataUtils.listEntities(cellName, boxName, colName, entityName, query, token,
+        PersoniumResponse res = UserDataUtils.listEntities(cellName, boxName, colName, entityName, query, token,
                 HttpStatus.SC_OK);
         String resString = res.bodyAsString();
         JSONObject json = (JSONObject) new JSONParser().parse(resString);

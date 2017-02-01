@@ -25,7 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    DcCoreExceptionMapperTest.class
+    PersoniumCoreExceptionMapperTest.class
     })
 public class AllTests {
 }

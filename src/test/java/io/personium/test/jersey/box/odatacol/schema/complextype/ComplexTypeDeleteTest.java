@@ -31,9 +31,9 @@ import io.personium.core.model.ctl.Property;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -41,7 +41,7 @@ import io.personium.test.unit.core.UrlUtils;
 /**
  * ComplexType削除のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class ComplexTypeDeleteTest extends ODataCommon {
 
@@ -60,7 +60,7 @@ public class ComplexTypeDeleteTest extends ODataCommon {
         // コンプレックスタイプ作成
         String complexTypeName = "deleteTest";
         String complexTypeEntitiesUrl = UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, null);
-        DcRequest req = DcRequest.post(complexTypeEntitiesUrl);
+        PersoniumRequest req = PersoniumRequest.post(complexTypeEntitiesUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(ComplexType.P_COMPLEXTYPE_NAME.getName(), complexTypeName);
         request(req);
@@ -69,7 +69,7 @@ public class ComplexTypeDeleteTest extends ODataCommon {
         String entityTypeName = "deleteTestEntity";
         String entityTypeEntitiesUrl =
                 UrlUtils.entityType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, null);
-        req = DcRequest.post(entityTypeEntitiesUrl);
+        req = PersoniumRequest.post(entityTypeEntitiesUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(EntityType.P_ENTITYTYPE_NAME.getName(), entityTypeName);
         request(req);
@@ -78,7 +78,7 @@ public class ComplexTypeDeleteTest extends ODataCommon {
         String propertyName = "deleteTestProperty";
         String propertyEntitiesUrl =
                 UrlUtils.property(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, null, null);
-        req = DcRequest.post(propertyEntitiesUrl);
+        req = PersoniumRequest.post(propertyEntitiesUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(Property.P_NAME.getName(), propertyName);
         req.addJsonBody(Property.P_TYPE.getName(), complexTypeName);
@@ -88,21 +88,21 @@ public class ComplexTypeDeleteTest extends ODataCommon {
         // ComplexTypeを使用しているPropertyが存在している場合に４０９が返却されること
         String complexTypeEntityUrl =
                 UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, complexTypeName);
-        req = DcRequest.delete(complexTypeEntityUrl);
+        req = PersoniumRequest.delete(complexTypeEntityUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
         try {
             assertEquals(HttpStatus.SC_CONFLICT, response.getStatusCode());
         } finally {
             // Property削除
             String propertyEntityUrl = UrlUtils.property(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     propertyName, entityTypeName);
-            req = DcRequest.delete(propertyEntityUrl);
+            req = PersoniumRequest.delete(propertyEntityUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
 
             // ComplexType削除
-            req = DcRequest.delete(complexTypeEntityUrl);
+            req = PersoniumRequest.delete(complexTypeEntityUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
             response.getStatusCode();
@@ -110,7 +110,7 @@ public class ComplexTypeDeleteTest extends ODataCommon {
             // EntityType削除
             String entityTypeEntityUrl =
                     UrlUtils.entityType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, entityTypeName);
-            req = DcRequest.delete(entityTypeEntityUrl);
+            req = PersoniumRequest.delete(entityTypeEntityUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             request(req);
         }
@@ -125,7 +125,7 @@ public class ComplexTypeDeleteTest extends ODataCommon {
         // コンプレックスタイプ作成（コンプレックスタイププロパティの型）
         String complexTypeName = "deleteTest";
         String complexTypeEntitiesUrl = UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, null);
-        DcRequest req = DcRequest.post(complexTypeEntitiesUrl);
+        PersoniumRequest req = PersoniumRequest.post(complexTypeEntitiesUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(ComplexType.P_COMPLEXTYPE_NAME.getName(), complexTypeName);
         request(req);
@@ -134,7 +134,7 @@ public class ComplexTypeDeleteTest extends ODataCommon {
         String linkedComplexTypeName = "linkedComplexTypeName";
         String linkedComplexTypeEntitiesUrl =
                 UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, null);
-        req = DcRequest.post(linkedComplexTypeEntitiesUrl);
+        req = PersoniumRequest.post(linkedComplexTypeEntitiesUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(ComplexType.P_COMPLEXTYPE_NAME.getName(), linkedComplexTypeName);
         request(req);
@@ -143,7 +143,7 @@ public class ComplexTypeDeleteTest extends ODataCommon {
         String complexTypePropertyName = "deleteTestProperty";
         String complexTypePropertyEntitiesUrl =
                 UrlUtils.complexTypeProperty(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, null, null);
-        req = DcRequest.post(complexTypePropertyEntitiesUrl);
+        req = PersoniumRequest.post(complexTypePropertyEntitiesUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(ComplexTypeProperty.P_NAME.getName(), complexTypePropertyName);
         req.addJsonBody(ComplexTypeProperty.P_TYPE.getName(), complexTypeName);
@@ -153,21 +153,21 @@ public class ComplexTypeDeleteTest extends ODataCommon {
         // ComplexTypeを使用しているComplexTypePropertyが存在している場合に４０９が返却されること
         String complexTypeEntityUrl = UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                 complexTypeName);
-        req = DcRequest.delete(complexTypeEntityUrl);
+        req = PersoniumRequest.delete(complexTypeEntityUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
         try {
             assertEquals(HttpStatus.SC_CONFLICT, response.getStatusCode());
         } finally {
             // ComplexTypeProperty削除
             String complexTypePropertyEntityUrl = UrlUtils.complexTypeProperty(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, complexTypePropertyName, linkedComplexTypeName);
-            req = DcRequest.delete(complexTypePropertyEntityUrl);
+            req = PersoniumRequest.delete(complexTypePropertyEntityUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
 
             // ComplexType削除（コンプレックスタイププロパティの型）
-            req = DcRequest.delete(complexTypeEntityUrl);
+            req = PersoniumRequest.delete(complexTypeEntityUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
             response.getStatusCode();
@@ -175,7 +175,7 @@ public class ComplexTypeDeleteTest extends ODataCommon {
             // ComplexType削除(コンプレックスタイププロパティのリンク)
             String linkedComplexTypeEntityUrl =
                     UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, linkedComplexTypeName);
-            req = DcRequest.delete(linkedComplexTypeEntityUrl);
+            req = PersoniumRequest.delete(linkedComplexTypeEntityUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             request(req);
         }

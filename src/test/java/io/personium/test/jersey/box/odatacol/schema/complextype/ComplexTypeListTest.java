@@ -34,9 +34,9 @@ import io.personium.core.model.ctl.ComplexType;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -44,7 +44,7 @@ import io.personium.test.unit.core.UrlUtils;
 /**
  * ComplexType一覧取得のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class ComplexTypeListTest extends ODataCommon {
 
@@ -84,30 +84,30 @@ public class ComplexTypeListTest extends ODataCommon {
 
         try {
             // ComplexType1作成
-            DcRequest req = DcRequest.post(REQUEST_URL);
+            PersoniumRequest req = PersoniumRequest.post(REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(COMPLEX_TYPE_NAME_KEY, COMPLEX_TYPE_NAME);
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // ComplexType1作成時のetag
             String etag = getEtag(response);
 
             // ComplexType2作成
-            DcRequest req2 = DcRequest.post(REQUEST_URL);
+            PersoniumRequest req2 = PersoniumRequest.post(REQUEST_URL);
             req2.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req2.addJsonBody(COMPLEX_TYPE_NAME_KEY, COMPLEX_TYPE_NAME2);
-            DcResponse response2 = request(req2);
+            PersoniumResponse response2 = request(req2);
             assertEquals(HttpStatus.SC_CREATED, response2.getStatusCode());
 
             // ComplexType2作成時のetag
             String etag2 = getEtag(response2);
 
             // ComplexType一覧取得
-            req = DcRequest.get(locationUrlGet);
+            req = PersoniumRequest.get(locationUrlGet);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse resGet = request(req);
+            PersoniumResponse resGet = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_OK, resGet.getStatusCode());
@@ -144,10 +144,10 @@ public class ComplexTypeListTest extends ODataCommon {
         String locationUrl = UrlUtils.complexType(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, null);
 
         // ComplexType一覧取得
-        DcRequest req = DcRequest.get(locationUrl);
+        PersoniumRequest req = PersoniumRequest.get(locationUrl);
         req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse resGet = request(req);
+        PersoniumResponse resGet = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_OK, resGet.getStatusCode());

@@ -46,7 +46,7 @@ import org.junit.runner.RunWith;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -63,7 +63,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * UserData $batchのNavigationProperty経由登録の上限値テスト. たくさんデータを登録するので、「Integration.class, Regression.class」では動作しない。
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
 public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
     private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();

@@ -36,9 +36,9 @@ import io.personium.core.utils.ODataUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.setup.Setup;
@@ -52,7 +52,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserDataComplexType登録のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataComplexPropertyDateTimeTest extends AbstractUserDataTest {
 
@@ -576,7 +576,7 @@ public class UserDataComplexPropertyDateTimeTest extends AbstractUserDataTest {
     protected void createProperty(String type, String defValue) {
         // リクエストパラメータ設定
         String locationUrl = UrlUtils.property(cellName, boxName, COL_NAME, null, null);
-        DcRequest req = DcRequest.post(locationUrl);
+        PersoniumRequest req = PersoniumRequest.post(locationUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, PROP_NAME);
         req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, ENTITY_TYPE_NAME);
@@ -588,7 +588,7 @@ public class UserDataComplexPropertyDateTimeTest extends AbstractUserDataTest {
         req.addJsonBody(PropertyUtils.PROPERTY_UNIQUE_KEY_KEY, null);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());

@@ -52,12 +52,12 @@ import io.personium.core.model.impl.es.DavNode;
 import io.personium.core.model.impl.es.ads.AdsException;
 import io.personium.core.model.impl.es.ads.JdbcAds;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 /**
  * DavNodeAccessorTestの単体テストケース.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
 public class DavNodeAccessorTest {
 

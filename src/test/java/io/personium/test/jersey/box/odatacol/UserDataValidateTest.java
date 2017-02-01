@@ -36,10 +36,10 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -51,7 +51,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserData登録のバリデートテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataValidateTest extends ODataCommon {
 
@@ -265,7 +265,7 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcResponse res = createUserDataWithDcClient(body);
+            PersoniumResponse res = createUserDataWithDcClient(body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
 
@@ -475,7 +475,7 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            DcResponse res = createUserDataWithDcClient(body);
+            PersoniumResponse res = createUserDataWithDcClient(body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
 
@@ -575,7 +575,7 @@ public class UserDataValidateTest extends ODataCommon {
         locationHeader = null;
 
         try {
-            DcResponse res = createUserDataWithDcClient(body);
+            PersoniumResponse res = createUserDataWithDcClient(body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
             assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
 
@@ -619,7 +619,7 @@ public class UserDataValidateTest extends ODataCommon {
         locationHeader = null;
 
         try {
-            DcResponse res = createUserDataWithDcClient(body);
+            PersoniumResponse res = createUserDataWithDcClient(body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
 
@@ -1320,9 +1320,9 @@ public class UserDataValidateTest extends ODataCommon {
      * @param body リクエストボディ
      * @return レスポンス
      */
-    private DcResponse createUserDataWithDcClient(JSONObject body) {
+    private PersoniumResponse createUserDataWithDcClient(JSONObject body) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1332,7 +1332,7 @@ public class UserDataValidateTest extends ODataCommon {
         try {
             res = rest.post(UrlUtils.userData("testcell1", "box1", "setodata", "Category"), body.toJSONString(),
                     requestheaders);
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
 

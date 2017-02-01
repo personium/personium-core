@@ -49,7 +49,7 @@ public class ResourcePathTest extends AbstractCase {
     @Test
     public final void CellルートパスのCell名に空白が指定された場合に404エラーが返却されること() {
         String url = UrlUtils.cellRoot("cell%20test");
-        DcResponse res = ODataCommon.getOdataResource(url);
+        PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
@@ -64,7 +64,7 @@ public class ResourcePathTest extends AbstractCase {
     @Test
     public final void CellルートパスのCell名に改行コードが指定された場合に404エラーが返却されること() {
         String url = UrlUtils.cellRoot("cell%0atest");
-        DcResponse res = ODataCommon.getOdataResource(url);
+        PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
@@ -79,7 +79,7 @@ public class ResourcePathTest extends AbstractCase {
     @Test
     public final void BoxルートパスのBox名に空白が指定された場合に404エラーが返却されること() {
         String url = UrlUtils.boxRoot(Setup.TEST_CELL1, "box%20test");
-        DcResponse res = ODataCommon.getOdataResource(url);
+        PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
@@ -95,7 +95,7 @@ public class ResourcePathTest extends AbstractCase {
     @Test
     public final void BoxルートパスのBox名に改行コードが指定された場合に404エラーが返却されること() {
         String url = UrlUtils.boxRoot(Setup.TEST_CELL1, "box%0atest");
-        DcResponse res = ODataCommon.getOdataResource(url);
+        PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
@@ -111,7 +111,7 @@ public class ResourcePathTest extends AbstractCase {
     @Test
     public final void ユニット制御API一件取得の検索値に空白が指定された場合に404エラーが返却されること() {
         String url = UrlUtils.unitCtl("Cell", "cell%20test");
-        DcResponse res = ODataCommon.getOdataResource(url);
+        PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
@@ -126,7 +126,7 @@ public class ResourcePathTest extends AbstractCase {
     @Test
     public final void ユニット制御API一件取得の検索値に改行コードが指定された場合に404エラーが返却されること() {
         String url = UrlUtils.unitCtl("Cell", "cell%0atest");
-        DcResponse res = ODataCommon.getOdataResource(url);
+        PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
@@ -141,7 +141,7 @@ public class ResourcePathTest extends AbstractCase {
     @Test
     public final void セル制御API一件取得の検索値に空白が指定された場合に404エラーが返却されること() {
         String url = UrlUtils.cellCtl(Setup.TEST_CELL1, "Box", "box%20test");
-        DcResponse res = ODataCommon.getOdataResource(url);
+        PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");
@@ -156,7 +156,7 @@ public class ResourcePathTest extends AbstractCase {
     @Test
     public final void セル制御API一件取得の検索値に改行コードが指定された場合に404エラーが返却されること() {
         String url = UrlUtils.cellCtl(Setup.TEST_CELL1, "Box", "box%0atest");
-        DcResponse res = ODataCommon.getOdataResource(url);
+        PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
         String message = (String) ((JSONObject) resBody.get("message")).get("value");

@@ -64,10 +64,10 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
@@ -84,7 +84,7 @@ import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 /**
  * ImplicitFlow認証のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 @SuppressWarnings("restriction")
 public class ImplicitFlowTest extends JerseyTest {
@@ -125,7 +125,7 @@ public class ImplicitFlowTest extends JerseyTest {
     public final void 存在しないCellに対してImplicitFlow認証リクエストを実行し404エラーとなること() {
         String reqCell = UrlUtils.cellRoot("dummyCell");
 
-        DcResponse res = requesttoAuthz(null, reqCell, Setup.TEST_CELL_SCHEMA1, null);
+        PersoniumResponse res = requesttoAuthz(null, reqCell, Setup.TEST_CELL_SCHEMA1, null);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
     }
 
@@ -135,7 +135,7 @@ public class ImplicitFlowTest extends JerseyTest {
     @Test
     public final void 認証フォームへのPOSTで200が返ること() {
 
-        DcResponse res = requesttoAuthz(null);
+        PersoniumResponse res = requesttoAuthz(null);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
@@ -157,7 +157,7 @@ public class ImplicitFlowTest extends JerseyTest {
             // Box作成
             BoxUtils.createWithSchema(Setup.TEST_CELL1, "authzBox", AbstractCase.MASTER_TOKEN_NAME, clientId);
 
-            DcResponse res = requesttoAuthz(null, Setup.TEST_CELL1, clientId, null);
+            PersoniumResponse res = requesttoAuthz(null, Setup.TEST_CELL1, clientId, null);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
 
         } finally {
@@ -172,7 +172,7 @@ public class ImplicitFlowTest extends JerseyTest {
     public final void 認証フォームへのPOSTでredirect_uriとclient_idが異なる場合400エラーとなること() {
         String redirectUri = UrlUtils.cellRoot(Setup.TEST_CELL2) + REDIRECT_HTML;
 
-        DcResponse res = requesttoAuthz(null, Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
+        PersoniumResponse res = requesttoAuthz(null, Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
                 redirectUri);
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -185,7 +185,7 @@ public class ImplicitFlowTest extends JerseyTest {
     public final void 認証フォームへのPOSTでclient_idで指定したCellをスキーマに持つBoxが存在しない場合認可エラーとなること() {
         String clientId = UrlUtils.cellRoot("dummyCell");
 
-        DcResponse res = requesttoAuthz(null, Setup.TEST_CELL1, clientId, null);
+        PersoniumResponse res = requesttoAuthz(null, Setup.TEST_CELL1, clientId, null);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
 
         assertEquals(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error?code=PS-ER-0003",
@@ -205,7 +205,7 @@ public class ImplicitFlowTest extends JerseyTest {
             CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
 
             // __authzリクエストを実行
-            DcResponse res = requesttoAuthz(null, cellName, clientId, null);
+            PersoniumResponse res = requesttoAuthz(null, cellName, clientId, null);
             assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
 
             assertEquals(UrlUtils.cellRoot(cellName) + "__html/error?code=PS-ER-0003",
@@ -226,7 +226,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
         String addbody = "&username=account2&password=password2";
 
-        DcResponse res = requesttoAuthz(addbody);
+        PersoniumResponse res = requesttoAuthz(addbody);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
 
@@ -262,7 +262,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
         String addbody = "&username=account2&password=dummypassword";
 
-        DcResponse res = requesttoAuthz(addbody);
+        PersoniumResponse res = requesttoAuthz(addbody);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         // アカウントの最終ログイン時刻が更新されていないことの確認
@@ -291,7 +291,7 @@ public class ImplicitFlowTest extends JerseyTest {
             Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "account2");
 
             // パスワード認証(失敗)
-            DcResponse res = requesttoAuthz(addbody);
+            PersoniumResponse res = requesttoAuthz(addbody);
 
             // レスポンスヘッダのチェック
             assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
@@ -328,7 +328,7 @@ public class ImplicitFlowTest extends JerseyTest {
             String addbody = "&username=account2&password=dummypassword";
 
             // パスワード認証(失敗)
-            DcResponse res = requesttoAuthz(addbody);
+            PersoniumResponse res = requesttoAuthz(addbody);
 
             // レスポンスヘッダのチェック
             assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
@@ -361,7 +361,7 @@ public class ImplicitFlowTest extends JerseyTest {
             String addbody = "&username=account2&password=dummypassword";
 
             // パスワード認証(失敗)
-            DcResponse res = requesttoAuthz(addbody);
+            PersoniumResponse res = requesttoAuthz(addbody);
 
             // レスポンスヘッダのチェック
             assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
@@ -403,7 +403,7 @@ public class ImplicitFlowTest extends JerseyTest {
             String addbody = "&username=account2&password=dummypassword";
 
             // パスワード認証(失敗)
-            DcResponse res = requesttoAuthz(addbody);
+            PersoniumResponse res = requesttoAuthz(addbody);
 
             // レスポンスヘッダのチェック
             assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
@@ -441,7 +441,7 @@ public class ImplicitFlowTest extends JerseyTest {
         // ユーザ名が空
         String addbody = "&username=&password=password2";
 
-        DcResponse res = requesttoAuthz(addbody);
+        PersoniumResponse res = requesttoAuthz(addbody);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         // アカウントの最終ログイン時刻が更新されていないことの確認
@@ -478,7 +478,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
         String addbody = "&username=dummyaccount&password=dummypassword";
 
-        DcResponse res = requesttoAuthz(addbody);
+        PersoniumResponse res = requesttoAuthz(addbody);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
@@ -501,7 +501,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
         String addbody = "&username=account4&password=password4&p_target=" + UrlUtils.cellRoot(Setup.TEST_CELL1);
 
-        DcResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
+        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
         // アカウントの最終ログイン時刻が更新されたことの確認
@@ -547,7 +547,7 @@ public class ImplicitFlowTest extends JerseyTest {
         DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
                 "cell/proppatch-uluut.txt", HttpStatus.SC_MULTI_STATUS);
 
-        DcResponse res = requesttoAuthz(addbody);
+        PersoniumResponse res = requesttoAuthz(addbody);
 
         // アカウントの最終ログイン時刻が更新されたことの確認
         AuthTestCommon.accountLastAuthenticatedCheck(Setup.TEST_CELL1, "account2", lastAuthenticatedTime);
@@ -586,7 +586,7 @@ public class ImplicitFlowTest extends JerseyTest {
         DavResourceUtils.setProppatch(Setup.TEST_CELL2, AbstractCase.MASTER_TOKEN_NAME,
                 "cell/proppatch-uluut.txt", HttpStatus.SC_MULTI_STATUS);
 
-        DcResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
+        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
 
@@ -621,7 +621,7 @@ public class ImplicitFlowTest extends JerseyTest {
         // 認証前のアカウントの最終ログイン時刻を取得しておく
         Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "account2");
 
-        DcResponse res = requesttoAuthz(addbody, Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
+        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
                 redirectUri);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
@@ -640,7 +640,7 @@ public class ImplicitFlowTest extends JerseyTest {
         String addbody = "&username=account2&password=password2";
         String redirectUri = UrlUtils.cellRoot(Setup.TEST_CELL2) + REDIRECT_HTML;
 
-        DcResponse res = requesttoAuthz(addbody, Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
+        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
                 redirectUri);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
@@ -660,7 +660,7 @@ public class ImplicitFlowTest extends JerseyTest {
                 + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
                 + "&state=" + DEFAULT_STATE + "&username=account2&password=password2";
 
-        DcResponse res = requesttoAuthzWithBody(Setup.TEST_CELL1, body);
+        PersoniumResponse res = requesttoAuthzWithBody(Setup.TEST_CELL1, body);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
 
@@ -679,7 +679,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
         String addbody = "&username=account2&password=password2&keeplogin=true";
 
-        DcResponse res = requesttoAuthz(addbody);
+        PersoniumResponse res = requesttoAuthz(addbody);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
 
@@ -714,7 +714,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
         // トークン認証
         String addbody = "&assertion=" + transCellAccessToken;
-        DcResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
+        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
         // アカウントの最終ログイン時刻が更新されていないことの確認
@@ -754,7 +754,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
             // トークン認証
             String addbody = "&assertion=" + transCellAccessToken + "&p_target=" + UrlUtils.cellRoot("authzcell");
-            DcResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2,
+            PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2,
                     UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
 
             assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
@@ -801,7 +801,7 @@ public class ImplicitFlowTest extends JerseyTest {
         String body = "client_id=" + clientId
                 + "&redirect_uri=" + redirecturi
                 + "&state=" + DEFAULT_STATE + addbody;
-        DcResponse res = requesttoAuthzWithBody(Setup.TEST_CELL2, body);
+        PersoniumResponse res = requesttoAuthzWithBody(Setup.TEST_CELL2, body);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
 
@@ -826,7 +826,7 @@ public class ImplicitFlowTest extends JerseyTest {
         String body = "response_type=token"
                 + "&redirect_uri=" + redirecturi
                 + "&state=" + DEFAULT_STATE + addbody;
-        DcResponse res = requesttoAuthzWithBody(Setup.TEST_CELL2, body);
+        PersoniumResponse res = requesttoAuthzWithBody(Setup.TEST_CELL2, body);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
 
@@ -847,7 +847,7 @@ public class ImplicitFlowTest extends JerseyTest {
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
         String body = "response_type=token&client_id=" + clientId
                 + "&state=" + DEFAULT_STATE + addbody;
-        DcResponse res = requesttoAuthzWithBody(Setup.TEST_CELL2, body);
+        PersoniumResponse res = requesttoAuthzWithBody(Setup.TEST_CELL2, body);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
 
@@ -868,7 +868,7 @@ public class ImplicitFlowTest extends JerseyTest {
         String body = "response_type=token&client_id=" + clientId
                 + "&redirect_uri=" + redirecturi
                 + "&state=" + DEFAULT_STATE + addbody;
-        DcResponse res = requesttoAuthzWithBody(Setup.TEST_CELL2, body);
+        PersoniumResponse res = requesttoAuthzWithBody(Setup.TEST_CELL2, body);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
 
@@ -894,7 +894,7 @@ public class ImplicitFlowTest extends JerseyTest {
         String body = "response_type=token&client_id=" + clientId
                 + "&redirect_uri=" + redirecturi
                 + "&state=" + DEFAULT_STATE + addbody;
-        DcResponse res = requesttoAuthzWithBody(Setup.TEST_CELL1, body);
+        PersoniumResponse res = requesttoAuthzWithBody(Setup.TEST_CELL1, body);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
 
@@ -913,7 +913,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
         // パスワード認証で自分セルリフレッシュトークン取得
         String addbody = "&username=account2&password=password2";
-        DcResponse res = requesttoAuthz(addbody);
+        PersoniumResponse res = requesttoAuthz(addbody);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
         // cookieの値と有効期限の確認
         String sessionId = checkSessionId(false, Setup.TEST_CELL1);
@@ -956,7 +956,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
         // パスワード認証で自分セルリフレッシュトークン取得
         String addbody = "&username=account2&password=password2";
-        DcResponse res = requesttoAuthz(addbody);
+        PersoniumResponse res = requesttoAuthz(addbody);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
         // cookieの値と有効期限の確認
         String sessionId = checkSessionId(false, Setup.TEST_CELL1);
@@ -1002,7 +1002,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
         // パスワード認証で自分セルリフレッシュトークン取得
         String addbody = "&username=account2&password=password2";
-        DcResponse res = requesttoAuthz(addbody);
+        PersoniumResponse res = requesttoAuthz(addbody);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
         // cookieの値と有効期限の確認
         String sessionId = checkSessionId(false, Setup.TEST_CELL1);
@@ -1048,7 +1048,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
         // パスワード認証で自分セルリフレッシュトークン取得
         String addbody = "&username=account2&password=password2";
-        DcResponse res = requesttoAuthz(addbody);
+        PersoniumResponse res = requesttoAuthz(addbody);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
         // cookieの値と有効期限の確認
         String sessionId = checkSessionId(false, Setup.TEST_CELL1);
@@ -1096,7 +1096,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
         // パスワード認証で自分セルリフレッシュトークン取得
         String addbody = "&username=account4&password=password4";
-        DcResponse res = requesttoAuthz(addbody);
+        PersoniumResponse res = requesttoAuthz(addbody);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
         // cookieの値と有効期限の確認
         String sessionId = checkSessionId(false, Setup.TEST_CELL1);
@@ -1148,7 +1148,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
             // パスワード認証で自分セルリフレッシュトークン取得
             String addbody = "&username=account1&password=password1";
-            DcResponse res = requesttoAuthz(addbody, cellName, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
+            PersoniumResponse res = requesttoAuthz(addbody, cellName, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
             assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
             // cookieの値と有効期限の確認
             String sessionId = checkSessionId(false, cellName);
@@ -1197,7 +1197,7 @@ public class ImplicitFlowTest extends JerseyTest {
 
         // パスワード認証で自分セルリフレッシュトークン取得
         String addbody = "&username=account2&password=password2";
-        DcResponse res = requesttoAuthz(addbody);
+        PersoniumResponse res = requesttoAuthz(addbody);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
         // cookieの値と有効期限の確認
         String sessionId = checkSessionId(false, Setup.TEST_CELL1);
@@ -1238,7 +1238,7 @@ public class ImplicitFlowTest extends JerseyTest {
                 + "&state=" + DEFAULT_STATE;
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("session-id", sessionId);
-        DcResponse res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
+        PersoniumResponse res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
 
         // cookieが設定されていないことの確認
         Map<String, Object> sessionMap = getSessionMap();
@@ -1268,7 +1268,7 @@ public class ImplicitFlowTest extends JerseyTest {
                 + "&state=" + DEFAULT_STATE;
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put("session-id", sessionId);
-        DcResponse res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
+        PersoniumResponse res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
 
         // cookieが設定されていないことの確認
         Map<String, Object> sessionMap = getSessionMap();
@@ -1288,7 +1288,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * @param addbody 追加のボディ
      * @return レスポンス
      */
-    private DcResponse requesttoAuthz(String addbody) {
+    private PersoniumResponse requesttoAuthz(String addbody) {
         return requesttoAuthz(addbody, Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
     }
 
@@ -1300,7 +1300,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * @param redirecturi redirect_uri
      * @return レスポンス
      */
-    private DcResponse requesttoAuthz(String addbody, String requestCellName, String clientId, String redirecturi) {
+    private PersoniumResponse requesttoAuthz(String addbody, String requestCellName, String clientId, String redirecturi) {
         if (addbody == null) {
             addbody = "";
         }
@@ -1322,7 +1322,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * @param body ボディ
      * @return レスポンス
      */
-    private DcResponse requesttoAuthzWithBody(String requestCellName, String body) {
+    private PersoniumResponse requesttoAuthzWithBody(String requestCellName, String body) {
         return requesttoAuthzWithBody(requestCellName, body, null);
     }
 
@@ -1333,11 +1333,11 @@ public class ImplicitFlowTest extends JerseyTest {
      * @param requestheaders 追加のリクエストヘッダ
      * @return レスポンス
      */
-    private DcResponse requesttoAuthzWithBody(String requestCellName,
+    private PersoniumResponse requesttoAuthzWithBody(String requestCellName,
             String body,
             HashMap<String, String> requestheaders) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         if (requestheaders == null) {
@@ -1352,14 +1352,14 @@ public class ImplicitFlowTest extends JerseyTest {
 
             cookies = rest.getCookies();
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
 
         return res;
     }
 
-    private Map<String, String> parseResponse(DcResponse res) {
+    private Map<String, String> parseResponse(PersoniumResponse res) {
         String location = res.getFirstHeader(HttpHeaders.LOCATION);
         System.out.println(location);
         String[] locations = location.split("#");
@@ -1410,11 +1410,11 @@ public class ImplicitFlowTest extends JerseyTest {
         return sessionMap;
     }
 
-    static void checkHtmlBody(DcResponse res, String messageId, String dataCellName) {
+    static void checkHtmlBody(PersoniumResponse res, String messageId, String dataCellName) {
         checkHtmlBody(res, messageId, dataCellName, "");
     }
 
-    static void checkHtmlBody(DcResponse res, String messageId, String dataCellName, String dcOwner) {
+    static void checkHtmlBody(PersoniumResponse res, String messageId, String dataCellName, String dcOwner) {
         DOMParser parser = new DOMParser();
         InputSource body = null;
         body = new InputSource(res.bodyAsStream());

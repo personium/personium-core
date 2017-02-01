@@ -42,7 +42,7 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
+import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
 import io.personium.test.jersey.cell.ctl.BoxCrudTest;
@@ -725,7 +725,7 @@ public class AclTest extends AbstractCase {
         String boxName = "noneLinkedBox";
         try {
             // Roleと紐ついていないBoxを登録
-            DcRequest req = DcRequest.post(UrlUtils.cellCtl(Setup.TEST_CELL1, "Box"));
+            PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(Setup.TEST_CELL1, "Box"));
             String[] key = {"Name" };
             String[] value = {boxName };
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN).addJsonBody(key, value);

@@ -40,12 +40,12 @@ import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 /**
  * DataSourceAccessorの単体テストケース.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
 public class DataSourceAccessorTest {
 

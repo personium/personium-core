@@ -34,8 +34,8 @@ import io.personium.core.model.Cell;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 
@@ -86,7 +86,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成の正常系のテスト() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellNormal(req, cellNameLower);
     }
 
@@ -96,8 +96,8 @@ public class CreateTest extends ODataCommon {
     @Test
     public final void 登録したCellを削除後すぐに再登録するテスト() {
         // Cellを作成
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
-        DcResponse res = cellNormalResponse(req, cellNameLower);
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumResponse res = cellNormalResponse(req, cellNameLower);
         // Cell削除
         cellDelete(res);
         // Cellを再作成
@@ -109,7 +109,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成のリクエストボディが無いパターンのテスト() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorEmptyBody(req);
     }
 
@@ -118,7 +118,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成のリクエストボディに不正なフィールド名を指定したパターンのテスト() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorInvalidField(req, cellNameLower);
     }
 
@@ -127,7 +127,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成のNameが空のパターンのテスト() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorName0(req);
     }
 
@@ -136,7 +136,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成のNameが1文字のパターンのテスト() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellName1(req);
     }
 
@@ -145,7 +145,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成のNameが128文字のパターンのテスト() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellName128(req);
     }
 
@@ -154,7 +154,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成のNameが129文字のパターンのテスト() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorName129(req);
     }
 
@@ -163,7 +163,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成のNameが不正な値のパターンのテスト() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorNameCharacter(req);
     }
 
@@ -172,7 +172,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成のNameが__の場合に４００が返却されること() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorNameUnderbaer(req);
     }
 
@@ -181,7 +181,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成のNameが__ctlの場合に４００が返却されること() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorNameUnderbaerCtl(req);
     }
 
@@ -190,7 +190,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cell作成のリクエストボディに管理情報__publishedが指定された場合に４００が返却されること() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorBodyDateCtl(req, PUBLISHED);
     }
 
@@ -199,7 +199,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cell作成のリクエストボディに管理情報__updatedが指定された場合に４００が返却されること() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorBodyDateCtl(req, UPDATED);
     }
 
@@ -208,7 +208,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cell作成のリクエストボディに管理情報__metadataが指定された場合に４００が返却されること() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorBodyMetadataCtl(req, METADATA);
     }
 
@@ -217,7 +217,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成のJSONフォーマットエラーのテスト() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorInvalidJson(req, cellNameLower);
     }
 
@@ -226,7 +226,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成のXMLフォーマットエラーのテスト() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorInvalidXml(req, cellNameLower);
     }
 
@@ -235,7 +235,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成の認証ヘッダ無しのテスト() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorAuthNone(req);
     }
 
@@ -244,7 +244,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成の不正な認証ヘッダのテスト() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorAuthInvalid(req);
     }
 
@@ -253,7 +253,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成の不正なメソッドのテスト() {
-        DcRequest req = DcRequest.delete(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.delete(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorInvalidMethod(req, cellNameLower);
     }
 
@@ -262,7 +262,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成で小文字のCell名を登録した後に同じ小文字のCell名を登録した場合_409となることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellConflict(req, cellNameLower);
     }
 
@@ -271,7 +271,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成で大文字のCell名を登録した後に同じ大文字のCell名を登録した場合_409となることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellConflict(req, cellNameUpper);
     }
 
@@ -280,7 +280,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成で小文字のCell名を登録した後に大文字で同じCell名を登録した場合_201となることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellCreateResCheck(req, HttpMethod.POST, UrlUtils.unitCtl(Cell.EDM_TYPE_NAME), cellNameLower, cellNameUpper);
     }
 
@@ -289,7 +289,7 @@ public class CreateTest extends ODataCommon {
      */
     @Test
     public final void Cellの作成で大文字のCell名を登録した後に小文字で同じCell名を登録した場合_201となることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellCreateResCheck(req, HttpMethod.POST, UrlUtils.unitCtl(Cell.EDM_TYPE_NAME), cellNameUpper, cellNameLower);
     }
 
@@ -299,13 +299,13 @@ public class CreateTest extends ODataCommon {
     @Test
     public final void 大文字Cell名で作成したCellに対してCellレベルAPIが利用できること() {
         // 大文字Cell名のCellを作成
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellNormal(req, cellNameUpper);
 
         // 大文字Cell名を指定してBoxの一覧取得を実行
-        req = DcRequest.get(UrlUtils.cellCtl(cellNameUpper, "Box"));
+        req = PersoniumRequest.get(UrlUtils.cellCtl(cellNameUpper, "Box"));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // 200になることを確認
         assertEquals(HttpStatus.SC_OK, response.getStatusCode());
@@ -317,13 +317,13 @@ public class CreateTest extends ODataCommon {
     @Test
     public final void 小文字Cell名で作成したCellに対してCellレベルAPIが利用できること() {
         // 小文字Cell名のCellを作成
-        DcRequest req = DcRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellNormal(req, cellNameLower);
 
         // 小文字Cell名を指定してBoxの一覧取得を実行
-        req = DcRequest.get(UrlUtils.cellCtl(cellNameLower, "Box"));
+        req = PersoniumRequest.get(UrlUtils.cellCtl(cellNameLower, "Box"));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // 200になることを確認
         assertEquals(HttpStatus.SC_OK, response.getStatusCode());

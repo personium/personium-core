@@ -30,13 +30,13 @@ import org.slf4j.Marker;
 
 import io.personium.core.PersoniumCoreMessageUtils.Severity;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 /**
  * EsModelの単体テストケース.
  */
 
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public class PersoniumCoreLogTest {
     static Logger log = LoggerFactory.getLogger(PersoniumCoreLog.class);

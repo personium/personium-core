@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Performance;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.AbstractUserDataTest;
 import io.personium.test.setup.Setup;
@@ -40,7 +40,7 @@ import io.personium.test.utils.TResponse;
 /**
  * UserData一覧のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Performance.class })
 public class UserDataListPerformanceTest extends AbstractUserDataTest {
 

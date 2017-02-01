@@ -40,9 +40,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -54,7 +54,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserData更新のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataUpdateTest extends AbstractUserDataWithNP {
 
@@ -1651,13 +1651,13 @@ public class UserDataUpdateTest extends AbstractUserDataWithNP {
             // ユーザデータ更新
             String requestURL =
                     UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, "Category(3830)", null);
-            DcRequest req = DcRequest.put(requestURL);
+            PersoniumRequest req = PersoniumRequest.put(requestURL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.IF_MATCH, "*");
             req.addJsonBody("dynamicProperty", "dynamicPropertyValue");
 
             // リクエスト実行
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());

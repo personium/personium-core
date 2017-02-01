@@ -43,7 +43,7 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumResponse;
 
 /**
  * JerseyTestFrameworkを利用したユニットテスト.
@@ -96,7 +96,7 @@ public class ReadTest extends AbstractCase {
         cellName = cellName + Long.toString(Calendar.getInstance().getTimeInMillis());
 
         // Cellを作成
-        DcResponse res;
+        PersoniumResponse res;
         res = createCell(cellName);
 
         // Cell作成のレスポンスチェック
@@ -128,7 +128,7 @@ public class ReadTest extends AbstractCase {
     @Test
     public final void Cell登録直後にCellが参照できること() {
         // Cellを作成
-        DcResponse res;
+        PersoniumResponse res;
         res = createCell("testSoonGetCell");
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
         // Cell作成のレスポンスチェック
@@ -153,7 +153,7 @@ public class ReadTest extends AbstractCase {
     private void settleCell() {
         // test用に作成したCellを削除
         this.setHeaders(null);
-        DcResponse res = restDelete(getUrl(this.cellId));
+        PersoniumResponse res = restDelete(getUrl(this.cellId));
         assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
         // 削除された事を確認するため、取得を行い、404になる事を確認
@@ -170,7 +170,7 @@ public class ReadTest extends AbstractCase {
         // $format なし
         // Acceptヘッダ なし
         String url = getUrl(this.cellId);
-        DcResponse res = this.restGet(url);
+        PersoniumResponse res = this.restGet(url);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
@@ -190,7 +190,7 @@ public class ReadTest extends AbstractCase {
         // Acceptヘッダ なし
         String cellName = "123456";
         String url = getUrlWithOutQuote(cellName, null);
-        DcResponse res = this.restGet(url);
+        PersoniumResponse res = this.restGet(url);
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
         checkErrorResponse(res.bodyAsJson(),
@@ -207,7 +207,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.AUTHORIZATION, "");
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId));
 
         // ステータスコード:401
         // コンテンツタイプ:application/json
@@ -227,7 +227,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.AUTHORIZATION, "Token token=\"" + AbstractCase.MASTER_TOKEN_NAME + "\"");
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId));
 
         // ステータスコード:401
         // コンテンツタイプ:application/json
@@ -247,7 +247,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.AUTHORIZATION, "Basic ");
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId));
 
         // ステータスコード:401
         // コンテンツタイプ:application/json
@@ -268,7 +268,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.AUTHORIZATION, "Basic " + AbstractCase.MASTER_TOKEN_NAME);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId));
 
         // ステータスコード:401
         // コンテンツタイプ:application/json
@@ -291,7 +291,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.AUTHORIZATION, "Basic YzNzgUZpbm5vdg==");
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId));
 
         // ステータスコード:401
         // コンテンツタイプ:application/json
@@ -311,7 +311,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.AUTHORIZATION, "Bearer ");
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId));
 
         // ステータスコード:401
         // コンテンツタイプ:application/json
@@ -331,7 +331,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.AUTHORIZATION, "Bearer test");
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId));
 
         // ステータスコード:401
         // コンテンツタイプ:application/json
@@ -347,7 +347,7 @@ public class ReadTest extends AbstractCase {
      */
     @Test
     public final void Cellの取得で不正なIDを指定した場合にBadRequestが返却されること() {
-        DcResponse res = this.restGet(getUrl("'a'"));
+        PersoniumResponse res = this.restGet(getUrl("'a'"));
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, res.getResponseHeaders(HttpHeaders.CONTENT_TYPE)[0].getValue());
@@ -359,7 +359,7 @@ public class ReadTest extends AbstractCase {
      */
     @Test
     public final void Cellの取得でIDを空文字指定した場合にjsonフォーマットでNotFoundが返却されること() {
-        DcResponse res = this.restGet(getUrl(""));
+        PersoniumResponse res = this.restGet(getUrl(""));
 
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, res.getResponseHeaders(HttpHeaders.CONTENT_TYPE)[0].getValue());
@@ -374,7 +374,7 @@ public class ReadTest extends AbstractCase {
         String url = getUrl(this.cellId);
         // $format json
         // Acceptヘッダ なし
-        DcResponse res = this.restGet(url + "?" + QUERY_FORMAT_JSON);
+        PersoniumResponse res = this.restGet(url + "?" + QUERY_FORMAT_JSON);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
@@ -393,7 +393,7 @@ public class ReadTest extends AbstractCase {
         String url = getUrl(this.cellId);
         // $format atom
         // Acceptヘッダ なし
-        DcResponse res = this.restGet(url + "?" + QUERY_FORMAT_ATOM);
+        PersoniumResponse res = this.restGet(url + "?" + QUERY_FORMAT_ATOM);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.responseHeaderMap.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_ATOM_XML);
@@ -416,7 +416,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_ATOM_XML);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(url + "?" + QUERY_FORMAT_ATOM);
+        PersoniumResponse res = this.restGet(url + "?" + QUERY_FORMAT_ATOM);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.responseHeaderMap.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_ATOM_XML);
@@ -439,7 +439,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(url + "?" + QUERY_FORMAT_ATOM);
+        PersoniumResponse res = this.restGet(url + "?" + QUERY_FORMAT_ATOM);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.responseHeaderMap.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_ATOM_XML);
@@ -462,7 +462,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_ATOM_XML);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(url + "?" + QUERY_FORMAT_JSON);
+        PersoniumResponse res = this.restGet(url + "?" + QUERY_FORMAT_JSON);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.checkHeaders(res);
@@ -485,7 +485,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(url + "?" + QUERY_FORMAT_JSON);
+        PersoniumResponse res = this.restGet(url + "?" + QUERY_FORMAT_JSON);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.checkHeaders(res);
@@ -508,7 +508,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_ATOM_XML);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(url);
+        PersoniumResponse res = this.restGet(url);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.responseHeaderMap.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_ATOM_XML);
@@ -531,7 +531,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(url);
+        PersoniumResponse res = this.restGet(url);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.checkHeaders(res);
@@ -549,7 +549,7 @@ public class ReadTest extends AbstractCase {
     public final void IfNoneMatchヘッダに一致する値を指定した場合レスポンスが304で返却されること() {
         String url = getUrl(this.cellId);
         // 一度リクエストを実行してEtagを取得する
-        DcResponse res = this.restGet(getUrl(this.cellId));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId));
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
         this.checkHeaders(res);
@@ -576,7 +576,7 @@ public class ReadTest extends AbstractCase {
         String url = getUrl(this.cellId);
         // $format なし
         // Acceptヘッダ なし
-        DcResponse res = this.restGet(url);
+        PersoniumResponse res = this.restGet(url);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.checkHeaders(res);
@@ -609,7 +609,7 @@ public class ReadTest extends AbstractCase {
     @Test
     public final void Cellの取得で存在しないIDを指定した場合にjsonフォーマットでNotFoundが返却されること() {
         this.settleCell();
-        DcResponse res = this.restGet(getUrl(this.cellId));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId));
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, res.getResponseHeaders(HttpHeaders.CONTENT_TYPE)[0].getValue());
         this.checkErrorResponse(res.bodyAsJson(), "PR404-OD-0002");
@@ -623,7 +623,7 @@ public class ReadTest extends AbstractCase {
         this.settleCell();
         // $format json
         // Acceptヘッダ なし
-        DcResponse res = this.restGet(getUrl(this.cellId, QUERY_FORMAT_JSON));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId, QUERY_FORMAT_JSON));
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, res.getResponseHeaders(HttpHeaders.CONTENT_TYPE)[0].getValue());
         this.checkErrorResponse(res.bodyAsJson(), "PR404-OD-0002");
@@ -637,7 +637,7 @@ public class ReadTest extends AbstractCase {
         this.settleCell();
         // $format atom
         // Acceptヘッダ なし
-        DcResponse res = this.restGet(getUrl(this.cellId, QUERY_FORMAT_ATOM));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId, QUERY_FORMAT_ATOM));
         // TODO $formatのxml対応が完了したら確認内容を修正する
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, res.getResponseHeaders(HttpHeaders.CONTENT_TYPE)[0].getValue());
@@ -657,7 +657,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_ATOM_XML);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId, QUERY_FORMAT_ATOM));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId, QUERY_FORMAT_ATOM));
 
         // TODO $formatのxml対応が完了したら確認内容を修正する
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
@@ -678,7 +678,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId, QUERY_FORMAT_ATOM));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId, QUERY_FORMAT_ATOM));
 
         // TODO $formatのxml対応が完了したら確認内容を修正する
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
@@ -700,7 +700,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_ATOM_XML);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId, QUERY_FORMAT_JSON));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId, QUERY_FORMAT_JSON));
 
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, res.getResponseHeaders(HttpHeaders.CONTENT_TYPE)[0].getValue());
@@ -721,7 +721,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId, QUERY_FORMAT_JSON));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId, QUERY_FORMAT_JSON));
 
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, res.getResponseHeaders(HttpHeaders.CONTENT_TYPE)[0].getValue());
@@ -741,7 +741,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_ATOM_XML);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId));
 
         // TODO $formatのxml対応が完了したら確認内容を修正する
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
@@ -762,7 +762,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         this.setHeaders(headers);
 
-        DcResponse res = this.restGet(getUrl(this.cellId));
+        PersoniumResponse res = this.restGet(getUrl(this.cellId));
 
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, res.getResponseHeaders(HttpHeaders.CONTENT_TYPE)[0].getValue());
@@ -775,7 +775,7 @@ public class ReadTest extends AbstractCase {
      */
     @Test
     public final void Cellの取得で許可されていないメソッドを指定した場合にjsonフォーマットでMethodNotAllowedが返却されること() {
-        DcResponse res = restPost(getUrl(this.cellId), "");
+        PersoniumResponse res = restPost(getUrl(this.cellId), "");
 
         // レスポンスのチェック
         assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
@@ -790,7 +790,7 @@ public class ReadTest extends AbstractCase {
     public final void ＄formatがjsonでCellの取得で許可されていないメソッドを指定した場合にjsonフォーマットでMethodNotAllowedが返却されること() {
         // $format json
         // Acceptヘッダ なし
-        DcResponse res = restPost(getUrl(this.cellId), QUERY_FORMAT_JSON);
+        PersoniumResponse res = restPost(getUrl(this.cellId), QUERY_FORMAT_JSON);
 
         // レスポンスのチェック
         assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
@@ -805,7 +805,7 @@ public class ReadTest extends AbstractCase {
     public final void ＄formatがatomでCellの取得で許可されていないメソッドを指定した場合にjsonフォーマットでMethodNotAllowedが返却されること() {
         // $format atom
         // Acceptヘッダ なし
-        DcResponse res = this.restPost(getUrl(this.cellId), QUERY_FORMAT_ATOM);
+        PersoniumResponse res = this.restPost(getUrl(this.cellId), QUERY_FORMAT_ATOM);
 
         // レスポンスのチェック
         // TODO formatのxml対応が完了したら確認内容を修正する
@@ -826,7 +826,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_ATOM_XML);
         this.setHeaders(headers);
 
-        DcResponse res = this.restPost(getUrl(this.cellId), QUERY_FORMAT_ATOM);
+        PersoniumResponse res = this.restPost(getUrl(this.cellId), QUERY_FORMAT_ATOM);
 
         // レスポンスのチェック
         // TODO formatのxml対応が完了したら確認内容を修正する
@@ -847,7 +847,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         this.setHeaders(headers);
 
-        DcResponse res = this.restPost(getUrl(this.cellId), QUERY_FORMAT_ATOM);
+        PersoniumResponse res = this.restPost(getUrl(this.cellId), QUERY_FORMAT_ATOM);
 
         // レスポンスのチェック
         // TODO formatのxml対応が完了したら確認内容を修正する
@@ -868,7 +868,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_ATOM_XML);
         this.setHeaders(headers);
 
-        DcResponse res = this.restPost(getUrl(this.cellId), QUERY_FORMAT_JSON);
+        PersoniumResponse res = this.restPost(getUrl(this.cellId), QUERY_FORMAT_JSON);
 
         // レスポンスのチェック
         assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
@@ -888,7 +888,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         this.setHeaders(headers);
 
-        DcResponse res = this.restPost(getUrl(this.cellId), QUERY_FORMAT_JSON);
+        PersoniumResponse res = this.restPost(getUrl(this.cellId), QUERY_FORMAT_JSON);
 
         // レスポンスのチェック
         assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
@@ -908,7 +908,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_ATOM_XML);
         this.setHeaders(headers);
 
-        DcResponse res = this.restPost(getUrl(this.cellId), "");
+        PersoniumResponse res = this.restPost(getUrl(this.cellId), "");
 
         // レスポンスのチェック
         // TODO formatのxml対応が完了したら確認内容を修正する
@@ -929,7 +929,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         this.setHeaders(headers);
 
-        DcResponse res = this.restPost(getUrl(this.cellId), "");
+        PersoniumResponse res = this.restPost(getUrl(this.cellId), "");
 
         // レスポンスのチェック
         assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
@@ -950,7 +950,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, "image/jpeg");
         this.setHeaders(headers);
 
-        DcResponse res = restGet(url);
+        PersoniumResponse res = restGet(url);
         assertEquals(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE, res.getStatusCode());
     }
 
@@ -967,7 +967,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, "image/jpeg");
         this.setHeaders(headers);
 
-        DcResponse res = restGet(url + "?" + QUERY_FORMAT_ATOM);
+        PersoniumResponse res = restGet(url + "?" + QUERY_FORMAT_ATOM);
         // TODO Acceptヘッダーのチェック処理が完了したら、NOT_ACCEPTABLEのチェックに変更する
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.responseHeaderMap.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_ATOM_XML);
@@ -990,7 +990,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, "image/jpeg");
         this.setHeaders(headers);
 
-        DcResponse res = restGet(url + "?" + QUERY_FORMAT_JSON);
+        PersoniumResponse res = restGet(url + "?" + QUERY_FORMAT_JSON);
         // TODO Acceptヘッダーのチェック処理が完了したら、NOT_ACCEPTABLEのチェックに変更する
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.checkHeaders(res);
@@ -1013,7 +1013,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, "");
         this.setHeaders(headers);
 
-        DcResponse res = restGet(url);
+        PersoniumResponse res = restGet(url);
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.responseHeaderMap.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_ATOM_XML);
         this.checkHeaders(res);
@@ -1036,7 +1036,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, "");
         this.setHeaders(headers);
 
-        DcResponse res = restGet(url + "?" + QUERY_FORMAT_ATOM);
+        PersoniumResponse res = restGet(url + "?" + QUERY_FORMAT_ATOM);
         // TODO Acceptヘッダーのチェック処理が完了したら、NOT_ACCEPTABLEのチェックに変更する
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.responseHeaderMap.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_ATOM_XML);
@@ -1059,7 +1059,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, "");
         this.setHeaders(headers);
 
-        DcResponse res = restGet(url + "?" + QUERY_FORMAT_JSON);
+        PersoniumResponse res = restGet(url + "?" + QUERY_FORMAT_JSON);
         // TODO Acceptヘッダーのチェック処理が完了したら、NOT_ACCEPTABLEのチェックに変更する
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         this.checkHeaders(res);
@@ -1077,7 +1077,7 @@ public class ReadTest extends AbstractCase {
         String url = getUrl(this.cellId);
         // $format csv
         // Acceptヘッダ なし
-        DcResponse res = restGet(url + "?" + "$format=csv");
+        PersoniumResponse res = restGet(url + "?" + "$format=csv");
 
         // TODO $formatのチェック処理が完了したら、BAD_REQUESTのチェックに変更する
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -1096,7 +1096,7 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_ATOM_XML);
         this.setHeaders(headers);
 
-        DcResponse res = restGet(url + "?" + "$format=csv");
+        PersoniumResponse res = restGet(url + "?" + "$format=csv");
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
     }
 
@@ -1113,11 +1113,11 @@ public class ReadTest extends AbstractCase {
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         this.setHeaders(headers);
 
-        DcResponse res = restGet(url + "?" + "$format=csv");
+        PersoniumResponse res = restGet(url + "?" + "$format=csv");
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
     }
 
-    private void checkHeaders(final DcResponse res) {
+    private void checkHeaders(final PersoniumResponse res) {
         for (int i = 0; i < RESPONSE_HEADERS.length; i++) {
             Header[] headers = res.getResponseHeaders(RESPONSE_HEADERS[i]);
             assertEquals(headers.length, 1);

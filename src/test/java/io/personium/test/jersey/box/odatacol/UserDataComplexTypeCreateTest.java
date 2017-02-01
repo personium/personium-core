@@ -38,9 +38,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -55,7 +55,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * UserDataComplexType登録のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
@@ -96,14 +96,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -144,14 +144,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -203,7 +203,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
@@ -214,7 +214,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -270,7 +270,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
@@ -281,7 +281,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -340,7 +340,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
@@ -348,7 +348,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             req.addJsonBody("listComplexType", etListPropStr);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -406,14 +406,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -456,14 +456,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -494,13 +494,13 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // リクエストパラメータ設定
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -530,14 +530,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // リクエストパラメータ設定
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -577,14 +577,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -632,7 +632,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
@@ -642,7 +642,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -687,7 +687,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
@@ -695,7 +695,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             req.addJsonBody("listComplexType", etListPropStr);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -743,7 +743,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
@@ -751,7 +751,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             req.addJsonBody("listComplexType", etListPropStr);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -799,7 +799,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
@@ -807,7 +807,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             req.addJsonBody("listComplexType", etListPropStr);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             listComplexType2.put("requiredStringEntry", "test");
@@ -821,7 +821,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), userdatalocationUrl, nameSpace, expected);
 
             // 取得リクエスト実行
-            req = DcRequest.get(userdatalocationUrl);
+            req = PersoniumRequest.get(userdatalocationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
@@ -862,14 +862,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -882,7 +882,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), userdatalocationUrl, nameSpace, expected);
 
             // 取得リクエスト実行
-            req = DcRequest.get(userdatalocationUrl);
+            req = PersoniumRequest.get(userdatalocationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
@@ -927,14 +927,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -947,7 +947,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), userdatalocationUrl, nameSpace, expected);
 
             // 取得リクエスト実行
-            req = DcRequest.get(userdatalocationUrl);
+            req = PersoniumRequest.get(userdatalocationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
@@ -992,14 +992,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1012,7 +1012,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), userdatalocationUrl, nameSpace, expected);
 
             // 取得リクエスト実行
-            req = DcRequest.get(userdatalocationUrl);
+            req = PersoniumRequest.get(userdatalocationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
@@ -1057,14 +1057,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1077,7 +1077,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), userdatalocationUrl, nameSpace, expected);
 
             // 取得リクエスト実行
-            req = DcRequest.get(userdatalocationUrl);
+            req = PersoniumRequest.get(userdatalocationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
@@ -1123,14 +1123,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1174,14 +1174,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1225,14 +1225,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1269,7 +1269,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
@@ -1281,7 +1281,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             }
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1318,7 +1318,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
@@ -1332,7 +1332,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             }
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             expected.put("__id", "test000");
@@ -1343,7 +1343,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), userdatalocationUrl, nameSpace, expected);
 
             // 取得リクエスト実行
-            req = DcRequest.get(userdatalocationUrl);
+            req = PersoniumRequest.get(userdatalocationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
@@ -1396,7 +1396,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
@@ -1407,7 +1407,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1453,7 +1453,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
@@ -1464,7 +1464,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1510,7 +1510,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
@@ -1521,7 +1521,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1561,14 +1561,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1614,14 +1614,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1670,14 +1670,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1722,14 +1722,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1742,7 +1742,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), userdatalocationUrl, nameSpace, expected);
 
             // 取得リクエスト実行
-            req = DcRequest.get(userdatalocationUrl);
+            req = PersoniumRequest.get(userdatalocationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
@@ -1788,14 +1788,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1822,13 +1822,13 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1839,7 +1839,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), userdatalocationUrl, nameSpace, expected);
 
             // 取得リクエスト実行
-            req = DcRequest.get(userdatalocationUrl);
+            req = PersoniumRequest.get(userdatalocationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
@@ -1868,14 +1868,14 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, null);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1886,7 +1886,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), userdatalocationUrl, nameSpace, expected);
 
             // 取得リクエスト実行
-            req = DcRequest.get(userdatalocationUrl);
+            req = PersoniumRequest.get(userdatalocationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
@@ -1913,13 +1913,13 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, "propertyValue");
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1948,13 +1948,13 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             Map<String, Object> expected = new HashMap<String, Object>();
@@ -1965,7 +1965,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             ODataCommon.checkResponseBody(response.bodyAsJson(), userdatalocationUrl, nameSpace, expected);
 
             // 取得リクエスト実行
-            req = DcRequest.get(userdatalocationUrl);
+            req = PersoniumRequest.get(userdatalocationUrl);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             response = request(req);
@@ -1999,13 +1999,13 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
             // リクエストパラメータ設定
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody("listprop", "hoge");
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());

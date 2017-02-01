@@ -35,7 +35,7 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
+import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
@@ -652,7 +652,7 @@ public class AccountCreateTest extends ODataCommon {
     }
 
     private void deleteAccount(String accountUrl) {
-        DcRequest req = DcRequest.delete(accountUrl)
+        PersoniumRequest req = PersoniumRequest.delete(accountUrl)
                 .header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
                 .header(HttpHeaders.IF_MATCH, "*");
         request(req);

@@ -31,15 +31,15 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 
 /**
  * UserData全文検索のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataFullTextSearchTest extends AbstractUserDataTest {
 
@@ -76,7 +76,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=たま");
 
             // レスポンスボディーのチェック
@@ -129,7 +129,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=ぽち");
 
             // レスポンスボディーのチェック
@@ -190,7 +190,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=はち");
 
             // レスポンスボディーのチェック
@@ -233,7 +233,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=ぽち１号");
 
             // レスポンスボディーのチェック
@@ -286,7 +286,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=１号");
 
             // レスポンスボディーのチェック
@@ -339,7 +339,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=pochi1st");
 
             // レスポンスボディーのチェック
@@ -392,7 +392,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=POCHI");
 
             // レスポンスボディーのチェック
@@ -445,7 +445,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=pochi");
 
             // レスポンスボディーのチェック
@@ -498,7 +498,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=pochi");
 
             // レスポンスボディーのチェック
@@ -541,7 +541,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=pochi%201st");
 
             // レスポンスボディーのチェック
@@ -594,7 +594,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=pochi");
 
             // レスポンスボディーのチェック
@@ -655,7 +655,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=bone%201st%20pochi");
 
             // レスポンスボディーのチェック
@@ -712,7 +712,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=pochi%261st");
 
             // レスポンスボディーのチェック
@@ -763,7 +763,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("name_ja", "たま ポチ");
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=ポチ%20たま");
 
             // レスポンスボディーのチェック
@@ -818,7 +818,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("name_ja", "たま ポチ");
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=%22ポチ%20たま%22");
 
             // レスポンスボディーのチェック
@@ -875,7 +875,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=pochi%261st");
 
             // レスポンスボディーのチェック
@@ -928,7 +928,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=pochi");
 
             // レスポンスボディーのチェック
@@ -989,7 +989,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=pochi%201st");
 
             // レスポンスボディーのチェック
@@ -1042,7 +1042,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=ぽちichi");
 
             // レスポンスボディーのチェック
@@ -1095,7 +1095,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=");
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1139,7 +1139,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
                     + "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
                     + "1234567890123456";
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=" + qValue);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1183,7 +1183,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
                     + "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
                     + "123456789012345";
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=" + qValue);
 
             // レスポンスボディーのチェック
@@ -1231,7 +1231,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
                     + "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
                     + "123456789012あ";
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=" + qValue);
 
             // レスポンスボディーのチェック
@@ -1274,7 +1274,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             body.put("number", 1);
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=pochi_1st");
 
             // レスポンスボディーのチェック
@@ -1318,7 +1318,7 @@ public class UserDataFullTextSearchTest extends AbstractUserDataTest {
             this.createUserDataWithDcClient(cellName, boxName, colName, entityTypeName, body);
 
             // 半角空白&+\,"'%?;:~!*@$=() のテスト
-            DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
+            PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, entityTypeName,
                     "?q=pochi%20%26%2B%5C%2C%22%27%25%3F%3B%3A%7E%21%2A%40%24%3D%28%291st");
 
             // レスポンスボディーのチェック

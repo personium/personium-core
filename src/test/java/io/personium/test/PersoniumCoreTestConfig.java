@@ -21,11 +21,11 @@ import io.personium.core.PersoniumUnitConfig;
 /**
  * Coreのテスト用設定を定義するクラス.
  */
-public class DcCoreTestConfig {
+public class PersoniumCoreTestConfig {
 
     private static final String PROP_TARGET_VERSION = "io.personium.test.target.version";
 
-    private DcCoreTestConfig() {
+    private PersoniumCoreTestConfig() {
     }
 
     /**

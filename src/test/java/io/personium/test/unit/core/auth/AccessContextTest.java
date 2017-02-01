@@ -48,13 +48,13 @@ import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Cell;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.unit.core.UrlUtils;
 
 /**
  * AccessContext ユニットテストクラス.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public class AccessContextTest {
 

@@ -26,8 +26,8 @@ import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.unit.core.UrlUtils;
 
@@ -62,11 +62,11 @@ public class BoxUtils {
      * @param boxName boxName
      * @param authorization Authorizationヘッダの値(auth-schemaを含む文字列)
      * @return レスポンス
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
-    public static DcResponse getWithAuthSchema(final String cellName,
+    public static PersoniumResponse getWithAuthSchema(final String cellName,
             final String boxName,
-            final String authorization) throws DcException {
+            final String authorization) throws PersoniumException {
         PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);
@@ -114,11 +114,11 @@ public class BoxUtils {
      * @param boxName boxName
      * @param authorization Authorizationヘッダの値(auth-schemaを含む文字列)
      * @return レスポンス
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
-    public static DcResponse createWithAuthSchema(final String cellName,
+    public static PersoniumResponse createWithAuthSchema(final String cellName,
             final String boxName,
-            final String authorization) throws DcException {
+            final String authorization) throws PersoniumException {
         PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);
@@ -203,10 +203,10 @@ public class BoxUtils {
      * @param cellName cellName
      * @param authorization Authorizationヘッダの値(auth-schemaを含む文字列)
      * @return レスポンス
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
-    public static DcResponse listWithAuthSchema(final String cellName,
-            final String authorization) throws DcException {
+    public static PersoniumResponse listWithAuthSchema(final String cellName,
+            final String authorization) throws PersoniumException {
         PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);
@@ -269,12 +269,12 @@ public class BoxUtils {
      * @param newName 新ボックス名
      * @param authorization Authorizationヘッダの値(auth-schemaを含む文字列)
      * @return レスポンス
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
-    public static DcResponse updateWithAuthSchema(final String cellName,
+    public static PersoniumResponse updateWithAuthSchema(final String cellName,
             final String boxName,
             final String newName,
-            final String authorization) throws DcException {
+            final String authorization) throws PersoniumException {
         PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);
@@ -327,11 +327,11 @@ public class BoxUtils {
      * @param boxName boxName
      * @param authorization Authorizationヘッダの値(auth-schemaを含む文字列)
      * @return レスポンス
-     * @throws DcException リクエスト失敗
+     * @throws PersoniumException リクエスト失敗
      */
-    public static DcResponse deleteWithAuthSchema(final String cellName,
+    public static PersoniumResponse deleteWithAuthSchema(final String cellName,
             final String boxName,
-            final String authorization) throws DcException {
+            final String authorization) throws PersoniumException {
         PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, authorization);

@@ -58,7 +58,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * ReadDeleteOnlyModeに関するテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Integration.class })
 public class ReadDeleteOnlyModeTest extends JerseyTest {
 

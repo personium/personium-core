@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.core.model.progress.ProgressInfo;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.Http;
@@ -244,7 +244,7 @@ public class BarInstallTestUtils {
      */
     public static void assertBarInstallStatus(String location, String schemaUrl, ProgressInfo.STATUS status) {
         waitBoxInstallCompleted(location);
-        DcResponse res = ODataCommon.getOdataResource(location);
+        PersoniumResponse res = ODataCommon.getOdataResource(location);
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         JSONObject bodyJson = (JSONObject) ((JSONObject) res.bodyAsJson());
 
@@ -271,7 +271,7 @@ public class BarInstallTestUtils {
      * @param location Location
      */
     public static void waitBoxInstallCompleted(String location) {
-        DcResponse response = null;
+        PersoniumResponse response = null;
         JSONObject bodyJson = null;
 
         long startTime = System.currentTimeMillis();

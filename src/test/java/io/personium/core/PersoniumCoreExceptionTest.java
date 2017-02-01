@@ -23,13 +23,13 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumCoreMessageUtils.Severity;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 
 /**
  * URLの作成の組立を行う関数群.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public final class PersoniumCoreExceptionTest {
 

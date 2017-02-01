@@ -45,10 +45,10 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DaoException;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -61,7 +61,7 @@ import io.personium.test.utils.TResponse;
 /**
  * MessageAPIのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class MessageReceivedTest extends ODataCommon {
 
@@ -92,7 +92,7 @@ public class MessageReceivedTest extends ODataCommon {
 
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -122,7 +122,7 @@ public class MessageReceivedTest extends ODataCommon {
                 checkResponseBody(json, locationHeader, Common.EDM_NS_CELL_CTL + "."
                         + ReceivedMessagePort.EDM_TYPE_NAME, expected);
                 System.out.println(json.toJSONString());
-            } catch (DcException e) {
+            } catch (PersoniumException e) {
                 e.printStackTrace();
             }
 
@@ -149,7 +149,7 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Status", "unread");
 
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -166,7 +166,7 @@ public class MessageReceivedTest extends ODataCommon {
                     PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
                     PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(
                             ReceivedMessage.P_ID.getName()).getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
     }
@@ -188,7 +188,7 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Status", "unread");
 
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -203,7 +203,7 @@ public class MessageReceivedTest extends ODataCommon {
             checkErrorResponse(res.bodyAsJson(),
                     PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getCode(),
                     PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
 
@@ -226,7 +226,7 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Status", "unread");
 
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -239,7 +239,7 @@ public class MessageReceivedTest extends ODataCommon {
             checkErrorResponse(res.bodyAsJson(),
                     PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.getCode(),
                     PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
     }
@@ -261,7 +261,7 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Status", "unread");
 
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -276,7 +276,7 @@ public class MessageReceivedTest extends ODataCommon {
             checkErrorResponse(res.bodyAsJson(),
                     PersoniumCoreAuthzException.TOKEN_PARSE_ERROR.getCode(),
                     PersoniumCoreAuthzException.TOKEN_PARSE_ERROR.getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
     }
@@ -298,7 +298,7 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Status", "unread");
 
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -319,7 +319,7 @@ public class MessageReceivedTest extends ODataCommon {
                     PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getCode(),
                     PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING.getMessage());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
 
@@ -351,14 +351,14 @@ public class MessageReceivedTest extends ODataCommon {
 
         try {
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = rest.post(requestUrl, body.toJSONString(),
+            PersoniumResponse res = rest.post(requestUrl, body.toJSONString(),
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
                     PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
                     PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                             ReceivedMessage.P_STATUS.getName()).getMessage());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
     }
@@ -387,7 +387,7 @@ public class MessageReceivedTest extends ODataCommon {
 
         try {
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -419,7 +419,7 @@ public class MessageReceivedTest extends ODataCommon {
                         + ReceivedMessagePort.EDM_TYPE_NAME, expected);
                 System.out.println(json.toJSONString());
 
-            } catch (DcException e) {
+            } catch (PersoniumException e) {
                 e.printStackTrace();
             }
 
@@ -439,8 +439,8 @@ public class MessageReceivedTest extends ODataCommon {
 
         PersoniumRestAdapter rest1 = new PersoniumRestAdapter();
         PersoniumRestAdapter rest2 = new PersoniumRestAdapter();
-        DcResponse res1 = null;
-        DcResponse res2 = null;
+        PersoniumResponse res1 = null;
+        PersoniumResponse res2 = null;
 
         // リクエストボディ1作成
         JSONObject body1 = new JSONObject();
@@ -486,7 +486,7 @@ public class MessageReceivedTest extends ODataCommon {
             JSONArray results = (JSONArray) ((JSONObject) listresponse.bodyAsJson().get("d")).get("results");
             assertEquals(2, results.size());
             // TODO レスポンスボディのチェック
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             if (res1 != null) {
@@ -507,7 +507,7 @@ public class MessageReceivedTest extends ODataCommon {
     public final void 受信メッセージの一件取得ができること() {
 
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストボディ作成
         JSONObject body = new JSONObject();
@@ -537,7 +537,7 @@ public class MessageReceivedTest extends ODataCommon {
             // 送信メッセージの一件取得
             ReceivedMessageUtils.get(MASTER_TOKEN_NAME, Setup.TEST_CELL1, HttpStatus.SC_OK, id);
             // TODO レスポンスボディのチェック
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             if (res != null) {
@@ -554,7 +554,7 @@ public class MessageReceivedTest extends ODataCommon {
     public final void 受信メッセージの削除ができること() {
 
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         String id = null;
 
         // リクエストボディ作成
@@ -582,7 +582,7 @@ public class MessageReceivedTest extends ODataCommon {
             // __idの取得
             JSONObject results = (JSONObject) ((JSONObject) res.bodyAsJson().get("d")).get("results");
             id = (String) results.get("__id");
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             if (res != null) {
@@ -603,13 +603,13 @@ public class MessageReceivedTest extends ODataCommon {
         String messageId = null;
         String accountName = "account1";
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
 
         try {
             // 受信メッセージの作成
-            DcResponse messageResponse = createReceivedMessage();
+            PersoniumResponse messageResponse = createReceivedMessage();
             locationHeader = messageResponse.getFirstHeader(HttpHeaders.LOCATION);
             messageId = getId(messageResponse);
 
@@ -628,7 +628,7 @@ public class MessageReceivedTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(requestUrl, requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // $links削除
@@ -640,7 +640,7 @@ public class MessageReceivedTest extends ODataCommon {
                     rest = new PersoniumRestAdapter();
                     res = null;
                     res = rest.del(requestUrl, requestheaders);
-                } catch (DcException e) {
+                } catch (PersoniumException e) {
                     e.printStackTrace();
                 }
                 assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
@@ -661,13 +661,13 @@ public class MessageReceivedTest extends ODataCommon {
         String messageId = null;
         String accountName = "account1";
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
 
         try {
             // 受信メッセージの作成
-            DcResponse messageResponse = createReceivedMessage();
+            PersoniumResponse messageResponse = createReceivedMessage();
             locationHeader = messageResponse.getFirstHeader(HttpHeaders.LOCATION);
             messageId = getId(messageResponse);
 
@@ -679,7 +679,7 @@ public class MessageReceivedTest extends ODataCommon {
             body.put("uri", UrlUtils.cellCtl(Setup.TEST_CELL1, Account.EDM_TYPE_NAME, accountName));
             res = rest.post(requestUrl, body.toJSONString(), requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             if (locationHeader != null) {
@@ -698,13 +698,13 @@ public class MessageReceivedTest extends ODataCommon {
         String messageId = null;
         String accountName = "account1";
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
 
         try {
             // 受信メッセージの作成
-            DcResponse messageResponse = createReceivedMessage();
+            PersoniumResponse messageResponse = createReceivedMessage();
             locationHeader = messageResponse.getFirstHeader(HttpHeaders.LOCATION);
             messageId = getId(messageResponse);
 
@@ -723,7 +723,7 @@ public class MessageReceivedTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(requestUrl, requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // $links削除
@@ -735,7 +735,7 @@ public class MessageReceivedTest extends ODataCommon {
                     rest = new PersoniumRestAdapter();
                     res = null;
                     res = rest.del(requestUrl, requestheaders);
-                } catch (DcException e) {
+                } catch (PersoniumException e) {
                     e.printStackTrace();
                 }
                 assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
@@ -797,20 +797,20 @@ public class MessageReceivedTest extends ODataCommon {
 
             try {
                 PersoniumRestAdapter restAdapterForCreateLink = new PersoniumRestAdapter();
-                DcResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
+                PersoniumResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
                         bodyForCreateLink.toJSONString(), requestheaders);
                 assertEquals(HttpStatus.SC_NO_CONTENT, linkCreateResponse.getStatusCode());
-            } catch (DcException ex) {
+            } catch (PersoniumException ex) {
                 fail();
             }
 
             // $links取得
             try {
                 PersoniumRestAdapter restAdapterForGetLink = new PersoniumRestAdapter();
-                DcResponse linkRetreiveResponse = restAdapterForGetLink.getAcceptEncodingGzip(
+                PersoniumResponse linkRetreiveResponse = restAdapterForGetLink.getAcceptEncodingGzip(
                         requestUrl, requestheaders);
                 assertEquals(HttpStatus.SC_OK, linkRetreiveResponse.getStatusCode());
-            } catch (DcException ex) {
+            } catch (PersoniumException ex) {
                 fail();
             }
 
@@ -821,9 +821,9 @@ public class MessageReceivedTest extends ODataCommon {
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, receiveAccountName);
                 try {
                     PersoniumRestAdapter restAdapterForDeleteLink = new PersoniumRestAdapter();
-                    DcResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
+                    PersoniumResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
                     assertEquals(HttpStatus.SC_NO_CONTENT, linkDeleteResponse.getStatusCode());
-                } catch (DcException e) {
+                } catch (PersoniumException e) {
                     fail();
                 }
             }
@@ -888,20 +888,20 @@ public class MessageReceivedTest extends ODataCommon {
 
             try {
                 PersoniumRestAdapter restAdapterForCreateLink = new PersoniumRestAdapter();
-                DcResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
+                PersoniumResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
                         bodyForCreateLink.toJSONString(), requestheaders);
                 assertEquals(HttpStatus.SC_NO_CONTENT, linkCreateResponse.getStatusCode());
-            } catch (DcException ex) {
+            } catch (PersoniumException ex) {
                 fail();
             }
 
             // $links取得
             try {
                 PersoniumRestAdapter restAdapterForGetLink = new PersoniumRestAdapter();
-                DcResponse linkRetreiveResponse = restAdapterForGetLink.getAcceptEncodingGzip(requestUrl,
+                PersoniumResponse linkRetreiveResponse = restAdapterForGetLink.getAcceptEncodingGzip(requestUrl,
                         requestheaders);
                 assertEquals(HttpStatus.SC_OK, linkRetreiveResponse.getStatusCode());
-            } catch (DcException ex) {
+            } catch (PersoniumException ex) {
                 fail();
             }
 
@@ -912,9 +912,9 @@ public class MessageReceivedTest extends ODataCommon {
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, receiveAccountName);
                 try {
                     PersoniumRestAdapter restAdapterForDeleteLink = new PersoniumRestAdapter();
-                    DcResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
+                    PersoniumResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
                     assertEquals(HttpStatus.SC_NO_CONTENT, linkDeleteResponse.getStatusCode());
-                } catch (DcException e) {
+                } catch (PersoniumException e) {
                     fail();
                 }
             }
@@ -979,10 +979,10 @@ public class MessageReceivedTest extends ODataCommon {
 
             try {
                 PersoniumRestAdapter restAdapterForCreateLink = new PersoniumRestAdapter();
-                DcResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
+                PersoniumResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
                         bodyForCreateLink.toJSONString(), requestheaders);
                 assertEquals(HttpStatus.SC_FORBIDDEN, linkCreateResponse.getStatusCode());
-            } catch (DcException ex) {
+            } catch (PersoniumException ex) {
                 fail();
             }
         } finally {
@@ -1047,20 +1047,20 @@ public class MessageReceivedTest extends ODataCommon {
 
             try {
                 PersoniumRestAdapter restAdapterForCreateLink = new PersoniumRestAdapter();
-                DcResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
+                PersoniumResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
                         bodyForCreateLink.toJSONString(), requestheaders);
                 assertEquals(HttpStatus.SC_NO_CONTENT, linkCreateResponse.getStatusCode());
-            } catch (DcException ex) {
+            } catch (PersoniumException ex) {
                 fail();
             }
 
             // $links取得
             try {
                 PersoniumRestAdapter restAdapterForGetLink = new PersoniumRestAdapter();
-                DcResponse linkRetreiveResponse = restAdapterForGetLink.getAcceptEncodingGzip(requestUrl,
+                PersoniumResponse linkRetreiveResponse = restAdapterForGetLink.getAcceptEncodingGzip(requestUrl,
                         requestheaders);
                 assertEquals(HttpStatus.SC_OK, linkRetreiveResponse.getStatusCode());
-            } catch (DcException ex) {
+            } catch (PersoniumException ex) {
                 fail();
             }
 
@@ -1071,9 +1071,9 @@ public class MessageReceivedTest extends ODataCommon {
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, receiveAccountName);
                 try {
                     PersoniumRestAdapter restAdapterForDeleteLink = new PersoniumRestAdapter();
-                    DcResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
+                    PersoniumResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
                     assertEquals(HttpStatus.SC_NO_CONTENT, linkDeleteResponse.getStatusCode());
-                } catch (DcException e) {
+                } catch (PersoniumException e) {
                     fail();
                 }
             }
@@ -1139,20 +1139,20 @@ public class MessageReceivedTest extends ODataCommon {
 
             try {
                 PersoniumRestAdapter restAdapterForCreateLink = new PersoniumRestAdapter();
-                DcResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
+                PersoniumResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
                         bodyForCreateLink.toJSONString(), requestheaders);
                 assertEquals(HttpStatus.SC_NO_CONTENT, linkCreateResponse.getStatusCode());
-            } catch (DcException ex) {
+            } catch (PersoniumException ex) {
                 fail();
             }
 
             // $links取得
             try {
                 PersoniumRestAdapter restAdapterForGetLink = new PersoniumRestAdapter();
-                DcResponse linkRetreiveResponse = restAdapterForGetLink.getAcceptEncodingGzip(requestUrl,
+                PersoniumResponse linkRetreiveResponse = restAdapterForGetLink.getAcceptEncodingGzip(requestUrl,
                         requestheaders);
                 assertEquals(HttpStatus.SC_OK, linkRetreiveResponse.getStatusCode());
-            } catch (DcException ex) {
+            } catch (PersoniumException ex) {
                 fail();
             }
 
@@ -1163,9 +1163,9 @@ public class MessageReceivedTest extends ODataCommon {
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, receiveAccountName);
                 try {
                     PersoniumRestAdapter restAdapterForDeleteLink = new PersoniumRestAdapter();
-                    DcResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
+                    PersoniumResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
                     assertEquals(HttpStatus.SC_NO_CONTENT, linkDeleteResponse.getStatusCode());
-                } catch (DcException e) {
+                } catch (PersoniumException e) {
                     fail();
                 }
             }
@@ -1231,10 +1231,10 @@ public class MessageReceivedTest extends ODataCommon {
 
             try {
                 PersoniumRestAdapter restAdapterForCreateLink = new PersoniumRestAdapter();
-                DcResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
+                PersoniumResponse linkCreateResponse = restAdapterForCreateLink.post(requestUrl,
                         bodyForCreateLink.toJSONString(), requestheaders);
                 assertEquals(HttpStatus.SC_FORBIDDEN, linkCreateResponse.getStatusCode());
-            } catch (DcException ex) {
+            } catch (PersoniumException ex) {
                 fail();
             }
         } finally {
@@ -1257,13 +1257,13 @@ public class MessageReceivedTest extends ODataCommon {
         String messageId = null;
         String accountName = "account1";
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
 
         try {
             // 受信メッセージの作成
-            DcResponse messageResponse = createReceivedMessage();
+            PersoniumResponse messageResponse = createReceivedMessage();
             locationHeader = messageResponse.getFirstHeader(HttpHeaders.LOCATION);
             messageId = getId(messageResponse);
 
@@ -1292,7 +1292,7 @@ public class MessageReceivedTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(requestUrl, requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // $links削除
@@ -1304,7 +1304,7 @@ public class MessageReceivedTest extends ODataCommon {
                     rest = new PersoniumRestAdapter();
                     res = null;
                     res = rest.del(requestUrl, requestheaders);
-                } catch (DcException e) {
+                } catch (PersoniumException e) {
                     e.printStackTrace();
                 }
                 assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
@@ -1325,13 +1325,13 @@ public class MessageReceivedTest extends ODataCommon {
         String messageId = null;
         String accountName = "account1";
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
 
         try {
             // 受信メッセージの作成
-            DcResponse messageResponse = createReceivedMessage();
+            PersoniumResponse messageResponse = createReceivedMessage();
             locationHeader = messageResponse.getFirstHeader(HttpHeaders.LOCATION);
             messageId = getId(messageResponse);
 
@@ -1370,7 +1370,7 @@ public class MessageReceivedTest extends ODataCommon {
             }
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // $links削除
@@ -1382,7 +1382,7 @@ public class MessageReceivedTest extends ODataCommon {
                     rest = new PersoniumRestAdapter();
                     res = null;
                     res = rest.del(requestUrl, requestheaders);
-                } catch (DcException e) {
+                } catch (PersoniumException e) {
                     e.printStackTrace();
                 }
                 assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
@@ -1418,13 +1418,13 @@ public class MessageReceivedTest extends ODataCommon {
         }
     }
 
-    private String getId(DcResponse response) {
+    private String getId(PersoniumResponse response) {
         JSONObject result = (JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results");
         return (String) result.get("__id");
     }
 
     @SuppressWarnings("unchecked")
-    private DcResponse createReceivedMessage() {
+    private PersoniumResponse createReceivedMessage() {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
@@ -1435,7 +1435,7 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("Status", "unread");
 
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1447,7 +1447,7 @@ public class MessageReceivedTest extends ODataCommon {
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
             res = rest.post(requestUrl, body.toJSONString(), requestheaders);
             assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
         return res;

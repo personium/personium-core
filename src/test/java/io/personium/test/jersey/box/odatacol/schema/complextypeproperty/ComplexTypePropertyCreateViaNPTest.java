@@ -37,8 +37,8 @@ import io.personium.core.model.ctl.Property;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -47,7 +47,7 @@ import io.personium.test.utils.TResponse;
 /**
  * ComplexTypePropertyNP経由登録のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class ComplexTypePropertyCreateViaNPTest extends ODataCommon {
 
@@ -78,7 +78,7 @@ public class ComplexTypePropertyCreateViaNPTest extends ODataCommon {
     public void before() {
         // ComplexType作成
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(ComplexTypePropertyUtils.CT_REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(ComplexTypePropertyUtils.CT_REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(COMPLEX_TYPE_NAME_KEY, COMPLEX_TYPE_NAME);
         // リクエスト実行

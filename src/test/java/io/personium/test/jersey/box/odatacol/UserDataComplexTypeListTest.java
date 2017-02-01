@@ -37,9 +37,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -51,7 +51,7 @@ import io.personium.test.utils.TResponse;
 /**
  * UserDataComplexType一覧取得のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataComplexTypeListTest extends AbstractUserDataTest {
 
@@ -106,7 +106,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
             reqBody.put("__id", USER_DATA_ID1);
             reqBody.put(ET_STRING_PROP, "etStrPropValue1");
             reqBody.put(ET_CT1ST_PROP, ct1stProp1);
-            DcResponse resPost = createUserDataComplexType(reqBody);
+            PersoniumResponse resPost = createUserDataComplexType(reqBody);
             assertEquals(HttpStatus.SC_CREATED, resPost.getStatusCode());
 
             // ユーザデータ2登録
@@ -187,13 +187,13 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
 
             String requestUrl1 = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     ENTITY_TYPE_NAME, null);
-            DcRequest req1 = DcRequest.post(requestUrl1);
+            PersoniumRequest req1 = PersoniumRequest.post(requestUrl1);
             req1.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req1.addJsonBody("__id", USER_DATA_ID1);
             req1.addJsonBody(ET_STRING_PROP, "etStrPropValue1");
             req1.addJsonBody(ET_CT1ST_PROP, ct1stProp1);
 
-            DcResponse resPost1 = request(req1);
+            PersoniumResponse resPost1 = request(req1);
             assertEquals(HttpStatus.SC_CREATED, resPost1.getStatusCode());
 
             // ユーザデータ2登録
@@ -210,13 +210,13 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
 
             String requestUrl2 = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     ENTITY_TYPE_NAME, null);
-            DcRequest req2 = DcRequest.post(requestUrl2);
+            PersoniumRequest req2 = PersoniumRequest.post(requestUrl2);
             req2.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req2.addJsonBody("__id", USER_DATA_ID2);
             req2.addJsonBody(ET_STRING_PROP, "etStrPropValue2");
             req2.addJsonBody(ET_CT1ST_PROP, ct1stProp2);
 
-            DcResponse resPost2 = request(req2);
+            PersoniumResponse resPost2 = request(req2);
             assertEquals(HttpStatus.SC_CREATED, resPost2.getStatusCode());
 
             // ユーザデータの一覧取得
@@ -296,7 +296,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
 
             String requestUrl1 = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req1 = DcRequest.post(requestUrl1);
+            PersoniumRequest req1 = PersoniumRequest.post(requestUrl1);
             req1.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req1.addJsonBody("__id", USER_DATA_ID1);
             req1.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "etStrPropValue1");
@@ -307,7 +307,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
             req1.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp1);
 
             // シンプル型配列データの作成
-            DcResponse response1 = request(req1);
+            PersoniumResponse response1 = request(req1);
             assertEquals(HttpStatus.SC_CREATED, response1.getStatusCode());
 
             // ユーザデータ2登録
@@ -316,7 +316,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
 
             String requestUrl2 = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req2 = DcRequest.post(requestUrl2);
+            PersoniumRequest req2 = PersoniumRequest.post(requestUrl2);
             req2.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req2.addJsonBody("__id", USER_DATA_ID2);
             req2.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "etStrPropValue2");
@@ -327,7 +327,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
             req2.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp2);
 
             // シンプル型配列データの作成
-            DcResponse response2 = request(req2);
+            PersoniumResponse response2 = request(req2);
             assertEquals(HttpStatus.SC_CREATED, response2.getStatusCode());
 
             // ユーザデータの一覧取得
@@ -404,7 +404,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
 
             String requestUrl1 = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req1 = DcRequest.post(requestUrl1);
+            PersoniumRequest req1 = PersoniumRequest.post(requestUrl1);
             req1.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req1.addJsonBody("__id", USER_DATA_ID1);
             req1.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "etStrPropValue1");
@@ -412,7 +412,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
             req1.addJsonBody("listComplexType", etListPropStr);
 
             // Complex型配列データの作成
-            DcResponse response1 = request(req1);
+            PersoniumResponse response1 = request(req1);
             assertEquals(HttpStatus.SC_CREATED, response1.getStatusCode());
 
             // ユーザデータ2登録
@@ -421,7 +421,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
 
             String requestUrl2 = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req2 = DcRequest.post(requestUrl2);
+            PersoniumRequest req2 = PersoniumRequest.post(requestUrl2);
             req2.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req2.addJsonBody("__id", USER_DATA_ID2);
             req2.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "etStrPropValue2");
@@ -429,7 +429,7 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
             req2.addJsonBody("listComplexType", etListPropStr);
 
             // Complex型配列データの作成
-            DcResponse response2 = request(req2);
+            PersoniumResponse response2 = request(req2);
             assertEquals(HttpStatus.SC_CREATED, response2.getStatusCode());
 
             // ユーザデータの一覧取得
@@ -515,14 +515,14 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
 
             String requestUrl1 = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req1 = DcRequest.post(requestUrl1);
+            PersoniumRequest req1 = PersoniumRequest.post(requestUrl1);
             req1.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req1.addJsonBody("__id", USER_DATA_ID1);
             req1.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "etStrPropValue1");
             req1.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp1);
 
             // Complex型配列データの作成
-            DcResponse response1 = request(req1);
+            PersoniumResponse response1 = request(req1);
             assertEquals(HttpStatus.SC_CREATED, response1.getStatusCode());
 
             // ユーザデータ2登録
@@ -536,14 +536,14 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
 
             String requestUrl2 = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req2 = DcRequest.post(requestUrl2);
+            PersoniumRequest req2 = PersoniumRequest.post(requestUrl2);
             req2.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req2.addJsonBody("__id", USER_DATA_ID2);
             req2.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "etStrPropValue2");
             req2.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp2);
 
             // Complex型配列データの作成
-            DcResponse response2 = request(req2);
+            PersoniumResponse response2 = request(req2);
             assertEquals(HttpStatus.SC_CREATED, response2.getStatusCode());
 
             // ユーザデータの一覧取得
@@ -612,14 +612,14 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
 
             String requestUrl1 = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req1 = DcRequest.post(requestUrl1);
+            PersoniumRequest req1 = PersoniumRequest.post(requestUrl1);
             req1.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req1.addJsonBody("__id", USER_DATA_ID1);
             req1.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "etStrPropValue1");
             req1.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp1);
 
             // Complex型配列データの作成
-            DcResponse response1 = request(req1);
+            PersoniumResponse response1 = request(req1);
             assertEquals(HttpStatus.SC_CREATED, response1.getStatusCode());
 
             // ユーザデータ2登録
@@ -629,14 +629,14 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
 
             String requestUrl2 = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req2 = DcRequest.post(requestUrl2);
+            PersoniumRequest req2 = PersoniumRequest.post(requestUrl2);
             req2.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req2.addJsonBody("__id", USER_DATA_ID2);
             req2.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "etStrPropValue2");
             req2.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp2);
 
             // Complex型配列データの作成
-            DcResponse response2 = request(req2);
+            PersoniumResponse response2 = request(req2);
             assertEquals(HttpStatus.SC_CREATED, response2.getStatusCode());
 
             // ユーザデータの一覧取得
@@ -712,19 +712,19 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
             // ユーザデータ登録
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", USER_DATA_ID1);
             req.addJsonBody("nullableList", null);
             req.addJsonBody("ctNullableList", null);
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
             JSONObject result = ((JSONObject) (((JSONObject) response.bodyAsJson().get("d")).get("results")));
             assertEquals(null, result.get("nullableList"));
             assertEquals(null, result.get("ctNullableList"));
 
             // ユーザデータ取得
-            req = DcRequest.get(USER_DATA_LOCATION_URL1);
+            req = PersoniumRequest.get(USER_DATA_LOCATION_URL1);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             response = request(req);
@@ -760,11 +760,11 @@ public class UserDataComplexTypeListTest extends AbstractUserDataTest {
         }
     }
 
-    private DcResponse createUserDataComplexType(HashMap<String, Object> reqBody) {
+    private PersoniumResponse createUserDataComplexType(HashMap<String, Object> reqBody) {
         // UserData作成
         String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                 ENTITY_TYPE_NAME, null);
-        DcRequest req = DcRequest.post(requestUrl);
+        PersoniumRequest req = PersoniumRequest.post(requestUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         for (String key : reqBody.keySet()) {
             req.addJsonBody(key, reqBody.get(key));

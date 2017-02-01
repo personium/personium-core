@@ -39,7 +39,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumUnitConfig.OData;
 import io.personium.core.model.progress.ProgressInfo;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -53,7 +53,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * ユーザデータの$links制限値チェック向けのbarファイルインストール用テスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
 public class BarInstallUserDataLinksLimitTest extends JerseyTest {
     private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();

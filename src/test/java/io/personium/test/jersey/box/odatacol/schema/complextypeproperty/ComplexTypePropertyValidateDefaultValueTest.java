@@ -32,9 +32,9 @@ import io.personium.core.model.ctl.ComplexType;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -42,7 +42,7 @@ import io.personium.test.unit.core.UrlUtils;
 /**
  * ComplexTypeProperty登録のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class ComplexTypePropertyValidateDefaultValueTest extends ODataCommon {
 
@@ -73,7 +73,7 @@ public class ComplexTypePropertyValidateDefaultValueTest extends ODataCommon {
     public void before() {
         // ComplexType作成
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(ComplexTypePropertyUtils.CT_REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(ComplexTypePropertyUtils.CT_REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(COMPLEX_TYPE_NAME_KEY, COMPLEX_TYPE_NAME);
         // リクエスト実行
@@ -95,7 +95,7 @@ public class ComplexTypePropertyValidateDefaultValueTest extends ODataCommon {
     @Test
     public final void ComplexTypePropertyTypeのEdmDoubleでDefaultValueが正のDouble最小値を下回る場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY, CT_PROPERTY_NAME);
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY, COMPLEX_TYPE_NAME);
@@ -104,7 +104,7 @@ public class ComplexTypePropertyValidateDefaultValueTest extends ODataCommon {
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_DEFAULT_VALUE_KEY, 2.229e-308);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -122,7 +122,7 @@ public class ComplexTypePropertyValidateDefaultValueTest extends ODataCommon {
     @Test
     public final void ComplexTypePropertyTypeのEdmDoubleでDefaultValueが正のDouble最大値を下回る場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY, CT_PROPERTY_NAME);
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY, COMPLEX_TYPE_NAME);
@@ -131,7 +131,7 @@ public class ComplexTypePropertyValidateDefaultValueTest extends ODataCommon {
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_DEFAULT_VALUE_KEY, 1.791e308);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -149,7 +149,7 @@ public class ComplexTypePropertyValidateDefaultValueTest extends ODataCommon {
     @Test
     public final void ComplexTypePropertyTypeのEdmDoubleでDefaultValueが負のDouble最小値を下回る場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY, CT_PROPERTY_NAME);
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY, COMPLEX_TYPE_NAME);
@@ -158,7 +158,7 @@ public class ComplexTypePropertyValidateDefaultValueTest extends ODataCommon {
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_DEFAULT_VALUE_KEY, -1.791e308);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -176,7 +176,7 @@ public class ComplexTypePropertyValidateDefaultValueTest extends ODataCommon {
     @Test
     public final void ComplexTypePropertyTypeのEdmDoubleでDefaultValueが負のDouble最大値を下回る場合_BadRequestが返却されること() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
+        PersoniumRequest req = PersoniumRequest.post(ComplexTypePropertyUtils.CTP_REQUEST_URL);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY, CT_PROPERTY_NAME);
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY, COMPLEX_TYPE_NAME);
@@ -185,7 +185,7 @@ public class ComplexTypePropertyValidateDefaultValueTest extends ODataCommon {
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_DEFAULT_VALUE_KEY, -2.229e-308);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());

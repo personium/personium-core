@@ -35,10 +35,10 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DaoException;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import com.sun.jersey.test.framework.JerseyTest;
@@ -46,7 +46,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 /**
  * Test for Error Page.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class ErrorPageTest extends JerseyTest {
 
@@ -64,7 +64,7 @@ public class ErrorPageTest extends JerseyTest {
     public final void エラーページへのGETで指定したコードに対応するメッセージが返却されること() {
 
         String code = PersoniumCoreException.OData.JSON_PARSE_ERROR.getCode();
-        DcResponse res = requesttoErrorPage(code);
+        PersoniumResponse res = requesttoErrorPage(code);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
@@ -83,7 +83,7 @@ public class ErrorPageTest extends JerseyTest {
     public final void personiumで定義されていないコードを指定してエラーページを取得しundefinedとなること() {
 
         String code = "dummyCode";
-        DcResponse res = requesttoErrorPage(code);
+        PersoniumResponse res = requesttoErrorPage(code);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
@@ -102,7 +102,7 @@ public class ErrorPageTest extends JerseyTest {
     public final void コードの値を指定せずにエラーページを取得しundefinedとなること() {
 
         String code = "";
-        DcResponse res = requesttoErrorPage(code);
+        PersoniumResponse res = requesttoErrorPage(code);
 
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
 
@@ -120,7 +120,7 @@ public class ErrorPageTest extends JerseyTest {
     public final void コードを指定せずにエラーページを取得しundefinedとなること() {
 
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -128,7 +128,7 @@ public class ErrorPageTest extends JerseyTest {
         try {
             res = rest.getAcceptEncodingGzip(
                     UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error", requestheaders);
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
 
@@ -150,14 +150,14 @@ public class ErrorPageTest extends JerseyTest {
 
         String code = PersoniumCoreException.OData.JSON_PARSE_ERROR.getCode();
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
 
         try {
             res = rest.post(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error?code=" + code, "", requestheaders);
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
         assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
@@ -171,14 +171,14 @@ public class ErrorPageTest extends JerseyTest {
 
         String code = PersoniumCoreException.OData.JSON_PARSE_ERROR.getCode();
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
 
         try {
             res = rest.put(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error?code=" + code, "", requestheaders);
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
         assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
@@ -192,14 +192,14 @@ public class ErrorPageTest extends JerseyTest {
 
         String code = PersoniumCoreException.OData.JSON_PARSE_ERROR.getCode();
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
 
         try {
             res = rest.del(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error?code=" + code, requestheaders);
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
         assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
@@ -209,9 +209,9 @@ public class ErrorPageTest extends JerseyTest {
      * エラーページにリクエストを投入する.
      * @return レスポンス
      */
-    private DcResponse requesttoErrorPage(String code) {
+    private PersoniumResponse requesttoErrorPage(String code) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -219,7 +219,7 @@ public class ErrorPageTest extends JerseyTest {
         try {
             res = rest.getAcceptEncodingGzip(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error?code="
                     + code, requestheaders);
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
 
@@ -231,7 +231,7 @@ public class ErrorPageTest extends JerseyTest {
      * @param res レスポンス情報
      * @param expectedCode 期待するエラーコード
      */
-    public static void checkResponseBody(DcResponse res, String expectedCode) {
+    public static void checkResponseBody(PersoniumResponse res, String expectedCode) {
         String body = null;
         String expectedMessage = null;
         String expectedTitle = PersoniumCoreMessageUtils.getMessage("PS-ER-0001");

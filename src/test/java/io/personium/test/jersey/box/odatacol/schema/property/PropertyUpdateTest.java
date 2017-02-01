@@ -36,8 +36,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
@@ -50,7 +50,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * Property更新のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class PropertyUpdateTest extends ODataCommon {
 
@@ -109,7 +109,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     entityTypeName);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyName,
                     entityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue,
@@ -205,7 +205,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     entityTypeName);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyNameToBeUpdated,
                     entityTypeName, propertyNameToBeUpdated,
                     entityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue,
@@ -286,7 +286,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     uniqueKey, HttpStatus.SC_CREATED);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyName,
                     entityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue,
@@ -351,7 +351,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     uniqueKey, HttpStatus.SC_CREATED);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyName,
                     entityTypeName, EdmSimpleType.SINGLE.getFullyQualifiedTypeName(), nullable, defaultValue,
@@ -421,7 +421,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("Name", propertyName);
             body.put("_EntityType.Name", entityTypeName);
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -486,7 +486,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("_EntityType.Name", entityTypeName);
             body.put("Type", EdmSimpleType.DOUBLE.getFullyQualifiedTypeName());
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -552,7 +552,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     entityTypeName);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyReName,
                     entityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue,
@@ -640,7 +640,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     entityTypeName);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyReName,
                     entityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue,
@@ -725,7 +725,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     .create(cellName, MASTER_TOKEN_NAME, boxName, colName, entityTypeName, HttpStatus.SC_CREATED);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyReName,
                     entityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue,
@@ -769,7 +769,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     uniqueKey, HttpStatus.SC_CREATED);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyReName,
                     entityTypeName, EdmSimpleType.INT32.getFullyQualifiedTypeName(), nullable, defaultValue,
@@ -833,7 +833,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("Name", propertyName);
             body.put("Type", EdmSimpleType.DOUBLE.getFullyQualifiedTypeName());
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -896,7 +896,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     HttpStatus.SC_CREATED);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyName,
                     invalidEntityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue,
@@ -964,7 +964,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     entityTypeName);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyReName,
                     entityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue,
@@ -1027,7 +1027,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     uniqueKey, HttpStatus.SC_CREATED);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyName,
                     entityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), false, defaultValue,
@@ -1101,7 +1101,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("IsKey", isKey);
             body.put("UniqueKey", uniqueKey);
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
@@ -1168,7 +1168,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("IsKey", isKey);
             body.put("UniqueKey", uniqueKey);
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1228,7 +1228,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     uniqueKey, HttpStatus.SC_CREATED);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyName,
                     entityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, 12345, collectionKind,
@@ -1301,7 +1301,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("IsKey", isKey);
             body.put("UniqueKey", uniqueKey);
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
@@ -1368,7 +1368,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("IsKey", isKey);
             body.put("UniqueKey", uniqueKey);
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1428,7 +1428,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     uniqueKey, HttpStatus.SC_CREATED);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyName,
                     entityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue, "List",
@@ -1501,7 +1501,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("IsKey", isKey);
             body.put("UniqueKey", uniqueKey);
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
@@ -1568,7 +1568,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("IsKey", isKey);
             body.put("UniqueKey", uniqueKey);
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1628,7 +1628,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     uniqueKey, HttpStatus.SC_CREATED);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyName,
                     entityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue,
@@ -1702,7 +1702,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("Nullable", nullable);
             body.put("UniqueKey", uniqueKey);
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
@@ -1769,7 +1769,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("Nullable", nullable);
             body.put("UniqueKey", uniqueKey);
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1829,7 +1829,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     uniqueKey, HttpStatus.SC_CREATED);
 
             // Property更新
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName,
                     entityTypeName, propertyName,
                     entityTypeName, EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue,
@@ -1903,7 +1903,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("IsKey", isKey);
             body.put("Nullable", nullable);
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
@@ -1970,7 +1970,7 @@ public class PropertyUpdateTest extends ODataCommon {
             body.put("IsKey", isKey);
             body.put("Nullable", nullable);
 
-            DcResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
+            PersoniumResponse response = PropertyUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName,
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());

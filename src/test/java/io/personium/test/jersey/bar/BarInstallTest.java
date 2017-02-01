@@ -58,8 +58,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.cell.ctl.CellCtlUtils;
 import io.personium.test.setup.Setup;
@@ -84,7 +84,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * barファイルインストール用テスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class BarInstallTest extends JerseyTest {
     /**
@@ -841,7 +841,7 @@ public class BarInstallTest extends JerseyTest {
      */
     private void checkComplexType(String cellName, String boxName, String colName, String complexName) {
         String complex1Url = UrlUtils.complexType(cellName, boxName, colName, complexName);
-        DcResponse dres = ODataCommon.getOdataResource(complex1Url);
+        PersoniumResponse dres = ODataCommon.getOdataResource(complex1Url);
         JSONObject json = dres.bodyAsJson();
         JSONObject results = (JSONObject) ((JSONObject) json.get("d")).get("results");
         String value = results.get(ComplexType.P_COMPLEXTYPE_NAME.getName()).toString();
@@ -858,7 +858,7 @@ public class BarInstallTest extends JerseyTest {
      */
     private void checkAssocEnd(String cellName, String boxName, String colName, String entityName, String assocName) {
         String aeUrl = UrlUtils.associationEnd(cellName, boxName, colName, assocName, entityName);
-        DcResponse res = ODataCommon.getOdataResource(aeUrl);
+        PersoniumResponse res = ODataCommon.getOdataResource(aeUrl);
         JSONObject json = res.bodyAsJson();
         JSONObject results = (JSONObject) ((JSONObject) json.get("d")).get("results");
         String value = results.get(AssociationEnd.P_ASSOCIATION_NAME.getName()).toString();
@@ -872,7 +872,7 @@ public class BarInstallTest extends JerseyTest {
     private void checkAssocEndLinks(final String colName) {
         String path = UrlUtils.associationEnd(Setup.TEST_CELL1,
                 INSTALL_TARGET, colName, "entity1-entity2", "entity1") + "/$links/_AssociationEnd";
-        DcResponse dres = ODataCommon.getOdataResource(path);
+        PersoniumResponse dres = ODataCommon.getOdataResource(path);
         JSONObject json = dres.bodyAsJson();
         JSONArray reses = (JSONArray) ((JSONObject) json.get("d")).get("results");
         assertEquals(1, reses.size());
@@ -902,7 +902,7 @@ public class BarInstallTest extends JerseyTest {
             typeName = complexName;
             aeUrl = UrlUtils.complexTypeProperty(cellName, boxName, colName, propName, complexName);
         }
-        DcResponse res = ODataCommon.getOdataResource(aeUrl);
+        PersoniumResponse res = ODataCommon.getOdataResource(aeUrl);
         JSONObject json = res.bodyAsJson();
         JSONObject results = (JSONObject) ((JSONObject) json.get("d")).get("results");
         String value = results.get(Property.P_NAME.getName()).toString();

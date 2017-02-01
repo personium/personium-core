@@ -31,9 +31,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
@@ -42,7 +42,7 @@ import io.personium.test.utils.TResponse;
 /**
  * UserData削除のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataDeleteTest extends AbstractUserDataTest {
 
@@ -500,12 +500,12 @@ public class UserDataDeleteTest extends AbstractUserDataTest {
             // ユーザデータ削除
             String requestURL =
                     UrlUtils.userdata(cellName, boxName,  colName, entityTypeName + "(" + userdataKey + ")", null);
-            DcRequest req = DcRequest.delete(requestURL);
+            PersoniumRequest req = PersoniumRequest.delete(requestURL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.IF_MATCH, "*");
 
             // リクエスト実行
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());

@@ -30,9 +30,9 @@ import org.odata4j.edm.EdmSimpleType;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.AbstractUserDataTest;
 import io.personium.test.setup.Setup;
@@ -41,7 +41,7 @@ import io.personium.test.unit.core.UrlUtils;
 /**
  * Property削除のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class PropertyDeleteTest extends AbstractUserDataTest {
 
@@ -73,13 +73,13 @@ public class PropertyDeleteTest extends AbstractUserDataTest {
         String userDataId = "userdata001";
         String entityRequestUrl = null;
         String propertyRequestUrl = null;
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         try {
             // EntityType登録
             entityRequestUrl = UrlUtils.entityType(Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, null);
-            DcRequest req = DcRequest.post(entityRequestUrl);
+            PersoniumRequest req = PersoniumRequest.post(entityRequestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("Name", entityTypeName);
             // リクエスト実行
@@ -88,7 +88,7 @@ public class PropertyDeleteTest extends AbstractUserDataTest {
 
             // プロパティ登録
             propertyRequestUrl = UrlUtils.property(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, null, null);
-            req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
             req.addJsonBody(PropertyUtils.PROPERTY_ENTITYTYPE_NAME_KEY, entityTypeName);

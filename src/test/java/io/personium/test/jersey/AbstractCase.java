@@ -55,7 +55,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * JerseyTestFrameworkを利用したユニットテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Ignore
 public class AbstractCase extends JerseyTest {
 
@@ -132,9 +132,9 @@ public class AbstractCase extends JerseyTest {
      * @return Cell作成時のレスポンスオブジェクト
      */
     @SuppressWarnings("unchecked")
-    public final DcResponse createCell(final String cellName) {
+    public final PersoniumResponse createCell(final String cellName) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -161,9 +161,9 @@ public class AbstractCase extends JerseyTest {
      * @return Box作成時のレスポンスオブジェクト
      */
     @SuppressWarnings("unchecked")
-    public final DcResponse createBox(final String cellName, final String boxName) {
+    public final PersoniumResponse createBox(final String cellName, final String boxName) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -188,9 +188,9 @@ public class AbstractCase extends JerseyTest {
      * @param url リクエスト先のURL
      * @return レスポンスオブジェクト
      */
-    public final DcResponse restGet(final String url) {
+    public final PersoniumResponse restGet(final String url) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         if (this.headers == null) {
             // setHeadersで設定されていない場合、リクエストヘッダをセット
@@ -214,9 +214,9 @@ public class AbstractCase extends JerseyTest {
      * @param data postデータ
      * @return レスポンスオブジェクト
      */
-    public final DcResponse restPost(final String url, final String data) {
+    public final PersoniumResponse restPost(final String url, final String data) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -237,9 +237,9 @@ public class AbstractCase extends JerseyTest {
      * @param data リクエストデータ
      * @return レスポンスオブジェクト
      */
-    public final DcResponse restPut(final String url, final String data) {
+    public final PersoniumResponse restPut(final String url, final String data) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -259,9 +259,9 @@ public class AbstractCase extends JerseyTest {
      * @param url リクエスト先のURL
      * @return レスポンスオブジェクト
      */
-    public final DcResponse restDelete(final String url) {
+    public final PersoniumResponse restDelete(final String url) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -282,9 +282,9 @@ public class AbstractCase extends JerseyTest {
      * @param req リクエストパラメータ
      * @return res
      */
-    public static DcResponse request(DcRequest req) {
+    public static PersoniumResponse request(PersoniumRequest req) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
         String method = req.getMethod();
         try {
             // リクエスト
@@ -593,7 +593,7 @@ public class AbstractCase extends JerseyTest {
      * @param response DcResponseオブジェクト
      * @param contentType レスポンスのContentType
      */
-    public final void checkCellListResponse(DcResponse response, MediaType contentType) {
+    public final void checkCellListResponse(PersoniumResponse response, MediaType contentType) {
 
         // Cell作成のレスポンスチェック
         // 200になることを確認
@@ -627,7 +627,7 @@ public class AbstractCase extends JerseyTest {
      * @param response DcResponseオブジェクト
      * @param contentType レスポンスのContentType
      */
-    public final void checkDomainListResponse(DcResponse response, MediaType contentType) {
+    public final void checkDomainListResponse(PersoniumResponse response, MediaType contentType) {
 
         // Cell取得のレスポンスチェック
         // 200になることを確認

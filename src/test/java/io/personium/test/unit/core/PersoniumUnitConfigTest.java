@@ -34,7 +34,7 @@ import io.personium.test.categories.Unit;
  * AccessContext ユニットテストクラス.
  */
 @Category({ Unit.class })
-public class DcCoreConfigTest {
+public class PersoniumUnitConfigTest {
 
     /**
      * ユニットテスト用クラス.

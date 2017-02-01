@@ -31,8 +31,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -414,7 +414,7 @@ public class RoleCreateTest extends ODataCommon {
         try {
 
             // Box作成
-            DcResponse resBox = createBox(boxname);
+            PersoniumResponse resBox = createBox(boxname);
             locationHeaderBox = resBox.getFirstHeader(HttpHeaders.LOCATION);
 
             TResponse res = createRole(roleName, boxname);
@@ -444,7 +444,7 @@ public class RoleCreateTest extends ODataCommon {
 
         try {
             // Box作成
-            DcResponse resBox = createBox(boxname);
+            PersoniumResponse resBox = createBox(boxname);
             locationHeaderBox = resBox.getFirstHeader(HttpHeaders.LOCATION);
 
             TResponse res = createRole(roleName, boxname);
@@ -473,7 +473,7 @@ public class RoleCreateTest extends ODataCommon {
 
         try {
             // Box作成
-            DcResponse resBox = createBox(boxname);
+            PersoniumResponse resBox = createBox(boxname);
             locationHeaderBox = resBox.getFirstHeader(HttpHeaders.LOCATION);
 
             TResponse res = createRole(roleName, boxname);
@@ -653,8 +653,8 @@ public class RoleCreateTest extends ODataCommon {
 
     }
 
-    private DcResponse createBox(String boxname) {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(cellName, Box.EDM_TYPE_NAME));
+    private PersoniumResponse createBox(String boxname) {
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(cellName, Box.EDM_TYPE_NAME));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", boxname);
         return request(req);
     }

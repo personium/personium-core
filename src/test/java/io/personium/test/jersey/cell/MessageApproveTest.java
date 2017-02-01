@@ -37,10 +37,10 @@ import io.personium.core.model.ctl.Relation;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -54,7 +54,7 @@ import io.personium.test.utils.TResponse;
 /**
  * メッセージ承認APIのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class MessageApproveTest extends ODataCommon {
 
@@ -88,7 +88,7 @@ public class MessageApproveTest extends ODataCommon {
 
             HashMap<String, String> requestheaders;
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -115,7 +115,7 @@ public class MessageApproveTest extends ODataCommon {
             // 更新結果を取得
             checkMessageStatus(messageId, "unread");
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             if (locationHeader != null) {
@@ -135,7 +135,7 @@ public class MessageApproveTest extends ODataCommon {
 
             // メッセージ承認にする
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse res = null;
+            PersoniumResponse res = null;
 
             // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -147,7 +147,7 @@ public class MessageApproveTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
     }
@@ -175,7 +175,7 @@ public class MessageApproveTest extends ODataCommon {
 
             HashMap<String, String> requestheaders;
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -209,7 +209,7 @@ public class MessageApproveTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             if (locationHeader != null) {
@@ -241,7 +241,7 @@ public class MessageApproveTest extends ODataCommon {
 
             HashMap<String, String> requestheaders;
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -268,7 +268,7 @@ public class MessageApproveTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             if (locationHeader != null) {
@@ -314,7 +314,7 @@ public class MessageApproveTest extends ODataCommon {
 
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -345,7 +345,7 @@ public class MessageApproveTest extends ODataCommon {
             // Statusが変更されていることを確認
             checkMessageStatus(messageId, "approved");
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // Relation-ExtCell $links削除
@@ -389,7 +389,7 @@ public class MessageApproveTest extends ODataCommon {
         try {
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             // __idの取得
@@ -421,7 +421,7 @@ public class MessageApproveTest extends ODataCommon {
             // Statusが変更されていることを確認
             checkMessageStatus(messageId, "approved");
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // Relation-ExtCell $links削除
@@ -480,7 +480,7 @@ public class MessageApproveTest extends ODataCommon {
 
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -498,7 +498,7 @@ public class MessageApproveTest extends ODataCommon {
             checkErrorResponse(res.bodyAsJson(),
                     PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_EXISTS_ERROR.getCode());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // Relation-ExtCell $links削除
@@ -542,7 +542,7 @@ public class MessageApproveTest extends ODataCommon {
         try {
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -564,7 +564,7 @@ public class MessageApproveTest extends ODataCommon {
             // Statusが変更されていることを確認
             checkMessageStatus(messageId, "rejected");
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // Relation削除
@@ -603,7 +603,7 @@ public class MessageApproveTest extends ODataCommon {
         try {
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -636,7 +636,7 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // Relation削除
@@ -675,7 +675,7 @@ public class MessageApproveTest extends ODataCommon {
         try {
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -701,7 +701,7 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // Relation削除
@@ -740,7 +740,7 @@ public class MessageApproveTest extends ODataCommon {
         try {
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -763,7 +763,7 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // Relation-ExtCell $links削除
@@ -807,7 +807,7 @@ public class MessageApproveTest extends ODataCommon {
         try {
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -830,7 +830,7 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // Relation削除
@@ -861,7 +861,7 @@ public class MessageApproveTest extends ODataCommon {
 
             // approved
             String requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
-            DcResponse res = rest.post(requestUrl, "{\"Command\":\"approved\" }",
+            PersoniumResponse res = rest.post(requestUrl, "{\"Command\":\"approved\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode());
@@ -873,7 +873,7 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         }
     }
@@ -905,7 +905,7 @@ public class MessageApproveTest extends ODataCommon {
         try {
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -923,7 +923,7 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_CONFLICT, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR.getCode());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // Relation削除
@@ -962,7 +962,7 @@ public class MessageApproveTest extends ODataCommon {
         try {
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -981,7 +981,7 @@ public class MessageApproveTest extends ODataCommon {
             checkErrorResponse(res.bodyAsJson(),
                     PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR.getCode());
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // Relation削除
@@ -1021,7 +1021,7 @@ public class MessageApproveTest extends ODataCommon {
         try {
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             // __idの取得
@@ -1073,7 +1073,7 @@ public class MessageApproveTest extends ODataCommon {
             // Statusが変更されていることを確認
             checkMessageStatus(messageId, "approved");
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // Relation-ExtCell $links削除
@@ -1120,7 +1120,7 @@ public class MessageApproveTest extends ODataCommon {
         try {
             // 関係削除メッセージ受信
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             breakLocationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             // 関係削除メッセージを承認する
@@ -1137,7 +1137,7 @@ public class MessageApproveTest extends ODataCommon {
             // Statusが変更されていることを確認
             checkMessageStatus(messageId, "none");
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // 受信メッセージ削除
@@ -1174,7 +1174,7 @@ public class MessageApproveTest extends ODataCommon {
         try {
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-            DcResponse res = createReceivedMessage(requestUrl, body);
+            PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
 
             String messageId = getMessageId(res);
@@ -1193,7 +1193,7 @@ public class MessageApproveTest extends ODataCommon {
             // Statusが変更されていることを確認
             checkMessageStatus(messageId, "rejected");
 
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
             // 受信メッセージ削除
@@ -1203,9 +1203,9 @@ public class MessageApproveTest extends ODataCommon {
         }
     }
 
-    private DcResponse createReceivedMessage(String requestUrl, JSONObject body) throws DcException {
+    private PersoniumResponse createReceivedMessage(String requestUrl, JSONObject body) throws PersoniumException {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1234,7 +1234,7 @@ public class MessageApproveTest extends ODataCommon {
         assertEquals(expectedStatus, status);
     }
 
-    private String getMessageId(DcResponse res) {
+    private String getMessageId(PersoniumResponse res) {
         JSONObject results = (JSONObject) ((JSONObject) res.bodyAsJson().get("d")).get("results");
         String messageId = (String) results.get("__id");
         return messageId;

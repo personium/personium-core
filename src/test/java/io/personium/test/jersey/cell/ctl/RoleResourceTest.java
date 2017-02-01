@@ -28,7 +28,7 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.utils.Http;
 import com.sun.jersey.test.framework.JerseyTest;
 
@@ -36,7 +36,7 @@ import com.sun.jersey.test.framework.JerseyTest;
  * RoleResourceのテスト.
  * setupパッケージでのRoleの準備があることが前提
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class RoleResourceTest extends JerseyTest {
 

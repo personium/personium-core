@@ -39,9 +39,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -53,7 +53,7 @@ import io.personium.test.utils.TResponse;
 /**
  * UserDataComplexType登録のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataComplexTypeMergeTest extends AbstractUserDataTest {
 
@@ -86,12 +86,12 @@ public class UserDataComplexTypeMergeTest extends AbstractUserDataTest {
             // ユーザデータ登録リクエスト実行
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", userDataId);
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // ユーザデータマージリクエスト実行
@@ -135,7 +135,7 @@ public class UserDataComplexTypeMergeTest extends AbstractUserDataTest {
                     UserDataComplexTypeUtils.ET_CT1ST_PROP, UserDataComplexTypeUtils.CT1ST_STRING_PROP);
 
             // ComplexTypeProperty登録(1階層目)
-            DcResponse complexTypePropertyResponse = UserDataUtils.createComplexTypeProperty(Setup.TEST_CELL1,
+            PersoniumResponse complexTypePropertyResponse = UserDataUtils.createComplexTypeProperty(Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA,
                     "ct2ndStrProp", UserDataComplexTypeUtils.COMPLEX_TYPE_NAME, "Edm.String", true, null, "None");
             complexTypePropertylocationUrl = complexTypePropertyResponse.getFirstHeader(HttpHeaders.LOCATION);
@@ -150,12 +150,12 @@ public class UserDataComplexTypeMergeTest extends AbstractUserDataTest {
             // ユーザデータ登録リクエスト実行
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", userDataId);
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // ユーザデータマージリクエスト実行
@@ -206,7 +206,7 @@ public class UserDataComplexTypeMergeTest extends AbstractUserDataTest {
                     UserDataComplexTypeUtils.ET_CT1ST_PROP, UserDataComplexTypeUtils.CT1ST_STRING_PROP);
 
             // ComplexTypeProperty登録(2階層目)
-            DcResponse complexTypePropertyResponse = UserDataUtils.createComplexTypeProperty(Setup.TEST_CELL1,
+            PersoniumResponse complexTypePropertyResponse = UserDataUtils.createComplexTypeProperty(Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA,
                     "ct2ndStrProp", UserDataComplexTypeUtils.COMPLEX_TYPE_NAME, "Edm.String", true, null, "None");
             complexTypePropertylocationUrl = complexTypePropertyResponse.getFirstHeader(HttpHeaders.LOCATION);
@@ -235,12 +235,12 @@ public class UserDataComplexTypeMergeTest extends AbstractUserDataTest {
             // ユーザデータ登録リクエスト実行
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", userDataId);
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // ユーザデータマージリクエスト実行
@@ -294,7 +294,7 @@ public class UserDataComplexTypeMergeTest extends AbstractUserDataTest {
                     UserDataComplexTypeUtils.ET_CT1ST_PROP, UserDataComplexTypeUtils.CT1ST_STRING_PROP);
 
             // ComplexTypeProperty登録(2階層目)
-            DcResponse complexTypePropertyResponse = UserDataUtils.createComplexTypeProperty(Setup.TEST_CELL1,
+            PersoniumResponse complexTypePropertyResponse = UserDataUtils.createComplexTypeProperty(Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA,
                     "ct2ndStrProp", UserDataComplexTypeUtils.COMPLEX_TYPE_NAME, "Edm.String", true, null, "None");
             complexTypePropertylocationUrl = complexTypePropertyResponse.getFirstHeader(HttpHeaders.LOCATION);
@@ -323,12 +323,12 @@ public class UserDataComplexTypeMergeTest extends AbstractUserDataTest {
             // ユーザデータ登録リクエスト実行
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", userDataId);
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // ユーザデータマージリクエスト実行
@@ -384,21 +384,21 @@ public class UserDataComplexTypeMergeTest extends AbstractUserDataTest {
                     Setup.TEST_ODATA, UserDataComplexTypeUtils.ENTITY_TYPE_NAME, HttpStatus.SC_CREATED);
 
             // ComplexType作成
-            DcResponse ctRes = UserDataUtils.createComplexType(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse ctRes = UserDataUtils.createComplexType(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, UserDataComplexTypeUtils.COMPLEX_TYPE_NAME);
 
             // Property作成
-            DcResponse p1Res = UserDataUtils.createProperty(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse p1Res = UserDataUtils.createProperty(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, UserDataComplexTypeUtils.ET_STRING_PROP,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME,
                     EdmSimpleType.STRING.getFullyQualifiedTypeName(), false, null, null, false, null);
 
-            DcResponse p2Res = UserDataUtils.createProperty(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse p2Res = UserDataUtils.createProperty(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, UserDataComplexTypeUtils.ET_CT1ST_PROP, UserDataComplexTypeUtils.ENTITY_TYPE_NAME,
                     UserDataComplexTypeUtils.COMPLEX_TYPE_NAME, false, null, "List", false, null);
 
             // complexTypeProperty作成
-            DcResponse p3Res = UserDataUtils.createComplexTypeProperty(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse p3Res = UserDataUtils.createComplexTypeProperty(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, UserDataComplexTypeUtils.CT1ST_STRING_PROP,
                     UserDataComplexTypeUtils.COMPLEX_TYPE_NAME,
                     EdmSimpleType.STRING.getFullyQualifiedTypeName(), false, null, null);
@@ -424,12 +424,12 @@ public class UserDataComplexTypeMergeTest extends AbstractUserDataTest {
             // ユーザデータ登録リクエスト実行
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", userDataId);
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // ユーザデータマージリクエスト実行
@@ -503,7 +503,7 @@ public class UserDataComplexTypeMergeTest extends AbstractUserDataTest {
                     UserDataComplexTypeUtils.COMPLEX_TYPE_NAME,
                     EdmSimpleType.STRING.getFullyQualifiedTypeName(), false, null, null);
             // ComplexTypeProperty2のproperty登録(1階層目)
-            DcResponse complexTypePropertyResponse = UserDataUtils.createComplexTypeProperty(Setup.TEST_CELL1,
+            PersoniumResponse complexTypePropertyResponse = UserDataUtils.createComplexTypeProperty(Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA,
                     "ct2ndStrProp", UserDataComplexTypeUtils.COMPLEX_TYPE_NAME, "Edm.String", true, null, "None");
             complexTypePropertylocationUrl = complexTypePropertyResponse.getFirstHeader(HttpHeaders.LOCATION);
@@ -511,12 +511,12 @@ public class UserDataComplexTypeMergeTest extends AbstractUserDataTest {
             // ユーザデータ登録リクエスト実行
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", userDataId);
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP,
                     "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // ユーザデータマージリクエスト実行

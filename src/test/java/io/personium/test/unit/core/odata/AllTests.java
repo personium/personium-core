@@ -25,7 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    DcExpressionParserTest.class
+    PersoniumExpressionParserTest.class
     })
 public class AllTests {
 }

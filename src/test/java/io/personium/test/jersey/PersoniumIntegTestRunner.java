@@ -35,11 +35,11 @@ import io.personium.core.PersoniumUnitConfig;
 /**
  * IT用テストランナークラス.
  */
-public class DcRunner extends BlockJUnit4ClassRunner {
+public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
     /**
      * ログ用オブジェクト.
      */
-    private static Logger log = LoggerFactory.getLogger(DcRunner.class);
+    private static Logger log = LoggerFactory.getLogger(PersoniumIntegTestRunner.class);
 
     /**
      * コンストラクタ.
@@ -51,7 +51,7 @@ public class DcRunner extends BlockJUnit4ClassRunner {
      * @throws NoSuchAlgorithmException NoSuchAlgorithmException
      * @throws javax.security.cert.CertificateException CertificateException
      */
-    public DcRunner(Class<?> klass)
+    public PersoniumIntegTestRunner(Class<?> klass)
             throws InitializationError, NoSuchAlgorithmException,
             InvalidKeySpecException, CertificateException, IOException, javax.security.cert.CertificateException {
         super(klass);

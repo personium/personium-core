@@ -22,7 +22,7 @@ import org.json.simple.JSONValue;
 /**
  * DAOで発生するException.
  */
-public class DcException extends Exception {
+public class PersoniumException extends Exception {
     /** serialVersionID. */
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +31,7 @@ public class DcException extends Exception {
      * @param msg メッセージ
      * @param t thorowable
      */
-    public DcException(final String msg, final Throwable t) {
+    public PersoniumException(final String msg, final Throwable t) {
         super(msg, t);
     }
 
@@ -39,7 +39,7 @@ public class DcException extends Exception {
      * コンストラクタ.
      * @param msg メッセージ
      */
-    public DcException(final String msg) {
+    public PersoniumException(final String msg) {
         super(msg);
     }
 
@@ -49,14 +49,14 @@ public class DcException extends Exception {
      * @param c ステータスコード
      * @return DaoExceptionオブジェクト
      */
-    public static DcException create(final String msg, final int c) {
+    public static PersoniumException create(final String msg, final int c) {
         String str = "";
         if (msg.startsWith("{")) {
             str = "{\"msg\":" + msg + ",\"code\":\"" + Integer.toString(c) + "\"}";
         } else {
             str = "{\"msg\":\"" + msg + "\",\"code\":\"" + Integer.toString(c) + "\"}";
         }
-        return new DcException(str);
+        return new PersoniumException(str);
     }
 
     /**

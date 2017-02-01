@@ -36,9 +36,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -50,7 +50,7 @@ import io.personium.test.utils.TResponse;
 /**
  * BoxのCRUDのIT.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class BoxCrudTest extends ODataCommon {
     /**
@@ -92,11 +92,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にNameに空文字を指定して場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"", TEST_BOX_SCHEMA };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -107,11 +107,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にNameにアンダーバー始まり文字を指定して場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"_xxx", TEST_BOX_SCHEMA };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -122,11 +122,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にNameにハイフン始まり文字を指定して場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"-xxx", TEST_BOX_SCHEMA };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -137,11 +137,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にNameにスラッシュ文字を指定して場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"xx/xx", TEST_BOX_SCHEMA };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -152,11 +152,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時に__ctlを指定して場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"__ctl", TEST_BOX_SCHEMA };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -167,13 +167,13 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にNameを1文字指定して場合_201になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String boxName = "1";
         String[] key = {"Name", "Schema" };
         String[] value = {boxName, TEST_BOX_SCHEMA };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
         try {
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
 
             // 201になることを確認
             assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
@@ -187,7 +187,7 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にNameを128文字指定して場合_201になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String boxName = "12345678901234567890123456789012345678901234567890"
                 + "12345678901234567890123456789012345678901234567890"
                 + "1234567890123456789012345678";
@@ -195,7 +195,7 @@ public class BoxCrudTest extends ODataCommon {
         String[] value = {boxName, TEST_BOX_SCHEMA };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
         try {
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
 
             // 201になることを確認
             assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
@@ -209,14 +209,14 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にNameを129文字指定して場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String boxName = "12345678901234567890123456789012345678901234567890"
                 + "12345678901234567890123456789012345678901234567890"
                 + "1234567890123456789012345678a";
         String[] key = {"Name", "Schema" };
         String[] value = {boxName, TEST_BOX_SCHEMA };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -227,11 +227,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にSchamaに空文字を指定して場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", "" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -242,11 +242,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にSchamaにtrailing_slashの無いURL形式文字_https_を指定した場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", "https://xxx.com/test" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -257,11 +257,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void  BOX新規登録時にSchamaに正規化されていないパスを含むURL形式文字_https_を指定した場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", "https://xxx.com/test/1/2/../3/./../test/" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -272,12 +272,12 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にSchemaをURL形式_https_文字を指定して場合_201になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", "https://xxx.com/test/" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
         try {
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
 
             // 201になることを確認
             assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
@@ -291,11 +291,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にSchamaにtrailing_slashの無いURL形式文字_http_を指定した場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", "http://xxx.com/test" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -306,11 +306,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にSchamaに正規化されていないパスを含むURL形式文字_http_を指定した場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", "http://xxx.com/test/0/../1/./2/test/" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -321,12 +321,12 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にSchemaをURL形式_http_文字を指定して場合_201になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", "http://xxx.com/test/" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
         try {
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
 
             // 201になることを確認
             assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
@@ -340,12 +340,12 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にSchemaをURL形式personium_localunit文字を指定して場合_201になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", "personium-localunit:/schema/" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
         try {
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
 
             // 201になることを確認
             assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
@@ -359,12 +359,12 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にSchemaをURN形式文字を指定して場合_201になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", "urn:xxx:xxx" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
         try {
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
 
             // 201になることを確認
             assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
@@ -378,11 +378,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にSchemaをFTP形式文字を指定して場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", "ftp://xxx.com" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -393,13 +393,13 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にSchemaに1024文字を指定して場合_201になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String schema = "http://" + StringUtils.repeat("x", 1012) + ".com/";
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", schema };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
         try {
-            DcResponse res = request(req);
+            PersoniumResponse res = request(req);
 
             // 400になることを確認
             assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
@@ -413,12 +413,12 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にSchemaに1025文字を指定して場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String schema = "http://" + StringUtils.repeat("x", 1013) + ".com/";
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", schema };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -429,11 +429,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にSchemaをURL形式でない文字を指定して場合_400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema" };
         String[] value = {"testBox", "xxx" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -444,11 +444,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にリクエストボディに管理情報__publishedを指定した場合_レスポンスコード400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema", PUBLISHED };
         String[] value = {TEST_BOX_NAME, "http://xxx.com/test", "/Date(0)/" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -459,11 +459,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にリクエストボディに管理情報__updatedを指定した場合_レスポンスコード400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema", UPDATED };
         String[] value = {TEST_BOX_NAME, "http://xxx.com/test", "/Date(0)/" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -474,11 +474,11 @@ public class BoxCrudTest extends ODataCommon {
      */
     @Test
     public void BOX新規登録時にリクエストボディに管理情報__metadataを指定した場合_レスポンスコード400になることを確認() {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
         String[] key = {"Name", "Schema", METADATA };
         String[] value = {TEST_BOX_NAME, "http://xxx.com/test", "test" };
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
 
         // 400になることを確認
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
@@ -559,7 +559,7 @@ public class BoxCrudTest extends ODataCommon {
     @Test
     public void BOX更新時にリクエストボディに管理情報__publishedを指定した場合_レスポンスコード400になることを確認() {
         try {
-            DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+            PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
             String[] key = {"Name", "Schema" };
             String[] value = {TEST_BOX_NAME, "http://xxx.com/test" };
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
@@ -582,7 +582,7 @@ public class BoxCrudTest extends ODataCommon {
     @Test
     public void BOX更新時にリクエストボディに管理情報__updatedを指定した場合_レスポンスコード400になることを確認() {
         try {
-            DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+            PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
             String[] key = {"Name", "Schema" };
             String[] value = {TEST_BOX_NAME, "http://xxx.com/test" };
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
@@ -605,7 +605,7 @@ public class BoxCrudTest extends ODataCommon {
     @Test
     public void BOX更新時にリクエストボディに管理情報__metadataを指定した場合_レスポンスコード400になることを確認() {
         try {
-            DcRequest req = DcRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
+            PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(CELL_NAME, ENTITY_TYPE_BOX));
             String[] key = {"Name", "Schema" };
             String[] value = {TEST_BOX_NAME, "http://xxx.com/test" };
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody(key, value);
@@ -663,7 +663,7 @@ public class BoxCrudTest extends ODataCommon {
         // Acceptヘッダ なし
         String boxName = "123456";
         String url = UrlUtils.cellCtlWithoutSingleQuote(CELL_NAME, "Box", boxName);
-        DcResponse res = this.restGet(url);
+        PersoniumResponse res = this.restGet(url);
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
         checkErrorResponse(res.bodyAsJson(),
@@ -680,7 +680,7 @@ public class BoxCrudTest extends ODataCommon {
         // Acceptヘッダ なし
         String boxName = "123456";
         String url = UrlUtils.cellCtlWithoutSingleQuote(CELL_NAME, "Box", boxName);
-        DcResponse res = this.restPut(url, "");
+        PersoniumResponse res = this.restPut(url, "");
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
         checkErrorResponse(res.bodyAsJson(),
@@ -697,7 +697,7 @@ public class BoxCrudTest extends ODataCommon {
         // Acceptヘッダ なし
         String boxName = "123456";
         String url = UrlUtils.cellCtlWithoutSingleQuote(CELL_NAME, "Box", boxName);
-        DcResponse res = this.restDelete(url);
+        PersoniumResponse res = this.restDelete(url);
 
         assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
         checkErrorResponse(res.bodyAsJson(),

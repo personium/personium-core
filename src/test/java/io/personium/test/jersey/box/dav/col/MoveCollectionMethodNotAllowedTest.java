@@ -30,9 +30,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -42,7 +42,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 /**
  * MOVEメソッドに対応していないリソースへのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
     private static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
@@ -65,11 +65,11 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         final String destUrl = UrlUtils.box(CELL_NAME, BOX_NAME, destColName);
         // 移動
         String srcUrl = UrlUtils.box(CELL_NAME, BOX_NAME, Setup.TEST_ODATA, "$metadata");
-        DcRequest req = DcRequest.move(srcUrl);
+        PersoniumRequest req = PersoniumRequest.move(srcUrl);
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.header(HttpHeaders.DESTINATION, destUrl);
         req.header(HttpHeaders.OVERWRITE, "F");
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
         PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
@@ -85,11 +85,11 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         final String destUrl = UrlUtils.box(CELL_NAME, BOX_NAME, destColName);
         // 移動
         String srcUrl = UrlUtils.box(CELL_NAME, BOX_NAME, Setup.TEST_ODATA, "$metadata/$metadata");
-        DcRequest req = DcRequest.move(srcUrl);
+        PersoniumRequest req = PersoniumRequest.move(srcUrl);
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.header(HttpHeaders.DESTINATION, destUrl);
         req.header(HttpHeaders.OVERWRITE, "F");
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
         PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
@@ -105,11 +105,11 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         final String destUrl = UrlUtils.box(CELL_NAME, BOX_NAME, destColName);
         // 移動
         String srcUrl = UrlUtils.box(CELL_NAME, BOX_NAME, Setup.TEST_ODATA, "$metadata", EntityType.EDM_TYPE_NAME);
-        DcRequest req = DcRequest.move(srcUrl);
+        PersoniumRequest req = PersoniumRequest.move(srcUrl);
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.header(HttpHeaders.DESTINATION, destUrl);
         req.header(HttpHeaders.OVERWRITE, "F");
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
         PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
@@ -126,11 +126,11 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         // 移動
         String srcUrl = UrlUtils.box(CELL_NAME, BOX_NAME, Setup.TEST_ODATA, "$metadata",
                 EntityType.EDM_TYPE_NAME + "('SalesDetail')");
-        DcRequest req = DcRequest.move(srcUrl);
+        PersoniumRequest req = PersoniumRequest.move(srcUrl);
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.header(HttpHeaders.DESTINATION, destUrl);
         req.header(HttpHeaders.OVERWRITE, "F");
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
         PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
@@ -146,11 +146,11 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         final String destUrl = UrlUtils.box(CELL_NAME, BOX_NAME, destColName);
         // 移動
         String srcUrl = UrlUtils.box(CELL_NAME, BOX_NAME, Setup.TEST_ODATA, "SalesDetail");
-        DcRequest req = DcRequest.move(srcUrl);
+        PersoniumRequest req = PersoniumRequest.move(srcUrl);
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.header(HttpHeaders.DESTINATION, destUrl);
         req.header(HttpHeaders.OVERWRITE, "F");
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
         PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
@@ -166,11 +166,11 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         final String destUrl = UrlUtils.box(CELL_NAME, BOX_NAME, destColName);
         // 移動
         String srcUrl = UrlUtils.box(CELL_NAME, BOX_NAME, Setup.TEST_ODATA, "SalesDetail('userdata001')");
-        DcRequest req = DcRequest.move(srcUrl);
+        PersoniumRequest req = PersoniumRequest.move(srcUrl);
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.header(HttpHeaders.DESTINATION, destUrl);
         req.header(HttpHeaders.OVERWRITE, "F");
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
         PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
@@ -186,11 +186,11 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         final String destUrl = UrlUtils.box(CELL_NAME, BOX_NAME, destColName);
         // 移動
         String srcUrl = UrlUtils.box(CELL_NAME, BOX_NAME, Setup.TEST_ODATA, "$batch");
-        DcRequest req = DcRequest.move(srcUrl);
+        PersoniumRequest req = PersoniumRequest.move(srcUrl);
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.header(HttpHeaders.DESTINATION, destUrl);
         req.header(HttpHeaders.OVERWRITE, "F");
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
         PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
@@ -206,11 +206,11 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         final String destUrl = UrlUtils.box(CELL_NAME, BOX_NAME, destColName);
         // 移動
         String srcUrl = UrlUtils.box(CELL_NAME, BOX_NAME, Setup.TEST_ODATA, "SalesDetail('userdata001')/_Sales");
-        DcRequest req = DcRequest.move(srcUrl);
+        PersoniumRequest req = PersoniumRequest.move(srcUrl);
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.header(HttpHeaders.DESTINATION, destUrl);
         req.header(HttpHeaders.OVERWRITE, "F");
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
         PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
@@ -226,11 +226,11 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
         final String destUrl = UrlUtils.box(CELL_NAME, BOX_NAME, destColName);
         // 移動
         String srcUrl = UrlUtils.box(CELL_NAME, BOX_NAME, Setup.TEST_ODATA, "SalesDetail('userdata001')/$links/_Sales");
-        DcRequest req = DcRequest.move(srcUrl);
+        PersoniumRequest req = PersoniumRequest.move(srcUrl);
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.header(HttpHeaders.DESTINATION, destUrl);
         req.header(HttpHeaders.OVERWRITE, "F");
-        DcResponse response = AbstractCase.request(req);
+        PersoniumResponse response = AbstractCase.request(req);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
         PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
@@ -253,11 +253,11 @@ public class MoveCollectionMethodNotAllowedTest extends JerseyTest {
             // 移動
             // このリソースはサービス実行用であるが、MOVEメソッドは実行対象外としているため405が返却される。
             String srcUrl = UrlUtils.box(CELL_NAME, BOX_NAME, srcCol, "dummyResource");
-            DcRequest req = DcRequest.move(srcUrl);
+            PersoniumRequest req = PersoniumRequest.move(srcUrl);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.OVERWRITE, "F");
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_METHOD_NOT_ALLOWED);
             PersoniumCoreException expectedException = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;

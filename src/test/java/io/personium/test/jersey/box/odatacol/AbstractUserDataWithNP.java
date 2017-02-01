@@ -30,9 +30,9 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -43,7 +43,7 @@ import io.personium.test.utils.TResponse;
 /**
  * UserDataのNavigationProperty経由一覧のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Ignore
 public class AbstractUserDataWithNP extends AbstractUserDataTest {
 
@@ -378,7 +378,7 @@ public class AbstractUserDataWithNP extends AbstractUserDataTest {
         reqBody.put("__id", "userdataNP2");
         reqBody.put(UserDataComplexTypeUtils.ET_STRING_PROP, "etStrPropValue1");
         reqBody.put(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
-        DcResponse resPost = createComplexTypeUserDataWithNP("parent", reqBody);
+        PersoniumResponse resPost = createComplexTypeUserDataWithNP("parent", reqBody);
         assertEquals(HttpStatus.SC_CREATED, resPost.getStatusCode());
     }
 
@@ -427,7 +427,7 @@ public class AbstractUserDataWithNP extends AbstractUserDataTest {
      */
     @SuppressWarnings("unchecked")
     void createComplexTypeUserDataForONE(String parentEntityType, String childEnitityType) {
-        DcResponse resPost = null;
+        PersoniumResponse resPost = null;
         JSONObject ct1stProp = new JSONObject();
         ct1stProp.put("ct1stStrProp", "ct1stStrPropValue1");
 
@@ -487,7 +487,7 @@ public class AbstractUserDataWithNP extends AbstractUserDataTest {
         reqBody.put("__id", "parent");
         reqBody.put(UserDataComplexTypeUtils.ET_STRING_PROP, "etStrPropValue1");
         reqBody.put(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
-        DcResponse resPost = createUserDataComplexType(reqBody);
+        PersoniumResponse resPost = createUserDataComplexType(reqBody);
         assertEquals(HttpStatus.SC_CREATED, resPost.getStatusCode());
     }
 
@@ -495,12 +495,12 @@ public class AbstractUserDataWithNP extends AbstractUserDataTest {
      * ComplexTypeユーザデータの登録を行う.
      * @param reqBody リクエストボディ
      */
-    private DcResponse createUserDataComplexType(HashMap<String, Object> reqBody) {
+    private PersoniumResponse createUserDataComplexType(HashMap<String, Object> reqBody) {
         // UserData作成
         String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1,
                 UserDataListWithNPTest.ODATA_COLLECTION,
                 entityTypeName, null);
-        DcRequest req = DcRequest.post(requestUrl);
+        PersoniumRequest req = PersoniumRequest.post(requestUrl);
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         for (String key : reqBody.keySet()) {
             req.addJsonBody(key, reqBody.get(key));

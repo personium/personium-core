@@ -30,10 +30,10 @@ import io.personium.core.odata.PersoniumExpressionParser.Token;
 import io.personium.test.categories.Unit;
 
 /**
- * DcExpressionParser ユニットテストクラス.
+ * PersoniumExpressionParser ユニットテストクラス.
  */
 @Category({ Unit.class })
-public class DcExpressionParserTest {
+public class PersoniumExpressionParserTest {
 
 
     /**

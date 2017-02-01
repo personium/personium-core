@@ -42,7 +42,7 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import io.personium.test.DcCoreTestConfig;
+import io.personium.test.PersoniumCoreTestConfig;
 
 /**
  * RESTアクセスのためのクラス.
@@ -86,18 +86,18 @@ public class PersoniumRestAdapter {
      * @param url リクエスト対象URL
      * @param headers リクエストヘッダのハッシュマップ
      * @return DcResponse型
-     * @throws DcException DAO例外
+     * @throws PersoniumException DAO例外
      */
-    public final DcResponse get(final String url, final HashMap<String, String> headers)
-            throws DcException {
+    public final PersoniumResponse get(final String url, final HashMap<String, String> headers)
+            throws PersoniumException {
         HttpUriRequest req = new HttpGet(url);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", PersoniumCoreTestConfig.getCoreVersion());
 
         debugHttpRequest(req, "");
-        DcResponse res = this.request(req);
+        PersoniumResponse res = this.request(req);
         return res;
     }
 
@@ -106,19 +106,19 @@ public class PersoniumRestAdapter {
      * @param url リクエスト対象URL
      * @param headers リクエストヘッダのハッシュマップ
      * @return DcResponse型
-     * @throws DcException DAO例外
+     * @throws PersoniumException DAO例外
      */
-    public final DcResponse getAcceptEncodingGzip(final String url, final HashMap<String, String> headers)
-            throws DcException {
+    public final PersoniumResponse getAcceptEncodingGzip(final String url, final HashMap<String, String> headers)
+            throws PersoniumException {
         HttpUriRequest req = new HttpGet(url);
         req.addHeader("Accept-Encoding", "gzip");
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", PersoniumCoreTestConfig.getCoreVersion());
 
         debugHttpRequest(req, "");
-        DcResponse res = this.request(req);
+        PersoniumResponse res = this.request(req);
         return res;
     }
 
@@ -128,20 +128,20 @@ public class PersoniumRestAdapter {
      * @param data 書き込むデータ
      * @param headers リクエストヘッダのハッシュマップ
      * @return DcResponse型
-     * @throws DcException DAO例外
+     * @throws PersoniumException DAO例外
      */
-    public final DcResponse put(final String url,
+    public final PersoniumResponse put(final String url,
             final String data,
-            final HashMap<String, String> headers) throws DcException {
+            final HashMap<String, String> headers) throws PersoniumException {
         String contentType = headers.get(HttpHeaders.CONTENT_TYPE);
         HttpUriRequest req = makePutRequest(url, data, contentType);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", PersoniumCoreTestConfig.getCoreVersion());
 
         debugHttpRequest(req, data);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
         return res;
     }
 
@@ -151,19 +151,19 @@ public class PersoniumRestAdapter {
      * @param headers リクエストヘッダのハッシュマップ
      * @param is PUTするデータストリーム
      * @return DcResponse型
-     * @throws DcException DAO例外
+     * @throws PersoniumException DAO例外
      */
-    public final DcResponse put(final String url, final HashMap<String, String> headers, final InputStream is)
-            throws DcException {
+    public final PersoniumResponse put(final String url, final HashMap<String, String> headers, final InputStream is)
+            throws PersoniumException {
         String contentType = headers.get(HttpHeaders.CONTENT_TYPE);
         HttpUriRequest req = makePutRequestByStream(url, contentType, is);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", PersoniumCoreTestConfig.getCoreVersion());
 
         debugHttpRequest(req, "body is InputStream...");
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
         return res;
     }
 
@@ -173,19 +173,19 @@ public class PersoniumRestAdapter {
      * @param data 書き込むデータ
      * @param headers リクエストヘッダのハッシュマップ
      * @return DcResponse型
-     * @throws DcException DAO例外
+     * @throws PersoniumException DAO例外
      */
-    public final DcResponse post(final String url, final String data, final HashMap<String, String> headers)
-            throws DcException {
+    public final PersoniumResponse post(final String url, final String data, final HashMap<String, String> headers)
+            throws PersoniumException {
         String contentType = headers.get(HttpHeaders.CONTENT_TYPE);
         HttpUriRequest req = makePostRequest(url, data, contentType);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", PersoniumCoreTestConfig.getCoreVersion());
 
         debugHttpRequest(req, data);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
         return res;
     }
 
@@ -194,14 +194,14 @@ public class PersoniumRestAdapter {
      * @param url リクエスト対象URL
      * @param headers リクエストヘッダのハッシュマップ
      * @return DcResponse型
-     * @throws DcException DAO例外
+     * @throws PersoniumException DAO例外
      */
-    public final DcResponse del(final String url, final HashMap<String, String> headers) throws DcException {
+    public final PersoniumResponse del(final String url, final HashMap<String, String> headers) throws PersoniumException {
         HttpDelete req = new HttpDelete(url);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", PersoniumCoreTestConfig.getCoreVersion());
 
         debugHttpRequest(req, "");
         return this.request(req);
@@ -214,10 +214,10 @@ public class PersoniumRestAdapter {
      * @param body リクエストボディ
      * @param headers リクエストヘッダのハッシュマップ
      * @return DcResponse型
-     * @throws DcException DAO例外
+     * @throws PersoniumException DAO例外
      */
-    public DcResponse request(final String method, String url, String body,
-            HashMap<String, String> headers) throws DcException {
+    public PersoniumResponse request(final String method, String url, String body,
+            HashMap<String, String> headers) throws PersoniumException {
         HttpEntityEnclosingRequestBase req = new HttpEntityEnclosingRequestBase() {
             @Override
             public String getMethod() {
@@ -228,7 +228,7 @@ public class PersoniumRestAdapter {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());
         }
-        req.addHeader("X-Personium-Version", DcCoreTestConfig.getCoreVersion());
+        req.addHeader("X-Personium-Version", PersoniumCoreTestConfig.getCoreVersion());
 
         if (body != null) {
             HttpEntity httpEntity = null;
@@ -236,7 +236,7 @@ public class PersoniumRestAdapter {
                 String bodyStr = toUniversalCharacterNames(body);
                 httpEntity = new StringEntity(bodyStr);
             } catch (UnsupportedEncodingException e) {
-                throw DcException.create("error while request body encoding : " + e.getMessage(), 0);
+                throw PersoniumException.create("error while request body encoding : " + e.getMessage(), 0);
             }
             req.setEntity(httpEntity);
         }
@@ -263,10 +263,10 @@ public class PersoniumRestAdapter {
      * @param data PUTするデータ
      * @param contentType メディアタイプ
      * @return HttpPutインスタンス
-     * @throws DcException DAO例外
+     * @throws PersoniumException DAO例外
      */
     protected final HttpPut makePutRequest(final String url, final String data, final String contentType)
-            throws DcException {
+            throws PersoniumException {
         HttpPut request = new HttpPut(url);
         HttpEntity body = null;
         try {
@@ -277,7 +277,7 @@ public class PersoniumRestAdapter {
                 body = new StringEntity(data, PersoniumRestAdapter.ENCODE);
             }
         } catch (UnsupportedEncodingException e) {
-            throw DcException.create("error while request body encoding : " + e.getMessage(), 0);
+            throw PersoniumException.create("error while request body encoding : " + e.getMessage(), 0);
         }
         request.setEntity(body);
         return request;
@@ -289,10 +289,10 @@ public class PersoniumRestAdapter {
      * @param contentType メディアタイプ
      * @param is PUTするデータストリーム
      * @return HttpPutクラスインスタンス
-     * @throws DcException DAO例外
+     * @throws PersoniumException DAO例外
      */
     protected final HttpPut makePutRequestByStream(final String url, final String contentType, final InputStream is)
-            throws DcException {
+            throws PersoniumException {
         HttpPut request = new HttpPut(url);
         InputStreamEntity body;
         body = new InputStreamEntity(is, -1);
@@ -310,17 +310,17 @@ public class PersoniumRestAdapter {
      * @param data POSTするデータ
      * @param contentType メディアタイプ
      * @return POSTされたデータ
-     * @throws DcException DAO例外
+     * @throws PersoniumException DAO例外
      */
     protected final HttpPost makePostRequest(final String url, final String data, final String contentType)
-            throws DcException {
+            throws PersoniumException {
         HttpPost request = new HttpPost(url);
         HttpEntity body = null;
         try {
             String bodyStr = toUniversalCharacterNames(data);
             body = new StringEntity(bodyStr);
         } catch (UnsupportedEncodingException e) {
-            throw DcException.create("error while request body encoding : " + e.getMessage(), 0);
+            throw PersoniumException.create("error while request body encoding : " + e.getMessage(), 0);
         }
         request.setEntity(body);
         makeCommonHeaders(request, contentType, contentType, null);
@@ -363,12 +363,12 @@ public class PersoniumRestAdapter {
      * Reponseボディを受ける場合のHTTPリクエストを行う.
      * @param httpReq HTTPリクエスト
      * @return DCレスポンスオブジェクト
-     * @throws DcException DAO例外
+     * @throws PersoniumException DAO例外
      */
-    private DcResponse request(final HttpUriRequest httpReq) throws DcException {
+    private PersoniumResponse request(final HttpUriRequest httpReq) throws PersoniumException {
         try {
             HttpResponse objResponse = httpClient.execute(httpReq);
-            DcResponse dcRes = new DcResponse(objResponse);
+            PersoniumResponse dcRes = new PersoniumResponse(objResponse);
             /*
              * int statusCode = objResponse.getStatusLine().getStatusCode(); if (statusCode >= STATUS300) {
              * debugHttpResponse(objResponse); throw DcException.create(dcRes.bodyAsString(), statusCode); } if
@@ -378,7 +378,7 @@ public class PersoniumRestAdapter {
             debugHttpResponse(objResponse);
             return dcRes;
         } catch (Exception ioe) {
-            throw DcException.create("io exception : " + ioe.getMessage(), 0);
+            throw PersoniumException.create("io exception : " + ioe.getMessage(), 0);
         }
     }
 

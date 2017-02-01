@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.TResponse;
@@ -41,7 +41,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 /**
  * サービス実行のリレーテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Integration.class, Regression.class })
 public class ServiceRelayTest extends JerseyTest {
     /**

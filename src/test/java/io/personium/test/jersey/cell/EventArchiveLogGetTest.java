@@ -42,9 +42,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.CellUtils;
@@ -61,7 +61,7 @@ import io.personium.test.utils.TResponse;
  * @see io.personium.test.setup.Setup#resetEventLog()
  *      </p>
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class EventArchiveLogGetTest extends ODataCommon {
 
@@ -80,10 +80,10 @@ public class EventArchiveLogGetTest extends ODataCommon {
     /**
      * ローテートされた過去ログを取得して200が返却されること.
      * @throws IOException レスポンスボディの読み込みに失敗した場合
-     * @throws DcException DcException
+     * @throws PersoniumException DcException
      */
     @Test
-    public final void ローテートされた過去ログを取得して200が返却されること() throws IOException, DcException {
+    public final void ローテートされた過去ログを取得して200が返却されること() throws IOException, PersoniumException {
         final String cell = Setup.TEST_CELL_EVENTLOG;
 
         // 過去ログのファイル名を取得するため、いったんPROPFINDを発行する
@@ -103,7 +103,7 @@ public class EventArchiveLogGetTest extends ODataCommon {
         for (String href : hrefList) {
             String[] splitedHref = href.split("log\\.");
             String archiveLogName = String.format(DEFAULT_LOG_FORMAT, Long.valueOf(splitedHref[1]));
-            DcResponse response = CellUtils.getLog(cell, ARCHIVE_COLLECTION, archiveLogName);
+            PersoniumResponse response = CellUtils.getLog(cell, ARCHIVE_COLLECTION, archiveLogName);
             assertEquals(TEXT_CSV, response.getFirstHeader(HttpHeaders.CONTENT_TYPE));
             assertEquals(HttpStatus.SC_OK, response.getStatusCode());
 
@@ -157,7 +157,7 @@ public class EventArchiveLogGetTest extends ODataCommon {
      * @param response レスポンス情報
      * @throws IOException レスポンスボディの読み込みに失敗した場合
      */
-    private void checkResponseBody(DcResponse response) throws IOException {
+    private void checkResponseBody(PersoniumResponse response) throws IOException {
         InputStream is = null;
         InputStreamReader isr = null;
         BufferedReader reader = null;

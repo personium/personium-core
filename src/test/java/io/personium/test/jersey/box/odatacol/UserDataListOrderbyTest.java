@@ -40,8 +40,8 @@ import io.personium.core.model.ctl.Common;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -53,7 +53,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserData一覧の$orderbyクエリのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataListOrderbyTest extends AbstractUserDataTest {
 
@@ -224,7 +224,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName,
                 boxName,
                 colName,
                 sdEntityTypeName,
@@ -247,7 +247,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName,
                 boxName,
                 colName,
                 sdEntityTypeName,
@@ -270,7 +270,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName,
                 boxName,
                 colName,
                 sdEntityTypeName,
@@ -295,7 +295,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName,
                 boxName,
                 colName,
                 sdEntityTypeName,
@@ -320,7 +320,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName,
                 boxName,
                 colName,
                 sdEntityTypeName,
@@ -344,7 +344,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName,
                 boxName,
                 colName,
                 sdEntityTypeName,
@@ -369,7 +369,7 @@ public class UserDataListOrderbyTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName,
                 boxName,
                 colName,
                 sdEntityTypeName,

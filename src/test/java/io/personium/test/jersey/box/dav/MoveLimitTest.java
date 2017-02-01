@@ -33,9 +33,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
@@ -50,7 +50,7 @@ import static org.fest.assertions.Assertions.assertThat;
 /**
  * MOVEの最大値に関するテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class MoveLimitTest extends JerseyTest {
     private static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
@@ -132,12 +132,12 @@ public class MoveLimitTest extends JerseyTest {
             // Fileの移動(最大値, 上書き) → 204
             destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, moveFileNameEqualLimitCount);
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, SRC_COL_NAME, moveOverwriteFileNameEqualLimitCount);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "T");
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
 
             // Fileの移動(最大値 + 1) → 400
@@ -225,12 +225,12 @@ public class MoveLimitTest extends JerseyTest {
             // TODO 現状は上書き指定に対応していないため、400としているが、上書き指定に対応した際は204に変更する
             destination = UrlUtils.box(CELL_NAME, BOX_NAME, DST_COL_NAME, moveCollectionNameEqualLimitCount);
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, SRC_COL_NAME, moveOverwriteCollectionNameEqualLimitCount);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "T");
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
 
             // Collectionの移動(最大値 + 1) → 400
@@ -302,11 +302,11 @@ public class MoveLimitTest extends JerseyTest {
             // 移動(最大値, 上書き) → 204
             // TODO 現状は上書き指定に対応していないため、400としているが、上書き指定に対応した際は204に変更する
             DavResourceUtils.createWebDavCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME, BOX_NAME, srcCol);
-            DcRequest req = DcRequest.move(UrlUtils.box(CELL_NAME, BOX_NAME, srcCol));
+            PersoniumRequest req = PersoniumRequest.move(UrlUtils.box(CELL_NAME, BOX_NAME, srcCol));
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destUrl);
             req.header(HttpHeaders.OVERWRITE, "T");
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             // エラーコード確認
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;

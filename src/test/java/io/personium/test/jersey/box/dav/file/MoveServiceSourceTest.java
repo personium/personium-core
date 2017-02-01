@@ -33,9 +33,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.DavResourceUtils;
@@ -48,7 +48,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * ServiceSourceのMOVEのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class MoveServiceSourceTest extends JerseyTest {
     private static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
@@ -100,13 +100,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, colName, "__src", FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "F");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
             String etag = response.getFirstHeader(HttpHeaders.ETAG);
 
@@ -141,12 +141,12 @@ public class MoveServiceSourceTest extends JerseyTest {
                     CELL_NAME, BOX_NAME, colName);
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, colName, "__src", FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_NOT_FOUND);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
@@ -173,12 +173,12 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, colName, "__src", FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destination);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
@@ -207,12 +207,12 @@ public class MoveServiceSourceTest extends JerseyTest {
                     HttpStatus.SC_CREATED);
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, colName + "/__src/" + FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     HttpHeaders.DESTINATION, destination);
@@ -242,12 +242,12 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, colName + "/__src/" + FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     HttpHeaders.DESTINATION, destination);
@@ -277,13 +277,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, colName + "/__src/" + FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "T");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CONFLICT);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.HAS_NOT_PARENT.params(invalidColName);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
@@ -310,12 +310,12 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, colName + "/__src/" + FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     HttpHeaders.DESTINATION, destination);
@@ -344,12 +344,12 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, colName + "/__src/" + FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     HttpHeaders.DESTINATION, destination);
@@ -382,13 +382,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, svcColName + "/__src/" + FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "T");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_OVERWRITE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
@@ -419,13 +419,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, svcColName + "/__src/" + FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "F");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_PRECONDITION_FAILED);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_ALREADY_EXISTS;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
@@ -456,13 +456,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, svcColName + "/__src/" + FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "T");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_FILE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
@@ -491,13 +491,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, svcColName, "__src", FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "F");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
             String etag = response.getFirstHeader(HttpHeaders.ETAG);
 
@@ -539,13 +539,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, svcColName, "__src", FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "T");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
             String etag = response.getFirstHeader(HttpHeaders.ETAG);
 
@@ -589,13 +589,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, svcColName, "__src", FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "F");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_PRECONDITION_FAILED);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_ALREADY_EXISTS;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
@@ -636,13 +636,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, svcColName, "__src", FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "T");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
             String etag = response.getFirstHeader(HttpHeaders.ETAG);
 
@@ -687,13 +687,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動（上書き禁止モード）
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcSvcColName, "__src", FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "F");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
             String etag = response.getFirstHeader(HttpHeaders.ETAG);
 
@@ -747,13 +747,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動（上書きモード）
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcSvcColName, "__src", FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "T");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_CREATED);
             String etag = response.getFirstHeader(HttpHeaders.ETAG);
 
@@ -810,13 +810,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動（上書き禁止モード）
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcSvcColName, "__src", FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "F");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_PRECONDITION_FAILED);
             PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_ALREADY_EXISTS;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
@@ -877,13 +877,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動（上書きモード）
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, srcSvcColName, "__src", FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "T");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
             String etag = response.getFirstHeader(HttpHeaders.ETAG);
 
@@ -939,13 +939,13 @@ public class MoveServiceSourceTest extends JerseyTest {
 
             // Fileの移動
             String url = UrlUtils.box(CELL_NAME, BOX_NAME, svcColName, "__src", FILE_NAME);
-            DcRequest req = DcRequest.move(url);
+            PersoniumRequest req = PersoniumRequest.move(url);
             req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.DESTINATION, destination);
             req.header(HttpHeaders.OVERWRITE, "T");
 
             // リクエスト実行
-            DcResponse response = AbstractCase.request(req);
+            PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_NO_CONTENT);
             String etag = response.getFirstHeader(HttpHeaders.ETAG);
 

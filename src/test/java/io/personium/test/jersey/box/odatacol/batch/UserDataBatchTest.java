@@ -52,8 +52,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.setup.Setup;
@@ -67,7 +67,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserData$batchのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataBatchTest extends AbstractUserDataBatchTest {
 
@@ -1469,7 +1469,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
             for (int i = 0; i < registerNumber * 2; i++) {
                 String id = String.format("testBatch%02d", i);
                 String url = UrlUtils.userdata(cellName, boxName, colName, "Supplier", id);
-                DcResponse res = ODataCommon.getOdataResource(url);
+                PersoniumResponse res = ODataCommon.getOdataResource(url);
                 assertEquals(res.getStatusCode(), HttpStatus.SC_OK);
             }
         } finally {
@@ -1697,7 +1697,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
         for (int i = 0; i < registerNumber; i++) {
             String id = String.format("testBatch%02d", i + offset);
             String url = UrlUtils.userdata(cellName, boxName, colName, "Supplier", id);
-            DcResponse res = ODataCommon.getOdataResource(url);
+            PersoniumResponse res = ODataCommon.getOdataResource(url);
             assertEquals(res.getStatusCode(), HttpStatus.SC_OK);
         }
     }

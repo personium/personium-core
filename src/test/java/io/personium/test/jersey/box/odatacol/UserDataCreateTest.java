@@ -39,10 +39,10 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcException;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -57,7 +57,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserData登録のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataCreateTest extends AbstractUserDataTest {
 
@@ -187,7 +187,7 @@ public class UserDataCreateTest extends AbstractUserDataTest {
             Setup.entityTypePost(TEST_COL, TEST_BOX, TEST_ENTITYTYPE, cellPath);
 
             // ユーザデータの一覧取得(0件HITであることを確認)
-            DcResponse listResponse = getUserDataWithDcClient(cellPath,
+            PersoniumResponse listResponse = getUserDataWithDcClient(cellPath,
                     TEST_BOX,
                     TEST_COL,
                     TEST_ENTITYTYPE,
@@ -260,7 +260,7 @@ public class UserDataCreateTest extends AbstractUserDataTest {
             Setup.entityTypePost(TEST_COL, boxPath, TEST_ENTITYTYPE, TEST_CELL);
 
             // ユーザデータの一覧取得(0件HITであることを確認)
-            DcResponse listResponse = getUserDataWithDcClient(TEST_CELL,
+            PersoniumResponse listResponse = getUserDataWithDcClient(TEST_CELL,
                     boxPath,
                     TEST_COL,
                     TEST_ENTITYTYPE,
@@ -330,7 +330,7 @@ public class UserDataCreateTest extends AbstractUserDataTest {
             Setup.entityTypePost(colPath, TEST_BOX, TEST_ENTITYTYPE, TEST_CELL);
 
             // ユーザデータの一覧取得(0件HITであることを確認)
-            DcResponse listResponse = getUserDataWithDcClient(TEST_CELL,
+            PersoniumResponse listResponse = getUserDataWithDcClient(TEST_CELL,
                     TEST_BOX,
                     colPath,
                     TEST_ENTITYTYPE,
@@ -396,7 +396,7 @@ public class UserDataCreateTest extends AbstractUserDataTest {
             Setup.entityTypePost(TEST_COL, TEST_BOX, entityPath, TEST_CELL);
 
             // ユーザデータの一覧取得(0件HITであることを確認)
-            DcResponse listResponse = getUserDataWithDcClient(TEST_CELL,
+            PersoniumResponse listResponse = getUserDataWithDcClient(TEST_CELL,
                     TEST_BOX,
                     TEST_COL,
                     entityPath,
@@ -519,7 +519,7 @@ public class UserDataCreateTest extends AbstractUserDataTest {
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            DcResponse response = null;
+            PersoniumResponse response = null;
             response = rest.post(UrlUtils.userData(cellName, boxName, colName,
                     entityTypeName), body.toJSONString(), requestheaders);
 
@@ -530,7 +530,7 @@ public class UserDataCreateTest extends AbstractUserDataTest {
 
             String nameSpace = getNameSpace(entityTypeName);
             ODataCommon.checkResponseBody(response.bodyAsJson(), null, nameSpace, additional);
-        } catch (DcException e) {
+        } catch (PersoniumException e) {
             e.printStackTrace();
 
         } finally {

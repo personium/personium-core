@@ -40,7 +40,7 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.acl.jaxb.Acl;
 import io.personium.test.setup.Setup;
@@ -61,7 +61,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * Basic認証のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class AuthBasicTest extends JerseyTest {
     // セル再帰的削除を使用するための準備

@@ -25,7 +25,7 @@ import org.json.simple.JSONObject;
 /**
  * RESTテスト用のリクエストクラス.
  */
-public class DcRequest {
+public class PersoniumRequest {
     /** Requestヘッダのハッシュマップ. */
     private HashMap<String, String> headers;
     /** リクエスト先のURL. */
@@ -52,7 +52,7 @@ public class DcRequest {
      * コンストラクタ.
      * @param url URL
      */
-    public DcRequest(String url) {
+    public PersoniumRequest(String url) {
         this.headers = new HashMap<String, String>();
         this.urlString = url;
     }
@@ -62,8 +62,8 @@ public class DcRequest {
      * @param url URL
      * @return req DcRequestオブジェクト
      */
-    public static DcRequest get(String url) {
-        DcRequest req = new DcRequest(url);
+    public static PersoniumRequest get(String url) {
+        PersoniumRequest req = new PersoniumRequest(url);
         req.method = HttpMethod.GET;
         return req;
     }
@@ -73,8 +73,8 @@ public class DcRequest {
      * @param url URL
      * @return req DcRequestオブジェクト
      */
-    public static DcRequest put(String url) {
-        DcRequest req = new DcRequest(url);
+    public static PersoniumRequest put(String url) {
+        PersoniumRequest req = new PersoniumRequest(url);
         req.method = HttpMethod.PUT;
         return req;
     }
@@ -84,8 +84,8 @@ public class DcRequest {
      * @param url URL
      * @return req DcRequestオブジェクト
      */
-    public static DcRequest post(String url) {
-        DcRequest req = new DcRequest(url);
+    public static PersoniumRequest post(String url) {
+        PersoniumRequest req = new PersoniumRequest(url);
         req.method = HttpMethod.POST;
         return req;
     }
@@ -95,8 +95,8 @@ public class DcRequest {
      * @param url URL
      * @return req DcRequestオブジェクト
      */
-    public static DcRequest delete(String url) {
-        DcRequest req = new DcRequest(url);
+    public static PersoniumRequest delete(String url) {
+        PersoniumRequest req = new PersoniumRequest(url);
         req.method = HttpMethod.DELETE;
         return req;
     }
@@ -106,8 +106,8 @@ public class DcRequest {
      * @param url URL
      * @return req DcRequestオブジェクト
      */
-    public static DcRequest move(String url) {
-        DcRequest req = new DcRequest(url);
+    public static PersoniumRequest move(String url) {
+        PersoniumRequest req = new PersoniumRequest(url);
         req.method = io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MOVE;
         return req;
     }
@@ -117,7 +117,7 @@ public class DcRequest {
      * @param inMethod HTTP method
      * @return DcRequestオブジェクト
      */
-    public DcRequest method(String inMethod) {
+    public PersoniumRequest method(String inMethod) {
         this.method = inMethod;
         return this;
     }
@@ -199,7 +199,7 @@ public class DcRequest {
      * @param value Cell ID値
      * @return DcRequestオブジェクト
      */
-    public DcRequest cell(final String value) {
+    public PersoniumRequest cell(final String value) {
         this.cellID = value;
         return this;
     }
@@ -209,7 +209,7 @@ public class DcRequest {
      * @param value Query文字列
      * @return DcRequestオブジェクト
      */
-    public DcRequest query(final String value) {
+    public PersoniumRequest query(final String value) {
         this.queryStr = value;
         return this;
     }
@@ -234,8 +234,8 @@ public class DcRequest {
      * @param url URL文字列
      * @return DcRequestオブジェクト
      */
-    public static DcRequest create(final String url) {
-        return new DcRequest(url);
+    public static PersoniumRequest create(final String url) {
+        return new PersoniumRequest(url);
     }
 
     /**
@@ -244,7 +244,7 @@ public class DcRequest {
      * @param value 値
      * @return DcRequestオブジェクト
      */
-    public DcRequest header(final String key, final String value) {
+    public PersoniumRequest header(final String key, final String value) {
         if (value != null) {
             this.headers.put(key, value);
         }
@@ -258,7 +258,7 @@ public class DcRequest {
      * @return DcRequestオブジェクト
      */
     @SuppressWarnings("unchecked")
-    public DcRequest addJsonBody(final String key, final Object value) {
+    public PersoniumRequest addJsonBody(final String key, final Object value) {
         if (this.body == null) {
             this.body = new JSONObject();
         }
@@ -274,7 +274,7 @@ public class DcRequest {
      * @return DcRequestオブジェクト
      */
     @SuppressWarnings("unchecked")
-    public DcRequest addJsonBody(final String[] key, final String[] value) {
+    public PersoniumRequest addJsonBody(final String[] key, final String[] value) {
         if (this.body == null) {
             this.body = new JSONObject();
         }
@@ -290,7 +290,7 @@ public class DcRequest {
      * @param value 値
      * @return DcRequestオブジェクト
      */
-    public DcRequest addStringBody(final String value) {
+    public PersoniumRequest addStringBody(final String value) {
         if (this.body == null) {
             this.body = new String();
         }

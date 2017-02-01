@@ -49,8 +49,8 @@ import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.Relation;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.UserDataListWithNPTest;
@@ -971,10 +971,10 @@ public class Setup extends AbstractCase {
      *            リクエストボディ
      * @return ユーザーデータ作成時のレスポンスオブジェクト
      */
-    private static DcResponse createUserDataWithDcClient(String cellName, String boxName, String colName,
+    private static PersoniumResponse createUserDataWithDcClient(String cellName, String boxName, String colName,
             String entityTypeName, JSONObject body) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1240,9 +1240,9 @@ public class Setup extends AbstractCase {
      * @return Cell作成時のレスポンスオブジェクト
      */
     @SuppressWarnings("unchecked")
-    final DcResponse createCell(final Config config) {
+    final PersoniumResponse createCell(final Config config) {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        DcResponse res = null;
+        PersoniumResponse res = null;
 
         // リクエストヘッダをセット
         HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1299,7 +1299,7 @@ public class Setup extends AbstractCase {
      */
     public static void cellBulkDeletion(String cellName) {
         // セルの一括削除APIを実行する
-        DcRequest request = DcRequest.delete(UrlUtils.cellRoot(cellName));
+        PersoniumRequest request = PersoniumRequest.delete(UrlUtils.cellRoot(cellName));
         request.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).header("X-Personium-Recursive", "true");
         request(request);
     }
@@ -1559,10 +1559,10 @@ public class Setup extends AbstractCase {
      * @return 作成されたAccountのURL
      */
     private String createAccount(final String cellName, final String name, final String pass) {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(cellName, Account.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(cellName, Account.EDM_TYPE_NAME));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).header(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL, pass)
                 .addJsonBody("Name", name);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
         String accLocHeader = res.getFirstHeader(HttpHeaders.LOCATION);
         assertNotNull(accLocHeader);
@@ -1617,10 +1617,10 @@ public class Setup extends AbstractCase {
      * @return 作成されたRoleのURL
      */
     private String createRole(final String cellName, final String testRoleName) {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(cellName, Role.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(cellName, Role.EDM_TYPE_NAME));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", testRoleName)
                 .addJsonBody("_Box.Name", null);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
         String roleLocHeader = res.getFirstHeader(HttpHeaders.LOCATION);
         assertNotNull(roleLocHeader);
@@ -1635,9 +1635,9 @@ public class Setup extends AbstractCase {
      * @return 作成されたRoleのURL
      */
     private void matchRole(final String cellName, final String accountName, final String roleUrl) {
-        DcRequest req = DcRequest.post(UrlUtils.accountLinks(cellName, accountName));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.accountLinks(cellName, accountName));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("uri", roleUrl);
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
         assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
     }
 
@@ -1652,12 +1652,12 @@ public class Setup extends AbstractCase {
      * @return boxURL
      */
     private String createBox2(final String cellName, final String boxName, final String boxSchema) {
-        DcRequest req = DcRequest.post(UrlUtils.cellCtl(cellName, Box.EDM_TYPE_NAME));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(cellName, Box.EDM_TYPE_NAME));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", boxName);
         if (boxSchema != null) {
             req.addJsonBody("Schema", boxSchema);
         }
-        DcResponse res = request(req);
+        PersoniumResponse res = request(req);
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
         String url = res.getFirstHeader(HttpHeaders.LOCATION);
         assertNotNull(url);

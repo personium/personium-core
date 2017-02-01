@@ -42,8 +42,8 @@ public class StatusTest extends ODataCommon {
      */
     @Test
     public void ステータス確認のテスト() {
-        DcRequest req = DcRequest.get(UrlUtils.status());
-        DcResponse res = request(req);
+        PersoniumRequest req = PersoniumRequest.get(UrlUtils.status());
+        PersoniumResponse res = request(req);
         JSONObject json = res.bodyAsJson();
 
         assertNotNull(json.get("ElasticSearch"));

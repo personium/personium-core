@@ -35,8 +35,8 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DaoException;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -47,7 +47,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserODataのDouble型動的プロパティ登録のテストクラス.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataDynamicDoublePropertyTest extends AbstractUserDataTest {
 
@@ -74,8 +74,8 @@ public class UserDataDynamicDoublePropertyTest extends AbstractUserDataTest {
     @Test
     public final void 数値形式のデータを登録できること() {
         TResponse createResponse;
-        DcResponse getResponse;
-        DcResponse listResponse;
+        PersoniumResponse getResponse;
+        PersoniumResponse listResponse;
         JSONObject createdEntity;
         JSONObject getEntity;
         JSONObject listEntity;
@@ -179,8 +179,8 @@ public class UserDataDynamicDoublePropertyTest extends AbstractUserDataTest {
     @Test
     public final void 小数値データ登録後に整数値データが登録できること() {
         TResponse createResponse;
-        DcResponse getResponse;
-        DcResponse listResponse;
+        PersoniumResponse getResponse;
+        PersoniumResponse listResponse;
         JSONObject createdEntity;
         JSONObject getEntity;
         JSONObject listEntity;
@@ -238,8 +238,8 @@ public class UserDataDynamicDoublePropertyTest extends AbstractUserDataTest {
     @Test
     public final void Double型にNullが登録できること() {
         TResponse createResponse;
-        DcResponse getResponse;
-        DcResponse listResponse;
+        PersoniumResponse getResponse;
+        PersoniumResponse listResponse;
         JSONObject createdEntity;
         JSONObject getEntity;
         JSONObject listEntity;
@@ -288,8 +288,8 @@ public class UserDataDynamicDoublePropertyTest extends AbstractUserDataTest {
     @Test
     public final void 文字列型にDouble型のデータが文字列として登録できること() {
         TResponse createResponse;
-        DcResponse getResponse;
-        DcResponse listResponse;
+        PersoniumResponse getResponse;
+        PersoniumResponse listResponse;
         try {
             // テスト用エンティティタイプ作成
             createEntityType();
@@ -362,8 +362,8 @@ public class UserDataDynamicDoublePropertyTest extends AbstractUserDataTest {
     @Test
     public final void Double型に文字列型の数値のデータが登録できること() {
         TResponse createResponse;
-        DcResponse getResponse;
-        DcResponse listResponse;
+        PersoniumResponse getResponse;
+        PersoniumResponse listResponse;
         try {
             // テスト用エンティティタイプ作成
             createEntityType();
@@ -412,8 +412,8 @@ public class UserDataDynamicDoublePropertyTest extends AbstractUserDataTest {
                 body, CELL_NAME, BOX_NAME, COL_NAME, ENTITYTYPE);
     }
 
-    private DcResponse getUserOData(String userDataId, int code) {
-        DcResponse response = ODataCommon.getOdataResource(
+    private PersoniumResponse getUserOData(String userDataId, int code) {
+        PersoniumResponse response = ODataCommon.getOdataResource(
                 UrlUtils.userdata(CELL_NAME, BOX_NAME, COL_NAME, ENTITYTYPE, userDataId));
         if (code != -1) {
             assertEquals(code, response.getStatusCode());
@@ -421,8 +421,8 @@ public class UserDataDynamicDoublePropertyTest extends AbstractUserDataTest {
         return response;
     }
 
-    private DcResponse getUserODataList() {
-        DcResponse response =
+    private PersoniumResponse getUserODataList() {
+        PersoniumResponse response =
                 ODataCommon.getOdataResource(UrlUtils.userData(CELL_NAME, BOX_NAME, COL_NAME, ENTITYTYPE));
         return response;
     }

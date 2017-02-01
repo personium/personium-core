@@ -30,9 +30,9 @@ import io.personium.core.model.ctl.ComplexType;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.AbstractUserDataTest;
 import io.personium.test.jersey.box.odatacol.UserDataComplexTypeUtils;
@@ -43,7 +43,7 @@ import io.personium.test.unit.core.UrlUtils;
 /**
  * ComplexTypeProperty更新のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class ComplexTypePropertyDeleteTest extends AbstractUserDataTest {
 
@@ -88,19 +88,19 @@ public class ComplexTypePropertyDeleteTest extends AbstractUserDataTest {
 
             String requestUrl = UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     UserDataComplexTypeUtils.ENTITY_TYPE_NAME, null);
-            DcRequest req = DcRequest.post(requestUrl);
+            PersoniumRequest req = PersoniumRequest.post(requestUrl);
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody("__id", "test000");
             req.addJsonBody(UserDataComplexTypeUtils.ET_STRING_PROP, "UserDataComplexTypeUtils.ET_STRING_PROP_VALUE");
             req.addJsonBody(UserDataComplexTypeUtils.ET_CT1ST_PROP, ct1stProp);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // ComplexTypeProperty削除
             // リクエストパラメータ設定
-            req = DcRequest.delete(UrlUtils.complexTypeProperty(
+            req = PersoniumRequest.delete(UrlUtils.complexTypeProperty(
                     Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, "ct3rdStrProp", "complexType3rd"));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.IF_MATCH, "*");
@@ -126,12 +126,12 @@ public class ComplexTypePropertyDeleteTest extends AbstractUserDataTest {
         String propertyRequestUrl = null;
         String userDataId = "compro_test";
         String entityTypeName = "Price";
-        DcResponse response = null;
+        PersoniumResponse response = null;
 
         try {
             // ComplexType登録
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(UrlUtils.complexType(Setup.TEST_CELL1,
+            PersoniumRequest req = PersoniumRequest.post(UrlUtils.complexType(Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, null));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(COMPLEX_TYPE_NAME_KEY, COMPLEX_TYPE_NAME);
@@ -141,7 +141,7 @@ public class ComplexTypePropertyDeleteTest extends AbstractUserDataTest {
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // ComplexTypeProperty登録
-            req = DcRequest.post(UrlUtils.complexTypeProperty(
+            req = PersoniumRequest.post(UrlUtils.complexTypeProperty(
                     Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, null, null));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY, CT_PROPERTY_NAME);
@@ -155,7 +155,7 @@ public class ComplexTypePropertyDeleteTest extends AbstractUserDataTest {
 
             // Property登録(Type:adress)
             // リクエストパラメータ設定
-            req = DcRequest.post(PropertyUtils.REQUEST_URL);
+            req = PersoniumRequest.post(PropertyUtils.REQUEST_URL);
 
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(PropertyUtils.PROPERTY_NAME_KEY, propName);
@@ -175,7 +175,7 @@ public class ComplexTypePropertyDeleteTest extends AbstractUserDataTest {
 
             // ComplexTypeProperty削除
             // リクエストパラメータ設定
-            req = DcRequest.delete(UrlUtils.complexTypeProperty(
+            req = PersoniumRequest.delete(UrlUtils.complexTypeProperty(
                     Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, CT_PROPERTY_NAME, COMPLEX_TYPE_NAME));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.IF_MATCH, "*");
@@ -221,17 +221,17 @@ public class ComplexTypePropertyDeleteTest extends AbstractUserDataTest {
         try {
             // ComplexType登録
             // リクエストパラメータ設定
-            DcRequest req = DcRequest.post(UrlUtils.complexType(Setup.TEST_CELL1,
+            PersoniumRequest req = PersoniumRequest.post(UrlUtils.complexType(Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, null));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(COMPLEX_TYPE_NAME_KEY, COMPLEX_TYPE_NAME);
 
             // リクエスト実行
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
             assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
 
             // ComplexTypeProperty登録
-            req = DcRequest.post(UrlUtils.complexTypeProperty(
+            req = PersoniumRequest.post(UrlUtils.complexTypeProperty(
                     Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, null, null));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY, CT_PROPERTY_NAME);
@@ -245,7 +245,7 @@ public class ComplexTypePropertyDeleteTest extends AbstractUserDataTest {
 
             // ComplexTypeProperty削除
             // リクエストパラメータ設定
-            req = DcRequest.delete(UrlUtils.complexTypeProperty(
+            req = PersoniumRequest.delete(UrlUtils.complexTypeProperty(
                     Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, CT_PROPERTY_NAME, COMPLEX_TYPE_NAME));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             req.header(HttpHeaders.IF_MATCH, "*");

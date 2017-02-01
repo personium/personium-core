@@ -37,8 +37,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.schema.complextype.ComplexTypeUtils;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
@@ -53,7 +53,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * ComplexTypeProperty更新のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class ComplexTypePropertyUpdateTest extends ODataCommon {
 
@@ -117,7 +117,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     entityTypeName);
 
             // ComplexTypeProperty更新
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName,
                     complexTypePropertyName, complexTypeName,
                     EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue, collectionKind);
@@ -236,7 +236,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     entityTypeName);
 
             // ComplexTypeProperty更新
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     prop3ComplexTypeProperty2, complexTypeName2,
                     prop3ComplexTypeProperty2, complexTypeName2,
                     EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue, collectionKind);
@@ -354,7 +354,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     entityTypeName);
 
             // ComplexTypeProperty更新
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypeProperty32, complexTypeName3,
                     complexTypeProperty32, complexTypeName3,
                     EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue, collectionKind);
@@ -434,7 +434,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypeName, true, null, Property.COLLECTION_KIND_NONE, false, null, HttpStatus.SC_CREATED);
 
             // ComplexTypeProperty更新
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName,
                     complexTypePropertyName, complexTypeName,
                     EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue, collectionKind);
@@ -502,7 +502,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypeName, true, null, Property.COLLECTION_KIND_NONE, false, null, HttpStatus.SC_CREATED);
 
             // ComplexTypeProperty更新
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName,
                     complexTypePropertyName, complexTypeName,
                     EdmSimpleType.SINGLE.getFullyQualifiedTypeName(), nullable, defaultValue, collectionKind);
@@ -577,7 +577,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             body.put("Nullable", nullable);
             body.put("DefaultValue", defaultValue);
             body.put("CollectionKind", collectionKind);
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -647,7 +647,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             body.put("Nullable", nullable);
             body.put("DefaultValue", defaultValue);
             body.put("CollectionKind", collectionKind);
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -705,7 +705,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypeName, EdmSimpleType.INT32.getFullyQualifiedTypeName(), HttpStatus.SC_CREATED);
 
             // ComplexTypeProperty更新
-            DcResponse res = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse res = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName,
                     complexTypePropertyReName, complexTypeName,
                     EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue, collectionKind);
@@ -809,7 +809,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     entityTypeName);
 
             // ComplexTypeProperty更新
-            DcResponse res = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse res = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypeProperty3, complexTypeName3,
                     complexTypePropertyReName, complexTypeName3,
                     EdmSimpleType.BOOLEAN.getFullyQualifiedTypeName(), nullable, defaultValue, collectionKind);
@@ -886,7 +886,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypeName, EdmSimpleType.INT32.getFullyQualifiedTypeName(), HttpStatus.SC_CREATED);
 
             // ComplexTypeProperty更新
-            DcResponse res = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse res = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName,
                     complexTypePropertyReName, complexTypeName,
                     EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue, collectionKind);
@@ -959,7 +959,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypeName, EdmSimpleType.INT32.getFullyQualifiedTypeName(), HttpStatus.SC_CREATED);
 
             // ComplexTypeProperty更新
-            DcResponse res = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse res = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName,
                     complexTypePropertyReName, complexTypeName,
                     EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue, collectionKind);
@@ -1010,7 +1010,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             ComplexTypeUtils.create(cellName, boxName, colName, complexTypeName, HttpStatus.SC_CREATED);
 
             // ComplexTypeProperty更新
-            DcResponse res = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse res = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName,
                     complexTypePropertyReName, complexTypeName,
                     EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue, collectionKind);
@@ -1061,7 +1061,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             body.put("Nullable", nullable);
             body.put("DefaultValue", defaultValue);
             body.put("CollectionKind", collectionKind);
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1126,7 +1126,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             ComplexTypeUtils.create(cellName, boxName, colName, "updated", HttpStatus.SC_CREATED);
 
             // ComplexTypeProperty更新
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName,
                     complexTypePropertyName, "updated",
                     EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue, collectionKind);
@@ -1195,7 +1195,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypeName, true, null, Property.COLLECTION_KIND_NONE, false, null, HttpStatus.SC_CREATED);
 
             // ComplexTypeProperty更新
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName,
                     complexTypePropertyName, complexTypeName,
                     EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), false, defaultValue, collectionKind);
@@ -1271,7 +1271,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             body.put("Type", EdmSimpleType.DOUBLE.getFullyQualifiedTypeName());
             body.put("DefaultValue", defaultValue);
             body.put("CollectionKind", collectionKind);
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
@@ -1339,7 +1339,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             body.put("Type", EdmSimpleType.DOUBLE.getFullyQualifiedTypeName());
             body.put("DefaultValue", defaultValue);
             body.put("CollectionKind", collectionKind);
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1405,7 +1405,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypeName, true, null, Property.COLLECTION_KIND_NONE, false, null, HttpStatus.SC_CREATED);
 
             // ComplexTypeProperty更新
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName,
                     complexTypePropertyName, complexTypeName,
                     EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, 12345, collectionKind);
@@ -1481,7 +1481,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             body.put("Type", EdmSimpleType.DOUBLE.getFullyQualifiedTypeName());
             body.put("Nullable", nullable);
             body.put("CollectionKind", collectionKind);
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
@@ -1549,7 +1549,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             body.put("Type", EdmSimpleType.DOUBLE.getFullyQualifiedTypeName());
             body.put("Nullable", nullable);
             body.put("CollectionKind", collectionKind);
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -1615,7 +1615,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypeName, true, null, Property.COLLECTION_KIND_NONE, false, null, HttpStatus.SC_CREATED);
 
             // ComplexTypeProperty更新
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName,
                     complexTypePropertyName, complexTypeName,
                     EdmSimpleType.DOUBLE.getFullyQualifiedTypeName(), nullable, defaultValue, "List");
@@ -1691,7 +1691,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             body.put("Type", EdmSimpleType.DOUBLE.getFullyQualifiedTypeName());
             body.put("DefaultValue", defaultValue);
             body.put("Nullable", nullable);
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
@@ -1759,7 +1759,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
             body.put("Type", EdmSimpleType.DOUBLE.getFullyQualifiedTypeName());
             body.put("DefaultValue", defaultValue);
             body.put("Nullable", nullable);
-            DcResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
+            PersoniumResponse response = ComplexTypePropertyUtils.update(cellName, boxName, colName,
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());

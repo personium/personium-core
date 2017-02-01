@@ -29,14 +29,14 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 /**
  * 本アプリケーションの例外マッパー. ログ出力と適切な形でのエラー応答出力を行う。
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
-public final class DcCoreExceptionMapperTest {
+public final class PersoniumCoreExceptionMapperTest {
     static Logger log = LoggerFactory.getLogger(PersoniumCoreExceptionMapper.class);
     // ロガー差し替えをするので、ここに避難させておく.
     static Logger shelterdLogger;

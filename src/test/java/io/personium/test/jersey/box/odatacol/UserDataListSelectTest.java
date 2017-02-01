@@ -39,8 +39,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.setup.Setup;
@@ -52,7 +52,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * UserData一覧のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataListSelectTest extends AbstractUserDataTest {
 
@@ -1144,7 +1144,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
             body.put("complexProperty", complexBody);
             body.put("dynamicProperty", "dynamicStringProperty");
             complexBody.put("complexStringProperty", "complexStringProprty");
-            DcResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "selectTestEntity", body);
             userdataUrl = createResponse.getFirstHeader(HttpHeaders.LOCATION);
 
@@ -1193,7 +1193,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
             body.put("complexProperty", complexBody);
             body.put("dynamicProperty", "dynamicStringProperty");
             complexBody.put("complexStringProperty", "complexStringProprty");
-            DcResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "selectTestEntity", body);
             userdataUrl = createResponse.getFirstHeader(HttpHeaders.LOCATION);
 
@@ -1242,7 +1242,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
             body.put("complexProperty", complexBody);
             body.put("dynamicProperty", "dynamicStringProperty");
             complexBody.put("complexStringProperty", "complexStringProprty");
-            DcResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "selectTestEntity", body);
             userdataUrl = createResponse.getFirstHeader(HttpHeaders.LOCATION);
 
@@ -1291,7 +1291,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
             body.put("complexProperty", complexBody);
             body.put("dynamicProperty", "dynamicStringProperty");
             complexBody.put("complexStringProperty", "complexStringProprty");
-            DcResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "selectTestEntity", body);
             userdataUrl = createResponse.getFirstHeader(HttpHeaders.LOCATION);
 
@@ -1340,7 +1340,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
             body.put("complexProperty", complexBody);
             body.put("dynamicProperty", "dynamicStringProperty");
             complexBody.put("complexStringProperty", "complexStringProprty");
-            DcResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "selectTestEntity", body);
             userdataUrl = createResponse.getFirstHeader(HttpHeaders.LOCATION);
 
@@ -1389,7 +1389,7 @@ public class UserDataListSelectTest extends AbstractUserDataTest {
             body.put("complexProperty", complexBody);
             body.put("dynamicProperty", "dynamicStringProperty");
             complexBody.put("complexStringProperty", "complexStringProprty");
-            DcResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
+            PersoniumResponse createResponse = createUserDataWithDcClient(Setup.TEST_CELL1, Setup.TEST_BOX1,
                     Setup.TEST_ODATA, "selectTestEntity", body);
             userdataUrl = createResponse.getFirstHeader(HttpHeaders.LOCATION);
 

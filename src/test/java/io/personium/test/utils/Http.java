@@ -47,7 +47,7 @@ import org.apache.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.test.DcCoreTestConfig;
+import io.personium.test.PersoniumCoreTestConfig;
 import io.personium.test.unit.core.UrlUtils;
 import com.sun.jersey.core.header.OutBoundHeaders;
 
@@ -164,7 +164,7 @@ public class Http {
             }
 
             // Version情報のヘッダを追加
-            lines.add("X-Personium-Version: " + DcCoreTestConfig.getCoreVersion() + CRLF);
+            lines.add("X-Personium-Version: " + PersoniumCoreTestConfig.getCoreVersion() + CRLF);
             String body = null;
             // 前処理で空行でBreakしたときはBodyがあることの証。
             if (line != null) {

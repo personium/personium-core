@@ -35,7 +35,7 @@ import io.personium.test.unit.core.UrlUtils;
  * Accept-Encodingヘッダのテスト.
  * Accept-Encodingヘッダを処理するミドルウェアが存在しない場合はテストが失敗する。
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class AcceptEncodingTest extends AbstractCase {
 
@@ -52,11 +52,11 @@ public class AcceptEncodingTest extends AbstractCase {
     @Test
     public final void Accept_Encodingヘッダにgzipを指定した場合にレスポンスボディがgzipで返却されること() {
         String locationUrlGet = UrlUtils.unitCtl(Cell.EDM_TYPE_NAME);
-        DcRequest req = DcRequest.get(locationUrlGet + "?$inlinecount=allpages");
+        PersoniumRequest req = PersoniumRequest.get(locationUrlGet + "?$inlinecount=allpages");
         req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.header(HttpHeaders.ACCEPT_ENCODING, "gzip");
-        DcResponse res = AbstractCase.request(req);
+        PersoniumResponse res = AbstractCase.request(req);
 
         // GZip 圧縮されていることをレスポンスヘッダから確認する
         String contentEncodingHeader = res.getFirstHeader(HttpHeaders.CONTENT_ENCODING);

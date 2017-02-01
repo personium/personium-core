@@ -38,8 +38,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.unit.core.UrlUtils;
@@ -51,7 +51,7 @@ import java.util.Arrays;
 /**
  * UserData一覧のテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataListTest extends AbstractUserDataTest {
 
@@ -385,7 +385,7 @@ public class UserDataListTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName, "");
+        PersoniumResponse response = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName, "");
 
         // レスポンスボディーのチェック.__countが存在しないことを確認する
         ODataCommon.checkResponseBodyCount(response.bodyAsJson(), ODataCommon.COUNT_NONE);
@@ -399,7 +399,7 @@ public class UserDataListTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName,
                 boxName,
                 colName,
                 sdEntityTypeName,
@@ -417,7 +417,7 @@ public class UserDataListTest extends AbstractUserDataTest {
         // ユーザデータの一覧取得
         String sdEntityTypeName = "SalesDetail";
 
-        DcResponse response = getUserDataWithDcClient(cellName,
+        PersoniumResponse response = getUserDataWithDcClient(cellName,
                 boxName,
                 colName,
                 sdEntityTypeName,

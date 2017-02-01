@@ -32,9 +32,9 @@ import io.personium.core.model.ctl.ComplexTypeProperty;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRequest;
-import io.personium.test.jersey.DcResponse;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -43,7 +43,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * ComplexTypeのLinksテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class ComplexTypePropertyLinkTest extends ODataCommon {
 
@@ -60,13 +60,13 @@ public class ComplexTypePropertyLinkTest extends ODataCommon {
     @Test
     public final void ComplexTypePropertyとComplexTypeのLink作成は400が返却される事() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.post(
+        PersoniumRequest req = PersoniumRequest.post(
                 UrlUtils.schemaLinksWithSingleQuote(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                         ComplexTypeProperty.EDM_TYPE_NAME, "id", ComplexType.EDM_TYPE_NAME, null));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -81,13 +81,13 @@ public class ComplexTypePropertyLinkTest extends ODataCommon {
     @Test
     public final void ComplexTypePropertyとComplexTypeのLink更新は501が返却される事() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.put(
+        PersoniumRequest req = PersoniumRequest.put(
                 UrlUtils.schemaLinksWithSingleQuote(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                         ComplexTypeProperty.EDM_TYPE_NAME, "id", ComplexType.EDM_TYPE_NAME, "id"));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, response.getStatusCode());
@@ -102,13 +102,13 @@ public class ComplexTypePropertyLinkTest extends ODataCommon {
     @Test
     public final void ComplexTypePropertyとComplexTypeのLink削除は400が返却される事() {
         // リクエストパラメータ設定
-        DcRequest req = DcRequest.delete(
+        PersoniumRequest req = PersoniumRequest.delete(
                 UrlUtils.schemaLinksWithSingleQuote(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                         ComplexTypeProperty.EDM_TYPE_NAME, "id", ComplexType.EDM_TYPE_NAME, "id"));
         req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
         // リクエスト実行
-        DcResponse response = request(req);
+        PersoniumResponse response = request(req);
 
         // レスポンスチェック
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
@@ -142,11 +142,11 @@ public class ComplexTypePropertyLinkTest extends ODataCommon {
 
             // ComplexTypeProperty - ComplexType $links一覧取得
             String key = String.format("Name='%s',_ComplexType.Name='%s'", complexTypePropertyName, complexTypeName);
-            DcRequest req = DcRequest.get(
+            PersoniumRequest req = PersoniumRequest.get(
                     UrlUtils.schemaLinks(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                             ComplexTypeProperty.EDM_TYPE_NAME, key, ComplexType.EDM_TYPE_NAME, null));
             req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-            DcResponse response = request(req);
+            PersoniumResponse response = request(req);
 
             // レスポンスチェック
             assertEquals(HttpStatus.SC_OK, response.getStatusCode());

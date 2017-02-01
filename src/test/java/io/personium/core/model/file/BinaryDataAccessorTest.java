@@ -38,12 +38,12 @@ import org.mockito.Mockito;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 /**
  * BinaryDataAccessorユニットテストクラス.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
 public class BinaryDataAccessorTest {
 

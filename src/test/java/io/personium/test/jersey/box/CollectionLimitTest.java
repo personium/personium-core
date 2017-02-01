@@ -33,7 +33,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.progress.ProgressInfo;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.DcRunner;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -48,7 +48,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 /**
  * MKCOLのテスト.
  */
-@RunWith(DcRunner.class)
+@RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
 public class CollectionLimitTest extends JerseyTest {
     private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
