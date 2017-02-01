@@ -84,7 +84,7 @@ public class ExtCellUpdateTest extends ODataCommon {
      */
     @Test
     public final void Urlが1024文字の場合正常に作成されること() {
-        String newCellUrl = "http://localhost:8080/personium-core/testcell1" + StringUtils.repeat("a", 983) + "/";
+        String newCellUrl = "http://localhost:8080/personium-core/testcell1" + StringUtils.repeat("a", 977) + "/";
 
         try {
             ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);
@@ -99,7 +99,7 @@ public class ExtCellUpdateTest extends ODataCommon {
      */
     @Test
     public final void Urlが1025文字以上の場合400エラーを返却すること() {
-        String newCellUrl = "http://localhost:8080/personium-core/testcell1" + StringUtils.repeat("a", 984) + "/";
+        String newCellUrl = "http://localhost:8080/personium-core/testcell1" + StringUtils.repeat("a", 978) + "/";
 
         try {
             ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);
