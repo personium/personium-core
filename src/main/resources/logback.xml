@@ -26,7 +26,7 @@
     </appender>
     <!-- EventAPIの出力先を別ファイルに分けるための暫定対応 -->
     <appender name="FILE_USER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>dc1-user.log</file>
+    <file>personium-user.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
         <!-- daily rollover -->
         <fileNamePattern>personium-core-user.log.%d{yyyy-MM-dd}</fileNamePattern>
@@ -59,7 +59,7 @@
         <sift>
             <appender name="FILE-${eventlog_path}" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <file>/personium_nfs/personium-core/eventlog/${eventlog_path}/current/default.log</file>
-                <rollingPolicy class="io.personium.logging.rolling.DcFixedWindowRollingPolicy">
+                <rollingPolicy class="io.personium.logging.rolling.PersoniumFixedWindowRollingPolicy">
                     <fileNamePattern>/personium_nfs/personium-core/eventlog/${eventlog_path}/archive/default.log.%i.zip</fileNamePattern>
                     <minIndex>1</minIndex>
                     <maxIndex>12</maxIndex>
