@@ -289,7 +289,7 @@ public final class CellEsImpl implements Cell {
             source.put("query", QueryMapFactory.filteredQuery(null, filter));
 
             PersoniumSearchResponse resp = ecCells.search(source);
-            if ((resp == null) || (resp.getHits().getCount() == 0)) {
+            if (resp == null || resp.getHits().getCount() == 0) {
                 return null;
             }
             PersoniumSearchHit hit = resp.getHits().getAt(0);

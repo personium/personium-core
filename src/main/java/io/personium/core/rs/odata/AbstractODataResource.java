@@ -220,9 +220,9 @@ public abstract class AbstractODataResource {
     }
 
     private boolean isAcceptXml(String accept) {
-        return (accept.equals(MediaType.APPLICATION_ATOM_XML)
+        return accept.equals(MediaType.APPLICATION_ATOM_XML)
                 || accept.equals(MediaType.APPLICATION_XML)
-                || accept.equals(MediaType.WILDCARD));
+                || accept.equals(MediaType.WILDCARD);
     }
 
     private boolean isAcceptJson(String accept) {
@@ -654,7 +654,7 @@ public abstract class AbstractODataResource {
         if (annotation != null && !(Boolean.valueOf(annotation.getValue().toString()))) {
             return null;
         }
-        if ((ep.getType().isSimple() && !ep.getCollectionKind().equals(CollectionKind.List))
+        if (ep.getType().isSimple() && !ep.getCollectionKind().equals(CollectionKind.List)
                 && ep.getDefaultValue() != null) {
             op = generateDefautlProperty(ep);
         } else if (ep.isNullable()) {

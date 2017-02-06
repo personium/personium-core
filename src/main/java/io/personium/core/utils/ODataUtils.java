@@ -124,7 +124,7 @@ public final class ODataUtils {
         }
 
         // IfMatchヘッダに「*」が指定されている場合は無条件に実行
-        if (("*").equals(etag)) {
+        if ("*".equals(etag)) {
             return;
         }
 
@@ -349,7 +349,7 @@ public final class ODataUtils {
         }
         String scheme = uri.getScheme();
         boolean isUrn = scheme != null
-                && (scheme.equals(UriUtils.SCHEME_URN));
+                && scheme.equals(UriUtils.SCHEME_URN);
         return isValidLength && isUrn;
     }
 
@@ -368,9 +368,9 @@ public final class ODataUtils {
         }
         String scheme = uri.getScheme();
         boolean isValidScheme = scheme != null
-                && ((scheme.equals(UriUtils.SCHEME_HTTP))
-                || (scheme.equals(UriUtils.SCHEME_HTTPS))
-                || (scheme.equals(UriUtils.SCHEME_LOCALUNIT)));
+                && (scheme.equals(UriUtils.SCHEME_HTTP)
+                || scheme.equals(UriUtils.SCHEME_HTTPS)
+                || scheme.equals(UriUtils.SCHEME_LOCALUNIT));
         boolean isNormalized = uri.normalize().toString().equals(str);
         boolean hasTrailingSlash = str.endsWith("/");
         return isValidLength && isValidScheme && isNormalized && hasTrailingSlash;
