@@ -57,8 +57,8 @@ import io.personium.core.model.ctl.ComplexTypeProperty;
 import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.ctl.EntityType;
 import io.personium.core.model.ctl.Property;
-import io.personium.core.odata.PersoniumOptionsQueryParser;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.odata.PersoniumOptionsQueryParser;
 import io.personium.core.rs.odata.ODataResource;
 import io.personium.core.utils.ODataUtils;
 
@@ -268,7 +268,8 @@ public final class ODataSvcSchemaResource extends ODataResource {
                         && !propValue.equals(EdmSimpleType.DOUBLE.getFullyQualifiedTypeName())
                         && !propValue.equals(EdmSimpleType.DATETIME.getFullyQualifiedTypeName())) {
                     // 登録済みのComplexTypeのチェック
-                    BoolCommonExpression filter = PersoniumOptionsQueryParser.parseFilter("Name eq '" + propValue + "'");
+                    BoolCommonExpression filter = PersoniumOptionsQueryParser.parseFilter(
+                            "Name eq '" + propValue + "'");
                     QueryInfo query = new QueryInfo(null, null, null, filter, null, null, null, null, null);
                     CountResponse reponse = this.getODataProducer().getEntitiesCount(ComplexType.EDM_TYPE_NAME, query);
                     if (reponse.getCount() == 0) {

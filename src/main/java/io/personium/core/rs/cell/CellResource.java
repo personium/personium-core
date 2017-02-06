@@ -44,13 +44,13 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthzException;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
-import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
@@ -140,7 +140,8 @@ public final class CellResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         // X-Personium-Recursiveヘッダの指定が"true"でない場合はエラーとする
         if (!"true".equals(recursiveHeader)) {
-            throw PersoniumCoreException.Misc.PRECONDITION_FAILED.params(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+            throw PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
+                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
         }
         // アクセス権限の確認を実施する
         // ユニットマスター、ユニットユーザ、ユニットローカルユニットユーザ以外は権限エラーとする
@@ -192,7 +193,8 @@ public final class CellResource {
      * @return CellCtlResource
      */
     @Path("__ctl")
-    public CellCtlResource ctl(@HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader) {
+    public CellCtlResource ctl(
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader) {
         return new CellCtlResource(this.accessContext, pCredHeader, this.cellRsCmp);
     }
 

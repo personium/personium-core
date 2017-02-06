@@ -59,6 +59,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.EsBulkRequest;
+import io.personium.common.es.response.EsClientException;
+import io.personium.common.es.response.EsClientException.PersoniumSearchPhaseExecutionException;
 import io.personium.common.es.response.PersoniumBulkItemResponse;
 import io.personium.common.es.response.PersoniumBulkResponse;
 import io.personium.common.es.response.PersoniumDeleteResponse;
@@ -67,11 +69,9 @@ import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchHits;
 import io.personium.common.es.response.PersoniumSearchResponse;
-import io.personium.common.es.response.EsClientException;
-import io.personium.common.es.response.EsClientException.PersoniumSearchPhaseExecutionException;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.AssociationEnd;
 import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.ComplexTypeProperty;
@@ -91,8 +91,8 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.odata.EsNavigationTargetKeyProperty.NTKPNotFoundException;
 import io.personium.core.model.lock.Lock;
 import io.personium.core.model.lock.LockManager;
-import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.core.rs.odata.BulkRequest;
 import io.personium.core.rs.odata.ODataBatchResource.NavigationPropertyBulkContext;
@@ -643,8 +643,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         // データが２件以上返ったら異常事態
         if (hits.getAllPages() > 1) {
             PersoniumCoreLog.OData.FOUND_MULTIPLE_RECORDS.params(hits.getAllPages()).writeLog();
-            throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(new RuntimeException("multiple records ("
-                    + hits.getAllPages() + ") found for the key ."));
+            throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(new RuntimeException(
+                    "multiple records (" + hits.getAllPages() + ") found for the key ."));
         }
         // ここで晴れてhit数は１であることが保証されるのでその１件を返す。
         return getDocHandler(hits.getHits()[0], entitySetName);
@@ -2322,7 +2322,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             List<String> idvals = LinkDocHandler.query(this.getAccessorForLink(),
                     src, tgtEsType.getType(), targetEntityTypeId, qi);
 
-            PersoniumSearchHits sHits = ODataProducerUtils.searchLinksNN(src, targetSetName, idvals, tgtEsType, queryInfo);
+            PersoniumSearchHits sHits = ODataProducerUtils.searchLinksNN(
+                    src, targetSetName, idvals, tgtEsType, queryInfo);
             oeids = getOEntityIds(sHits, targetSetName, tgtSet);
 
         } else if ((assoc.getEnd1().getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE
@@ -2763,13 +2764,13 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
             // ESから変更するAccount情報を取得する
             EntitySetAccessor esType = this.getAccessorForEntitySet(entitySet.getName());
-            PersoniumGetResponse PersoniumGetResponseNew = esType.get(accountId);
-            if (PersoniumGetResponseNew == null) {
+            PersoniumGetResponse personiumGetResponseNew = esType.get(accountId);
+            if (personiumGetResponseNew == null) {
                 // 認証から最終ログイン時刻更新までにAccountが削除された場合は、更新対象が存在しないため、正常終了する。
                 PersoniumCoreLog.Auth.ACCOUNT_ALREADY_DELETED.params(originalKey.toKeyString()).writeLog();
                 return;
             }
-            EntitySetDocHandler oedhNew = new OEntityDocHandler(PersoniumGetResponseNew);
+            EntitySetDocHandler oedhNew = new OEntityDocHandler(personiumGetResponseNew);
             // 取得したAccountの最終ログイン日時を上書きする
             Map<String, Object> staticFields = oedhNew.getStaticFields();
             staticFields.put("LastAuthenticated", nowTimeMillis);

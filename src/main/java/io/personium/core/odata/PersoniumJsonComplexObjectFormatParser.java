@@ -63,7 +63,8 @@ import io.personium.core.utils.ODataUtils;
 /**
  * Parser for OComplexObjects in JSON.
  */
-public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatParser implements FormatParser<OComplexObject> {
+public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatParser
+        implements FormatParser<OComplexObject> {
 
     /**
      * コンストラクタ.

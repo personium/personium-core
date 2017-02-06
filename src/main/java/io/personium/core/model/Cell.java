@@ -16,6 +16,7 @@
  */
 package io.personium.core.model;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,8 +30,6 @@ import io.personium.common.auth.token.Role;
 import io.personium.core.event.EventBus;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.odata.OEntityWrapper;
-
-import java.util.Arrays;
 
 /**
  * Model Class for Cell.
@@ -131,14 +130,14 @@ public interface Cell {
      * @param username Account name
      * @return Account
      */
-    OEntityWrapper getAccount(final String username);
+    OEntityWrapper getAccount(String username);
 
     /**
      * @param oew account
      * @param password password
      * @return true if authentication is successful.
      */
-    boolean authenticateAccount(final OEntityWrapper oew, String password);
+    boolean authenticateAccount(OEntityWrapper oew, String password);
 
     // public abstract void createAccount(String username, String schema) throws Cell.ManipulationException;
     // public abstract void createConnector(String name, String schema) throws Cell.ManipulationException;
