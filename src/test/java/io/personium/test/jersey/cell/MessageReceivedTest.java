@@ -34,8 +34,8 @@ import org.junit.runner.RunWith;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.PersoniumCoreAuthzException;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
@@ -45,11 +45,11 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DaoException;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.DavResourceUtils;
@@ -821,7 +821,8 @@ public class MessageReceivedTest extends ODataCommon {
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, receiveAccountName);
                 try {
                     PersoniumRestAdapter restAdapterForDeleteLink = new PersoniumRestAdapter();
-                    PersoniumResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
+                    PersoniumResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl,
+                            requestheaders);
                     assertEquals(HttpStatus.SC_NO_CONTENT, linkDeleteResponse.getStatusCode());
                 } catch (PersoniumException e) {
                     fail();
@@ -912,7 +913,8 @@ public class MessageReceivedTest extends ODataCommon {
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, receiveAccountName);
                 try {
                     PersoniumRestAdapter restAdapterForDeleteLink = new PersoniumRestAdapter();
-                    PersoniumResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
+                    PersoniumResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl,
+                            requestheaders);
                     assertEquals(HttpStatus.SC_NO_CONTENT, linkDeleteResponse.getStatusCode());
                 } catch (PersoniumException e) {
                     fail();
@@ -1071,7 +1073,8 @@ public class MessageReceivedTest extends ODataCommon {
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, receiveAccountName);
                 try {
                     PersoniumRestAdapter restAdapterForDeleteLink = new PersoniumRestAdapter();
-                    PersoniumResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
+                    PersoniumResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl,
+                            requestheaders);
                     assertEquals(HttpStatus.SC_NO_CONTENT, linkDeleteResponse.getStatusCode());
                 } catch (PersoniumException e) {
                     fail();
@@ -1163,7 +1166,8 @@ public class MessageReceivedTest extends ODataCommon {
                         ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, receiveAccountName);
                 try {
                     PersoniumRestAdapter restAdapterForDeleteLink = new PersoniumRestAdapter();
-                    PersoniumResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl, requestheaders);
+                    PersoniumResponse linkDeleteResponse = restAdapterForDeleteLink.del(linkDeleteRequestUrl,
+                            requestheaders);
                     assertEquals(HttpStatus.SC_NO_CONTENT, linkDeleteResponse.getStatusCode());
                 } catch (PersoniumException e) {
                     fail();

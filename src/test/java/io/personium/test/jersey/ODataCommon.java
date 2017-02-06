@@ -39,11 +39,12 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.odata4j.core.ODataConstants;
 
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * ODataリソース関連の共通テスト処理.
@@ -373,7 +374,8 @@ public class ODataCommon extends AbstractCase {
                 // 409であることを確認
                 assertEquals(HttpStatus.SC_CONFLICT, resConflict.getStatusCode());
                 // レスポンスボディのチェック
-                checkErrorResponse(resConflict.bodyAsJson(), PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS.getCode());
+                checkErrorResponse(resConflict.bodyAsJson(),
+                        PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS.getCode());
             } else {
                 // 201であることを確認
                 assertEquals(HttpStatus.SC_CREATED, resConflict.getStatusCode());
@@ -834,7 +836,8 @@ public class ODataCommon extends AbstractCase {
      * @param expectedCode 期待するエラーコード
      * @param expectedMessage 期待するメッセージ
      */
-    public static final void checkErrorResponseBody(PersoniumResponse res, String expectedCode, String expectedMessage) {
+    public static final void checkErrorResponseBody(PersoniumResponse res, String expectedCode,
+            String expectedMessage) {
         JSONObject body = (JSONObject) res.bodyAsJson();
         String code = (String) body.get("code");
         String message = (String) ((JSONObject) body.get("message")).get("value");
