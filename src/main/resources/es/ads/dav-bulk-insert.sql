@@ -10,4 +10,4 @@ insert into `##schema##`.DAV_NODE(
     published,
     updated,
     id
-) values 
+) values
