@@ -410,8 +410,8 @@ public class PersoniumJsonFormatParser {
             for (NamespacedAnnotation<?> annotation : type.getAnnotations()) {
                 if (localName.equals(annotation.getName())) {
                     String uri = annotation.getNamespace().getUri();
-                    if ((namespaceUri == null && uri == null)
-                            || (namespaceUri != null && namespaceUri.equals(uri))) {
+                    if ((namespaceUri == null && uri == null) //NOPMD -To maintain readability
+                            || (namespaceUri != null && namespaceUri.equals(uri))) { //NOPMD
                         return annotation;
                     }
                 }

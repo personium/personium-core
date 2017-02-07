@@ -459,8 +459,10 @@ public class PersoniumExpressionParser {
 
     private static void processParenthesesCheckToken(AggregateFunction aggregateFunction, Token ntoken) {
         if (ntoken == null
-                || (aggregateFunction == AggregateFunction.all && ntoken.type != TokenType.WORD)
-                || (aggregateFunction == AggregateFunction.any && ntoken.type != TokenType.WORD
+                || (aggregateFunction == AggregateFunction.all //NOPMD -To maintain readability
+                && ntoken.type != TokenType.WORD)
+                || (aggregateFunction == AggregateFunction.any //NOPMD
+                && ntoken.type != TokenType.WORD
                 && ntoken.type != TokenType.CLOSEPAREN)) {
             String reason;
             if (ntoken == null) {
@@ -1035,7 +1037,8 @@ public class PersoniumExpressionParser {
 
     private static int readQuotedString(String value, int start) {
         int rt = start;
-        while (value.charAt(rt) != '\'' || (rt < value.length() - 1 && value.charAt(rt + 1) == '\'')) {
+        while (value.charAt(rt) != '\'' //NOPMD -To maintain readability
+                || (rt < value.length() - 1 && value.charAt(rt + 1) == '\'')) {
             if (value.charAt(rt) != '\'') {
                 rt++;
             } else {

@@ -707,9 +707,9 @@ public class UserSchemaODataProducer extends EsODataProducer {
         // Typeプロパティは以下の場合のみ許容する
         // - INT32からDoubleへの変更
         // - 値の変更なし
-        return (EdmSimpleType.INT32.getFullyQualifiedTypeName().equals(existingType)
+        return (EdmSimpleType.INT32.getFullyQualifiedTypeName().equals(existingType) //NOPMD -To maintain readability
                 && EdmSimpleType.DOUBLE.getFullyQualifiedTypeName().equals(requestType))
-                || (null != requestType && requestType.equals(existingType));
+                || null != requestType && requestType.equals(existingType);
     }
 
     /**
@@ -721,8 +721,8 @@ public class UserSchemaODataProducer extends EsODataProducer {
      * @return true or false
      */
     private boolean isStaticFieldValueChanged(String requestKey, Object requestValue, Object existingValue) {
-        return (null == requestValue && null != existingValue)
-                || (null != requestValue && !requestKey.equals(Property.P_TYPE.getName())
+        return (null == requestValue && null != existingValue) //NOPMD -To maintain readability
+                || (null != requestValue && !requestKey.equals(Property.P_TYPE.getName()) //NOPMD
                         && !requestKey.equals(Property.P_NAME.getName())
                 && !requestValue.equals(existingValue));
     }

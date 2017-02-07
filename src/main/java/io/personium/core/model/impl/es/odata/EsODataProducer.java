@@ -2326,9 +2326,9 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                     src, targetSetName, idvals, tgtEsType, queryInfo);
             oeids = getOEntityIds(sHits, targetSetName, tgtSet);
 
-        } else if ((assoc.getEnd1().getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE
+        } else if ((assoc.getEnd1().getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE //NOPMD -To maintain readability
                 && assoc.getEnd2().getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE)
-                || (assoc.getEnd1().getMultiplicity() == EdmMultiplicity.ONE
+                || (assoc.getEnd1().getMultiplicity() == EdmMultiplicity.ONE //NOPMD -To maintain readability
                 && assoc.getEnd2().getMultiplicity() == EdmMultiplicity.ONE)) {
             // 片方のEdmAssociationEndを取得する
             oeids = getOEntityIds(src, targetSetName, tgtSet);
