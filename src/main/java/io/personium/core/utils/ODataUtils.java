@@ -290,10 +290,8 @@ public final class ODataUtils {
      */
     public static boolean validateDouble(Double value) {
         if (0 == value
-                || (DOUBLE_NEGATIVE_MIN_VALUE <= value //NOPMD -To maintain readability
-                && value <= DOUBLE_NEGATIVE_MAX_VALUE)
-                || (DOUBLE_POSITIVE_MIN_VALUE <= value //NOPMD
-                && value <= DOUBLE_POSITIVE_MAX_VALUE)) {
+                || (DOUBLE_NEGATIVE_MIN_VALUE <= value && value <= DOUBLE_NEGATIVE_MAX_VALUE)
+                || (DOUBLE_POSITIVE_MIN_VALUE <= value && value <= DOUBLE_POSITIVE_MAX_VALUE)) {
             return true;
         }
         return false;

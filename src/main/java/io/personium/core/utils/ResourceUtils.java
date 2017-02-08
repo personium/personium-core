@@ -62,8 +62,7 @@ public class ResourceUtils {
      */
     public static boolean hasApparentlyRequestBody(Long contentLength, String transferEncoding) {
         // 以下を満たせばリクエストボディが存在すると判定する
-        return ((null != contentLength && contentLength > 0L) //NOPMD -To maintain readability
-                || null != transferEncoding);
+        return ((null != contentLength && contentLength > 0L) || null != transferEncoding);
     }
 
 }

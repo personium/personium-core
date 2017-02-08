@@ -314,18 +314,14 @@ public final class ODataSvcSchemaResource extends ODataResource {
         // EntityTypeとAssociationEndの$links指定は不可（EntityType:AssociationEndは1:Nの関係だから）
         // EntityTypeとPropertyの$links指定は不可（EntityType:Propertyは1:Nの関係だから）
         // ComplexTypeとComplexTypePropertyの$links指定は不可（ComplexType:ComplexTypePropertyは1:Nの関係だから）
-        if ((sourceEntity.equals(EntityType.EDM_TYPE_NAME) //NOPMD -To maintain readability
-                        && targetNavProp.equals(AssociationEnd.EDM_TYPE_NAME))
-                || (sourceEntity.equals(AssociationEnd.EDM_TYPE_NAME) //NOPMD
-                        && targetNavProp.equals(EntityType.EDM_TYPE_NAME))
-                || (sourceEntity.equals(EntityType.EDM_TYPE_NAME) //NOPMD
-                        && targetNavProp.equals(Property.EDM_TYPE_NAME))
-                || (sourceEntity.equals(Property.EDM_TYPE_NAME) //NOPMD
-                        && targetNavProp.equals(EntityType.EDM_TYPE_NAME))
-                || (sourceEntity.equals(ComplexType.EDM_TYPE_NAME) //NOPMD
+        if ((sourceEntity.equals(EntityType.EDM_TYPE_NAME) && targetNavProp.equals(AssociationEnd.EDM_TYPE_NAME))
+                || (sourceEntity.equals(AssociationEnd.EDM_TYPE_NAME) && targetNavProp.equals(EntityType.EDM_TYPE_NAME))
+                || (sourceEntity.equals(EntityType.EDM_TYPE_NAME) && targetNavProp.equals(Property.EDM_TYPE_NAME))
+                || (sourceEntity.equals(Property.EDM_TYPE_NAME) && targetNavProp.equals(EntityType.EDM_TYPE_NAME))
+                || (sourceEntity.equals(ComplexType.EDM_TYPE_NAME)
                 && targetNavProp.equals(ComplexTypeProperty.EDM_TYPE_NAME))
-                || (sourceEntity.equals(ComplexTypeProperty.EDM_TYPE_NAME) //NOPMD
-                && targetNavProp.equals(ComplexType.EDM_TYPE_NAME))) { //NOPMD
+                || (sourceEntity.equals(ComplexTypeProperty.EDM_TYPE_NAME)
+                && targetNavProp.equals(ComplexType.EDM_TYPE_NAME))) {
             throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
     }
