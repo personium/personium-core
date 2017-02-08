@@ -1,4 +1,4 @@
-update `##schema##`.DAV_NODE set
+update `##schema##`.DAV_NODE set 
     cell_id=?,
     box_id=?,
     parent_id=?,
@@ -8,5 +8,5 @@ update `##schema##`.DAV_NODE set
     properties=?,
     file=?,
     published=?,
-    updated=?
+    updated=? 
 where id=?

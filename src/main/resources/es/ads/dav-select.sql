@@ -1,4 +1,4 @@
-select
+select 
     cell_id,
     box_id,
     parent_id,
@@ -9,5 +9,5 @@ select
     file,
     published,
     updated,
-    id
+    id 
 from `##schema##`.DAV_NODE limit ?, ?

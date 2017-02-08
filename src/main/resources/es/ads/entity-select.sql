@@ -1,4 +1,4 @@
-select
+select 
     type,
     cell_id,
     box_id,
@@ -10,5 +10,5 @@ select
     links,
     published,
     updated,
-    id
+    id 
 from `##schema##`.ENTITY limit ?, ?

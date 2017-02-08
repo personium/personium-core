@@ -1,4 +1,4 @@
-select
+select 
     cell_id,
     box_id,
     node_id,
@@ -8,5 +8,5 @@ select
     ent2_id,
     published,
     updated,
-    id
-from `##schema##`.LINK where id in
+    id 
+from `##schema##`.LINK where id in 
