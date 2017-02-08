@@ -3,7 +3,7 @@
     {
       "FromType": "Relation",
       "FromName": {
-          "Name": "relation1"
+          "Name": "relation1" 
       },
       "ToType": "Box",
       "ToName": {
