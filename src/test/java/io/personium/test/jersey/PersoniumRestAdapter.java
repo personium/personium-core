@@ -196,8 +196,7 @@ public class PersoniumRestAdapter {
      * @return DcResponse型
      * @throws PersoniumException DAO例外
      */
-    public final PersoniumResponse del(final String url, final HashMap<String, String> headers)
-            throws PersoniumException {
+    public final PersoniumResponse del(final String url, final HashMap<String, String> headers) throws PersoniumException {
         HttpDelete req = new HttpDelete(url);
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             req.setHeader(entry.getKey(), entry.getValue());

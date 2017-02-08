@@ -28,8 +28,6 @@ import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.PersoniumUnitConfig;
@@ -38,6 +36,7 @@ import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.Http;
+import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * トランスセルアクセストークンでのX509証明書検証テスト. IT/STのように、サーバとクライアントが分かれている場合は本テストは実施出来ないため、POMの設定で無効化
@@ -100,8 +99,8 @@ public class X509AuthTest extends JerseyTest {
             // トランスセルアクセストークンでのデータアクセス
             BoxUtils.get(Setup.TEST_CELL1, token, Setup.TEST_BOX1, HttpStatus.SC_UNAUTHORIZED);
         } finally {
-            TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
-                    PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
+            TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(), PersoniumUnitConfig.getX509Certificate(),
+                    PersoniumUnitConfig.getX509RootCertificate());
         }
     }
 
@@ -172,8 +171,8 @@ public class X509AuthTest extends JerseyTest {
             // トランスセルアクセストークンでのデータアクセス
             BoxUtils.get(Setup.TEST_CELL1, token, Setup.TEST_BOX1, HttpStatus.SC_UNAUTHORIZED);
         } finally {
-            TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
-                    PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
+            TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(), PersoniumUnitConfig.getX509Certificate(),
+                    PersoniumUnitConfig.getX509RootCertificate());
         }
 
     }
@@ -218,8 +217,8 @@ public class X509AuthTest extends JerseyTest {
             // トランスセルアクセストークンでのデータアクセス
             BoxUtils.get(Setup.TEST_CELL1, token, Setup.TEST_BOX1, HttpStatus.SC_INTERNAL_SERVER_ERROR);
         } finally {
-            TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
-                    PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
+            TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(), PersoniumUnitConfig.getX509Certificate(),
+                    PersoniumUnitConfig.getX509RootCertificate());
         }
 
     }

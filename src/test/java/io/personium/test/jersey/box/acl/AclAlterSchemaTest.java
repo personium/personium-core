@@ -36,17 +36,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.box.acl.jaxb.Acl;
 import io.personium.test.jersey.box.odatacol.schema.complextype.ComplexTypeUtils;
 import io.personium.test.jersey.box.odatacol.schema.complextypeproperty.ComplexTypePropertyUtils;
@@ -62,6 +59,8 @@ import io.personium.test.utils.ODataSchemaUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.UserDataUtils;
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * BOXレベル-スキーマ変更に関するACLのテスト.<br />
@@ -658,8 +657,7 @@ public class AclAlterSchemaTest extends JerseyTest {
             UserDataUtils.create(MASTER_TOKEN, HttpStatus.SC_CREATED, body, CELL_NAME, BOX_NAME, COL_NAME,
                     entityTypeName);
             // ダイナミックプロパティに対する確認
-            PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME,
-                    propertyName, entityTypeName);
+            PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
             res = PropertyUtils.list(token, CELL_NAME, BOX_NAME, COL_NAME);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
@@ -681,8 +679,7 @@ public class AclAlterSchemaTest extends JerseyTest {
             UserDataUtils.create(MASTER_TOKEN, HttpStatus.SC_CREATED, body, CELL_NAME, BOX_NAME, COL_NAME,
                     entityTypeName);
             // ダイナミックプロパティに対する確認
-            PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME,
-                    propertyName, entityTypeName);
+            PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
             res = PropertyUtils.list(token, CELL_NAME, BOX_NAME, COL_NAME);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
@@ -704,8 +701,7 @@ public class AclAlterSchemaTest extends JerseyTest {
             UserDataUtils.create(MASTER_TOKEN, HttpStatus.SC_CREATED, body, CELL_NAME, BOX_NAME, COL_NAME,
                     entityTypeName);
             // ダイナミックプロパティに対する確認
-            PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME,
-                    propertyName, entityTypeName);
+            PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
             res = PropertyUtils.list(token, CELL_NAME, BOX_NAME, COL_NAME);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
@@ -727,8 +723,7 @@ public class AclAlterSchemaTest extends JerseyTest {
             UserDataUtils.create(MASTER_TOKEN, HttpStatus.SC_CREATED, body, CELL_NAME, BOX_NAME, COL_NAME,
                     entityTypeName);
             // ダイナミックプロパティに対する確認
-            PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME,
-                    propertyName, entityTypeName);
+            PersoniumResponse res = PropertyUtils.get(token, CELL_NAME, BOX_NAME, COL_NAME, propertyName, entityTypeName);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
             res = PropertyUtils.list(token, CELL_NAME, BOX_NAME, COL_NAME);
             assertThat(res.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);

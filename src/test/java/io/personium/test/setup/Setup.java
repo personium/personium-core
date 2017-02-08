@@ -49,10 +49,10 @@ import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.Relation;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.UserDataListWithNPTest;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.unit.core.UrlUtils;
@@ -1009,8 +1009,7 @@ public class Setup extends AbstractCase {
         Http.request("box/odatacol/create.txt").with("cell", cellName).with("box", boxName).with("collection", colName)
                 .with("entityType", entityTypeName).with("accept", MediaType.APPLICATION_JSON)
                 .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken())
-                .with("body", body.toJSONString()).returns()
+                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken()).with("body", body.toJSONString()).returns()
                 .debug();
     }
 
@@ -1057,8 +1056,8 @@ public class Setup extends AbstractCase {
             String userDataId) {
         // リクエスト実行
         Http.request("box/odatacol/delete.txt").with("cell", cellName).with("box", boxName).with("collection", colName)
-                .with("entityType", entityTypeName).with("id", userDataId)
-                .with("token", PersoniumUnitConfig.getMasterToken()).with("ifMatch", "*").returns();
+                .with("entityType", entityTypeName).with("id", userDataId).with("token", PersoniumUnitConfig.getMasterToken())
+                .with("ifMatch", "*").returns();
     }
 
     /**
@@ -1561,8 +1560,8 @@ public class Setup extends AbstractCase {
      */
     private String createAccount(final String cellName, final String name, final String pass) {
         PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(cellName, Account.EDM_TYPE_NAME));
-        req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).header(
-                PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL, pass).addJsonBody("Name", name);
+        req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).header(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL, pass)
+                .addJsonBody("Name", name);
         PersoniumResponse res = request(req);
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
         String accLocHeader = res.getFirstHeader(HttpHeaders.LOCATION);

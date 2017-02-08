@@ -564,8 +564,7 @@ public class CellUtils {
      * @return レスポンス DcResponse
      * @throws PersoniumException DcException
      */
-    public static PersoniumResponse getLog(String cellName, String collection, String fileName)
-            throws PersoniumException {
+    public static PersoniumResponse getLog(String cellName, String collection, String fileName) throws PersoniumException {
         PersoniumRestAdapter adaper = new PersoniumRestAdapter();
         HashMap<String, String> header = new HashMap<String, String>();
         header.put(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);

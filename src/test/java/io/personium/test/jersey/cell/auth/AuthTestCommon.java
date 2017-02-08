@@ -28,8 +28,6 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumResponse;
@@ -43,6 +41,7 @@ import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
+import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * 認証のテスト.
@@ -1432,8 +1431,7 @@ public class AuthTestCommon extends JerseyTest {
      * @param expectedAuthScheme WWW-Authenticateヘッダに指定されるべきAuth Scheme("Bearer" or "Basic")
      * @param expectedCellName 期待するrealmに含まれるCell名
      */
-    public static void checkAuthenticateHeader(PersoniumResponse res, String expectedAuthScheme,
-            String expectedCellName) {
+    public static void checkAuthenticateHeader(PersoniumResponse res, String expectedAuthScheme, String expectedCellName) {
         String expected = String.format("%s realm=\"%s\"", expectedAuthScheme, UrlUtils.cellRoot(expectedCellName));
         Header[] headers = res.getResponseHeaders(HttpHeaders.WWW_AUTHENTICATE);
         assertEquals(1, headers.length);

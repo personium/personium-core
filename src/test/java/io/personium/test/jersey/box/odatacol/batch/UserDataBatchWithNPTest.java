@@ -44,15 +44,15 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.CompareJSON;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.ODataCommon;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -770,10 +770,8 @@ public class UserDataBatchWithNPTest extends AbstractUserDataBatchTest {
                     "SalesDetail", "id0001", HttpStatus.SC_NOT_FOUND);
 
         } finally {
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001",
-                    PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0002",
-                    PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0002", PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Product", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }

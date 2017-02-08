@@ -16,9 +16,6 @@
  */
 package io.personium.test.jersey.box.dav.file;
 
-import static org.fest.assertions.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,22 +30,24 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
-import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.ODataCommon;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.TResponse;
+import com.sun.jersey.test.framework.JerseyTest;
+
+import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 /**
  * MOVEのテスト.
@@ -103,8 +102,7 @@ public class MoveFileTest extends JerseyTest {
             // Fileの移動
             TResponse response = DavResourceUtils.moveWebDav(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + svcColName + "/__src", destination, HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_MOVE;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_MOVE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {
@@ -356,8 +354,7 @@ public class MoveFileTest extends JerseyTest {
             // リクエスト実行
             PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destination);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destination);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {
@@ -509,8 +506,7 @@ public class MoveFileTest extends JerseyTest {
             // リクエスト実行
             PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteWebDavFile(CELL_NAME, TOKEN, BOX_NAME + "/" + colName, FILE_NAME);
@@ -936,8 +932,7 @@ public class MoveFileTest extends JerseyTest {
             // リクエスト実行
             PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteCollection(CELL_NAME, BOX_NAME, colName, TOKEN, -1);
@@ -995,8 +990,7 @@ public class MoveFileTest extends JerseyTest {
             // リクエスト実行
             PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteWebDavFile(CELL_NAME, TOKEN, BOX_NAME, FILE_NAME);

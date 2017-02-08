@@ -31,8 +31,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AssociationEndUtils;
@@ -120,8 +120,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(),
-                    HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
@@ -257,8 +256,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId + 1, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(),
-                    HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
@@ -324,8 +322,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(),
-                    HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
@@ -395,8 +392,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId + 1, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(),
-                    HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
@@ -462,8 +458,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(),
-                    HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
@@ -531,8 +526,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(),
-                    HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
@@ -602,8 +596,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(),
-                    HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId + 1, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
         }
@@ -659,8 +652,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                 ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                         Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, HttpStatus.SC_NO_CONTENT);
                 deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                        targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(),
-                        HttpStatus.SC_NO_CONTENT);
+                        targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             }
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
@@ -717,8 +709,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                 ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                         Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, HttpStatus.SC_NO_CONTENT);
                 deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                        targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(),
-                        HttpStatus.SC_NO_CONTENT);
+                        targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             }
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
@@ -775,8 +766,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                 ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                         Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, HttpStatus.SC_NO_CONTENT);
                 deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                        targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(),
-                        HttpStatus.SC_NO_CONTENT);
+                        targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
             }
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
                     srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);

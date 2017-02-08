@@ -36,9 +36,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AssociationEndUtils;
@@ -72,8 +72,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,
@@ -126,8 +126,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,
@@ -183,8 +183,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,
@@ -240,8 +240,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,
@@ -301,8 +301,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,
@@ -359,8 +359,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,
@@ -416,8 +416,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,
@@ -472,8 +472,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,
@@ -526,8 +526,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,
@@ -591,8 +591,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,
@@ -659,8 +659,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,
@@ -734,8 +734,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,
@@ -809,8 +809,8 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
             // Doubleの検索のテスト用エンティティタイプ作成
             EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, srcEntityTypeName,
                     HttpStatus.SC_CREATED);
-            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    targetEntityTypeName, HttpStatus.SC_CREATED);
+            EntityTypeUtils.create(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, targetEntityTypeName,
+                    HttpStatus.SC_CREATED);
 
             // AssociationEndの作成と紐づけ
             AssociationEndUtils.create(MASTER_TOKEN_NAME, "0..1", cellName, boxName, colName,

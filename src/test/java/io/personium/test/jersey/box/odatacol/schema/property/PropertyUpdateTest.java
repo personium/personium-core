@@ -30,23 +30,22 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import com.sun.jersey.test.framework.WebAppDescriptor;
-
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Property;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.ODataCommon;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
+import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * Property更新のテスト.
@@ -426,8 +425,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response,
-                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
                     PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Type").getMessage());
 
             // Propertyが更新されていないことの確認
@@ -492,8 +490,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response,
-                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
                     PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Name").getMessage());
 
             // Propertyが更新されていないことの確認
@@ -840,8 +837,7 @@ public class PropertyUpdateTest extends ODataCommon {
                     colName, propertyName, entityTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response,
-                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
                     PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("_EntityType.Name").getMessage());
 
             // Propertyが更新されていないことの確認

@@ -26,24 +26,23 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
-import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.ODataCommon;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.TResponse;
+import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * MOVEのテスト.
@@ -199,8 +198,7 @@ public class MoveCollectionTest extends JerseyTest {
             PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destUrl);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destUrl);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {
@@ -309,8 +307,7 @@ public class MoveCollectionTest extends JerseyTest {
             // Fileの移動
             TResponse response = DavResourceUtils.moveWebDav(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + srcColName, destUrl, HttpStatus.SC_CONFLICT);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.HAS_NOT_PARENT.params(notExistColName);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.HAS_NOT_PARENT.params(notExistColName);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteCollection(CELL_NAME, BOX_NAME, srcColName, TOKEN, -1);
@@ -335,8 +332,7 @@ public class MoveCollectionTest extends JerseyTest {
             // 移動
             TResponse response = DavResourceUtils.moveWebDav(TOKEN, CELL_NAME, BOX_NAME + "/" + srcColName, destUrl,
                     HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(),
                     expectedException.getMessage());
         } finally {
@@ -562,8 +558,7 @@ public class MoveCollectionTest extends JerseyTest {
             PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {
@@ -734,8 +729,7 @@ public class MoveCollectionTest extends JerseyTest {
             PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
             // 移動元のコレクションが存在すること
@@ -966,8 +960,7 @@ public class MoveCollectionTest extends JerseyTest {
             PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destUrl);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destUrl);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {
@@ -1076,8 +1069,7 @@ public class MoveCollectionTest extends JerseyTest {
             // Fileの移動
             TResponse response = DavResourceUtils.moveWebDav(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + srcColName, destUrl, HttpStatus.SC_CONFLICT);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.HAS_NOT_PARENT.params(notExistColName);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.HAS_NOT_PARENT.params(notExistColName);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteCollection(CELL_NAME, BOX_NAME, srcColName, TOKEN, -1);
@@ -1273,8 +1265,7 @@ public class MoveCollectionTest extends JerseyTest {
             PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {
@@ -1479,8 +1470,7 @@ public class MoveCollectionTest extends JerseyTest {
             PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destUrl);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destUrl);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {
@@ -1593,8 +1583,7 @@ public class MoveCollectionTest extends JerseyTest {
             // コレクションの移動
             TResponse response = DavResourceUtils.moveWebDav(TOKEN, CELL_NAME,
                     BOX_NAME + "/" + srcColName, destUrl, HttpStatus.SC_CONFLICT);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.HAS_NOT_PARENT.params(notExistColName);
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.HAS_NOT_PARENT.params(notExistColName);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
             DavResourceUtils.deleteCollection(CELL_NAME, BOX_NAME, srcColName, TOKEN, -1);
@@ -1796,8 +1785,7 @@ public class MoveCollectionTest extends JerseyTest {
             PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException =
-                    PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE;
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {

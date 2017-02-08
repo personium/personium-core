@@ -464,8 +464,7 @@ public class CellCtlODataProducerTest extends CellCtlODataProducer {
             mock.breakRelationMock(docHandler);
             fail("PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS does not occurred.");
         } catch (PersoniumCoreException e) {
-            PersoniumCoreException expected =
-                    PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS
+            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS
                     .params("https://example.com/test0110/");
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());

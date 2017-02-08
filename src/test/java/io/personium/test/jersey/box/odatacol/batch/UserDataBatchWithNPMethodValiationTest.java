@@ -37,8 +37,8 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
@@ -123,10 +123,8 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
                     "Sales", -1);
             ResourceUtils.deleteUserDataLinks("srcKey", "npTest2", "SalesDetail", cellName, boxName, colName,
                     "Sales", -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1",
-                    PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest2",
-                    PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest2", PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
@@ -197,10 +195,8 @@ public class UserDataBatchWithNPMethodValiationTest extends AbstractUserDataBatc
                     "Sales", -1);
             ResourceUtils.deleteUserDataLinks("srcKey", "npTest3", "SalesDetail", cellName, boxName, colName,
                     "Sales", -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest2",
-                    PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest3",
-                    PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest2", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest3", PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }

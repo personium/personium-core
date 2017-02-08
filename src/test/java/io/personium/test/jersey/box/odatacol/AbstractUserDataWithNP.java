@@ -30,10 +30,10 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.test.jersey.ODataCommon;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
@@ -116,8 +116,7 @@ public class AbstractUserDataWithNP extends AbstractUserDataTest {
                 ODATA_COLLECTION, parentEntityType, -1);
         ResourceUtils.deleteUserDataLinks("parent", "userdataNP2", childEnitityType, Setup.TEST_CELL1, Setup.TEST_BOX1,
                 ODATA_COLLECTION, parentEntityType, -1);
-        deleteUserData(cellName, boxName, colName, childEnitityType, "userdataNP2",
-                PersoniumUnitConfig.getMasterToken(), -1);
+        deleteUserData(cellName, boxName, colName, childEnitityType, "userdataNP2", PersoniumUnitConfig.getMasterToken(), -1);
         deleteUserDataForONE(parentEntityType, childEnitityType);
     }
 
@@ -127,12 +126,9 @@ public class AbstractUserDataWithNP extends AbstractUserDataTest {
      * @param childEnitityType 子EntityType
      */
     void deleteUserDataForONE(String parentEntityType, String childEnitityType) {
-        deleteUserData(cellName, boxName, colName, childEnitityType, "userdata",
-                PersoniumUnitConfig.getMasterToken(), -1);
-        deleteUserData(cellName, boxName, colName, childEnitityType, "userdataNP",
-                PersoniumUnitConfig.getMasterToken(), -1);
-        deleteUserData(cellName, boxName, colName, parentEntityType, "parent",
-                PersoniumUnitConfig.getMasterToken(), -1);
+        deleteUserData(cellName, boxName, colName, childEnitityType, "userdata", PersoniumUnitConfig.getMasterToken(), -1);
+        deleteUserData(cellName, boxName, colName, childEnitityType, "userdataNP", PersoniumUnitConfig.getMasterToken(), -1);
+        deleteUserData(cellName, boxName, colName, parentEntityType, "parent", PersoniumUnitConfig.getMasterToken(), -1);
     }
 
     /**

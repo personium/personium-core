@@ -129,8 +129,7 @@ public class UserDataUtils {
             final String defaultValue,
             final String collectionKind) {
         // リクエストパラメータ設定
-        PersoniumRequest req = PersoniumRequest.post(UrlUtils.complexTypeProperty(
-                cellName, boxName, odataSvcPath, null, null));
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.complexTypeProperty(cellName, boxName, odataSvcPath, null, null));
         req.header(HttpHeaders.AUTHORIZATION, AbstractCase.BEARER_MASTER_TOKEN);
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_NAME_KEY, propName);
         req.addJsonBody(ComplexTypePropertyUtils.CT_PROPERTY_COMPLEXTYPE_NAME_KEY, complexTypeName);

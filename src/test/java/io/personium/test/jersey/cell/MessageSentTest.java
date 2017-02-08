@@ -33,8 +33,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.ReceivedMessageUtils;
@@ -726,8 +726,7 @@ public class MessageSentTest extends ODataCommon {
                     body.toJSONString(), HttpStatus.SC_BAD_REQUEST);
             // エラーメッセージチェック
             String code = PersoniumCoreException.SentMessage.TO_RELATION_NOT_FOUND_ERROR.getCode();
-            String message = PersoniumCoreException.SentMessage.TO_RELATION_NOT_FOUND_ERROR.params(
-                    "norelation").getMessage();
+            String message = PersoniumCoreException.SentMessage.TO_RELATION_NOT_FOUND_ERROR.params("norelation").getMessage();
             checkErrorResponse(response.bodyAsJson(), code, message);
 
         } finally {
@@ -772,8 +771,8 @@ public class MessageSentTest extends ODataCommon {
                     body.toJSONString(), HttpStatus.SC_BAD_REQUEST);
             // エラーメッセージチェック
             String code = PersoniumCoreException.SentMessage.RELATED_EXTCELL_NOT_FOUND_ERROR.getCode();
-            String message = PersoniumCoreException.SentMessage.RELATED_EXTCELL_NOT_FOUND_ERROR.params(
-                    "noExtCellRelation").getMessage();
+            String message = PersoniumCoreException.SentMessage.RELATED_EXTCELL_NOT_FOUND_ERROR.params("noExtCellRelation")
+                    .getMessage();
             checkErrorResponse(response.bodyAsJson(), code, message);
 
         } finally {
