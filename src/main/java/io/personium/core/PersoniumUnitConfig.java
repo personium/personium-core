@@ -72,6 +72,11 @@ public class PersoniumUnitConfig {
     public static final String STATUS_REQUEST_URL = KEY_ROOT + "status.requestProxyUrl";
 
     /**
+     * プラグインのパス設定キー.
+     */
+    public static final String PLUGIN_PATH = KEY_ROOT + "plugin.path";
+
+    /**
      * OData廻りの設定.
      */
     public static final class OData {
@@ -253,6 +258,31 @@ public class PersoniumUnitConfig {
          * ロック用memcached operationタイムアウト値(ms).
          */
         public static final String MEMCACHED_OPTIMEOUT = KEY_ROOT + "lock.memcached.opTimeout";
+    }
+
+    /**
+     * Proxy関連の設定.
+     */
+    public static final class Proxy {
+        /**
+         * PROXY ホスト名.
+         */
+        public static final String HOST_NAME = KEY_ROOT + "proxy.host";
+
+        /**
+         * PROXY ポート番号.
+         */
+        public static final String PORT_NUMBER = KEY_ROOT + "proxy.port";
+
+        /**
+         * PROXY ユーザ名.
+         */
+        public static final String USER_NAME = KEY_ROOT + "proxy.user";
+
+        /**
+         * PROXY パスワード.
+         */
+        public static final String USER_PSWD = KEY_ROOT + "proxy.pswd";
     }
 
     /**
@@ -806,7 +836,8 @@ public class PersoniumUnitConfig {
      * @param configFilePath 設定ファイルパス
      * @return personium-unit-config.properties
      */
-    protected InputStream getConfigFileInputStream(String configFilePath) {
+    @SuppressWarnings("resource")
+	protected InputStream getConfigFileInputStream(String configFilePath) {
         Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
         InputStream configFileInputStream = null;
         if (configFilePath == null) {
@@ -906,6 +937,13 @@ public class PersoniumUnitConfig {
      */
     public static String getStatusRequestUrl() {
         return get(STATUS_REQUEST_URL);
+    }
+
+    /**
+     * @return プラグインのパス設定キー.
+     */
+    public static String getPluginPath() {
+        return get(PLUGIN_PATH);
     }
 
     /**
@@ -1260,6 +1298,34 @@ public class PersoniumUnitConfig {
         ret.setProperty("maxWait", get(ES.ADS.CP_MAX_WAIT));
         ret.setProperty("validationQuery", get(ES.ADS.CP_VALIDATION_QUERY));
         return ret;
+    }
+
+    /**
+     * @return $proxyホスト名.
+     */
+    public static String getProxyHostName() {
+        return get(Proxy.HOST_NAME);
+    }
+
+    /**
+     * @return $proxyホスト番号.
+     */
+    public static int getProxyHostNumber() {
+        return Integer.parseInt(get(Proxy.PORT_NUMBER));
+    }
+
+    /**
+     * @return $proxyユーザ名.
+     */
+    public static String getProxyUserName() {
+        return get(Proxy.USER_NAME);
+    }
+
+    /**
+     * @return $proxyパスワード.
+     */
+    public static String getProxyPassword() {
+        return get(Proxy.USER_PSWD);
     }
 
     /**

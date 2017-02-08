@@ -21,7 +21,9 @@ import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_AN
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.ws.rs.FormParam;
@@ -62,12 +64,10 @@ import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthnException;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.PersoniumUnitConfig.OIDC;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthUtils;
-import io.personium.core.auth.IdToken;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
@@ -78,6 +78,13 @@ import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.utils.UriUtils;
+import io.personium.core.rs.PersoniumCoreApplication;
+import io.personium.core.plugin.PluginInfo;
+import io.personium.core.plugin.PluginManager;
+import io.personium.plugin.base.Plugin;
+import io.personium.plugin.base.auth.AuthConst;
+import io.personium.plugin.base.auth.AuthenticatedIdentity;
+import io.personium.plugin.base.auth.AuthPlugin;
 
 /**
  * 認証処理を司るJAX-RSリソース.
@@ -179,9 +186,69 @@ public class TokenEndPointResource {
             return this.receiveSaml2(target, pOwner, schema, assertion);
         } else if (OAuth2Helper.GrantType.REFRESH_TOKEN.equals(grantType)) {
             return this.receiveRefresh(target, pOwner, host, refreshToken);
-        } else if (OAuth2Helper.GrantType.URN_OIDC_GOOGLE.equals(grantType)) {
-            return this.receiveIdTokenGoogle(target, pOwner, schema, username, idToken, host);
         } else {
+        	// Call Auth Plugins
+        	return this.callAuthPlugins(grantType, idToken, target, pOwner, schema, username, host);
+        }
+    }
+
+    /**
+     * call Auth Plugins.
+     * @param grantType
+     * @param idToken
+     * @param target
+     * @param owner
+     * @param schema
+     * @param username
+     * @param host
+     * @return Response
+     */
+    private Response callAuthPlugins(String grantType, String idToken,
+    		String target, String owner, String schema, String username, String host){
+    	try {
+            // Plugin manager.
+            PluginManager pm = PersoniumCoreApplication.getPluginManager();
+            // Search target plugin.
+            PluginInfo pi = pm.getPluginsByGrantType(grantType);
+            if (pi == null) {
+            	// When there is no plugin.
+                throw PersoniumCoreAuthnException.UNSUPPORTED_GRANT_TYPE.realm(this.cell.getUrl());
+            }
+
+            // Invoke the plug-in function.
+            Map<String, String> body = new HashMap<String, String>();
+            body.put(AuthConst.KEY_TOKEN, idToken);
+            Object plugin = (Plugin) pi.getObj();
+            AuthenticatedIdentity ai = ((AuthPlugin) plugin).authenticate(body);
+            if (ai == null) {
+                throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
+            }
+
+        	String account = ai.getAccountName();
+            String oidc = ai.getAttributes(AuthConst.KEY_OIDC_TYPE);
+            if (account == null || oidc == null) {
+                throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
+            }
+
+            // If the Account shown in IdToken does not exist in cell.
+            OEntityWrapper idTokenUserOew = cell.getAccount(account);
+            if (idTokenUserOew == null) {
+                // アカウントの存在確認に悪用されないように、失敗の旨のみのエラー応答
+                PersoniumCoreLog.OIDC.NO_SUCH_ACCOUNT.params(account).writeLog();
+                throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
+            }
+
+            // Confirm if OidC is included in Type when there is Account.
+            if (!AuthUtils.getAccountType(idTokenUserOew).contains(oidc)) {
+                // アカウントの存在確認に悪用されないように、失敗の旨のみのエラー応答
+            	PersoniumCoreLog.OIDC.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(oidc, account).writeLog();
+                throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
+            }
+
+        	// When processing is normally completed, issue a token.
+            return this.issueToken(target, owner, schema, username, host);
+
+        } catch (PersoniumCoreAuthnException e) {
             throw PersoniumCoreAuthnException.UNSUPPORTED_GRANT_TYPE.realm(this.cell.getUrl());
         }
     }
@@ -591,79 +658,6 @@ public class TokenEndPointResource {
     @OPTIONS
     public Response options() {
         return PersoniumCoreUtils.responseBuilderForOptions(HttpMethod.POST).build();
-    }
-
-    /**
-     * Google認証連携処理.
-     * @param target
-     * @param pOwner
-     * @param schema
-     * @param username
-     * @param idToken
-     * @param host
-     * @return
-     */
-
-    private Response receiveIdTokenGoogle(String target, String pOwner,
-        String schema, String username, String idToken, String host) {
-
-        // usernameのCheck処理
-        // 暫定的にインターフェースとして(username)を無視する仕様とした
-        /*if (username == null) {
-            throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.realm(this.cell.getUrl()).params(Key.USERNAME);
-        }*/
-        // id_tokenのCheck処理
-        if (idToken == null) {
-            throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.realm(this.cell.getUrl()).params(Key.ID_TOKEN);
-        }
-
-        // id_tokenをパースする
-        IdToken idt = IdToken.parse(idToken);
-
-        // Tokenに有効期限(exp)があるかnullチェック
-        if (idt.getExp() == null) {
-            throw PersoniumCoreAuthnException.OIDC_INVALID_ID_TOKEN.params("ID Token expiration time null.");
-        }
-
-        // Tokenの検証。検証失敗したらPersoniumCoreAuthnExceptionが投げられる
-        idt.verify();
-
-        // Token検証成功時
-        String mail = idt.getEmail();
-        String aud  = idt.getAudience();
-        String issuer = idt.getIssuer();
-
-        // issuerがGoogleが認めたものであるかどうか
-        if (!issuer.equals("accounts.google.com") && !issuer.equals("https://accounts.google.com")) {
-            PersoniumCoreLog.OIDC.INVALID_ISSUER.params(issuer).writeLog();
-            throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
-        }
-
-        // Googleに登録したサービス/アプリのClientIDかを確認
-        // UnitConfigPropatiesに登録したClientIdに一致していればOK
-        if (!OIDC.isGoogleClientIdTrusted(aud)) {
-            throw PersoniumCoreAuthnException.OIDC_WRONG_AUDIENCE.params(aud);
-        }
-
-        // このユーザー名がアカウント登録されているかを確認
-        // IDtokenの中に示されているAccountが存在しない場合
-        OEntityWrapper idTokenUserOew = this.cell.getAccount(mail);
-        if (idTokenUserOew == null) {
-            //アカウントの存在確認に悪用されないように、失敗の旨のみのエラー応答
-            PersoniumCoreLog.OIDC.NO_SUCH_ACCOUNT.params(mail).writeLog();
-            throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
-        }
-
-        // アカウントタイプがoidc:googleになっているかを確認。
-        // Account があるけどTypeにOidCが含まれていない
-        if (!AuthUtils.isAccountTypeOidcGoogle(idTokenUserOew)) {
-            //アカウントの存在確認に悪用されないように、失敗の旨のみのエラー応答
-            PersoniumCoreLog.OIDC.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(Account.TYPE_VALUE_OIDC_GOOGLE, mail).writeLog();
-            throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
-        }
-
-        // トークンを発行
-        return this.issueToken(target, pOwner, host, schema, mail);
     }
 
 }
