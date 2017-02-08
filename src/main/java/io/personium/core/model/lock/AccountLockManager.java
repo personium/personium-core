@@ -57,7 +57,7 @@ public abstract class AccountLockManager extends LockManager {
             String key =  CATEGORY_ACCOUNT_LOCK + accountId;
             // 対象アカウントのLock確認
             String lockPublic = singleton.doGetAccountLock(key);
-            return lockPublic != null;
+            return (lockPublic != null);
         } catch (MemcachedClientException e) {
             throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
         }

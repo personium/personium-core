@@ -390,7 +390,7 @@ public final class PersoniumCoreLog {
      */
     public void writeLog() {
 
-        StackTraceElement[] ste = new Throwable().getStackTrace();
+        StackTraceElement[] ste = (new Throwable()).getStackTrace();
         String logInfo = String.format("[%s] - [%s#%s:%s] - %s",
                 this.code, ste[1].getClassName(), ste[1].getMethodName(), ste[1].getLineNumber(), this.message);
         switch (this.severity) {

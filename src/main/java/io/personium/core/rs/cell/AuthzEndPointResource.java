@@ -55,8 +55,6 @@ import org.odata4j.edm.EdmEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.api.client.ClientResponse.Status;
-
 import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
@@ -72,10 +70,10 @@ import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthnException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumCoreMessageUtils;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
@@ -87,8 +85,9 @@ import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
-import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.odata.OEntityWrapper;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * ImplicitFlow認証処理を司るJAX-RSリソース.
@@ -976,10 +975,10 @@ public class AuthzEndPointResource {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_REDIRECT_INVALID;
         }
 
-        if (redirectUri.contains("\n") || redirectUri.contains("\r")) {
+        if ((redirectUri.contains("\n") || redirectUri.contains("\r"))) {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_REDIRECT_INVALID;
         }
-        if (clientId.contains("\n") || clientId.contains("\r")) {
+        if ((clientId.contains("\n") || clientId.contains("\r"))) {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
         }
 

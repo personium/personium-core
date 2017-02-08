@@ -49,8 +49,8 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchResponse;
-import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.ModelFactory;
@@ -75,9 +75,9 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyUpdateDocHandler;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker.CheckError;
-import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.PersoniumOptionsQueryParser;
+import io.personium.core.odata.OEntityWrapper;
 
 /**
  * ユーザデータスキーマのODataサービスむけODataProvider.
@@ -449,7 +449,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
             // 検索して０件であることを確認する;
             CountResponse cr = getNavPropertyCount(from.getType().getName(), entityKey, to.getType().getName(),
                     query);
-            return cr.getCount() > 0;
+            return (cr.getCount() > 0);
         }
         return false;
     }

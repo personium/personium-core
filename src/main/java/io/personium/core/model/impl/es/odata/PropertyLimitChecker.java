@@ -17,7 +17,6 @@
 package io.personium.core.model.impl.es.odata;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.doc.ComplexTypePropertyDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyDocHandler;
+
+import java.util.Arrays;
 
 /**
  * EntityType内の Property数制限数をチェックするためのメソッドを実装しているクラス.
@@ -176,9 +177,9 @@ public class PropertyLimitChecker {
         // 追加対象数分、ダミーでプロパティをスキーマ情報に追加する
         String dummyKey = "dummy" + System.currentTimeMillis();
         for (int i = 0; i < dynamicPropCount; i++) {
-            EdmEntityType.Builder entityTypeBuilder = builder
+            org.odata4j.edm.EdmEntityType.Builder entityTypeBuilder = builder
                     .findEdmEntityType(UserDataODataProducer.USER_ODATA_NAMESPACE + "." + entityTypeName);
-            EdmProperty.Builder propertyBuilder =
+            org.odata4j.edm.EdmProperty.Builder propertyBuilder =
                     EdmProperty.newBuilder(String.format("%s_%03d", dummyKey, i))
                     .setType(EdmSimpleType.getSimple("Edm.String"));
             entityTypeBuilder.addProperties(propertyBuilder);
@@ -202,38 +203,38 @@ public class PropertyLimitChecker {
         final String dummyPropertyKey = "DUMMY" + System.currentTimeMillis();
         if (propHandler instanceof ComplexTypePropertyDocHandler) {
             // ComplexTypePropertyDocHandlerの場合の処理
-            EdmComplexType.Builder complexTypeBuilder = builder
+            org.odata4j.edm.EdmComplexType.Builder complexTypeBuilder = builder
                     .findEdmComplexType(UserDataODataProducer.USER_ODATA_NAMESPACE + "." + propHandler
                     .getEntityTypeName());
             Map<String, Object> staticFields = propHandler.getStaticFields();
             String typeName = (String) staticFields.get("Type");
             EdmType type = EdmSimpleType.getSimple(typeName);
             if (null != type) {
-                EdmProperty.Builder propertyBuilder = EdmProperty.newBuilder(dummyPropertyKey).setType(
+                org.odata4j.edm.EdmProperty.Builder propertyBuilder = EdmProperty.newBuilder(dummyPropertyKey).setType(
                         type);
                 complexTypeBuilder.addProperties(propertyBuilder);
             } else {
                 EdmComplexType complex = metadata.findEdmComplexType(UserDataODataProducer.USER_ODATA_NAMESPACE + "."
                         + typeName);
-                EdmProperty.Builder propertyBuilder = EdmProperty.newBuilder(dummyPropertyKey).setType(
+                org.odata4j.edm.EdmProperty.Builder propertyBuilder = EdmProperty.newBuilder(dummyPropertyKey).setType(
                         complex);
                 complexTypeBuilder.addProperties(propertyBuilder);
             }
         } else {
-            EdmEntityType.Builder entityTypeBuilder = builder
+            org.odata4j.edm.EdmEntityType.Builder entityTypeBuilder = builder
                     .findEdmEntityType(UserDataODataProducer.USER_ODATA_NAMESPACE + "." + propHandler
                     .getEntityTypeName());
             Map<String, Object> staticFields = propHandler.getStaticFields();
             String typeName = (String) staticFields.get("Type");
             EdmType type = EdmSimpleType.getSimple(typeName);
             if (null != type) {
-                EdmProperty.Builder propertyBuilder = EdmProperty.newBuilder(dummyPropertyKey).setType(
+                org.odata4j.edm.EdmProperty.Builder propertyBuilder = EdmProperty.newBuilder(dummyPropertyKey).setType(
                         type);
                 entityTypeBuilder.addProperties(propertyBuilder);
             } else {
                 EdmComplexType complex = metadata.findEdmComplexType(UserDataODataProducer.USER_ODATA_NAMESPACE + "."
                         + typeName);
-                EdmProperty.Builder propertyBuilder = EdmProperty.newBuilder(dummyPropertyKey).setType(
+                org.odata4j.edm.EdmProperty.Builder propertyBuilder = EdmProperty.newBuilder(dummyPropertyKey).setType(
                         complex);
                 entityTypeBuilder.addProperties(propertyBuilder);
             }

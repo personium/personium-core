@@ -124,7 +124,7 @@ public class HttpClientFactory extends DefaultHttpClient {
         }
         // CHECKSTYLE:ON
 
-        HostnameVerifier hostnameVerifier = SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+        HostnameVerifier hostnameVerifier = org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
         SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext, (X509HostnameVerifier) hostnameVerifier);
         // socketFactory.setHostnameVerifier((X509HostnameVerifier)
         // hostnameVerifier);

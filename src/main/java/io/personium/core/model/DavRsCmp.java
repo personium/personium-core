@@ -212,7 +212,7 @@ public class DavRsCmp {
     public final ResponseBuilder get(final String ifNoneMatch, final String rangeHeaderField) {
         // return "Not-Modified" if "If-None-Match" header matches.
         if (matchesETag(ifNoneMatch)) {
-            return Response.notModified().header(HttpHeaders.ETAG, this.davCmp.getEtag());
+            return javax.ws.rs.core.Response.notModified().header(HttpHeaders.ETAG, this.davCmp.getEtag());
         }
         return this.davCmp.get(rangeHeaderField);
     }

@@ -44,7 +44,7 @@ public abstract class UnitUserLockManager extends LockManager {
             String key = CATEGORY_UNITUSER_LOCK + "-" + unitUserName;
             // 対象UnitUserのLock確認
             String lockPublic = singleton.doGetUnituserLock(key);
-            return lockPublic != null;
+            return (lockPublic != null);
         } catch (MemcachedClientException e) {
             throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
         }

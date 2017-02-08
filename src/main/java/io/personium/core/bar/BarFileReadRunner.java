@@ -28,7 +28,6 @@ import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -1888,8 +1887,10 @@ public class BarFileReadRunner implements Runnable {
         try {
             Map<String, String> fromId = ((JSONUserDataLinks) mappedObject).getFromId();
             String fromKey = "";
-            Iterator<Entry<String, String>> fromIterator = fromId.entrySet().iterator();
-            fromKey = String.format("('%s')", fromIterator.next().getValue());
+            for (Map.Entry<String, String> entry : fromId.entrySet()) {
+                fromKey = String.format("('%s')", entry.getValue());
+                break;
+            }
 
             OEntityKey fromOEKey = OEntityKey.parse(fromKey);
             sourceEntity = OEntityIds.create(((JSONUserDataLinks) mappedObject).getFromType(), fromOEKey);
@@ -1900,8 +1901,10 @@ public class BarFileReadRunner implements Runnable {
 
             Map<String, String> toId = ((JSONUserDataLinks) mappedObject).getToId();
             String toKey = "";
-            Iterator<Entry<String, String>> toIterator = toId.entrySet().iterator();
-            toKey = String.format("('%s')", toIterator.next().getValue());
+            for (Map.Entry<String, String> entry : toId.entrySet()) {
+                toKey = String.format("('%s')", entry.getValue());
+                break;
+            }
 
             OEntityKey toOEKey = OEntityKey.parse(toKey);
             newTargetEntity = OEntityIds.create(((JSONUserDataLinks) mappedObject).getToType(), toOEKey);

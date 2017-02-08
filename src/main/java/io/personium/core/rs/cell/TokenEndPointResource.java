@@ -180,7 +180,7 @@ public class TokenEndPointResource {
         } else if (OAuth2Helper.GrantType.REFRESH_TOKEN.equals(grantType)) {
             return this.receiveRefresh(target, pOwner, host, refreshToken);
         } else if (OAuth2Helper.GrantType.URN_OIDC_GOOGLE.equals(grantType)) {
-            return this.receiveIdTokenGoogle(target, pOwner, schema, idToken, host);
+            return this.receiveIdTokenGoogle(target, pOwner, schema, username, idToken, host);
         } else {
             throw PersoniumCoreAuthnException.UNSUPPORTED_GRANT_TYPE.realm(this.cell.getUrl());
         }
@@ -599,13 +599,14 @@ public class TokenEndPointResource {
      * @param target
      * @param pOwner
      * @param schema
+     * @param username
      * @param idToken
      * @param host
      * @return
      */
 
     private Response receiveIdTokenGoogle(String target, String pOwner,
-        String schema, String idToken, String host) {
+        String schema, String username, String idToken, String host) {
 
         // usernameのCheck処理
         // 暫定的にインターフェースとして(username)を無視する仕様とした

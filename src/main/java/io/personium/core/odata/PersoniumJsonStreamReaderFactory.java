@@ -43,15 +43,15 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Stack;
 
-import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonEndPropertyEvent;
-import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonEvent;
 import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonParseException;
-import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStartPropertyEvent;
 import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamReader;
+import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamReader.JsonEndPropertyEvent;
+import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamReader.JsonEvent;
+import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamReader.JsonStartPropertyEvent;
+import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamReader.JsonValueEvent;
 import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamTokenizer;
 import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamTokenizer.JsonToken;
 import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamTokenizer.JsonTokenType;
-import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonValueEvent;
 
 /**
  * PersoniumJsonStreamReaderFactory.
@@ -106,65 +106,103 @@ public class PersoniumJsonStreamReaderFactory {
     }
 
     /**
-     * JsonEventインターフェースクラス.
-     */
-    public interface JsonEvent {
-
-        /**
-         * @return boolean
-         */
-        boolean isStartObject();
-
-        /**
-         * @return boolean
-         */
-        boolean isEndObject();
-
-        /**
-         * @return boolean
-         */
-        boolean isStartProperty();
-
-        /**
-         * @return boolean
-         */
-        boolean isEndProperty();
-
-        /**
-         * @return boolean
-         */
-        boolean isStartArray();
-
-        /**
-         * @return boolean
-         */
-        boolean isEndArray();
-
-        /**
-         * @return boolean
-         */
-        boolean isValue();
-
-        /**
-         * @return JsonStartPropertyEvent
-         */
-        JsonStartPropertyEvent asStartProperty();
-
-        /**
-         * @return JsonEndPropertyEvent
-         */
-        JsonEndPropertyEvent asEndProperty();
-
-        /**
-         * @return JsonValueEvent.
-         */
-        JsonValueEvent asValue();
-    }
-
-    /**
      * JsonStreamReader.
      */
     public interface JsonStreamReader {
+
+        /**
+         * JsonEventインターフェースクラス.
+         */
+        public interface JsonEvent {
+
+            /**
+             * @return boolean
+             */
+            boolean isStartObject();
+
+            /**
+             * @return boolean
+             */
+            boolean isEndObject();
+
+            /**
+             * @return boolean
+             */
+            boolean isStartProperty();
+
+            /**
+             * @return boolean
+             */
+            boolean isEndProperty();
+
+            /**
+             * @return boolean
+             */
+            boolean isStartArray();
+
+            /**
+             * @return boolean
+             */
+            boolean isEndArray();
+
+            /**
+             * @return boolean
+             */
+            boolean isValue();
+
+            /**
+             * @return JsonStartPropertyEvent
+             */
+            JsonStartPropertyEvent asStartProperty();
+
+            /**
+             * @return JsonEndPropertyEvent
+             */
+            JsonEndPropertyEvent asEndProperty();
+
+            /**
+             * @return JsonValueEvent.
+             */
+            JsonValueEvent asValue();
+        }
+
+        /**
+         * JsonStartPropertyEvent.
+         */
+        public interface JsonStartPropertyEvent extends JsonEvent {
+            /**
+             * @return キー名
+             */
+            String getName();
+        }
+
+        /**
+         * JsonEndPropertyEvent.
+         */
+        public interface JsonEndPropertyEvent extends JsonEvent {
+            /**
+             * JSONの値を文字列で返す.
+             * @return JSON値
+             */
+            String getValue();
+
+            /**
+             * JSONの値をオブジェクトで返す.
+             * @return オブジェクト
+             */
+            Object getObject();
+        }
+
+        /**
+         * JsonValueEvent.
+         */
+        public interface JsonValueEvent extends JsonEvent {
+            /**
+             * JSONの値を文字列で返す.
+             * @return JSON値
+             */
+            String getValue();
+        }
 
         /**
          * 次の値を持っているか.
@@ -188,44 +226,6 @@ public class PersoniumJsonStreamReaderFactory {
          * クローズ.
          */
         void close();
-    }
-
-    /**
-     * JsonStartPropertyEvent.
-     */
-    public interface JsonStartPropertyEvent extends JsonEvent {
-        /**
-         * @return キー名
-         */
-        String getName();
-    }
-
-    /**
-     * JsonEndPropertyEvent.
-     */
-    public interface JsonEndPropertyEvent extends JsonEvent {
-        /**
-         * JSONの値を文字列で返す.
-         * @return JSON値
-         */
-        String getValue();
-
-        /**
-         * JSONの値をオブジェクトで返す.
-         * @return オブジェクト
-         */
-        Object getObject();
-    }
-
-    /**
-     * JsonValueEvent.
-     */
-    public interface JsonValueEvent extends JsonEvent {
-        /**
-         * JSONの値を文字列で返す.
-         * @return JSON値
-         */
-        String getValue();
     }
 
     /**

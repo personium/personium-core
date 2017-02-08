@@ -40,9 +40,9 @@ import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthzException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
@@ -653,7 +653,7 @@ public final class AccessContext {
         String tokenConfidentialLevel = this.getConfidentialLevel();
 
         // スキーマ認証レベルが未設定（空）かNONEの場合はスキーマ認証チェック不要。
-        if ("".equals(settingConfidentialLevel) || OAuth2Helper.SchemaLevel.NONE.equals(settingConfidentialLevel)) {
+        if (("".equals(settingConfidentialLevel) || OAuth2Helper.SchemaLevel.NONE.equals(settingConfidentialLevel))) {
             return;
         }
 

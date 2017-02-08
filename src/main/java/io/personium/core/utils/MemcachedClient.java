@@ -22,13 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import net.spy.memcached.ConnectionFactoryBuilder;
+import net.spy.memcached.DefaultConnectionFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
-import net.spy.memcached.ConnectionFactoryBuilder;
-import net.spy.memcached.DefaultConnectionFactory;
+import io.personium.core.PersoniumCoreLog;
 
 /**
  * 本アプリでのMemcachedアクセスを司るClient.
@@ -185,7 +186,7 @@ public class MemcachedClient implements CacheClient {
     public Boolean createLongValue(String key, long initValue) {
         try {
             long count = this.spyClient.incr(key, 0, initValue);
-            return count == initValue;
+            return (count == initValue);
         } catch (RuntimeException e) {
             log.info(e.getMessage(), e);
             throw new MemcachedClientException(e);

@@ -320,7 +320,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             // 検索して０件であることを確認する;
             CountResponse cr = getNavPropertyCount(from.getType().getName(), entityKey, to.getType().getName(),
                     new EntityQueryInfo.Builder().build());
-            return cr.getCount() > 0;
+            return (cr.getCount() > 0);
         }
         return false;
     }
@@ -351,7 +351,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                     count = 1;
                 }
             }
-            return count > 0;
+            return (count > 0);
         }
         return false;
     }
