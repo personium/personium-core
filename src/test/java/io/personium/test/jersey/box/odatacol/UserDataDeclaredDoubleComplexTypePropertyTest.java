@@ -41,10 +41,10 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -923,8 +923,8 @@ public class UserDataDeclaredDoubleComplexTypePropertyTest extends AbstractUserD
      */
     private void createEntities(String type, String defaultcomplexTypeProperty) {
         // Collection作成
-        DavResourceUtils.createODataCollection(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED, cellName, boxName,
-                COL_NAME);
+        DavResourceUtils.createODataCollection(PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CREATED,
+                cellName, boxName, COL_NAME);
 
         // EntityType作成
         createEntityType(ENTITY_TYPE_NAME, COL_NAME);

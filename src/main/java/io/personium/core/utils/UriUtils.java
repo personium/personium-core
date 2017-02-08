@@ -95,7 +95,7 @@ public class UriUtils {
      * @return Url with http scheme
      */
     public static String convertSchemeFromLocalUnitToHttp(String unitUrl, String localUnitSchemeUrl) {
-        if ((localUnitSchemeUrl != null) && (localUnitSchemeUrl.startsWith(SCHEME_LOCALUNIT))) {
+        if (localUnitSchemeUrl != null && localUnitSchemeUrl.startsWith(SCHEME_LOCALUNIT)) {
             // SchemeLocalUnit(http://host/localunit/)
             return localUnitSchemeUrl.replace(SCHEME_UNIT_URI, unitUrl);
         }

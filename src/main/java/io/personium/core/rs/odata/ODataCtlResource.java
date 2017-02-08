@@ -110,8 +110,10 @@ public class ODataCtlResource {
         if (targetNavProp.startsWith("_")) {
             targetNavProp = targetNavProp.substring(1);
         }
-        if ((sourceEntity.equals(ExtRole.EDM_TYPE_NAME) && targetNavProp.equals(Relation.EDM_TYPE_NAME))
-                || (sourceEntity.equals(Relation.EDM_TYPE_NAME) && targetNavProp.equals(ExtRole.EDM_TYPE_NAME))) {
+        if ((sourceEntity.equals(ExtRole.EDM_TYPE_NAME) //NOPMD -To maintain readability
+                        && targetNavProp.equals(Relation.EDM_TYPE_NAME)) //NOPMD
+                || (sourceEntity.equals(Relation.EDM_TYPE_NAME) //NOPMD
+                        && targetNavProp.equals(ExtRole.EDM_TYPE_NAME))) { //NOPMD
             throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
     }

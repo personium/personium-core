@@ -35,6 +35,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.common.ads.AdsWriteFailureLogException;
 import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.ads.AdsWriteFailureLogWriter;
@@ -43,8 +45,8 @@ import io.personium.common.es.EsType;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreLog;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.ads.Ads;
@@ -65,7 +67,6 @@ import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * マスタ自動復旧機能のcoreとの結合テストクラス.
@@ -129,7 +130,8 @@ public class RepairAdsIntegrationTest extends AbstractCase {
             CellUtils.create(cellName, MASTER_TOKEN_NAME, owner, HttpStatus.SC_CREATED);
 
             // ESからデータ取得
-            PersoniumSearchHit esHit = searchFromEs(indexName, esTypeName, routingId, searchFieldName, searchFieldValue);
+            PersoniumSearchHit esHit = searchFromEs(indexName, esTypeName, routingId,
+                    searchFieldName, searchFieldValue);
             String id = esHit.getId();
             EntitySetDocHandler esDocument = new CellDocHandler(esHit);
 
@@ -205,7 +207,8 @@ public class RepairAdsIntegrationTest extends AbstractCase {
     @Test
     public void core経由で登録されたODATAデータをMySQLに登録できること() throws AdsException {
 
-        String userDataIndexName = PersoniumUnitConfig.getEsUnitPrefix() + "_" + IndexNameEncoder.encodeEsIndexName(owner);
+        String userDataIndexName = PersoniumUnitConfig.getEsUnitPrefix()
+                + "_" + IndexNameEncoder.encodeEsIndexName(owner);
 
         // ESアクセス情報
         String userDataEsTypeName = UserDataODataProducer.USER_ODATA_NAMESPACE;
@@ -231,9 +234,10 @@ public class RepairAdsIntegrationTest extends AbstractCase {
                     .create(MASTER_TOKEN_NAME, HttpStatus.SC_CREATED, body, cellName, boxName, colName, entityType);
 
             // ESからデータ取得
-            String cellIndexName = PersoniumUnitConfig.getEsUnitPrefix() + "_" + IndexNameEncoder.encodeEsIndexName("ad");
-            PersoniumSearchHit cellEsHit = searchFromEs(cellIndexName, Cell.EDM_TYPE_NAME, EsIndex.CELL_ROUTING_KEY_NAME,
-                    "Name", cellName);
+            String cellIndexName = PersoniumUnitConfig.getEsUnitPrefix()
+                    + "_" + IndexNameEncoder.encodeEsIndexName("ad");
+            PersoniumSearchHit cellEsHit = searchFromEs(cellIndexName, Cell.EDM_TYPE_NAME,
+                    EsIndex.CELL_ROUTING_KEY_NAME, "Name", cellName);
             String cellId = cellEsHit.getId();
             PersoniumSearchHit userDataEsHit = searchFromEs(userDataIndexName, userDataEsTypeName, cellId,
                     userDataSearchFieldName,

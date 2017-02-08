@@ -40,8 +40,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AssociationEndUtils;
@@ -386,8 +386,10 @@ public class UserDataBatchWithNPRelationTest extends AbstractUserDataBatchTest {
                     "srcKey", "id0001", "SalesDetail", cellName, boxName, colName, "Sales", -1);
             ResourceUtils.deleteUserDataLinks(
                     "srcKey", "id0002", "SalesDetail", cellName, boxName, colName, "Sales", -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0002", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001",
+                    PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0002",
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
@@ -518,7 +520,8 @@ public class UserDataBatchWithNPRelationTest extends AbstractUserDataBatchTest {
                     "srcKey", "id0002", "Sales", cellName, boxName, colName, "SalesDetail", -1);
             deleteUserData(cellName, boxName, colName, "Sales", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Sales", "id0002", PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "srcKey",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -1055,7 +1058,8 @@ public class UserDataBatchWithNPRelationTest extends AbstractUserDataBatchTest {
             ResourceUtils.deleteUserDataLinks(
                     "srcKey", id, "Sales", cellName, boxName, colName, "SalesDetail", -1);
             deleteUserData(cellName, boxName, colName, "Sales", id, PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "srcKey",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -1248,9 +1252,11 @@ public class UserDataBatchWithNPRelationTest extends AbstractUserDataBatchTest {
             deleteUserData(cellName, boxName, colName, "Sales", "id0021", PersoniumUnitConfig.getMasterToken(), -1);
 
             deleteUserData(cellName, boxName, colName, "Price", "srcKey001", PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Product", "srcKey002", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Product", "srcKey002",
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Sales", "srcKey003", PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "Supplier", "srcKey004", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Supplier", "srcKey004",
+                    PersoniumUnitConfig.getMasterToken(), -1);
 
         }
     }

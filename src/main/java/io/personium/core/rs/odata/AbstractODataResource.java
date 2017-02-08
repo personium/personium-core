@@ -18,8 +18,8 @@ package io.personium.core.rs.odata;
 
 import java.io.Reader;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -69,16 +69,16 @@ import org.odata4j.format.Settings;
 import org.odata4j.producer.EntityResponse;
 
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.Property;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker.CheckError;
+import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumFormatParserFactory;
 import io.personium.core.odata.PersoniumFormatWriterFactory;
 import io.personium.core.odata.PersoniumODataProducer;
-import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.utils.EscapeControlCode;
 import io.personium.core.utils.ODataUtils;
 
@@ -220,9 +220,9 @@ public abstract class AbstractODataResource {
     }
 
     private boolean isAcceptXml(String accept) {
-        return (accept.equals(MediaType.APPLICATION_ATOM_XML)
+        return accept.equals(MediaType.APPLICATION_ATOM_XML)
                 || accept.equals(MediaType.APPLICATION_XML)
-                || accept.equals(MediaType.WILDCARD));
+                || accept.equals(MediaType.WILDCARD);
     }
 
     private boolean isAcceptJson(String accept) {
@@ -654,7 +654,7 @@ public abstract class AbstractODataResource {
         if (annotation != null && !(Boolean.valueOf(annotation.getValue().toString()))) {
             return null;
         }
-        if ((ep.getType().isSimple() && !ep.getCollectionKind().equals(CollectionKind.List))
+        if (ep.getType().isSimple() && !ep.getCollectionKind().equals(CollectionKind.List)
                 && ep.getDefaultValue() != null) {
             op = generateDefautlProperty(ep);
         } else if (ep.isNullable()) {
@@ -1060,8 +1060,8 @@ public abstract class AbstractODataResource {
             final EdmDataServices metadata,
             final String entitySetName,
             final OEntityKey entityKey) {
-        FormatParser<Entry> parser = PersoniumFormatParserFactory.getParser(Entry.class, type, new Settings(version, metadata,
-                entitySetName, entityKey, null, false));
+        FormatParser<Entry> parser = PersoniumFormatParserFactory.getParser(Entry.class, type, new Settings(
+                version, metadata, entitySetName, entityKey, null, false));
         Entry entry = null;
         try {
             entry = parser.parse(body);

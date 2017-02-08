@@ -2,7 +2,7 @@
   "Links": [
     {
       "FromName": {
-          "Name": "relation1" 
+          "Name": "relation1"
       },
       "ToType": "Role",
       "ToName": {
