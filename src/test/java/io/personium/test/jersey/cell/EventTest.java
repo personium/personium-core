@@ -36,10 +36,10 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.DaoException;
+import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
@@ -206,7 +206,8 @@ public class EventTest extends ODataCommon {
                         .with("requestKey", "abc#123")
                         .with("json", "")
                         .returns();
-        response.checkErrorResponse("PR400-EV-0002", PersoniumCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID.getMessage());
+        response.checkErrorResponse("PR400-EV-0002",
+                PersoniumCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID.getMessage());
         response.statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 

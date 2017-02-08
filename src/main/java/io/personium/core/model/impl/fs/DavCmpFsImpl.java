@@ -62,9 +62,9 @@ import org.w3c.dom.NodeList;
 import io.personium.common.auth.token.Role;
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.OAuth2Helper.Key;
@@ -303,7 +303,7 @@ public class DavCmpFsImpl implements DavCmp {
      */
     @Override
     public final boolean exists() {
-        return (this.fsDir != null) && this.fsDir.exists() && this.metaFile.exists();
+        return this.fsDir != null && this.fsDir.exists() && this.metaFile.exists();
     }
 
     /**
@@ -653,7 +653,7 @@ public class DavCmpFsImpl implements DavCmp {
                     throw PersoniumCoreException.Misc.NOT_IMPLEMENTED.params("Range-MultiPart");
                 } else {
                     StreamingOutput sout = new StreamingOutputForDavFileWithRange(fileFullPath, fileSize, range);
-                    res = davFileResponseForRange(sout, fileSize, contentType, range);
+                    res = davFileResponseForRange(sout, contentType, range);
                 }
             }
             return res.header(HttpHeaders.ETAG, this.getEtag()).header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES,
@@ -687,15 +687,13 @@ public class DavCmpFsImpl implements DavCmp {
      * ファイルレスポンス処理.
      * @param sout
      *            StreamingOuputオブジェクト
-     * @param fileSize
-     *            ファイルサイズ
      * @param contentType
      *            コンテントタイプ
      * @param range
      *            RangeHeaderHandler
      * @return レスポンス
      */
-    private ResponseBuilder davFileResponseForRange(final StreamingOutput sout, long fileSize, String contentType,
+    private ResponseBuilder davFileResponseForRange(final StreamingOutput sout, String contentType,
             final RangeHeaderHandler range) {
         // MultiPartには対応しないため1個目のbyte-renge-setだけ処理する。
         int rangeIndex = 0;

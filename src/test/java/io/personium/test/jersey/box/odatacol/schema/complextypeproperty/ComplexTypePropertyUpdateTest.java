@@ -30,6 +30,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Property;
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
@@ -37,9 +39,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.box.odatacol.schema.complextype.ComplexTypeUtils;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.utils.BoxUtils;
@@ -48,7 +50,6 @@ import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * ComplexTypeProperty更新のテスト.
@@ -581,7 +582,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+            ODataCommon.checkErrorResponseBody(response,
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
                     PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Type").getMessage());
 
             // ComplexTypePropertyが更新されていないことの確認
@@ -651,7 +653,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+            ODataCommon.checkErrorResponseBody(response,
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
                     PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("Name").getMessage());
 
             // ComplexTypePropertyが更新されていないことの確認
@@ -1065,7 +1068,8 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
                     complexTypePropertyName, complexTypeName, body);
 
             assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatusCode());
-            ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
+            ODataCommon.checkErrorResponseBody(response,
+                    PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.getCode(),
                     PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params("_ComplexType.Name").getMessage());
 
             // ComplexTypePropertyが更新されていないことの確認

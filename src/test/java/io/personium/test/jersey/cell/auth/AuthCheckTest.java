@@ -33,6 +33,8 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.sun.jersey.test.framework.JerseyTest;
+
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
@@ -63,7 +65,6 @@ import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TestMethodUtils;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * 認証のテスト.
@@ -745,7 +746,8 @@ public class AuthCheckTest extends JerseyTest {
                     boxNameNoneScheme, roleNameWithBox1, HttpStatus.SC_CREATED);
 
             // extCellとロールの結びつけ
-            ResourceUtils.linkExtCelltoRole(PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName)), testCellName2,
+            ResourceUtils.linkExtCelltoRole(PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName)),
+                    testCellName2,
                     UrlUtils.roleUrl(testCellName2, boxNameNoneScheme, roleNameWithBox1),
                     AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
@@ -782,7 +784,8 @@ public class AuthCheckTest extends JerseyTest {
 
             // ロールとextCellの結びつけ削除
             ResourceUtils.linkExtCellRoleDelete(testCellName2, AbstractCase.MASTER_TOKEN_NAME,
-                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName)), boxNameNoneScheme, roleNameWithBox1);
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName)),
+                    boxNameNoneScheme, roleNameWithBox1);
 
             // ExtCell削除
             ExtCellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, testCellName2,

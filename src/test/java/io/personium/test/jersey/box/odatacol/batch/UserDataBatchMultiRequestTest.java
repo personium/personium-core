@@ -31,13 +31,13 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
@@ -104,7 +104,8 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
         } finally {
             ResourceUtils.deleteUserDataLinks("srcKey", "npTest1", "SalesDetail", cellName, boxName, colName,
                     "Sales", -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1",
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
@@ -273,9 +274,12 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                     "Sales", -1);
 
             // UserODataの削除
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1", PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest2", PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest3", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1",
+                    PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest2",
+                    PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest3",
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Sales", "srcKey1", PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Sales", "srcKey2", PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Sales", "srcKey3", PersoniumUnitConfig.getMasterToken(), -1);
@@ -291,7 +295,8 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
         String invalidPath = "Sales('srcKey2')/";
         String path3 = "Sales('srcKey3')/_SalesDetail";
         String code = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
-        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("POST " + invalidPath + " HTTP/1.1")
+        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(
+                "POST " + invalidPath + " HTTP/1.1")
                 .getMessage();
 
         String body = START_BOUNDARY + retrievePostBody("Sales", "srcKey1")
@@ -402,8 +407,10 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
                     "Sales", -1);
 
             // UserODataの削除
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1", PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest3", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest1",
+                    PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "npTest3",
+                    PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Sales", "srcKey1", PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Sales", "srcKey2", PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Sales", "srcKey3", PersoniumUnitConfig.getMasterToken(), -1);
@@ -419,7 +426,8 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
         String invalidEntityPath = "Sales('srcKey3')/_InvalidEntity";
         String invalidPath = "Sales('srcKey2')/";
         String code = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.getCode();
-        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params("POST " + invalidPath + " HTTP/1.1")
+        String err = PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(
+                "POST " + invalidPath + " HTTP/1.1")
                 .getMessage();
 
         String body = START_BOUNDARY + retrievePostBody("Sales", "srcKey1")

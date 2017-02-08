@@ -31,13 +31,13 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
@@ -80,7 +80,8 @@ public class UserDataListWithNPTest extends AbstractUserDataWithNP {
                     .statusCode(HttpStatus.SC_BAD_REQUEST)
                     .debug();
         } finally {
-            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_A, "parent", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_A, "parent",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -105,7 +106,8 @@ public class UserDataListWithNPTest extends AbstractUserDataWithNP {
                     .statusCode(HttpStatus.SC_NOT_FOUND)
                     .debug();
         } finally {
-            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_A, "parent", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_A, "parent",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -146,7 +148,8 @@ public class UserDataListWithNPTest extends AbstractUserDataWithNP {
             String nameSpace = getNameSpace(entityTypeName);
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, null);
         } finally {
-            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_A, "parent", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_A, "parent",
+                    PersoniumUnitConfig.getMasterToken(), -1);
 
         }
     }
@@ -168,7 +171,8 @@ public class UserDataListWithNPTest extends AbstractUserDataWithNP {
             String nameSpace = getNameSpace(entityTypeName);
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, null);
         } finally {
-            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_A, "parent", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_A, "parent",
+                    PersoniumUnitConfig.getMasterToken(), -1);
 
         }
     }
@@ -190,7 +194,8 @@ public class UserDataListWithNPTest extends AbstractUserDataWithNP {
             String nameSpace = getNameSpace(entityTypeName);
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, null);
         } finally {
-            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_A, "parent", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_A, "parent",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -211,7 +216,8 @@ public class UserDataListWithNPTest extends AbstractUserDataWithNP {
             String nameSpace = getNameSpace(entityTypeName);
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, null);
         } finally {
-            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_C, "parent", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_C, "parent",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -232,7 +238,8 @@ public class UserDataListWithNPTest extends AbstractUserDataWithNP {
             String nameSpace = getNameSpace(entityTypeName);
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, null);
         } finally {
-            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_B, "parent", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_B, "parent",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -253,7 +260,8 @@ public class UserDataListWithNPTest extends AbstractUserDataWithNP {
             String nameSpace = getNameSpace(entityTypeName);
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, null);
         } finally {
-            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_D, "parent", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_D, "parent",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -274,7 +282,8 @@ public class UserDataListWithNPTest extends AbstractUserDataWithNP {
             String nameSpace = getNameSpace(entityTypeName);
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, null);
         } finally {
-            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_D, "parent", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_D, "parent",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -295,7 +304,8 @@ public class UserDataListWithNPTest extends AbstractUserDataWithNP {
             String nameSpace = getNameSpace(entityTypeName);
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, null);
         } finally {
-            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_C, "parent", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_C, "parent",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -536,7 +546,8 @@ public class UserDataListWithNPTest extends AbstractUserDataWithNP {
             String nameSpace = getNameSpace(entityTypeName);
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), null, nameSpace, null, 0);
         } finally {
-            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_C, "parent", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, ENTITY_TYPE_C, "parent",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 

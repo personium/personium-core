@@ -24,8 +24,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 
 /**
  * JaxRS Resource オブジェクトから処理の委譲を受けてDavのMoveに関する処理を行うクラス.
@@ -114,7 +114,8 @@ public class DavMoveResource extends DavRsCmp {
         // Overwrite ヘッダ
         if (!DavCommon.OVERWRITE_FALSE.equalsIgnoreCase(overwrite)
                 && !DavCommon.OVERWRITE_TRUE.equalsIgnoreCase(overwrite)) {
-            throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(org.apache.http.HttpHeaders.OVERWRITE, overwrite);
+            throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
+                    org.apache.http.HttpHeaders.OVERWRITE, overwrite);
         }
 
         // Destination ヘッダ

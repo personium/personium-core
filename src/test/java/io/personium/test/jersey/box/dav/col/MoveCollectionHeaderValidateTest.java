@@ -25,19 +25,20 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.JerseyTest;
+
 import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * コレクションに対するMOVEメソッドのヘッダー指定に関する妥当性検証を実装するクラス. <br />
@@ -80,7 +81,8 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
             PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException = PersoniumCoreException.Dav.REQUIRED_REQUEST_HEADER_NOT_EXIST.params(
+            PersoniumCoreException expectedException =
+                    PersoniumCoreException.Dav.REQUIRED_REQUEST_HEADER_NOT_EXIST.params(
                     HttpHeaders.DESTINATION);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
         } finally {
@@ -107,7 +109,8 @@ public class MoveCollectionHeaderValidateTest extends JerseyTest {
             PersoniumResponse response = AbstractCase.request(req);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST);
-            PersoniumCoreException expectedException = PersoniumCoreException.Dav.REQUIRED_REQUEST_HEADER_NOT_EXIST.params(
+            PersoniumCoreException expectedException =
+                    PersoniumCoreException.Dav.REQUIRED_REQUEST_HEADER_NOT_EXIST.params(
                     HttpHeaders.DESTINATION, destUrl);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 

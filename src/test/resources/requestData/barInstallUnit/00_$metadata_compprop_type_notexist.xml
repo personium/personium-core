@@ -26,23 +26,23 @@
       </ComplexType>
       <EntityType Name="entity1" OpenType="true">
         <Key>
-          <PropertyRef Name="__id" /> 
+          <PropertyRef Name="__id" />
         </Key>
-        <Property Name="__id" Type="Edm.String" Nullable="false" DefaultValue="UUID()" p:Format="regEx('^[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}$')" /> 
-        <Property Name="__published" Type="Edm.DateTime" Nullable="false" DefaultValue="SYSUTCDATETIME()" Precision="3" /> 
-        <Property Name="__updated" Type="Edm.DateTime" Nullable="false" DefaultValue="SYSUTCDATETIME()" Precision="3" /> 
+        <Property Name="__id" Type="Edm.String" Nullable="false" DefaultValue="UUID()" p:Format="regEx('^[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}$')" />
+        <Property Name="__published" Type="Edm.DateTime" Nullable="false" DefaultValue="SYSUTCDATETIME()" Precision="3" />
+        <Property Name="__updated" Type="Edm.DateTime" Nullable="false" DefaultValue="SYSUTCDATETIME()" Precision="3" />
       </EntityType>
       <EntityType Name="entity2" OpenType="true">
         <Key>
-          <PropertyRef Name="__id" /> 
+          <PropertyRef Name="__id" />
         </Key>
-        <Property Name="__id" Type="Edm.String" Nullable="false" DefaultValue="UUID()" p:Format="regEx('^[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}$')" /> 
-        <Property Name="__published" Type="Edm.DateTime" Nullable="false" DefaultValue="SYSUTCDATETIME()" Precision="3" /> 
-        <Property Name="__updated" Type="Edm.DateTime" Nullable="false" DefaultValue="SYSUTCDATETIME()" Precision="3" /> 
+        <Property Name="__id" Type="Edm.String" Nullable="false" DefaultValue="UUID()" p:Format="regEx('^[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}$')" />
+        <Property Name="__published" Type="Edm.DateTime" Nullable="false" DefaultValue="SYSUTCDATETIME()" Precision="3" />
+        <Property Name="__updated" Type="Edm.DateTime" Nullable="false" DefaultValue="SYSUTCDATETIME()" Precision="3" />
       </EntityType>
       <EntityContainer Name="UserData" m:IsDefaultEntityContainer="true">
-        <EntitySet Name="entity1" EntityType="UserData.entity1" /> 
-        <EntitySet Name="entity2" EntityType="UserData.entity2" /> 
+        <EntitySet Name="entity1" EntityType="UserData.entity1" />
+        <EntitySet Name="entity2" EntityType="UserData.entity2" />
       </EntityContainer>
     </Schema>
   </edmx:DataServices>

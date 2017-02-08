@@ -66,8 +66,8 @@ import org.odata4j.producer.edm.Edm;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.odata.PersoniumJsonFeedFormatParser.JsonEntry;
+import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonEvent;
 import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamReader;
-import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamReader.JsonEvent;
 import io.personium.core.utils.ODataUtils;
 
 /**
@@ -410,8 +410,8 @@ public class PersoniumJsonFormatParser {
             for (NamespacedAnnotation<?> annotation : type.getAnnotations()) {
                 if (localName.equals(annotation.getName())) {
                     String uri = annotation.getNamespace().getUri();
-                    if ((namespaceUri == null && uri == null)
-                            || (namespaceUri != null && namespaceUri.equals(uri))) {
+                    if ((namespaceUri == null && uri == null) //NOPMD -To maintain readability
+                            || (namespaceUri != null && namespaceUri.equals(uri))) { //NOPMD
                         return annotation;
                     }
                 }
