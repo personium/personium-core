@@ -120,8 +120,7 @@ public class CellRsCmp extends DavRsCmp {
             if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
                 ac.throwInvalidTokenException(getAcceptableAuthScheme());
             } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
-                throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(
-                        ac.getRealm(), getAcceptableAuthScheme());
+                throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(), getAcceptableAuthScheme());
             }
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }

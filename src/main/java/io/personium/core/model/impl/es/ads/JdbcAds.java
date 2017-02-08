@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.model.impl.es.DavNode;
 import io.personium.core.model.impl.es.doc.CellDocHandler;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
@@ -1565,8 +1565,7 @@ public class JdbcAds implements Ads {
         static String deleteCellResourceFromEntity =
                 PersoniumCoreUtils.readStringResource("es/ads/delete-cellresource-from-entity.sql", CharEncoding.UTF_8);
         static String deleteCellResourceFromDavNode =
-                PersoniumCoreUtils.readStringResource("es/ads/delete-cellresource-from-davnode.sql",
-                        CharEncoding.UTF_8);
+                PersoniumCoreUtils.readStringResource("es/ads/delete-cellresource-from-davnode.sql", CharEncoding.UTF_8);
         static String deleteCellResourceFromLink =
                 PersoniumCoreUtils.readStringResource("es/ads/delete-cellresource-from-link.sql", CharEncoding.UTF_8);
 

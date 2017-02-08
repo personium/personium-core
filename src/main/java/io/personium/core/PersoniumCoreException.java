@@ -394,8 +394,7 @@ public class PersoniumCoreException extends RuntimeException {
         /**
          * 移動元のリソースとして__srcが指定された場合.
          */
-        public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_MOVE =
-                create("PR400-DV-0011");
+        public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_MOVE = create("PR400-DV-0011");
         /**
          * 移動先のリソースとして、既存のリソースが指定された場合.
          */
@@ -403,8 +402,7 @@ public class PersoniumCoreException extends RuntimeException {
         /**
          * 移動先のリソースとして、ODataコレクション配下のパスが指定された場合.
          */
-        public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION =
-                create("PR400-DV-0013");
+        public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION = create("PR400-DV-0013");
         /**
          * 移動先のリソースとして、ファイル配下のパスが指定された場合.
          */
@@ -416,13 +414,11 @@ public class PersoniumCoreException extends RuntimeException {
         /**
          * 移動先のリソースとして、Serviceコレクション配下のパスが指定された場合.
          */
-        public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION =
-                create("PR400-DV-0016");
+        public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION = create("PR400-DV-0016");
         /**
          * 移動先のリソースとして__srcが指定された場合.
          */
-        public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE =
-                create("PR400-DV-0017");
+        public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE = create("PR400-DV-0017");
         /**
          * 移動元がコレクションで、移動先のリソースとしてサービスソースコレクションが指定された場合.
          */

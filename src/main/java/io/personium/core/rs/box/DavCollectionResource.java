@@ -89,16 +89,14 @@ public final class DavCollectionResource {
      * @return JAX-RS応答オブジェクト
      */
     @DELETE
-    public Response delete(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
+    public Response delete(@HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         boolean recursive = false;
         // X-Personium-Recursive Header
         if (recursiveHeader != null) {
             try {
                 recursive = Boolean.valueOf(recursiveHeader);
             } catch (Exception e) {
-                throw PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
-                        PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+                throw PersoniumCoreException.Misc.PRECONDITION_FAILED.params(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
             }
         }
         // アクセス制御(親の権限をチェックする)

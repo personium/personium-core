@@ -29,6 +29,8 @@ import java.util.regex.Pattern;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import net.spy.memcached.internal.CheckedOperationTimeoutException;
+
 import org.apache.commons.lang.StringUtils;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityKey;
@@ -50,9 +52,9 @@ import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchHits;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.common.es.util.IndexNameEncoder;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.event.EventBus;
@@ -81,7 +83,6 @@ import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
 import io.personium.core.model.lock.CellLockManager;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.utils.UriUtils;
-import net.spy.memcached.internal.CheckedOperationTimeoutException;
 
 /**
  * Cell object implemented using ElasticSearch.
@@ -614,8 +615,7 @@ public final class CellEsImpl implements Cell {
                         continue;
                     }
                     // ExtCell-Roleのリンク情報をすべて見て今回アクセスしてきたセル向けのロールを洗い出す。
-                    PersoniumSearchResponse resExtRoleToRole = serchRoleLinks(
-                            ExtRole.EDM_TYPE_NAME, extRoleHit.getId());
+                    PersoniumSearchResponse resExtRoleToRole = serchRoleLinks(ExtRole.EDM_TYPE_NAME, extRoleHit.getId());
                     if (resExtRoleToRole == null) {
                         continue;
                     }
@@ -967,8 +967,7 @@ public final class CellEsImpl implements Cell {
 
         // 1000件ずつ、WebDavファイルの管理情報件数まで以下を実施する
         int fetchCount = DAVFILE_DEFAULT_FETCH_COUNT;
-        BinaryDataAccessor accessor = new BinaryDataAccessor(
-                PersoniumUnitConfig.getBlobStoreRoot(), unitUserNameWithOutPrefix,
+        BinaryDataAccessor accessor = new BinaryDataAccessor(PersoniumUnitConfig.getBlobStoreRoot(), unitUserNameWithOutPrefix,
                 PersoniumUnitConfig.getPhysicalDeleteMode(), PersoniumUnitConfig.getFsyncEnabled());
         for (int i = 0; i <= davfileCount; i += fetchCount) {
             // WebDavファイルのID一覧を取得する

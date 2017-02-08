@@ -294,13 +294,13 @@ public final class OAuth2Helper {
         /**
          * ownerRepresentativeAccounts.
          */
-        public static final QName PROP_KEY_OWNER_REPRESENTIVE_ACCOUNTS =
-                new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, "ownerRepresentativeAccounts");
+        public static final QName PROP_KEY_OWNER_REPRESENTIVE_ACCOUNTS = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
+                "ownerRepresentativeAccounts");
         /**
          * ownerRepresentativeAccount.
          */
-        public static final QName PROP_KEY_OWNER_REPRESENTIVE_ACCOUNT =
-                new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, "account");
+        public static final QName PROP_KEY_OWNER_REPRESENTIVE_ACCOUNT = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
+                "account");
     }
 
     /**

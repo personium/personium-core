@@ -386,7 +386,7 @@ public final class PersoniumCoreLog {
      * ログの出力.
      * ログの出力時にログ出力元のクラス名、メソッド名、行数を表示する。
      * 出力例）
-     * 2012-09-09 11:23:47.029 [main] [INFO ] CoreLog [io.personium.core.CoreLogTest#test:22] - JSON Parse Error.
+     * 2012-09-09 11:23:47.029 [main] [INFO ] PersoniumCoreLog [io.personium.core.PersoniumCoreLogTest#test:22] - JSON Parse Error.
      */
     public void writeLog() {
 

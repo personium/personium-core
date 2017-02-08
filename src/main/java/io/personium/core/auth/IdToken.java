@@ -214,8 +214,7 @@ public class IdToken {
                 .params("Header and payload should be Base64 encoded JSON.");
     } catch (Exception e) {
             // BASE64が失敗.
-            throw PersoniumCoreAuthnException.OIDC_INVALID_ID_TOKEN.params(
-                    "Header and payload should be Base64 encoded.");
+            throw PersoniumCoreAuthnException.OIDC_INVALID_ID_TOKEN.params("Header and payload should be Base64 encoded.");
         }
         return ret;
     }
@@ -252,8 +251,7 @@ public class IdToken {
             return jsonObj;
         } catch (ClientProtocolException e) {
             // HTTPのプロトコル違反
-            throw PersoniumCoreException.NetWork.UNEXPECTED_RESPONSE.params(
-                    url, "proper HTTP response", status).reason(e);
+            throw PersoniumCoreException.NetWork.UNEXPECTED_RESPONSE.params(url, "proper HTTP response", status).reason(e);
         } catch (IOException e) {
             // サーバーに接続できない場合に発生
             throw PersoniumCoreException.NetWork.HTTP_REQUEST_FAILED.params(HttpGet.METHOD_NAME, url).reason(e);

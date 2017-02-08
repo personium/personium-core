@@ -88,8 +88,7 @@ public class BoxCache {
         obj.put("schema", box.getSchema());
         obj.put("published", box.getPublished());
 
-        getMcdClient().put(cacheKey(box.getName(), box.getCell()),
-                PersoniumUnitConfig.getCacheMemcachedExpiresIn(), obj);
+        getMcdClient().put(cacheKey(box.getName(), box.getCell()), PersoniumUnitConfig.getCacheMemcachedExpiresIn(), obj);
     }
 
     /**

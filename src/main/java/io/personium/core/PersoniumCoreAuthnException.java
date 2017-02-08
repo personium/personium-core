@@ -50,13 +50,11 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     /**
      * Client Secret パースエラー.
      */
-    public static final PersoniumCoreAuthnException CLIENT_SECRET_PARSE_ERROR =
-            create("PR400-AN-0003", Error.INVALID_CLIENT);
+    public static final PersoniumCoreAuthnException CLIENT_SECRET_PARSE_ERROR = create("PR400-AN-0003", Error.INVALID_CLIENT);
     /**
      * Client Secret 有効期限チェック.
      */
-    public static final PersoniumCoreAuthnException CLIENT_SECRET_EXPIRED =
-            create("PR400-AN-0004", Error.INVALID_CLIENT);
+    public static final PersoniumCoreAuthnException CLIENT_SECRET_EXPIRED = create("PR400-AN-0004", Error.INVALID_CLIENT);
     /**
      * Client Secret 署名検証をエラー.
      */
@@ -102,8 +100,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     /**
      * 権限がないから昇格できない.
      */
-    public static final PersoniumCoreAuthnException NOT_ALLOWED_REPRESENT_OWNER =
-            create("PR400-AN-0014", Error.INVALID_GRANT);
+    public static final PersoniumCoreAuthnException NOT_ALLOWED_REPRESENT_OWNER = create("PR400-AN-0014", Error.INVALID_GRANT);
     /**
      * オーナーがいないセルは昇格できない.
      */
@@ -112,8 +109,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
      * 必須パラメータが無い.
      * {0}:パラメータキー名
      */
-    public static final PersoniumCoreAuthnException REQUIRED_PARAM_MISSING =
-            create("PR400-AN-0016", Error.INVALID_REQUEST);
+    public static final PersoniumCoreAuthnException REQUIRED_PARAM_MISSING = create("PR400-AN-0016", Error.INVALID_REQUEST);
     /**
      * 認証エラー.
      */
@@ -121,8 +117,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     /**
      * 認証ヘッダの指定誤り.
      */
-    public static final PersoniumCoreAuthnException AUTH_HEADER_IS_INVALID =
-            create("PR400-AN-0018", Error.INVALID_CLIENT);
+    public static final PersoniumCoreAuthnException AUTH_HEADER_IS_INVALID = create("PR400-AN-0018", Error.INVALID_CLIENT);
     /**
      * Accountロック中.
      */
@@ -138,13 +133,11 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     /**
      * 無効なIDToken.
      */
-    public static final PersoniumCoreAuthnException OIDC_INVALID_ID_TOKEN =
-            create("PR400-AN-0032", Error.INVALID_GRANT);
+    public static final PersoniumCoreAuthnException OIDC_INVALID_ID_TOKEN = create("PR400-AN-0032", Error.INVALID_GRANT);
     /**
      * IDTokenの有効期限切れ.
      */
-    public static final PersoniumCoreAuthnException OIDC_EXPIRED_ID_TOKEN =
-            create("PR400-AN-0033", Error.INVALID_GRANT);
+    public static final PersoniumCoreAuthnException OIDC_EXPIRED_ID_TOKEN = create("PR400-AN-0033", Error.INVALID_GRANT);
 
     /**
      * インナークラスを強制的にロードする.
@@ -182,8 +175,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
      */
     public PersoniumCoreAuthnException realm(String realm2set) {
         // クローンを作成
-        return new PersoniumCoreAuthnException(this.code, this.severity, this.message, this.status,
-                this.error, realm2set);
+        return new PersoniumCoreAuthnException(this.code, this.severity, this.message, this.status, this.error, realm2set);
     }
 
     @SuppressWarnings("unchecked")

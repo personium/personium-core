@@ -61,7 +61,7 @@ public interface PersoniumODataProducer extends ODataProducer {
      * @param originalKey 更新対象キー
      * @param oEntityWrapper データ（更新後キーも含む）
      */
-    void updateEntity(String entitySetName, OEntityKey originalKey, OEntityWrapper oEntityWrapper);
+    void updateEntity(final String entitySetName, final OEntityKey originalKey, final OEntityWrapper oEntityWrapper);
 
     /**
      * Accountのパスワード変更.
@@ -69,7 +69,7 @@ public interface PersoniumODataProducer extends ODataProducer {
      * @param originalKey 更新対象キー
      * @param pCredHeader dcCredHeader
      */
-    void updatePassword(EdmEntitySet entitySetName, OEntityKey originalKey, String pCredHeader);
+    void updatePassword(final EdmEntitySet entitySetName, final OEntityKey originalKey, final String pCredHeader);
 
     /**
      * Accountの最終ログイン時刻変更.
@@ -77,7 +77,7 @@ public interface PersoniumODataProducer extends ODataProducer {
      * @param originalKey 更新対象キー
      * @param accountId アカウントのID
      */
-    void updateLastAuthenticated(EdmEntitySet entitySetName, OEntityKey originalKey, String accountId);
+    void updateLastAuthenticated(final EdmEntitySet entitySetName, final OEntityKey originalKey, String accountId);
 
     /**
      * ETag・主キー変更対応のEntity MERGE.
@@ -85,7 +85,7 @@ public interface PersoniumODataProducer extends ODataProducer {
      * @param originalKey 更新対象キー
      * @param oEntityWrapper データ（更新後キーも含む）
      */
-    void mergeEntity(String entitySetName, OEntityKey originalKey, OEntityWrapper oEntityWrapper);
+    void mergeEntity(final String entitySetName, final OEntityKey originalKey, final OEntityWrapper oEntityWrapper);
 
     /**
      * ETag対応のEntity削除.

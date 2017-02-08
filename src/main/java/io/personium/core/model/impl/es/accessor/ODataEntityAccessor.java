@@ -60,8 +60,7 @@ public class ODataEntityAccessor extends AbstractEntitySetAccessor {
                     try {
                         getAds().createEntity(indexName, docHandler);
                     } catch (AdsException e1) {
-                        PersoniumCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(
-                                e1.getMessage()).reason(e1).writeLog();
+                        PersoniumCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e1.getMessage()).reason(e1).writeLog();
 
                         // Adsの登録に失敗した場合は、専用のログに書込む
                         String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,

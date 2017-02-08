@@ -37,11 +37,11 @@ import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.ads.AdsWriteFailureLogWriter;
 import io.personium.common.ads.RollingAdsWriteFailureLog;
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.EsClientException;
 import io.personium.common.es.response.PersoniumSearchHits;
 import io.personium.common.es.response.PersoniumSearchResponse;
-import io.personium.core.PersoniumCoreException;
+import io.personium.common.es.response.EsClientException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
 import io.personium.core.model.impl.es.ads.AdsException;
 import io.personium.core.model.lock.Lock;
@@ -371,8 +371,7 @@ public class RepairAds {
                         lock = lock(lockKey);
                     } catch (PersoniumCoreException e) {
                         if (e.getCode().equals(PersoniumCoreException.Server.GET_LOCK_STATE_ERROR.getCode())
-                                || e.getCode().equals(
-                                        PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.getCode())) {
+                                || e.getCode().equals(PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.getCode())) {
                             // 全体を異常終了させる
                             throw e;
                         } else {
@@ -399,8 +398,7 @@ public class RepairAds {
                         indexName = PersoniumUnitConfig.getEsUnitPrefix() + "_" + EsIndex.CATEGORY_AD;
                     }
                     // ES/ADSへの検索は、一括検索ができるようなAPIを使用しているが、今のところは1件ずつ処理することを前提としている。
-                    PersoniumSearchResponse esResponse = EsAccessor.search(
-                            indexName, routingId, idList, logInfo.getType());
+                    PersoniumSearchResponse esResponse = EsAccessor.search(indexName, routingId, idList, logInfo.getType());
                     List<JSONObject> adsResponse = AdsAccessor.getIdListOnAds(logInfo);
                     repairToAds(logInfo, esResponse, adsResponse);
                 } catch (EsClientException e) {

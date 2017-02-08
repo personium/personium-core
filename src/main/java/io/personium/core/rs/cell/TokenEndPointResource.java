@@ -61,10 +61,10 @@ import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthnException;
-import io.personium.core.PersoniumCoreException;
-import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumUnitConfig.OIDC;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumCoreLog;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.IdToken;
@@ -75,8 +75,8 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
-import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.utils.UriUtils;
 
 /**
@@ -320,8 +320,7 @@ public class TokenEndPointResource {
         // トークンのターゲットが自分でない場合はエラー応答
         try {
             if (!(AuthResourceUtils.checkTargetUrl(this.cell, tcToken))) {
-                throw PersoniumCoreAuthnException.TOKEN_TARGET_WRONG.realm(
-                        this.cell.getUrl()).params(tcToken.getTarget());
+                throw PersoniumCoreAuthnException.TOKEN_TARGET_WRONG.realm(this.cell.getUrl()).params(tcToken.getTarget());
             }
         } catch (MalformedURLException e) {
             throw PersoniumCoreAuthnException.TOKEN_TARGET_WRONG.realm(this.cell.getUrl()).params(tcToken.getTarget());
@@ -659,8 +658,7 @@ public class TokenEndPointResource {
         // Account があるけどTypeにOidCが含まれていない
         if (!AuthUtils.isAccountTypeOidcGoogle(idTokenUserOew)) {
             //アカウントの存在確認に悪用されないように、失敗の旨のみのエラー応答
-            PersoniumCoreLog.OIDC.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(
-                    Account.TYPE_VALUE_OIDC_GOOGLE, mail).writeLog();
+            PersoniumCoreLog.OIDC.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(Account.TYPE_VALUE_OIDC_GOOGLE, mail).writeLog();
             throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
         }
 
