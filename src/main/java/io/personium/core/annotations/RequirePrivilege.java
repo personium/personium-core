@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
 public @interface RequirePrivilege {
     /**
      * Privilege required for method invocation.
-     * @return value // CHECKSTYLE IGNORE -Required javadoc
+     * @return value.
      */
     String value();
 }

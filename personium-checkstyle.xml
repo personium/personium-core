@@ -84,7 +84,6 @@
     </module>
     <module name="TodoComment"/>
     <module name="UpperEll"/>
-    <module name="FileContentsHolder"/>
   </module>
   <module name="JavadocPackage"/>
   <module name="NewlineAtEndOfFile"/>
@@ -111,10 +110,5 @@
   </module>
   <module name="SuppressionFilter">
     <property name="file" value="${project_loc}/checkstyle-suppressions.xml"/>
-  </module>
-  <module name="SuppressWithNearbyCommentFilter">
-    <property name="commentFormat" value="CHECKSTYLE IGNORE"/>
-    <property name="checkFormat" value=".*"/>
-    <property name="influenceFormat" value="0"/>
   </module>
 </module>

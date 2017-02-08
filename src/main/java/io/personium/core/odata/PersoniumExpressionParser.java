@@ -1038,7 +1038,7 @@ public class PersoniumExpressionParser {
     private static int readQuotedString(String value, int start) {
         int rt = start;
         while (value.charAt(rt) != '\'' //NOPMD -To maintain readability
-                || (rt < value.length() - 1 && value.charAt(rt + 1) == '\'')) { //NOPMD
+                || (rt < value.length() - 1 && value.charAt(rt + 1) == '\'')) {
             if (value.charAt(rt) != '\'') {
                 rt++;
             } else {

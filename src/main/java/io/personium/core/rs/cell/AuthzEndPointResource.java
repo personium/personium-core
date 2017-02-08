@@ -231,7 +231,7 @@ public class AuthzEndPointResource {
             this.checkImplicitParam(normalizedClientId, normalizedRedirectUri, uriInfo.getBaseUri());
         } catch (PersoniumCoreException e) {
             log.debug(e.getMessage());
-            if ((username == null && password == null) //NOPMD -To maintain readability
+            if ((username == null && password == null)
                     && (assertion == null || "".equals(assertion))
                     && cookieRefreshToken == null) {
                 // ユーザID・パスワード・assertion・cookieが未指定の場合、フォーム送信
