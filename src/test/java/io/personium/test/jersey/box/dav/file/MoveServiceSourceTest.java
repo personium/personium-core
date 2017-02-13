@@ -16,6 +16,9 @@
  */
 package io.personium.test.jersey.box.dav.file;
 
+import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpHeaders;
@@ -27,23 +30,21 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import io.personium.core.PersoniumUnitConfig;
+import com.sun.jersey.test.framework.JerseyTest;
+
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
-
-import static org.fest.assertions.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 
 /**
  * ServiceSourceのMOVEのテスト.
@@ -180,7 +181,8 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_FORBIDDEN);
-            PersoniumCoreException expectedException = PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destination);
+            PersoniumCoreException expectedException =
+                    PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destination);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {

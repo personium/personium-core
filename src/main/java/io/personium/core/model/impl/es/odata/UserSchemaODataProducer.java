@@ -49,8 +49,8 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchResponse;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.ModelFactory;
@@ -75,9 +75,9 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyUpdateDocHandler;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker.CheckError;
+import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.PersoniumOptionsQueryParser;
-import io.personium.core.odata.OEntityWrapper;
 
 /**
  * ユーザデータスキーマのODataサービスむけODataProvider.
@@ -449,7 +449,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
             // 検索して０件であることを確認する;
             CountResponse cr = getNavPropertyCount(from.getType().getName(), entityKey, to.getType().getName(),
                     query);
-            return (cr.getCount() > 0);
+            return cr.getCount() > 0;
         }
         return false;
     }
@@ -707,9 +707,9 @@ public class UserSchemaODataProducer extends EsODataProducer {
         // Typeプロパティは以下の場合のみ許容する
         // - INT32からDoubleへの変更
         // - 値の変更なし
-        return (EdmSimpleType.INT32.getFullyQualifiedTypeName().equals(existingType)
+        return (EdmSimpleType.INT32.getFullyQualifiedTypeName().equals(existingType) //NOPMD -To maintain readability
                 && EdmSimpleType.DOUBLE.getFullyQualifiedTypeName().equals(requestType))
-                || (null != requestType && requestType.equals(existingType));
+                || null != requestType && requestType.equals(existingType);
     }
 
     /**
@@ -721,8 +721,8 @@ public class UserSchemaODataProducer extends EsODataProducer {
      * @return true or false
      */
     private boolean isStaticFieldValueChanged(String requestKey, Object requestValue, Object existingValue) {
-        return (null == requestValue && null != existingValue)
-                || (null != requestValue && !requestKey.equals(Property.P_TYPE.getName())
+        return (null == requestValue && null != existingValue) //NOPMD -To maintain readability
+                || (null != requestValue && !requestKey.equals(Property.P_TYPE.getName()) //NOPMD
                         && !requestKey.equals(Property.P_NAME.getName())
                 && !requestValue.equals(existingValue));
     }

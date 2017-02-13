@@ -26,7 +26,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.model.jaxb.Ace;
 import io.personium.core.model.jaxb.Acl;
 import io.personium.core.model.jaxb.ObjectIo;
@@ -50,7 +49,6 @@ public class TestMethodUtils {
      */
     public static void aclResponseTest(Element doc, String resorce,
             List<Map<String, List<String>>> list, int responseIndex, String baseUrl, String requireSchamaAuthz) {
-        String xmlStr = PersoniumCoreUtils.nodeToString(doc);
         NodeList response = doc.getElementsByTagName("response");
         assertEquals(responseIndex, response.getLength());
         Element node = (Element) response.item(0);

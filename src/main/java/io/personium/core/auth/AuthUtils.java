@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.CharEncoding;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.OEntityWrapper;
 
@@ -79,8 +79,8 @@ public final class AuthUtils {
     public static String checkValidatePassword(final String pCredHeader, String entitySetName) {
         if (Account.EDM_TYPE_NAME.equals(entitySetName)) {
             if (pCredHeader != null) {
-                if ((pCredHeader.length() >= MIN_PASSWORD_LENGTH)
-                        && (pCredHeader.length() <= MAX_PASSWORD_LENGTH)) {
+                if (pCredHeader.length() >= MIN_PASSWORD_LENGTH
+                        && pCredHeader.length() <= MAX_PASSWORD_LENGTH) {
                     String regex = "^[a-zA-Z0-9-_]{0,}$";
                     Pattern pattern = Pattern.compile(regex);
                     Matcher m = pattern.matcher(pCredHeader);

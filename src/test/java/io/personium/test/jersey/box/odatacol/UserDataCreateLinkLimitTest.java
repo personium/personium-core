@@ -34,12 +34,15 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.PersoniumUnitConfig;
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.AssociationEndUtils;
 import io.personium.test.utils.BoxUtils;
@@ -49,8 +52,6 @@ import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * UserDataのlink登録の上限値テスト. たくさんデータを登録するので、「Integration.class, Regression.class」では動作しない。
@@ -246,7 +247,8 @@ public class UserDataCreateLinkLimitTest extends JerseyTest {
                     targetEntityTypeName, id, HttpStatus.SC_BAD_REQUEST);
 
             // エラーメッセージのチェック
-            ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getCode(),
+            ODataCommon.checkErrorResponseBody(res,
+                    PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getCode(),
                     PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getMessage());
 
             // 登録済み件数が増加していないことのチェック
@@ -270,7 +272,8 @@ public class UserDataCreateLinkLimitTest extends JerseyTest {
                     srcEntityTypeName, srcId, HttpStatus.SC_BAD_REQUEST);
 
             // エラーメッセージのチェック
-            ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getCode(),
+            ODataCommon.checkErrorResponseBody(res,
+                    PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getCode(),
                     PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED.getMessage());
 
             // 登録済み件数が増加していないことのチェック

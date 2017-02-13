@@ -36,7 +36,7 @@ public abstract class ReadDeleteModeLockManager extends LockManager {
     public static boolean isReadDeleteOnlyMode() {
         try {
             String response = singleton.doGetReadDeleteOnlyMode(LOCK_KEY);
-            return (response != null);
+            return response != null;
         } catch (MemcachedClientException e) {
             throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
         }

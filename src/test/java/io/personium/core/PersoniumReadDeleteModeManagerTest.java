@@ -31,6 +31,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.model.lock.ReadDeleteModeLockManager;
 
 /**
@@ -83,7 +84,7 @@ public class PersoniumReadDeleteModeManagerTest {
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
         try {
             PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(
-                    io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND, pathSegment);
+                    PersoniumCoreUtils.HttpMethod.PROPFIND, pathSegment);
         } catch (PersoniumCoreException e) {
             fail(e.getMessage());
         }
@@ -170,7 +171,7 @@ public class PersoniumReadDeleteModeManagerTest {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
-        PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MERGE,
+        PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(PersoniumCoreUtils.HttpMethod.MERGE,
                 pathSegment);
     }
 
@@ -183,7 +184,7 @@ public class PersoniumReadDeleteModeManagerTest {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
-        PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MKCOL,
+        PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(PersoniumCoreUtils.HttpMethod.MKCOL,
                 pathSegment);
     }
 
@@ -196,7 +197,7 @@ public class PersoniumReadDeleteModeManagerTest {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
-        PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH,
+        PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(PersoniumCoreUtils.HttpMethod.PROPPATCH,
                 pathSegment);
     }
 
@@ -209,7 +210,7 @@ public class PersoniumReadDeleteModeManagerTest {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
-        PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.ACL,
+        PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(PersoniumCoreUtils.HttpMethod.ACL,
                 pathSegment);
     }
 
@@ -255,7 +256,7 @@ public class PersoniumReadDeleteModeManagerTest {
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(false);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
         try {
-            PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MERGE,
+            PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(PersoniumCoreUtils.HttpMethod.MERGE,
                     pathSegment);
         } catch (PersoniumCoreException e) {
             fail(e.getMessage());
@@ -272,7 +273,7 @@ public class PersoniumReadDeleteModeManagerTest {
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(false);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
         try {
-            PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MKCOL,
+            PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(PersoniumCoreUtils.HttpMethod.MKCOL,
                     pathSegment);
         } catch (PersoniumCoreException e) {
             fail(e.getMessage());
@@ -290,7 +291,7 @@ public class PersoniumReadDeleteModeManagerTest {
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
         try {
             PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(
-                    io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH, pathSegment);
+                    PersoniumCoreUtils.HttpMethod.PROPPATCH, pathSegment);
         } catch (PersoniumCoreException e) {
             fail(e.getMessage());
         }
@@ -306,7 +307,7 @@ public class PersoniumReadDeleteModeManagerTest {
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(false);
         List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "box", "odata", "entity" });
         try {
-            PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.ACL,
+            PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(PersoniumCoreUtils.HttpMethod.ACL,
                     pathSegment);
         } catch (PersoniumCoreException e) {
             fail(e.getMessage());

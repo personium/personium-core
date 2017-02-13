@@ -34,8 +34,8 @@ import javax.ws.rs.OPTIONS;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.StreamingOutput;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -57,7 +57,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
 import io.personium.common.auth.token.Role;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthzException;
@@ -71,9 +70,9 @@ import io.personium.core.model.jaxb.Acl;
 import io.personium.core.model.jaxb.ObjectIo;
 import io.personium.core.rs.box.DavCollectionResource;
 import io.personium.core.rs.box.DavFileResource;
-import io.personium.core.rs.box.PersoniumEngineSvcCollectionResource;
 import io.personium.core.rs.box.NullResource;
 import io.personium.core.rs.box.ODataSvcCollectionResource;
+import io.personium.core.rs.box.PersoniumEngineSvcCollectionResource;
 import io.personium.core.utils.ResourceUtils;
 
 /**
@@ -213,7 +212,7 @@ public class DavRsCmp {
     public final ResponseBuilder get(final String ifNoneMatch, final String rangeHeaderField) {
         // return "Not-Modified" if "If-None-Match" header matches.
         if (matchesETag(ifNoneMatch)) {
-            return javax.ws.rs.core.Response.notModified().header(HttpHeaders.ETAG, this.davCmp.getEtag());
+            return Response.notModified().header(HttpHeaders.ETAG, this.davCmp.getEtag());
         }
         return this.davCmp.get(rangeHeaderField);
     }
@@ -282,12 +281,6 @@ public class DavRsCmp {
             }
             String collectionUrl = reqUri.substring(0, resourcePos);
             reqUri = collectionUrl + "/" + resourceName;
-        }
-
-        String[] paths = reqUri.split("/");
-        String nm = "";
-        if (paths.length > 0) {
-            nm = paths[paths.length - 1];
         }
 
         // 実際の処理
@@ -624,25 +617,6 @@ public class DavRsCmp {
         }
         Element e = doc.getDocumentElement();
         return e;
-    }
-    /**
-     * PROPFINDのACL内のxml:base値を生成します.
-     * @return
-     */
-    private String createBaseUrlStr() {
-        String result = null;
-        if (!this.davCmp.isCellLevel()) {
-            // Boxレベル以下のACLの場合、BoxリソースのURL
-            // セルURLは連結でスラッシュつけてるので、URLの最後がスラッシュだったら消す。
-            result = String.format(Role.ROLE_RESOURCE_FORMAT, this.davCmp.getCell().getUrl().replaceFirst("/$", ""),
-                    this.davCmp.getBox().getName(), "");
-        } else {
-            // Cellレベル以下のACLの場合、デフォルトBoxのリソースURL
-            // セルURLは連結でスラッシュつけてるので、URLの最後がスラッシュだったら消す。
-            result = String.format(Role.ROLE_RESOURCE_FORMAT, this.davCmp.getCell().getUrl().replaceFirst("/$", ""),
-                    Box.DEFAULT_BOX_NAME, "");
-        }
-        return result;
     }
 
 }
