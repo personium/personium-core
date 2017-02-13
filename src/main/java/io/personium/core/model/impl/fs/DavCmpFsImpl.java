@@ -593,7 +593,7 @@ public class DavCmpFsImpl implements DavCmp {
         }
 
         // 指定etagがあり、かつそれが*ではなく内部データから導出されるものと異なるときはエラー
-        if (etag != null && !"*".equals(etag) && !this.getEtag().equals(etag)) {
+        if (etag != null && !"*".equals(etag) && !matchesETag(etag)) {
             throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;
         }
 
@@ -819,7 +819,7 @@ public class DavCmpFsImpl implements DavCmp {
                 throw getNotFoundException().params(this.getUrl());
             }
             // 指定etagがあり、かつそれが*ではなく内部データから導出されるものと異なるときはエラー
-            if (etag != null && !"*".equals(etag) && !this.getEtag().equals(etag)) {
+            if (etag != null && !"*".equals(etag) && !matchesETag(etag)) {
                 throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;
             }
 
@@ -897,7 +897,7 @@ public class DavCmpFsImpl implements DavCmp {
     @Override
     public final ResponseBuilder delete(final String ifMatch, boolean recursive) {
         // 指定etagがあり、かつそれが*ではなく内部データから導出されるものと異なるときはエラー
-        if (ifMatch != null && !"*".equals(ifMatch) && !this.getEtag().equals(ifMatch)) {
+        if (ifMatch != null && !"*".equals(ifMatch) && !matchesETag(ifMatch)) {
             throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;
         }
         // ロック
@@ -1091,6 +1091,21 @@ public class DavCmpFsImpl implements DavCmp {
             result = String.format(ACL_RELATIVE_PATH_FORMAT, roloResourceUrl.getBoxName(), roloResourceUrl.getName());
         }
         return result;
+    }
+
+    /**
+     * It judges whether the given string matches the stored Etag.<br>
+     * Do not distinguish between Etag and WEtag (Issue #5).
+     * @param etag string
+     * @return true if given string matches  the stored Etag
+     */
+    private boolean matchesETag(String etag) {
+        if (etag == null) {
+            return false;
+        }
+        String storedEtag = this.getEtag();
+        String weakEtag = "W/" +  storedEtag;
+        return etag.equals(storedEtag) || etag.equals(weakEtag);
     }
 
     static final String KEY_SCHEMA = "Schema";
