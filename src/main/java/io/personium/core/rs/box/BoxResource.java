@@ -226,7 +226,7 @@ public final class BoxResource {
     @SuppressWarnings("unchecked")
     private JSONObject createNotRequestedResponse() {
         JSONObject response = new JSONObject();
-        response.put("status", ProgressInfo.STATUS.COMPLETED.value());
+        response.put("customStatus", ProgressInfo.STATUS.COMPLETED.value());
         response.put("schema", this.getBox().getSchema());
 
         SimpleDateFormat sdfIso8601ExtendedFormatUtc = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -247,13 +247,13 @@ public final class BoxResource {
         response.remove("cell_id");
         response.remove("box_id");
         response.put("schema", this.getBox().getSchema());
-        ProgressInfo.STATUS status = ProgressInfo.STATUS.valueOf((String) values.get("status"));
+        ProgressInfo.STATUS status = ProgressInfo.STATUS.valueOf((String) values.get("customStatus"));
         if (status == ProgressInfo.STATUS.COMPLETED) {
             response.remove("progress");
             String startedAt = (String) response.remove("started_at");
             response.put("installed_at", startedAt);
         }
-        response.put("status", status.value());
+        response.put("customStatus", status.value());
         return response;
     }
 

@@ -40,7 +40,7 @@ public interface ProgressInfo {
 
         /**
          * コンストラクタ.
-         * @param message メッセージ
+         * @param customMessage メッセージ
          */
         STATUS(String message) {
             this.message = message;

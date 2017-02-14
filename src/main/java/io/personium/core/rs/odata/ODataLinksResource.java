@@ -105,7 +105,7 @@ public final class ODataLinksResource {
      * POSTメソッドを受けて linkを作成する.
      * 成功時のレスポンスは204.特に記述が無いためLocationヘッダは返さない。
      * InsertLink Request
-     * If an InsertLink Request is successful, the response MUST have a 204 status code,
+     * If an InsertLink Request is successful, the response MUST have a 204 customStatus code,
      * as specified in [RFC2616], and contain an empty response body.
      * @param uriInfo UriInfo
      * @param reqBody リクエストボディ

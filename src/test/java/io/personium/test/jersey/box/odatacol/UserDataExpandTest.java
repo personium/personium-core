@@ -1283,7 +1283,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
      * @param baseEntity ベース側EntitySet名
      * @param expands $expandクエリの値
      * @param top $topの値
-     * @param status ステータスコード
+     * @param customStatus ステータスコード
      * @return レスポンス
      */
     private TResponse listUserODataWithExpand(String cell, String box,

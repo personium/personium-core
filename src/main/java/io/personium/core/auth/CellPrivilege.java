@@ -55,11 +55,11 @@ public final class CellPrivilege extends Privilege {
     /**
      * ReceivedMessage, SentMessage グループ操作権限.
      */
-    public static final CellPrivilege MESSAGE = new CellPrivilege("message", ROOT);
+    public static final CellPrivilege MESSAGE = new CellPrivilege("customMessage", ROOT);
     /**
      * MESSAGEグループ read権限.
      */
-    public static final CellPrivilege MESSAGE_READ = new CellPrivilege("message-read", MESSAGE);
+    public static final CellPrivilege MESSAGE_READ = new CellPrivilege("customMessage-read", MESSAGE);
     /**
      * event, log グループ操作権限.
      */

@@ -319,7 +319,7 @@ public final class PersoniumCoreLog {
     /**
      * コンストラクタ.
      * @param severityエラーレベル
-     * @param message エラーメッセージ
+     * @param customMessage エラーメッセージ
      */
     PersoniumCoreLog(final String code,
             final Severity severity,

@@ -115,7 +115,7 @@ public class CollectionTest extends JerseyTest {
             assertEquals(tresponse.getBody(), tresponseAll.getBody());
 
             // BodyXMLからの要素取得
-            String status1 = getXmlNodeValue(tresponse.bodyAsXml(), "status");
+            String status1 = getXmlNodeValue(tresponse.bodyAsXml(), "customStatus");
             assertEquals("HTTP/1.1 200 OK", status1);
 
             // webDAVの仕様とのマッチ
@@ -278,7 +278,7 @@ public class CollectionTest extends JerseyTest {
             assertEquals(tresponse.getBody(), tresponseAll.getBody());
 
             // BodyXMLからの要素取得
-            String status1 = getXmlNodeValue(tresponse.bodyAsXml(), "status");
+            String status1 = getXmlNodeValue(tresponse.bodyAsXml(), "customStatus");
             assertEquals("HTTP/1.1 200 OK", status1);
 
             // webDAVの仕様とのマッチ
@@ -340,7 +340,7 @@ public class CollectionTest extends JerseyTest {
             assertEquals(tresponse.getBody(), tresponseAll.getBody());
 
             // BodyXMLからの要素取得
-            String status1 = getXmlNodeValue(tresponse.bodyAsXml(), "status");
+            String status1 = getXmlNodeValue(tresponse.bodyAsXml(), "customStatus");
             assertEquals("HTTP/1.1 200 OK", status1);
 
             // webDAVの仕様とのマッチ
@@ -882,7 +882,7 @@ public class CollectionTest extends JerseyTest {
             assertEquals(1, hrefchildren.getLength());
             String hrefResult = (hrefchildren.item(0)).getFirstChild().getNodeValue();
             if (hrefResult.equals(resorce)) {
-                NodeList statuschild = resourcetype.getElementsByTagName("status");
+                NodeList statuschild = resourcetype.getElementsByTagName("customStatus");
                 assertNotNull(statuschild);
                 assertEquals(1, statuschild.getLength());
                 statusResult = (statuschild.item(0)).getFirstChild().getNodeValue();
@@ -1754,7 +1754,7 @@ public class CollectionTest extends JerseyTest {
                 node.getElementsByTagName("href").item(0).getFirstChild().getNodeValue());
         assertEquals(
                 "HTTP/1.1 200 OK",
-                node.getElementsByTagName("status").item(0).getFirstChild().getNodeValue());
+                node.getElementsByTagName("customStatus").item(0).getFirstChild().getNodeValue());
 
         for (Iterator<String> it = map.keySet().iterator(); it.hasNext();) {
             Object key = it.next();
@@ -1791,7 +1791,7 @@ public class CollectionTest extends JerseyTest {
                 node.getElementsByTagName("href").item(0).getFirstChild().getNodeValue());
         assertEquals(
                 "HTTP/1.1 200 OK",
-                node.getElementsByTagName("status").item(0).getFirstChild().getNodeValue());
+                node.getElementsByTagName("customStatus").item(0).getFirstChild().getNodeValue());
 
         String lapNameFlg = null;
         NodeList tmp = node.getElementsByTagName("prop").item(0).getChildNodes();

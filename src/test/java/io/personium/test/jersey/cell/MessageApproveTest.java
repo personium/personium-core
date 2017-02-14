@@ -75,7 +75,7 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);
@@ -162,7 +162,7 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);
@@ -228,7 +228,7 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);

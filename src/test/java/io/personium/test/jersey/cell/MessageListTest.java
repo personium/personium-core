@@ -49,7 +49,7 @@ public class MessageListTest extends ODataCommon {
 
     static final String TEST_CELL1 = Setup.TEST_CELL1;
 
-    static final String MESSAGE = "message";
+    static final String MESSAGE = "customMessage";
     static final String REQ_RELATION_BUILD = "req.relation.build";
     static final String REQ_RELATION_BREAK = "req.relation.break ";
 

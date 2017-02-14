@@ -83,7 +83,7 @@ public abstract class CellLockManager extends LockManager {
      * 指定した初期値でセルの処理ステータスを設定する.
      * ステータスに「0:通常」を指定した場合は設定済みのステータスオブジェクトを削除する.
      * @param cellId 対象のセルID
-     * @param status 処理ステータス (0:通常 1:一括削除処理中)
+     * @param customStatus 処理ステータス (0:通常 1:一括削除処理中)
      * @return 設定後の処理ステータス
      */
     private static Boolean setCellStatus(String cellId, long status) {

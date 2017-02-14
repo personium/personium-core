@@ -42,7 +42,7 @@ public class ReceivedMessage {
     public static final String EDM_NPNAME_FOR_ACCOUNT = "_AccountRead";
 
     /** タイプ メッセージ. */
-    public static final String TYPE_MESSAGE = "message";
+    public static final String TYPE_MESSAGE = "customMessage";
     /** タイプ 関係登録. */
     public static final String TYPE_REQ_RELATION_BUILD = "req.relation.build";
     /** タイプ 関係削除. */

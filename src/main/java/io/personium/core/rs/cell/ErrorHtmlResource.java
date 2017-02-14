@@ -62,7 +62,7 @@ public class ErrorHtmlResource {
 
     /**
      * returns HTML string for error code.
-     * @param code message code
+     * @param code customMessage code
      * @return HTML string
      */
     private String htmlForCode(String code) {

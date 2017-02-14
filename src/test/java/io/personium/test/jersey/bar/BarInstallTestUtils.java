@@ -240,7 +240,7 @@ public class BarInstallTestUtils {
      * barファイルインストール（非同期）の完了まで待ってからステータスを検証する.
      * @param location barファイルインストール状況確認APIのURL
      * @param schemaUrl スキーマURL
-     * @param status 期待するステータス
+     * @param customStatus 期待するステータス
      */
     public static void assertBarInstallStatus(String location, String schemaUrl, ProgressInfo.STATUS status) {
         waitBoxInstallCompleted(location);
@@ -248,17 +248,17 @@ public class BarInstallTestUtils {
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
         JSONObject bodyJson = (JSONObject) ((JSONObject) res.bodyAsJson());
 
-        assertEquals(status.value(), bodyJson.get("status"));
+        assertEquals(status.value(), bodyJson.get("customStatus"));
         assertEquals(schemaUrl, bodyJson.get("schema"));
         if (ProgressInfo.STATUS.FAILED == status) {
             assertNotNull(bodyJson.get("started_at"));
             assertNull(bodyJson.get("installed_at"));
             assertNotNull(bodyJson.get("progress"));
-            assertNotNull(bodyJson.get("message"));
-            assertNotNull(((JSONObject) bodyJson.get("message")).get("code"));
-            assertNotNull(((JSONObject) bodyJson.get("message")).get("message"));
-            assertNotNull(((JSONObject) ((JSONObject) bodyJson.get("message")).get("message")).get("value"));
-            assertNotNull(((JSONObject) ((JSONObject) bodyJson.get("message")).get("message")).get("lang"));
+            assertNotNull(bodyJson.get("customMessage"));
+            assertNotNull(((JSONObject) bodyJson.get("customMessage")).get("code"));
+            assertNotNull(((JSONObject) bodyJson.get("customMessage")).get("customMessage"));
+            assertNotNull(((JSONObject) ((JSONObject) bodyJson.get("customMessage")).get("customMessage")).get("value"));
+            assertNotNull(((JSONObject) ((JSONObject) bodyJson.get("customMessage")).get("customMessage")).get("lang"));
         } else {
             assertNull(bodyJson.get("started_at"));
             assertNotNull(bodyJson.get("installed_at"));
@@ -279,7 +279,7 @@ public class BarInstallTestUtils {
             response = ODataCommon.getOdataResource(location);
             if (HttpStatus.SC_OK == response.getStatusCode()) {
                 bodyJson = (JSONObject) ((JSONObject) response.bodyAsJson());
-                if (!ProgressInfo.STATUS.PROCESSING.value().equals(bodyJson.get("status"))) {
+                if (!ProgressInfo.STATUS.PROCESSING.value().equals(bodyJson.get("customStatus"))) {
                     return;
                 }
                 assertNull(bodyJson.get("installed_at"));

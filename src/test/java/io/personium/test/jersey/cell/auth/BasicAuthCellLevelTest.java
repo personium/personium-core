@@ -309,7 +309,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
             messageId = SentMessageUtils.getMessageId(res);
         } finally {
             SentMessageUtils.delete(AbstractCase.MASTER_TOKEN_NAME, cellName, -1, messageId);
-            SentMessageUtils.deleteReceivedMessage(targetCell, UrlUtils.cellRoot(cellName), "message", title,
+            SentMessageUtils.deleteReceivedMessage(targetCell, UrlUtils.cellRoot(cellName), "customMessage", title,
                     messageBody);
         }
     }

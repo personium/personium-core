@@ -823,7 +823,7 @@ public class ODataCommon extends AbstractCase {
      */
     public static final void checkErrorResponseBody(TResponse res, String expectedCode, String expectedMessage) {
         String code = (String) ((JSONObject) res.bodyAsJson()).get("code");
-        String message = (String) ((JSONObject) ((JSONObject) res.bodyAsJson()).get("message")).get("value");
+        String message = (String) ((JSONObject) ((JSONObject) res.bodyAsJson()).get("customMessage")).get("value");
         assertEquals(expectedCode, code);
         assertEquals(expectedMessage, message);
     }
@@ -837,7 +837,7 @@ public class ODataCommon extends AbstractCase {
     public static final void checkErrorResponseBody(PersoniumResponse res, String expectedCode, String expectedMessage) {
         JSONObject body = (JSONObject) res.bodyAsJson();
         String code = (String) body.get("code");
-        String message = (String) ((JSONObject) body.get("message")).get("value");
+        String message = (String) ((JSONObject) body.get("customMessage")).get("value");
         assertEquals(expectedCode, code);
         assertEquals(expectedMessage, message);
     }

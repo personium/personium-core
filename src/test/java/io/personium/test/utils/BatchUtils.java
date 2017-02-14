@@ -580,7 +580,7 @@ public class BatchUtils {
                 + "Content-Transfer-Encoding: binary\n\n"
                 + "HTTP/1.1 400 \n"
                 + "Content-Type: application/json\n\n"
-                + "\\{\"code\":\"PR400-OD-0006\",\"message\":\\{\"lang\":\"en\","
+                + "\\{\"code\":\"PR400-OD-0006\",\"customMessage\":\\{\"lang\":\"en\","
                 + "\"value\":\"\\[intProperty\\] field format error.*\n\n"
                 + "--changeset_cLzcDEEVPwvvoxS3yJTFTpRauSK_FAQ6mQtyo0aby93-SDP3lAs2A19a2uBb--\n\n";
     }

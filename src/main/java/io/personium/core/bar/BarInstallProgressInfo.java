@@ -144,13 +144,13 @@ public class BarInstallProgressInfo implements ProgressInfo {
         this.endTime = sdfIso8601ExtendedFormatUtc.format(new Date());
     }
     /**
-     * @return the status
+     * @return the customStatus
      */
     public STATUS getStatus() {
         return status;
     }
     /**
-     * @param status the status to set
+     * @param customStatus the customStatus to set
      */
     public void setStatus(STATUS status) {
         this.status = status;
@@ -162,13 +162,13 @@ public class BarInstallProgressInfo implements ProgressInfo {
         return progressInPercent + "%";
     }
     /**
-     * @return the message
+     * @return the customMessage
      */
     public JSONObject getMessage() {
         return message;
     }
     /**
-     * @param message the message to set
+     * @param customMessage the customMessage to set
      */
     public void setMessage(JSONObject message) {
         this.message = message;
@@ -190,10 +190,10 @@ public class BarInstallProgressInfo implements ProgressInfo {
         barInfoJson.put("cell_id", getCellId());
         barInfoJson.put("box_id", getBoxId());
         barInfoJson.put("started_at", getStartTime());
-        barInfoJson.put("status", getStatus().toString());
+        barInfoJson.put("customStatus", getStatus().toString());
         barInfoJson.put("progress", getProgress());
         if (this.status == STATUS.FAILED) {
-            barInfoJson.put("message", getMessage());
+            barInfoJson.put("customMessage", getMessage());
         }
         return this.jsonObject;
     }

@@ -173,7 +173,7 @@ public class CellCtlODataProducer extends EsODataProducer {
      * 関係登録/削除、及びメッセージ受信のステータスを変更する.
      * @param entitySet entitySetName
      * @param originalKey 更新対象キー
-     * @param status メッセージステータス
+     * @param customStatus メッセージステータス
      * @return ETag
      */
     public String changeStatusAndUpdateRelation(final EdmEntitySet entitySet,
@@ -219,7 +219,7 @@ public class CellCtlODataProducer extends EsODataProducer {
     /**
      * 関係登録/削除を行う.
      * @param entitySetDocHandler 受信メッセージ
-     * @param status 変更するStatus
+     * @param customStatus 変更するStatus
      */
     private void updateRelation(EntitySetDocHandler entitySetDocHandler, String status) {
         String type = (String) entitySetDocHandler.getStaticFields().get(ReceivedMessage.P_TYPE.getName());
@@ -473,7 +473,7 @@ public class CellCtlODataProducer extends EsODataProducer {
     /**
      * Messageのステータスバリデート.
      * @param type メッセージタイプ
-     * @param status メッセージステータス
+     * @param customStatus メッセージステータス
      * @return boolean
      */
     protected boolean isValidMessageStatus(String type, String status) {
@@ -488,7 +488,7 @@ public class CellCtlODataProducer extends EsODataProducer {
     /**
      * Relationのステータスバリデート.
      * @param type メッセージタイプ
-     * @param status メッセージステータス
+     * @param customStatus メッセージステータス
      * @return boolean
      */
     protected boolean isValidRelationStatus(String type, String status) {
@@ -504,7 +504,7 @@ public class CellCtlODataProducer extends EsODataProducer {
     /**
      * 受信メッセージのステータスバリデート.
      * @param type メッセージタイプ
-     * @param status メッセージステータス
+     * @param customStatus メッセージステータス
      * @return boolean
      */
     protected boolean isValidCurrentStatus(String type, String status) {
@@ -519,7 +519,7 @@ public class CellCtlODataProducer extends EsODataProducer {
     /**
      * 受信メッセージのステータスと更新日を上書きする.
      * @param entitySetDocHandler DocHandler
-     * @param status メッセージステータス
+     * @param customStatus メッセージステータス
      */
     private void updateStatusOfEntitySetDocHandler(EntitySetDocHandler entitySetDocHandler, String status) {
         Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();

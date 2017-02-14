@@ -239,7 +239,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     public final void Typeがmessageの場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(SentMessage.P_TYPE.build(),
                 SentMessage.P_TYPE.getName(),
-                OProperties.string(SentMessage.P_TYPE.getName(), "message"));
+                OProperties.string(SentMessage.P_TYPE.getName(), "customMessage"));
     }
 
     /**
@@ -277,7 +277,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void Typeがnullの場合にmessageが返却されること() {
-        OProperty<?> expected = OProperties.string(SentMessage.P_TYPE.getName(), "message");
+        OProperty<?> expected = OProperties.string(SentMessage.P_TYPE.getName(), "customMessage");
         OProperty<?> result = this.setDefaultValue(SentMessage.P_TYPE.build(),
                 SentMessage.P_TYPE.getName(),
                 OProperties.string(SentMessage.P_TYPE.getName(), ""));

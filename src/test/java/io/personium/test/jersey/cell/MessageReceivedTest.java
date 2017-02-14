@@ -82,7 +82,7 @@ public class MessageReceivedTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);
@@ -109,7 +109,7 @@ public class MessageReceivedTest extends ODataCommon {
                 expected.put("Body", "Body");
                 expected.put("_Box.Name", null);
                 expected.put("RequestRelation", null);
-                expected.put("Type", "message");
+                expected.put("Type", "customMessage");
                 expected.put("Title", "Title");
                 expected.put("Priority", 3);
                 expected.put("Status", "unread");
@@ -142,7 +142,7 @@ public class MessageReceivedTest extends ODataCommon {
 
         JSONObject body = new JSONObject();
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);
@@ -181,7 +181,7 @@ public class MessageReceivedTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);
@@ -219,7 +219,7 @@ public class MessageReceivedTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);
@@ -254,7 +254,7 @@ public class MessageReceivedTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);
@@ -291,7 +291,7 @@ public class MessageReceivedTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);
@@ -335,7 +335,7 @@ public class MessageReceivedTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);
@@ -446,7 +446,7 @@ public class MessageReceivedTest extends ODataCommon {
         JSONObject body1 = new JSONObject();
         body1.put("__id", "12345678901234567890123456789012");
         body1.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body1.put("Type", "message");
+        body1.put("Type", "customMessage");
         body1.put("Title", "Title1");
         body1.put("Body", "Hello");
         body1.put("Priority", 3);
@@ -456,7 +456,7 @@ public class MessageReceivedTest extends ODataCommon {
         JSONObject body2 = new JSONObject();
         body2.put("__id", "12345678901234567890123456789013");
         body2.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body2.put("Type", "message");
+        body2.put("Type", "customMessage");
         body2.put("Title", "Title2");
         body2.put("Body", "Good Bye");
         body2.put("Priority", 2);
@@ -513,7 +513,7 @@ public class MessageReceivedTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title1");
         body.put("Body", "Hello");
         body.put("Priority", 3);
@@ -561,7 +561,7 @@ public class MessageReceivedTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title1");
         body.put("Body", "Hello");
         body.put("Priority", 3);
@@ -833,7 +833,7 @@ public class MessageReceivedTest extends ODataCommon {
                 ODataCommon.deleteOdataResource(response1.getLocationHeader());
             }
             MessageSentTest.deleteReceivedMessage(
-                    Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL2), "message", "test mail", "test body01");
+                    Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL2), "customMessage", "test mail", "test body01");
         }
     }
 
@@ -924,7 +924,7 @@ public class MessageReceivedTest extends ODataCommon {
                 ODataCommon.deleteOdataResource(response1.getLocationHeader());
             }
             MessageSentTest.deleteReceivedMessage(
-                    Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL2), "message", "test mail", "test body01");
+                    Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL2), "customMessage", "test mail", "test body01");
         }
     }
 
@@ -991,7 +991,7 @@ public class MessageReceivedTest extends ODataCommon {
                 ODataCommon.deleteOdataResource(response1.getLocationHeader());
             }
             MessageSentTest.deleteReceivedMessage(
-                    Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL2), "message", "test mail", "test body01");
+                    Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL2), "customMessage", "test mail", "test body01");
         }
     }
 
@@ -1083,7 +1083,7 @@ public class MessageReceivedTest extends ODataCommon {
                 ODataCommon.deleteOdataResource(response1.getLocationHeader());
             }
             MessageSentTest.deleteReceivedMessage(
-                    Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL2), "message", "test mail", "test body01");
+                    Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL2), "customMessage", "test mail", "test body01");
         }
     }
 
@@ -1175,7 +1175,7 @@ public class MessageReceivedTest extends ODataCommon {
                 ODataCommon.deleteOdataResource(response1.getLocationHeader());
             }
             MessageSentTest.deleteReceivedMessage(
-                    Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL2), "message", "test mail", "test body01");
+                    Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL2), "customMessage", "test mail", "test body01");
         }
     }
 
@@ -1243,7 +1243,7 @@ public class MessageReceivedTest extends ODataCommon {
                 ODataCommon.deleteOdataResource(response1.getLocationHeader());
             }
             MessageSentTest.deleteReceivedMessage(
-                    Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL2), "message", "test mail", "test body01");
+                    Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL2), "customMessage", "test mail", "test body01");
         }
     }
 
@@ -1404,7 +1404,7 @@ public class MessageReceivedTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", id);
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);
@@ -1428,7 +1428,7 @@ public class MessageReceivedTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", "message");
+        body.put("Type", "customMessage");
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);

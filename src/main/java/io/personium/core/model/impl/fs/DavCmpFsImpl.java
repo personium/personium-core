@@ -1141,7 +1141,7 @@ public class DavCmpFsImpl implements DavCmp {
      * retruns NotFoundException for this resource. <br />
      * messages should vary among resource type Cell, box, file, etc..
      * Each *Cmp class should override this method and define the proper exception <br />
-     * Additional info (reason etc.) for the message should be set after calling this method.
+     * Additional info (reason etc.) for the customMessage should be set after calling this method.
      * @return NotFoundException
      */
     public PersoniumCoreException getNotFoundException() {

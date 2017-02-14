@@ -326,7 +326,7 @@ public class AuthzEndPointResource {
      * ImplicitFlowパスワード認証フォーム.
      * @param clientId clientId
      * @param redirectUriStr redirectUriStr
-     * @param message メッセージ表示領域に出力する文字列
+     * @param customMessage メッセージ表示領域に出力する文字列
      * @param state state
      * @param dcTraget dcTraget
      * @param pOwner pOwner

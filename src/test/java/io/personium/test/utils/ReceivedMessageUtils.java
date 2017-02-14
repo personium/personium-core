@@ -54,7 +54,7 @@ public class ReceivedMessageUtils {
             TransCellAccessToken ttk = new TransCellAccessToken(cellUrl, cellUrl, targetCellUrl, list, "");
             token = ttk.toTokenString();
         }
-        TResponse response = Http.request("received-message.txt")
+        TResponse response = Http.request("received-customMessage.txt")
                 .with("cellPath", cellName)
                 .with("body", body)
                 .with("token", token)
@@ -101,7 +101,7 @@ public class ReceivedMessageUtils {
      */
     public static TResponse get(final String token,
             final String cellName, final int code, final String messageId) {
-        TResponse response = Http.request("received-message-get.txt")
+        TResponse response = Http.request("received-customMessage-get.txt")
                 .with("cellPath", cellName)
                 .with("messageId", messageId)
                 .with("token", token)
@@ -130,7 +130,7 @@ public class ReceivedMessageUtils {
      * @return response レスポンス情報
      */
     public static TResponse list(final String token, final String cellName, String query, final int code) {
-        TResponse response = Http.request("received-message-list.txt")
+        TResponse response = Http.request("received-customMessage-list.txt")
                 .with("cellPath", cellName)
                 .with("token", token)
                 .with("query", query)
@@ -149,7 +149,7 @@ public class ReceivedMessageUtils {
      */
     public static TResponse delete(final String token,
             final String cellName, final int code, final String messageId) {
-        TResponse response = Http.request("received-message-delete.txt")
+        TResponse response = Http.request("received-customMessage-delete.txt")
                 .with("cellPath", cellName)
                 .with("messageId", messageId)
                 .with("token", token)
@@ -172,7 +172,7 @@ public class ReceivedMessageUtils {
             final String cellName, final String uuid, final int code) {
         JSONObject body = new JSONObject();
         body.put("Command", "approved");
-        TResponse response = Http.request("approved-message.txt")
+        TResponse response = Http.request("approved-customMessage.txt")
                 .with("method", "POST")
                 .with("cellPath", cellName)
                 .with("uuid", uuid)
@@ -197,7 +197,7 @@ public class ReceivedMessageUtils {
             final String cellName, final String uuid, final int code) {
         JSONObject body = new JSONObject();
         body.put("Command", "rejected");
-        TResponse response = Http.request("approved-message.txt")
+        TResponse response = Http.request("approved-customMessage.txt")
                 .with("method", "POST")
                 .with("cellPath", cellName)
                 .with("uuid", uuid)
@@ -222,7 +222,7 @@ public class ReceivedMessageUtils {
             final String cellName, final String uuid, final int code) {
         JSONObject body = new JSONObject();
         body.put("Command", "read");
-        TResponse response = Http.request("approved-message.txt")
+        TResponse response = Http.request("approved-customMessage.txt")
                 .with("method", "POST")
                 .with("cellPath", cellName)
                 .with("uuid", uuid)

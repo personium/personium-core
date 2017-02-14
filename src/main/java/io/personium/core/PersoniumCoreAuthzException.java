@@ -90,10 +90,10 @@ public final class PersoniumCoreAuthzException extends PersoniumCoreException {
 
     /**
      * コンストラクタ.
-     * @param status HTTPレスポンスステータス
+     * @param customStatus HTTPレスポンスステータス
      * @param severityエラーレベル
      * @param code エラーコード
-     * @param message エラーメッセージ
+     * @param customMessage エラーメッセージ
      * @param error OAuth認証エラーのエラーコード
      * @param realm WWWW-Authenticateヘッダを返す場合はここにrealm値を設定する
      * @param authScheme 認証を許可するAuthSchemeの種別
@@ -172,7 +172,7 @@ public final class PersoniumCoreAuthzException extends PersoniumCoreException {
 
     /**
      * ファクトリーメソッド.
-     * @param code Personium message code
+     * @param code Personium customMessage code
      * @return PersoniumCoreException
      */
     public static PersoniumCoreAuthzException create(String code) {

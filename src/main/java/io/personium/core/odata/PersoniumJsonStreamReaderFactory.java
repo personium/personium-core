@@ -81,7 +81,7 @@ public class PersoniumJsonStreamReaderFactory {
 
         /**
          * コンストラクタ.
-         * @param message メッセージ
+         * @param customMessage メッセージ
          * @param cause Throwable
          */
         public JsonParseException(String message, Throwable cause) {
@@ -90,7 +90,7 @@ public class PersoniumJsonStreamReaderFactory {
 
         /**
          * コンストラクタ.
-         * @param message メッセージ
+         * @param customMessage メッセージ
          */
         public JsonParseException(String message) {
             super(message);

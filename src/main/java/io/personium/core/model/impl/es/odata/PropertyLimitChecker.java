@@ -56,7 +56,7 @@ public class PropertyLimitChecker {
         /**
          * コンストラクタ.
          * @param entityTypeName EntityType名
-         * @param message エラー詳細
+         * @param customMessage エラー詳細
          */
         public CheckError(String entityTypeName, String message) {
             this.entityTypeName = entityTypeName;
@@ -90,7 +90,7 @@ public class PropertyLimitChecker {
 
         /**
          * コンストラクタ.
-         * @param message メッセージ
+         * @param customMessage メッセージ
          */
         PropertyLimitException(String message) {
             super(message);
@@ -99,7 +99,7 @@ public class PropertyLimitChecker {
         /**
          * コンストラクタ.
          * @param entityTypeName EntityType名
-         * @param message メッセージ
+         * @param customMessage メッセージ
          */
         PropertyLimitException(String entityTypeName, String message) {
             super(message);
@@ -130,7 +130,7 @@ public class PropertyLimitChecker {
     static class EntityTypeDepthExceedException extends PropertyLimitException {
         /**
          * constructor.
-         * @param message メッセージ
+         * @param customMessage メッセージ
          */
         EntityTypeDepthExceedException(String message) {
             super(message);

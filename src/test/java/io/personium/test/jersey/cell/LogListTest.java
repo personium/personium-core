@@ -418,7 +418,7 @@ public class LogListTest extends ODataCommon {
      */
     private void checkLogListResponse(TResponse tresponse, String cellName, int depth) {
         // コレクションの情報
-        String status = getNodeValue(tresponse.bodyAsXml(), 0, "status");
+        String status = getNodeValue(tresponse.bodyAsXml(), 0, "customStatus");
         assertEquals("HTTP/1.1 200 OK", status);
 
         String href = getNodeValue(tresponse.bodyAsXml(), 0, "href");
@@ -433,7 +433,7 @@ public class LogListTest extends ODataCommon {
         // ログファイルの情報
         if (depth == 1) {
             for (int i = 1; i < 3; i++) {
-                status = getNodeValue(tresponse.bodyAsXml(), i, "status");
+                status = getNodeValue(tresponse.bodyAsXml(), i, "customStatus");
                 assertEquals("HTTP/1.1 200 OK", status);
 
                 href = getNodeValue(tresponse.bodyAsXml(), i, "href");

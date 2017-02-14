@@ -1449,7 +1449,7 @@ public class ImplicitFlowTest extends JerseyTest {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Element element = (Element) nodeList.item(i);
             String id = element.getAttribute("id");
-            if ("message".equals(id)) {
+            if ("customMessage".equals(id)) {
                 assertEquals(PersoniumCoreMessageUtils.getMessage(messageId).replaceAll("<br />", ""),
                         element.getTextContent());
             }

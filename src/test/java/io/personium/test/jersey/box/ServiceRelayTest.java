@@ -63,7 +63,7 @@ public class ServiceRelayTest extends JerseyTest {
         + "    \"query\" : request.queryString"
         + "  };"
         + "  return {"
-        + "    status: 200,"
+        + "    customStatus: 200,"
         + "    headers: {'Content-Type':'application/json'},"
         + "    body: [JSON.stringify(response)]"
         + " };"

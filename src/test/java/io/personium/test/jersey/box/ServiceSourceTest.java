@@ -55,7 +55,7 @@ public class ServiceSourceTest extends JerseyTest {
     String serviceColPath = "servicecol";
     String srcPath = "servicecol/__src";
     String resourcePath = "servicecol/__src/hello.js";
-    String jsSource = "function(request){return {status: 200,"
+    String jsSource = "function(request){return {customStatus: 200,"
             + "headers: {\"Content-Type\":\"text/html\"},body: [\"hello world!\"]};}";
     static final String MASTER_TOKEN = AbstractCase.MASTER_TOKEN_NAME;
 
@@ -180,7 +180,7 @@ public class ServiceSourceTest extends JerseyTest {
                     .statusCode(HttpStatus.SC_CREATED);
 
             // 登録したJavascriptソースを更新
-            String updateSource = "function(request){return {status: 200,"
+            String updateSource = "function(request){return {customStatus: 200,"
                     + "headers: {\"Content-Type\":\"text/html\"},body: [\"hi world!\"]};}";
             Http.request("box/dav-put.txt")
                     .with("cellPath", "testcell1")
@@ -546,7 +546,7 @@ public class ServiceSourceTest extends JerseyTest {
                 node.getElementsByTagName("href").item(0).getFirstChild().getNodeValue());
         assertEquals(
                 "HTTP/1.1 200 OK",
-                node.getElementsByTagName("status").item(0).getFirstChild().getNodeValue());
+                node.getElementsByTagName("customStatus").item(0).getFirstChild().getNodeValue());
 
         for (Iterator<String> it = map.keySet().iterator(); it.hasNext();) {
             Object key = it.next();

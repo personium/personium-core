@@ -162,7 +162,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     public final void Typeがmessageの場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_TYPE.build(),
                 ReceivedMessage.P_TYPE.getName(),
-                OProperties.string(ReceivedMessage.P_TYPE.getName(), "message"));
+                OProperties.string(ReceivedMessage.P_TYPE.getName(), "customMessage"));
     }
 
     /**
@@ -458,7 +458,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void TypeがmessageでStatusがunreadの場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateStatus("message", "unread");
+        MessageODataResource.validateStatus("customMessage", "unread");
     }
 
     /**
@@ -466,7 +466,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test(expected = PersoniumCoreException.class)
     public final void TypeがmessageでStatusがnoneの場合にPersoniumCoreExceptionが発生すること() {
-        MessageODataResource.validateStatus("message", "none");
+        MessageODataResource.validateStatus("customMessage", "none");
     }
 
     /**
@@ -530,7 +530,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void TypeがmessageでRequestRelationがnullの場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateReqRelation("message", null, "http://example.com/test");
+        MessageODataResource.validateReqRelation("customMessage", null, "http://example.com/test");
     }
 
 }
