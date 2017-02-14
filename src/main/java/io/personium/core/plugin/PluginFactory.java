@@ -27,7 +27,6 @@ import java.util.jar.Manifest;
 
 /**
  * Plugin Factory.
- * @author fjqs
  */
 public class PluginFactory {
     /** instance. */

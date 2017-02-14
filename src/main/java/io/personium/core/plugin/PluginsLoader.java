@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 /**
  * Plugins Loader.
- * @author fjqs
  */
 public class PluginsLoader {
     /**

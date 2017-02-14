@@ -22,7 +22,6 @@ import java.util.ArrayList;
 
 /**
  * Plugin Load.
- * @author coe
  */
 public class PluginManager {
 

@@ -20,8 +20,6 @@ import io.personium.plugin.base.Plugin;
 
 /**
  * plugin Info Class.
- * @author fjqs
- *
  */
 public class PluginInfo implements Plugin {
     private Object obj;

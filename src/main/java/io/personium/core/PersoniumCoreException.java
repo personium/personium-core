@@ -17,6 +17,8 @@
 package io.personium.core;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +30,7 @@ import org.apache.http.HttpStatus;
 import io.personium.core.PersoniumCoreMessageUtils.Severity;
 import io.personium.core.exceptions.ODataErrorMessage;
 import io.personium.core.utils.EscapeControlCode;
+import io.personium.plugin.base.PluginException;
 
 /**
  * ログメッセージ作成クラス.
@@ -842,6 +845,27 @@ public class PersoniumCoreException extends RuntimeException {
 
     }
 
+    /**
+     * Pluginエラー.
+     */
+    public static class Plugin {
+        /**
+	     * プラグイン内部でキャッチされず、外に出てきてしまった非チェック例外に対応.
+	     */
+        public static final PersoniumCoreException UNEXPECTED_ERROR = create("PR500-PL-0001");
+
+	    /**
+	     * プラグイン作者が定義したエラー.
+	     */
+        public static final PersoniumCoreException PLUGIN_DEFINED_CLIENT_ERROR = create("PR400-PL-0002");
+
+	    /**
+	     * プラグイン作者が定義したエラー.
+	     */
+        public static final PersoniumCoreException PLUGIN_DEFINED_SERVER_ERROR = create("PR500-PL-0002");
+
+    }
+
     String code;
     Severity severity;
     String message;
@@ -882,12 +906,12 @@ public class PersoniumCoreException extends RuntimeException {
 
     /**
      * コンストラクタ.
-     * @param status HTTPレスポンスステータス
-     * @param severityエラーレベル
      * @param code エラーコード
+     * @param severityエラーレベル
      * @param message エラーメッセージ
+     * @param status HTTPレスポンスステータス
      */
-    PersoniumCoreException(final String code,
+    public PersoniumCoreException(final String code,
             final Severity severity,
             final String message,
             final int status) {
@@ -1018,4 +1042,25 @@ public class PersoniumCoreException extends RuntimeException {
         }
         return Integer.parseInt(m.group(1));
     }
+
+    /**
+     * Mapping Plugin Exception.
+	 *   PluginException -> PersoniumCoreException
+     * @return exmap Map
+     */
+	public static Map<PluginException, PersoniumCoreException> mappingPluginException(){
+		Map<PluginException, PersoniumCoreException> exmap = new HashMap<>();
+
+		// Auth
+		exmap.put(PluginException.Auth.JSON_PARSE_ERROR, PersoniumCoreException.OData.JSON_PARSE_ERROR);
+		exmap.put(PluginException.Auth.IDTOKEN_ENCODED_INVALID, PersoniumCoreException.Auth.REQUEST_PARAM_INVALID);
+
+		// Network
+		exmap.put(PluginException.NetWork.NETWORK_ERROR, PersoniumCoreException.NetWork.NETWORK_ERROR);
+		exmap.put(PluginException.NetWork.HTTP_REQUEST_FAILED, PersoniumCoreException.NetWork.HTTP_REQUEST_FAILED);
+		exmap.put(PluginException.NetWork.UNEXPECTED_RESPONSE, PersoniumCoreException.NetWork.UNEXPECTED_RESPONSE);
+		exmap.put(PluginException.NetWork.UNEXPECTED_VALUE, PersoniumCoreException.NetWork.UNEXPECTED_VALUE);
+
+		return exmap;
+	}
 }

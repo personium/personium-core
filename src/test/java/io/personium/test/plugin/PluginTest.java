@@ -166,13 +166,13 @@ public class PluginTest extends JerseyTest {
      * @throws Exception .
      */
     @Test
-    public void GooglePlugin_アカウントとIdTokenを指定し認証プラグイン処理を直接実行できること() throws Exception {
+    public void GooglePlugin_正常なアカウントとIdTokenを指定し認証プラグイン処理を直接実行できること() throws Exception {
         PluginManager pm = new PluginManager();
         PluginInfo pi = pm.getPluginsByGrantType(GOOGLE_GRANT_TYPE);
 
         // Map設定
         Map<String, String> body = new HashMap<String, String>();
-        // debug message
+        // debug customMessage
         body.put(AuthConst.KEY_MESSAGE, "");
 
         // idTokenの設定
@@ -189,7 +189,7 @@ public class PluginTest extends JerseyTest {
 
                 // 実行結果
                 if (ai != null) {
-                    String accountName = ai.getAttributes(AuthConst.KEY_ACCOUT);
+                    String accountName = ai.getAccountName();
                     if (accountName != null) {
                         if (account.equals(accountName)) {
                             String oidcType = ai.getAttributes(AuthConst.KEY_OIDC_TYPE);
@@ -213,7 +213,7 @@ public class PluginTest extends JerseyTest {
      * @throws InterruptedException 待機失敗
      */
     @Test
-    public final void GooglePlugin_アカウントとIdTokenを設定し正常に認証され200が返却されること()
+    public final void GooglePlugin_正常なアカウントとIdTokenを設定し認証され200が返却されること()
             throws InterruptedException {
 
         Properties properties = getIdTokenProperty();
@@ -248,7 +248,7 @@ public class PluginTest extends JerseyTest {
      * @throws InterruptedException 待機失敗
      */
     @Test
-    public final void 異常な期限切れIDTokenを設定し400が返却されること()
+    public final void GooglePlugin_異常な期限切れIDTokenを設定し400が返却されること()
             throws InterruptedException {
 
         Properties properties = getIdTokenProperty();
@@ -283,7 +283,7 @@ public class PluginTest extends JerseyTest {
      * @throws InterruptedException 待機失敗
      */
     @Test
-    public final void 異常アカウントをCell設定しIDTokenは認証され異常値が返却されること()
+    public final void GooglePlugin_異常アカウントをCell設定しIDTokenは認証され異常値が返却されること()
             throws InterruptedException {
 
         Properties properties = getIdTokenProperty();

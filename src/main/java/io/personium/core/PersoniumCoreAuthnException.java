@@ -16,6 +16,9 @@
  */
 package io.personium.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -28,6 +31,7 @@ import io.personium.core.PersoniumCoreMessageUtils.Severity;
 import io.personium.core.auth.OAuth2Helper.Error;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.auth.OAuth2Helper.Scheme;
+import io.personium.plugin.base.auth.AuthPluginException;
 
 /**
  * ログメッセージ作成クラス.
@@ -138,6 +142,14 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
      * IDTokenの有効期限切れ.
      */
     public static final PersoniumCoreAuthnException OIDC_EXPIRED_ID_TOKEN = create("PR400-AN-0033", Error.INVALID_GRANT);
+    /**
+     * 接続先が想定外の値を返却.
+     */
+    public static final PersoniumCoreAuthnException OIDC_UNEXPECTED_VALUE = create("PR400-AN-0034", Error.INVALID_GRANT);
+    /**
+     * 公開鍵の形式ｉ異常を返却.
+     */
+    public static final PersoniumCoreAuthnException OIDC_INVALID_KEY = create("PR400-AN-0035", Error.INVALID_GRANT);
 
     /**
      * インナークラスを強制的にロードする.
@@ -150,10 +162,10 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
 
     /**
      * コンストラクタ.
-     * @param status HTTPレスポンスステータス
+     * @param customStatus HTTPレスポンスステータス
      * @param severityエラーレベル
      * @param code エラーコード
-     * @param message エラーメッセージ
+     * @param customMessage エラーメッセージ
      * @param error OAuth認証エラーのエラーコード
      * @param realm WWWW-Authenticateヘッダを返す場合はここにrealm値を設定する
      */
@@ -236,4 +248,25 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
 
         return new PersoniumCoreAuthnException(code, severity, message, statusCode, error, null);
     }
+
+	static Map<Integer, PersoniumCoreAuthnException> exmap = new HashMap<>();
+	static {
+		exmap.put(AuthPluginException.REQUIRED_PARAM_MISSING.getType(), PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING);
+		exmap.put(AuthPluginException.OIDC_WRONG_AUDIENCE.getType(), PersoniumCoreAuthnException.OIDC_WRONG_AUDIENCE);
+		exmap.put(AuthPluginException.OIDC_AUTHN_FAILED.getType(), PersoniumCoreAuthnException.OIDC_AUTHN_FAILED);
+		exmap.put(AuthPluginException.OIDC_INVALID_ID_TOKEN.getType(), PersoniumCoreAuthnException.OIDC_INVALID_ID_TOKEN);
+		exmap.put(AuthPluginException.OIDC_EXPIRED_ID_TOKEN.getType(), PersoniumCoreAuthnException.OIDC_EXPIRED_ID_TOKEN);
+		exmap.put(AuthPluginException.OIDC_UNEXPECTED_VALUE.getType(), PersoniumCoreAuthnException.OIDC_UNEXPECTED_VALUE);
+		exmap.put(AuthPluginException.OIDC_INVALID_KEY.getType(), PersoniumCoreAuthnException.OIDC_INVALID_KEY);
+	}
+
+    /**
+     * Mapping AuthPlugin Exception.
+	 *   AuthPluginException -> PersoniumCoreAuthnException
+     * @return PersoniumCoreAuthnException
+     */
+	public static PersoniumCoreAuthnException mappingAuthPluginException(AuthPluginException ape){
+		PersoniumCoreAuthnException pcae = exmap.get(ape.getType());
+		return (PersoniumCoreAuthnException)pcae.params((Object[])ape.getParams());
+	}
 }
