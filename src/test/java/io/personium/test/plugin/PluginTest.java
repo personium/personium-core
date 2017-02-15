@@ -30,6 +30,7 @@ import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+
 import com.sun.jersey.test.framework.JerseyTest;
 
 import io.personium.core.plugin.PluginInfo;
@@ -41,9 +42,9 @@ import io.personium.test.jersey.AbstractCase;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
-
 import io.personium.plugin.base.auth.AuthConst;
 import io.personium.plugin.base.auth.AuthPlugin;
+import io.personium.plugin.base.auth.AuthPluginException;
 import io.personium.plugin.base.auth.AuthenticatedIdentity;
 
 /**
@@ -107,7 +108,7 @@ public class PluginTest extends JerseyTest {
      * @throws Exception .
      */
     @Test
-    public void プラグイン処理のgoogle認証を取得できること() throws Exception {
+    public void プラグイン処理_一覧からgoogle認証プラグインを取得できること() throws Exception {
         boolean bFind = false;
         PluginManager pm = new PluginManager();
         PluginInfo pi = (PluginInfo) pm.getPluginsByGrantType(GOOGLE_GRANT_TYPE);
@@ -124,7 +125,7 @@ public class PluginTest extends JerseyTest {
      * @throws Exception .
      */
     @Test
-    public void プラグイン処理の異常GrantTypeの場合にエラーとなること() throws Exception {
+    public void プラグイン処理_異常GrantTypeの場合にエラーとなること() throws Exception {
         String invalidGratType = "urn:x-dc1:oidc:hoge:code";
 
         PluginManager pm = new PluginManager();
@@ -146,7 +147,7 @@ public class PluginTest extends JerseyTest {
      * @throws Exception .
      */
     @Test
-    public void プラグイン処理の認証一覧を取得できること() throws Exception {
+    public void プラグイン処理_認証プラグイン一覧を取得できること() throws Exception {
         boolean bFind = false;
 
         // プラグインjarがディレクトリに存在する場合
@@ -201,6 +202,11 @@ public class PluginTest extends JerseyTest {
                     System.out.println("NG authenticate");
                     assertFalse(false);
                 }
+            } catch (AuthPluginException ape) {
+                System.out.println(ape);
+                System.out.println(ape.getType());
+                System.out.println(ape.getParams().toString());
+                assertFalse(true);
             } catch (Exception e) {
                 System.out.println(e);
                 assertFalse(true);
