@@ -16,17 +16,17 @@
  */
 package io.personium.core;
 
+import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
+import io.personium.core.auth.OAuth2Helper.Scheme;
+import io.personium.core.exceptions.ODataErrorMessage;
+import io.personium.plugin.base.PluginMessageUtils.Severity;
+
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.http.HttpStatus;
-
-import io.personium.core.PersoniumCoreMessageUtils.Severity;
-import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
-import io.personium.core.auth.OAuth2Helper.Scheme;
-import io.personium.core.exceptions.ODataErrorMessage;
 
 /**
  * 認証エラー(PR401-AU-xxxx)が発生した場合のログ出力クラス.

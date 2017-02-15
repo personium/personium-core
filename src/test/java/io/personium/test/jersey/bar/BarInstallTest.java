@@ -41,6 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
@@ -58,9 +61,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.cell.ctl.CellCtlUtils;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -78,8 +81,6 @@ import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TestMethodUtils;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * barファイルインストール用テスト.
@@ -235,6 +236,81 @@ public class BarInstallTest extends JerseyTest {
         }
 
         try {
+            // Delete link.
+            String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellName/__role/__/role2");
+            Http.request("links-request.txt")
+                    .with("method", "DELETE")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", Setup.TEST_CELL1)
+                    .with("entitySet", Role.EDM_TYPE_NAME)
+                    .with("key", "Name='role1',_Box.Name='" + INSTALL_TARGET + "'")
+                    .with("navProp", "_" + ExtRole.EDM_TYPE_NAME)
+                    .with("navKey", "ExtRole='" + extRole + "'"
+                            + ",_Relation.Name='relation1',_Relation._Box.Name='" + INSTALL_TARGET + "'")
+                    .returns()
+                    .debug();
+        } catch (Exception ex) {
+            log.debug(ex.getMessage());
+        }
+
+        try {
+            // Delete link.
+            Http.request("links-request.txt")
+                    .with("method", "DELETE")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", Setup.TEST_CELL1)
+                    .with("entitySet", Relation.EDM_TYPE_NAME)
+                    .with("key", "Name='relation1',_Box.Name='" + INSTALL_TARGET + "'")
+                    .with("navProp", "_" + Role.EDM_TYPE_NAME)
+                    .with("navKey", "Name='role1',_Box.Name='" + INSTALL_TARGET + "'")
+                    .returns()
+                    .debug();
+        } catch (Exception ex) {
+            log.debug(ex.getMessage());
+        }
+
+        try {
+            // Delete ExtRole.
+            String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellName/__role/__/role2");
+            Http.request("cell/extRole/extRole-delete.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", Setup.TEST_CELL1)
+                    .with("extRoleName", extRole)
+                    .with("relationName", "'" + "relation1" + "'")
+                    .with("relationBoxName", "'" + INSTALL_TARGET + "'")
+                    .returns()
+                    .debug();
+        } catch (Exception ex) {
+            log.debug(ex.getMessage());
+        }
+
+        try {
+            // Delete Role.
+            Http.request("role-delete.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", Setup.TEST_CELL1)
+                    .with("rolename", "role1")
+                    .with("boxname", "'" + INSTALL_TARGET + "'")
+                    .returns()
+                    .debug();
+        } catch (Exception ex) {
+            log.debug(ex.getMessage());
+        }
+
+        try {
+            // Delete Relation.
+            Http.request("relation-delete.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", Setup.TEST_CELL1)
+                    .with("relationname", "relation1")
+                    .with("boxname", "'" + INSTALL_TARGET + "'")
+                    .returns()
+                    .debug();
+        } catch (Exception ex) {
+            log.debug(ex.getMessage());
+        }
+
+        try {
             Http.request("cell/box-delete.txt")
                     .with("cellPath", reqCell)
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
@@ -357,17 +433,12 @@ public class BarInstallTest extends JerseyTest {
         headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
         headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
 
-        try {
-            res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
-            res.statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED);
-            String code = PersoniumCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.getCode();
-            String message = PersoniumCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.
-                    params(reqPath).getMessage();
-            res.checkErrorResponse(code, message);
-        } finally {
-            BoxUtils.delete(reqCell, AbstractCase.MASTER_TOKEN_NAME, "boxInstallTestBox", -1);
-            BoxUtils.delete(reqCell, AbstractCase.MASTER_TOKEN_NAME, INSTALL_TARGET, -1);
-        }
+        res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
+        res.statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED);
+        String code = PersoniumCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.getCode();
+        String message = PersoniumCoreException.BarInstall.BAR_FILE_BOX_ALREADY_EXISTS.
+                params(reqPath).getMessage();
+        res.checkErrorResponse(code, message);
     }
 
     /**
@@ -1037,17 +1108,13 @@ public class BarInstallTest extends JerseyTest {
         headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
         headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
 
-        try {
-            res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
-            res.statusCode(HttpStatus.SC_ACCEPTED);
-            String location = res.getHeader(HttpHeaders.LOCATION);
-            String expected = UrlUtils.cellRoot(reqCell) + reqPath;
-            assertEquals(expected, location);
+        res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
+        res.statusCode(HttpStatus.SC_ACCEPTED);
+        String location = res.getHeader(HttpHeaders.LOCATION);
+        String expected = UrlUtils.cellRoot(reqCell) + reqPath;
+        assertEquals(expected, location);
 
-            BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
-        } finally {
-            CellCtlUtils.deleteRelation(Setup.TEST_CELL1, "relation1", INSTALL_TARGET);
-        }
+        BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
     }
 
     /**
@@ -1089,17 +1156,13 @@ public class BarInstallTest extends JerseyTest {
         headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
         headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
 
-        try {
-            res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
-            res.statusCode(HttpStatus.SC_ACCEPTED);
-            String location = res.getHeader(HttpHeaders.LOCATION);
-            String expected = UrlUtils.cellRoot(reqCell) + reqPath;
-            assertEquals(expected, location);
+        res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
+        res.statusCode(HttpStatus.SC_ACCEPTED);
+        String location = res.getHeader(HttpHeaders.LOCATION);
+        String expected = UrlUtils.cellRoot(reqCell) + reqPath;
+        assertEquals(expected, location);
 
-            BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
-        } finally {
-            CellCtlUtils.deleteRelation(Setup.TEST_CELL1, "relation1", INSTALL_TARGET);
-        }
+        BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
     }
 
     /**
@@ -1117,20 +1180,13 @@ public class BarInstallTest extends JerseyTest {
         headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
         headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
 
-        try {
-            res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
-            res.statusCode(HttpStatus.SC_ACCEPTED);
-            String location = res.getHeader(HttpHeaders.LOCATION);
-            String expected = UrlUtils.cellRoot(reqCell) + reqPath;
-            assertEquals(expected, location);
+        res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
+        res.statusCode(HttpStatus.SC_ACCEPTED);
+        String location = res.getHeader(HttpHeaders.LOCATION);
+        String expected = UrlUtils.cellRoot(reqCell) + reqPath;
+        assertEquals(expected, location);
 
-            BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
-        } finally {
-            String extRole = "https://fqdn/cellName/__role/__/role2";
-            CellCtlUtils.deleteExtRole(Setup.TEST_CELL1, extRole, "relation1", INSTALL_TARGET);
-            CellCtlUtils.deleteRelation(Setup.TEST_CELL1, "relation1", INSTALL_TARGET);
-            CellCtlUtils.deleteRole(Setup.TEST_CELL1, "role1", INSTALL_TARGET);
-        }
+        BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
     }
 
     /**
@@ -1148,18 +1204,13 @@ public class BarInstallTest extends JerseyTest {
         headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
         headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
 
-        try {
-            res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
-            res.statusCode(HttpStatus.SC_ACCEPTED);
-            String location = res.getHeader(HttpHeaders.LOCATION);
-            String expected = UrlUtils.cellRoot(reqCell) + reqPath;
-            assertEquals(expected, location);
+        res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
+        res.statusCode(HttpStatus.SC_ACCEPTED);
+        String location = res.getHeader(HttpHeaders.LOCATION);
+        String expected = UrlUtils.cellRoot(reqCell) + reqPath;
+        assertEquals(expected, location);
 
-            BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
-        } finally {
-            CellCtlUtils.deleteRelation(Setup.TEST_CELL1, "relation1", INSTALL_TARGET);
-            CellCtlUtils.deleteRole(Setup.TEST_CELL1, "role1", INSTALL_TARGET);
-        }
+        BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
     }
 
     /**
@@ -1200,24 +1251,14 @@ public class BarInstallTest extends JerseyTest {
         headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
         headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
 
-        try {
-            res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
+        res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
 
-            res.statusCode(HttpStatus.SC_ACCEPTED);
-            String location = res.getHeader(HttpHeaders.LOCATION);
-            String expected = UrlUtils.cellRoot(reqCell) + reqPath;
-            assertEquals(expected, location);
+        res.statusCode(HttpStatus.SC_ACCEPTED);
+        String location = res.getHeader(HttpHeaders.LOCATION);
+        String expected = UrlUtils.cellRoot(reqCell) + reqPath;
+        assertEquals(expected, location);
 
-            BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
-        } finally {
-            deleteLink(Relation.EDM_TYPE_NAME, "Name='relation1',_Box.Name='" + INSTALL_TARGET + "'",
-                    "_" + Role.EDM_TYPE_NAME,
-                    "Name='role1',_Box.Name='" + INSTALL_TARGET + "'");
-            String extRole = "https://fqdn/cellName/__role/__/role2";
-            CellCtlUtils.deleteExtRole(Setup.TEST_CELL1, extRole, "relation1", INSTALL_TARGET);
-            CellCtlUtils.deleteRelation(Setup.TEST_CELL1, "relation1", INSTALL_TARGET);
-            CellCtlUtils.deleteRole(Setup.TEST_CELL1, "role1", INSTALL_TARGET);
-        }
+        BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
     }
 
     /**
@@ -1410,16 +1451,13 @@ public class BarInstallTest extends JerseyTest {
 
         res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
 
-        try {
-            res.statusCode(HttpStatus.SC_ACCEPTED);
-            String location = res.getHeader(HttpHeaders.LOCATION);
-            String expected = UrlUtils.cellRoot(reqCell) + reqPath;
-            assertEquals(expected, location);
+        res.statusCode(HttpStatus.SC_ACCEPTED);
+        String location = res.getHeader(HttpHeaders.LOCATION);
+        String expected = UrlUtils.cellRoot(reqCell) + reqPath;
+        assertEquals(expected, location);
 
-            BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
-        } finally {
-            CellCtlUtils.deleteRelation(Setup.TEST_CELL1, "relation1", INSTALL_TARGET);
-        }
+        BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
+
     }
 
     /**
@@ -1438,20 +1476,14 @@ public class BarInstallTest extends JerseyTest {
         headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
         headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
 
-        try {
-            res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
+        res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
 
-            res.statusCode(HttpStatus.SC_ACCEPTED);
-            String location = res.getHeader(HttpHeaders.LOCATION);
-            String expected = UrlUtils.cellRoot(reqCell) + reqPath;
-            assertEquals(expected, location);
+        res.statusCode(HttpStatus.SC_ACCEPTED);
+        String location = res.getHeader(HttpHeaders.LOCATION);
+        String expected = UrlUtils.cellRoot(reqCell) + reqPath;
+        assertEquals(expected, location);
 
-            BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
-        } finally {
-            CellCtlUtils.deleteRelation(Setup.TEST_CELL1, "relation1", INSTALL_TARGET);
-            CellCtlUtils.deleteRole(Setup.TEST_CELL1, "role1", INSTALL_TARGET);
-        }
-
+        BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
     }
 
     /**
@@ -1522,18 +1554,14 @@ public class BarInstallTest extends JerseyTest {
         headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
         headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
 
-        try {
-            res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
+        res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
 
-            res.statusCode(HttpStatus.SC_ACCEPTED);
-            String location = res.getHeader(HttpHeaders.LOCATION);
-            String expected = UrlUtils.cellRoot(reqCell) + reqPath;
-            assertEquals(expected, location);
+        res.statusCode(HttpStatus.SC_ACCEPTED);
+        String location = res.getHeader(HttpHeaders.LOCATION);
+        String expected = UrlUtils.cellRoot(reqCell) + reqPath;
+        assertEquals(expected, location);
 
-            BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
-        } finally {
-            CellCtlUtils.deleteRelation(Setup.TEST_CELL1, "relation1", INSTALL_TARGET);
-        }
+        BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
     }
 
     /**
@@ -1552,19 +1580,14 @@ public class BarInstallTest extends JerseyTest {
         headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
         headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
 
-        try {
-            res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
+        res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
 
-            res.statusCode(HttpStatus.SC_ACCEPTED);
-            String location = res.getHeader(HttpHeaders.LOCATION);
-            String expected = UrlUtils.cellRoot(reqCell) + reqPath;
-            assertEquals(expected, location);
+        res.statusCode(HttpStatus.SC_ACCEPTED);
+        String location = res.getHeader(HttpHeaders.LOCATION);
+        String expected = UrlUtils.cellRoot(reqCell) + reqPath;
+        assertEquals(expected, location);
 
-            BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
-        } finally {
-            CellCtlUtils.deleteRelation(Setup.TEST_CELL1, "relation1", INSTALL_TARGET);
-            CellCtlUtils.deleteRole(Setup.TEST_CELL1, "role1", INSTALL_TARGET);
-        }
+        BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
     }
 
     /**
@@ -1684,14 +1707,14 @@ public class BarInstallTest extends JerseyTest {
         String reqCell = Setup.TEST_CELL1;
         String reqPath = INSTALL_TARGET;
 
-        try {
-            TResponse res = null;
-            File barFile = new File(RESOURCE_PATH + BAR_FILE_00METADATA_NOTEXIST);
-            byte[] body = BarInstallTestUtils.readBarFile(barFile);
-            Map<String, String> headers = new LinkedHashMap<String, String>();
-            headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
-            headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
+        TResponse res = null;
+        File barFile = new File(RESOURCE_PATH + BAR_FILE_00METADATA_NOTEXIST);
+        byte[] body = BarInstallTestUtils.readBarFile(barFile);
+        Map<String, String> headers = new LinkedHashMap<String, String>();
+        headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
+        headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
 
+        try {
             res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
             res.statusCode(HttpStatus.SC_ACCEPTED);
             String location = res.getHeader(HttpHeaders.LOCATION);
@@ -1711,15 +1734,16 @@ public class BarInstallTest extends JerseyTest {
     public final void ODataCol用の00_metadata_xmlと10_odatarelations_jsonの順序が不正の場合に異常終了する() {
         String reqCell = Setup.TEST_CELL1;
         String reqPath = INSTALL_TARGET;
+        String odataColName = "odatacol1";
+
+        TResponse res = null;
+        File barFile = new File(RESOURCE_PATH + BAR_FILE_INVALID_CONT_ORDER);
+        byte[] body = BarInstallTestUtils.readBarFile(barFile);
+        Map<String, String> headers = new LinkedHashMap<String, String>();
+        headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
+        headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
 
         try {
-            TResponse res = null;
-            File barFile = new File(RESOURCE_PATH + BAR_FILE_INVALID_CONT_ORDER);
-            byte[] body = BarInstallTestUtils.readBarFile(barFile);
-            Map<String, String> headers = new LinkedHashMap<String, String>();
-            headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
-            headers.put(HttpHeaders.CONTENT_LENGTH, String.valueOf(body.length));
-
             res = BarInstallTestUtils.request(REQUEST_NORM_FILE, reqCell, reqPath, headers, body);
             res.statusCode(HttpStatus.SC_ACCEPTED);
             String location = res.getHeader(HttpHeaders.LOCATION);
@@ -1728,6 +1752,10 @@ public class BarInstallTest extends JerseyTest {
 
             BarInstallTestUtils.assertBarInstallStatus(location, SCHEMA_URL, ProgressInfo.STATUS.FAILED);
         } finally {
+            // Delete entity
+            Setup.entityTypeDelete(odataColName, "entity", reqCell, reqPath);
+
+            // Delete collection
             BarInstallTestUtils.deleteCollection("odatacol1");
         }
     }

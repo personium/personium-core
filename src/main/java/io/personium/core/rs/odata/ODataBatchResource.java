@@ -58,17 +58,17 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthzException;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumReadDeleteModeManager;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.Privilege;
 import io.personium.core.exceptions.ODataErrorMessage;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.model.impl.es.doc.LinkDocHandler;
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
-import io.personium.core.odata.PersoniumFormatWriterFactory;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.odata.PersoniumFormatWriterFactory;
 import io.personium.core.rs.PersoniumCoreExceptionMapper;
 
 /**
@@ -1016,7 +1016,8 @@ public class ODataBatchResource extends AbstractODataResource {
             } else {
                 for (NavigationPropertyBulkContext npBulkContext : navigationPropertyBulkContexts) {
                     npBulkContext.setException(PersoniumCoreException.Misc.SERVER_REQUEST_TIMEOUT);
-                    npBulkContext.getBatchResponse().setErrorResponse(PersoniumCoreException.Misc.SERVER_REQUEST_TIMEOUT);
+                    npBulkContext.getBatchResponse().setErrorResponse(
+                            PersoniumCoreException.Misc.SERVER_REQUEST_TIMEOUT);
                     BatchBodyPart bodyPart = npBulkContext.getBodyPart();
                     responseBody.append(getChangesetResponseBody(boundary, bodyPart,
                             npBulkContext.getBatchResponse()));

@@ -17,13 +17,13 @@
 package io.personium.test.jersey.box.odatacol.batch;
 
 import static io.personium.test.utils.BatchUtils.BOUNDARY;
-import static io.personium.test.utils.BatchUtils.START_BOUNDARY;
 import static io.personium.test.utils.BatchUtils.END_BOUNDARY;
+import static io.personium.test.utils.BatchUtils.START_BOUNDARY;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,16 +45,16 @@ import org.odata4j.core.ODataConstants;
 import org.odata4j.edm.EdmSimpleType;
 import org.odata4j.producer.resources.ODataBatchProvider;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.CompareJSON;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -638,8 +638,10 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
             checkBatchResponseBody(res, expectedBody);
         } finally {
             // UserODataの削除
-            deleteUserData(cellName, boxName, colName, entityTypeName, "testBatch1", PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, entityTypeName, "testBatch2", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, entityTypeName, "testBatch1",
+                    PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, entityTypeName, "testBatch2",
+                    PersoniumUnitConfig.getMasterToken(), -1);
             // EntityTypeの削除
             Setup.entityTypeDelete(colName, entityTypeName, cellName, boxName);
 
@@ -691,7 +693,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
             checkBatchResponseBody(res, expectedBody);
         } finally {
             deleteUserData(cellName, boxName, colName, "Sales", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -744,7 +747,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
 
         } finally {
             deleteUserData(cellName, boxName, colName, "Sales", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -815,7 +819,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
 
         } finally {
             deleteUserData(cellName, boxName, colName, "Sales", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
-            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "id0001",
+                    PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
@@ -943,7 +948,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
-                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(
+                        HttpHeaders.CONTENT_TYPE).getMessage());
     }
 
     /**
@@ -1011,7 +1017,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
-                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(
+                        HttpHeaders.CONTENT_TYPE).getMessage());
     }
 
     /**
@@ -1036,7 +1043,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
-                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(
+                        HttpHeaders.CONTENT_TYPE).getMessage());
     }
 
     /**
@@ -1060,7 +1068,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
         ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
-                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(
+                        HttpHeaders.CONTENT_TYPE).getMessage());
     }
 
     /**
@@ -1084,8 +1093,10 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .debug()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
-        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
-                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE).getMessage());
+        ODataCommon.checkErrorResponseBody(res,
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.getCode(),
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(
+                        HttpHeaders.CONTENT_TYPE).getMessage());
     }
 
     /**
@@ -1108,7 +1119,8 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
                 .debug()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
-        ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.BATCH_BODY_FORMAT_CHANGESET_NEST_ERROR.getCode(),
+        ODataCommon.checkErrorResponseBody(res,
+                PersoniumCoreException.OData.BATCH_BODY_FORMAT_CHANGESET_NEST_ERROR.getCode(),
                 PersoniumCoreException.OData.BATCH_BODY_FORMAT_CHANGESET_NEST_ERROR.getMessage());
     }
 

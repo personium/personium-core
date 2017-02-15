@@ -18,8 +18,8 @@ package io.personium.core.model.lock;
 
 import java.util.Date;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
@@ -96,7 +96,7 @@ public abstract class LockManager {
      * @return Lock
      */
     public static Lock getLock(String category, String cellId, String boxId, String nodeId) {
-        Long createdAt = (new Date()).getTime();
+        Long createdAt = new Date().getTime();
         // memcached にキーが存在するか調べる
         // なければmemcached に書きに行く
         // あったら、リトライする。

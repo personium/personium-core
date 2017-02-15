@@ -16,8 +16,21 @@
  */
 package io.personium.test.plugin;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import io.personium.core.plugin.PluginInfo;
+import io.personium.core.plugin.PluginManager;
+import io.personium.plugin.base.PluginException;
+import io.personium.plugin.base.auth.AuthConst;
+import io.personium.plugin.base.auth.AuthPlugin;
+import io.personium.plugin.base.auth.AuthenticatedIdentity;
+import io.personium.test.categories.Integration;
+import io.personium.test.categories.Regression;
+import io.personium.test.categories.Unit;
+import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.utils.AccountUtils;
+import io.personium.test.utils.Http;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -32,20 +45,6 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import com.sun.jersey.test.framework.JerseyTest;
-
-import io.personium.core.plugin.PluginInfo;
-import io.personium.core.plugin.PluginManager;
-import io.personium.test.categories.Integration;
-import io.personium.test.categories.Regression;
-import io.personium.test.categories.Unit;
-import io.personium.test.jersey.AbstractCase;
-import io.personium.test.utils.AccountUtils;
-import io.personium.test.utils.Http;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.plugin.base.auth.AuthConst;
-import io.personium.plugin.base.auth.AuthPlugin;
-import io.personium.plugin.base.auth.AuthPluginException;
-import io.personium.plugin.base.auth.AuthenticatedIdentity;
 
 /**
  * Pluginクラスのテスト.
@@ -137,7 +136,6 @@ public class PluginTest extends JerseyTest {
                 assertTrue(true);
             }
         } catch (Exception e) {
-            System.out.println(e);
             assertFalse(false);
         }
     }
@@ -202,10 +200,10 @@ public class PluginTest extends JerseyTest {
                     System.out.println("NG authenticate");
                     assertFalse(false);
                 }
-            } catch (AuthPluginException ape) {
-                System.out.println(ape);
-                System.out.println(ape.getType());
-                System.out.println(ape.getParams().toString());
+            } catch (PluginException pe) {
+                System.out.println(pe);
+                System.out.println(pe.getType());
+                System.out.println(pe.getParams().toString());
                 assertFalse(true);
             } catch (Exception e) {
                 System.out.println(e);

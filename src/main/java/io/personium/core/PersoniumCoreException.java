@@ -16,14 +16,11 @@
  */
 package io.personium.core;
 
-import io.personium.core.PersoniumCoreMessageUtils.Severity;
 import io.personium.core.exceptions.ODataErrorMessage;
 import io.personium.core.utils.EscapeControlCode;
-import io.personium.plugin.base.PluginException;
+import io.personium.plugin.base.PluginMessageUtils.Severity;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -397,7 +394,8 @@ public class PersoniumCoreException extends RuntimeException {
         /**
          * 移動元のリソースとして__srcが指定された場合.
          */
-        public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_MOVE = create("PR400-DV-0011");
+        public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_MOVE =
+                create("PR400-DV-0011");
         /**
          * 移動先のリソースとして、既存のリソースが指定された場合.
          */
@@ -405,7 +403,8 @@ public class PersoniumCoreException extends RuntimeException {
         /**
          * 移動先のリソースとして、ODataコレクション配下のパスが指定された場合.
          */
-        public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION = create("PR400-DV-0013");
+        public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION =
+                create("PR400-DV-0013");
         /**
          * 移動先のリソースとして、ファイル配下のパスが指定された場合.
          */
@@ -417,11 +416,13 @@ public class PersoniumCoreException extends RuntimeException {
         /**
          * 移動先のリソースとして、Serviceコレクション配下のパスが指定された場合.
          */
-        public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION = create("PR400-DV-0016");
+        public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION =
+                create("PR400-DV-0016");
         /**
          * 移動先のリソースとして__srcが指定された場合.
          */
-        public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE = create("PR400-DV-0017");
+        public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE =
+                create("PR400-DV-0017");
         /**
          * 移動元がコレクションで、移動先のリソースとしてサービスソースコレクションが指定された場合.
          */
@@ -726,7 +727,11 @@ public class PersoniumCoreException extends RuntimeException {
          * JSONのパースに失敗したとき.
          */
         public static final PersoniumCoreException JSON_PARSE_ERROR = create("PR400-AZ-0005");
-
+        /**
+         * JSONのEncodeに失敗したとき.
+         */
+        public static final PersoniumCoreException IDTOKEN_ENCODED_INVALID = create("PR400-AZ-0006");
+        
     }
 
     /**
@@ -916,7 +921,7 @@ public class PersoniumCoreException extends RuntimeException {
      * @param customMessage エラーメッセージ
      * @param status HTTPレスポンスステータス
      */
-    public PersoniumCoreException(final String code,
+    PersoniumCoreException(final String code,
             final Severity severity,
             final String message,
             final int status) {
@@ -1047,27 +1052,4 @@ public class PersoniumCoreException extends RuntimeException {
         }
         return Integer.parseInt(m.group(1));
     }
-
-	static Map<Integer, PersoniumCoreException> exmap = new HashMap<>();
-	static {
-		// Auth
-		exmap.put(PluginException.Auth.JSON_PARSE_ERROR.getType(), PersoniumCoreException.Auth.JSON_PARSE_ERROR);
-		exmap.put(PluginException.Auth.IDTOKEN_ENCODED_INVALID.getType(), PersoniumCoreException.Auth.REQUEST_PARAM_INVALID);
-
-		// Network
-		exmap.put(PluginException.NetWork.NETWORK_ERROR.getType(), PersoniumCoreException.NetWork.NETWORK_ERROR);
-		exmap.put(PluginException.NetWork.HTTP_REQUEST_FAILED.getType(), PersoniumCoreException.NetWork.HTTP_REQUEST_FAILED);
-		exmap.put(PluginException.NetWork.UNEXPECTED_RESPONSE.getType(), PersoniumCoreException.NetWork.UNEXPECTED_RESPONSE);
-		exmap.put(PluginException.NetWork.UNEXPECTED_VALUE.getType(), PersoniumCoreException.NetWork.UNEXPECTED_VALUE);
-	}
-
-    /**
-     * Mapping Plugin Exception.
-	 *   PluginException -> PersoniumCoreException
-     * @return exmap Map
-     */
-	public static PersoniumCoreException mappingPluginException(PluginException pe){
-		PersoniumCoreException pce = exmap.get(pe.getType());
-		return (PersoniumCoreException)pce.params((Object[])pe.getParams());
-	}
 }

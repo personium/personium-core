@@ -57,8 +57,8 @@ import io.personium.core.model.ctl.ComplexTypeProperty;
 import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.ctl.EntityType;
 import io.personium.core.model.ctl.Property;
-import io.personium.core.odata.PersoniumOptionsQueryParser;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.odata.PersoniumOptionsQueryParser;
 import io.personium.core.rs.odata.ODataResource;
 import io.personium.core.utils.ODataUtils;
 
@@ -268,7 +268,8 @@ public final class ODataSvcSchemaResource extends ODataResource {
                         && !propValue.equals(EdmSimpleType.DOUBLE.getFullyQualifiedTypeName())
                         && !propValue.equals(EdmSimpleType.DATETIME.getFullyQualifiedTypeName())) {
                     // 登録済みのComplexTypeのチェック
-                    BoolCommonExpression filter = PersoniumOptionsQueryParser.parseFilter("Name eq '" + propValue + "'");
+                    BoolCommonExpression filter = PersoniumOptionsQueryParser.parseFilter(
+                            "Name eq '" + propValue + "'");
                     QueryInfo query = new QueryInfo(null, null, null, filter, null, null, null, null, null);
                     CountResponse reponse = this.getODataProducer().getEntitiesCount(ComplexType.EDM_TYPE_NAME, query);
                     if (reponse.getCount() == 0) {
@@ -313,14 +314,18 @@ public final class ODataSvcSchemaResource extends ODataResource {
         // EntityTypeとAssociationEndの$links指定は不可（EntityType:AssociationEndは1:Nの関係だから）
         // EntityTypeとPropertyの$links指定は不可（EntityType:Propertyは1:Nの関係だから）
         // ComplexTypeとComplexTypePropertyの$links指定は不可（ComplexType:ComplexTypePropertyは1:Nの関係だから）
-        if ((sourceEntity.equals(EntityType.EDM_TYPE_NAME) && targetNavProp.equals(AssociationEnd.EDM_TYPE_NAME))
-                || (sourceEntity.equals(AssociationEnd.EDM_TYPE_NAME) && targetNavProp.equals(EntityType.EDM_TYPE_NAME))
-                || (sourceEntity.equals(EntityType.EDM_TYPE_NAME) && targetNavProp.equals(Property.EDM_TYPE_NAME))
-                || (sourceEntity.equals(Property.EDM_TYPE_NAME) && targetNavProp.equals(EntityType.EDM_TYPE_NAME))
-                || (sourceEntity.equals(ComplexType.EDM_TYPE_NAME)
+        if ((sourceEntity.equals(EntityType.EDM_TYPE_NAME) //NOPMD -To maintain readability
+                        && targetNavProp.equals(AssociationEnd.EDM_TYPE_NAME))
+                || (sourceEntity.equals(AssociationEnd.EDM_TYPE_NAME) //NOPMD
+                        && targetNavProp.equals(EntityType.EDM_TYPE_NAME))
+                || (sourceEntity.equals(EntityType.EDM_TYPE_NAME) //NOPMD
+                        && targetNavProp.equals(Property.EDM_TYPE_NAME))
+                || (sourceEntity.equals(Property.EDM_TYPE_NAME) //NOPMD
+                        && targetNavProp.equals(EntityType.EDM_TYPE_NAME))
+                || (sourceEntity.equals(ComplexType.EDM_TYPE_NAME) //NOPMD
                 && targetNavProp.equals(ComplexTypeProperty.EDM_TYPE_NAME))
-                || (sourceEntity.equals(ComplexTypeProperty.EDM_TYPE_NAME)
-                && targetNavProp.equals(ComplexType.EDM_TYPE_NAME))) {
+                || (sourceEntity.equals(ComplexTypeProperty.EDM_TYPE_NAME) //NOPMD
+                && targetNavProp.equals(ComplexType.EDM_TYPE_NAME))) { //NOPMD
             throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
     }

@@ -28,6 +28,7 @@ import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,9 +84,9 @@ import org.w3c.dom.Element;
 
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreMessageUtils;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.bar.jackson.JSONExtRoles;
 import io.personium.core.bar.jackson.JSONLinks;
 import io.personium.core.bar.jackson.JSONManifest;
@@ -93,8 +94,8 @@ import io.personium.core.bar.jackson.JSONMappedObject;
 import io.personium.core.bar.jackson.JSONRelations;
 import io.personium.core.bar.jackson.JSONRoles;
 import io.personium.core.bar.jackson.JSONUserDataLinks;
-import io.personium.core.eventbus.PersoniumEventBus;
 import io.personium.core.eventbus.JSONEvent;
+import io.personium.core.eventbus.PersoniumEventBus;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.Cell;
@@ -118,9 +119,9 @@ import io.personium.core.model.impl.es.odata.UserSchemaODataProducer;
 import io.personium.core.model.progress.Progress;
 import io.personium.core.model.progress.ProgressInfo;
 import io.personium.core.model.progress.ProgressManager;
+import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumEdmxFormatParser;
 import io.personium.core.odata.PersoniumODataProducer;
-import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.cell.EventResource;
 import io.personium.core.rs.odata.BulkRequest;
 import io.personium.core.rs.odata.ODataEntitiesResource;
@@ -1144,7 +1145,8 @@ public class BarFileReadRunner implements Runnable {
                     } else if (nodeName.equals("p:service")) {
                         return TYPE_SERVICE_COLLECTION;
                     } else {
-                        String message = MessageFormat.format(PersoniumCoreMessageUtils.getMessage("PL-BI-2018"), nodeName);
+                        String message = MessageFormat.format(
+                                PersoniumCoreMessageUtils.getMessage("PL-BI-2018"), nodeName);
                         writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                         return TYPE_MISMATCH;
                     }
@@ -1603,7 +1605,8 @@ public class BarFileReadRunner implements Runnable {
         try {
             manifest = mapper.readValue(jp, JSONManifest.class);
         } catch (UnrecognizedPropertyException ex) {
-            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params("manifest.json unrecognized property");
+            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(
+                    "manifest.json unrecognized property");
         }
         if (manifest.getBarVersion() == null) {
             throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params("manifest.json#barVersion");
@@ -1885,10 +1888,8 @@ public class BarFileReadRunner implements Runnable {
         try {
             Map<String, String> fromId = ((JSONUserDataLinks) mappedObject).getFromId();
             String fromKey = "";
-            for (Map.Entry<String, String> entry : fromId.entrySet()) {
-                fromKey = String.format("('%s')", entry.getValue());
-                break;
-            }
+            Iterator<Entry<String, String>> fromIterator = fromId.entrySet().iterator();
+            fromKey = String.format("('%s')", fromIterator.next().getValue());
 
             OEntityKey fromOEKey = OEntityKey.parse(fromKey);
             sourceEntity = OEntityIds.create(((JSONUserDataLinks) mappedObject).getFromType(), fromOEKey);
@@ -1899,10 +1900,8 @@ public class BarFileReadRunner implements Runnable {
 
             Map<String, String> toId = ((JSONUserDataLinks) mappedObject).getToId();
             String toKey = "";
-            for (Map.Entry<String, String> entry : toId.entrySet()) {
-                toKey = String.format("('%s')", entry.getValue());
-                break;
-            }
+            Iterator<Entry<String, String>> toIterator = toId.entrySet().iterator();
+            toKey = String.format("('%s')", toIterator.next().getValue());
 
             OEntityKey toOEKey = OEntityKey.parse(toKey);
             newTargetEntity = OEntityIds.create(((JSONUserDataLinks) mappedObject).getToType(), toOEKey);

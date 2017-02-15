@@ -124,7 +124,7 @@ public final class ODataUtils {
         }
 
         // IfMatchヘッダに「*」が指定されている場合は無条件に実行
-        if (("*").equals(etag)) {
+        if ("*".equals(etag)) {
             return;
         }
 
@@ -290,8 +290,10 @@ public final class ODataUtils {
      */
     public static boolean validateDouble(Double value) {
         if (0 == value
-                || (DOUBLE_NEGATIVE_MIN_VALUE <= value && value <= DOUBLE_NEGATIVE_MAX_VALUE)
-                || (DOUBLE_POSITIVE_MIN_VALUE <= value && value <= DOUBLE_POSITIVE_MAX_VALUE)) {
+                || (DOUBLE_NEGATIVE_MIN_VALUE <= value //NOPMD -To maintain readability
+                && value <= DOUBLE_NEGATIVE_MAX_VALUE)
+                || (DOUBLE_POSITIVE_MIN_VALUE <= value //NOPMD
+                && value <= DOUBLE_POSITIVE_MAX_VALUE)) {
             return true;
         }
         return false;
@@ -349,7 +351,7 @@ public final class ODataUtils {
         }
         String scheme = uri.getScheme();
         boolean isUrn = scheme != null
-                && (scheme.equals(UriUtils.SCHEME_URN));
+                && scheme.equals(UriUtils.SCHEME_URN);
         return isValidLength && isUrn;
     }
 
@@ -368,9 +370,9 @@ public final class ODataUtils {
         }
         String scheme = uri.getScheme();
         boolean isValidScheme = scheme != null
-                && ((scheme.equals(UriUtils.SCHEME_HTTP))
-                || (scheme.equals(UriUtils.SCHEME_HTTPS))
-                || (scheme.equals(UriUtils.SCHEME_LOCALUNIT)));
+                && (scheme.equals(UriUtils.SCHEME_HTTP)
+                || scheme.equals(UriUtils.SCHEME_HTTPS)
+                || scheme.equals(UriUtils.SCHEME_LOCALUNIT));
         boolean isNormalized = uri.normalize().toString().equals(str);
         boolean hasTrailingSlash = str.endsWith("/");
         return isValidLength && isValidScheme && isNormalized && hasTrailingSlash;

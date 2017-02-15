@@ -4,3 +4,7 @@
 bin/target/
 target
 /src/main/resources/personium-unit-config.properties
+*.log
+src/test/resources/testoauth.properties
+personium-core.log
+personium-core.log.*

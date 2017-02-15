@@ -16,14 +16,14 @@
  */
 package io.personium.core;
 
+import io.personium.plugin.base.PluginMessageUtils.Severity;
+import io.personium.test.categories.Unit;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-
-import io.personium.core.PersoniumCoreMessageUtils.Severity;
-import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 
 /**

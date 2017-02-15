@@ -31,14 +31,16 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.PersoniumUnitConfig;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AssociationEndUtils;
@@ -49,7 +51,6 @@ import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * $expandクエリ指定のテスト.
@@ -977,7 +978,8 @@ public class UserDataExpandTest extends AbstractUserDataTest {
         TResponse response = listUserODataWithExpand(cellName, boxName, colName, fromEntity, expands, top,
                 HttpStatus.SC_BAD_REQUEST);
 
-        ODataCommon.checkErrorResponseBody(response, PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getCode(),
+        ODataCommon.checkErrorResponseBody(response,
+                PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getCode(),
                 PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getMessage());
 
     }
@@ -1150,7 +1152,8 @@ public class UserDataExpandTest extends AbstractUserDataTest {
             String expands = expandBuilder.toString();
             TResponse res = UserDataUtils.getWithQuery(cellName, MASTER_TOKEN_NAME, boxName, colName,
                     fromEntity, expands, userDataId, HttpStatus.SC_BAD_REQUEST);
-            ODataCommon.checkErrorResponseBody(res, PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getCode(),
+            ODataCommon.checkErrorResponseBody(res,
+                    PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getCode(),
                     PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED.getMessage());
 
         } finally {

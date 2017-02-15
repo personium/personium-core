@@ -56,7 +56,6 @@ import io.personium.plugin.base.Plugin;
 import io.personium.plugin.base.PluginException;
 import io.personium.plugin.base.auth.AuthConst;
 import io.personium.plugin.base.auth.AuthPlugin;
-import io.personium.plugin.base.auth.AuthPluginException;
 import io.personium.plugin.base.auth.AuthenticatedIdentity;
 
 import java.net.MalformedURLException;
@@ -251,20 +250,12 @@ public class TokenEndPointResource {
 		try {
 			ai = ((AuthPlugin) plugin).authenticate(body);
 
-		} catch (AuthPluginException ape) {
-			// throw PersoniumCoreAuthException matches with catched AuthPluginException.
-			PersoniumCoreAuthnException pcae = PersoniumCoreAuthnException.mappingAuthPluginException(ape);
+		} catch (PluginException pe) {
+			PersoniumCoreAuthnException pcae = PersoniumCoreAuthnException.mapFrom(pe);
 			if (pcae != null) {
 				throw pcae;
 			}
-			// throw PersoniumCoreException matches with catched PluginException.
-			PersoniumCoreException pce = PersoniumCoreException.mappingPluginException((PluginException)ape);
-			if (pce != null) {
-				throw pce;
-			}
-			// if matches exception not exist, create default PersoniumCoreAuthException
-			// and set reason from catched AuthPluginException.
-			throw PersoniumCoreAuthnException.Plugin.PLUGIN_DEFINED_CLIENT_ERROR.reason(ape);
+			throw PersoniumCoreAuthnException.Plugin.PLUGIN_DEFINED_CLIENT_ERROR.reason(pe);
 
 		} catch (Exception e) {
 			// Unexpected exception throwed from "Plugin", create default PersoniumCoreAuthException
@@ -776,5 +767,4 @@ public class TokenEndPointResource {
 		return PersoniumCoreUtils.responseBuilderForOptions(HttpMethod.POST)
 				.build();
 	}
-
 }

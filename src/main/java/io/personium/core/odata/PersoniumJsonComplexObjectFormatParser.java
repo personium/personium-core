@@ -56,14 +56,15 @@ import org.odata4j.format.json.JsonTypeConverter;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
+import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonEvent;
 import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamReader;
-import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamReader.JsonEvent;
 import io.personium.core.utils.ODataUtils;
 
 /**
  * Parser for OComplexObjects in JSON.
  */
-public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatParser implements FormatParser<OComplexObject> {
+public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatParser
+        implements FormatParser<OComplexObject> {
 
     /**
      * コンストラクタ.

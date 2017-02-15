@@ -16,12 +16,12 @@
  */
 package io.personium.core;
 
+import io.personium.plugin.base.PluginMessageUtils.Severity;
+
 import java.text.MessageFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.personium.core.PersoniumCoreMessageUtils.Severity;
 
 /**
  * ログメッセージ作成クラス.
@@ -386,11 +386,11 @@ public final class PersoniumCoreLog {
      * ログの出力.
      * ログの出力時にログ出力元のクラス名、メソッド名、行数を表示する。
      * 出力例）
-     * 2012-09-09 11:23:47.029 [main] [INFO ] PersoniumCoreLog [io.personium.core.PersoniumCoreLogTest#test:22] - JSON Parse Error.
+     * 2012-09-09 11:23:47.029 [main] [INFO ] CoreLog [io.personium.core.CoreLogTest#test:22] - JSON Parse Error.
      */
     public void writeLog() {
 
-        StackTraceElement[] ste = (new Throwable()).getStackTrace();
+        StackTraceElement[] ste = new Throwable().getStackTrace();
         String logInfo = String.format("[%s] - [%s#%s:%s] - %s",
                 this.code, ste[1].getClassName(), ste[1].getMethodName(), ste[1].getLineNumber(), this.message);
         switch (this.severity) {

@@ -18,6 +18,9 @@ package io.personium.core;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import io.personium.plugin.base.PluginMessageUtils.Severity;
+import io.personium.test.categories.Unit;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -27,10 +30,6 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
-
-import io.personium.core.PersoniumCoreMessageUtils.Severity;
-import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 
 /**
  * EsModelの単体テストケース.
