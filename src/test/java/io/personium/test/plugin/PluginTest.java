@@ -110,13 +110,13 @@ public class PluginTest extends JerseyTest {
     public void プラグイン処理_一覧からgoogle認証プラグインを取得できること() throws Exception {
         boolean bFind = false;
         PluginManager pm = new PluginManager();
-        if (pm.getPluginCount() > 0){
-        	PluginInfo pi = (PluginInfo) pm.getPluginsByGrantType(GOOGLE_GRANT_TYPE);
-	        if (pi != null) {
-	            bFind = true;
-	            System.out.println("OK get grant_type = " + GOOGLE_GRANT_TYPE);
-	        }
-	        assertTrue(bFind);
+        if (pm.getPluginCount() > 0) {
+            PluginInfo pi = (PluginInfo) pm.getPluginsByGrantType(GOOGLE_GRANT_TYPE);
+            if (pi != null) {
+                bFind = true;
+                System.out.println("OK get grant_type = " + GOOGLE_GRANT_TYPE);
+            }
+            assertTrue(bFind);
         }
         // プラグインが存在しない場合にはエラーにしない
         assertTrue(true);
@@ -131,15 +131,20 @@ public class PluginTest extends JerseyTest {
         String invalidGratType = "urn:x-dc1:oidc:hoge:code";
 
         PluginManager pm = new PluginManager();
-        PluginInfo pi = pm.getPluginsByGrantType(invalidGratType);
+        if (pm.getPluginCount() > 0) {
+            PluginInfo pi = pm.getPluginsByGrantType(invalidGratType);
 
-        try {
-            AuthPlugin ap = (AuthPlugin) pi.getObj();
-            if (ap == null) {
-                assertTrue(true);
+            try {
+                AuthPlugin ap = (AuthPlugin) pi.getObj();
+                if (ap == null) {
+                    assertTrue(true);
+                }
+            } catch (Exception e) {
+                assertFalse(false);
             }
-        } catch (Exception e) {
-            assertFalse(false);
+        } else {
+            // プラグインが存在しない場合にはエラーにしない
+            assertTrue(true);
         }
     }
 
@@ -154,17 +159,18 @@ public class PluginTest extends JerseyTest {
         // プラグインjarがディレクトリに存在する場合
         PluginManager pm = new PluginManager();
         if (pm.getPluginCount() > 0) {
-	        ArrayList<PluginInfo> pl = pm.getPluginsByType(AuthConst.TYPE_AUTH);
-	        for (int i = 0; i < pl.size(); i++) {
-	            PluginInfo pi = (PluginInfo) pl.get(i);
-	            if (pi.getType().equals(AuthConst.TYPE_AUTH)) {
-	                bFind = true;
-	            }
-	        }
-	        assertTrue(bFind);
+            ArrayList<PluginInfo> pl = pm.getPluginsByType(AuthConst.TYPE_AUTH);
+            for (int i = 0; i < pl.size(); i++) {
+                PluginInfo pi = (PluginInfo) pl.get(i);
+                if (pi.getType().equals(AuthConst.TYPE_AUTH)) {
+                    bFind = true;
+                }
+            }
+            assertTrue(bFind);
+        } else {
+            // プラグインが存在しない場合にはエラーにしない
+            assertTrue(true);
         }
-        // プラグインが存在しない場合にはエラーにしない
-        assertTrue(true);
     }
 
     /**
@@ -174,48 +180,53 @@ public class PluginTest extends JerseyTest {
     @Test
     public void GooglePlugin_正常なアカウントとIdTokenを指定し認証プラグイン処理を直接実行できること() throws Exception {
         PluginManager pm = new PluginManager();
-        PluginInfo pi = pm.getPluginsByGrantType(GOOGLE_GRANT_TYPE);
+        if (pm.getPluginCount() > 0) {
+            PluginInfo pi = pm.getPluginsByGrantType(GOOGLE_GRANT_TYPE);
 
-        // Map設定
-        Map<String, String> body = new HashMap<String, String>();
-        // debug message
-        body.put(AuthConst.KEY_MESSAGE, "");
+            // Map設定
+            Map<String, String> body = new HashMap<String, String>();
+            // debug message
+            body.put(AuthConst.KEY_MESSAGE, "");
 
-        // idTokenの設定
-        Properties properties = getIdTokenProperty();
-        String idToken = properties.getProperty(PROP_IDTOKEN);
-        String account = properties.getProperty(PROP_ACCOUNT);
+            // idTokenの設定
+            Properties properties = getIdTokenProperty();
+            String idToken = properties.getProperty(PROP_IDTOKEN);
+            String account = properties.getProperty(PROP_ACCOUNT);
 
-        if (idToken != null && account != null) {
-            try {
-                // Plugin
-                body.put(AuthConst.KEY_TOKEN, idToken);
-                AuthPlugin ap = (AuthPlugin) pi.getObj();
-                AuthenticatedIdentity ai = ap.authenticate(body);
+            if (idToken != null && account != null) {
+                try {
+                    // Plugin
+                    body.put(AuthConst.KEY_TOKEN, idToken);
+                    AuthPlugin ap = (AuthPlugin) pi.getObj();
+                    AuthenticatedIdentity ai = ap.authenticate(body);
 
-                // 実行結果
-                if (ai != null) {
-                    String accountName = ai.getAccountName();
-                    if (accountName != null) {
-                        if (account.equals(accountName)) {
-                            String oidcType = ai.getAttributes(AuthConst.KEY_OIDC_TYPE);
-                            System.out.println("OK authenticate account = " + accountName + " oidcType=" + oidcType);
+                    // 実行結果
+                    if (ai != null) {
+                        String accountName = ai.getAccountName();
+                        if (accountName != null) {
+                            if (account.equals(accountName)) {
+                                String oidcType = ai.getAttributes(AuthConst.KEY_OIDC_TYPE);
+                                System.out.println(
+                                "OK authenticate account = " + accountName + " oidcType=" + oidcType);
+                            }
+                            assertTrue(true);
                         }
-                        assertTrue(true);
+                    } else {
+                        System.out.println("NG authenticate");
+                        assertFalse(false);
                     }
-                } else {
-                    System.out.println("NG authenticate");
-                    assertFalse(false);
+                } catch (PluginException pe) {
+                    System.out.println(pe);
+                    System.out.println(pe.getType());
+                    System.out.println(pe.getParams().toString());
+                    assertFalse(true);
+                } catch (Exception e) {
+                    System.out.println(e);
+                    assertFalse(true);
                 }
-            } catch (PluginException pe) {
-                System.out.println(pe);
-                System.out.println(pe.getType());
-                System.out.println(pe.getParams().toString());
-                assertFalse(true);
-            } catch (Exception e) {
-                System.out.println(e);
-                assertFalse(true);
             }
+        } else {
+            assertFalse(true);
         }
     }
 
