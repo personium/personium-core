@@ -91,4 +91,12 @@ public class PluginManager {
         AuthPlugin ap = (AuthPlugin) pi.getObj();
         return ap.getGrantType();
     }
+
+    /**
+     * getPluginCount.
+     * @return
+     */
+    public int getPluginCount() {
+        return this.pl.getPlugins().size();
+    }
 }
