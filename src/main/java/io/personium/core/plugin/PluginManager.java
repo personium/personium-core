@@ -93,10 +93,10 @@ public class PluginManager {
     }
 
     /**
-     * getPluginCount.
+     * size.
      * @return size
      */
-    public int getPluginCount() {
+    public int size() {
         return this.pl.getPlugins().size();
     }
 }

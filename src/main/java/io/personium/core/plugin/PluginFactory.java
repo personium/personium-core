@@ -136,4 +136,32 @@ public class PluginFactory {
         }
         return plugin;
     }
+
+    /**
+     * loadDefault.
+     * @param name String
+     * @return obj
+     */
+    public Object loadDefaultPlugin(String name) {
+        Object obj = null;
+        // personium-core pox.xml
+        // original plug-in
+        // set personium-plugins jar
+        try {
+            Class<?> clazz;
+            clazz = Class.forName(name);
+            obj = clazz.newInstance();
+
+        } catch (ClassNotFoundException e) {
+            // クラスが存在しない
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            // インスタンス作成不可
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // 呼び出し:アクセス違反, 保護されている
+            e.printStackTrace();
+        }
+        return obj;
+    }
 }
