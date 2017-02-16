@@ -37,11 +37,11 @@ import io.personium.core.model.ctl.Relation;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.ExtCellUtils;
@@ -921,7 +921,8 @@ public class MessageApproveTest extends ODataCommon {
             res = rest.post(requestUrl, "{\"Command\":\"approved\" }",
                     requestheaders);
             assertEquals(HttpStatus.SC_CONFLICT, res.getStatusCode());
-            checkErrorResponse(res.bodyAsJson(), PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR.getCode());
+            checkErrorResponse(res.bodyAsJson(),
+                    PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR.getCode());
 
         } catch (PersoniumException e) {
             e.printStackTrace();

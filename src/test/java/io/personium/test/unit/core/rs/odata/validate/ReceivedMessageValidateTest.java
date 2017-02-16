@@ -505,7 +505,8 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      * Typeがreq.relation.breakでRequestRelationとRequestRelationTargetの指定がある場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Typeがreq_relation_breakでRequestRelationとRequestRelationTargetの指定がある場合にPersoniumCoreExceptionが発生しないこと() {
+    public final void
+    Typeがreq_relation_breakでRequestRelationとRequestRelationTargetの指定がある場合にPersoniumCoreExceptionが発生しないこと() {
         MessageODataResource.validateReqRelation("req.relation.break", "http://xxx.com/xx", "http://xxx.com/xx");
     }
 
