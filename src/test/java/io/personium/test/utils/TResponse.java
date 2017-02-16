@@ -108,7 +108,7 @@ public final class TResponse {
      */
     public TResponse checkErrorResponse(String expectedCode, String expectedValue) {
         String code = (String) ((JSONObject) this.bodyAsJson()).get("code");
-        String value = (String) ((JSONObject) ((JSONObject) this.bodyAsJson()).get("customMessage")).get("value");
+        String value = (String) ((JSONObject) ((JSONObject) this.bodyAsJson()).get("message")).get("value");
         assertEquals(expectedCode, code);
         assertEquals(expectedValue, value);
         return this;

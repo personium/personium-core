@@ -189,10 +189,10 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
 
     /**
      * コンストラクタ.
-     * @param customStatus HTTPレスポンスステータス
+     * @param status HTTPレスポンスステータス
      * @param severityエラーレベル
      * @param code エラーコード
-     * @param customMessage エラーメッセージ
+     * @param message エラーメッセージ
      * @param error OAuth認証エラーのエラーコード
      * @param realm WWWW-Authenticateヘッダを返す場合はここにrealm値を設定する
      */

@@ -1590,7 +1590,7 @@ public class ODataBatchResource extends AbstractODataResource {
             json.put("code", code);
             jsonMessage.put("lang", ODataErrorMessage.DEFAULT_LANG_TAG);
             jsonMessage.put("value", message);
-            json.put("customMessage", jsonMessage);
+            json.put("message", jsonMessage);
             return JSONObject.toJSONString(json);
         }
 

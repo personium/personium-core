@@ -97,12 +97,12 @@ public class ReadDeleteOnlyModeTest extends JerseyTest {
         }
 
         // ReadDeleteOnlyモードを設定する
-        String lockValue = "{\"customStatus\":{\"volumeStatus\":[{\"customStatus\":\"OK\",\"volume\":\"_ads\","
+        String lockValue = "{\"status\":{\"volumeStatus\":[{\"status\":\"OK\",\"volume\":\"_ads\","
                 + "\"allocatedDiskSize\":13738862182,\"usedDiskSize\":3725590528,\"volumeDiskSize\":68694310912},"
-                + "{\"customStatus\":\"OK\",\"volume\":\"_log\",\"allocatedDiskSize\":2113090355,\"usedDiskSize\":1092616192,"
-                + "\"volumeDiskSize\":10565451776},{\"customStatus\":\"FULL\",\"volume\":\"elasticsearch1\","
+                + "{\"status\":\"OK\",\"volume\":\"_log\",\"allocatedDiskSize\":2113090355,\"usedDiskSize\":1092616192,"
+                + "\"volumeDiskSize\":10565451776},{\"status\":\"FULL\",\"volume\":\"elasticsearch1\","
                 + "\"allocatedDiskSize\":13739701043,\"usedDiskSize\":18747490304,\"volumeDiskSize\":68698505216},"
-                + "{\"customStatus\":\"OK\",\"volume\":\"dav\",\"allocatedDiskSize\":23250842419,\"usedDiskSize\":6122848256,"
+                + "{\"status\":\"OK\",\"volume\":\"dav\",\"allocatedDiskSize\":23250842419,\"usedDiskSize\":6122848256,"
                 + "\"volumeDiskSize\":116254212096}],\"systemStatus\":\"FULL\"}}";
         MemcachedClient.getLockClient().add("PcsReadDeleteMode", lockValue);
 
@@ -137,13 +137,13 @@ public class ReadDeleteOnlyModeTest extends JerseyTest {
                     Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, "SalesDetail");
 
             // ReadDeleteOnlyモードを設定する
-            String lockValue = "{\"customStatus\":{\"volumeStatus\":[{\"customStatus\":\"OK\",\"volume\":\"_ads\","
+            String lockValue = "{\"status\":{\"volumeStatus\":[{\"status\":\"OK\",\"volume\":\"_ads\","
                     + "\"allocatedDiskSize\":13738862182,\"usedDiskSize\":3725590528,"
-                    + "\"volumeDiskSize\":68694310912},{\"customStatus\":\"OK\",\"volume\":\"_log\","
+                    + "\"volumeDiskSize\":68694310912},{\"status\":\"OK\",\"volume\":\"_log\","
                     + "\"allocatedDiskSize\":2113090355,\"usedDiskSize\":1092616192,"
-                    + "\"volumeDiskSize\":10565451776},{\"customStatus\":\"FULL\",\"volume\":\"elasticsearch1\","
+                    + "\"volumeDiskSize\":10565451776},{\"status\":\"FULL\",\"volume\":\"elasticsearch1\","
                     + "\"allocatedDiskSize\":13739701043,\"usedDiskSize\":18747490304,\"volumeDiskSize\":68698505216},"
-                    + "{\"customStatus\":\"OK\",\"volume\":\"dav\",\"allocatedDiskSize\":23250842419,"
+                    + "{\"status\":\"OK\",\"volume\":\"dav\",\"allocatedDiskSize\":23250842419,"
                     + "\"usedDiskSize\":6122848256,\"volumeDiskSize\":116254212096}],\"systemStatus\":\"FULL\"}}";
             MemcachedClient.getLockClient().add("PcsReadDeleteMode", lockValue);
 

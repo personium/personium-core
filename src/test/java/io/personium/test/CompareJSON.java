@@ -50,7 +50,7 @@ public class CompareJSON {
          * .
          * @param key キー
          * @param actualValue 実際の値
-         * @param customMessage メッセージ
+         * @param message メッセージ
          * @return 旧オブジェクト
          */
         public Object put(Object key, Object actualValue, String message) {

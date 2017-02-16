@@ -519,7 +519,7 @@ public final class MessageODataResource extends AbstractODataResource {
         String message = "";
         try {
             if (resBody != null) {
-                message = (String) ((JSONObject) resBody.get("customMessage")).get("value");
+                message = (String) ((JSONObject) resBody.get("message")).get("value");
             }
         } catch (Exception e) {
             log.info(e.getMessage());

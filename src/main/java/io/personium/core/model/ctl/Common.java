@@ -89,7 +89,7 @@ public class Common {
     public static final String PATTERN_IN_REPLY_TO = "^.{32}$";
     /** メッセージタイプ_messageまたはreq.relation.buildまたはreq.relation.break. */
     public static final String PATTERN_MESSAGE_TYPE =
-         "^(customMessage)|(req\\.relation\\.build)|(req\\.relation\\.break)$";
+         "^(message)|(req\\.relation\\.build)|(req\\.relation\\.break)$";
     /** メッセージタイトル0文字から256文字文字. */
     public static final String PATTERN_MESSAGE_TITLE = "^.{0,256}$";
     /** メッセージプライオリティ 1から5. */

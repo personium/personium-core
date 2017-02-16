@@ -362,7 +362,7 @@ public class DeleteTest extends ODataCommon {
         body.put("InReplyTo", null);
         body.put("To", UrlUtils.cellRoot(receivedCell));
         body.put("ToRelation", null);
-        body.put("Type", "customMessage");
+        body.put("Type", "message");
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
@@ -384,7 +384,7 @@ public class DeleteTest extends ODataCommon {
 
             deleteOdataResource(response.getLocationHeader());
             // 自動生成された受信メッセージの削除
-            MessageSentTest.deleteReceivedMessage(receivedCell, UrlUtils.cellRoot(this.cellInfo.cellName), "customMessage",
+            MessageSentTest.deleteReceivedMessage(receivedCell, UrlUtils.cellRoot(this.cellInfo.cellName), "message",
                     "title", "body");
 
             // Cellを削除（SentMessage削除済のため、削除可能）

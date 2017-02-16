@@ -57,7 +57,7 @@ public class TestMethodUtils {
                 node.getElementsByTagName("href").item(0).getFirstChild().getNodeValue());
         assertEquals(
                 "HTTP/1.1 200 OK",
-                node.getElementsByTagName("customStatus").item(0).getFirstChild().getNodeValue());
+                node.getElementsByTagName("status").item(0).getFirstChild().getNodeValue());
         NodeList tmp = node.getElementsByTagName("prop").item(0).getChildNodes();
         for (int i = 0; i < tmp.getLength(); i++) {
             Node child = tmp.item(i);

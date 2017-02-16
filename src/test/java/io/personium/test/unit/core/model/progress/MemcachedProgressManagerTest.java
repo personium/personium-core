@@ -143,10 +143,10 @@ public class MemcachedProgressManagerTest {
         barInfo.put("box_id", boxId);
         barInfo.put("start_time", "2013-10-18T10:10:10.000Z");
         barInfo.put("end_time", "2013-10-18T10:10:20.000Z");
-        barInfo.put("customStatus", "FAILED");
+        barInfo.put("status", "FAILED");
         barInfo.put("progress", "30%");
         JSONObject message = new JSONObject();
-        barInfo.put("customMessage", message);
+        barInfo.put("message", message);
         message.put("code", "PR409-OD-0003");
         message.put("value", "The entity already exists.");
         return json.toJSONString();

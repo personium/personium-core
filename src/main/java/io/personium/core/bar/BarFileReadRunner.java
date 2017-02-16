@@ -1678,7 +1678,7 @@ public class BarFileReadRunner implements Runnable {
      * @param isError エラー時の場合はtrueを、それ以外はfalseを指定する.
      * @param code 処理コード（ex. PL-BI-0000）
      * @param path barファイル内のエントリパス（Edmxの場合は、ODataのパス）
-     * @param customMessage 出力用メッセージ
+     * @param message 出力用メッセージ
      */
     @SuppressWarnings("unchecked")
     private void outputEventBus(boolean isError, String code, String path, String message) {
@@ -1692,7 +1692,7 @@ public class BarFileReadRunner implements Runnable {
             JSONObject messageJson = new JSONObject();
             JSONObject messageDetail = new JSONObject();
             messageJson.put("code", code);
-            messageJson.put("customMessage", messageDetail);
+            messageJson.put("message", messageDetail);
             messageDetail.put("lang", "en");
             messageDetail.put("value", message);
             this.progressInfo.setMessage(messageJson);

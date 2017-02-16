@@ -900,7 +900,7 @@ public class PersoniumCoreException extends RuntimeException {
      * @param status HTTPレスポンスステータス
      * @param severityエラーレベル
      * @param code エラーコード
-     * @param customMessage エラーメッセージ
+     * @param message エラーメッセージ
      */
     PersoniumCoreException(final String code,
             final Severity severity,
@@ -918,7 +918,7 @@ public class PersoniumCoreException extends RuntimeException {
      * コンストラクタ.
      * @param code エラーコード
      * @param severityエラーレベル
-     * @param customMessage エラーメッセージ
+     * @param message エラーメッセージ
      * @param status HTTPレスポンスステータス
      */
     PersoniumCoreException(final String code,
@@ -1048,7 +1048,7 @@ public class PersoniumCoreException extends RuntimeException {
         Matcher m = p.matcher(code);
         if (!m.matches()) {
             throw new IllegalArgumentException(
-                    "customMessage code should be in \"PR000-OD-0000\" format. code=[" + code + "].");
+                    "message code should be in \"PR000-OD-0000\" format. code=[" + code + "].");
         }
         return Integer.parseInt(m.group(1));
     }

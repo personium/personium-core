@@ -471,7 +471,7 @@ public class ResourceUtils {
      * リソースに対しGETを行うユーティリティー.
      * @param path パス
      * @param token トークン
-     * @param customStatus ステータス
+     * @param status ステータス
      * @param boxName box名
      * @param cellPath セル名
      * @return レスポンス
@@ -491,7 +491,7 @@ public class ResourceUtils {
     /**
      * リソースに対し、トークンなしでGETを行うユーティリティー.
      * @param path パス
-     * @param customStatus ステータス
+     * @param status ステータス
      * @param cellPath セル名
      * @return レスポンス
      */

@@ -312,7 +312,7 @@ public class UserDataBatchLinkTest extends AbstractUserDataBatchTest {
         return "Content-Type: application/http\n\n"
                 + "HTTP/1.1 " + Integer.toString(statusCode) + " \n"
                 + "Content-Type: application/json\n\n"
-                + "\\{\"code\":\"" + code + "\",\"customMessage\":\\{\"lang\":\"en\",\"value\":\"" + Pattern.quote(message)
+                + "\\{\"code\":\"" + code + "\",\"message\":\\{\"lang\":\"en\",\"value\":\"" + Pattern.quote(message)
                 + ".*\n\n";
     }
 
@@ -324,7 +324,7 @@ public class UserDataBatchLinkTest extends AbstractUserDataBatchTest {
                 + "Content-Transfer-Encoding: binary\n\n"
                 + "HTTP/1.1 " + String.valueOf(statusCode) + " \n"
                 + "Content-Type: application/json\n\n"
-                + "\\{\"code\":\"" + code + "\",\"customMessage\":\\{\"lang\":\"en\",\"value\":\"" + Pattern.quote(message)
+                + "\\{\"code\":\"" + code + "\",\"message\":\\{\"lang\":\"en\",\"value\":\"" + Pattern.quote(message)
                 + ".*\n\n"
                 + "--changeset_cLzcDEEVPwvvoxS3yJTFTpRauSK_FAQ6mQtyo0aby93-SDP3lAs2A19a2uBb--\n\n";
     }

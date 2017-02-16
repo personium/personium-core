@@ -162,7 +162,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     public final void Typeがmessageの場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_TYPE.build(),
                 ReceivedMessage.P_TYPE.getName(),
-                OProperties.string(ReceivedMessage.P_TYPE.getName(), "customMessage"));
+                OProperties.string(ReceivedMessage.P_TYPE.getName(), "message"));
     }
 
     /**
@@ -458,7 +458,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void TypeがmessageでStatusがunreadの場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateStatus("customMessage", "unread");
+        MessageODataResource.validateStatus("message", "unread");
     }
 
     /**
@@ -466,7 +466,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test(expected = PersoniumCoreException.class)
     public final void TypeがmessageでStatusがnoneの場合にPersoniumCoreExceptionが発生すること() {
-        MessageODataResource.validateStatus("customMessage", "none");
+        MessageODataResource.validateStatus("message", "none");
     }
 
     /**
@@ -505,7 +505,8 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      * Typeがreq.relation.breakでRequestRelationとRequestRelationTargetの指定がある場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Typeがreq_relation_breakでRequestRelationとRequestRelationTargetの指定がある場合にPersoniumCoreExceptionが発生しないこと() {
+    public final void
+    Typeがreq_relation_breakでRequestRelationとRequestRelationTargetの指定がある場合にPersoniumCoreExceptionが発生しないこと() {
         MessageODataResource.validateReqRelation("req.relation.break", "http://xxx.com/xx", "http://xxx.com/xx");
     }
 
@@ -530,7 +531,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void TypeがmessageでRequestRelationがnullの場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateReqRelation("customMessage", null, "http://example.com/test");
+        MessageODataResource.validateReqRelation("message", null, "http://example.com/test");
     }
 
 }

@@ -81,16 +81,15 @@ public final class ODataErrorMessage {
     }
 
     /**
-     * @return the customMessage
+     * @return the message
      */
-    @XmlElement(name = "customMessage")
+    @XmlElement(name = "message")
     public Message getMessage() {
         return message;
     }
 
     /**
      * setMessage.
-     * customMessage the customMessage to set.
      * @param message String
      */
     public void setMessage(final String message) {
@@ -100,7 +99,7 @@ public final class ODataErrorMessage {
     /**
      */
     @XmlAccessorType(XmlAccessType.PROPERTY)
-    @XmlType(name = "customMessage", propOrder = { "lang", "value" })
+    @XmlType(name = "message", propOrder = { "lang", "value" })
     static final class Message {
         String lang;
         String value;

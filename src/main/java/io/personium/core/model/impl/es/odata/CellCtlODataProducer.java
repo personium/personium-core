@@ -219,7 +219,7 @@ public class CellCtlODataProducer extends EsODataProducer {
     /**
      * 関係登録/削除を行う.
      * @param entitySetDocHandler 受信メッセージ
-     * @param customStatus 変更するStatus
+     * @param status 変更するStatus
      */
     private void updateRelation(EntitySetDocHandler entitySetDocHandler, String status) {
         String type = (String) entitySetDocHandler.getStaticFields().get(ReceivedMessage.P_TYPE.getName());
@@ -519,7 +519,7 @@ public class CellCtlODataProducer extends EsODataProducer {
     /**
      * 受信メッセージのステータスと更新日を上書きする.
      * @param entitySetDocHandler DocHandler
-     * @param customStatus メッセージステータス
+     * @param status メッセージステータス
      */
     private void updateStatusOfEntitySetDocHandler(EntitySetDocHandler entitySetDocHandler, String status) {
         Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();

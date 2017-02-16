@@ -805,7 +805,7 @@ public class AbstractCase extends JerseyTest {
         assertEquals(code, elm.getTextContent());
 
         // message要素
-        elm = getElementByTagName(doc, "customMessage");
+        elm = getElementByTagName(doc, "message");
         assertNotNull(elm);
         // message値が引数と一致するかチェックは行わない。
         // （今後の国際化対応等を見越し、エラーコードのみのチェックとする）
@@ -824,7 +824,7 @@ public class AbstractCase extends JerseyTest {
      * エラーレスポンスチェック.
      * @param doc JSONObjectオブジェクト
      * @param code エラーコード
-     * @param customMessage エラーメッセージ
+     * @param message エラーメッセージ
      */
     public final void checkErrorResponse(JSONObject doc, String code, String message) {
 
@@ -838,7 +838,7 @@ public class AbstractCase extends JerseyTest {
         assertEquals(code, value);
 
         // __metadata要素
-        JSONObject metadata = (JSONObject) error.get("customMessage");
+        JSONObject metadata = (JSONObject) error.get("message");
         // lang要素
         value = (String) metadata.get("lang");
         assertNotNull(value);
@@ -870,7 +870,7 @@ public class AbstractCase extends JerseyTest {
         assertEquals(elm.getTextContent(), errorCode);
 
         // message要素
-        elm = getElementByTagName(doc, "customMessage");
+        elm = getElementByTagName(doc, "message");
         assertNotNull(elm);
         assertTrue(elm.getTextContent().length() > 0);
     }

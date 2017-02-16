@@ -75,7 +75,7 @@ public abstract class AbstractUserDataBatchTest extends AbstractUserDataTest {
         for (int i = 0; i < odResEx.size(); i++) {
             ODataResponse resEx = odResEx.get(i);
             ODataResponse resAc = odResAc.get(i);
-            // should be same customStatus code
+            // should be same status code
             org.junit.Assert.assertEquals(resEx.getStatusCode(), resAc.getStatusCode());
             org.junit.Assert.assertEquals(resEx.bodyAsString(), resAc.bodyAsString());
 

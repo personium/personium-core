@@ -45,7 +45,7 @@ public class SentMessageUtils {
      * @return response レスポンス情報
      */
     public static TResponse sent(final String token, final String cellName, final String body, final int code) {
-        TResponse response = Http.request("sent-customMessage.txt")
+        TResponse response = Http.request("sent-message.txt")
                 .with("cellPath", cellName)
                 .with("body", body)
                 .with("token", token)
@@ -66,7 +66,7 @@ public class SentMessageUtils {
             final String cellName,
             final Request request,
             final int code) {
-        TResponse response = Http.request("sent-customMessage-anyAuthSchema.txt")
+        TResponse response = Http.request("sent-message-anyAuthSchema.txt")
                 .with("cellPath", cellName)
                 .with("body", request.toJsonString())
                 .with("authorization", authorization)
@@ -112,7 +112,7 @@ public class SentMessageUtils {
      */
     public static TResponse get(final String token,
             final String cellName, final int code, final String messageId) {
-        TResponse response = Http.request("sent-customMessage-get.txt")
+        TResponse response = Http.request("sent-message-get.txt")
                 .with("cellPath", cellName)
                 .with("messageId", messageId)
                 .with("token", token)
@@ -141,7 +141,7 @@ public class SentMessageUtils {
      * @return response レスポンス情報
      */
     public static TResponse list(final String token, final String cellName, String query, final int code) {
-        TResponse response = Http.request("sent-customMessage-list.txt")
+        TResponse response = Http.request("sent-message-list.txt")
                 .with("cellPath", cellName)
                 .with("query", query)
                 .with("token", token)
@@ -160,7 +160,7 @@ public class SentMessageUtils {
      */
     public static TResponse delete(final String token,
             final String cellName, final int code, final String messageId) {
-        TResponse response = Http.request("sent-customMessage-delete.txt")
+        TResponse response = Http.request("sent-message-delete.txt")
                 .with("cellPath", cellName)
                 .with("messageId", messageId)
                 .with("token", token)
@@ -196,7 +196,7 @@ public class SentMessageUtils {
         TResponse resReceivedList = null;
         try {
             resReceivedList = Http
-                    .request("received-customMessage-list.txt")
+                    .request("received-message-list.txt")
                     .with("cellPath", targetCell)
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
                     .with("query", "?\\$filter=From+eq+%27" + URLEncoder.encode(fromCellUrl, "UTF-8") + "%27+"

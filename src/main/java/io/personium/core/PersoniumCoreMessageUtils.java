@@ -108,7 +108,7 @@ public abstract class PersoniumCoreMessageUtils {
         String msg = LOG_MSG_PROP.getProperty(LOG_MESSAGE + code);
         if (msg == null) {
             // ログが定義されていなかったら例外
-            throw new RuntimeException("customMessage undefined for code=[" + code + "].");
+            throw new RuntimeException("message undefined for code=[" + code + "].");
         }
         return msg;
     }

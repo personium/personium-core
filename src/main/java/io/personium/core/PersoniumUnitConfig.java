@@ -69,7 +69,7 @@ public class PersoniumUnitConfig {
     /**
      * ステータス取得用のリクエストＵＲＬ.
      */
-    public static final String STATUS_REQUEST_URL = KEY_ROOT + "customStatus.requestProxyUrl";
+    public static final String STATUS_REQUEST_URL = KEY_ROOT + "status.requestProxyUrl";
 
     /**
      * プラグインのパス設定キー.

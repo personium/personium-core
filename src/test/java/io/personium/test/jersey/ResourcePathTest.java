@@ -52,7 +52,7 @@ public class ResourcePathTest extends AbstractCase {
         PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
-        String message = (String) ((JSONObject) resBody.get("customMessage")).get("value");
+        String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
         assertEquals(PersoniumCoreException.Dav.CELL_NOT_FOUND.getCode(), code);
         assertEquals(PersoniumCoreException.Dav.CELL_NOT_FOUND.getMessage(), message);
@@ -67,7 +67,7 @@ public class ResourcePathTest extends AbstractCase {
         PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
-        String message = (String) ((JSONObject) resBody.get("customMessage")).get("value");
+        String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
         assertEquals(PersoniumCoreException.Dav.CELL_NOT_FOUND.getCode(), code);
         assertEquals(PersoniumCoreException.Dav.CELL_NOT_FOUND.getMessage(), message);
@@ -82,7 +82,7 @@ public class ResourcePathTest extends AbstractCase {
         PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
-        String message = (String) ((JSONObject) resBody.get("customMessage")).get("value");
+        String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
         assertEquals(PersoniumCoreException.Dav.BOX_NOT_FOUND.getCode(), code);
         String expectedUrl = UrlUtils.boxRoot(Setup.TEST_CELL1, "box test");
@@ -98,7 +98,7 @@ public class ResourcePathTest extends AbstractCase {
         PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
-        String message = (String) ((JSONObject) resBody.get("customMessage")).get("value");
+        String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
         assertEquals(PersoniumCoreException.Dav.BOX_NOT_FOUND.getCode(), code);
         String expectedUrl = UrlUtils.boxRoot(Setup.TEST_CELL1, "box\ntest");
@@ -114,7 +114,7 @@ public class ResourcePathTest extends AbstractCase {
         PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
-        String message = (String) ((JSONObject) resBody.get("customMessage")).get("value");
+        String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
         assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode(), code);
         assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getMessage(), message);
@@ -129,7 +129,7 @@ public class ResourcePathTest extends AbstractCase {
         PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
-        String message = (String) ((JSONObject) resBody.get("customMessage")).get("value");
+        String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
         assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode(), code);
         assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getMessage(), message);
@@ -144,7 +144,7 @@ public class ResourcePathTest extends AbstractCase {
         PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
-        String message = (String) ((JSONObject) resBody.get("customMessage")).get("value");
+        String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
         assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode(), code);
         assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getMessage(), message);
@@ -159,7 +159,7 @@ public class ResourcePathTest extends AbstractCase {
         PersoniumResponse res = ODataCommon.getOdataResource(url);
         assertEquals(HttpStatus.SC_NOT_FOUND, res.getStatusCode());
         JSONObject resBody = res.bodyAsJson();
-        String message = (String) ((JSONObject) resBody.get("customMessage")).get("value");
+        String message = (String) ((JSONObject) resBody.get("message")).get("value");
         String code = (String) resBody.get("code");
         assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode(), code);
         assertEquals(PersoniumCoreException.OData.NO_SUCH_ENTITY.getMessage(), message);

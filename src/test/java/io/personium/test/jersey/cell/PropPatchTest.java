@@ -182,7 +182,7 @@ public class PropPatchTest extends JerseyTest {
                 node.getElementsByTagName("href").item(0).getFirstChild().getNodeValue());
         assertEquals(
                 "HTTP/1.1 200 OK",
-                node.getElementsByTagName("customStatus").item(0).getFirstChild().getNodeValue());
+                node.getElementsByTagName("status").item(0).getFirstChild().getNodeValue());
 
         for (Iterator<String> it = map.keySet().iterator(); it.hasNext();) {
             Object key = it.next();

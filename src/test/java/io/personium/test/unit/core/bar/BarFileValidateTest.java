@@ -782,7 +782,7 @@ public class BarFileValidateTest {
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/__/\""
                     + " xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</prop>");
-            buf.append("<customStatus>HTTP/1.1 200 OK</customStatus>");
+            buf.append("<status>HTTP/1.1 200 OK</status>");
             buf.append("</propstat>");
             buf.append("</response>");
             buf.append("<response>");
@@ -812,7 +812,7 @@ public class BarFileValidateTest {
             buf.append("</ace>");
             buf.append("</acl>");
             buf.append("</prop>");
-            buf.append("<customStatus>HTTP/1.1 200 OK</customStatus>");
+            buf.append("<status>HTTP/1.1 200 OK</status>");
             buf.append("</propstat>");
             buf.append("</response>");
             buf.append("<response>");
@@ -828,7 +828,7 @@ public class BarFileValidateTest {
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/__/\""
                     + " xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</prop>");
-            buf.append("<customStatus>HTTP/1.1 200 OK</customStatus>");
+            buf.append("<status>HTTP/1.1 200 OK</status>");
             buf.append("</propstat>");
             buf.append("</response>");
             buf.append("<response>");
@@ -873,7 +873,7 @@ public class BarFileValidateTest {
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/box/\""
                     + " xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</prop>");
-            buf.append("<customStatus>HTTP/1.1 200 OK</customStatus>");
+            buf.append("<status>HTTP/1.1 200 OK</status>");
             buf.append("</propstat>");
             // responseタグが閉じていない
             // buf.append("</response>");
@@ -910,7 +910,7 @@ public class BarFileValidateTest {
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/box/\""
                     + " xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</prop>");
-            buf.append("<customStatus>HTTP/1.1 200 OK</customStatus>");
+            buf.append("<status>HTTP/1.1 200 OK</status>");
             buf.append("</propstat>");
             buf.append("</response>");
             buf.append("</multistatus>");
@@ -947,7 +947,7 @@ public class BarFileValidateTest {
             buf.append("<acl xml:base=\"https://tsunashima.c3.fla.fujitsu.com/test0121/__role/box/\""
                     + " xmlns:p=\"urn:x-personium:xmlns\"/>");
             buf.append("</prop>");
-            buf.append("<customStatus>HTTP/1.1 200 OK</customStatus>");
+            buf.append("<status>HTTP/1.1 200 OK</status>");
             buf.append("</propstat>");
             buf.append("</response>");
             buf.append("</multistatus>");

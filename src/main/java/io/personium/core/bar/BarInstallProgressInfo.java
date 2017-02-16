@@ -190,10 +190,10 @@ public class BarInstallProgressInfo implements ProgressInfo {
         barInfoJson.put("cell_id", getCellId());
         barInfoJson.put("box_id", getBoxId());
         barInfoJson.put("started_at", getStartTime());
-        barInfoJson.put("customStatus", getStatus().toString());
+        barInfoJson.put("status", getStatus().toString());
         barInfoJson.put("progress", getProgress());
         if (this.status == STATUS.FAILED) {
-            barInfoJson.put("customMessage", getMessage());
+            barInfoJson.put("message", getMessage());
         }
         return this.jsonObject;
     }

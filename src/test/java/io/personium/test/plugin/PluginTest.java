@@ -178,7 +178,7 @@ public class PluginTest extends JerseyTest {
 
         // Map設定
         Map<String, String> body = new HashMap<String, String>();
-        // debug customMessage
+        // debug message
         body.put(AuthConst.KEY_MESSAGE, "");
 
         // idTokenの設定
