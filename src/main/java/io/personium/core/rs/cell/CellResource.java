@@ -384,30 +384,31 @@ public final class CellResource {
                 CellPrivilege.PROPFIND, CellPrivilege.ACL_READ);
     }
 
-    /**
-     * PROPPATCHメソッドの処理.
-     * @param requestBodyXml Request Body
-     * @return JAX-RS Response
-     */
-    @WebDAVMethod.PROPPATCH
-    public Response proppatch(final Reader requestBodyXml) {
-        AccessContext ac = this.cellRsCmp.getAccessContext();
-        // トークンの有効性チェック
-        // トークンがINVALIDでもACL設定でPrivilegeがallに設定されているとアクセスを許可する必要があるのでこのタイミングでチェック
-        ac.updateBasicAuthenticationStateForResource(null);
-        if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
-            ac.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
-        } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
-            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(),
-                    this.cellRsCmp.getAcceptableAuthScheme());
-        }
-
-        // アクセス制御 CellレベルPROPPATCHはユニットユーザのみ可能とする
-        if (!ac.isUnitUserToken()) {
-            throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
-        }
-        return this.cellRsCmp.doProppatch(requestBodyXml);
-    }
+    // TODO Interim correspondence.(For security reasons)
+//    /**
+//     * PROPPATCHメソッドの処理.
+//     * @param requestBodyXml Request Body
+//     * @return JAX-RS Response
+//     */
+//    @WebDAVMethod.PROPPATCH
+//    public Response proppatch(final Reader requestBodyXml) {
+//        AccessContext ac = this.cellRsCmp.getAccessContext();
+//        // トークンの有効性チェック
+//        // トークンがINVALIDでもACL設定でPrivilegeがallに設定されているとアクセスを許可する必要があるのでこのタイミングでチェック
+//        ac.updateBasicAuthenticationStateForResource(null);
+//        if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
+//            ac.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
+//        } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
+//            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(),
+//                    this.cellRsCmp.getAcceptableAuthScheme());
+//        }
+//
+//        // アクセス制御 CellレベルPROPPATCHはユニットユーザのみ可能とする
+//        if (!ac.isUnitUserToken()) {
+//            throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
+//        }
+//        return this.cellRsCmp.doProppatch(requestBodyXml);
+//    }
 
     /**
      * ACLメソッドの処理.
