@@ -173,7 +173,7 @@ public class CellCtlODataProducer extends EsODataProducer {
      * 関係登録/削除、及びメッセージ受信のステータスを変更する.
      * @param entitySet entitySetName
      * @param originalKey 更新対象キー
-     * @param customStatus メッセージステータス
+     * @param status メッセージステータス
      * @return ETag
      */
     public String changeStatusAndUpdateRelation(final EdmEntitySet entitySet,
@@ -473,7 +473,7 @@ public class CellCtlODataProducer extends EsODataProducer {
     /**
      * Messageのステータスバリデート.
      * @param type メッセージタイプ
-     * @param customStatus メッセージステータス
+     * @param status メッセージステータス
      * @return boolean
      */
     protected boolean isValidMessageStatus(String type, String status) {
@@ -488,7 +488,7 @@ public class CellCtlODataProducer extends EsODataProducer {
     /**
      * Relationのステータスバリデート.
      * @param type メッセージタイプ
-     * @param customStatus メッセージステータス
+     * @param status メッセージステータス
      * @return boolean
      */
     protected boolean isValidRelationStatus(String type, String status) {
@@ -504,7 +504,7 @@ public class CellCtlODataProducer extends EsODataProducer {
     /**
      * 受信メッセージのステータスバリデート.
      * @param type メッセージタイプ
-     * @param customStatus メッセージステータス
+     * @param status メッセージステータス
      * @return boolean
      */
     protected boolean isValidCurrentStatus(String type, String status) {

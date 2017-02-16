@@ -102,7 +102,6 @@ public class TokenEndPointResource {
 
     /**
      * constructor.
-     * 
      * @param cell
      *            Cell
      * @param davRsCmp
@@ -119,7 +118,6 @@ public class TokenEndPointResource {
      * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
      * <li>scopeがなければCellLocalを発行する。</li>
      * </ul>
-     * 
      * @param uriInfo
      *            URI情報
      * @param authzHeader
@@ -219,7 +217,6 @@ public class TokenEndPointResource {
 
     /**
      * call Auth Plugins.
-     * 
      * @param grantType
      * @param idToken
      * @param target
@@ -319,7 +316,6 @@ public class TokenEndPointResource {
 
     /**
      * クライアント認証処理.
-     * 
      * @param scope
      * @param clientId
      * @param clientSecret
@@ -494,7 +490,6 @@ public class TokenEndPointResource {
 
     /**
      * リフレッシュ認証処理.
-     * 
      * @param target
      * @param owner
      * @param host
@@ -643,7 +638,6 @@ public class TokenEndPointResource {
 
     /**
      * Cookieに設定するパスを作成する.
-     * 
      * @return Cookieに設定するパス
      */
     private String getCookiePath() {
@@ -758,7 +752,6 @@ public class TokenEndPointResource {
 
     /**
      * OPTIONSメソッド.
-     * 
      * @return JAX-RS Response
      */
     @OPTIONS

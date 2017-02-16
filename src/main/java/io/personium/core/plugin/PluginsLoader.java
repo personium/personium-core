@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2014 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class PluginsLoader {
                     if (file.isFile()) {
                         PluginFactory pf = new PluginFactory();
                         Object obj = pf.getJarPlugin(cpath, fname);
-                        if (obj != null){
+                        if (obj != null) {
                             pinfo = createPluginInfo(obj, obj.getClass().getName());
                         }
                     }

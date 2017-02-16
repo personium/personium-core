@@ -731,7 +731,7 @@ public class PersoniumCoreException extends RuntimeException {
          * JSONのEncodeに失敗したとき.
          */
         public static final PersoniumCoreException IDTOKEN_ENCODED_INVALID = create("PR400-AZ-0006");
-        
+
     }
 
     /**
@@ -858,19 +858,19 @@ public class PersoniumCoreException extends RuntimeException {
      * Pluginエラー.
      */
     public static class Plugin {
-	    /**
-	     * プラグイン作者が定義したエラー.
-	     */
+        /**
+         * プラグイン作者が定義したエラー.
+         */
         public static final PersoniumCoreException PLUGIN_DEFINED_CLIENT_ERROR = create("PR400-PL-0001");
 
-	    /**
-	     * プラグイン作者が定義したエラー.
-	     */
+        /**
+         * プラグイン作者が定義したエラー.
+         */
         public static final PersoniumCoreException PLUGIN_DEFINED_SERVER_ERROR = create("PR500-PL-0001");
 
         /**
-	     * プラグイン内部でキャッチされず、外に出てきてしまった非チェック例外に対応.
-	     */
+         * プラグイン内部でキャッチされず、外に出てきてしまった非チェック例外に対応.
+         */
         public static final PersoniumCoreException UNEXPECTED_ERROR = create("PR500-PL-0002");
 
     }

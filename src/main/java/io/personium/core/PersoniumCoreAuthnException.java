@@ -149,11 +149,13 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     /**
      * IDTokenの有効期限切れ.
      */
-    public static final PersoniumCoreAuthnException OIDC_EXPIRED_ID_TOKEN = create("PR400-AN-0033", Error.INVALID_GRANT);
+    public static final PersoniumCoreAuthnException OIDC_EXPIRED_ID_TOKEN = create("PR400-AN-0033",
+            Error.INVALID_GRANT);
     /**
      * 接続先が想定外の値を返却.
      */
-    public static final PersoniumCoreAuthnException OIDC_UNEXPECTED_VALUE = create("PR400-AN-0034", Error.INVALID_GRANT);
+    public static final PersoniumCoreAuthnException OIDC_UNEXPECTED_VALUE = create("PR400-AN-0034",
+            Error.INVALID_GRANT);
     /**
      * 公開鍵の形式ｉ異常を返却.
      */
@@ -275,52 +277,64 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
         return new PersoniumCoreAuthnException(code, severity, message, statusCode, error, null);
     }
 
-	static Map<Integer, PersoniumCoreAuthnException> exmap = new HashMap<>();
-	static {
-		exmap.put(PluginException.Authn.REQUIRED_PARAM_MISSING.getType(), PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING);
-		exmap.put(PluginException.Authn.OIDC_WRONG_AUDIENCE.getType(), PersoniumCoreAuthnException.OIDC_WRONG_AUDIENCE);
-		exmap.put(PluginException.Authn.OIDC_AUTHN_FAILED.getType(), PersoniumCoreAuthnException.OIDC_AUTHN_FAILED);
-		exmap.put(PluginException.Authn.OIDC_INVALID_ID_TOKEN.getType(), PersoniumCoreAuthnException.OIDC_INVALID_ID_TOKEN);
-		exmap.put(PluginException.Authn.OIDC_EXPIRED_ID_TOKEN.getType(), PersoniumCoreAuthnException.OIDC_EXPIRED_ID_TOKEN);
-		exmap.put(PluginException.Authn.OIDC_UNEXPECTED_VALUE.getType(), PersoniumCoreAuthnException.OIDC_UNEXPECTED_VALUE);
-		exmap.put(PluginException.Authn.OIDC_INVALID_KEY.getType(), PersoniumCoreAuthnException.OIDC_INVALID_KEY);
+    static Map<Integer, PersoniumCoreAuthnException> exmap = new HashMap<>();
+    static {
+        exmap.put(PluginException.Authn.REQUIRED_PARAM_MISSING.getType(),
+                  PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING);
+        exmap.put(PluginException.Authn.OIDC_WRONG_AUDIENCE.getType(),
+                  PersoniumCoreAuthnException.OIDC_WRONG_AUDIENCE);
+        exmap.put(PluginException.Authn.OIDC_AUTHN_FAILED.getType(),
+                  PersoniumCoreAuthnException.OIDC_AUTHN_FAILED);
+        exmap.put(PluginException.Authn.OIDC_INVALID_ID_TOKEN.getType(),
+                  PersoniumCoreAuthnException.OIDC_INVALID_ID_TOKEN);
+        exmap.put(PluginException.Authn.OIDC_EXPIRED_ID_TOKEN.getType(),
+                  PersoniumCoreAuthnException.OIDC_EXPIRED_ID_TOKEN);
+        exmap.put(PluginException.Authn.OIDC_UNEXPECTED_VALUE.getType(),
+                  PersoniumCoreAuthnException.OIDC_UNEXPECTED_VALUE);
+        exmap.put(PluginException.Authn.OIDC_INVALID_KEY.getType(),
+                  PersoniumCoreAuthnException.OIDC_INVALID_KEY);
 
-		// NetWork
-		exmap.put(PluginException.NetWork.NETWORK_ERROR.getType(), PersoniumCoreAuthnException.NETWORK_ERROR);
-		exmap.put(PluginException.NetWork.HTTP_REQUEST_FAILED.getType(), PersoniumCoreAuthnException.HTTP_REQUEST_FAILED);
-		exmap.put(PluginException.NetWork.UNEXPECTED_RESPONSE.getType(), PersoniumCoreAuthnException.UNEXPECTED_RESPONSE);
-		exmap.put(PluginException.NetWork.UNEXPECTED_VALUE.getType(), PersoniumCoreAuthnException.UNEXPECTED_VALUE);
-	}
+        // NetWork
+        exmap.put(PluginException.NetWork.NETWORK_ERROR.getType(),
+                  PersoniumCoreAuthnException.NETWORK_ERROR);
+        exmap.put(PluginException.NetWork.HTTP_REQUEST_FAILED.getType(),
+                  PersoniumCoreAuthnException.HTTP_REQUEST_FAILED);
+        exmap.put(PluginException.NetWork.UNEXPECTED_RESPONSE.getType(),
+                  PersoniumCoreAuthnException.UNEXPECTED_RESPONSE);
+        exmap.put(PluginException.NetWork.UNEXPECTED_VALUE.getType(),
+                  PersoniumCoreAuthnException.UNEXPECTED_VALUE);
+    }
 
     /**
      * Mapping AuthPlugin Exception.
-	 *   AuthPluginException -> PersoniumCoreAuthnException
+     *   AuthPluginException -> PersoniumCoreAuthnException
      * @return PersoniumCoreAuthnException
+     * @param pe PluginException
      */
-	public static PersoniumCoreAuthnException mapFrom(PluginException pe){
-		PersoniumCoreAuthnException pcae = exmap.get(pe.getType());
-		if (pcae == null) {
-			if (pe instanceof PluginException.Authn) {
-				PluginException.Authn pea = (PluginException.Authn)pe;
-				return new PersoniumCoreAuthnException(
-						pea.getCustomErrorCode(), pea.getSeverity(),
-						pea.getMessage(), pea.getStatus(), pea.getOAuthError(), null);
-			}
-			// TODO User-defined non-Authn Exception is treated as server error, though it may be inappropriate.
-			return new PersoniumCoreAuthnException(
-				pe.getCustomErrorCode(), pe.getSeverity(),
-				pe.getMessage(), pe.getStatus(), Error.SERVER_ERROR, null);
-		}
-		return pcae.params(pe.getParams());
-	}
+    public static PersoniumCoreAuthnException mapFrom(PluginException pe) {
+        PersoniumCoreAuthnException pcae = exmap.get(pe.getType());
+        if (pcae == null) {
+            if (pe instanceof PluginException.Authn) {
+                PluginException.Authn pea = (PluginException.Authn) pe;
+                return new PersoniumCoreAuthnException(
+                        pea.getCustomErrorCode(), pea.getSeverity(),
+                        pea.getMessage(), pea.getStatus(), pea.getOAuthError(), null);
+            }
+            // TODO User-defined non-Authn Exception is treated as server error, though it may be inappropriate.
+            return new PersoniumCoreAuthnException(
+                pe.getCustomErrorCode(), pe.getSeverity(),
+                pe.getMessage(), pe.getStatus(), Error.SERVER_ERROR, null);
+        }
+        return pcae.params(pe.getParams());
+    }
 
     /**
      * メッセージをパラメタ置換したものを作成して返します. エラーメッセージ上の $1 $2 等の表現がパラメタ置換用キーワードです。
      * @param params 付加メッセージ
      * @return PersoniumCoreMessage
      */
-	@Override
-	public PersoniumCoreAuthnException params(final Object... params) {
+    @Override
+    public PersoniumCoreAuthnException params(final Object... params) {
         // 置換メッセージ作成
         String ms = MessageFormat.format(this.message, params);
 
@@ -328,7 +342,8 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
         ms = EscapeControlCode.escape(ms);
 
         // メッセージ置換クローンを作成
-        PersoniumCoreAuthnException ret = new PersoniumCoreAuthnException(this.code, this.severity, ms, this.status, this.error, this.realm);
+        PersoniumCoreAuthnException ret = new PersoniumCoreAuthnException(
+                 this.code, this.severity, ms, this.status, this.error, this.realm);
         return ret;
     }
 }

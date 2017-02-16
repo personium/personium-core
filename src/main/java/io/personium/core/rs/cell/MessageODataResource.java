@@ -709,7 +709,7 @@ public final class MessageODataResource extends AbstractODataResource {
     /**
      * Statusのバリデート.
      * @param type タイプ
-     * @param customStatus ステータス
+     * @param status ステータス
      */
     public static void validateStatus(String type, String status) {
         // Typeがmessageの場合unread：未読

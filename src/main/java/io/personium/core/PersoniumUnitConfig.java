@@ -838,7 +838,7 @@ public class PersoniumUnitConfig {
      * @return personium-unit-config.properties
      */
     @SuppressWarnings("resource")
-	protected InputStream getConfigFileInputStream(String configFilePath) {
+    protected InputStream getConfigFileInputStream(String configFilePath) {
         Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
         InputStream configFileInputStream = null;
         if (configFilePath == null) {

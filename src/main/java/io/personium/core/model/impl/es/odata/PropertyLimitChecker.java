@@ -55,7 +55,7 @@ public class PropertyLimitChecker {
         /**
          * コンストラクタ.
          * @param entityTypeName EntityType名
-         * @param customMessage エラー詳細
+         * @param message エラー詳細
          */
         public CheckError(String entityTypeName, String message) {
             this.entityTypeName = entityTypeName;

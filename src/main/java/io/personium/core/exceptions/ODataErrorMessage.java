@@ -89,7 +89,9 @@ public final class ODataErrorMessage {
     }
 
     /**
-     * @param customMessage the customMessage to set
+     * setMessage.
+     * customMessage the customMessage to set.
+     * @param message String
      */
     public void setMessage(final String message) {
         this.message = new Message(DEFAULT_LANG_TAG, message);

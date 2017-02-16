@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2014 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,14 +67,14 @@ public class PluginFactory {
             String cname = att.getValue("Plugin-Class");
 
             try {
-	            // get class
-	            URL url = file.getCanonicalFile().toURI().toURL();
-	            ucl = new URLClassLoader(new URL[] {url});
+                // get class
+                URL url = file.getCanonicalFile().toURI().toURL();
+                ucl = new URLClassLoader(new URL[] {url});
 
-	            System.out.println(ucl.getURLs().toString());
+                System.out.println(ucl.getURLs().toString());
                 Class<?> clazz = ucl.loadClass(cname);
                 if (clazz != null) {
-                  	plugin = (Object) clazz.newInstance();
+                    plugin = (Object) clazz.newInstance();
                 }
                 System.out.println("Plugin Factory load jar file...... " + cname);
             } catch (ClassNotFoundException e) {
@@ -90,7 +90,8 @@ public class PluginFactory {
             } catch (ExceptionInInitializerError e) {
                 e.printStackTrace();
             } catch (InstantiationException e) {
-                System.out.println("Plugin Factory InstantiationException : Instance can not be created class name = " + cname);
+                System.out.println(
+                    "Plugin Factory InstantiationException : Instance can not be created class name = " + cname);
                 e.printStackTrace();
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
