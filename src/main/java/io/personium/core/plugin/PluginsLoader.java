@@ -23,13 +23,32 @@ import java.util.ArrayList;
  * Plugins Loader.
  */
 public class PluginsLoader {
+
+    static final String PLUGIN_AUTH_GOOGLE =
+           "io.personium.plugin.auth.oidc.GoogleIdTokenAuthPlugin";
+
     /**
      * Return together an instance of the plug-in class to an ArrayList.
      * @param cpath String
      * @return ArrayList
      */
-    public ArrayList<PluginInfo> getPlugins(String cpath) {
+    public ArrayList<PluginInfo> loadPlugins(String cpath) {
         ArrayList<PluginInfo> plugins = new ArrayList<PluginInfo>();
+
+        // Load jar(maven) specified in pom.xml
+        try {
+            // personium-plugins original
+            String className = PLUGIN_AUTH_GOOGLE;
+            PluginFactory pf = new PluginFactory();
+            Object obj = pf.loadDefaultPlugin(className);
+            if (obj != null) {
+                plugins.add(createPluginInfo(obj, className));
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        // Load Local File jar
         try {
             File f = new File(cpath);
             String[] files = f.list();

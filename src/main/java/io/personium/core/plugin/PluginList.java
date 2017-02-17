@@ -41,7 +41,7 @@ public class PluginList {
         // get Config plugin path
         String path = PersoniumUnitConfig.getPluginPath();
         // get Plugins
-        this.plugins = pl.getPlugins(path);
+        this.plugins = pl.loadPlugins(path);
     }
 
     /**

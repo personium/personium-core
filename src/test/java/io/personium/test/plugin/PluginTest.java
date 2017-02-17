@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2014 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,16 +57,23 @@ public class PluginTest extends JerseyTest {
     /**
      * idToken.
      */
-    public static final  String PROP_IDTOKEN = "id_token";
+    public static final String PROP_IDTOKEN = "id_token";
+
     /**
      * accountName.
      */
-    public static final  String PROP_ACCOUNT = "account";
+    public static final String PROP_ACCOUNT = "account";
+
+    /**
+     * properties file path.
+     */
+    public static final String OAUTH_PROPERTIES_FILE
+        = "/src/test/resources/oauth/oauth.properties";
 
     /** google oidc. **/
     public static final String OIDC_GOOGLE = "oidc:google";
     /** urn google grantType. **/
-    public static final String GOOGLE_GRANT_TYPE = "urn:x-personium:oidc:google:code";
+    public static final String GOOGLE_GRANT_TYPE = "urn:x-personium:oidc:google";
     /** マスタートークン(Bearer + MASTER_TOKEN_NAME). */
     public static final String BEARER_MASTER_TOKEN = "Bearer " + AbstractCase.MASTER_TOKEN_NAME;
 
@@ -110,7 +117,7 @@ public class PluginTest extends JerseyTest {
     public void プラグイン処理_一覧からgoogle認証プラグインを取得できること() throws Exception {
         boolean bFind = false;
         PluginManager pm = new PluginManager();
-        if (pm.getPluginCount() > 0) {
+        if (pm.size() > 0) {
             PluginInfo pi = (PluginInfo) pm.getPluginsByGrantType(GOOGLE_GRANT_TYPE);
             if (pi != null) {
                 bFind = true;
@@ -131,7 +138,7 @@ public class PluginTest extends JerseyTest {
         String invalidGratType = "urn:x-dc1:oidc:hoge:code";
 
         PluginManager pm = new PluginManager();
-        if (pm.getPluginCount() > 0) {
+        if (pm.size() > 0) {
             PluginInfo pi = pm.getPluginsByGrantType(invalidGratType);
 
             try {
@@ -158,7 +165,7 @@ public class PluginTest extends JerseyTest {
 
         // プラグインjarがディレクトリに存在する場合
         PluginManager pm = new PluginManager();
-        if (pm.getPluginCount() > 0) {
+        if (pm.size() > 0) {
             ArrayList<PluginInfo> pl = pm.getPluginsByType(AuthConst.TYPE_AUTH);
             for (int i = 0; i < pl.size(); i++) {
                 PluginInfo pi = (PluginInfo) pl.get(i);
@@ -180,7 +187,7 @@ public class PluginTest extends JerseyTest {
     @Test
     public void GooglePlugin_正常なアカウントとIdTokenを指定し認証プラグイン処理を直接実行できること() throws Exception {
         PluginManager pm = new PluginManager();
-        if (pm.getPluginCount() > 0) {
+        if (pm.size() > 0) {
             PluginInfo pi = pm.getPluginsByGrantType(GOOGLE_GRANT_TYPE);
 
             // Map設定
@@ -218,7 +225,6 @@ public class PluginTest extends JerseyTest {
                 } catch (PluginException pe) {
                     System.out.println(pe);
                     System.out.println(pe.getType());
-                    System.out.println(pe.getParams().toString());
                     assertFalse(true);
                 } catch (Exception e) {
                     System.out.println(e);
@@ -339,7 +345,7 @@ public class PluginTest extends JerseyTest {
     public static Properties getIdTokenProperty() {
         Properties properties = new Properties();
         String basepath = System.getProperty("user.dir");
-        String file = "/src/test/resources/testoauth.properties";
+        String file = OAUTH_PROPERTIES_FILE;
         try {
             InputStream inputStream = new FileInputStream(basepath + file);
             properties.load(inputStream);
