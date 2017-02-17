@@ -73,7 +73,7 @@ public class PluginTest extends JerseyTest {
     /** google oidc. **/
     public static final String OIDC_GOOGLE = "oidc:google";
     /** urn google grantType. **/
-    public static final String GOOGLE_GRANT_TYPE = "urn:x-personium:oidc:google:code";
+    public static final String GOOGLE_GRANT_TYPE = "urn:x-personium:oidc:google";
     /** マスタートークン(Bearer + MASTER_TOKEN_NAME). */
     public static final String BEARER_MASTER_TOKEN = "Bearer " + AbstractCase.MASTER_TOKEN_NAME;
 
