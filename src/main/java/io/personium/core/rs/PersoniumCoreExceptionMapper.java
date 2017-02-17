@@ -16,6 +16,10 @@
  */
 package io.personium.core.rs;
 
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.exceptions.ODataErrorMessage;
+import io.personium.plugin.base.PluginMessageUtils.Severity;
+
 import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
@@ -26,10 +30,6 @@ import javax.ws.rs.ext.Provider;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.personium.core.PersoniumCoreException;
-import io.personium.core.PersoniumCoreMessageUtils.Severity;
-import io.personium.core.exceptions.ODataErrorMessage;
 
 /**
  * 本アプリケーションの例外マッパー. ログ出力と適切な形でのエラー応答出力を行う。

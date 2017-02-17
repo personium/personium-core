@@ -143,7 +143,8 @@ public class EsQueryHandlerTest {
             fail("Not Throw Exception.");
         } catch (PersoniumCoreException e) {
             assertEquals(PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.getCode(), e.getCode());
-            String message = PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params("itemKey").getMessage();
+            String message = PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(
+                    "itemKey").getMessage();
             assertEquals(message, e.getMessage());
         } catch (Exception e) {
             fail(e.getMessage());

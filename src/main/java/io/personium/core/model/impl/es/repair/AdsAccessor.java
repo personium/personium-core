@@ -105,28 +105,28 @@ public class AdsAccessor {
     public static void createAds(String indexName, String type,
             PersoniumSearchResponse esResponse) throws AdsException {
         // MySQLへデータ登録処理
-        PersoniumSearchHit[] PersoniumSearchHit = esResponse.getHits().getHits();
+        PersoniumSearchHit[] personiumSearchHit = esResponse.getHits().getHits();
         try {
             if (Cell.EDM_TYPE_NAME.equals(type)) {
                 // CELLテーブルに登録
-                EntitySetDocHandler oedh = new CellDocHandler(PersoniumSearchHit[0]);
+                EntitySetDocHandler oedh = new CellDocHandler(personiumSearchHit[0]);
                 ads.createCell(indexName, oedh);
             } else if ("link".equals(type)) {
                 // LINKテーブルに登録
-                LinkDocHandler ldh = new LinkDocHandler(PersoniumSearchHit[0]);
+                LinkDocHandler ldh = new LinkDocHandler(personiumSearchHit[0]);
                 ads.createLink(indexName, ldh);
             } else if ("dav".equals(type)) {
                 // DAV_NODEテーブルに登録
-                DavNode davNode = DavNode.createFromJsonString(PersoniumSearchHit[0].getId(),
-                        PersoniumSearchHit[0].sourceAsString());
+                DavNode davNode = DavNode.createFromJsonString(personiumSearchHit[0].getId(),
+                        personiumSearchHit[0].sourceAsString());
                 ads.createDavNode(indexName, davNode);
             } else {
                 // ENTITYテーブルに登録
                 EntitySetDocHandler oedh;
                 if (type.equals(UserDataODataProducer.USER_ODATA_NAMESPACE)) {
-                    oedh = new UserDataDocHandler(PersoniumSearchHit[0]);
+                    oedh = new UserDataDocHandler(personiumSearchHit[0]);
                 } else {
-                    oedh = new OEntityDocHandler(PersoniumSearchHit[0]);
+                    oedh = new OEntityDocHandler(personiumSearchHit[0]);
                 }
 
                 if (oedh.getDynamicFields() == null) {
@@ -153,27 +153,27 @@ public class AdsAccessor {
             PersoniumSearchResponse esResponse) throws AdsException {
         try {
             // MySQLへデータ更新処理
-            PersoniumSearchHit[] PersoniumSearchHit = esResponse.getHits().getHits();
+            PersoniumSearchHit[] personiumSearchHit = esResponse.getHits().getHits();
             if (Cell.EDM_TYPE_NAME.equals(type)) {
                 // CELLテーブルに更新
-                EntitySetDocHandler oedh = new CellDocHandler(PersoniumSearchHit[0]);
+                EntitySetDocHandler oedh = new CellDocHandler(personiumSearchHit[0]);
                 ads.updateCell(indexName, oedh);
             } else if ("link".equals(type)) {
                 // LINKテーブルに更新
-                LinkDocHandler ldh = new LinkDocHandler(PersoniumSearchHit[0]);
+                LinkDocHandler ldh = new LinkDocHandler(personiumSearchHit[0]);
                 ads.updateLink(indexName, ldh);
             } else if ("dav".equals(type)) {
                 // DAV_NODEテーブルに更新
-                DavNode davNode = DavNode.createFromJsonString(PersoniumSearchHit[0].getId(),
-                        PersoniumSearchHit[0].sourceAsString());
+                DavNode davNode = DavNode.createFromJsonString(personiumSearchHit[0].getId(),
+                        personiumSearchHit[0].sourceAsString());
                 ads.updateDavNode(indexName, davNode);
             } else {
                 // ENTITYテーブルに更新
                 EntitySetDocHandler oedh;
                 if (type.equals(UserDataODataProducer.USER_ODATA_NAMESPACE)) {
-                    oedh = new UserDataDocHandler(PersoniumSearchHit[0]);
+                    oedh = new UserDataDocHandler(personiumSearchHit[0]);
                 } else {
-                    oedh = new OEntityDocHandler(PersoniumSearchHit[0]);
+                    oedh = new OEntityDocHandler(personiumSearchHit[0]);
                 }
 
                 if (oedh.getDynamicFields() == null) {

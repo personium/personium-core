@@ -16,6 +16,8 @@
  */
 package io.personium.core;
 
+import io.personium.plugin.base.PluginMessageUtils.Severity;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -47,27 +49,6 @@ public abstract class PersoniumCoreMessageUtils {
      */
     public static final String LOG_MESSAGE = PersoniumUnitConfig.KEY_ROOT + "msg.";
 
-    /**
-     * ログレベルに対応する例外の深刻さ.
-     */
-    public enum Severity {
-        /**
-         * ERRORレベル.
-         */
-        ERROR,
-        /**
-         * WARNレベル.
-         */
-        WARN,
-        /**
-         * INFOレベル.
-         */
-        INFO,
-        /**
-         * DEBUGレベル.
-         */
-        DEBUG
-    }
 
     static {
         LOG_LEVEL_PROP = doLoad("personium-log-level.properties");

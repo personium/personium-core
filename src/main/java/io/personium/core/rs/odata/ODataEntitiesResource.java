@@ -229,8 +229,8 @@ public final class ODataEntitiesResource extends AbstractODataResource {
             throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", top.toString());
         }
 
-        Map<String, String> customOptions = new HashMap<String, String>();
-        customOptions.put("q", fullTextSearchKeyword);
+        Map<String, String> options = new HashMap<String, String>();
+        options.put("q", fullTextSearchKeyword);
         return new QueryInfo(
                 inlineCount,
                 top,
@@ -238,7 +238,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
                 filter,
                 orderBy,
                 skipToken,
-                customOptions,
+                options,
                 expand,
                 select);
     }

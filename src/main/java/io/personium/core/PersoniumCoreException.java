@@ -16,6 +16,10 @@
  */
 package io.personium.core;
 
+import io.personium.core.exceptions.ODataErrorMessage;
+import io.personium.core.utils.EscapeControlCode;
+import io.personium.plugin.base.PluginMessageUtils.Severity;
+
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,10 +28,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
-
-import io.personium.core.PersoniumCoreMessageUtils.Severity;
-import io.personium.core.exceptions.ODataErrorMessage;
-import io.personium.core.utils.EscapeControlCode;
 
 /**
  * ログメッセージ作成クラス.
@@ -394,7 +394,8 @@ public class PersoniumCoreException extends RuntimeException {
         /**
          * 移動元のリソースとして__srcが指定された場合.
          */
-        public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_MOVE = create("PR400-DV-0011");
+        public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_MOVE =
+                create("PR400-DV-0011");
         /**
          * 移動先のリソースとして、既存のリソースが指定された場合.
          */
@@ -402,7 +403,8 @@ public class PersoniumCoreException extends RuntimeException {
         /**
          * 移動先のリソースとして、ODataコレクション配下のパスが指定された場合.
          */
-        public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION = create("PR400-DV-0013");
+        public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION =
+                create("PR400-DV-0013");
         /**
          * 移動先のリソースとして、ファイル配下のパスが指定された場合.
          */
@@ -414,11 +416,13 @@ public class PersoniumCoreException extends RuntimeException {
         /**
          * 移動先のリソースとして、Serviceコレクション配下のパスが指定された場合.
          */
-        public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION = create("PR400-DV-0016");
+        public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION =
+                create("PR400-DV-0016");
         /**
          * 移動先のリソースとして__srcが指定された場合.
          */
-        public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE = create("PR400-DV-0017");
+        public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE =
+                create("PR400-DV-0017");
         /**
          * 移動元がコレクションで、移動先のリソースとしてサービスソースコレクションが指定された場合.
          */
@@ -719,6 +723,14 @@ public class PersoniumCoreException extends RuntimeException {
          * リクエストパラメータが不正.
          */
         public static final PersoniumCoreException REQUEST_PARAM_REDIRECT_INVALID = create("PR400-AZ-0003");
+        /**
+         * JSONのパースに失敗したとき.
+         */
+        public static final PersoniumCoreException JSON_PARSE_ERROR = create("PR400-AZ-0005");
+        /**
+         * JSONのEncodeに失敗したとき.
+         */
+        public static final PersoniumCoreException IDTOKEN_ENCODED_INVALID = create("PR400-AZ-0006");
 
     }
 
@@ -842,6 +854,27 @@ public class PersoniumCoreException extends RuntimeException {
 
     }
 
+    /**
+     * Pluginエラー.
+     */
+    public static class Plugin {
+        /**
+         * プラグイン作者が定義したエラー.
+         */
+        public static final PersoniumCoreException PLUGIN_DEFINED_CLIENT_ERROR = create("PR400-PL-0001");
+
+        /**
+         * プラグイン作者が定義したエラー.
+         */
+        public static final PersoniumCoreException PLUGIN_DEFINED_SERVER_ERROR = create("PR500-PL-0001");
+
+        /**
+         * プラグイン内部でキャッチされず、外に出てきてしまった非チェック例外に対応.
+         */
+        public static final PersoniumCoreException UNEXPECTED_ERROR = create("PR500-PL-0002");
+
+    }
+
     String code;
     Severity severity;
     String message;
@@ -859,6 +892,7 @@ public class PersoniumCoreException extends RuntimeException {
         new Auth();
         new Event();
         new Misc();
+        new Plugin();
     }
 
     /**
@@ -882,10 +916,10 @@ public class PersoniumCoreException extends RuntimeException {
 
     /**
      * コンストラクタ.
-     * @param status HTTPレスポンスステータス
-     * @param severityエラーレベル
      * @param code エラーコード
+     * @param severityエラーレベル
      * @param message エラーメッセージ
+     * @param status HTTPレスポンスステータス
      */
     PersoniumCoreException(final String code,
             final Severity severity,

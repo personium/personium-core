@@ -46,6 +46,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.org.apache.xerces.internal.parsers.DOMParser;
+
 import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
@@ -55,8 +58,8 @@ import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreMessageUtils;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.lock.LockManager;
 import io.personium.core.rs.cell.AuthResourceUtils;
@@ -65,9 +68,9 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
@@ -78,8 +81,6 @@ import io.personium.test.utils.ExtCellUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 
 /**
  * ImplicitFlow認証のテスト.
@@ -501,7 +502,8 @@ public class ImplicitFlowTest extends JerseyTest {
 
         String addbody = "&username=account4&password=password4&p_target=" + UrlUtils.cellRoot(Setup.TEST_CELL1);
 
-        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
+        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
+                null);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
         // アカウントの最終ログイン時刻が更新されたことの確認
@@ -536,6 +538,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * パスワード認証でULUUTを取得できること.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void パスワード認証でULUUTを取得できること() {
 
         // 認証前のアカウントの最終ログイン時刻を取得しておく
@@ -577,6 +580,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * パスワード認証でp_targetとp_ownerを指定した場合ULUUTを取得できること.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void パスワード認証でp_targetとp_ownerを指定した場合ULUUTを取得できること() {
 
         String addbody = "&username=account2&password=password2&p_owner=true&p_target="
@@ -586,7 +590,8 @@ public class ImplicitFlowTest extends JerseyTest {
         DavResourceUtils.setProppatch(Setup.TEST_CELL2, AbstractCase.MASTER_TOKEN_NAME,
                 "cell/proppatch-uluut.txt", HttpStatus.SC_MULTI_STATUS);
 
-        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
+        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
+                null);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
 
@@ -714,7 +719,8 @@ public class ImplicitFlowTest extends JerseyTest {
 
         // トークン認証
         String addbody = "&assertion=" + transCellAccessToken;
-        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
+        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
+                null);
 
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, res.getStatusCode());
         // アカウントの最終ログイン時刻が更新されていないことの確認
@@ -998,6 +1004,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * Cookie認証でp_ownerを指定した場合ULUUTを取得できること.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void Cookie認証でp_ownerを指定した場合ULUUTを取得できること() {
 
         // パスワード認証で自分セルリフレッシュトークン取得
@@ -1044,6 +1051,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * Cookie認証でp_targetとp_ownerを指定した場合ULUUTを取得できること.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void Cookie認証でp_targetとp_ownerを指定した場合ULUUTを取得できること() {
 
         // パスワード認証で自分セルリフレッシュトークン取得
@@ -1092,6 +1100,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * Cookie認証で昇格失敗した場合302が返ること.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void Cookie認証で昇格失敗した場合302が返ること() {
 
         // パスワード認証で自分セルリフレッシュトークン取得
@@ -1131,6 +1140,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * Cookie認証でオーナー指定の無いセルに対しp_ownerを指定した場合302が返ること.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void Cookie認証でオーナー指定の無いセルに対しp_ownerを指定した場合302が返ること() {
 
         String cellName = "authzcell";
@@ -1300,7 +1310,8 @@ public class ImplicitFlowTest extends JerseyTest {
      * @param redirecturi redirect_uri
      * @return レスポンス
      */
-    private PersoniumResponse requesttoAuthz(String addbody, String requestCellName, String clientId, String redirecturi) {
+    private PersoniumResponse requesttoAuthz(String addbody, String requestCellName,
+            String clientId, String redirecturi) {
         if (addbody == null) {
             addbody = "";
         }

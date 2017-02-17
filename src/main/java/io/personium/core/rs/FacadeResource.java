@@ -50,7 +50,7 @@ public class FacadeResource {
     /**
      * クッキー認証の際、クッキー内に埋め込まれている情報のキー.
      */
-    public static final String p_cookie_KEY = "p_cookie";
+    public static final String P_COOKIE_KEY = "p_cookie";
     /**
      * クッキー認証の際、クエリパラメタに指定されるキー.
      */
@@ -68,7 +68,7 @@ public class FacadeResource {
      */
     @Path("{path1}")
     public final Object facade(
-            @CookieParam(p_cookie_KEY) final String cookieAuthValue,
+            @CookieParam(P_COOKIE_KEY) final String cookieAuthValue,
             @QueryParam(COOKIE_PEER_QUERY_KEY) final String cookiePeer,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeaderValue,
             @HeaderParam(HttpHeaders.HOST) final String host,
@@ -104,7 +104,7 @@ public class FacadeResource {
      */
     @Path("__ctl")
     public final UnitCtlResource ctl(
-            @CookieParam(p_cookie_KEY) final String cookieAuthValue,
+            @CookieParam(P_COOKIE_KEY) final String cookieAuthValue,
             @QueryParam(COOKIE_PEER_QUERY_KEY) final String cookiePeer,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeaderValue,
             @HeaderParam(HttpHeaders.HOST) final String host,

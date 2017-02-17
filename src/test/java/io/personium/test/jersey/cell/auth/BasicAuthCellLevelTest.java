@@ -27,9 +27,12 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+
+import com.sun.jersey.test.framework.JerseyTest;
 
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.test.categories.Integration;
@@ -37,8 +40,8 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumException;
-import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -49,7 +52,6 @@ import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.SentMessageUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * Basic認証のCellレベルのリソースに対するテスト.
@@ -266,6 +268,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
      * @throws PersoniumException リクエスト失敗
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void Basic認証ーproppatchの操作() throws PersoniumException {
         // 401エラーとなること
         TResponse res = CellUtils.proppatchWithAnyAuthSchema(cellName, authorization, HttpStatus.SC_UNAUTHORIZED,

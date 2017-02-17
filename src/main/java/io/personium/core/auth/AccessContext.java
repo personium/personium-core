@@ -40,9 +40,9 @@ import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthzException;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
@@ -524,16 +524,24 @@ public final class AccessContext {
             if (this.roles == null) {
                 return false;
             }
+
             for (Role role : this.roles) {
                 // 相対パスロールURL対応
                 String principalHref = getPrincipalHrefUrl(acl.getBase(), ace.getPrincipalHref());
                 if (principalHref == null) {
                     return false;
                 }
+
                 // ロールに対応している設定を検出
-                if (role.localCreateUrl(cellUrl).equals(principalHref)
-                        && requireAcePrivilege(ace.getGrantedPrivilegeList(), resourcePrivilege)) {
-                    return true;
+                if (role.localCreateUrl(cellUrl).equals(principalHref)) {
+                    // Rootが設定されているかどうかの確認
+                    if (ace.getGrantedPrivilegeList().contains(CellPrivilege.ROOT.getName())) {
+                        return true;
+                    }
+                    // ロールに対応している設定を検出
+                    if (requireAcePrivilege(ace.getGrantedPrivilegeList(), resourcePrivilege)) {
+                       return true;
+                    }
                 }
             }
         }
@@ -653,7 +661,7 @@ public final class AccessContext {
         String tokenConfidentialLevel = this.getConfidentialLevel();
 
         // スキーマ認証レベルが未設定（空）かNONEの場合はスキーマ認証チェック不要。
-        if (("".equals(settingConfidentialLevel) || OAuth2Helper.SchemaLevel.NONE.equals(settingConfidentialLevel))) {
+        if ("".equals(settingConfidentialLevel) || OAuth2Helper.SchemaLevel.NONE.equals(settingConfidentialLevel)) {
             return;
         }
 

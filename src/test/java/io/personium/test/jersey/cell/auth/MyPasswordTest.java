@@ -24,9 +24,12 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+
+import com.sun.jersey.test.framework.JerseyTest;
 
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.utils.PersoniumCoreUtils;
@@ -36,9 +39,9 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
@@ -47,7 +50,6 @@ import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * パスワード変更APIのテスト.
@@ -175,6 +177,7 @@ public class MyPasswordTest extends JerseyTest {
      * @throws TokenParseException 認証用トークンのパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void ユニットローカルユニットユーザトークン認証でパスワード変更を実行し403が返ること() throws TokenParseException {
         // 認証
         // アカウントにユニット昇格権限付与

@@ -16,14 +16,36 @@
  */
 package io.personium.core.rs.cell;
 
+import io.personium.common.auth.token.Role;
+import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.model.ctl.Common;
+import io.personium.core.model.ctl.CtlSchema;
+import io.personium.core.model.ctl.ExtCell;
+import io.personium.core.model.ctl.ReceivedMessage;
+import io.personium.core.model.ctl.ReceivedMessagePort;
+import io.personium.core.model.ctl.Relation;
+import io.personium.core.model.ctl.SentMessage;
+import io.personium.core.model.ctl.SentMessagePort;
+import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
+import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.rs.odata.AbstractODataResource;
+import io.personium.core.rs.odata.ODataResource;
+import io.personium.core.utils.HttpClientFactory;
+import io.personium.core.utils.ODataUtils;
+import io.personium.core.utils.ResourceUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +59,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.CharEncoding;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -64,28 +87,6 @@ import org.odata4j.producer.InlineCount;
 import org.odata4j.producer.QueryInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.personium.common.auth.token.Role;
-import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.PersoniumCoreException;
-import io.personium.core.auth.OAuth2Helper;
-import io.personium.core.model.ctl.Common;
-import io.personium.core.model.ctl.CtlSchema;
-import io.personium.core.model.ctl.ExtCell;
-import io.personium.core.model.ctl.ReceivedMessage;
-import io.personium.core.model.ctl.ReceivedMessagePort;
-import io.personium.core.model.ctl.Relation;
-import io.personium.core.model.ctl.SentMessage;
-import io.personium.core.model.ctl.SentMessagePort;
-import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
-import io.personium.core.odata.PersoniumODataProducer;
-import io.personium.core.odata.OEntityWrapper;
-import io.personium.core.rs.odata.AbstractODataResource;
-import io.personium.core.rs.odata.ODataResource;
-import io.personium.core.utils.HttpClientFactory;
-import io.personium.core.utils.ODataUtils;
-import io.personium.core.utils.ResourceUtils;
 
 /**
  * __messageのOData操作クラス.
@@ -475,8 +476,8 @@ public final class MessageODataResource extends AbstractODataResource {
         // リクエストボディ
         StringEntity body = null;
         try {
-            body = new StringEntity(jsonBody.toJSONString(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
+            body = new StringEntity(jsonBody.toJSONString(), CharEncoding.UTF_8);
+        } catch (UnsupportedCharsetException e) {
             throw PersoniumCoreException.SentMessage.SM_BODY_PARSE_ERROR.reason(e);
         }
         req.setEntity(body);
