@@ -1,3 +1,17 @@
+## 1.4.3
+
+IMPROVEMENTS:
+* Pluggable architecture for authentication APIs. ([#4](https://github.com/personium/personium-core/issues/4))
+* Accept Weak ETag for WebDAV. ([#5](https://github.com/personium/personium-core/issues/5))
+
+MODIFICATIONS FOR SECURITY:
+* Abolished temporarily Unit User Promotion `PROPPATCH` API. ([#11](https://github.com/personium/personium-core/issues/11)).
+
+BUG FIXES:
+* Test bar file resources are not proper in 1.4.2 . ([#7](https://github.com/personium/personium-core/issues/7))
+* Remove PMD warnings and Checkstyle errors. ([#8](https://github.com/personium/personium-core/issues/8))
+* Fixed a problem about Cell Administoration privilege `p:root`.
+
 ## 1.4.2
 
 BREAKING CHANGES:
