@@ -23,11 +23,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.http.HttpStatus;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.sun.jersey.test.framework.JerseyTest;
 
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -37,12 +40,12 @@ import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * CellレベルPROPPATCHのテスト.
  */
 @Category({Unit.class, Integration.class, Regression.class })
+@Ignore // UUT promotion setting API invalidation.
 public class PropPatchTest extends JerseyTest {
 
     static final String TEST_CELL1 = "testcell1";

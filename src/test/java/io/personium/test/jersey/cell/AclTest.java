@@ -26,10 +26,13 @@ import java.util.Map;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import com.sun.jersey.test.framework.WebAppDescriptor;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
@@ -43,8 +46,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
 import io.personium.test.jersey.cell.ctl.BoxCrudTest;
 import io.personium.test.setup.Setup;
@@ -63,7 +66,6 @@ import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.SentMessageUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TestMethodUtils;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * CellレベルACLのテスト.
@@ -593,6 +595,7 @@ public class AclTest extends AbstractCase {
      * CellレベルACL設定後のPROPPATCHの確認.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void CellレベルACL設定後のPROPPATCHの確認() {
 
         try {

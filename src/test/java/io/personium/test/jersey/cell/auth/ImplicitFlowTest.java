@@ -538,6 +538,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * パスワード認証でULUUTを取得できること.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void パスワード認証でULUUTを取得できること() {
 
         // 認証前のアカウントの最終ログイン時刻を取得しておく
@@ -579,6 +580,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * パスワード認証でp_targetとp_ownerを指定した場合ULUUTを取得できること.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void パスワード認証でp_targetとp_ownerを指定した場合ULUUTを取得できること() {
 
         String addbody = "&username=account2&password=password2&p_owner=true&p_target="
@@ -1002,6 +1004,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * Cookie認証でp_ownerを指定した場合ULUUTを取得できること.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void Cookie認証でp_ownerを指定した場合ULUUTを取得できること() {
 
         // パスワード認証で自分セルリフレッシュトークン取得
@@ -1048,6 +1051,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * Cookie認証でp_targetとp_ownerを指定した場合ULUUTを取得できること.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void Cookie認証でp_targetとp_ownerを指定した場合ULUUTを取得できること() {
 
         // パスワード認証で自分セルリフレッシュトークン取得
@@ -1096,6 +1100,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * Cookie認証で昇格失敗した場合302が返ること.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void Cookie認証で昇格失敗した場合302が返ること() {
 
         // パスワード認証で自分セルリフレッシュトークン取得
@@ -1135,6 +1140,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * Cookie認証でオーナー指定の無いセルに対しp_ownerを指定した場合302が返ること.
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void Cookie認証でオーナー指定の無いセルに対しp_ownerを指定した場合302が返ること() {
 
         String cellName = "authzcell";

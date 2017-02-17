@@ -24,8 +24,11 @@ import java.util.Map;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import com.sun.jersey.test.framework.WebAppDescriptor;
 
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
@@ -37,9 +40,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
@@ -47,7 +50,6 @@ import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * Cell一括削除のテスト.
@@ -239,6 +241,7 @@ public class CellBulkDeletionTest extends AbstractCase {
      * .
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void セル一括削除時にユニットローカルユニットユーザの認証トークンを指定してセルが削除できること() {
         // アカウントにユニット昇格権限付与
         DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,

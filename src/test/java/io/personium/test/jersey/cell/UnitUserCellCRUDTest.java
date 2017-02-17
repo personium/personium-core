@@ -27,9 +27,12 @@ import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+
+import com.sun.jersey.test.framework.JerseyTest;
 
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.Role;
@@ -52,7 +55,6 @@ import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * UnitUserでCellをCRUDするテスト.
@@ -251,6 +253,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void パスワード認証でユニットローカルユニットユーザトークンへ昇格したトークンでセル作成を行いオーナーが設定されることを確認() throws TokenParseException {
 
         try {
@@ -300,6 +303,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void 昇格設定のないアカウントがパスワード認証でユニットローカルユニットユーザトークンへ昇格できないことの確認() throws TokenParseException {
         // アカウントにユニット昇格権限付与
         DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
@@ -320,6 +324,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void リフレッシュトークン認証でユニットローカルユニットユーザトークンへ昇格したトークンでセル作成を行いオーナーが設定されることを確認() throws TokenParseException {
         // 認証（パスワード認証）
         TResponse res = Http.request("authn/password-cl-c0.txt")
@@ -357,6 +362,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void 昇格設定のないアカウントがリフレッシュトークン認証でユニットローカルユニットユーザトークンへ昇格できないことの確認() throws TokenParseException {
         // 認証（パスワード認証）
         TResponse res = Http.request("authn/password-cl-c0.txt")
@@ -386,6 +392,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void トランスセルトークンではセルの昇格ができないことの確認() throws TokenParseException {
         // 認証（パスワード認証）
         TResponse res = Http.request("authn/password-tc-c0.txt")
@@ -416,6 +423,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void 他人セルリフレッシュトークンではセルの昇格ができないことの確認() throws TokenParseException {
         // 認証（パスワード認証）
         TResponse res = Http.request("authn/password-tc-c0.txt")
@@ -455,6 +463,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void オーナーが未設定のセルの昇格が認証エラーになることの確認() throws TokenParseException {
         try {
             // 本テスト用セルの作成
@@ -491,6 +500,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void セルレベルPROPPATCHをユニットユーザトークンで実行可能なことを確認() throws TokenParseException {
         // UnitUserTokenを自作
         TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
@@ -508,6 +518,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void セルレベルPROPPATCHをオーナーの違うユニットユーザトークンでは実行不可なことを確認() throws TokenParseException {
         // UnitUserTokenを自作
         TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
@@ -525,6 +536,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void セルレベルPROPPATCHをユニットローカルユニットユーザトークンで実行可能なことを確認() throws TokenParseException {
         // アカウントにユニット昇格権限付与
         DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
@@ -551,6 +563,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void セルレベルPROPPATCHをオーナーが違うユニットローカルユニットユーザトークンで実行不可なことを確認() throws TokenParseException {
         // アカウントにユニット昇格権限付与
         DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
@@ -577,6 +590,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
+    @Ignore // UUT promotion setting API invalidation.
     public final void ユニットローカルユニットユーザトークンでオーナーによる実行判断の確認() throws TokenParseException {
         // アカウントにユニット昇格権限付与
         DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
