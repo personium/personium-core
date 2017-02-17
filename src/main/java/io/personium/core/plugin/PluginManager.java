@@ -72,9 +72,7 @@ public class PluginManager {
             if (pi != null) {
                 String gtype = getGrantType(pi);
                 // 完全一致
-//                if (gtype.equals(grant)) {
-                // 部分一致
-                if (gtype.indexOf(grant) != -1) {
+                if (gtype.equals(grant)) {
                     return pi;
                 }
             }
