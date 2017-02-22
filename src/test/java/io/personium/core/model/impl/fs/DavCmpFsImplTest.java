@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.model.impl.fs;
+package io.personium.core.model.impl.fs;
 
 import static java.lang.ClassLoader.getSystemResourceAsStream;
 import static javax.ws.rs.core.HttpHeaders.ETAG;
@@ -59,8 +59,6 @@ import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavDestination;
 import io.personium.core.model.DavRsCmp;
-import io.personium.core.model.impl.fs.DavCmpFsImpl;
-import io.personium.core.model.impl.fs.DavMetadataFile;
 import io.personium.core.model.lock.Lock;
 import io.personium.test.categories.Unit;
 
@@ -114,7 +112,7 @@ public class DavCmpFsImplTest {
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void doPutForUpdate_normal() throws Exception {
+    public void doPutForUpdate_Normal() throws Exception {
         String contentPath = TEST_DIR_PATH + CONTENT_FILE;
         String tempContentPath = TEST_DIR_PATH + TEMP_CONTENT_FILE;
         File contentFile = new File(contentPath);
@@ -124,13 +122,13 @@ public class DavCmpFsImplTest {
             // Test method args
             String contentType = "application/json";
             InputStream inputStream = getSystemResourceAsStream("request/unit/cell-create.txt");
-            String etag = "testEtag";
+            String etag = "\"1-1487652733383\"";
 
             // Expected result
             boolean contentFileExists = true;
             boolean tempFileExists = false;
             String sourceFileMD5 = md5Hex(getSystemResourceAsStream("request/unit/cell-create.txt"));
-            ResponseBuilder expected = Response.ok().status(SC_NO_CONTENT).header(ETAG, "testEtag");
+            ResponseBuilder expected = Response.ok().status(SC_NO_CONTENT).header(ETAG, "\"1-1487652733383\"");
 
             // Mock settings
             davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
@@ -138,7 +136,7 @@ public class DavCmpFsImplTest {
             Whitebox.setInternalState(davCmpFsImpl, "metaFile", davMetaDataFile);
             doNothing().when(davCmpFsImpl).load();
             doReturn(true).when(davCmpFsImpl).exists();
-            doReturn("testEtag").when(davCmpFsImpl).getEtag();
+            doReturn("\"1-1487652733383\"").when(davCmpFsImpl).getEtag();
             PowerMockito.doReturn(true).when(davCmpFsImpl, "matchesETag", anyString());
             PowerMockito.doReturn(tempContentPath).when(davCmpFsImpl, "getTempContentFilePath");
             PowerMockito.doReturn(contentPath).when(davCmpFsImpl, "getContentFilePath");
@@ -179,7 +177,7 @@ public class DavCmpFsImplTest {
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void doPutForUpdate_Error_ETag_not_match() throws Exception {
+    public void doPutForUpdate_Error_Not_match_ETag() throws Exception {
         String contentPath = TEST_DIR_PATH + CONTENT_FILE;
         String tempContentPath = TEST_DIR_PATH + TEMP_CONTENT_FILE;
         File contentFile = new File(contentPath);
@@ -189,7 +187,7 @@ public class DavCmpFsImplTest {
             // Test method args
             String contentType = "application/json";
             InputStream inputStream = getSystemResourceAsStream("request/unit/cell-create.txt");
-            String etag = "testEtag";
+            String etag = "\"1-1487652733383\"";
 
             // Expected result
             boolean contentFileExists = true;
@@ -238,7 +236,7 @@ public class DavCmpFsImplTest {
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void move_dest_DavNode_not_exists() throws Exception {
+    public void move_Normal_Dest_DavNode_not_exists() throws Exception {
         String sourcePath = TEST_DIR_PATH + SOURCE_FILE;
         String destPath = TEST_DIR_PATH + DEST_FILE;
         File sourceFile = new File(sourcePath);
@@ -246,7 +244,7 @@ public class DavCmpFsImplTest {
         try {
             sourceFile.createNewFile();
             // Test method args
-            String etag = "testEtag";
+            String etag = "\"1-1487652733383\"";
             String overwrite = "overwrite";
             DavDestination davDestination = mock(DavDestination.class);
 
@@ -258,7 +256,7 @@ public class DavCmpFsImplTest {
             sourceStream.close();
             ResponseBuilder expected = Response.status(HttpStatus.SC_CREATED);
             expected.header(HttpHeaders.LOCATION, destPath);
-            expected.header(HttpHeaders.ETAG, "testEtag");
+            expected.header(HttpHeaders.ETAG, "\"1-1487652733383\"");
 
             // Mock settings
             davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
@@ -271,7 +269,7 @@ public class DavCmpFsImplTest {
             File fsDir = mock(File.class);
             doReturn(sourceFile.toPath()).when(fsDir).toPath();
             Whitebox.setInternalState(davCmpFsImpl, "fsDir", fsDir);
-            doReturn("testEtag").when(davCmpFsImpl).getEtag();
+            doReturn("\"1-1487652733383\"").when(davCmpFsImpl).getEtag();
 
             doNothing().when(davDestination).loadDestinationHierarchy();
             doNothing().when(davDestination).validateDestinationResource(anyString(), any(DavCmp.class));
@@ -314,7 +312,7 @@ public class DavCmpFsImplTest {
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void move_Error_ETag_not_match() throws Exception {
+    public void move_Error_Not_match_ETag() throws Exception {
         String sourcePath = TEST_DIR_PATH + SOURCE_FILE;
         String destPath = TEST_DIR_PATH + DEST_FILE;
         File sourceFile = new File(sourcePath);
@@ -322,7 +320,7 @@ public class DavCmpFsImplTest {
         try {
             sourceFile.createNewFile();
             // Test method args
-            String etag = "testEtag";
+            String etag = "\"1-1487652733383\"";
             String overwrite = "overwrite";
             DavDestination davDestination = mock(DavDestination.class);
 
@@ -368,9 +366,9 @@ public class DavCmpFsImplTest {
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void delete_normal() throws Exception {
+    public void delete_Normal() throws Exception {
         // Test method args
-        String ifMatch = "testEtag";
+        String ifMatch = "\"1-1487652733383\"";
         boolean recursive = false;
 
         // Expected result
@@ -389,12 +387,8 @@ public class DavCmpFsImplTest {
         doReturn(1).when(davCmpFsImpl).getChildrenCount();
         PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
 
-        // Load methods for private
-        Method method = DavCmpFsImpl.class.getDeclaredMethod("delete", String.class, boolean.class);
-        method.setAccessible(true);
-
         // Run method
-        ResponseBuilder actual = (ResponseBuilder) method.invoke(davCmpFsImpl, ifMatch, recursive);
+        ResponseBuilder actual = davCmpFsImpl.delete(ifMatch, recursive);
 
         // Confirm result
         assertThat(actual.build().getStatus(), is(expected.build().getStatus()));
@@ -407,28 +401,22 @@ public class DavCmpFsImplTest {
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void delete_Error_ETag_not_match() throws Exception {
+    public void delete_Error_Not_match_ETag() throws Exception {
         // Test method args
-        String ifMatch = "testEtag";
+        String ifMatch = "\"1-1487652733383\"";
         boolean recursive = false;
 
         // Mock settings
         davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
         PowerMockito.doReturn(false).when(davCmpFsImpl, "matchesETag", anyString());
 
-        // Load methods for private
-        Method method = DavCmpFsImpl.class.getDeclaredMethod("delete", String.class, boolean.class);
-        method.setAccessible(true);
-
-        // Run method
         try {
-            method.invoke(davCmpFsImpl, ifMatch, recursive);
+            // Run method
+            davCmpFsImpl.delete(ifMatch, recursive);
             fail("Not throws exception.");
-        } catch (InvocationTargetException e) {
+        } catch (PersoniumCoreException e) {
             // Confirm result
-            assertThat(e.getCause(), is(instanceOf(PersoniumCoreException.class)));
-            PersoniumCoreException exception = (PersoniumCoreException) e.getCause();
-            assertThat(exception.getCode(), is(PersoniumCoreException.Dav.ETAG_NOT_MATCH.getCode()));
+            assertThat(e.getCode(), is(PersoniumCoreException.Dav.ETAG_NOT_MATCH.getCode()));
         }
     }
 
@@ -438,16 +426,16 @@ public class DavCmpFsImplTest {
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void matchesETag_argETag_equal_ETag() throws Exception {
+    public void matchesETag_Normal_argETag_equal_ETag() throws Exception {
         // Test method args
-        String etag = "testEtag";
+        String etag = "\"1-1487652733383\"";
 
         // Expected result
         boolean expected = true;
 
         // Mock settings
         davCmpFsImpl = spy(DavCmpFsImpl.class);
-        doReturn("testEtag").when(davCmpFsImpl).getEtag();
+        doReturn("\"1-1487652733383\"").when(davCmpFsImpl).getEtag();
 
         // Load methods for private
         Method method = DavCmpFsImpl.class.getDeclaredMethod("matchesETag", String.class);
@@ -464,16 +452,16 @@ public class DavCmpFsImplTest {
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void matchesETag_argETag_not_equal_ETag() throws Exception {
+    public void matchesETag_Normal_argETag_not_equal_ETag() throws Exception {
         // Test method args
-        String etag = "testEtag";
+        String etag = "\"1-1487652733383\"";
 
         // Expected result
         boolean expected = false;
 
         // Mock settings
         davCmpFsImpl = spy(DavCmpFsImpl.class);
-        doReturn("testEtag_2").when(davCmpFsImpl).getEtag();
+        doReturn("\"2-1487652733383\"").when(davCmpFsImpl).getEtag();
 
         // Load methods for private
         Method method = DavCmpFsImpl.class.getDeclaredMethod("matchesETag", String.class);
@@ -490,16 +478,16 @@ public class DavCmpFsImplTest {
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void matchesETag_weak_argETag_equal_ETag() throws Exception {
+    public void matchesETag_Normal_weak_argETag_equal_ETag() throws Exception {
         // Test method args
-        String etag = "W/testEtag";
+        String etag = "W/\"1-1487652733383\"";
 
         // Expected result
         boolean expected = true;
 
         // Mock settings
         davCmpFsImpl = spy(DavCmpFsImpl.class);
-        doReturn("testEtag").when(davCmpFsImpl).getEtag();
+        doReturn("\"1-1487652733383\"").when(davCmpFsImpl).getEtag();
 
         // Load methods for private
         Method method = DavCmpFsImpl.class.getDeclaredMethod("matchesETag", String.class);
@@ -516,7 +504,7 @@ public class DavCmpFsImplTest {
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void matchesETag_argETag_is_null() throws Exception {
+    public void matchesETag_Normal_argETag_is_null() throws Exception {
         // Test method args
         String etag = null;
 
