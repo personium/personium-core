@@ -1,3 +1,8 @@
+## 1.4.4
+
+MODIFICATIONS FOR RELIABILITY:
+* Add test codes for Accept Weak ETag. ([#5](https://github.com/personium/personium-core/issues/5))
+
 ## 1.4.3
 
 IMPROVEMENTS:
