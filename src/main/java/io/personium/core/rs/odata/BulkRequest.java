@@ -134,8 +134,8 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     @Override
-    public BULK_REQUEST_TYPE getRequestType() {
-        return BULK_REQUEST_TYPE.INDEX;
+    public BulkRequestType getRequestType() {
+        return BulkRequestType.INDEX;
     }
 
 }
