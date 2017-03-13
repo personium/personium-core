@@ -95,12 +95,16 @@ public class CellBulkDeletionTest extends AbstractCase {
         CellUtils.create(cellName, MASTER_TOKEN_NAME, -1);
 
         // イベントログを出力する
-        Map<String, String> body = new HashMap<String, String>();
-        body.put("level", "INFO");
-        body.put("action", "POST");
-        body.put("object", "ObjectData");
-        body.put("result", "resultData");
-        CellUtils.event(MASTER_TOKEN_NAME, -1, cellName, JSONObject.toJSONString(body));
+        String os = System.getProperty("os.name").toLowerCase();
+        // Windowsはプロセスの関係でイベントログが消せない為イベントログを作成しない
+        if (!os.contains("windows")) {
+            Map<String, String> body = new HashMap<String, String>();
+            body.put("level", "INFO");
+            body.put("action", "POST");
+            body.put("object", "ObjectData");
+            body.put("result", "resultData");
+            CellUtils.event(MASTER_TOKEN_NAME, -1, cellName, JSONObject.toJSONString(body));
+        }
 
         // ボックスを作成する
         BoxUtils.create(cellName, boxName, MASTER_TOKEN_NAME, -1);
@@ -208,6 +212,12 @@ public class CellBulkDeletionTest extends AbstractCase {
         // セル削除APIを実行して、204が返却されることを確認
         PersoniumResponse response = request(request);
         assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatusCode());
+        // スレッドで非同期で削除しているため、3秒スリープする
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            System.out.println("");
+        }
     }
 
     /**

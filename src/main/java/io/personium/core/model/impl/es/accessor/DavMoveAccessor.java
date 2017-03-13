@@ -23,7 +23,7 @@ import java.util.Map;
 
 import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.es.EsBulkRequest;
-import io.personium.common.es.EsBulkRequest.BULK_REQUEST_TYPE;
+import io.personium.common.es.EsBulkRequest.BulkRequestType;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumBulkItemResponse;
 import io.personium.common.es.response.PersoniumBulkResponse;
@@ -176,7 +176,7 @@ public class DavMoveAccessor extends DavNodeAccessor {
         }
         // 移動先のDavNodeが存在する場合は、そのDavNodeを削除する（ファイル実体は含まない）。
         if (null != dstNode) {
-            dstNode.setRequestType(EsBulkRequest.BULK_REQUEST_TYPE.DELETE);
+            dstNode.setRequestType(EsBulkRequest.BulkRequestType.DELETE);
             adsBulkRequest.add(dstNode);
             esBulkRequest.add(dstNode);
             setDestinationNodeForRollback(dstNode);
@@ -219,7 +219,7 @@ public class DavMoveAccessor extends DavNodeAccessor {
             int i;
             for (i = 0; i < esBulkRequest.size(); i++) {
                 EsBulkRequest esReq = esBulkRequest.get(i);
-                if (BULK_REQUEST_TYPE.DELETE != esReq.getRequestType()) {
+                if (BulkRequestType.DELETE != esReq.getRequestType()) {
                     adsUpdateBulkRequest.add(adsBulkRequest.get(i));
                 } else {
                     // Davテーブル一括更新

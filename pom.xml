@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>io.personium</groupId>
 			<artifactId>personium-lib-es-adapter</artifactId>
-			<version>1.4.2</version>
+			<version>1.4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>io.personium</groupId>
