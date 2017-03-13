@@ -1,3 +1,7 @@
+##1.4.5
+BUG FIXES:
+* Fixed about Executing Cell Recursive Delete API does not delete OData in cell. ([#13](https://github.com/personium/personium-core/issues/13))
+
 ## 1.4.4
 
 MODIFICATIONS FOR RELIABILITY:
