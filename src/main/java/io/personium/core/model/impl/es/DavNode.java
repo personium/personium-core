@@ -43,7 +43,7 @@ public class DavNode implements EsBulkRequest {
     long published;
     long updated;
     Map<String, Object> file;
-    private BULK_REQUEST_TYPE requestType = BULK_REQUEST_TYPE.INDEX;
+    private BulkRequestType requestType = BulkRequestType.INDEX;
 
     /** ES上のDavNode格納においてCellの内部IDを保存するJSONキー. */
     public static final String KEY_CELL_ID = "c";
@@ -335,7 +335,7 @@ public class DavNode implements EsBulkRequest {
     }
 
     @Override
-    public BULK_REQUEST_TYPE getRequestType() {
+    public BulkRequestType getRequestType() {
         return requestType;
     }
 
@@ -344,7 +344,7 @@ public class DavNode implements EsBulkRequest {
      * 既存の処理への影響を考慮して、デフォルト値は INDEX にしておく。
      * @param request リクエスト種別
      */
-    public void setRequestType(BULK_REQUEST_TYPE request) {
+    public void setRequestType(BulkRequestType request) {
         this.requestType = request;
     }
 }
