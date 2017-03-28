@@ -17,6 +17,7 @@
 package io.personium.test.jersey.cell;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +32,9 @@ import org.junit.runner.RunWith;
 
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.Relation;
 import io.personium.test.categories.Integration;
@@ -294,7 +297,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.build");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
@@ -375,7 +377,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.build");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
@@ -439,6 +440,335 @@ public class MessageApproveTest extends ODataCommon {
     }
 
     /**
+     * Normal test.
+     * Approve boxbound build message for already existing relation.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void normal_approve_boxbound_build_message_for_allready_exist_relation() {
+        String relationName = "messageTestRelation";
+        String boxName = Setup.TEST_BOX1;
+
+        // Request body of relation
+        JSONObject relationBody = new JSONObject();
+        relationBody.put(Relation.P_NAME.getName(), relationName);
+        relationBody.put(Common.P_BOX_NAME.getName(), boxName);
+
+        // Request body of message
+        JSONObject body = new JSONObject();
+        body.put("__id", "12345678901234567890123456789012");
+        body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
+        body.put("Type", "req.relation.build");
+        body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
+        body.put("Title", "Title");
+        body.put("Body", "Body");
+        body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
+        body.put("Priority", 3);
+        body.put("Status", "none");
+        body.put("RequestRelation", UrlUtils.cellRoot(Setup.TEST_CELL1) + "__relation/__/" + relationName);
+        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        TResponse response = null;
+        try {
+            // ---------------
+            // Preparation
+            // ---------------
+            // Relation
+            RelationUtils.create(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationBody, HttpStatus.SC_CREATED);
+            // ExtCell
+            ExtCellUtils.create(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"),
+                    HttpStatus.SC_CREATED);
+            // ReceivedMessage
+            String requestUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
+            response = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
+                    body.toJSONString(), HttpStatus.SC_CREATED);
+            String messageId = (String) body.get("__id");
+
+            // ---------------
+            // Execution
+            // ---------------
+            // execute approved message
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
+            HashMap<String, String> requestheaders = new HashMap<String, String>();
+            requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
+            requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
+            PersoniumResponse res = rest.post(requestUrl, "{\"Command\":\"approved\" }", requestheaders);
+
+            // ---------------
+            // Verification
+            // ---------------
+            assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
+            // Check relation exists
+            RelationUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, HttpStatus.SC_OK);
+            // Check extcell exists
+            ExtCellUtils.get(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"), HttpStatus.SC_OK);
+            // Check $links exists
+            ArrayList<String> expectedUriList = new ArrayList<String>();
+            expectedUriList.add(UrlUtils.extCellResource(Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell")));
+            checkRelationExtCellLinks(relationName, boxName, expectedUriList);
+            // Check status changed
+            checkMessageStatus(messageId, "approved");
+        } catch (PersoniumException e) {
+            fail(e.getStackTrace().toString());
+        } finally {
+            // Delete Relation-ExtCell $links
+            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
+                    ExtCell.EDM_TYPE_NAME,
+                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            // Delete Relation
+            RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
+            // Delete ExtCell
+            ExtCellUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"));
+            // Delete Received message
+            if (response != null) {
+                deleteOdataResource(response.getLocationHeader());
+            }
+        }
+    }
+
+    /**
+     * Normal test.
+     * Approve boxbound build message for not existing relation.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void normal_approve_boxbound_build_message_for_not_exist_relation() {
+        String relationName = "messageTestRelation";
+        String boxName = Setup.TEST_BOX1;
+
+        // Request body of message
+        JSONObject body = new JSONObject();
+        body.put("__id", "12345678901234567890123456789012");
+        body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
+        body.put("Type", "req.relation.build");
+        body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
+        body.put("Title", "Title");
+        body.put("Body", "Body");
+        body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
+        body.put("Priority", 3);
+        body.put("Status", "none");
+        body.put("RequestRelation", UrlUtils.cellRoot(Setup.TEST_CELL1) + "__relation/__/" + relationName);
+        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        TResponse response = null;
+        try {
+            // ---------------
+            // Preparation
+            // ---------------
+            // ReceivedMessage
+            String requestUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
+            response = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
+                    body.toJSONString(), HttpStatus.SC_CREATED);
+            String messageId = (String) body.get("__id");
+
+            // ---------------
+            // Execution
+            // ---------------
+            // execute approved message
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
+            HashMap<String, String> requestheaders = new HashMap<String, String>();
+            requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
+            requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
+            PersoniumResponse res = rest.post(requestUrl, "{\"Command\":\"approved\" }", requestheaders);
+
+            // ---------------
+            // Verification
+            // ---------------
+            assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
+            // Check relation exists
+            RelationUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, HttpStatus.SC_OK);
+            // Check extcell exists
+            ExtCellUtils.get(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"), HttpStatus.SC_OK);
+            // Check $links exists
+            ArrayList<String> expectedUriList = new ArrayList<String>();
+            expectedUriList.add(UrlUtils.extCellResource(Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell")));
+            checkRelationExtCellLinks(relationName, boxName, expectedUriList);
+            // Check status changed
+            checkMessageStatus(messageId, "approved");
+        } catch (PersoniumException e) {
+            fail(e.getStackTrace().toString());
+        } finally {
+            // Delete Relation-ExtCell $links
+            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
+                    ExtCell.EDM_TYPE_NAME,
+                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            // Delete Relation
+            RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
+            // Delete ExtCell
+            ExtCellUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"));
+            // Delete Received message
+            if (response != null) {
+                deleteOdataResource(response.getLocationHeader());
+            }
+        }
+    }
+
+    /**
+     * Normal test.
+     * Approve boxbound break message.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void normal_approve_boxbound_break_message() {
+        String relationName = "messageTestRelation";
+        String boxName = Setup.TEST_BOX1;
+
+        // Request body of message
+        JSONObject body = new JSONObject();
+        body.put("__id", "12345678901234567890123456789012");
+        body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
+        body.put("Type", "req.relation.build");
+        body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
+        body.put("Title", "Title");
+        body.put("Body", "Body");
+        body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
+        body.put("Priority", 3);
+        body.put("Status", "none");
+        body.put("RequestRelation", UrlUtils.cellRoot(Setup.TEST_CELL1) + "__relation/__/" + relationName);
+        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        TResponse buildResponse = null;
+        TResponse breakResponse = null;
+
+        try {
+            // ---------------
+            // Preparation
+            // ---------------
+            // BuildReceivedMessage
+            String requestUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
+            buildResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
+                    body.toJSONString(), HttpStatus.SC_CREATED);
+            String messageId = (String) body.get("__id");
+
+            // Approved message
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
+            HashMap<String, String> requestheaders = new HashMap<String, String>();
+            requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
+            requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
+            PersoniumResponse res = rest.post(requestUrl, "{\"Command\":\"approved\" }", requestheaders);
+            assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
+
+            // BreakReceivedMessage
+            body.put("Type", "req.relation.break");
+            body.put("__id", "12345678901234567890123456789013");
+            requestUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
+            breakResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
+                    body.toJSONString(), HttpStatus.SC_CREATED);
+            messageId = (String) body.get("__id");
+
+            // ---------------
+            // Execution
+            // ---------------
+            // execute approved message
+            rest = new PersoniumRestAdapter();
+            // リクエストヘッダをセット
+            requestheaders = new HashMap<String, String>();
+            requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
+            requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
+            res = rest.post(requestUrl, "{\"Command\":\"approved\" }", requestheaders);
+
+            // ---------------
+            // Verification
+            // ---------------
+            assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
+            // Check relation exists
+            RelationUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, HttpStatus.SC_OK);
+            // Check extcell exists
+            ExtCellUtils.get(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"), HttpStatus.SC_OK);
+            // Check $links not exists
+            TResponse linkResponse = getRelationExtCellLinks(relationName, boxName);
+            JSONArray results = (JSONArray) ((JSONObject) linkResponse.bodyAsJson().get("d")).get("results");
+            assertEquals(0, results.size());
+            // Check status changed
+            checkMessageStatus(messageId, "approved");
+        } catch (PersoniumException e) {
+            fail(e.getStackTrace().toString());
+        } finally {
+            // Delete Relation-ExtCell $links
+            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
+                    ExtCell.EDM_TYPE_NAME,
+                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            // Delete Relation
+            RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
+            // Delete ExtCell
+            ExtCellUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"));
+            // Delete Received message
+            if (buildResponse != null) {
+                deleteOdataResource(buildResponse.getLocationHeader());
+            }
+            if (breakResponse != null) {
+                deleteOdataResource(breakResponse.getLocationHeader());
+            }
+        }
+    }
+
+    /**
+     * Normal test.
+     * Reject boxbound build message.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void normal_reject_boxbound_build_message() {
+        String relationName = "messageTestRelation";
+        String boxName = Setup.TEST_BOX1;
+
+        // Request body of message
+        JSONObject body = new JSONObject();
+        body.put("__id", "12345678901234567890123456789012");
+        body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
+        body.put("Type", "req.relation.build");
+        body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
+        body.put("Title", "Title");
+        body.put("Body", "Body");
+        body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
+        body.put("Priority", 3);
+        body.put("Status", "none");
+        body.put("RequestRelation", UrlUtils.cellRoot(Setup.TEST_CELL1) + "__relation/__/" + relationName);
+        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        TResponse response = null;
+
+        try {
+            // ---------------
+            // Preparation
+            // ---------------
+            // ReceivedMessage
+            String requestUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
+            response = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
+                    body.toJSONString(), HttpStatus.SC_CREATED);
+            String messageId = (String) body.get("__id");
+
+            // ---------------
+            // Execution
+            // ---------------
+            // execute rejected message
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
+            HashMap<String, String> requestheaders = new HashMap<String, String>();
+            requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
+            requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
+            PersoniumResponse res = rest.post(requestUrl, "{\"Command\":\"rejected\" }", requestheaders);
+
+            // ---------------
+            // Verification
+            // ---------------
+            assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
+            // Check relation not exists
+            RelationUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, HttpStatus.SC_NOT_FOUND);
+            // Check status changed
+            checkMessageStatus(messageId, "rejected");
+        } catch (PersoniumException e) {
+            fail(e.getStackTrace().toString());
+        } finally {
+            // Delete Relation
+            RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
+            // Delete Received message
+            if (response != null) {
+                deleteOdataResource(response.getLocationHeader());
+            }
+        }
+    }
+
+    /**
      * 関係登録で関係登録済みのRelationを指定した場合400エラーとなること.
      */
     @SuppressWarnings("unchecked")
@@ -455,7 +785,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.build");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
@@ -528,7 +857,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.build");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
@@ -589,7 +917,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.build");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
@@ -661,7 +988,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.build");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
@@ -726,7 +1052,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.build");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
@@ -793,7 +1118,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.build");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
@@ -891,7 +1215,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.build");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
@@ -1007,7 +1330,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.build");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
@@ -1067,7 +1389,7 @@ public class MessageApproveTest extends ODataCommon {
                     HttpStatus.SC_OK);
 
             // Relation-ExtCellの$links一覧取得
-            TResponse linkResponse = getRelationExtCellLinks(relationName);
+            TResponse linkResponse = getRelationExtCellLinks(relationName, null);
             JSONArray results = (JSONArray) ((JSONObject) linkResponse.bodyAsJson().get("d")).get("results");
             assertEquals(0, results.size());
 
@@ -1107,7 +1429,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.break");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
@@ -1161,7 +1482,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.break");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
@@ -1241,23 +1561,32 @@ public class MessageApproveTest extends ODataCommon {
         return messageId;
     }
 
-    private TResponse getRelationExtCellLinks(String relationName) {
+    private TResponse getRelationExtCellLinks(String relationName, String boxName) {
+        String key;
+        if (boxName != null) {
+            key = "Name='" + relationName + "',_Box.Name='" + boxName + "'";
+        } else {
+            key = "'" + relationName + "'";
+        }
         return Http.request("links-request-no-navkey.txt")
                 .with("method", "GET")
                 .with("token", MASTER_TOKEN_NAME)
                 .with("cellPath", Setup.TEST_CELL1)
-                .with("entitySet", "Relation")
-                .with("key", "'" + relationName + "'")
-                .with("navProp", "_ExtCell")
+                .with("entitySet", Relation.EDM_TYPE_NAME)
+                .with("key", key)
+                .with("navProp", "_" + ExtCell.EDM_TYPE_NAME)
                 .returns()
                 .statusCode(HttpStatus.SC_OK)
                 .debug();
     }
 
     private void checkRelationExtCellLinks(String relationName, ArrayList<String> expectedUriList) {
-        TResponse resList = getRelationExtCellLinks(relationName);
+        checkRelationExtCellLinks(relationName, null, expectedUriList);
+    }
 
-        // レスポンスボディのチェック
+    private void checkRelationExtCellLinks(String relationName, String boxName, ArrayList<String> expectedUriList) {
+        TResponse resList = getRelationExtCellLinks(relationName, boxName);
+        // Check response body
         checkLinResponseBody(resList.bodyAsJson(), expectedUriList);
     }
 

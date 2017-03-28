@@ -16,6 +16,8 @@
  */
 package io.personium.test.jersey.cell;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.http.HttpStatus;
@@ -25,9 +27,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Common;
+import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ReceivedMessagePort;
+import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -37,8 +44,12 @@ import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.CellUtils;
+import io.personium.test.utils.Http;
 import io.personium.test.utils.ReceivedMessageUtils;
 import io.personium.test.utils.RelationUtils;
+import io.personium.test.utils.ResourceUtils;
+import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.SentMessageUtils;
 import io.personium.test.utils.TResponse;
 
@@ -55,7 +66,7 @@ public class MessageSentTest extends ODataCommon {
 
     static final String MESSAGE = "message";
     static final String REQ_RELATION_BUILD = "req.relation.build";
-    static final String REQ_RELATION_BREAK = "req.relation.break ";
+    static final String REQ_RELATION_BREAK = "req.relation.break";
 
     /**
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
@@ -697,6 +708,256 @@ public class MessageSentTest extends ODataCommon {
             }
             // 自動生成された受信メッセージの削除
             deleteReceivedMessage(targetCell, UrlUtils.cellRoot(Setup.TEST_CELL1), MESSAGE, "title", "body");
+        }
+    }
+
+    /**
+     * Normal test.
+     * Send BoxBound message of type RelationBuild.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void normal_send_boxbound_message_of_type_relation_build() {
+        String targetCellName = Setup.TEST_CELL2;
+        String targetRelationName = "testRelation001";
+        String srcCellName = TEST_CELL1;
+        String appCellName = Setup.TEST_CELL_SCHEMA1;
+
+        // Set request body
+        JSONObject body = new JSONObject();
+        body.put("BoxBound", true);
+        body.put("InReplyTo", null);
+        body.put("To", UrlUtils.cellRoot(targetCellName));
+        body.put("ToRelation", null);
+        body.put("Type", REQ_RELATION_BUILD);
+        body.put("Title", "title");
+        body.put("Body", "body");
+        body.put("Priority", 3);
+        body.put("RequestRelation", UrlUtils.cellRoot(targetCellName) + "__relation/__/" + targetRelationName);
+        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        TResponse response = null;
+        try {
+            // ---------------
+            // Preparation
+            // ---------------
+            // Create role
+            RoleUtils.create(srcCellName, MASTER_TOKEN_NAME, "testRole001", HttpStatus.SC_CREATED);
+            // Set acl to role
+            Http.request("cell/acl-setting-cell-none-root.txt")
+                    .with("url", srcCellName)
+                    .with("token", MASTER_TOKEN_NAME)
+                    .with("role1", "testRole001")
+                    .with("roleBaseUrl", UrlUtils.roleResource(srcCellName, null, "")).returns()
+                    .statusCode(HttpStatus.SC_OK);
+            // Set links account and role
+            ResourceUtils.linkAccountRole(srcCellName, MASTER_TOKEN_NAME, "account4", null,
+                    "testRole001", HttpStatus.SC_NO_CONTENT);
+
+            // App auth
+            TResponse authnRes = CellUtils.tokenAuthenticationWithTarget(appCellName, "account0",
+                    "password0", srcCellName);
+            String appToken = (String) authnRes.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            // authz
+            TResponse authzRes = Http.request("authn/password-cl-cp.txt")
+                    .with("remoteCell", srcCellName)
+                    .with("username", "account4")
+                    .with("password", "password4")
+                    .with("client_id", UrlUtils.cellRoot(appCellName))
+                    .with("client_secret", appToken)
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+            String token = (String) authzRes.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // ---------------
+            // Execution
+            // ---------------
+            // Send message
+            response = SentMessageUtils.sent(token, srcCellName,
+                    body.toJSONString(), HttpStatus.SC_CREATED);
+
+            // ---------------
+            // Verification
+            // ---------------
+            // Set expected response body
+            JSONObject expectedResult = new JSONObject();
+            expectedResult.put("To", UrlUtils.cellRoot(targetCellName));
+            expectedResult.put("Code", Integer.toString(HttpStatus.SC_CREATED));
+            expectedResult.put("Reason", "Created.");
+            JSONArray expectedResults = new JSONArray();
+            expectedResults.add(expectedResult);
+            JSONObject expected = new JSONObject();
+            expected.put("_Box.Name", Setup.TEST_BOX1);
+            expected.put("InReplyTo", null);
+            expected.put("To", UrlUtils.cellRoot(targetCellName));
+            expected.put("ToRelation", null);
+            expected.put("Type", REQ_RELATION_BUILD);
+            expected.put("Title", "title");
+            expected.put("Body", "body");
+            expected.put("Priority", 3);
+            expected.put("RequestRelation", UrlUtils.cellRoot(targetCellName) + "__relation/__/" + targetRelationName);
+            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("Result", expectedResults);
+            // Check response body
+            ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
+                    SENT_MESSAGE_TYPE, expected);
+
+            // Get message id
+            JSONObject results = (JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results");
+            String id = (String) results.get("__id");
+            // Verify that the sent message is saved
+            SentMessageUtils.get(MASTER_TOKEN_NAME, srcCellName, HttpStatus.SC_OK, id);
+            // Verify that the received message is saved
+            TResponse receivedResponse = ReceivedMessageUtils.get(
+                    MASTER_TOKEN_NAME, targetCellName, HttpStatus.SC_OK, id);
+            // Verify that boxname is stored in the received message
+            results = (JSONObject) ((JSONObject) receivedResponse.bodyAsJson().get("d")).get("results");
+            assertThat((String) results.get("_Box.Name"), is(Setup.TEST_BOX1));
+        } finally {
+            // Delete sent message
+            if (response != null) {
+                deleteOdataResource(response.getLocationHeader());
+            }
+            // Delete received message
+            deleteReceivedMessage(targetCellName, UrlUtils.cellRoot(srcCellName), REQ_RELATION_BUILD, "title", "body");
+            // Delete ExtCell and Relation $links
+            ResourceUtils.linksDelete(targetCellName, Relation.EDM_TYPE_NAME, targetRelationName, Setup.TEST_BOX1,
+                    ExtCell.EDM_TYPE_NAME, "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(srcCellName)) + "'",
+                    MASTER_TOKEN_NAME);
+            // Delete Box and Relation $links
+            ResourceUtils.linksDelete(targetCellName, Relation.EDM_TYPE_NAME, targetRelationName, Setup.TEST_BOX1,
+                    Box.EDM_TYPE_NAME, "Name='" + Setup.TEST_BOX1 + "'", MASTER_TOKEN_NAME);
+            // Delete relation
+            RelationUtils.delete(targetCellName, MASTER_TOKEN_NAME, targetRelationName, null, -1);
+            // Delete Role and Account $links
+            ResourceUtils.linkAccountRollDelete(srcCellName, MASTER_TOKEN_NAME, "account4", null, "testRole001");
+            // Delete role
+            RoleUtils.delete(srcCellName, MASTER_TOKEN_NAME, null, "testRole001", -1);
+        }
+    }
+
+    /**
+     * Normal test.
+     * Send BoxBound message of type RelationBreak.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void normal_send_boxbound_message_of_type_relation_break() {
+        String targetCellName = Setup.TEST_CELL2;
+        String targetRelationName = "testRelation001";
+        String srcCellName = TEST_CELL1;
+        String appCellName = Setup.TEST_CELL_SCHEMA1;
+
+        // Set request body
+        JSONObject body = new JSONObject();
+        body.put("BoxBound", true);
+        body.put("InReplyTo", null);
+        body.put("To", UrlUtils.cellRoot(targetCellName));
+        body.put("ToRelation", null);
+        body.put("Type", REQ_RELATION_BREAK);
+        body.put("Title", "title");
+        body.put("Body", "body");
+        body.put("Priority", 3);
+        body.put("RequestRelation", UrlUtils.cellRoot(targetCellName) + "__relation/__/" + targetRelationName);
+        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        TResponse response = null;
+        try {
+            // ---------------
+            // Preparation
+            // ---------------
+            // Create role
+            RoleUtils.create(srcCellName, MASTER_TOKEN_NAME, "testRole001", HttpStatus.SC_CREATED);
+            // Set acl to role
+            Http.request("cell/acl-setting-cell-none-root.txt")
+                    .with("url", srcCellName)
+                    .with("token", MASTER_TOKEN_NAME)
+                    .with("role1", "testRole001")
+                    .with("roleBaseUrl", UrlUtils.roleResource(srcCellName, null, "")).returns()
+                    .statusCode(HttpStatus.SC_OK);
+            // Set links account and role
+            ResourceUtils.linkAccountRole(srcCellName, MASTER_TOKEN_NAME, "account4", null, "testRole001",
+                    HttpStatus.SC_NO_CONTENT);
+
+            // App auth
+            TResponse authnRes = CellUtils.tokenAuthenticationWithTarget(appCellName, "account0", "password0",
+                    srcCellName);
+            String appToken = (String) authnRes.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            // authz
+            TResponse authzRes = Http.request("authn/password-cl-cp.txt")
+                    .with("remoteCell", srcCellName)
+                    .with("username", "account4")
+                    .with("password", "password4")
+                    .with("client_id", UrlUtils.cellRoot(appCellName))
+                    .with("client_secret", appToken)
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+            String token = (String) authzRes.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // ---------------
+            // Execution
+            // ---------------
+            // Send message
+            response = SentMessageUtils.sent(token, srcCellName,
+                    body.toJSONString(), HttpStatus.SC_CREATED);
+
+            // ---------------
+            // Verification
+            // ---------------
+            // Set expected response body
+            JSONObject expectedResult = new JSONObject();
+            expectedResult.put("To", UrlUtils.cellRoot(targetCellName));
+            expectedResult.put("Code", Integer.toString(HttpStatus.SC_CREATED));
+            expectedResult.put("Reason", "Created.");
+            JSONArray expectedResults = new JSONArray();
+            expectedResults.add(expectedResult);
+            JSONObject expected = new JSONObject();
+            expected.put("_Box.Name", Setup.TEST_BOX1);
+            expected.put("InReplyTo", null);
+            expected.put("To", UrlUtils.cellRoot(targetCellName));
+            expected.put("ToRelation", null);
+            expected.put("Type", REQ_RELATION_BREAK);
+            expected.put("Title", "title");
+            expected.put("Body", "body");
+            expected.put("Priority", 3);
+            expected.put("RequestRelation", UrlUtils.cellRoot(targetCellName) + "__relation/__/" + targetRelationName);
+            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("Result", expectedResults);
+            // Check response body
+            ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
+                    SENT_MESSAGE_TYPE, expected);
+
+            // Get message id
+            JSONObject results = (JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results");
+            String id = (String) results.get("__id");
+            // Verify that the sent message is saved
+            SentMessageUtils.get(MASTER_TOKEN_NAME, srcCellName, HttpStatus.SC_OK, id);
+            // Verify that the received message is saved
+            TResponse receivedResponse = ReceivedMessageUtils.get(
+                    MASTER_TOKEN_NAME, targetCellName, HttpStatus.SC_OK, id);
+            // Verify that boxname is stored in the received message
+            results = (JSONObject) ((JSONObject) receivedResponse.bodyAsJson().get("d")).get("results");
+            assertThat((String) results.get("_Box.Name"), is(Setup.TEST_BOX1));
+        } finally {
+            // Delete sent message
+            if (response != null) {
+                deleteOdataResource(response.getLocationHeader());
+            }
+            // Delete received message
+            deleteReceivedMessage(targetCellName, UrlUtils.cellRoot(srcCellName), REQ_RELATION_BREAK, "title", "body");
+            // Delete ExtCell and Relation $links
+            ResourceUtils.linksDelete(targetCellName, Relation.EDM_TYPE_NAME, targetRelationName, Setup.TEST_BOX1,
+                    ExtCell.EDM_TYPE_NAME, "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(srcCellName)) + "'",
+                    MASTER_TOKEN_NAME);
+            // Delete Box and Relation $links
+            ResourceUtils.linksDelete(targetCellName, Relation.EDM_TYPE_NAME, targetRelationName, Setup.TEST_BOX1,
+                    Box.EDM_TYPE_NAME, "Name='" + Setup.TEST_BOX1 + "'", MASTER_TOKEN_NAME);
+            // Delete relation
+            RelationUtils.delete(targetCellName, MASTER_TOKEN_NAME, targetRelationName, null, -1);
+            // Delete Role and Account $links
+            ResourceUtils.linkAccountRollDelete(srcCellName, MASTER_TOKEN_NAME, "account4", null, "testRole001");
+            // Delete role
+            RoleUtils.delete(srcCellName, MASTER_TOKEN_NAME, null, "testRole001", -1);
         }
     }
 

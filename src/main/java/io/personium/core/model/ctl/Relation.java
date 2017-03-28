@@ -36,7 +36,7 @@ public class Relation {
     /**
      * Name プロパティの定義体.
      */
-    public static final EdmProperty.Builder P_ROLE_NAME = EdmProperty.newBuilder("Name")
+    public static final EdmProperty.Builder P_NAME = EdmProperty.newBuilder("Name")
             .setType(EdmSimpleType.STRING)
             .setNullable(false).setAnnotations(Common.P_FORMAT_RELATION_NAME);
 
@@ -45,8 +45,8 @@ public class Relation {
      */
     public static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder()
             .setNamespace(Common.EDM_NS_CELL_CTL).setName(EDM_TYPE_NAME)
-            .addProperties(Enumerable.create(P_ROLE_NAME, Common.P_BOX_NAME.setAnnotations(Common.P_FORMAT_NAME),
+            .addProperties(Enumerable.create(P_NAME, Common.P_BOX_NAME.setAnnotations(Common.P_FORMAT_NAME),
                     Common.P_PUBLISHED, Common.P_UPDATED).toList())
-            .addKeys(P_ROLE_NAME.getName(), Common.P_BOX_NAME.getName());
+            .addKeys(P_NAME.getName(), Common.P_BOX_NAME.getName());
 
 }

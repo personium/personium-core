@@ -18,6 +18,7 @@ package io.personium.core.model.impl.es.odata;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,8 @@ import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityId;
 import org.odata4j.core.OEntityIds;
 import org.odata4j.core.OEntityKey;
+import org.odata4j.core.OEntityKey.KeyType;
+import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmDataServices;
 import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.producer.EntityQueryInfo;
@@ -39,11 +42,13 @@ import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.Cell;
 import io.personium.core.model.ModelFactory;
+import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.ReceivedMessagePort;
 import io.personium.core.model.ctl.Relation;
+import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.accessor.DataSourceAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
@@ -51,6 +56,7 @@ import io.personium.core.model.impl.es.accessor.ODataLinkAccessor;
 import io.personium.core.model.impl.es.cache.BoxCache;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
+import io.personium.core.model.impl.es.odata.EsNavigationTargetKeyProperty.NTKPNotFoundException;
 import io.personium.core.model.lock.Lock;
 import io.personium.core.odata.OEntityWrapper;
 
@@ -124,11 +130,34 @@ public class CellCtlODataProducer extends EsODataProducer {
      */
     @Override
     public void beforeCreate(final String entitySetName, final OEntity oEntity, final EntitySetDocHandler docHandler) {
-        if (entitySetName.equals(ReceivedMessagePort.EDM_TYPE_NAME)) {
+        if (entitySetName.equals(ReceivedMessage.EDM_TYPE_NAME)) {
             // 受信メッセージの場合は登録データから「_Box.Name」を削除
+            // TODO dynamicに値はこないと思うが既存の処理なのでとりあえず残す。意図が不明。
             Map<String, Object> dynamic = docHandler.getDynamicFields();
-            dynamic.remove(ReceivedMessagePort.P_BOX_NAME.getName());
+            dynamic.remove(ReceivedMessage.P_BOX_NAME.getName());
             docHandler.setDynamicFields(dynamic);
+
+            // Removed _Box.Name and add links
+            Map<String, Object> staticFields = docHandler.getStaticFields();
+            if (staticFields.get(ReceivedMessage.P_BOX_NAME.getName()) != null) {
+                Box box = this.cell.getBoxForName((String) staticFields.get(ReceivedMessage.P_BOX_NAME.getName()));
+                docHandler.getStaticFields().remove(ReceivedMessage.P_BOX_NAME.getName());
+
+                Map<String, Object> links = docHandler.getManyToOnelinkId();
+                links.put("Box", box.getId());
+                docHandler.setManyToOnelinkId(links);
+            }
+        } else if (entitySetName.equals(SentMessage.EDM_TYPE_NAME)) {
+            // Removed _Box.Name and add links
+            Map<String, Object> staticFields = docHandler.getStaticFields();
+            if (staticFields.get(SentMessage.P_BOX_NAME.getName()) != null) {
+                Box box = this.cell.getBoxForName((String) staticFields.get(SentMessage.P_BOX_NAME.getName()));
+                docHandler.getStaticFields().remove(SentMessage.P_BOX_NAME.getName());
+
+                Map<String, Object> links = docHandler.getManyToOnelinkId();
+                links.put("Box", box.getId());
+                docHandler.setManyToOnelinkId(links);
+            }
         }
     }
 
@@ -186,6 +215,12 @@ public class CellCtlODataProducer extends EsODataProducer {
                 throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
             }
 
+            // Get Ntkp from entitySet and store it as staticFields.
+            // Message does not include _Box.Name in Key, so it requires processing.
+            Map<String, Object> staticFields = convertNtkpValueToFields(
+                    entitySet, entitySetDocHandler.getStaticFields(), entitySetDocHandler.getManyToOnelinkId());
+            entitySetDocHandler.setStaticFields(staticFields);
+
             // TypeとStatusのチェック
             String type = (String) entitySetDocHandler.getStaticFields().get(ReceivedMessage.P_TYPE.getName());
             String currentStatus = (String) entitySetDocHandler.getStaticFields()
@@ -203,6 +238,9 @@ public class CellCtlODataProducer extends EsODataProducer {
             // 取得した受信メッセージのステータスと更新日を上書きする
             updateStatusOfEntitySetDocHandler(entitySetDocHandler, status);
 
+            // Remove _Box.Name
+            entitySetDocHandler.getStaticFields().remove(ReceivedMessage.P_BOX_NAME.getName());
+
             // ESに保存する
             EntitySetAccessor esType = this.getAccessorForEntitySet(entitySet.getName());
             Long version = entitySetDocHandler.getVersion();
@@ -214,6 +252,30 @@ public class CellCtlODataProducer extends EsODataProducer {
             log.debug("unlock");
             lock.release();
         }
+    }
+
+    /**
+     * Convert NavigationTargetKeyProperty value to staticFields.
+     * @param entitySet entitySetName
+     * @param staticFields static fields
+     * @param links links
+     * @return If the converted value is already set staticFields
+     */
+    protected Map<String, Object> convertNtkpValueToFields(
+            EdmEntitySet entitySet, Map<String, Object> staticFields, Map<String, Object> links) {
+        Map<String, String> ntkpProperties = new HashMap<String, String>();
+        Map<String, String> ntkpValueMap = new HashMap<String, String>();
+        getNtkpValueMap(entitySet, ntkpProperties, ntkpValueMap);
+        for (Map.Entry<String, String> ntkpProperty : ntkpProperties.entrySet()) {
+            String linksKey = getLinkskey(ntkpProperty.getValue());
+            if (links.containsKey(linksKey)) {
+                String linkId = links.get(linksKey).toString();
+                staticFields.put(ntkpProperty.getKey(), ntkpValueMap.get(ntkpProperty.getKey() + linkId));
+            } else {
+                staticFields.put(ntkpProperty.getKey(), null);
+            }
+        }
+        return staticFields;
     }
 
     /**
@@ -248,12 +310,16 @@ public class CellCtlODataProducer extends EsODataProducer {
         String requestRelation = (String) entitySetDocHandler.getStaticFields().get(
                 ReceivedMessage.P_REQUEST_RELATION.getName());
         String[] partRequestRelation = requestRelation.split("/");
-        String relationKey = partRequestRelation[partRequestRelation.length - 1];
+        String relationName = partRequestRelation[partRequestRelation.length - 1];
+        // Get box name
+        String boxName = (String) entitySetDocHandler.getStaticFields().get(
+                ReceivedMessage.P_BOX_NAME.getName());
 
-        EntitySetDocHandler relation = getRelation(relationKey);
+        EntitySetDocHandler relation = getRelation(relationName, boxName);
         if (relation == null) {
+
             // データが存在しない場合はRelationを新規に登録
-            createRelationEntity(relationKey);
+            createRelationEntity(relationName, boxName);
         }
 
         // 関係を結ぶセルURL取得
@@ -269,17 +335,18 @@ public class CellCtlODataProducer extends EsODataProducer {
         }
 
         // RelationとExtCellの$linksを作成
-        createRelationExtCellLinks(relationKey, requestExtCell);
+        createRelationExtCellLinks(relationName, boxName, requestExtCell);
     }
 
     /**
      * RelationとExtCellの$links作成.
-     * @param relationKey
-     * @param requestExtCell
+     * @param relationName Relation name
+     * @param boxName Box name linked to relation
+     * @param requestExtCell ExtCell name
      */
-    private void createRelationExtCellLinks(String relationKey, String requestExtCell) {
+    private void createRelationExtCellLinks(String relationName, String boxName, String requestExtCell) {
         try {
-            OEntityKey relationOEntityKey = createRelationOEntityKey(relationKey);
+            OEntityKey relationOEntityKey = createRelationOEntityKey(relationName, boxName);
             OEntityId relationEntityId = OEntityIds.create(Relation.EDM_TYPE_NAME, relationOEntityKey);
             OEntityKey extCellOEntityKey = createExtCellOEntityKey(requestExtCell);
             OEntityId extCellEntityId = OEntityIds.create(ExtCell.EDM_TYPE_NAME, extCellOEntityKey);
@@ -305,10 +372,23 @@ public class CellCtlODataProducer extends EsODataProducer {
         return extCellOEntityKey;
     }
 
-    private OEntityKey createRelationOEntityKey(String relationKey) {
+    /**
+     * Create relation key.
+     * @param relationName relation name
+     * @param boxName box name
+     * @return relation key
+     */
+    private OEntityKey createRelationOEntityKey(String relationName, String boxName) {
         OEntityKey relationOEntityKey;
+        String parseString;
+        if (boxName != null) {
+            parseString = "(" + Relation.P_NAME.getName() + "='" + relationName + "',"
+                    + Common.P_BOX_NAME.getName() + "='" + boxName + "')";
+        } else {
+            parseString = "('" + relationName + "')";
+        }
         try {
-            relationOEntityKey = OEntityKey.parse("('" + relationKey + "')");
+            relationOEntityKey = OEntityKey.parse(parseString);
         } catch (IllegalArgumentException e) {
             throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR.reason(e);
         }
@@ -317,12 +397,13 @@ public class CellCtlODataProducer extends EsODataProducer {
 
     /**
      * Relationを取得する.
-     * @param key キー
+     * @param relationName Relation name
+     * @param boxName Box name
      * @return EntitySetDocHandler
      */
-    protected EntitySetDocHandler getRelation(String key) {
+    protected EntitySetDocHandler getRelation(String relationName, String boxName) {
         EdmEntitySet edmEntitySet = getMetadata().getEdmEntitySet(Relation.EDM_TYPE_NAME);
-        OEntityKey oEntityKey = createRelationOEntityKey(key);
+        OEntityKey oEntityKey = createRelationOEntityKey(relationName, boxName);
 
         return retrieveWithKey(edmEntitySet, oEntityKey);
     }
@@ -341,14 +422,16 @@ public class CellCtlODataProducer extends EsODataProducer {
 
     /**
      * RelationをESに保存.
-     * @param key RelationのNameの値
+     * @param relationName Relation name
+     * @param boxName Link target box name
      */
-    private void createRelationEntity(String key) {
-
+    private void createRelationEntity(String relationName, String boxName) {
         // staticFields
         Map<String, Object> staticFields = new HashMap<String, Object>();
-        staticFields.put(Relation.P_ROLE_NAME.getName(), key);
-
+        staticFields.put(Relation.P_NAME.getName(), relationName);
+        if (boxName != null) {
+            staticFields.put(Common.P_BOX_NAME.getName(), boxName);
+        }
         createEntity(Relation.EDM_TYPE_NAME, staticFields);
     }
 
@@ -391,15 +474,15 @@ public class CellCtlODataProducer extends EsODataProducer {
         oedh.setPublished(crrTime);
         oedh.setUpdated(crrTime);
 
-        // TODO 複合キーでNTKPの項目(ex. _EntityType.Name)があれば、リンク情報を設定する
-        // if (KeyType.COMPLEX.equals(oEntityKey.getKeyType())) {
-        // try {
-        // setLinksFromOEntity(getMetadata().findEdmEntitySet(Relation.EDM_TYPE_NAME).getType(),
-        // oEntityKey, entitySetDocHandler);
-        // } catch (NTKPNotFoundException e) {
-        // throw PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(e.getMessage());
-        // }
-        // }
+        // 複合キーでNTKPの項目(ex. _EntityType.Name)があれば、リンク情報を設定する
+        OEntityKey entityKey = OEntityKey.create(staticFields);
+        if (KeyType.COMPLEX.equals(entityKey.getKeyType())) {
+            try {
+                setLinksFromOEntityKey(entityKey, typeName, oedh);
+            } catch (NTKPNotFoundException e) {
+                throw PersoniumCoreException.OData.BODY_NTKP_NOT_FOUND_ERROR.params(e.getMessage());
+            }
+        }
 
         // 登録前処理
         this.beforeCreate(typeName, null, oedh);
@@ -412,6 +495,22 @@ public class CellCtlODataProducer extends EsODataProducer {
     }
 
     /**
+     * If there is an item of NTKP in OEntityKey, link information is set.
+     * @param key OEntityKey
+     * @param typeName EntityTypeName
+     * @param oedh Document handler for registration data
+     * @throws NTKPNotFoundException The resource specified by NTKP does not exist
+     */
+    private void setLinksFromOEntityKey(OEntityKey key, String typeName, EntitySetDocHandler oedh)
+            throws NTKPNotFoundException {
+        // Based on the Property of EntityKey, set link information
+        Set<OProperty<?>> properties = key.asComplexProperties();
+        EsNavigationTargetKeyProperty esNtkp = new EsNavigationTargetKeyProperty(this.getCellId(), this.getBoxId(),
+                this.getNodeId(), typeName, this);
+        setLinksForOedh(properties, esNtkp, oedh);
+    }
+
+    /**
      * 関係削除を行う.
      * @param entitySetDocHandler 受信メッセージ
      */
@@ -421,12 +520,15 @@ public class CellCtlODataProducer extends EsODataProducer {
         String reqRelation = entitySetDocHandler.getStaticFields()
                 .get(ReceivedMessagePort.P_REQUEST_RELATION.getName()).toString();
         String relationName = getRelationFromRelationClassUrl(reqRelation);
+        // Get box name
+        String boxName = (String) entitySetDocHandler.getStaticFields().get(
+                ReceivedMessage.P_BOX_NAME.getName());
         if (relationName == null) {
             throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR;
         }
 
         // 対象のRelationが存在することを確認
-        EntitySetDocHandler relation = getRelation(relationName);
+        EntitySetDocHandler relation = getRelation(relationName, boxName);
         if (relation == null) {
             log.debug(String.format("RequestRelation does not exists. [%s]", relationName));
             throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params(relationName);
