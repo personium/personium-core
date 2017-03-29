@@ -16,28 +16,6 @@
  */
 package io.personium.core.rs.cell;
 
-import io.personium.common.auth.token.Role;
-import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.PersoniumCoreException;
-import io.personium.core.auth.OAuth2Helper;
-import io.personium.core.model.ctl.Common;
-import io.personium.core.model.ctl.CtlSchema;
-import io.personium.core.model.ctl.ExtCell;
-import io.personium.core.model.ctl.ReceivedMessage;
-import io.personium.core.model.ctl.ReceivedMessagePort;
-import io.personium.core.model.ctl.Relation;
-import io.personium.core.model.ctl.SentMessage;
-import io.personium.core.model.ctl.SentMessagePort;
-import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
-import io.personium.core.odata.OEntityWrapper;
-import io.personium.core.odata.PersoniumODataProducer;
-import io.personium.core.rs.odata.AbstractODataResource;
-import io.personium.core.rs.odata.ODataResource;
-import io.personium.core.utils.HttpClientFactory;
-import io.personium.core.utils.ODataUtils;
-import io.personium.core.utils.ResourceUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -87,6 +65,29 @@ import org.odata4j.producer.InlineCount;
 import org.odata4j.producer.QueryInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.personium.common.auth.token.Role;
+import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.model.Box;
+import io.personium.core.model.ctl.Common;
+import io.personium.core.model.ctl.CtlSchema;
+import io.personium.core.model.ctl.ExtCell;
+import io.personium.core.model.ctl.ReceivedMessage;
+import io.personium.core.model.ctl.ReceivedMessagePort;
+import io.personium.core.model.ctl.Relation;
+import io.personium.core.model.ctl.SentMessage;
+import io.personium.core.model.ctl.SentMessagePort;
+import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
+import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.rs.odata.AbstractODataResource;
+import io.personium.core.rs.odata.ODataResource;
+import io.personium.core.utils.HttpClientFactory;
+import io.personium.core.utils.ODataUtils;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * __messageのOData操作クラス.
@@ -212,11 +213,19 @@ public final class MessageODataResource extends AbstractODataResource {
         if (ReceivedMessage.EDM_TYPE_NAME.equals(this.getEntitySetName())) {
             for (int i = 0; i < props.size(); i++) {
                 if (ReceivedMessagePort.P_SCHEMA.getName().equals(props.get(i).getName())) {
+                    String schema = (String) props.get(i).getValue();
+                    Box box = this.odataResource.getAccessContext().getCell().getBoxForSchema(schema);
+                    String boxName = box != null ? box.getName() : null; // CHECKSTYLE IGNORE - To eliminate useless code
                     // メッセージ受信でSchemaはデータとして保持しないため、削除する
                     props.remove(i);
-                } else if (ReceivedMessagePort.P_BOX_NAME.getName().equals(props.get(i).getName())) {
-                    // メッセージ受信で_Box.Nameはデータとして保持しないるため置き換える
-                    props.set(i, OProperties.string(ReceivedMessagePort.P_BOX_NAME.getName(), (String) null));
+                    for (int j = 0; j < props.size(); j++) {
+                        if (ReceivedMessagePort.P_BOX_NAME.getName().equals(props.get(j).getName())) {
+                            // Replace with BoxName obtained from schema
+                            props.set(j, OProperties.string(ReceivedMessagePort.P_BOX_NAME.getName(), boxName));
+                            break;
+                        }
+                    }
+                    break;
                 }
             }
         } else if (SentMessage.EDM_TYPE_NAME.equals(this.getEntitySetName())) {
@@ -235,8 +244,11 @@ public final class MessageODataResource extends AbstractODataResource {
                     // メッセージ送信でBoxBoundはデータとして保持しないため、削除する
                     props.remove(i);
                 } else if (SentMessagePort.P_BOX_NAME.getName().equals(props.get(i).getName())) {
-                    // メッセージ受信で_Box.Nameはデータとして保持しているため置き換える
-                    props.set(i, OProperties.string(SentMessagePort.P_BOX_NAME.getName(), (String) null));
+                    String schema = this.odataResource.getAccessContext().getSchema();
+                    Box box = this.odataResource.getAccessContext().getCell().getBoxForSchema(schema);
+                    String boxName = box != null ? box.getName() : null; // CHECKSTYLE IGNORE - To eliminate useless code
+                    // Replace with BoxName obtained from schema
+                    props.set(i, OProperties.string(SentMessagePort.P_BOX_NAME.getName(), boxName));
                 } else if (SentMessagePort.P_RESULT.getName().equals(props.get(i).getName())) {
                     // メッセージ受信でResultはデータとして保持しているため置き換える
                     props.set(i, OProperties.collection(SentMessage.P_RESULT.getName(),
@@ -398,6 +410,7 @@ public final class MessageODataResource extends AbstractODataResource {
     private JSONObject createRequestJsonBody(String fromCellUrl, String targetCellUrl, List<String> toList, String id) {
         JSONObject requestBody = new JSONObject();
         String type = this.propMap.get(SentMessage.P_TYPE.getName());
+        boolean boxBound = Boolean.parseBoolean(this.propMap.get(SentMessagePort.P_BOX_BOUND.getName()));
 
         // Statusの設定
         String status = null;
@@ -426,6 +439,9 @@ public final class MessageODataResource extends AbstractODataResource {
         }
 
         requestBody.put(ReceivedMessage.P_ID.getName(), id);
+        if (boxBound) {
+            requestBody.put(ReceivedMessagePort.P_SCHEMA.getName(), this.odataResource.getAccessContext().getSchema());
+        }
         requestBody.put(ReceivedMessage.P_IN_REPLY_TO.getName(), this.propMap.get(SentMessage.P_IN_REPLY_TO.getName()));
         requestBody.put(ReceivedMessage.P_FROM.getName(), fromCellUrl);
         requestBody.put(ReceivedMessage.P_MULTICAST_TO.getName(), multicastTo);

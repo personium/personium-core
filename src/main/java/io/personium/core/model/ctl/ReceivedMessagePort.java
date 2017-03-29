@@ -30,12 +30,11 @@ public class ReceivedMessagePort extends ReceivedMessage {
     }
 
     /**
-     * Schemaプロパティの定義体.
+     * Schema プロパティの定義体.
      */
     public static final EdmProperty.Builder P_SCHEMA = EdmProperty.newBuilder("Schema")
-            .setType(EdmSimpleType.BOOLEAN)
-            .setNullable(true)
-            .setDefaultValue("false");
+            .setType(EdmSimpleType.STRING)
+            .setNullable(true);
 
     /**
      * EntityType Builder.

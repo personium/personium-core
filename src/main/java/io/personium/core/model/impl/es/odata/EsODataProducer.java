@@ -924,7 +924,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     @SuppressWarnings("unchecked")
-    private void getNtkpValueMap(EdmEntitySet eSet,
+    protected void getNtkpValueMap(EdmEntitySet eSet,
             Map<String, String> ntkpProperties,
             Map<String, String> ntkpValueMap) {
         Enumerable<EdmProperty> eProps = eSet.getType().getProperties();
@@ -1180,8 +1180,19 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         // EntityKeyのPropertyをもとに、リンク情報を取得する
         Set<OProperty<?>> properties = entity.getEntityKey().asComplexProperties();
         EsNavigationTargetKeyProperty esNtkp = new EsNavigationTargetKeyProperty(this.getCellId(), this.getBoxId(),
-                this.getNodeId(), entity
-                        .getEntityType().getName(), this);
+                this.getNodeId(), entity.getEntityType().getName(), this);
+        setLinksForOedh(properties, esNtkp, oedh);
+    }
+
+    /**
+     * If there is an item of NTKP in Properties, link information is set.
+     * @param properties OEntity key properties
+     * @param esNtkp NavigationTargetKeyProperty
+     * @param oedh Document handler for registration data
+     * @throws NTKPNotFoundException The resource specified by NTKP does not exist
+     */
+    protected void setLinksForOedh(Set<OProperty<?>> properties, EsNavigationTargetKeyProperty esNtkp,
+            EntitySetDocHandler oedh)  throws NTKPNotFoundException {
         esNtkp.setProperties(properties);
         Map.Entry<String, String> link = esNtkp.getLinkEntry();
 

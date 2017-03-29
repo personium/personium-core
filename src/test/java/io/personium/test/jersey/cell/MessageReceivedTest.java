@@ -369,63 +369,62 @@ public class MessageReceivedTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Schema指定ありでMessageを受信できること() {
+        String targetCellName = Setup.TEST_CELL1;
+        String targetRelationName = "testRelation001";
+        String srcCellName = Setup.TEST_CELL2;
+        String appCellName = Setup.TEST_CELL_SCHEMA1;
 
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
-        body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
+        body.put("From", UrlUtils.cellRoot(srcCellName));
         body.put("Type", "req.relation.build");
-        body.put("Schema", true);
+        body.put("Schema", UrlUtils.cellRoot(appCellName));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", "none");
-        body.put("RequestRelation", UrlUtils.cellRoot("appCell") + "__relation/__/+:xxx");
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+        body.put("RequestRelation", UrlUtils.cellRoot(targetCellName) + "__relation/__/" + targetRelationName);
+        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
 
-        String locationHeader = null;
-
+        TResponse response = null;
         try {
-            PersoniumRestAdapter rest = new PersoniumRestAdapter();
-            PersoniumResponse res = null;
-
-            // リクエストヘッダをセット
-            HashMap<String, String> requestheaders = new HashMap<String, String>();
+            // ---------------
+            // Preparation
+            // ---------------
             // Authorizationヘッダ
-            String targetCellUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
-            requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + getCellIssueToken(targetCellUrl));
+            String targetCellUrl = UrlUtils.cellRoot(targetCellName);
 
-            try {
-                String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
-                res = rest.post(requestUrl, body.toJSONString(),
-                        requestheaders);
-                assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
+            // ---------------
+            // Execution
+            // ---------------
+            response = ReceivedMessageUtils.receive(getCellIssueToken(targetCellUrl), targetCellName,
+                    body.toJSONString(), HttpStatus.SC_CREATED);
 
-                Map<String, Object> expected = new HashMap<String, Object>();
-                expected.put("Body", "Body");
-                expected.put("_Box.Name", null);
-                expected.put("Type", "req.relation.build");
-                expected.put("Title", "Title");
-                expected.put("Priority", 3);
-                expected.put("Status", "none");
-                expected.put("RequestRelation", UrlUtils.cellRoot("appCell") + "__relation/__/+:xxx");
-                expected.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
-                expected.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
-                expected.put("MulticastTo", null);
-                expected.put("From", UrlUtils.getBaseUrl() + "/testcell2/");
-                locationHeader = res.getFirstHeader("Location");
-                JSONObject json = res.bodyAsJson();
-                checkResponseBody(json, locationHeader, Common.EDM_NS_CELL_CTL + "."
-                        + ReceivedMessagePort.EDM_TYPE_NAME, expected);
-                System.out.println(json.toJSONString());
+            // ---------------
+            // Verification
+            // ---------------
+            Map<String, Object> expected = new HashMap<String, Object>();
+            expected.put("Body", "Body");
+            expected.put("_Box.Name", Setup.TEST_BOX1);
+            expected.put("Type", "req.relation.build");
+            expected.put("Title", "Title");
+            expected.put("Priority", 3);
+            expected.put("Status", "none");
+            expected.put("RequestRelation", UrlUtils.cellRoot(targetCellName) + "__relation/__/" + targetRelationName);
+            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
+            expected.put("MulticastTo", null);
+            expected.put("From", UrlUtils.getBaseUrl() + "/testcell2/");
 
-            } catch (PersoniumException e) {
-                e.printStackTrace();
-            }
-
+            // Check response body
+            ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
+                    "CellCtl.ReceivedMessage", expected);
+            // Verify that the received message is saved
+            ReceivedMessageUtils.get(MASTER_TOKEN_NAME, targetCellName, HttpStatus.SC_OK, (String) body.get("__id"));
         } finally {
-            if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+            if (response != null) {
+                deleteOdataResource(response.getLocationHeader());
             }
         }
     }

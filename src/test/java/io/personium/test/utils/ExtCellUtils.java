@@ -36,10 +36,11 @@ public class ExtCellUtils {
      * @param cellName セル名
      * @param url URL
      * @param code レスポンスコード
+     * @return レスポンス
      */
-    public static void get(final String token, final String cellName,
+    public static TResponse get(final String token, final String cellName,
             final String url, final int code) {
-        Http.request("cell/extCell-get.txt")
+        return Http.request("cell/extCell-get.txt")
                 .with("cellPath", cellName)
                 .with("token", token)
                 .with("accept", "application/xml")
