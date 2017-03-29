@@ -1,4 +1,9 @@
-##1.4.5
+## 1.4.6
+BUG FIXES:
+* Implementation of BoxBound function of message API.
+ ([#17](https://github.com/personium/personium-core/issues/17))
+
+## 1.4.5
 BUG FIXES:
 * Fixed about Executing Cell Recursive Delete API does not delete OData in cell. ([#13](https://github.com/personium/personium-core/issues/13))
 
