@@ -1272,7 +1272,6 @@ public class MessageApproveTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
         body.put("Type", "req.relation.build");
-        body.put("Schema", true);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
