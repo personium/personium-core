@@ -46,7 +46,6 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ReceivedMessage;
-import io.personium.core.model.ctl.ReceivedMessagePort;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.impl.es.EsModel;
@@ -130,29 +129,13 @@ public class CellCtlODataProducer extends EsODataProducer {
      */
     @Override
     public void beforeCreate(final String entitySetName, final OEntity oEntity, final EntitySetDocHandler docHandler) {
-        if (entitySetName.equals(ReceivedMessage.EDM_TYPE_NAME)) {
-            // 受信メッセージの場合は登録データから「_Box.Name」を削除
-            // TODO dynamicに値はこないと思うが既存の処理なのでとりあえず残す。意図が不明。
-            Map<String, Object> dynamic = docHandler.getDynamicFields();
-            dynamic.remove(ReceivedMessage.P_BOX_NAME.getName());
-            docHandler.setDynamicFields(dynamic);
-
+        if (entitySetName.equals(ReceivedMessage.EDM_TYPE_NAME)
+                || entitySetName.equals(SentMessage.EDM_TYPE_NAME)) {
             // Removed _Box.Name and add links
             Map<String, Object> staticFields = docHandler.getStaticFields();
-            if (staticFields.get(ReceivedMessage.P_BOX_NAME.getName()) != null) {
-                Box box = this.cell.getBoxForName((String) staticFields.get(ReceivedMessage.P_BOX_NAME.getName()));
-                docHandler.getStaticFields().remove(ReceivedMessage.P_BOX_NAME.getName());
-
-                Map<String, Object> links = docHandler.getManyToOnelinkId();
-                links.put("Box", box.getId());
-                docHandler.setManyToOnelinkId(links);
-            }
-        } else if (entitySetName.equals(SentMessage.EDM_TYPE_NAME)) {
-            // Removed _Box.Name and add links
-            Map<String, Object> staticFields = docHandler.getStaticFields();
-            if (staticFields.get(SentMessage.P_BOX_NAME.getName()) != null) {
-                Box box = this.cell.getBoxForName((String) staticFields.get(SentMessage.P_BOX_NAME.getName()));
-                docHandler.getStaticFields().remove(SentMessage.P_BOX_NAME.getName());
+            if (staticFields.get(Common.P_BOX_NAME.getName()) != null) {
+                Box box = this.cell.getBoxForName((String) staticFields.get(Common.P_BOX_NAME.getName()));
+                docHandler.getStaticFields().remove(Common.P_BOX_NAME.getName());
 
                 Map<String, Object> links = docHandler.getManyToOnelinkId();
                 links.put("Box", box.getId());
@@ -518,7 +501,7 @@ public class CellCtlODataProducer extends EsODataProducer {
         log.debug("breakRelation start.");
         // RequestRelationからRelation名を取得する
         String reqRelation = entitySetDocHandler.getStaticFields()
-                .get(ReceivedMessagePort.P_REQUEST_RELATION.getName()).toString();
+                .get(ReceivedMessage.P_REQUEST_RELATION.getName()).toString();
         String relationName = getRelationFromRelationClassUrl(reqRelation);
         // Get box name
         String boxName = (String) entitySetDocHandler.getStaticFields().get(
@@ -536,7 +519,7 @@ public class CellCtlODataProducer extends EsODataProducer {
 
         // 対象のExtCell(RequestRelationTarget)が存在することを確認
         String extCellUrl = entitySetDocHandler.getStaticFields()
-                .get(ReceivedMessagePort.P_REQUEST_RELATION_TARGET.getName()).toString();
+                .get(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName()).toString();
         EntitySetDocHandler extCell = getExtCell(extCellUrl);
         if (extCell == null) {
             log.debug(String.format("RequestRelationTarget does not exists. [%s]", extCellUrl));

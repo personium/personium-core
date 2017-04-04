@@ -16,6 +16,8 @@
  */
 package io.personium.test.jersey.cell;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -422,6 +424,61 @@ public class MessageReceivedTest extends ODataCommon {
                     "CellCtl.ReceivedMessage", expected);
             // Verify that the received message is saved
             ReceivedMessageUtils.get(MASTER_TOKEN_NAME, targetCellName, HttpStatus.SC_OK, (String) body.get("__id"));
+        } finally {
+            if (response != null) {
+                deleteOdataResource(response.getLocationHeader());
+            }
+        }
+    }
+
+    /**
+     * Error test.
+     * Received schema message of type Message.
+     * Box corresponding to the schema does not exist.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void error_received_schema_message_box_not_exists() {
+        String targetCellName = Setup.TEST_CELL1;
+        String targetRelationName = "testRelation001";
+        String srcCellName = Setup.TEST_CELL2;
+        String appCellName = "testSchema001";
+
+        JSONObject body = new JSONObject();
+        body.put("__id", "12345678901234567890123456789012");
+        body.put("From", UrlUtils.cellRoot(srcCellName));
+        body.put("Type", "message");
+        body.put("Schema", UrlUtils.cellRoot(appCellName));
+        body.put("Title", "Title");
+        body.put("Body", "Body");
+        body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
+        body.put("Priority", 3);
+        body.put("Status", "none");
+        body.put("RequestRelation", UrlUtils.cellRoot(targetCellName) + "__relation/__/" + targetRelationName);
+        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        TResponse response = null;
+        try {
+            // ---------------
+            // Preparation
+            // ---------------
+            // Authorizationヘッダ
+            String targetCellUrl = UrlUtils.cellRoot(targetCellName);
+
+            // ---------------
+            // Execution
+            // ---------------
+            response = ReceivedMessageUtils.receive(getCellIssueToken(targetCellUrl), targetCellName,
+                    body.toJSONString(), HttpStatus.SC_BAD_REQUEST);
+
+            // ---------------
+            // Verification
+            // ---------------
+            // Check response body
+            PersoniumCoreException exception = PersoniumCoreException.ReceiveMessage.BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS
+                    .params(UrlUtils.cellRoot(appCellName));
+            String message = (String) ((JSONObject) response.bodyAsJson().get("message")).get("value");
+            assertThat(message, is(exception.getMessage()));
         } finally {
             if (response != null) {
                 deleteOdataResource(response.getLocationHeader());

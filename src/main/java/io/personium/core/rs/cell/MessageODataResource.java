@@ -38,6 +38,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.CharEncoding;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -606,6 +607,7 @@ public final class MessageODataResource extends AbstractODataResource {
     public void validate(List<OProperty<?>> props) {
         // メッセージ受信のときのチェック
         if (ReceivedMessage.EDM_TYPE_NAME.equals(this.getEntitySetName())) {
+            validateReceivedBoxBoundSchema(this.odataResource, propMap.get(ReceivedMessagePort.P_SCHEMA.getName()));
             MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
                     propMap.get(ReceivedMessage.P_MULTICAST_TO.getName()));
             MessageODataResource.validateBody(propMap.get(ReceivedMessage.P_BODY.getName()),
@@ -618,6 +620,8 @@ public final class MessageODataResource extends AbstractODataResource {
         }
         // メッセージ送信のときのチェック
         if (SentMessage.EDM_TYPE_NAME.equals(this.getEntitySetName())) {
+            validateSentBoxBoundSchema(this.odataResource,
+                    Boolean.valueOf(propMap.get(SentMessagePort.P_BOX_BOUND.getName())));
             MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(), propMap.get(SentMessage.P_TO.getName()));
             MessageODataResource.validateBody(propMap.get(SentMessage.P_BODY.getName()),
                     Common.MAX_MESSAGE_BODY_LENGTH);
@@ -646,6 +650,35 @@ public final class MessageODataResource extends AbstractODataResource {
                 propMap.put(property.getName(), null);
             } else {
                 propMap.put(property.getName(), property.getValue().toString());
+            }
+        }
+    }
+
+    /**
+     * Schema check at Box Bound.
+     * @param messageResource ODataResource
+     * @param schema Schema
+     */
+    public void validateReceivedBoxBoundSchema(MessageResource messageResource, String schema) {
+        if (StringUtils.isNotEmpty(schema)) {
+            Box box = messageResource.getAccessContext().getCell().getBoxForSchema(schema);
+            if (box == null) {
+                throw PersoniumCoreException.ReceiveMessage.BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS.params(schema);
+            }
+        }
+    }
+
+    /**
+     * Schema check at Box Bound.
+     * @param messageResource ODataResource
+     * @param boxboundFlag BoxBoundFlag
+     */
+    public void validateSentBoxBoundSchema(MessageResource messageResource, boolean boxboundFlag) {
+        if (boxboundFlag) {
+            String schema = messageResource.getAccessContext().getSchema();
+            Box box = messageResource.getAccessContext().getCell().getBoxForSchema(schema);
+            if (box == null) {
+                throw PersoniumCoreException.SentMessage.BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS.params(schema);
             }
         }
     }

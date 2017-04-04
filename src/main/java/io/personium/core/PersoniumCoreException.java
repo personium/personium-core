@@ -16,10 +16,6 @@
  */
 package io.personium.core;
 
-import io.personium.core.exceptions.ODataErrorMessage;
-import io.personium.core.utils.EscapeControlCode;
-import io.personium.plugin.base.PluginMessageUtils.Severity;
-
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +24,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
+
+import io.personium.core.exceptions.ODataErrorMessage;
+import io.personium.core.utils.EscapeControlCode;
+import io.personium.plugin.base.PluginMessageUtils.Severity;
 
 /**
  * ログメッセージ作成クラス.
@@ -543,6 +543,11 @@ public class PersoniumCoreException extends RuntimeException {
          * 送信先URLが最大送信許可数を超えた場合.
          */
         public static final PersoniumCoreException OVER_MAX_SENT_NUM = create("PR400-SM-0003");
+        /**
+         * When a Box corresponding to a schema can not be acquired from a schema-authenticated token.
+         * {0}:Schema
+         */
+        public static final PersoniumCoreException BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS = create("PR400-SM-0004");
 
         /**
          * リクエストに失敗した場合.
@@ -562,6 +567,11 @@ public class PersoniumCoreException extends RuntimeException {
          * メッセージの関係登録で既に関係が存在する.
          */
         public static final PersoniumCoreException REQUEST_RELATION_EXISTS_ERROR = create("PR400-RM-0001");
+        /**
+         * When a Box corresponding to a schema can not be acquired.
+         * {0}:Schema
+         */
+        public static final PersoniumCoreException BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS = create("PR400-RM-0002");
         /**
          * メッセージのRequestRelationのパースに失敗.
          */
