@@ -923,6 +923,12 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         return null;
     }
 
+    /**
+     * Get NtkpValueMap from EntitySet and set it as an object of argument.
+     * @param eSet EntitySet
+     * @param ntkpProperties NtkpProperties
+     * @param ntkpValueMap NtkpValueMap
+     */
     @SuppressWarnings("unchecked")
     protected void getNtkpValueMap(EdmEntitySet eSet,
             Map<String, String> ntkpProperties,
