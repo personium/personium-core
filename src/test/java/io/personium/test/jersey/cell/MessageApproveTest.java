@@ -825,7 +825,7 @@ public class MessageApproveTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_EXISTS_ERROR.getCode());
+                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_EXISTS_ERROR.getCode());
 
         } catch (PersoniumException e) {
             e.printStackTrace();
@@ -1245,7 +1245,7 @@ public class MessageApproveTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_CONFLICT, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR.getCode());
+                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR.getCode());
 
         } catch (PersoniumException e) {
             e.printStackTrace();
@@ -1302,7 +1302,7 @@ public class MessageApproveTest extends ODataCommon {
                     requestheaders);
             assertEquals(HttpStatus.SC_CONFLICT, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(),
-                    PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR.getCode());
+                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_PARSE_ERROR.getCode());
 
         } catch (PersoniumException e) {
             e.printStackTrace();

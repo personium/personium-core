@@ -1275,7 +1275,7 @@ public class MessageSentTest extends ODataCommon {
             JSONObject expectedResult = new JSONObject();
             expectedResult.put("To", UrlUtils.cellRoot(targetCellName));
             expectedResult.put("Code", Integer.toString(HttpStatus.SC_BAD_REQUEST));
-            PersoniumCoreException exception = PersoniumCoreException.ReceiveMessage.BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS
+            PersoniumCoreException exception = PersoniumCoreException.ReceivedMessage.BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS
                     .params(UrlUtils.cellRoot(appCellName));
             expectedResult.put("Reason", exception.getMessage());
             JSONArray expectedResults = new JSONArray();

@@ -346,9 +346,10 @@ public class CellCtlODataProducerTest {
         try {
             doReturn(new OEntityDocHandler()).when(cellCtlODataProducer).retrieveWithKey(anyObject(), anyObject());
             cellCtlODataProducer.getExtCell("https://example.com/'/");
-            fail("PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR does not occurred.");
+            fail("PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_PARSE_ERROR does not occurred.");
         } catch (PersoniumCoreException e) {
-            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR;
+            PersoniumCoreException expected =
+                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_PARSE_ERROR;
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());
         }
@@ -366,9 +367,9 @@ public class CellCtlODataProducerTest {
         docHandler.setStaticFields(staticFields);
         try {
             cellCtlODataProducer.breakRelation(docHandler);
-            fail("PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR does not occurred.");
+            fail("PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR does not occurred.");
         } catch (PersoniumCoreException e) {
-            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR;
+            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR;
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());
         }
@@ -387,9 +388,9 @@ public class CellCtlODataProducerTest {
         doReturn(null).when(cellCtlODataProducer).getRelation(anyString(), anyString());
         try {
             cellCtlODataProducer.breakRelation(docHandler);
-            fail("PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS does not occurred.");
+            fail("PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_DOES_NOT_EXISTS does not occurred.");
         } catch (PersoniumCoreException e) {
-            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS
+            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_DOES_NOT_EXISTS
                     .params("+:me");
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());
@@ -412,10 +413,10 @@ public class CellCtlODataProducerTest {
         doReturn(null).when(cellCtlODataProducer).getExtCell(anyString());
         try {
             cellCtlODataProducer.breakRelation(docHandler);
-            fail("PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS does not occurred.");
+            fail("PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS does not occurred.");
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected =
-                    PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS
+                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS
                     .params("https://example.com/test0110/");
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());
@@ -439,9 +440,9 @@ public class CellCtlODataProducerTest {
         doReturn(false).when(cellCtlODataProducer).deleteLinkEntity(anyObject(), anyObject());
         try {
             cellCtlODataProducer.breakRelation(docHandler);
-            fail("PersoniumCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS does not occurred.");
+            fail("PersoniumCoreException.ReceivedMessage.LINK_DOES_NOT_EXISTS does not occurred.");
         } catch (PersoniumCoreException e) {
-            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS
+            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage.LINK_DOES_NOT_EXISTS
                     .params("+:me", "https://example.com/test0110/");
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());
@@ -1410,7 +1411,7 @@ public class CellCtlODataProducerTest {
             IllegalArgumentException cause = new IllegalArgumentException(
                     "bad valueString [''dummy''] as part of keyString [''dummy'']");
             PersoniumCoreException expected =
-                    PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR.reason(cause);
+                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR.reason(cause);
             PersoniumCoreException exception = (PersoniumCoreException) e.getCause();
             assertThat(exception.getStatus(), is(expected.getStatus()));
             assertThat(exception.getCode(), is(expected.getCode()));
@@ -1908,7 +1909,7 @@ public class CellCtlODataProducerTest {
             // --------------------
             // Confirm result
             // --------------------
-            assertThat(e, is(PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR));
+            assertThat(e, is(PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR));
         }
     }
 
@@ -1954,7 +1955,7 @@ public class CellCtlODataProducerTest {
             // Confirm result
             // --------------------
             PersoniumCoreException expected =
-                    PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params("dummyRelation");
+                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params("dummyRelation");
             assertThat(e.getStatus(), is(expected.getStatus()));
             assertThat(e.getCode(), is(expected.getCode()));
             assertThat(e.getMessage(), is(expected.getMessage()));
@@ -2004,7 +2005,7 @@ public class CellCtlODataProducerTest {
             // --------------------
             // Confirm result
             // --------------------
-            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage
+            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage
                     .REQUEST_RELATION_TARGET_DOES_NOT_EXISTS.params("http://personium/dummyExtCell/");
             assertThat(e.getStatus(), is(expected.getStatus()));
             assertThat(e.getCode(), is(expected.getCode()));
@@ -2058,7 +2059,7 @@ public class CellCtlODataProducerTest {
             // --------------------
             // Confirm result
             // --------------------
-            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS.params(
+            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage.LINK_DOES_NOT_EXISTS.params(
                     "dummyRelation", "http://personium/dummyExtCell/");
             assertThat(e.getStatus(), is(expected.getStatus()));
             assertThat(e.getCode(), is(expected.getCode()));

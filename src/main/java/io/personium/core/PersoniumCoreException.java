@@ -562,7 +562,7 @@ public class PersoniumCoreException extends RuntimeException {
     /**
      * ReceiveMessageAPI呼出し時のエラー.
      */
-    public static class ReceiveMessage {
+    public static class ReceivedMessage {
         /**
          * メッセージの関係登録で既に関係が存在する.
          */

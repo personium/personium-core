@@ -311,7 +311,7 @@ public class MessageODataResourceTest {
             // --------------------
             // Confirm result
             // --------------------
-            PersoniumCoreException expected = PersoniumCoreException.ReceiveMessage
+            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage
                     .BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS.params(schema);
             assertThat(e.getStatus(), is(expected.getStatus()));
             assertThat(e.getCode(), is(expected.getCode()));

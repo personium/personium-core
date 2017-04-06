@@ -475,7 +475,7 @@ public class MessageReceivedTest extends ODataCommon {
             // Verification
             // ---------------
             // Check response body
-            PersoniumCoreException exception = PersoniumCoreException.ReceiveMessage.BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS
+            PersoniumCoreException exception = PersoniumCoreException.ReceivedMessage.BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS
                     .params(UrlUtils.cellRoot(appCellName));
             String message = (String) ((JSONObject) response.bodyAsJson().get("message")).get("value");
             assertThat(message, is(exception.getMessage()));

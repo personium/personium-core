@@ -663,7 +663,7 @@ public final class MessageODataResource extends AbstractODataResource {
         if (StringUtils.isNotEmpty(schema)) {
             Box box = messageResource.getAccessContext().getCell().getBoxForSchema(schema);
             if (box == null) {
-                throw PersoniumCoreException.ReceiveMessage.BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS.params(schema);
+                throw PersoniumCoreException.ReceivedMessage.BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS.params(schema);
             }
         }
     }

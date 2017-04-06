@@ -339,7 +339,7 @@ public class CellCtlODataProducer extends EsODataProducer {
         } catch (PersoniumCoreException e) {
             if (PersoniumCoreException.OData.CONFLICT_LINKS.getCode().equals(e.getCode())) {
                 // $linksが既に存在する場合
-                throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_EXISTS_ERROR;
+                throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_EXISTS_ERROR;
             }
             throw e;
         }
@@ -350,7 +350,7 @@ public class CellCtlODataProducer extends EsODataProducer {
         try {
             extCellOEntityKey = OEntityKey.parse("('" + requestExtCell + "')");
         } catch (IllegalArgumentException e) {
-            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_PARSE_ERROR.reason(e);
         }
         return extCellOEntityKey;
     }
@@ -373,7 +373,7 @@ public class CellCtlODataProducer extends EsODataProducer {
         try {
             relationOEntityKey = OEntityKey.parse(parseString);
         } catch (IllegalArgumentException e) {
-            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR.reason(e);
         }
         return relationOEntityKey;
     }
@@ -507,14 +507,14 @@ public class CellCtlODataProducer extends EsODataProducer {
         String boxName = (String) entitySetDocHandler.getStaticFields().get(
                 ReceivedMessage.P_BOX_NAME.getName());
         if (relationName == null) {
-            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR;
+            throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR;
         }
 
         // 対象のRelationが存在することを確認
         EntitySetDocHandler relation = getRelation(relationName, boxName);
         if (relation == null) {
             log.debug(String.format("RequestRelation does not exists. [%s]", relationName));
-            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params(relationName);
+            throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params(relationName);
         }
 
         // 対象のExtCell(RequestRelationTarget)が存在することを確認
@@ -523,14 +523,14 @@ public class CellCtlODataProducer extends EsODataProducer {
         EntitySetDocHandler extCell = getExtCell(extCellUrl);
         if (extCell == null) {
             log.debug(String.format("RequestRelationTarget does not exists. [%s]", extCellUrl));
-            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS.params(extCellUrl);
+            throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS.params(extCellUrl);
         }
 
         // RelationとExtCellの関連を削除する
         if (!deleteLinkEntity(relation, extCell)) {
             log.debug(String.format("RequestRelation and RequestRelationTarget does not related. [%s] - [%s]",
                     relationName, extCellUrl));
-            throw PersoniumCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS.params(relationName, extCellUrl);
+            throw PersoniumCoreException.ReceivedMessage.LINK_DOES_NOT_EXISTS.params(relationName, extCellUrl);
         }
         log.debug("breakRelation success.");
     }
