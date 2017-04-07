@@ -300,7 +300,7 @@ public final class UrlUtils {
      * @return 認証エンドポイントURL
      */
     public static String auth(final String cellName) {
-        return String.format("%s/%s/__auth", baseUrl, cellName);
+        return String.format("%s/%s/__token", baseUrl, cellName);
     }
 
     /**

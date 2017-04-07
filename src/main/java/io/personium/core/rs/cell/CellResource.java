@@ -217,7 +217,7 @@ public final class CellResource {
      * </ul>
      * @return TokenEndPointResourceオブジェクト
      */
-    @Path("__auth")
+    @Path("__token")
     public TokenEndPointResource auth() {
         return new TokenEndPointResource(this.cell, this.cellRsCmp);
     }

@@ -16,13 +16,6 @@
  */
 package io.personium.core;
 
-import io.personium.core.auth.OAuth2Helper.Error;
-import io.personium.core.auth.OAuth2Helper.Key;
-import io.personium.core.auth.OAuth2Helper.Scheme;
-import io.personium.core.utils.EscapeControlCode;
-import io.personium.plugin.base.PluginException;
-import io.personium.plugin.base.PluginMessageUtils.Severity;
-
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +27,13 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
+
+import io.personium.core.auth.OAuth2Helper.Error;
+import io.personium.core.auth.OAuth2Helper.Key;
+import io.personium.core.auth.OAuth2Helper.Scheme;
+import io.personium.core.utils.EscapeControlCode;
+import io.personium.plugin.base.PluginException;
+import io.personium.plugin.base.PluginMessageUtils.Severity;
 
 /**
  * ログメッセージ作成クラス.
@@ -234,7 +234,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
                 .entity(errorJson.toJSONString());
 
         // レルム値が設定されていれば、WWW-Authenticateヘッダーを返却する。
-        // __authエンドポイントでは、認証失敗時(401返却時)には、同ヘッダーに Auth SchemeがBasicの値を返却するため、ここでは固定値とする。
+        // __tokenエンドポイントでは、認証失敗時(401返却時)には、同ヘッダーに Auth SchemeがBasicの値を返却するため、ここでは固定値とする。
         if (this.realm != null && statusCode == HttpStatus.SC_UNAUTHORIZED) {
             rb = rb.header(HttpHeaders.WWW_AUTHENTICATE, Scheme.BASIC + " realm=\"" + this.realm + "\"");
         }

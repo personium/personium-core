@@ -660,7 +660,7 @@ public class CellUtils {
         requestheaders.put(HttpHeaders.AUTHORIZATION, authorization);
 
         String body = String.format("grant_type=password&username=%s&password=%s", account, password);
-        return rest.post(UrlUtils.cellRoot(cellName) + "__auth", body, requestheaders);
+        return rest.post(UrlUtils.cellRoot(cellName) + "__token", body, requestheaders);
     }
 
     /**
