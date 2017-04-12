@@ -58,6 +58,7 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.odata.EsNavigationTargetKeyProperty.NTKPNotFoundException;
 import io.personium.core.model.lock.Lock;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.utils.UriUtils;
 
 /**
  * Cell管理オブジェクトの ODataProducer.
@@ -292,15 +293,17 @@ public class CellCtlODataProducer extends EsODataProducer {
         // 登録対象のRelation名取得
         String requestRelation = (String) entitySetDocHandler.getStaticFields().get(
                 ReceivedMessage.P_REQUEST_RELATION.getName());
-        String[] partRequestRelation = requestRelation.split("/");
-        String relationName = partRequestRelation[partRequestRelation.length - 1];
+        String relationName = getRelationNameFromRequestRelation(requestRelation);
         // Get box name
-        String boxName = (String) entitySetDocHandler.getStaticFields().get(
-                ReceivedMessage.P_BOX_NAME.getName());
+        String boxName = getBoxNameFromRequestRelation(requestRelation);
+        if (boxName == null) {
+            // If box can not be found from RequestRelation (RequestRelation is RelationName only),
+            // get BoxName from _ Box.Name
+            boxName = (String) entitySetDocHandler.getStaticFields().get(ReceivedMessage.P_BOX_NAME.getName());
+        }
 
         EntitySetDocHandler relation = getRelation(relationName, boxName);
         if (relation == null) {
-
             // データが存在しない場合はRelationを新規に登録
             createRelationEntity(relationName, boxName);
         }
@@ -502,12 +505,13 @@ public class CellCtlODataProducer extends EsODataProducer {
         // RequestRelationからRelation名を取得する
         String reqRelation = entitySetDocHandler.getStaticFields()
                 .get(ReceivedMessage.P_REQUEST_RELATION.getName()).toString();
-        String relationName = getRelationFromRelationClassUrl(reqRelation);
+        String relationName = getRelationNameFromRequestRelation(reqRelation);
         // Get box name
-        String boxName = (String) entitySetDocHandler.getStaticFields().get(
-                ReceivedMessage.P_BOX_NAME.getName());
-        if (relationName == null) {
-            throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR;
+        String boxName = getBoxNameFromRequestRelation(reqRelation);
+        if (boxName == null) {
+            // If box can not be found from RequestRelation (RequestRelation is RelationName only),
+            // get BoxName from _ Box.Name
+            boxName = (String) entitySetDocHandler.getStaticFields().get(ReceivedMessage.P_BOX_NAME.getName());
         }
 
         // 対象のRelationが存在することを確認
@@ -536,22 +540,51 @@ public class CellCtlODataProducer extends EsODataProducer {
     }
 
     /**
-     * リレーションクラスURLからリレーション名を取得する.
-     * @param relationClassUrl リレーションクラスURL
-     * @return リレーション名
+     * Get BoxName from RequestRelation.
+     * If RequestRelation is only RelationName, return null.
+     * @param requestRelation RequestRelation
+     * @return BoxName
+     * @throws PersoniumCoreException Box corresponding to the RelationClassURL can not be found
      */
-    protected String getRelationFromRelationClassUrl(String relationClassUrl) {
-        String relationName = null;
-        log.debug(String.format("RequestRelation URI = [%s]", relationClassUrl));
+    protected String getBoxNameFromRequestRelation(String requestRelation) throws PersoniumCoreException {
+        String boxName = null;
+        log.debug(String.format("RequestRelation URI = [%s]", requestRelation));
 
-        Pattern pattern = Pattern.compile(".+/([^/]+)/__relation/([^/]+)/([^/]+)/?");
-        Matcher m = pattern.matcher(relationClassUrl);
-        if (!m.matches()) {
-            log.debug(String.format("RequestRelation URI if not relationClassUrl format. [%s]", relationClassUrl));
-            return relationName;
+        // convert localunitUrl to unitUrl
+        String convertedRequestRelation = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), requestRelation);
+        Pattern pattern = Pattern.compile(Common.PATTERN_RELATION_CLASS_URL);
+        Matcher matcher = pattern.matcher(convertedRequestRelation);
+        if (matcher.matches()) {
+            String schema = matcher.replaceAll("$1" + "/" + "$2" + "/");
+            Box box = this.cell.getBoxForSchema(schema);
+            if (box != null) {
+                boxName = box.getName();
+            } else {
+                throw PersoniumCoreException.ReceivedMessage
+                        .BOX_THAT_MATCHES_RELATION_CLASS_URL_NOT_EXISTS.params(convertedRequestRelation);
+            }
         }
-        relationName = m.replaceAll("$3");
-        log.debug(String.format("RequestRelation URI Path = [%s]", relationName));
+        return boxName;
+    }
+
+    /**
+     * Get RelationName from RequestRelation.
+     * @param requestRelation RequestRelation
+     * @return RelationName
+     */
+    protected String getRelationNameFromRequestRelation(String requestRelation) {
+        String relationName = null;
+        log.debug(String.format("RequestRelation URI = [%s]", requestRelation));
+
+        // convert localunitUrl to unitUrl
+        String convertedRequestRelation = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), requestRelation);
+        Pattern pattern = Pattern.compile(Common.PATTERN_RELATION_CLASS_URL);
+        Matcher m = pattern.matcher(convertedRequestRelation);
+        if (m.matches()) {
+            relationName = m.replaceAll("$3");
+        } else {
+            relationName = convertedRequestRelation;
+        }
         return relationName;
     }
 

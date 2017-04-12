@@ -310,26 +310,6 @@ public class CellCtlODataProducerTest {
     }
 
     /**
-     * リレーションクラスURLからリレーション名を取得できること.
-     */
-    @Test
-    public void リレーションクラスURLからリレーション名を取得できること() {
-        String relationName = cellCtlODataProducer.getRelationFromRelationClassUrl(
-                "https://example.com/test0110/__relation/box/+:me");
-        assertEquals("+:me", relationName);
-    }
-
-    /**
-     * リレーションクラスURLのフォーマットが不正な場合はnullが取得できること.
-     */
-    @Test
-    public void リレーションクラスURLのフォーマットが不正な場合はnullが取得できること() {
-        String relationName = cellCtlODataProducer.getRelationFromRelationClassUrl(
-                "https://example.com/test0110/__relation/box/");
-        assertEquals(null, relationName);
-    }
-
-    /**
      * extCellの取得で存在する場合にEntitySetDocHandlerが返却されること.
      */
     @Test
@@ -350,100 +330,6 @@ public class CellCtlODataProducerTest {
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected =
                     PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_PARSE_ERROR;
-            assertEquals(expected.getCode(), e.getCode());
-            assertEquals(expected.getMessage(), e.getMessage());
-        }
-    }
-
-    /**
-     * RequestRelationが不正な場合はREQUEST_RELATION_PARSE_ERRORが発生すること.
-     */
-    @Test
-    public void RequestRelationが不正な場合はREQUEST_RELATION_PARSE_ERRORが発生すること() {
-        OEntityDocHandler docHandler = new OEntityDocHandler();
-        Map<String, Object> staticFields = new HashMap<String, Object>();
-        staticFields.put(ReceivedMessagePort.P_REQUEST_RELATION.getName(),
-                "https://example.com/test0110/__relation/box/");
-        docHandler.setStaticFields(staticFields);
-        try {
-            cellCtlODataProducer.breakRelation(docHandler);
-            fail("PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR does not occurred.");
-        } catch (PersoniumCoreException e) {
-            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR;
-            assertEquals(expected.getCode(), e.getCode());
-            assertEquals(expected.getMessage(), e.getMessage());
-        }
-    }
-
-    /**
-     * RequestRelationが不正な場合はREQUEST_RELATION_DOES_NOT_EXISTSが発生すること.
-     */
-    @Test
-    public void RequestRelationが存在しない場合はREQUEST_RELATION_DOES_NOT_EXISTSが発生すること() {
-        OEntityDocHandler docHandler = new OEntityDocHandler();
-        Map<String, Object> staticFields = new HashMap<String, Object>();
-        staticFields.put(ReceivedMessagePort.P_REQUEST_RELATION.getName(),
-                "https://example.com/test0110/__relation/box/+:me");
-        docHandler.setStaticFields(staticFields);
-        doReturn(null).when(cellCtlODataProducer).getRelation(anyString(), anyString());
-        try {
-            cellCtlODataProducer.breakRelation(docHandler);
-            fail("PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_DOES_NOT_EXISTS does not occurred.");
-        } catch (PersoniumCoreException e) {
-            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_DOES_NOT_EXISTS
-                    .params("+:me");
-            assertEquals(expected.getCode(), e.getCode());
-            assertEquals(expected.getMessage(), e.getMessage());
-        }
-    }
-
-    /**
-     * RequestRelationTargetが存在しない場合はREQUEST_RELATION_TARGET_DOES_NOT_EXISTSが発生すること.
-     */
-    @Test
-    public void RequestRelationTargetが存在しない場合はREQUEST_RELATION_TARGET_DOES_NOT_EXISTSが発生すること() {
-        OEntityDocHandler docHandler = new OEntityDocHandler();
-        Map<String, Object> staticFields = new HashMap<String, Object>();
-        staticFields.put(ReceivedMessagePort.P_REQUEST_RELATION.getName(),
-                "https://example.com/test0110/__relation/box/+:me");
-        staticFields.put(ReceivedMessagePort.P_REQUEST_RELATION_TARGET.getName(),
-                "https://example.com/test0110/");
-        docHandler.setStaticFields(staticFields);
-        doReturn(new OEntityDocHandler()).when(cellCtlODataProducer).getRelation(anyString(), anyString());
-        doReturn(null).when(cellCtlODataProducer).getExtCell(anyString());
-        try {
-            cellCtlODataProducer.breakRelation(docHandler);
-            fail("PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS does not occurred.");
-        } catch (PersoniumCoreException e) {
-            PersoniumCoreException expected =
-                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS
-                    .params("https://example.com/test0110/");
-            assertEquals(expected.getCode(), e.getCode());
-            assertEquals(expected.getMessage(), e.getMessage());
-        }
-    }
-
-    /**
-     * Link情報が存在しない場合はLINK_DOES_NOT_EXISTSが発生すること.
-     */
-    @Test
-    public void Link情報が存在しない場合はLINK_DOES_NOT_EXISTSが発生すること() {
-        OEntityDocHandler docHandler = new OEntityDocHandler();
-        Map<String, Object> staticFields = new HashMap<String, Object>();
-        staticFields.put(ReceivedMessagePort.P_REQUEST_RELATION.getName(),
-                "https://example.com/test0110/__relation/box/+:me");
-        staticFields.put(ReceivedMessagePort.P_REQUEST_RELATION_TARGET.getName(),
-                "https://example.com/test0110/");
-        docHandler.setStaticFields(staticFields);
-        doReturn(new OEntityDocHandler()).when(cellCtlODataProducer).getRelation(anyString(), anyString());
-        doReturn(new OEntityDocHandler()).when(cellCtlODataProducer).getExtCell(anyString());
-        doReturn(false).when(cellCtlODataProducer).deleteLinkEntity(anyObject(), anyObject());
-        try {
-            cellCtlODataProducer.breakRelation(docHandler);
-            fail("PersoniumCoreException.ReceivedMessage.LINK_DOES_NOT_EXISTS does not occurred.");
-        } catch (PersoniumCoreException e) {
-            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage.LINK_DOES_NOT_EXISTS
-                    .params("+:me", "https://example.com/test0110/");
             assertEquals(expected.getCode(), e.getCode());
             assertEquals(expected.getMessage(), e.getMessage());
         }
@@ -1135,9 +1021,11 @@ public class CellCtlODataProducerTest {
         // --------------------
         Map<String, Object> mockStaticFields = new HashMap<String, Object>();
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "dummyRelation");
-        mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBoxName");
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
         doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
+
+        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation("dummyRelation");
+        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation("dummyRelation");
 
         doReturn(null).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
         PowerMockito.doNothing().when(cellCtlODataProducer, "createRelationEntity", "dummyRelation", "dummyBoxName");
@@ -1192,9 +1080,11 @@ public class CellCtlODataProducerTest {
         // --------------------
         Map<String, Object> mockStaticFields = new HashMap<String, Object>();
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "dummyRelation");
-        mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBoxName");
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
         doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
+
+        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation("dummyRelation");
+        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation("dummyRelation");
 
         doReturn(new OEntityDocHandler()).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
         PowerMockito.doNothing().when(cellCtlODataProducer, "createRelationEntity", "dummyRelation", "dummyBoxName");
@@ -1249,9 +1139,11 @@ public class CellCtlODataProducerTest {
         // --------------------
         Map<String, Object> mockStaticFields = new HashMap<String, Object>();
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "dummyRelation");
-        mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBoxName");
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell");
         doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
+
+        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation("dummyRelation");
+        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation("dummyRelation");
 
         doReturn(null).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
         PowerMockito.doNothing().when(cellCtlODataProducer, "createRelationEntity", "dummyRelation", "dummyBoxName");
@@ -1838,13 +1730,15 @@ public class CellCtlODataProducerTest {
         // Mock settings
         // --------------------
         Map<String, Object> mockStaticFields = new HashMap<String, Object>();
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "http://personium/dummyRelation");
-        mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBoxName");
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(),
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
         doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
 
-        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationFromRelationClassUrl(
-                "http://personium/dummyRelation");
+        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation(
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
+        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
 
         EntitySetDocHandler relation = new OEntityDocHandler();
         EntitySetDocHandler extCell = new OEntityDocHandler();
@@ -1873,49 +1767,6 @@ public class CellCtlODataProducerTest {
     /**
      * Test breakRelation().
      * Error test.
-     * relationName is null.
-     */
-    @Test
-    public void breakRelation_Error_relationName_is_null() {
-        // --------------------
-        // Test method args
-        // --------------------
-        EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Map<String, Object> mockStaticFields = new HashMap<String, Object>();
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "http://personium/dummyRelation");
-        mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBoxName");
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
-        doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
-
-        doReturn(null).when(cellCtlODataProducer).getRelationFromRelationClassUrl(
-                "http://personium/dummyRelation");
-
-        // --------------------
-        // Expected result
-        // --------------------
-        // Nothing.
-
-        // --------------------
-        // Run method
-        // --------------------
-        try {
-            cellCtlODataProducer.breakRelation(entitySetDocHandler);
-            fail("Not exception.");
-        } catch (PersoniumCoreException e) {
-            // --------------------
-            // Confirm result
-            // --------------------
-            assertThat(e, is(PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR));
-        }
-    }
-
-    /**
-     * Test breakRelation().
-     * Error test.
      * relation is null.
      */
     @Test
@@ -1929,13 +1780,15 @@ public class CellCtlODataProducerTest {
         // Mock settings
         // --------------------
         Map<String, Object> mockStaticFields = new HashMap<String, Object>();
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "http://personium/dummyRelation");
-        mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBoxName");
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(),
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
         doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
 
-        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationFromRelationClassUrl(
-                "http://personium/dummyRelation");
+        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation(
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
+        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
 
         doReturn(null).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
 
@@ -1978,13 +1831,16 @@ public class CellCtlODataProducerTest {
         // Mock settings
         // --------------------
         Map<String, Object> mockStaticFields = new HashMap<String, Object>();
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "http://personium/dummyRelation");
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(),
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
         mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBoxName");
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
         doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
 
-        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationFromRelationClassUrl(
-                "http://personium/dummyRelation");
+        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation(
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
+        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
 
         EntitySetDocHandler relation = new OEntityDocHandler();
         doReturn(relation).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
@@ -2029,13 +1885,16 @@ public class CellCtlODataProducerTest {
         // Mock settings
         // --------------------
         Map<String, Object> mockStaticFields = new HashMap<String, Object>();
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "http://personium/dummyRelation");
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(),
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
         mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBoxName");
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
         doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
 
-        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationFromRelationClassUrl(
-                "http://personium/dummyRelation");
+        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation(
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
+        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
 
         EntitySetDocHandler relation = new OEntityDocHandler();
         EntitySetDocHandler extCell = new OEntityDocHandler();

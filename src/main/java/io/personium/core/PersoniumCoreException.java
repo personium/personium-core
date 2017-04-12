@@ -544,7 +544,7 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException OVER_MAX_SENT_NUM = create("PR400-SM-0003");
         /**
-         * When a Box corresponding to a schema can not be found from a schema-authenticated token.
+         * When the Box corresponding to the schema can not be found from the schema-authenticated token.
          * {0}:Schema
          */
         public static final PersoniumCoreException BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS = create("PR400-SM-0004");
@@ -568,10 +568,15 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException REQUEST_RELATION_EXISTS_ERROR = create("PR400-RM-0001");
         /**
-         * When a Box corresponding to a schema can not be found.
+         * When a Box corresponding to the schema can not be found.
          * {0}:Schema
          */
         public static final PersoniumCoreException BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS = create("PR400-RM-0002");
+        /**
+         * When the Box corresponding to the RelationClassURL can not be found.
+         * {0}:RelationClassURL
+         */
+        public static final PersoniumCoreException BOX_THAT_MATCHES_RELATION_CLASS_URL_NOT_EXISTS = create("PR400-RM-0003"); // CHECKSTYLE IGNORE - To maintain readability
         /**
          * メッセージのRequestRelationのパースに失敗.
          */

@@ -300,6 +300,22 @@ public final class ODataUtils {
     }
 
     /**
+     * Check the value of property item with regular expression.
+     * @param str Input string
+     * @param pFormat regular expression format
+     * @return true:OK false:NG
+     */
+    public static boolean isValidRegEx(String str, String pFormat) {
+        // Check
+        Pattern pattern = Pattern.compile(pFormat);
+        Matcher matcher = pattern.matcher(str);
+        if (!matcher.matches()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * プロパティ項目の値をURIかチェックする.
      * @param propValue チェック値
      * @return true:バリデートOK、falseバリデートNG
@@ -376,6 +392,40 @@ public final class ODataUtils {
         boolean isNormalized = uri.normalize().toString().equals(str);
         boolean hasTrailingSlash = str.endsWith("/");
         return isValidLength && isValidScheme && isNormalized && hasTrailingSlash;
+    }
+
+    /**
+     * Check the value of property item with Class URL.
+     * @param str Input string
+     * @param pFormat regular expression format
+     * @return true:OK false:NG
+     */
+    public static boolean isValidClassUrl(String str, String pFormat) {
+        URI uri;
+        try {
+            uri = new URI(str);
+            String scheme = uri.getScheme();
+            // Scheme check
+            if (uri.getScheme() == null
+                    || (!scheme.equals(UriUtils.SCHEME_HTTP)
+                     && !scheme.equals(UriUtils.SCHEME_HTTPS)
+                     && !scheme.equals(UriUtils.SCHEME_LOCALUNIT))) {
+                return false;
+            }
+            // String length check
+            if (uri.toString().length() > URI_MAX_LENGTH) {
+                return false;
+            }
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        // Regular expression check
+        Pattern pattern = Pattern.compile(pFormat);
+        Matcher matcher = pattern.matcher(str);
+        if (!matcher.matches()) {
+            return false;
+        }
+        return true;
     }
 
     /**
