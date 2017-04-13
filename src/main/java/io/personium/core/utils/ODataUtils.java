@@ -407,7 +407,7 @@ public final class ODataUtils {
             String scheme = uri.getScheme();
             // Scheme check
             if (uri.getScheme() == null
-                    || (!scheme.equals(UriUtils.SCHEME_HTTP)
+                    || (!scheme.equals(UriUtils.SCHEME_HTTP) //NOPMD -To maintain readability
                      && !scheme.equals(UriUtils.SCHEME_HTTPS)
                      && !scheme.equals(UriUtils.SCHEME_LOCALUNIT))) {
                 return false;
