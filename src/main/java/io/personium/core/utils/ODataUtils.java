@@ -305,7 +305,7 @@ public final class ODataUtils {
      * @param pFormat regular expression format
      * @return true:OK false:NG
      */
-    public static boolean isValidRegEx(String str, String pFormat) {
+    public static boolean validateRegEx(String str, String pFormat) {
         // Check
         Pattern pattern = Pattern.compile(pFormat);
         Matcher matcher = pattern.matcher(str);
@@ -400,7 +400,7 @@ public final class ODataUtils {
      * @param pFormat regular expression format
      * @return true:OK false:NG
      */
-    public static boolean isValidClassUrl(String str, String pFormat) {
+    public static boolean validateClassUrl(String str, String pFormat) {
         URI uri;
         try {
             uri = new URI(str);
@@ -420,12 +420,7 @@ public final class ODataUtils {
             return false;
         }
         // Regular expression check
-        Pattern pattern = Pattern.compile(pFormat);
-        Matcher matcher = pattern.matcher(str);
-        if (!matcher.matches()) {
-            return false;
-        }
-        return true;
+        return ODataUtils.validateRegEx(str, pFormat);
     }
 
     /**

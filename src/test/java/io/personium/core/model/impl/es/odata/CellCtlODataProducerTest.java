@@ -68,13 +68,14 @@ import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.odata.EsNavigationTargetKeyProperty.NTKPNotFoundException;
 import io.personium.core.model.lock.Lock;
+import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Unit;
 
 /**
  * UnitCtlODataProducerユニットテストクラス.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({CellCtlODataProducer.class, Box.class})
+@PrepareForTest({CellCtlODataProducer.class, Box.class, UriUtils.class})
 @Category({ Unit.class })
 public class CellCtlODataProducerTest {
 
@@ -1718,9 +1719,10 @@ public class CellCtlODataProducerTest {
     /**
      * Test breakRelation().
      * Normal test.
+     * getBoxNameFromRequestRelation() is not null.
      */
     @Test
-    public void breakRelation_Normal() {
+    public void breakRelation_Normal_getBoxNameFromRequestRelation_is_not_null() {
         // --------------------
         // Test method args
         // --------------------
@@ -1738,6 +1740,57 @@ public class CellCtlODataProducerTest {
         doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation(
                 "http://personium/dummyAppCell/__relation/__/dummyRelation");
         doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
+
+        EntitySetDocHandler relation = new OEntityDocHandler();
+        EntitySetDocHandler extCell = new OEntityDocHandler();
+        doReturn(relation).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
+        doReturn(extCell).when(cellCtlODataProducer).getExtCell("http://personium/dummyExtCell/");
+
+        doReturn(true).when(cellCtlODataProducer).deleteLinkEntity(relation, extCell);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        cellCtlODataProducer.breakRelation(entitySetDocHandler);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(cellCtlODataProducer, times(1)).deleteLinkEntity(relation, extCell);
+    }
+
+    /**
+     * Test breakRelation().
+     * Normal test.
+     * getBoxNameFromRequestRelation() is null.
+     */
+    @Test
+    public void breakRelation_Normal_getBoxNameFromRequestRelation_is_null() {
+        // --------------------
+        // Test method args
+        // --------------------
+        EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Map<String, Object> mockStaticFields = new HashMap<String, Object>();
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(),
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
+        mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBoxName");
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
+        doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
+
+        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation(
+                "http://personium/dummyAppCell/__relation/__/dummyRelation");
+        doReturn(null).when(cellCtlODataProducer).getBoxNameFromRequestRelation(
                 "http://personium/dummyAppCell/__relation/__/dummyRelation");
 
         EntitySetDocHandler relation = new OEntityDocHandler();
@@ -1924,5 +1977,218 @@ public class CellCtlODataProducerTest {
             assertThat(e.getCode(), is(expected.getCode()));
             assertThat(e.getMessage(), is(expected.getMessage()));
         }
+    }
+
+    /**
+     * Test getBoxNameFromRequestRelation().
+     * Normal test.
+     * RequestRelation is RelationClassURL.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getBoxNameFromRequestRelation_Normal_requestRelation_is_classURL() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String requestRelation = "http://personium/dummyAppCell/__relation/__/dummyRelation";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Cell mockCell = mock(Cell.class);
+        cellCtlODataProducer.cell = mockCell;
+        doReturn("http://personium").when(mockCell).getUnitUrl();
+
+        PowerMockito.mockStatic(UriUtils.class);
+        PowerMockito.doReturn(requestRelation).when(UriUtils.class, "convertSchemeFromLocalUnitToHttp",
+                "http://personium", requestRelation);
+
+        Box mockBox = PowerMockito.mock(Box.class);
+        doReturn("dummyBoxName").when(mockBox).getName();
+        doReturn(mockBox).when(mockCell).getBoxForSchema("http://personium/dummyAppCell/");
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expectedBoxName = "dummyBoxName";
+
+        // --------------------
+        // Run method
+        // --------------------
+        String actualBoxName = cellCtlODataProducer.getBoxNameFromRequestRelation(requestRelation);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualBoxName, is(expectedBoxName));
+    }
+
+    /**
+     * Test getBoxNameFromRequestRelation().
+     * Normal test.
+     * RequestRelation is RelationName.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getBoxNameFromRequestRelation_Normal_requestRelation_is_name() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String requestRelation = "dummyRelation";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Cell mockCell = mock(Cell.class);
+        cellCtlODataProducer.cell = mockCell;
+        doReturn("http://personium").when(mockCell).getUnitUrl();
+
+        PowerMockito.mockStatic(UriUtils.class);
+        PowerMockito.doReturn(requestRelation).when(UriUtils.class, "convertSchemeFromLocalUnitToHttp",
+                "http://personium", requestRelation);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expectedBoxName = null;
+
+        // --------------------
+        // Run method
+        // --------------------
+        String actualBoxName = cellCtlODataProducer.getBoxNameFromRequestRelation(requestRelation);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualBoxName, is(expectedBoxName));
+    }
+
+    /**
+     * Test getBoxNameFromRequestRelation().
+     * Error test.
+     * Box associated with class URL does not exist.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getBoxNameFromRequestRelation_Error_box_associated_with_classURL_does_not_exist() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String requestRelation = "http://personium/dummyAppCell/__relation/__/dummyRelation";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Cell mockCell = mock(Cell.class);
+        cellCtlODataProducer.cell = mockCell;
+        doReturn("http://personium").when(mockCell).getUnitUrl();
+
+        PowerMockito.mockStatic(UriUtils.class);
+        PowerMockito.doReturn(requestRelation).when(UriUtils.class, "convertSchemeFromLocalUnitToHttp",
+                "http://personium", requestRelation);
+
+        doReturn(null).when(mockCell).getBoxForSchema("http://personium/dummyAppCell/");
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            cellCtlODataProducer.getBoxNameFromRequestRelation(requestRelation);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage
+                    .BOX_THAT_MATCHES_RELATION_CLASS_URL_NOT_EXISTS.params(requestRelation);
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test getRelationNameFromRequestRelation().
+     * Normal test.
+     * RequestRelation is RelationClassURL.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getRelationNameFromRequestRelation_Normal_requestRelation_is_classURL() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String requestRelation = "http://personium/dummyAppCell/__relation/__/dummyRelation";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Cell mockCell = mock(Cell.class);
+        cellCtlODataProducer.cell = mockCell;
+        doReturn("http://personium").when(mockCell).getUnitUrl();
+
+        PowerMockito.mockStatic(UriUtils.class);
+        PowerMockito.doReturn(requestRelation).when(UriUtils.class, "convertSchemeFromLocalUnitToHttp",
+                "http://personium", requestRelation);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expectedRelationName = "dummyRelation";
+
+        // --------------------
+        // Run method
+        // --------------------
+        String actualRelationName = cellCtlODataProducer.getRelationNameFromRequestRelation(requestRelation);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualRelationName, is(expectedRelationName));
+    }
+
+    /**
+     * Test getRelationNameFromRequestRelation().
+     * Normal test.
+     * RequestRelation is RelationName.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getRelationNameFromRequestRelation_Normal_requestRelation_is_name() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String requestRelation = "dummyRelation";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Cell mockCell = mock(Cell.class);
+        cellCtlODataProducer.cell = mockCell;
+        doReturn("http://personium").when(mockCell).getUnitUrl();
+
+        PowerMockito.mockStatic(UriUtils.class);
+        PowerMockito.doReturn(requestRelation).when(UriUtils.class, "convertSchemeFromLocalUnitToHttp",
+                "http://personium", requestRelation);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expectedRelationName = "dummyRelation";
+
+        // --------------------
+        // Run method
+        // --------------------
+        String actualRelationName = cellCtlODataProducer.getRelationNameFromRequestRelation(requestRelation);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualRelationName, is(expectedRelationName));
     }
 }
