@@ -28,6 +28,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.common.utils.PersoniumCoreUtils.HttpHeaders;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.ReceivedMessage;
@@ -38,8 +41,6 @@ import io.personium.test.categories.Unit;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * 認証のテスト.
@@ -224,7 +225,7 @@ public class CrossDomainTest extends JerseyTest {
     public final void 認証にOPTIONSを指定してXHR2ヘッダーが返却されること() {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight.txt")
-                        .with("path", "/testcell1/__auth")
+                        .with("path", "/testcell1/__token")
                         .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
@@ -239,7 +240,7 @@ public class CrossDomainTest extends JerseyTest {
     public final void 認証にGETを指定してXHR2ヘッダーのALLOW_ORIGINのみ返却されること() {
         TResponse response =
                 Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
-                        .with("path", "/testcell1/__auth")
+                        .with("path", "/testcell1/__token")
                         .with("token", PersoniumUnitConfig.getMasterToken())
                         .returns()
                         .statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED)

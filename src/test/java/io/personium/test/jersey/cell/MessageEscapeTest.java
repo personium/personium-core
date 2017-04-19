@@ -29,8 +29,8 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.ReceivedMessageUtils;
@@ -271,7 +271,7 @@ public class MessageEscapeTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.cellRoot("re\\u0000lation"));
+        body.put("RequestRelation", "re\\u0000lation");
         body.put("RequestRelationTarget", UrlUtils.cellRoot(targetCell));
 
         TResponse response = null;
@@ -316,7 +316,7 @@ public class MessageEscapeTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.cellRoot(targetCell));
+        body.put("RequestRelation", UrlUtils.relationClassUrl("appCell", "relationName"));
         body.put("RequestRelationTarget", UrlUtils.cellRoot("re\\u0000lation"));
 
         TResponse response = null;

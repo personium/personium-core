@@ -135,7 +135,7 @@ public class ReceivedMessage {
     public static final EdmProperty.Builder P_REQUEST_RELATION = EdmProperty.newBuilder("RequestRelation")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.P_FORMAT_URI);
+            .setAnnotations(Common.P_FORMAT_MESSAGE_REQUEST_RELATION);
     /**
      * RequestRelationTargetプロパティの定義体.
      */

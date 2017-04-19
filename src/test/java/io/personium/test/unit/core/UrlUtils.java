@@ -25,6 +25,7 @@ import org.apache.wink.common.internal.uri.UriEncoder;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
+import io.personium.core.utils.UriUtils;
 
 /**
  * URLの作成の組立を行う関数群.
@@ -300,7 +301,7 @@ public final class UrlUtils {
      * @return 認証エンドポイントURL
      */
     public static String auth(final String cellName) {
-        return String.format("%s/%s/__auth", baseUrl, cellName);
+        return String.format("%s/%s/__token", baseUrl, cellName);
     }
 
     /**
@@ -472,6 +473,26 @@ public final class UrlUtils {
             box = "'" + boxName + "'";
         }
         return String.format("%s/%s/__ctl/Relation(_Box.Name=%s,Name='%s')", baseUrl, cellName, box, relationName);
+    }
+
+    /**
+     * Get RelationClassURL.
+     * @param cellName Cell name
+     * @param relationName Relation name
+     * @return RelationClassURL
+     */
+    public static String relationClassUrl(final String cellName, final String relationName) {
+        return String.format("%s/%s/__relation/__/%s", baseUrl, cellName, relationName);
+    }
+
+    /**
+     * Get unit local RelationClassURL.
+     * @param cellName Cell name
+     * @param relationName Relation name
+     * @return unit local RelationClassURL
+     */
+    public static String unitLocalRelationClassUrl(final String cellName, final String relationName) {
+        return String.format("%s%s/__relation/__/%s", UriUtils.SCHEME_UNIT_URI, cellName, relationName);
     }
 
     /**

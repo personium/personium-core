@@ -1,3 +1,14 @@
+## 1.5.0
+BUG FIXES:
+* Unavailability of TLS 1.2.
+ ([#3](https://github.com/personium/personium-client-java/issues/3))
+
+IMPROVEMENTS:
+* Enable specification of class URL in RequestRelation of message API.
+ ([#19](https://github.com/personium/personium-core/issues/19))
+* Change OAuth2Token authentication API endpoint.
+ ([#20](https://github.com/personium/personium-core/issues/20))
+
 ## 1.4.6
 BUG FIXES:
 * Implementation of BoxBound function of message API.

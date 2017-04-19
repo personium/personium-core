@@ -105,10 +105,10 @@ public class PersoniumReadDeleteModeManager {
     }
 
     private static boolean isAuthPath(List<PathSegment> pathSegment) {
-        // 認証のパスは/cell名/__auth または /cell名/__authz のためサイズを2とする
+        // 認証のパスは/cell名/__token または /cell名/__authz のためサイズを2とする
         if (pathSegment.size() == 2) {
             String lastPath = pathSegment.get(1).getPath();
-            if ("__auth".equals(lastPath) || "__authz".equals(lastPath)) {
+            if ("__token".equals(lastPath) || "__authz".equals(lastPath)) {
                 return true;
             }
         }

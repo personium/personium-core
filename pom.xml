@@ -3,7 +3,7 @@
 	<groupId>io.personium</groupId>
 	<artifactId>personium-core</artifactId>
 	<packaging>war</packaging>
-	<version>1.4.6</version>
+	<version>1.5.0</version>
 	<name>personium-core Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<licenses>
@@ -46,7 +46,7 @@
 		<dependency>
 			<groupId>io.personium</groupId>
 			<artifactId>personium-client-java</artifactId>
-			<version>1.4.2</version>
+			<version>1.4.3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

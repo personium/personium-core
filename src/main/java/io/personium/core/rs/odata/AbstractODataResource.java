@@ -689,6 +689,8 @@ public abstract class AbstractODataResource {
                     validatePropertyCellUrl(propName, op);
                 } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_USUSST)) {
                     validatePropertyUsusst(propName, op, pFormat);
+                } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION)) {
+                    validatePropertyMessageRequestRelation(propName, op);
                 }
             }
         }
@@ -753,16 +755,13 @@ public abstract class AbstractODataResource {
      * @param pFormat pFormatの値
      */
     protected void validatePropertyRegEx(String propName, OProperty<?> op, String pFormat) {
-        // regEx('正規表現')から正規表現を抜き出す
+        // Extract regular expressions from('regular expression')
         Pattern formatPattern = Pattern.compile(Common.P_FORMAT_PATTERN_REGEX + "\\('(.+)'\\)");
         Matcher formatMatcher = formatPattern.matcher(pFormat);
         formatMatcher.matches();
         pFormat = formatMatcher.group(1);
 
-        // フォーマットのチェックを行う
-        Pattern pattern = Pattern.compile(pFormat);
-        Matcher matcher = pattern.matcher(op.getValue().toString());
-        if (!matcher.matches()) {
+        if (!ODataUtils.validateRegEx(op.getValue().toString(), pFormat)) {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
         }
     }
@@ -840,6 +839,18 @@ public abstract class AbstractODataResource {
                } else {
                    overlapChk.add(token);
                }
+        }
+    }
+
+    /**
+     * Message RequestRelation Format Check.
+     * @param propName Property name
+     * @param op OProperty
+     */
+    protected void validatePropertyMessageRequestRelation(String propName, OProperty<?> op) {
+        if (!ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_RELATION_CLASS_URL)
+                && !ODataUtils.validateRegEx(op.getValue().toString(), Common.PATTERN_RELATION_NAME)) {
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
         }
     }
 

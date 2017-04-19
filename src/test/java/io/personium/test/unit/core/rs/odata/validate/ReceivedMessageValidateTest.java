@@ -339,7 +339,8 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     public final void RequestRelationがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_REQUEST_RELATION.build(),
                 ReceivedMessage.P_REQUEST_RELATION.getName(),
-                OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), "http://example.com/test"));
+                OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(),
+                        "http://example.com/test/__relation/__/testRelation"));
     }
 
     /**
@@ -349,7 +350,8 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     public final void RequestRelationがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
         this.validateProperty(ReceivedMessage.P_REQUEST_RELATION.build(),
                 ReceivedMessage.P_REQUEST_RELATION.getName(),
-                OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), "ftp://example.com/test"));
+                OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(),
+                        "ftp://example.com/test/__relation/__/testRelation"));
     }
 
     /**
