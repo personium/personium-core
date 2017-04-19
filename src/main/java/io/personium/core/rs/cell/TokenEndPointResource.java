@@ -17,6 +17,35 @@
 package io.personium.core.rs.cell;
 
 import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_AN_HOUR;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.ws.rs.FormParam;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.UriInfo;
+
+import org.json.simple.JSONObject;
+import org.odata4j.core.OEntityKey;
+import org.odata4j.edm.EdmEntitySet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
@@ -57,34 +86,6 @@ import io.personium.plugin.base.PluginException;
 import io.personium.plugin.base.auth.AuthConst;
 import io.personium.plugin.base.auth.AuthPlugin;
 import io.personium.plugin.base.auth.AuthenticatedIdentity;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.ws.rs.FormParam;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.UriInfo;
-
-import org.json.simple.JSONObject;
-import org.odata4j.core.OEntityKey;
-import org.odata4j.edm.EdmEntitySet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 認証処理を司るJAX-RSリソース.
@@ -609,7 +610,7 @@ public class TokenEndPointResource {
                 .type(MediaType.APPLICATION_JSON_TYPE);
         if (accessToken.getTarget() != null) {
             resp.put(OAuth2Helper.Key.TARGET, accessToken.getTarget());
-            rb.header(HttpHeaders.LOCATION, accessToken.getTarget() + "__auth");
+            rb.header(HttpHeaders.LOCATION, accessToken.getTarget() + "__token");
         }
 
         if (issueCookie) {

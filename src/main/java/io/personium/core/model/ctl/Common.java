@@ -73,6 +73,8 @@ public class Common {
     public static final String P_FORMAT_PATTERN_SCHEMA_URI = "schema-uri";
     /** 拡張スキーマFormat定義. */
     public static final String P_FORMAT_PATTERN_CELL_URL = "cell-url";
+    /** Extended schema Format definition(Message RequestRelation). */
+    public static final String P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION = "message-request-relation";
     /** 拡張スキーマFormat定義.1つ以上のスペース区切り英数字. */
     public static final String P_FORMAT_PATTERN_USUSST = "unordered-set-of-unique-space-separated-tokens";
     /** 先頭が-,_以外で始まる半角英数大小文字,-,_が1文字から128文字. */
@@ -81,6 +83,12 @@ public class Common {
     public static final String PATTERN_NAME_WITH_SIGN = "^[a-zA-Z0-9][a-zA-Z0-9-_!$*=^`{|}~.@]{0,127}$";
     /** 先頭が_,:以外で始まる半角英数大小文字,-,_,+,:が1文字から128文字. */
     public static final String PATTERN_RELATION_NAME = "^[a-zA-Z0-9-\\+][a-zA-Z0-9-_\\+:]{0,127}$";
+    /** String containing "/__relation/__/".<br>
+     * Explanation of applicable group.<br>
+     * $1:BaseURL
+     * $2:CellName
+     * $3:RelationName */
+    public static final String PATTERN_RELATION_CLASS_URL = "(^.+)/([^/]+)/__relation/__/([^/]+)/?";
     /** multiplicityのFormat定義. */
     public static final String PATTERN_MULTIPLICITY = "0\\.\\.1|1|\\*";
     /** 先頭が-,_以外で始まる半角英数大小文字,-,_が1文字から200文字. */
@@ -159,6 +167,10 @@ public class Common {
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_PRIORITY = new ArrayList<EdmAnnotation<?>>();
     /**
+     * Definition of p: Format for MessageRequestRelation item.
+     */
+    public static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_REQUEST_RELATION = new ArrayList<EdmAnnotation<?>>();
+    /**
      * AccountType項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_ACCOUNT_TYPE = new ArrayList<EdmAnnotation<?>>();
@@ -193,6 +205,7 @@ public class Common {
         P_FORMAT_MESSAGE_TYPE.add(createFormatMessageTypeAnnotation());
         P_FORMAT_MESSAGE_TITLE.add(createFormatMessageTitleAnnotation());
         P_FORMAT_MESSAGE_PRIORITY.add(createFormatMessagePriorityAnnotation());
+        P_FORMAT_MESSAGE_REQUEST_RELATION.add(createFormatMessageRequestRelation());
         P_FORMAT_ACCOUNT_TYPE.add(createFormatAccountTypeAnnotation());
     }
 
@@ -314,6 +327,16 @@ public class Common {
         return new EdmAnnotationAttribute(
                 P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
                 P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MESSAGE_PRIORITY + "')");
+    }
+
+    /**
+     * Return p: Format Annotation for MessageRequestRelation item.
+     * @return EdmAnnotation
+     */
+    public static EdmAnnotation<?> createFormatMessageRequestRelation() {
+        return new EdmAnnotationAttribute(
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION);
     }
 
     /**

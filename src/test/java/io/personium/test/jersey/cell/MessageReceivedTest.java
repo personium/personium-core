@@ -16,6 +16,8 @@
  */
 package io.personium.test.jersey.cell;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -364,11 +366,12 @@ public class MessageReceivedTest extends ODataCommon {
     }
 
     /**
-     * Schema指定ありでMessageを受信できること.
+     * Normal test.
+     * Received message of type relation.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void Schema指定ありでMessageを受信できること() {
+    public final void normal_received_message_of_type_relation() {
         String targetCellName = Setup.TEST_CELL1;
         String targetRelationName = "testRelation001";
         String srcCellName = Setup.TEST_CELL2;
@@ -378,13 +381,13 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(srcCellName));
         body.put("Type", "req.relation.build");
-        body.put("Schema", UrlUtils.cellRoot(appCellName));
+        body.put("Schema", null);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", "none");
-        body.put("RequestRelation", UrlUtils.cellRoot(targetCellName) + "__relation/__/" + targetRelationName);
+        body.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
         body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
 
         TResponse response = null;
@@ -406,12 +409,12 @@ public class MessageReceivedTest extends ODataCommon {
             // ---------------
             Map<String, Object> expected = new HashMap<String, Object>();
             expected.put("Body", "Body");
-            expected.put("_Box.Name", Setup.TEST_BOX1);
+            expected.put("_Box.Name", null);
             expected.put("Type", "req.relation.build");
             expected.put("Title", "Title");
             expected.put("Priority", 3);
             expected.put("Status", "none");
-            expected.put("RequestRelation", UrlUtils.cellRoot(targetCellName) + "__relation/__/" + targetRelationName);
+            expected.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
             expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
             expected.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
             expected.put("MulticastTo", null);
@@ -422,6 +425,181 @@ public class MessageReceivedTest extends ODataCommon {
                     "CellCtl.ReceivedMessage", expected);
             // Verify that the received message is saved
             ReceivedMessageUtils.get(MASTER_TOKEN_NAME, targetCellName, HttpStatus.SC_OK, (String) body.get("__id"));
+        } finally {
+            if (response != null) {
+                deleteOdataResource(response.getLocationHeader());
+            }
+        }
+    }
+
+    /**
+     * Error test.
+     * Received message of type relation.
+     * RequestRelation is invalid format.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void error_received_message_of_type_relation_requestRelation_invalid_format() {
+        String targetCellName = Setup.TEST_CELL1;
+        String targetRelationName = "testRelation001";
+        String srcCellName = Setup.TEST_CELL2;
+        String appCellName = Setup.TEST_CELL_SCHEMA1;
+
+        JSONObject body = new JSONObject();
+        body.put("__id", "12345678901234567890123456789012");
+        body.put("From", UrlUtils.cellRoot(srcCellName));
+        body.put("Type", "req.relation.build");
+        body.put("Schema", null);
+        body.put("Title", "Title");
+        body.put("Body", "Body");
+        body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
+        body.put("Priority", 3);
+        body.put("Status", "none");
+        body.put("RequestRelation", UrlUtils.relationUrl(appCellName, "box1", targetRelationName));
+        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        TResponse response = null;
+        try {
+            // ---------------
+            // Preparation
+            // ---------------
+            // Authorizationヘッダ
+            String targetCellUrl = UrlUtils.cellRoot(targetCellName);
+
+            // ---------------
+            // Execution
+            // ---------------
+            response = ReceivedMessageUtils.receive(getCellIssueToken(targetCellUrl), targetCellName,
+                    body.toJSONString(), HttpStatus.SC_BAD_REQUEST);
+
+            // ---------------
+            // Verification
+            // ---------------
+            // Check response body
+            PersoniumCoreException exception = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
+                    .params("RequestRelation");
+            String message = (String) ((JSONObject) response.bodyAsJson().get("message")).get("value");
+            assertThat(message, is(exception.getMessage()));
+        } finally {
+            if (response != null) {
+                deleteOdataResource(response.getLocationHeader());
+            }
+        }
+    }
+
+    /**
+     * Normal test.
+     * Received schema message.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void normal_received_schema_message() {
+        String targetCellName = Setup.TEST_CELL1;
+        String srcCellName = Setup.TEST_CELL2;
+        String appCellName = Setup.TEST_CELL_SCHEMA1;
+
+        JSONObject body = new JSONObject();
+        body.put("__id", "12345678901234567890123456789012");
+        body.put("From", UrlUtils.cellRoot(srcCellName));
+        body.put("Type", "message");
+        body.put("Schema", UrlUtils.cellRoot(appCellName));
+        body.put("Title", "Title");
+        body.put("Body", "Body");
+        body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
+        body.put("Priority", 3);
+        body.put("Status", "unread");
+        body.put("RequestRelation", null);
+        body.put("RequestRelationTarget", null);
+
+        TResponse response = null;
+        try {
+            // ---------------
+            // Preparation
+            // ---------------
+            // Authorizationヘッダ
+            String targetCellUrl = UrlUtils.cellRoot(targetCellName);
+
+            // ---------------
+            // Execution
+            // ---------------
+            response = ReceivedMessageUtils.receive(getCellIssueToken(targetCellUrl), targetCellName,
+                    body.toJSONString(), HttpStatus.SC_CREATED);
+
+            // ---------------
+            // Verification
+            // ---------------
+            Map<String, Object> expected = new HashMap<String, Object>();
+            expected.put("Body", "Body");
+            expected.put("_Box.Name", Setup.TEST_BOX1);
+            expected.put("Type", "message");
+            expected.put("Title", "Title");
+            expected.put("Priority", 3);
+            expected.put("Status", "unread");
+            expected.put("RequestRelation", null);
+            expected.put("RequestRelationTarget", null);
+            expected.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
+            expected.put("MulticastTo", null);
+            expected.put("From", UrlUtils.getBaseUrl() + "/testcell2/");
+
+            // Check response body
+            ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
+                    "CellCtl.ReceivedMessage", expected);
+            // Verify that the received message is saved
+            ReceivedMessageUtils.get(MASTER_TOKEN_NAME, targetCellName, HttpStatus.SC_OK, (String) body.get("__id"));
+        } finally {
+            if (response != null) {
+                deleteOdataResource(response.getLocationHeader());
+            }
+        }
+    }
+
+    /**
+     * Error test.
+     * Received schema message of type Message.
+     * Box corresponding to the schema does not exist.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void error_received_schema_message_box_not_exists() {
+        String targetCellName = Setup.TEST_CELL1;
+        String srcCellName = Setup.TEST_CELL2;
+        String appCellName = "testSchema001";
+
+        JSONObject body = new JSONObject();
+        body.put("__id", "12345678901234567890123456789012");
+        body.put("From", UrlUtils.cellRoot(srcCellName));
+        body.put("Type", "message");
+        body.put("Schema", UrlUtils.cellRoot(appCellName));
+        body.put("Title", "Title");
+        body.put("Body", "Body");
+        body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
+        body.put("Priority", 3);
+        body.put("Status", "none");
+        body.put("RequestRelation", null);
+        body.put("RequestRelationTarget", null);
+
+        TResponse response = null;
+        try {
+            // ---------------
+            // Preparation
+            // ---------------
+            // Authorizationヘッダ
+            String targetCellUrl = UrlUtils.cellRoot(targetCellName);
+
+            // ---------------
+            // Execution
+            // ---------------
+            response = ReceivedMessageUtils.receive(getCellIssueToken(targetCellUrl), targetCellName,
+                    body.toJSONString(), HttpStatus.SC_BAD_REQUEST);
+
+            // ---------------
+            // Verification
+            // ---------------
+            // Check response body
+            PersoniumCoreException exception = PersoniumCoreException.ReceivedMessage.BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS
+                    .params(UrlUtils.cellRoot(appCellName));
+            String message = (String) ((JSONObject) response.bodyAsJson().get("message")).get("value");
+            assertThat(message, is(exception.getMessage()));
         } finally {
             if (response != null) {
                 deleteOdataResource(response.getLocationHeader());

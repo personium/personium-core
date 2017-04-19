@@ -93,7 +93,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
         String authSchemaAccount = "account0";
         String authSchemaPassword = "password0";
 
-        // __auth(スキーマ認証)
+        // __token(スキーマ認証)
         PersoniumResponse dcRes = CellUtils.schemaAuthenticateWithBasic(
                 authTargetCell, "account4", "password4",
                 authSchemaCell, authSchemaAccount, authSchemaPassword);
@@ -120,7 +120,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
         String authSchemaAccount = "account0";
         String authSchemaPassword = "password0";
 
-        // __auth(スキーマ認証)
+        // __token(スキーマ認証)
         // 認証失敗時：400が返却され、WWW-Authenticateヘッダー(Auth Scheme: Basic)が付与される。
         PersoniumResponse dcRes = CellUtils.schemaAuthenticateWithBasic(
                 authTargetCell, "account4", "invlid_password",

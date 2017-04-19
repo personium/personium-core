@@ -46,7 +46,6 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ReceivedMessage;
-import io.personium.core.model.ctl.ReceivedMessagePort;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.impl.es.EsModel;
@@ -59,6 +58,7 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.odata.EsNavigationTargetKeyProperty.NTKPNotFoundException;
 import io.personium.core.model.lock.Lock;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.utils.UriUtils;
 
 /**
  * Cell管理オブジェクトの ODataProducer.
@@ -130,29 +130,13 @@ public class CellCtlODataProducer extends EsODataProducer {
      */
     @Override
     public void beforeCreate(final String entitySetName, final OEntity oEntity, final EntitySetDocHandler docHandler) {
-        if (entitySetName.equals(ReceivedMessage.EDM_TYPE_NAME)) {
-            // 受信メッセージの場合は登録データから「_Box.Name」を削除
-            // TODO dynamicに値はこないと思うが既存の処理なのでとりあえず残す。意図が不明。
-            Map<String, Object> dynamic = docHandler.getDynamicFields();
-            dynamic.remove(ReceivedMessage.P_BOX_NAME.getName());
-            docHandler.setDynamicFields(dynamic);
-
+        if (entitySetName.equals(ReceivedMessage.EDM_TYPE_NAME)
+                || entitySetName.equals(SentMessage.EDM_TYPE_NAME)) {
             // Removed _Box.Name and add links
             Map<String, Object> staticFields = docHandler.getStaticFields();
-            if (staticFields.get(ReceivedMessage.P_BOX_NAME.getName()) != null) {
-                Box box = this.cell.getBoxForName((String) staticFields.get(ReceivedMessage.P_BOX_NAME.getName()));
-                docHandler.getStaticFields().remove(ReceivedMessage.P_BOX_NAME.getName());
-
-                Map<String, Object> links = docHandler.getManyToOnelinkId();
-                links.put("Box", box.getId());
-                docHandler.setManyToOnelinkId(links);
-            }
-        } else if (entitySetName.equals(SentMessage.EDM_TYPE_NAME)) {
-            // Removed _Box.Name and add links
-            Map<String, Object> staticFields = docHandler.getStaticFields();
-            if (staticFields.get(SentMessage.P_BOX_NAME.getName()) != null) {
-                Box box = this.cell.getBoxForName((String) staticFields.get(SentMessage.P_BOX_NAME.getName()));
-                docHandler.getStaticFields().remove(SentMessage.P_BOX_NAME.getName());
+            if (staticFields.get(Common.P_BOX_NAME.getName()) != null) {
+                Box box = this.cell.getBoxForName((String) staticFields.get(Common.P_BOX_NAME.getName()));
+                docHandler.getStaticFields().remove(Common.P_BOX_NAME.getName());
 
                 Map<String, Object> links = docHandler.getManyToOnelinkId();
                 links.put("Box", box.getId());
@@ -309,15 +293,17 @@ public class CellCtlODataProducer extends EsODataProducer {
         // 登録対象のRelation名取得
         String requestRelation = (String) entitySetDocHandler.getStaticFields().get(
                 ReceivedMessage.P_REQUEST_RELATION.getName());
-        String[] partRequestRelation = requestRelation.split("/");
-        String relationName = partRequestRelation[partRequestRelation.length - 1];
+        String relationName = getRelationNameFromRequestRelation(requestRelation);
         // Get box name
-        String boxName = (String) entitySetDocHandler.getStaticFields().get(
-                ReceivedMessage.P_BOX_NAME.getName());
+        String boxName = getBoxNameFromRequestRelation(requestRelation);
+        if (boxName == null) {
+            // If box can not be found from RequestRelation (RequestRelation is RelationName only),
+            // get BoxName from _ Box.Name
+            boxName = (String) entitySetDocHandler.getStaticFields().get(ReceivedMessage.P_BOX_NAME.getName());
+        }
 
         EntitySetDocHandler relation = getRelation(relationName, boxName);
         if (relation == null) {
-
             // データが存在しない場合はRelationを新規に登録
             createRelationEntity(relationName, boxName);
         }
@@ -356,7 +342,7 @@ public class CellCtlODataProducer extends EsODataProducer {
         } catch (PersoniumCoreException e) {
             if (PersoniumCoreException.OData.CONFLICT_LINKS.getCode().equals(e.getCode())) {
                 // $linksが既に存在する場合
-                throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_EXISTS_ERROR;
+                throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_EXISTS_ERROR;
             }
             throw e;
         }
@@ -367,7 +353,7 @@ public class CellCtlODataProducer extends EsODataProducer {
         try {
             extCellOEntityKey = OEntityKey.parse("('" + requestExtCell + "')");
         } catch (IllegalArgumentException e) {
-            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_PARSE_ERROR.reason(e);
         }
         return extCellOEntityKey;
     }
@@ -390,7 +376,7 @@ public class CellCtlODataProducer extends EsODataProducer {
         try {
             relationOEntityKey = OEntityKey.parse(parseString);
         } catch (IllegalArgumentException e) {
-            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR.reason(e);
+            throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR.reason(e);
         }
         return relationOEntityKey;
     }
@@ -518,57 +504,87 @@ public class CellCtlODataProducer extends EsODataProducer {
         log.debug("breakRelation start.");
         // RequestRelationからRelation名を取得する
         String reqRelation = entitySetDocHandler.getStaticFields()
-                .get(ReceivedMessagePort.P_REQUEST_RELATION.getName()).toString();
-        String relationName = getRelationFromRelationClassUrl(reqRelation);
+                .get(ReceivedMessage.P_REQUEST_RELATION.getName()).toString();
+        String relationName = getRelationNameFromRequestRelation(reqRelation);
         // Get box name
-        String boxName = (String) entitySetDocHandler.getStaticFields().get(
-                ReceivedMessage.P_BOX_NAME.getName());
-        if (relationName == null) {
-            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_PARSE_ERROR;
+        String boxName = getBoxNameFromRequestRelation(reqRelation);
+        if (boxName == null) {
+            // If box can not be found from RequestRelation (RequestRelation is RelationName only),
+            // get BoxName from _ Box.Name
+            boxName = (String) entitySetDocHandler.getStaticFields().get(ReceivedMessage.P_BOX_NAME.getName());
         }
 
         // 対象のRelationが存在することを確認
         EntitySetDocHandler relation = getRelation(relationName, boxName);
         if (relation == null) {
             log.debug(String.format("RequestRelation does not exists. [%s]", relationName));
-            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params(relationName);
+            throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params(relationName);
         }
 
         // 対象のExtCell(RequestRelationTarget)が存在することを確認
         String extCellUrl = entitySetDocHandler.getStaticFields()
-                .get(ReceivedMessagePort.P_REQUEST_RELATION_TARGET.getName()).toString();
+                .get(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName()).toString();
         EntitySetDocHandler extCell = getExtCell(extCellUrl);
         if (extCell == null) {
             log.debug(String.format("RequestRelationTarget does not exists. [%s]", extCellUrl));
-            throw PersoniumCoreException.ReceiveMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS.params(extCellUrl);
+            throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS.params(extCellUrl);
         }
 
         // RelationとExtCellの関連を削除する
         if (!deleteLinkEntity(relation, extCell)) {
             log.debug(String.format("RequestRelation and RequestRelationTarget does not related. [%s] - [%s]",
                     relationName, extCellUrl));
-            throw PersoniumCoreException.ReceiveMessage.LINK_DOES_NOT_EXISTS.params(relationName, extCellUrl);
+            throw PersoniumCoreException.ReceivedMessage.LINK_DOES_NOT_EXISTS.params(relationName, extCellUrl);
         }
         log.debug("breakRelation success.");
     }
 
     /**
-     * リレーションクラスURLからリレーション名を取得する.
-     * @param relationClassUrl リレーションクラスURL
-     * @return リレーション名
+     * Get BoxName from RequestRelation.
+     * If RequestRelation is only RelationName, return null.
+     * @param requestRelation RequestRelation
+     * @return BoxName
+     * @throws PersoniumCoreException Box corresponding to the RelationClassURL can not be found
      */
-    protected String getRelationFromRelationClassUrl(String relationClassUrl) {
-        String relationName = null;
-        log.debug(String.format("RequestRelation URI = [%s]", relationClassUrl));
+    protected String getBoxNameFromRequestRelation(String requestRelation) throws PersoniumCoreException {
+        String boxName = null;
+        log.debug(String.format("RequestRelation URI = [%s]", requestRelation));
 
-        Pattern pattern = Pattern.compile(".+/([^/]+)/__relation/([^/]+)/([^/]+)/?");
-        Matcher m = pattern.matcher(relationClassUrl);
-        if (!m.matches()) {
-            log.debug(String.format("RequestRelation URI if not relationClassUrl format. [%s]", relationClassUrl));
-            return relationName;
+        // convert localunitUrl to unitUrl
+        String convertedRequestRelation = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), requestRelation);
+        Pattern pattern = Pattern.compile(Common.PATTERN_RELATION_CLASS_URL);
+        Matcher matcher = pattern.matcher(convertedRequestRelation);
+        if (matcher.matches()) {
+            String schema = matcher.replaceAll("$1" + "/" + "$2" + "/");
+            Box box = this.cell.getBoxForSchema(schema);
+            if (box != null) {
+                boxName = box.getName();
+            } else {
+                throw PersoniumCoreException.ReceivedMessage
+                        .BOX_THAT_MATCHES_RELATION_CLASS_URL_NOT_EXISTS.params(convertedRequestRelation);
+            }
         }
-        relationName = m.replaceAll("$3");
-        log.debug(String.format("RequestRelation URI Path = [%s]", relationName));
+        return boxName;
+    }
+
+    /**
+     * Get RelationName from RequestRelation.
+     * @param requestRelation RequestRelation
+     * @return RelationName
+     */
+    protected String getRelationNameFromRequestRelation(String requestRelation) {
+        String relationName = null;
+        log.debug(String.format("RequestRelation URI = [%s]", requestRelation));
+
+        // convert localunitUrl to unitUrl
+        String convertedRequestRelation = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), requestRelation);
+        Pattern pattern = Pattern.compile(Common.PATTERN_RELATION_CLASS_URL);
+        Matcher m = pattern.matcher(convertedRequestRelation);
+        if (m.matches()) {
+            relationName = m.replaceAll("$3");
+        } else {
+            relationName = convertedRequestRelation;
+        }
         return relationName;
     }
 

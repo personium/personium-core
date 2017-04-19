@@ -315,14 +315,14 @@ public class PersoniumReadDeleteModeManagerTest {
     }
 
     /**
-     * ReadDeleteOnlyモード時に__authに対するPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
+     * ReadDeleteOnlyモード時に__tokenに対するPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと.
      * @throws Exception .
      */
     @Test
-    public void ReadDeleteOnlyモード時に__authに対するPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
+    public void ReadDeleteOnlyモード時に__tokenに対するPOSTメソッドが実行された場合はPersoniumCoreExceptionが発生しないこと() throws Exception {
         PowerMockito.spy(ReadDeleteModeLockManager.class);
         PowerMockito.when(ReadDeleteModeLockManager.class, "isReadDeleteOnlyMode").thenReturn(true);
-        List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "__auth" });
+        List<PathSegment> pathSegment = getPathSegmentList(new String[] {"cell", "__token" });
         try {
             PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(HttpMethod.POST, pathSegment);
         } catch (PersoniumCoreException e) {
