@@ -140,13 +140,10 @@ public class CellAccessor extends AbstractEntitySetAccessor {
     }
     private void insertCellDeleteRecord(String unitUserName, String cellId) {
         CellDeleteAccessor accessor = new CellDeleteAccessor();
-        if (!accessor.isValid()) {
-            log.warn(String.format("Insert CELL_DELETE Record To Ads Failed. db_name:[%s], cell_id:[%s]",
-                    unitUserName, cellId));
-            return;
+        if (accessor.isValid()) {
+            accessor.createManagementDatabase();
+            accessor.insertCellDeleteRecord(unitUserName, cellId);
         }
-        accessor.createManagementDatabase();
-        accessor.insertCellDeleteRecord(unitUserName, cellId);
     }
 
     /**
