@@ -205,7 +205,7 @@ public class AbstractODataResourceTest {
      * @throws Exception Unexpected error.
      */
     @Test
-    public void validatePropertyMessageRequestRelation_Normal_relation_is_classURL() throws Exception {
+    public void validatePropertyMessageRequestRelation_Normal_relation_is_relationClassURL() throws Exception {
         String requestRelation = "http://personium/dummyAppCell/__relation/__/dummyRelation";
         // --------------------
         // Test method args
@@ -221,6 +221,10 @@ public class AbstractODataResourceTest {
                 requestRelation, Common.PATTERN_RELATION_CLASS_URL);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
+                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
+                requestRelation, Common.PATTERN_NAME);
 
         // --------------------
         // Expected result
@@ -249,7 +253,7 @@ public class AbstractODataResourceTest {
      * @throws Exception Unexpected error.
      */
     @Test
-    public void validatePropertyMessageRequestRelation_Normal_relation_is_name() throws Exception {
+    public void validatePropertyMessageRequestRelation_Normal_relation_is_relationName() throws Exception {
         String requestRelation = "dummyRelation";
         // --------------------
         // Test method args
@@ -265,6 +269,106 @@ public class AbstractODataResourceTest {
                 requestRelation, Common.PATTERN_RELATION_CLASS_URL);
         PowerMockito.doReturn(true).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
+                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
+                requestRelation, Common.PATTERN_NAME);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            abstractODataResource.validatePropertyMessageRequestRelation(propName, op);
+        } catch (PersoniumCoreException e) {
+            fail("Exception occurred.");
+        }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Nothing.
+    }
+
+    /**
+     * Test validatePropertyMessageRequestRelation().
+     * Normal test.
+     * isValidClassUrl return true;
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validatePropertyMessageRequestRelation_Normal_relation_is_roleClassURL() throws Exception {
+        String requestRelation = "http://personium/dummyAppCell/__role/__/dummyRole";
+        // --------------------
+        // Test method args
+        // --------------------
+        String propName = "RequestRelation";
+        OProperty<?> op = OProperties.string("RequestRelation", requestRelation);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        PowerMockito.mockStatic(ODataUtils.class);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
+                requestRelation, Common.PATTERN_RELATION_CLASS_URL);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
+                requestRelation, Common.PATTERN_RELATION_NAME);
+        PowerMockito.doReturn(true).when(ODataUtils.class, "validateClassUrl",
+                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
+                requestRelation, Common.PATTERN_NAME);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            abstractODataResource.validatePropertyMessageRequestRelation(propName, op);
+        } catch (PersoniumCoreException e) {
+            fail("Exception occurred.");
+        }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Nothing.
+    }
+
+    /**
+     * Test validatePropertyMessageRequestRelation().
+     * Normal test.
+     * isValidRegEx return true;
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validatePropertyMessageRequestRelation_Normal_relation_is_roleName() throws Exception {
+        String requestRelation = "dummyRole";
+        // --------------------
+        // Test method args
+        // --------------------
+        String propName = "RequestRelation";
+        OProperty<?> op = OProperties.string("RequestRelation", requestRelation);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        PowerMockito.mockStatic(ODataUtils.class);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
+                requestRelation, Common.PATTERN_RELATION_CLASS_URL);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
+                requestRelation, Common.PATTERN_RELATION_NAME);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
+                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
+        PowerMockito.doReturn(true).when(ODataUtils.class, "validateRegEx",
+                requestRelation, Common.PATTERN_NAME);
 
         // --------------------
         // Expected result
@@ -309,6 +413,10 @@ public class AbstractODataResourceTest {
                 requestRelation, Common.PATTERN_RELATION_CLASS_URL);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
+                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
+                requestRelation, Common.PATTERN_NAME);
 
         // --------------------
         // Expected result

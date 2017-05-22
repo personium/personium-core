@@ -444,4 +444,750 @@ public class MessageODataResourceTest {
             assertThat(e.getMessage(), is(expected.getMessage()));
         }
     }
+
+    /**
+     * Test validateStatus().
+     * Normal test.
+     * Type is message.
+     */
+    @Test
+    public void validateStatus_Normal_type_is_message() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_MESSAGE;
+        String status = ReceivedMessage.STATUS_UNREAD;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateStatus(type, status);
+        } catch (PersoniumCoreException e) {
+            fail("Exception occurred.");
+        }
+    }
+
+    /**
+     * Test validateStatus().
+     * Normal test.
+     * Type is relationBuild.
+     */
+    @Test
+    public void validateStatus_Normal_type_is_relation_build() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
+        String status = ReceivedMessage.STATUS_NONE;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateStatus(type, status);
+        } catch (PersoniumCoreException e) {
+            fail("Exception occurred.");
+        }
+    }
+
+    /**
+     * Test validateStatus().
+     * Normal test.
+     * Type is roleGrant.
+     */
+    @Test
+    public void validateStatus_Normal_type_is_role_grant() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_ROLE_GRANT;
+        String status = ReceivedMessage.STATUS_NONE;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateStatus(type, status);
+        } catch (PersoniumCoreException e) {
+            fail("Exception occurred.");
+        }
+    }
+
+    /**
+     * Test validateStatus().
+     * Error test.
+     * Type is message.
+     */
+    @Test
+    public void validateStatus_Error_type_is_message() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_MESSAGE;
+        String status = ReceivedMessage.STATUS_READ;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateStatus(type, status);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_STATUS.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validateStatus().
+     * Error test.
+     * Type is relationBuild.
+     */
+    @Test
+    public void validateStatus_Error_type_is_relation_build() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
+        String status = ReceivedMessage.STATUS_APPROVED;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateStatus(type, status);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_STATUS.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validateStatus().
+     * Error test.
+     * Type is relationBreak.
+     */
+    @Test
+    public void validateStatus_Error_type_is_relation_break() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
+        String status = ReceivedMessage.STATUS_REJECTED;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateStatus(type, status);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_STATUS.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validateStatus().
+     * Error test.
+     * Type is roleGrant.
+     */
+    @Test
+    public void validateStatus_Error_type_is_role_grant() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_ROLE_GRANT;
+        String status = ReceivedMessage.STATUS_REJECTED;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateStatus(type, status);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_STATUS.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validateStatus().
+     * Error test.
+     * Type is roleRevoke.
+     */
+    @Test
+    public void validateStatus_Error_type_is_role_revoke() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_ROLE_REVOKE;
+        String status = ReceivedMessage.STATUS_APPROVED;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateStatus(type, status);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_STATUS.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validateReqRelation().
+     * Normal test.
+     * Type is relationBuild.
+     */
+    @Test
+    public void validateReqRelation_Normal_type_is_relation_build() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
+        String requestRelation = "http://personium/AppCell/__relation/__/-relationName_+:/";
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+        } catch (PersoniumCoreException e) {
+            fail("Exception occurred.");
+        }
+    }
+
+    /**
+     * Test validateReqRelation().
+     * Normal test.
+     * Type is roleGrant.
+     */
+    @Test
+    public void validateReqRelation_Normal_type_is_role_grant() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_ROLE_GRANT;
+        String requestRelation = "http://personium/AppCell/__role/__/roleName-_/";
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+        } catch (PersoniumCoreException e) {
+            fail("Exception occurred.");
+        }
+    }
+
+    /**
+     * Test validateReqRelation().
+     * Normal test.
+     * Type is message.
+     */
+    @Test
+    public void validateReqRelation_Normal_type_is_message() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_MESSAGE;
+        String requestRelation = null;
+        String requestRelationTarget = null;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+        } catch (PersoniumCoreException e) {
+            fail("Exception occurred.");
+        }
+    }
+
+    /**
+     * Test validateReqRelation().
+     * Error test.
+     * Type is relationBuild and RequestRelation is null.
+     */
+    @Test
+    public void validateReqRelation_Error_type_is_relation_build_and_requestRelation_is_null() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
+        String requestRelation = null;
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_REQUEST_RELATION.getName()
+                    + "," + ReceivedMessage.P_REQUEST_RELATION_TARGET.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validateReqRelation().
+     * Error test.
+     * Type is relationBreak and RequestRelationTarget is null.
+     */
+    @Test
+    public void validateReqRelation_Error_type_is_relation_break_and_requestRelationTarget_is_null() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
+        String requestRelation = "rerationName";
+        String requestRelationTarget = null;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_REQUEST_RELATION.getName()
+                    + "," + ReceivedMessage.P_REQUEST_RELATION_TARGET.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validateReqRelation().
+     * Error test.
+     * Type is roleGrant and RequestRelation is null.
+     */
+    @Test
+    public void validateReqRelation_Error_type_is_role_grant_and_requestRelation_is_null() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_ROLE_GRANT;
+        String requestRelation = null;
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_REQUEST_RELATION.getName()
+                    + "," + ReceivedMessage.P_REQUEST_RELATION_TARGET.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validateReqRelation().
+     * Error test.
+     * Type is roleRevoke and RequestRelationTarget is null.
+     */
+    @Test
+    public void validateReqRelation_Error_type_is_role_revoke_and_requestRelationTarget_is_null() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_ROLE_REVOKE;
+        String requestRelation = "roleName";
+        String requestRelationTarget = null;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_REQUEST_RELATION.getName()
+                    + "," + ReceivedMessage.P_REQUEST_RELATION_TARGET.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validateReqRelation().
+     * Error test.
+     * Type is relationBuild and RequestRelation is invalid format.
+     */
+    @Test
+    public void validateReqRelation_Error_type_is_relation_build_and_requestRelation_is_invalid_format() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
+        String requestRelation = "http://personium/Cell/relationName";
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_REQUEST_RELATION.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validateReqRelation().
+     * Error test.
+     * Type is relationBreak and RequestRelation is invalid format.
+     */
+    @Test
+    public void validateReqRelation_Error_type_is_relation_break_and_requestRelation_is_invalid_format() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
+        String requestRelation = "_rerationName-+:";
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_REQUEST_RELATION.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validateReqRelation().
+     * Error test.
+     * Type is roleGrant and RequestRelation is invalid format.
+     */
+    @Test
+    public void validateReqRelation_Error_type_is_role_grant_and_requestRelation_is_invalid_format() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_ROLE_GRANT;
+        String requestRelation = "http://personium/Cell/roleName";
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_REQUEST_RELATION.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validateReqRelation().
+     * Error test.
+     * Type is roleRevoke and RequestRelation is invalid format.
+     */
+    @Test
+    public void validateReqRelation_Error_type_is_role_revoke_and_requestRelation_is_invalid_format() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_ROLE_REVOKE;
+        String requestRelation = "-roleName_";
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_REQUEST_RELATION.getName());
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
 }

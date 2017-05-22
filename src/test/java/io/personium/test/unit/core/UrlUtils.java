@@ -496,6 +496,26 @@ public final class UrlUtils {
     }
 
     /**
+     * Get RoleClassURL.
+     * @param cellName Cell name
+     * @param roleName Role name
+     * @return RoleClassURL
+     */
+    public static String roleClassUrl(final String cellName, final String roleName) {
+        return String.format("%s/%s/__role/__/%s", baseUrl, cellName, roleName);
+    }
+
+    /**
+     * Get unit local RoleClassURL.
+     * @param cellName Cell name
+     * @param roleName Role name
+     * @return unit local RoleClassURL
+     */
+    public static String unitLocalRoleClassUrl(final String cellName, final String roleName) {
+        return String.format("%s%s/__role/__/%s", UriUtils.SCHEME_UNIT_URI, cellName, roleName);
+    }
+
+    /**
      * ExtRoleのURL取得.
      * @param cellName セル名
      * @param boxName ボックス名

@@ -849,7 +849,9 @@ public abstract class AbstractODataResource {
      */
     protected void validatePropertyMessageRequestRelation(String propName, OProperty<?> op) {
         if (!ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_RELATION_CLASS_URL)
-                && !ODataUtils.validateRegEx(op.getValue().toString(), Common.PATTERN_RELATION_NAME)) {
+                && !ODataUtils.validateRegEx(op.getValue().toString(), Common.PATTERN_RELATION_NAME)
+                && !ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_ROLE_CLASS_URL)
+                && !ODataUtils.validateRegEx(op.getValue().toString(), Common.PATTERN_NAME)) {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
         }
     }

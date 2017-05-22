@@ -171,7 +171,7 @@ public class ExtRoleDeleteTest extends ODataCommon {
             relationBody.put("_Box.Name", null);
             RelationUtils.create(cellName, token, relationBody, -1);
             ExtRoleUtils.create(token, cellName, extRoleBody, HttpStatus.SC_CREATED);
-            RoleUtils.create(cellName, token, boxName, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(cellName, token, roleName, boxName, HttpStatus.SC_CREATED);
             ResourceUtils.linksExtRoleToRole(cellName, PersoniumCoreUtils.encodeUrlComp(extRoleName),
                     "'relation'", "null", UrlUtils.roleUrl(cellName, null, roleName), token);
 
@@ -185,7 +185,7 @@ public class ExtRoleDeleteTest extends ODataCommon {
         } finally {
             ResourceUtils.linksDeleteExtRoleToRole(cellName, PersoniumCoreUtils.encodeUrlComp(extRoleName),
                     "relation", "null", roleName, token);
-            RoleUtils.delete(cellName, token, boxName, roleName, -1);
+            RoleUtils.delete(cellName, token, roleName, boxName, -1);
             ExtRoleUtils.delete(token, cellName, extRoleName, "'relation'", "null", -1);
             RelationUtils.delete(cellName, token, "relation", null, -1);
         }

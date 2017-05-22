@@ -64,7 +64,7 @@ public class ExtCellDeleteTest extends ODataCommon {
         try {
             // 準備。ExtCell、ロール作ってリンクさせる。
             ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);
-            RoleUtils.create(cellName, token, boxName, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(cellName, token, roleName, boxName, HttpStatus.SC_CREATED);
             ResourceUtils.linkExtCelltoRole(PersoniumCoreUtils.encodeUrlComp(extCellUrl), cellName,
                     roleUrl, token, HttpStatus.SC_NO_CONTENT);
 
@@ -78,7 +78,7 @@ public class ExtCellDeleteTest extends ODataCommon {
         } finally {
             ResourceUtils.linkExtCellRoleDelete(cellName, token,
                     PersoniumCoreUtils.encodeUrlComp(extCellUrl), boxName, roleName);
-            RoleUtils.delete(cellName, token, boxName, roleName, -1);
+            RoleUtils.delete(cellName, token, roleName, boxName, -1);
             ExtCellUtils.delete(token, cellName, extCellUrl, -1);
         }
     }

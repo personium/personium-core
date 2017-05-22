@@ -87,7 +87,7 @@ public class AccountViaNPTest extends ODataCommon {
                     "Account", "'" + accountName + "'", -1);
 
             // Role削除
-            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, null, roleName, -1);
+            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, roleName, null, -1);
 
             // Account削除
             AccountUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, accountName, -1);
@@ -123,7 +123,7 @@ public class AccountViaNPTest extends ODataCommon {
                     "Account", "'" + accountName + "'", -1);
 
             // Role削除
-            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, null, roleName, -1);
+            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, roleName, null, -1);
 
             // Account削除
             AccountUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, accountName, -1);
@@ -158,7 +158,7 @@ public class AccountViaNPTest extends ODataCommon {
                     "Account", "'" + accountName + "'", -1);
 
             // Role削除
-            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, null, roleName, -1);
+            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, roleName, null, -1);
 
             // Account削除
             AccountUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, accountName, -1);
@@ -189,7 +189,7 @@ public class AccountViaNPTest extends ODataCommon {
             RoleUtils.deleteLink(CELL_NAME, MASTER_TOKEN_NAME, RoleUtils.keyString(roleName),
                     "Account", "'" + accountName + "'", -1);
             // Role削除
-            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, null, roleName, -1);
+            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, roleName, null, -1);
             // Account削除
             AccountUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, accountName, -1);
         }

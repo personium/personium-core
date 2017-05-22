@@ -26,7 +26,6 @@ import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
-import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.rs.cell.MessageODataResource;
 import io.personium.core.rs.odata.AbstractODataResource;
@@ -573,102 +572,6 @@ public class SentMessageValidateTest extends AbstractODataResource {
         String to = "http://example.com/toAddress";
         String toRelation = "http://example.com/toRelation";
         MessageODataResource.validateToAndToRelation(to, toRelation);
-    }
-
-    /**
-     * Typeが関係登録依頼でRequestRelationがない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void Typeが関係登録依頼でRequestRelationがない場合にPersoniumCoreExceptionが発生すること() {
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
-        String requestRelation = (String) OProperties.null_(
-                SentMessage.P_REQUEST_RELATION.getName(),
-                EdmSimpleType.STRING).getValue();
-        String requestRelationTarget = "http://example.com/reqRelation";
-        MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
-    }
-
-    /**
-     * Typeが関係登録依頼でRequestRelationがある場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void Typeが関係登録依頼でRequestRelationがある場合にPersoniumCoreExceptionが発生しないこと() {
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
-        String requestRelation = "http://example.com/reqRelation";
-        String requestRelationTarget = "http://example.com/reqRelation";
-        MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
-    }
-
-    /**
-     * Typeが関係削除依頼でRequestRelationがない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void Typeが関係削除依頼でRequestRelationがない場合にPersoniumCoreExceptionが発生すること() {
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
-        String requestRelation = (String) OProperties.null_(
-                SentMessage.P_REQUEST_RELATION.getName(),
-                EdmSimpleType.STRING).getValue();
-        String requestRelationTarget = "http://example.com/reqRelation";
-        MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
-    }
-
-    /**
-     * Typeが関係削除依頼でRequestRelationがある場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void Typeが関係削除依頼でRequestRelationがある場合にPersoniumCoreExceptionが発生しないこと() {
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
-        String requestRelation = "http://example.com/reqRelation";
-        String requestRelationTarget = "http://example.com/reqRelation";
-        MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
-    }
-
-    /**
-     * Typeが関係登録依頼でRequestRelationTargetがない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void Typeが関係登録依頼でRequestRelationTargetがない場合にPersoniumCoreExceptionが発生すること() {
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
-        String requestRelation = "http://example.com/reqRelation";
-        String requestRelationTarget = (String) OProperties.null_(
-                SentMessage.P_REQUEST_RELATION_TARGET.getName(),
-                EdmSimpleType.STRING).getValue();
-        MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
-    }
-
-    /**
-     * Typeが関係登録依頼でRequestRelationTargetがある場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void Typeが関係登録依頼でRequestRelationTargetがある場合にPersoniumCoreExceptionが発生しないこと() {
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
-        String requestRelation = "http://example.com/reqRelation";
-        String requestRelationTarget = "http://example.com/reqRelation";
-        MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
-    }
-
-    /**
-     * Typeが関係削除依頼でRequestRelationTargetがない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void Typeが関係削除依頼でRequestRelationTargetがない場合にPersoniumCoreExceptionが発生すること() {
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
-        String requestRelation = "http://example.com/reqRelation";
-        String requestRelationTarget = (String) OProperties.null_(
-                SentMessage.P_REQUEST_RELATION_TARGET.getName(),
-                EdmSimpleType.STRING).getValue();
-        MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
-    }
-
-    /**
-     * Typeが関係削除依頼でRequestRelationTargetがある場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void Typeが関係削除依頼でRequestRelationTargetがある場合にPersoniumCoreExceptionが発生しないこと() {
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
-        String requestRelation = "http://example.com/reqRelation";
-        String requestRelationTarget = "http://example.com/reqRelation";
-        MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
     }
 
     /**

@@ -24,17 +24,18 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.JerseyTest;
+
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * BoxとRoleのNP経由登録／一覧のテスト.
@@ -80,7 +81,7 @@ public class BoxRoleViaNPTest extends JerseyTest {
 
         } finally {
             // Role削除
-            RoleUtils.delete(CELL_NAME, TOKEN, boxName, roleName, -1);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, boxName, -1);
 
             // Box削除
             BoxUtils.delete(CELL_NAME, TOKEN, boxName, -1);
@@ -111,7 +112,7 @@ public class BoxRoleViaNPTest extends JerseyTest {
 
         } finally {
             // Role削除
-            RoleUtils.delete(CELL_NAME, TOKEN, baseBoxName, roleName, -1);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, baseBoxName, -1);
 
             // Box削除
             BoxUtils.delete(CELL_NAME, TOKEN, boxName, -1);
@@ -141,7 +142,7 @@ public class BoxRoleViaNPTest extends JerseyTest {
 
         } finally {
             // Role削除
-            RoleUtils.delete(CELL_NAME, TOKEN, null, roleName, -1);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, null, -1);
 
             // Box削除
             BoxUtils.delete(CELL_NAME, TOKEN, boxName, -1);

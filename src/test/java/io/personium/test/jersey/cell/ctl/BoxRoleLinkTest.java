@@ -28,12 +28,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.JerseyTest;
+
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
@@ -42,7 +44,6 @@ import io.personium.test.utils.Http;
 import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * BoxとRoleの$linksのテスト.
@@ -157,8 +158,8 @@ public class BoxRoleLinkTest extends JerseyTest {
                     HttpStatus.SC_CONFLICT);
         } finally {
             // Role削除
-            RoleUtils.delete(cellName, TOKEN, null, roleName, -1);
-            RoleUtils.delete(cellName, TOKEN, baseBoxName, roleName, -1);
+            RoleUtils.delete(cellName, TOKEN, roleName, null, -1);
+            RoleUtils.delete(cellName, TOKEN, roleName, baseBoxName, -1);
 
             // Box削除
             BoxUtils.delete(cellName, TOKEN, baseBoxName, -1);
@@ -190,7 +191,7 @@ public class BoxRoleLinkTest extends JerseyTest {
                     HttpStatus.SC_CONFLICT);
         } finally {
             // Role削除
-            RoleUtils.delete(cellName, TOKEN, boxName, roleName, -1);
+            RoleUtils.delete(cellName, TOKEN, roleName, boxName, -1);
 
             // Box削除
             BoxUtils.delete(cellName, TOKEN, boxName, -1);
@@ -713,19 +714,19 @@ public class BoxRoleLinkTest extends JerseyTest {
             BoxUtils.create(CELL_NAME, boxName, TOKEN, HttpStatus.SC_CREATED);
 
             // 上のBoxと結びつくRole作成
-            RoleUtils.create(CELL_NAME, TOKEN, boxName, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME, TOKEN, roleName, boxName, HttpStatus.SC_CREATED);
 
             // Boxの削除(結びつくロールがあるため、409)
             BoxUtils.delete(CELL_NAME, TOKEN, boxName, HttpStatus.SC_CONFLICT);
 
             // 結びつくロールの削除
-            RoleUtils.delete(CELL_NAME, TOKEN, boxName, roleName, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, boxName, HttpStatus.SC_NO_CONTENT);
 
             // Boxの削除(結びつくロールが無くなったため、204)
             BoxUtils.delete(CELL_NAME, TOKEN, boxName, HttpStatus.SC_NO_CONTENT);
         } finally {
             // 結びつくロールの削除
-            RoleUtils.delete(CELL_NAME, TOKEN, boxName, roleName, -1);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, boxName, -1);
 
             // Boxの削除
             BoxUtils.delete(CELL_NAME, TOKEN, boxName, -1);
@@ -780,10 +781,10 @@ public class BoxRoleLinkTest extends JerseyTest {
             BoxUtils.create(CELL_NAME, boxName, TOKEN, HttpStatus.SC_CREATED);
 
             // 上のBoxと結びつくRole作成
-            RoleUtils.create(CELL_NAME, TOKEN, boxName, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME, TOKEN, roleName, boxName, HttpStatus.SC_CREATED);
 
             // 上のBoxと結びつかないRole作成
-            RoleUtils.create(CELL_NAME, TOKEN, null, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME, TOKEN, roleName, null, HttpStatus.SC_CREATED);
 
             String roleKeyName = "_Box.Name='" + boxName + "',Name='" + roleName + "'";
 
@@ -793,20 +794,20 @@ public class BoxRoleLinkTest extends JerseyTest {
             deleteRoleBoxLink(roleKeyName, boxName, HttpStatus.SC_CONFLICT);
 
             // ロールの削除
-            RoleUtils.delete(CELL_NAME, TOKEN, null, roleName, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, null, HttpStatus.SC_NO_CONTENT);
 
             // BoxとRoleのLink削除（単一キーのRoleが存在しないので削除できる)
             deleteBoxRoleLink(boxName, roleKeyName, HttpStatus.SC_NO_CONTENT);
 
             // 結びつくロールの削除
-            RoleUtils.delete(CELL_NAME, TOKEN, null, roleName, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, null, HttpStatus.SC_NO_CONTENT);
 
             // Boxの削除
             BoxUtils.delete(CELL_NAME, TOKEN, boxName, HttpStatus.SC_NO_CONTENT);
         } finally {
             // 結びつくロールの削除
-            RoleUtils.delete(CELL_NAME, TOKEN, boxName, roleName, -1);
-            RoleUtils.delete(CELL_NAME, TOKEN, null, roleName, -1);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, boxName, -1);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, null, -1);
 
             // Boxの削除
             BoxUtils.delete(CELL_NAME, TOKEN, boxName, -1);
@@ -825,10 +826,10 @@ public class BoxRoleLinkTest extends JerseyTest {
             BoxUtils.create(CELL_NAME, boxName, TOKEN, HttpStatus.SC_CREATED);
 
             // 上のBoxと結びつくRole作成
-            RoleUtils.create(CELL_NAME, TOKEN, boxName, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME, TOKEN, roleName, boxName, HttpStatus.SC_CREATED);
 
             // 上のBoxと結びつかないRole作成
-            RoleUtils.create(CELL_NAME, TOKEN, null, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME, TOKEN, roleName, null, HttpStatus.SC_CREATED);
 
             String roleKeyName = "_Box.Name='" + boxName + "',Name='" + roleName + "'";
 
@@ -838,20 +839,20 @@ public class BoxRoleLinkTest extends JerseyTest {
             createRoleBoxLink(roleName, boxName, HttpStatus.SC_CONFLICT);
 
             // ロールの削除
-            RoleUtils.delete(CELL_NAME, TOKEN, null, roleName, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, null, HttpStatus.SC_NO_CONTENT);
 
             // BoxとRoleのLink削除
             deleteBoxRoleLink(boxName, roleKeyName, HttpStatus.SC_NO_CONTENT);
 
             // 結びつくロールの削除
-            RoleUtils.delete(CELL_NAME, TOKEN, null, roleName, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, null, HttpStatus.SC_NO_CONTENT);
 
             // Boxの削除
             BoxUtils.delete(CELL_NAME, TOKEN, boxName, HttpStatus.SC_NO_CONTENT);
         } finally {
             // 結びつくロールの削除
-            RoleUtils.delete(CELL_NAME, TOKEN, boxName, roleName, -1);
-            RoleUtils.delete(CELL_NAME, TOKEN, null, roleName, -1);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, boxName, -1);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, null, -1);
 
             // Boxの削除
             BoxUtils.delete(CELL_NAME, TOKEN, boxName, -1);
@@ -866,14 +867,14 @@ public class BoxRoleLinkTest extends JerseyTest {
         final String roleName = "boxLinkRole";
         try {
             // Role作成
-            RoleUtils.create(CELL_NAME, TOKEN, null, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME, TOKEN, roleName, null, HttpStatus.SC_CREATED);
 
             // Boxに紐付くRoleのlink一覧取得
             RoleUtils.list(TOKEN, CELL_NAME, "\\$expand=_Box&\\$filter=startswith(Name,'boxLinkRole')",
                     HttpStatus.SC_OK);
         } finally {
             // ロールの削除
-            RoleUtils.delete(CELL_NAME, TOKEN, null, roleName, -1);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, null, -1);
         }
     }
 
@@ -892,18 +893,18 @@ public class BoxRoleLinkTest extends JerseyTest {
             DavResourceUtils.createODataCollection(TOKEN, HttpStatus.SC_CREATED, CELL_NAME, boxName, "test");
 
             // 上のBoxと結びつくRole作成
-            RoleUtils.create(CELL_NAME, TOKEN, boxName, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME, TOKEN, roleName, boxName, HttpStatus.SC_CREATED);
 
             // 上のBoxと結びつくRole作成
-            RoleUtils.create(CELL_NAME, TOKEN, boxName, "boxLinkRole2", HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME, TOKEN, "boxLinkRole2", boxName, HttpStatus.SC_CREATED);
 
             // Roleに紐付くBoxのlink一覧取得
             RoleUtils.list(TOKEN, CELL_NAME, "\\$expand=_Box&\\$filter=startswith(Name,'boxLinkRole')",
                     HttpStatus.SC_OK);
         } finally {
             // 結びつくロールの削除
-            RoleUtils.delete(CELL_NAME, TOKEN, boxName, roleName, -1);
-            RoleUtils.delete(CELL_NAME, TOKEN, boxName, "boxLinkRole2", -1);
+            RoleUtils.delete(CELL_NAME, TOKEN, roleName, boxName, -1);
+            RoleUtils.delete(CELL_NAME, TOKEN, "boxLinkRole2", boxName, -1);
 
             // Collectionの削除
             DavResourceUtils.deleteCollection(CELL_NAME, boxName, "test", TOKEN, -1);

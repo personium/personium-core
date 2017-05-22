@@ -202,27 +202,45 @@ public class RoleUtils {
      */
     public static TResponse create(final String cellName, final String token,
             final String roleName, final int code) {
-        return create(cellName, token, null, roleName, code);
+        return create(cellName, token, roleName, null, code);
     }
 
     /**
      * Roleを作成するユーティリティ.
      * @param cellName セル名
      * @param token トークン
-     * @param boxName ボックス名
      * @param roleName ロール名
+     * @param boxName ボックス名
      * @param code レスポンスコード
      * @return レスポンス
      */
     @SuppressWarnings("unchecked")
     public static TResponse create(final String cellName, final String token,
-            final String boxName, final String roleName, final int code) {
+            final String roleName, final String boxName, final int code) {
         JSONObject body = new JSONObject();
         body.put("Name", roleName);
         if (boxName != null) {
             body.put("_Box.Name", boxName);
         }
 
+        return Http.request("role-create.txt")
+                .with("token", token)
+                .with("cellPath", cellName)
+                .with("body", body.toString())
+                .returns()
+                .statusCode(code);
+    }
+
+    /**
+     * create role utility.
+     * @param cellName cell name
+     * @param token token
+     * @param body body
+     * @param code response code
+     * @return response
+     */
+    public static TResponse create(final String cellName, final String token,
+            final JSONObject body, final int code) {
         return Http.request("role-create.txt")
                 .with("token", token)
                 .with("cellPath", cellName)
@@ -413,11 +431,11 @@ public class RoleUtils {
      * ロールを削除するユーティリティ.
      * @param cellName セル名
      * @param token トークン
-     * @param boxName ボックス名
      * @param roleName ロール名
+     * @param boxName ボックス名
      */
     public static void delete(final String cellName, final String token,
-            final String boxName, final String roleName) {
+            final String roleName, final String boxName) {
         String keyBoxName = null;
         if (boxName == null) {
             keyBoxName = "null";
@@ -437,12 +455,12 @@ public class RoleUtils {
      * ロールを削除するユーティリティ.
      * @param cellName セル名
      * @param token トークン
-     * @param boxName ボックス名
      * @param roleName ロール名
+     * @param boxName ボックス名
      * @param code レスポンスコード
      */
     public static void delete(final String cellName, final String token,
-            final String boxName, final String roleName, final int code) {
+            final String roleName, final String boxName, final int code) {
         String keyBoxName = null;
         if (boxName == null) {
             keyBoxName = "null";

@@ -137,8 +137,8 @@ public class AuthCheckTest extends JerseyTest {
                     userName, pass, HttpStatus.SC_CREATED);
 
             // ロール追加（BOXに結びつかない）
-            RoleUtils.create(testCellName, AbstractCase.MASTER_TOKEN_NAME, null,
-                    roleNameNoneBox, HttpStatus.SC_CREATED);
+            RoleUtils.create(testCellName, AbstractCase.MASTER_TOKEN_NAME, roleNameNoneBox,
+                    null, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
             ResourceUtils.linkAccountRole(testCellName, AbstractCase.MASTER_TOKEN_NAME,
@@ -170,7 +170,7 @@ public class AuthCheckTest extends JerseyTest {
             AccountUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME,
                     userName, HttpStatus.SC_NO_CONTENT);
             // ロール削除（BOXに結びつかない）
-            RoleUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME, null, roleNameNoneBox);
+            RoleUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME, roleNameNoneBox, null);
             // 本テスト用セルの削除
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, testCellName, -1);
 
@@ -209,8 +209,8 @@ public class AuthCheckTest extends JerseyTest {
                     userName, pass, HttpStatus.SC_CREATED);
 
             // ロール追加（スキーマありBOXに結びつつく）
-            RoleUtils.create(testCellName, AbstractCase.MASTER_TOKEN_NAME, boxNameWithScheme,
-                    roleNameWithBox2, HttpStatus.SC_CREATED);
+            RoleUtils.create(testCellName, AbstractCase.MASTER_TOKEN_NAME, roleNameWithBox2,
+                    boxNameWithScheme, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（スキーマありBOXに結びつくロールとアカウント結びつけ）
             ResourceUtils.linkAccountRole(testCellName, AbstractCase.MASTER_TOKEN_NAME, userName,
@@ -242,7 +242,7 @@ public class AuthCheckTest extends JerseyTest {
             AccountUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME,
                     userName, HttpStatus.SC_NO_CONTENT);
             // ロール削除（スキーマありBOXに結びつつく）
-            RoleUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME, boxNameWithScheme, roleNameWithBox2);
+            RoleUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME, roleNameWithBox2, boxNameWithScheme);
             // Box削除(スキーマあり)
             BoxUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME, boxNameWithScheme);
             // 本テスト用セルの削除
@@ -279,8 +279,8 @@ public class AuthCheckTest extends JerseyTest {
                     userName, pass, HttpStatus.SC_CREATED);
 
             // ロール追加（スキーマなしBOXに結びつつく）
-            RoleUtils.create(testCellName, AbstractCase.MASTER_TOKEN_NAME, boxNameNoneScheme,
-                    roleNameWithBox1, HttpStatus.SC_CREATED);
+            RoleUtils.create(testCellName, AbstractCase.MASTER_TOKEN_NAME, roleNameWithBox1,
+                    boxNameNoneScheme, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（スキーマなしBOXに結びつくロールとアカウント結びつけ）
             ResourceUtils.linkAccountRole(testCellName, AbstractCase.MASTER_TOKEN_NAME, userName,
@@ -314,7 +314,7 @@ public class AuthCheckTest extends JerseyTest {
                     userName, HttpStatus.SC_NO_CONTENT);
 
             // ロール削除（スキーマなしBOXに結びつつく）
-            RoleUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME, boxNameNoneScheme, roleNameWithBox1);
+            RoleUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME, roleNameWithBox1, boxNameNoneScheme);
 
             // Box削除(スキーマ無し)
             BoxUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME, boxNameNoneScheme);
@@ -358,7 +358,7 @@ public class AuthCheckTest extends JerseyTest {
             AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, testCellName3, userName3,
                     pass, HttpStatus.SC_CREATED);
             // Cell1のロールを作成する
-            RoleUtils.create(testCellName1, masterToken, null, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(testCellName1, masterToken, roleName, null, HttpStatus.SC_CREATED);
             // Cell1のExtCellを作成する
             ExtCellUtils.create(masterToken, testCellName1, UrlUtils.cellRoot(testCellName2));
             // Cell1にRelationを作成する
@@ -408,7 +408,7 @@ public class AuthCheckTest extends JerseyTest {
             // Cell2のアカウント削除
             AccountUtils.delete(testCellName2, masterToken, userName2, HttpStatus.SC_NO_CONTENT);
             // Cell1のロール削除
-            RoleUtils.delete(testCellName1, masterToken, null, roleName);
+            RoleUtils.delete(testCellName1, masterToken, roleName, null);
             // 本テスト用セルの削除(Cell1)
             CellUtils.delete(masterToken, testCellName1, -1);
             // 本テスト用セルの削除(Cell2)
@@ -443,23 +443,23 @@ public class AuthCheckTest extends JerseyTest {
             AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, CELL_NAME2,
                     USER_NAME4, PASSWORD, HttpStatus.SC_CREATED);
             // Cell2のユーザ1用のロール作成及び結びつけ
-            RoleUtils.create(CELL_NAME2, masterToken, BOX_NAME1, ROLE_NAME1, HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME2, masterToken, ROLE_NAME1, BOX_NAME1, HttpStatus.SC_CREATED);
             ResourceUtils.linkAccountRole(CELL_NAME2, masterToken, USER_NAME1, BOX_NAME1,
                     ROLE_NAME1, HttpStatus.SC_NO_CONTENT);
             // Cell2のユーザ2用のロール作成及び結びつけ
-            RoleUtils.create(CELL_NAME2, masterToken, null, ROLE_NAME2, HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME2, masterToken, ROLE_NAME2, null, HttpStatus.SC_CREATED);
             ResourceUtils.linkAccountRole(CELL_NAME2, masterToken, USER_NAME2, null,
                     ROLE_NAME2, HttpStatus.SC_NO_CONTENT);
             // Cell2のユーザ3用のロール作成及び結びつけ
-            RoleUtils.create(CELL_NAME2, masterToken, null, ROLE_NAME3, HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME2, masterToken, ROLE_NAME3, null, HttpStatus.SC_CREATED);
             ResourceUtils.linkAccountRole(CELL_NAME2, masterToken, USER_NAME3, null,
                     ROLE_NAME3, HttpStatus.SC_NO_CONTENT);
             // Cell2のユーザ4用のロール作成及び結びつけ
-            RoleUtils.create(CELL_NAME2, masterToken, BOX_NAME2, ROLE_NAME4, HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME2, masterToken, ROLE_NAME4, BOX_NAME2, HttpStatus.SC_CREATED);
             ResourceUtils.linkAccountRole(CELL_NAME2, masterToken, USER_NAME4, BOX_NAME2,
                     ROLE_NAME4, HttpStatus.SC_NO_CONTENT);
             // Cell1のロールを作成する
-            RoleUtils.create(CELL_NAME1, masterToken, null, ROLE_NAME, HttpStatus.SC_CREATED);
+            RoleUtils.create(CELL_NAME1, masterToken, ROLE_NAME, null, HttpStatus.SC_CREATED);
             // Cell1のExtCellを作成する
             ExtCellUtils.create(masterToken, CELL_NAME1, UrlUtils.cellRoot(CELL_NAME2));
             // Cell1にRelationを作成する
@@ -550,16 +550,16 @@ public class AuthCheckTest extends JerseyTest {
             ExtCellUtils.delete(masterToken, CELL_NAME1, UrlUtils.cellRoot(CELL_NAME2),
                     HttpStatus.SC_NO_CONTENT);
             // Cell1のロール削除
-            RoleUtils.delete(CELL_NAME1, masterToken, null, ROLE_NAME);
+            RoleUtils.delete(CELL_NAME1, masterToken, ROLE_NAME, null);
             // Cell2のユーザのロール結びつけ削除
             ResourceUtils.linkAccountRollDelete(CELL_NAME2, masterToken, USER_NAME4, BOX_NAME2, ROLE_NAME4);
-            RoleUtils.delete(CELL_NAME2, masterToken, BOX_NAME2, ROLE_NAME4);
+            RoleUtils.delete(CELL_NAME2, masterToken, ROLE_NAME4, BOX_NAME2);
             ResourceUtils.linkAccountRollDelete(CELL_NAME2, masterToken, USER_NAME3, null, ROLE_NAME3);
-            RoleUtils.delete(CELL_NAME2, masterToken, null, ROLE_NAME3);
+            RoleUtils.delete(CELL_NAME2, masterToken, ROLE_NAME3, null);
             ResourceUtils.linkAccountRollDelete(CELL_NAME2, masterToken, USER_NAME2, null, ROLE_NAME2);
-            RoleUtils.delete(CELL_NAME2, masterToken, null, ROLE_NAME2);
+            RoleUtils.delete(CELL_NAME2, masterToken, ROLE_NAME2, null);
             ResourceUtils.linkAccountRollDelete(CELL_NAME2, masterToken, USER_NAME1, BOX_NAME1, ROLE_NAME1);
-            RoleUtils.delete(CELL_NAME2, masterToken, BOX_NAME1, ROLE_NAME1);
+            RoleUtils.delete(CELL_NAME2, masterToken, ROLE_NAME1, BOX_NAME1);
             // Cell2のアカウント削除
             AccountUtils.delete(CELL_NAME2, masterToken, USER_NAME4, HttpStatus.SC_NO_CONTENT);
             AccountUtils.delete(CELL_NAME2, masterToken, USER_NAME3, HttpStatus.SC_NO_CONTENT);
@@ -590,7 +590,7 @@ public class AuthCheckTest extends JerseyTest {
             AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1,
                     userName, pass, HttpStatus.SC_CREATED);
             // Boxに紐付くロールの作成
-            RoleUtils.create(TEST_CELL1, masterToken, boxName, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, masterToken, roleName, boxName, HttpStatus.SC_CREATED);
             // RoleとAccountの結びつけ
             ResourceUtils.linkAccountRole(TEST_CELL1, masterToken, userName, boxName,
                     roleName, HttpStatus.SC_NO_CONTENT);
@@ -609,7 +609,7 @@ public class AuthCheckTest extends JerseyTest {
             // RoleとAccountの結びつけの削除
             ResourceUtils.linkAccountRollDelete(TEST_CELL1, masterToken, userName, boxName, roleName);
             // Roleの削除
-            RoleUtils.delete(TEST_CELL1, masterToken, boxName, roleName);
+            RoleUtils.delete(TEST_CELL1, masterToken, roleName, boxName);
             // Accountの削除
             AccountUtils.delete(TEST_CELL1, masterToken, userName, HttpStatus.SC_NO_CONTENT);
         }
@@ -634,9 +634,9 @@ public class AuthCheckTest extends JerseyTest {
             AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1, userName.toUpperCase(),
                     pass, HttpStatus.SC_CREATED);
             // Boxに紐付くロールの作成 (小文字)
-            RoleUtils.create(TEST_CELL1, masterToken, boxName, roleName.toLowerCase(), HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, masterToken, roleName.toLowerCase(), boxName, HttpStatus.SC_CREATED);
             // Boxに紐付くロールの作成 (大文字)
-            RoleUtils.create(TEST_CELL1, masterToken, boxName, roleName.toUpperCase(), HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, masterToken, roleName.toUpperCase(), boxName, HttpStatus.SC_CREATED);
             // RoleとAccountの結びつけ(小文字)
             ResourceUtils.linkAccountRole(TEST_CELL1, masterToken, userName.toLowerCase(), boxName,
                     roleName.toLowerCase(), HttpStatus.SC_NO_CONTENT);
@@ -686,8 +686,8 @@ public class AuthCheckTest extends JerseyTest {
             ResourceUtils.linkAccountRollDelete(TEST_CELL1, masterToken, userName.toUpperCase(), boxName,
                     roleName.toUpperCase());
             // Roleの削除
-            RoleUtils.delete(TEST_CELL1, masterToken, boxName, roleName.toLowerCase());
-            RoleUtils.delete(TEST_CELL1, masterToken, boxName, roleName.toUpperCase());
+            RoleUtils.delete(TEST_CELL1, masterToken, roleName.toLowerCase(), boxName);
+            RoleUtils.delete(TEST_CELL1, masterToken, roleName.toUpperCase(), boxName);
             // Accountの削除
             AccountUtils.delete(TEST_CELL1, masterToken, userName.toLowerCase(), HttpStatus.SC_NO_CONTENT);
             AccountUtils.delete(TEST_CELL1, masterToken, userName.toUpperCase(), HttpStatus.SC_NO_CONTENT);
@@ -724,8 +724,8 @@ public class AuthCheckTest extends JerseyTest {
                     userName, pass, HttpStatus.SC_CREATED);
 
             // ロール追加（スキーマなしBOXに結びつつく）
-            RoleUtils.create(testCellName, AbstractCase.MASTER_TOKEN_NAME, boxNameNoneScheme,
-                    roleNameWithBox1, HttpStatus.SC_CREATED);
+            RoleUtils.create(testCellName, AbstractCase.MASTER_TOKEN_NAME, roleNameWithBox1,
+                    boxNameNoneScheme, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（スキーマなしBOXに結びつくロールとアカウント結びつけ）
             ResourceUtils.linkAccountRole(testCellName, AbstractCase.MASTER_TOKEN_NAME, userName,
@@ -743,7 +743,7 @@ public class AuthCheckTest extends JerseyTest {
 
             // ロール
             RoleUtils.create(testCellName2, AbstractCase.MASTER_TOKEN_NAME,
-                    boxNameNoneScheme, roleNameWithBox1, HttpStatus.SC_CREATED);
+                    roleNameWithBox1, boxNameNoneScheme, HttpStatus.SC_CREATED);
 
             // extCellとロールの結びつけ
             ResourceUtils.linkExtCelltoRole(PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(testCellName)),
@@ -795,10 +795,10 @@ public class AuthCheckTest extends JerseyTest {
             AccountUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME, userName, -1);
 
             // ロール削除
-            RoleUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME, boxNameNoneScheme,
-                    roleNameWithBox1, -1);
+            RoleUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME, roleNameWithBox1,
+                    boxNameNoneScheme, -1);
             RoleUtils.delete(testCellName2, AbstractCase.MASTER_TOKEN_NAME,
-                    boxNameNoneScheme, roleNameWithBox1, -1);
+                    roleNameWithBox1, boxNameNoneScheme, -1);
 
             // Box削除
             BoxUtils.delete(testCellName, AbstractCase.MASTER_TOKEN_NAME, boxNameNoneScheme, -1);
@@ -859,8 +859,8 @@ public class AuthCheckTest extends JerseyTest {
             AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1,
                     notDelRoleUser, pass, HttpStatus.SC_CREATED);
             // Boxに紐付くロールの作成
-            RoleUtils.create(TEST_CELL1, masterToken, Setup.TEST_BOX1, roleNotDelete, HttpStatus.SC_CREATED);
-            RoleUtils.create(TEST_CELL1, masterToken, Setup.TEST_BOX1, roleDelete, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, masterToken, roleNotDelete, Setup.TEST_BOX1, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, masterToken, roleDelete, Setup.TEST_BOX1, HttpStatus.SC_CREATED);
             // RoleとAccountの結びつけ
             ResourceUtils.linkAccountRole(TEST_CELL1, masterToken, notDelRoleUser, Setup.TEST_BOX1,
                     roleNotDelete, HttpStatus.SC_NO_CONTENT);
@@ -870,7 +870,7 @@ public class AuthCheckTest extends JerseyTest {
                     "<D:read/>", "<D:write/>", "");
 
             // testRole002の削除
-            RoleUtils.delete(TEST_CELL1, masterToken, Setup.TEST_BOX1, roleDelete, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(TEST_CELL1, masterToken, roleDelete, Setup.TEST_BOX1, HttpStatus.SC_NO_CONTENT);
 
             // PROPFIND
             TResponse tresponse = DavResourceUtils.propfind("box/propfind-box-allprop.txt", masterToken,
@@ -896,8 +896,8 @@ public class AuthCheckTest extends JerseyTest {
             ResourceUtils.linkAccountRollDelete(TEST_CELL1, masterToken, notDelRoleUser, Setup.TEST_BOX1,
                     roleNotDelete);
             // Roleの削除
-            RoleUtils.delete(TEST_CELL1, masterToken, Setup.TEST_BOX1, roleNotDelete, -1);
-            RoleUtils.delete(TEST_CELL1, masterToken, Setup.TEST_BOX1, roleDelete, -1);
+            RoleUtils.delete(TEST_CELL1, masterToken, roleNotDelete, Setup.TEST_BOX1, -1);
+            RoleUtils.delete(TEST_CELL1, masterToken, roleDelete, Setup.TEST_BOX1, -1);
             // Accountの削除
             AccountUtils.delete(TEST_CELL1, masterToken, notDelRoleUser, HttpStatus.SC_NO_CONTENT);
         }
@@ -932,11 +932,11 @@ public class AuthCheckTest extends JerseyTest {
             CellUtils.create(cellName, accessToken1, HttpStatus.SC_CREATED);
 
             // ロールの作成
-            RoleUtils.create(cellName, accessToken1, null, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(cellName, accessToken1, roleName, null, HttpStatus.SC_CREATED);
             setCellACL(cellName, roleName, accessToken1);
 
             // ロールの削除
-            RoleUtils.delete(cellName, accessToken1, null, roleName, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(cellName, accessToken1, roleName, null, HttpStatus.SC_NO_CONTENT);
 
             // セルレベルAPI操作
             // アカウント一覧取得
@@ -946,7 +946,7 @@ public class AuthCheckTest extends JerseyTest {
             AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user1, -1);
             AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user2, -1);
             // ロールの削除
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, null, roleName, -1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
             // Cellの削除
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, cellName, -1);
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
@@ -982,7 +982,7 @@ public class AuthCheckTest extends JerseyTest {
             CellUtils.create(cellName, accessToken1, HttpStatus.SC_CREATED);
 
             // ロールの作成
-            RoleUtils.create(cellName, accessToken1, null, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(cellName, accessToken1, roleName, null, HttpStatus.SC_CREATED);
             // CellにACLの設定
             // ACLをtestcell1に設定
             setCellACL(cellName, roleName, accessToken1);
@@ -999,8 +999,8 @@ public class AuthCheckTest extends JerseyTest {
             AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user1, -1);
             AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user2, -1);
             // ロールの削除
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, null, roleName, -1);
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, null, roleName + "updated", -1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName + "updated", null, -1);
             // Cellの削除
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, cellName, -1);
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
@@ -1036,14 +1036,14 @@ public class AuthCheckTest extends JerseyTest {
             CellUtils.create(cellName, accessToken1, HttpStatus.SC_CREATED);
 
             // ロールの作成
-            RoleUtils.create(cellName, accessToken1, null, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(cellName, accessToken1, roleName, null, HttpStatus.SC_CREATED);
             setCellACL(cellName, roleName, accessToken1);
 
             // ロールの削除
-            RoleUtils.delete(cellName, accessToken1, null, roleName, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(cellName, accessToken1, roleName, null, HttpStatus.SC_NO_CONTENT);
 
             // ロールの作成
-            RoleUtils.create(cellName, accessToken1, null, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(cellName, accessToken1, roleName, null, HttpStatus.SC_CREATED);
             // セルレベルAPI操作
             // アカウント一覧取得
             AccountUtils.get(accessToken2, HttpStatus.SC_FORBIDDEN, cellName, user1);
@@ -1058,7 +1058,7 @@ public class AuthCheckTest extends JerseyTest {
             AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user1, -1);
             AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user2, -1);
             // ロールの削除
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, null, roleName, -1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
             // Cellの削除
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, cellName, -1);
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
@@ -1098,12 +1098,12 @@ public class AuthCheckTest extends JerseyTest {
             BoxUtils.create(cellName, boxName, accessToken1, HttpStatus.SC_CREATED);
 
             // ロールの作成
-            RoleUtils.create(cellName, accessToken1, boxName, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(cellName, accessToken1, roleName, boxName, HttpStatus.SC_CREATED);
 
             setBoxACL(cellName, boxName, roleName, accessToken1);
 
             // ロールの削除
-            RoleUtils.delete(cellName, accessToken1, boxName, roleName, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(cellName, accessToken1, roleName, boxName, HttpStatus.SC_NO_CONTENT);
 
             // セルレベルAPI操作
             // アカウント一覧取得
@@ -1113,7 +1113,7 @@ public class AuthCheckTest extends JerseyTest {
             AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user1, -1);
             AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user2, -1);
             // ロールの削除
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, boxName, roleName, -1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, boxName, -1);
             // Boxの削除
             BoxUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, boxName, -1);
             // Cellの削除

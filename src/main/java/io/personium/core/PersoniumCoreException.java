@@ -577,20 +577,23 @@ public class PersoniumCoreException extends RuntimeException {
          * {0}:RelationClassURL
          */
         public static final PersoniumCoreException BOX_THAT_MATCHES_RELATION_CLASS_URL_NOT_EXISTS = create("PR400-RM-0003"); // CHECKSTYLE IGNORE - To maintain readability
-        /**
-         * メッセージのRequestRelationのパースに失敗.
-         */
-        public static final PersoniumCoreException REQUEST_RELATION_PARSE_ERROR = create("PR409-RM-0001");
+
+// unnecessary.
+//        /**
+//         * メッセージのRequestRelationのパースに失敗.
+//         */
+//        public static final PersoniumCoreException REQUEST_RELATION_PARSE_ERROR = create("PR409-RM-0001");
 
         /**
          * 関係削除対象のRelationが存在しない.
          */
         public static final PersoniumCoreException REQUEST_RELATION_DOES_NOT_EXISTS = create("PR409-RM-0002");
 
-        /**
-         * メッセージのRequestRelationTargetのパースに失敗.
-         */
-        public static final PersoniumCoreException REQUEST_RELATION_TARGET_PARSE_ERROR = create("PR409-RM-0003");
+// unnecessary.
+//        /**
+//         * メッセージのRequestRelationTargetのパースに失敗.
+//         */
+//        public static final PersoniumCoreException REQUEST_RELATION_TARGET_PARSE_ERROR = create("PR409-RM-0003");
 
         /**
          * 関係削除対象のExtCellが存在しない.

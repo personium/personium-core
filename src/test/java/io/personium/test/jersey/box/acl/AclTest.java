@@ -32,14 +32,17 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
@@ -52,8 +55,6 @@ import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TestMethodUtils;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * BOXレベルACLのテスト.
@@ -268,7 +269,7 @@ public class AclTest extends JerseyTest {
             BoxUtils.create(TEST_CELL1, testBox, TOKEN);
 
             // Boxに紐付くRoleの作成
-            RoleUtils.create(TEST_CELL1, TOKEN, testBox, testRole, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, testRole, testBox, HttpStatus.SC_CREATED);
 
             // 上記Boxに上記RoleでACL設定
             DavResourceUtils.setACLwithBox(TEST_CELL1, TOKEN, HttpStatus.SC_OK, testBox, "",
@@ -295,7 +296,7 @@ public class AclTest extends JerseyTest {
 
         } finally {
             // Roleの削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, testBox, testRole);
+            RoleUtils.delete(TEST_CELL1, TOKEN, testRole, testBox);
 
             // Box1の削除
             BoxUtils.delete(TEST_CELL1, TOKEN, testBox);
@@ -314,9 +315,9 @@ public class AclTest extends JerseyTest {
             BoxUtils.create(TEST_CELL1, testBox, TOKEN);
 
             // Boxに紐付くRoleの作成
-            RoleUtils.create(TEST_CELL1, TOKEN, testBox, testRole, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, testRole, testBox, HttpStatus.SC_CREATED);
             // Boxに紐づかないRoleの作成
-            RoleUtils.create(TEST_CELL1, TOKEN, null, testRole, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, testRole, null, HttpStatus.SC_CREATED);
 
             // 上記BoxにBoxに紐付かないRoleでACL設定
             DavResourceUtils.setACLwithBox(TEST_CELL1, TOKEN, HttpStatus.SC_OK, testBox, "", ACL_SETTING_TEST,
@@ -343,9 +344,9 @@ public class AclTest extends JerseyTest {
 
         } finally {
             // Roleの削除(Boxに紐づく)
-            RoleUtils.delete(TEST_CELL1, TOKEN, testBox, testRole);
+            RoleUtils.delete(TEST_CELL1, TOKEN, testRole, testBox);
             // Roleの削除(Boxに紐づかない)
-            RoleUtils.delete(TEST_CELL1, TOKEN, null, testRole);
+            RoleUtils.delete(TEST_CELL1, TOKEN, testRole, null);
             // Boxの削除
             BoxUtils.delete(TEST_CELL1, TOKEN, testBox);
         }
@@ -380,7 +381,7 @@ public class AclTest extends JerseyTest {
             BoxUtils.create(TEST_CELL1, testBox2, TOKEN);
 
             // Roleの作成
-            RoleUtils.create(TEST_CELL1, TOKEN, testBox2, testRole02, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, testRole02, testBox2, HttpStatus.SC_CREATED);
 
             // 上記Boxに上記RoleでACL設定
             DavResourceUtils.setACLwithBox(TEST_CELL1, TOKEN, HttpStatus.SC_OK, testBox1, "",
@@ -408,7 +409,7 @@ public class AclTest extends JerseyTest {
         } finally {
 
             // Roleの削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, testBox2, testRole02);
+            RoleUtils.delete(TEST_CELL1, TOKEN, testRole02, testBox2);
 
             // Box1の削除
             BoxUtils.delete(TEST_CELL1, TOKEN, testBox1);
@@ -428,7 +429,7 @@ public class AclTest extends JerseyTest {
             BoxUtils.create(TEST_CELL1, testBox1, TOKEN);
 
             // Roleの作成
-            RoleUtils.create(TEST_CELL1, TOKEN, testBox1, testRole, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, testRole, testBox1, HttpStatus.SC_CREATED);
 
             // 上記Boxに上記RoleでACL設定
             DavResourceUtils.setACLwithRoleBaseUrl(TEST_CELL1, TOKEN, HttpStatus.SC_OK, testBox1, "",
@@ -457,7 +458,7 @@ public class AclTest extends JerseyTest {
         } finally {
 
             // Roleの削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, testBox1, testRole);
+            RoleUtils.delete(TEST_CELL1, TOKEN, testRole, testBox1);
 
             // Box1の削除
             BoxUtils.delete(TEST_CELL1, TOKEN, testBox1);
@@ -518,8 +519,8 @@ public class AclTest extends JerseyTest {
         String roleDelete = "role002";
         try {
             // box2に紐付くロール作成
-            RoleUtils.create(TEST_CELL1, TOKEN, box2, roleNotDelete, HttpStatus.SC_CREATED);
-            RoleUtils.create(TEST_CELL1, TOKEN, box2, roleDelete, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, roleNotDelete, box2, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, roleDelete, box2, HttpStatus.SC_CREATED);
 
             // ACLをtestcell1/box2に設定
             DavResourceUtils.setACLwithBox(TEST_CELL1, AbstractCase.BEARER_MASTER_TOKEN, HttpStatus.SC_OK, box2, "",
@@ -527,7 +528,7 @@ public class AclTest extends JerseyTest {
                     "<D:write/>", "");
 
             // roleを削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, box2, roleDelete, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleDelete, box2, HttpStatus.SC_NO_CONTENT);
 
             // PROPFINDでtestcell1/box2のACLを取得
             TResponse tresponse = DavResourceUtils.propfind("box/propfind-box-allprop.txt", TOKEN,
@@ -542,8 +543,8 @@ public class AclTest extends JerseyTest {
 
         } finally {
             // ロールの削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, box2, roleNotDelete, -1);
-            RoleUtils.delete(TEST_CELL1, TOKEN, box2, roleDelete, -1);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleNotDelete, box2, -1);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleDelete, box2, -1);
 
             // ACLの設定を元に戻す
             Http.request("box/acl-authtest.txt")
@@ -567,14 +568,14 @@ public class AclTest extends JerseyTest {
         String roleDelete = "role002";
         try {
             // box2に紐付くロール作成
-            RoleUtils.create(TEST_CELL1, TOKEN, null, roleDelete, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, roleDelete, null, HttpStatus.SC_CREATED);
 
             // ACLをtestcell1/box2に設定
             DavResourceUtils.setACLwithBox(TEST_CELL1, TOKEN, HttpStatus.SC_OK, box2, "",
                     ACL_SETTING_TEST, roleDelete, null, "<D:read/>", "");
 
             // roleを削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, null, roleDelete, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleDelete, null, HttpStatus.SC_NO_CONTENT);
 
             // PROPFINDでtestcell1/box2のACLを取得
             TResponse tresponse = DavResourceUtils.propfind("box/propfind-box-allprop.txt", TOKEN,
@@ -586,7 +587,7 @@ public class AclTest extends JerseyTest {
 
         } finally {
             // ロールの削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, null, roleDelete, -1);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleDelete, null, -1);
 
             // ACLの設定を元に戻す
             Http.request("box/acl-authtest.txt")
@@ -625,7 +626,7 @@ public class AclTest extends JerseyTest {
             BoxUtils.create(TEST_CELL1, testBox, TOKEN);
 
             // Boxに紐付くRoleの作成
-            RoleUtils.create(TEST_CELL1, TOKEN, testBox, testRole, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, testRole, testBox, HttpStatus.SC_CREATED);
 
             // 存在しないBoxを指定でACL設定
             DavResourceUtils.setACLwithBox(TEST_CELL1, TOKEN, HttpStatus.SC_BAD_REQUEST, testBox, "",
@@ -633,7 +634,7 @@ public class AclTest extends JerseyTest {
 
         } finally {
             // Roleの削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, testBox, testRole);
+            RoleUtils.delete(TEST_CELL1, TOKEN, testRole, testBox);
 
             // Box1の削除
             BoxUtils.delete(TEST_CELL1, TOKEN, testBox);
@@ -652,7 +653,7 @@ public class AclTest extends JerseyTest {
             BoxUtils.create(TEST_CELL1, testBox, TOKEN);
 
             // Boxに紐付くRoleの作成
-            RoleUtils.create(TEST_CELL1, TOKEN, testBox, testRole, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, testRole, testBox, HttpStatus.SC_CREATED);
 
             // 存在しないCellをxml:baseに指定してACL設定
             DavResourceUtils.setACLwithRoleBaseUrl(TEST_CELL1, TOKEN, HttpStatus.SC_BAD_REQUEST, testBox, "",
@@ -661,7 +662,7 @@ public class AclTest extends JerseyTest {
 
         } finally {
             // Roleの削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, testBox, testRole);
+            RoleUtils.delete(TEST_CELL1, TOKEN, testRole, testBox);
 
             // Box1の削除
             BoxUtils.delete(TEST_CELL1, TOKEN, testBox);
@@ -687,7 +688,7 @@ public class AclTest extends JerseyTest {
                     ACL_SETTING_TEST, testRole, testBox, "<D:read/>", "");
         } finally {
             // Roleの削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, null, testRole);
+            RoleUtils.delete(TEST_CELL1, TOKEN, testRole, null);
 
             // Box1の削除
             BoxUtils.delete(TEST_CELL1, TOKEN, testBox);
@@ -742,7 +743,7 @@ public class AclTest extends JerseyTest {
             BoxUtils.create(cellName, boxName, AbstractCase.MASTER_TOKEN_NAME, -1);
             DavResourceUtils.createODataCollection(AbstractCase.MASTER_TOKEN_NAME, -1, cellName, boxName, colName);
             AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, account, "password", -1);
-            RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, boxName, role1, -1);
+            RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, role1, boxName, -1);
             AccountUtils.createLinkWithRole(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName, account, role1, -1);
 
             // BoxにACL設定
@@ -769,10 +770,10 @@ public class AclTest extends JerseyTest {
 
             // ACL設定がされたRoleの削除
             AccountUtils.deleteLinksWithRole(cellName, boxName, AbstractCase.MASTER_TOKEN_NAME, account, role1, -1);
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, boxName, role1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, role1, boxName);
 
             // アクセスするアカウントはRoleと結びついていないとaceのチェック前で権限エラーとなるため、ACL設定がされていないRoleの作成
-            RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, boxName, role2, -1);
+            RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, role2, boxName, -1);
             AccountUtils.createLinkWithRole(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName, account, role2, -1);
 
             // ここから実際のテスト
