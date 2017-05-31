@@ -35,10 +35,7 @@ import io.personium.common.es.EsClient;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.model.impl.es.ads.AdsException;
-import io.personium.core.model.impl.es.ads.JdbcAds;
 import io.personium.core.model.impl.es.doc.CellDocHandler;
-import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.unit.core.UrlUtils;
@@ -75,36 +72,8 @@ public class CellAccessorTest {
         EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
         try {
             index.delete();
-            JdbcAds ads = new JdbcAds();
-            ads.deleteIndex(esUnitPrefix + INDEX_NAME);
         } catch (Exception ex) {
             System.out.println("");
-        }
-    }
-
-    /**
-     * 例外用Mock.
-     * @author Administrator
-     */
-    class JdbcAdsMock extends JdbcAds {
-
-        JdbcAdsMock() throws Exception {
-            super();
-        }
-
-        @Override
-        public void createCell(String index, EntitySetDocHandler docHandler) throws AdsException {
-            throw new AdsException("MockErrorCreare");
-        }
-
-        @Override
-        public void updateCell(String index, EntitySetDocHandler docHandler) throws AdsException {
-            throw new AdsException("MockErrorUpdate");
-        }
-
-        @Override
-        public void deleteCell(String index, String id) throws AdsException {
-            throw new AdsException("MockErrorDelete");
         }
     }
 

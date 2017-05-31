@@ -16,14 +16,13 @@
  */
 package io.personium.test;
 
-import junit.framework.TestSuite;
-
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 
 import io.personium.test.categories.Regression;
+import junit.framework.TestSuite;
 
 /**
  * 結合テスト用テストスイート.
@@ -34,7 +33,6 @@ import io.personium.test.categories.Regression;
         io.personium.core.model.file.AllTests.class,
         io.personium.core.model.impl.es.AllTests.class,
         io.personium.core.model.impl.es.accessor.AllTests.class,
-        io.personium.core.model.impl.es.ads.AllTests.class,
         io.personium.core.model.lock.AllTests.class,
         io.personium.core.rs.AllTests.class,
         io.personium.test.jersey.AllTests.class,
