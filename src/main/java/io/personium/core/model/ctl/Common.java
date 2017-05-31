@@ -93,7 +93,7 @@ public class Common {
      * $1:BaseURL
      * $2:CellName
      * $3:RelationName */
-    public static final String PATTERN_RELATION_CLASS_URL = "(^.+)/([^/]+)/__relation/__/(" + REGEX_RELATION_NAME + ")/?$";
+    public static final String PATTERN_RELATION_CLASS_URL = "(^.+)/([^/]+)/__relation/__/(" + REGEX_RELATION_NAME + ")/?$"; // CHECKSTYLE IGNORE - To maintain readability
     /** String containing "/__role/__/".<br>
      * Explanation of applicable group.<br>
      * $1:BaseURL
