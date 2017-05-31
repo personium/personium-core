@@ -23,34 +23,28 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.ads.AdsWriteFailureLogException;
-import io.personium.common.ads.AdsWriteFailureLogInfo;
-import io.personium.common.ads.AdsWriteFailureLogWriter;
 import io.personium.common.es.EsBulkRequest;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.EsType;
 import io.personium.common.es.query.PersoniumQueryBuilder;
+import io.personium.common.es.response.EsClientException;
 import io.personium.common.es.response.PersoniumActionResponse;
-import io.personium.common.es.response.PersoniumBulkItemResponse;
 import io.personium.common.es.response.PersoniumBulkResponse;
 import io.personium.common.es.response.PersoniumDeleteResponse;
 import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.common.es.response.PersoniumMultiSearchResponse;
 import io.personium.common.es.response.PersoniumSearchResponse;
-import io.personium.common.es.response.EsClientException;
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.ads.AdsConnectionException;
 import io.personium.core.model.impl.es.ads.AdsException;
 import io.personium.core.model.impl.es.ads.JdbcAds;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.model.impl.es.doc.LinkDocHandler;
-import io.personium.core.model.lock.Lock;
-import io.personium.core.model.lock.LockKeyComposer;
 
 /**
  * データストア層の基本処理を実装した基底クラス.
@@ -394,24 +388,6 @@ public class DataSourceAccessor {
         } catch (EsClientException.EsNoResponseException e) {
             throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
         }
-        if (this.ads != null) {
-            try {
-                this.ads.bulkEntity(this.index.getName(), adsBulkRequest);
-            } catch (AdsException e) {
-                PersoniumCoreLog.Server.DATA_STORE_ENTITY_BULK_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
-
-                for (EntitySetDocHandler docHandler : adsBulkRequest) {
-                    // Adsの登録に失敗した場合は、専用のログに書込む
-                    String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
-                            docHandler.getCellId(), null, docHandler.getNodeId());
-                    AdsWriteFailureLogInfo loginfo = new AdsWriteFailureLogInfo(
-                            this.getIndex().getName(), docHandler.getType(), lockKey,
-                            docHandler.getCellId(), docHandler.getId(),
-                            AdsWriteFailureLogInfo.OperationKind.CREATE, 1, docHandler.getUpdated());
-                    recordAdsWriteFailureLog(loginfo);
-                }
-            }
-        }
         return response;
     }
 
@@ -436,57 +412,6 @@ public class DataSourceAccessor {
             response = this.index.bulkRequest(routingId, esBulkRequest, false);
         } catch (EsClientException.EsNoResponseException e) {
             throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
-        }
-        if (this.ads != null) {
-            try {
-                // Entityテーブル更新
-                if (adsBulkEntityRequest.size() > 0) {
-                    this.ads.bulkUpdateEntity(this.index.getName(), adsBulkEntityRequest);
-                }
-            } catch (AdsException e) {
-                PersoniumCoreLog.Server.DATA_STORE_ENTITY_BULK_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
-
-                // Adsの登録に失敗した場合は、専用のログに書込む
-                // ESでのバージョン情報を取得するためにesBulkRequestをループさせている
-                PersoniumBulkItemResponse[] responseItems = response.items();
-                int responseIndex = 0;
-                int adsBulkEntityRequestIndex = 0;
-                for (EsBulkRequest request : esBulkRequest) {
-                    if (request.getType().equals(EsModel.TYPE_CTL_LINK)) {
-                        responseIndex++;
-                        continue;
-                    }
-                    PersoniumBulkItemResponse itemResponse = responseItems[responseIndex++];
-                    EntitySetDocHandler docHandler = adsBulkEntityRequest.get(adsBulkEntityRequestIndex++);
-                    String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
-                            docHandler.getCellId(), null, docHandler.getNodeId());
-                    AdsWriteFailureLogInfo loginfo = new AdsWriteFailureLogInfo(
-                            this.getIndex().getName(), docHandler.getType(), lockKey,
-                            docHandler.getCellId(), docHandler.getId(),
-                            AdsWriteFailureLogInfo.OperationKind.UPDATE, itemResponse.version(),
-                            docHandler.getUpdated());
-                    recordAdsWriteFailureLog(loginfo);
-                }
-            }
-            try {
-                // Linkテーブル追加
-                if (adsBulkLinkRequest.size() > 0) {
-                    this.ads.bulkCreateLink(this.index.getName(), adsBulkLinkRequest);
-                }
-            } catch (AdsException e) {
-                PersoniumCoreLog.Server.DATA_STORE_ENTITY_BULK_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
-
-                for (LinkDocHandler docHandler : adsBulkLinkRequest) {
-                    // Adsの登録に失敗した場合は、専用のログに書込む
-                    String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
-                            docHandler.getCellId(), null, docHandler.getNodeId());
-                    AdsWriteFailureLogInfo loginfo = new AdsWriteFailureLogInfo(
-                            this.getIndex().getName(), EsModel.TYPE_CTL_LINK, lockKey,
-                            docHandler.getCellId(), docHandler.getId(),
-                            AdsWriteFailureLogInfo.OperationKind.CREATE, 1, docHandler.getUpdated());
-                    recordAdsWriteFailureLog(loginfo);
-                }
-            }
         }
         return response;
     }
@@ -590,23 +515,6 @@ public class DataSourceAccessor {
             // 接続に失敗した場合はエラーレスポンスを返却する
             PersoniumCoreLog.Server.ADS_CONNECTION_ERROR.params(e.getMessage()).reason(e).writeLog();
             throw PersoniumCoreException.Server.ADS_CONNECTION_ERROR.reason(e);
-        }
-    }
-
-    /**
-     * Ads書込みエラー時にファイルにリペア用のエラー情報を書込む.
-     * @param loginfo リペア用のエラー情報
-     */
-    protected void recordAdsWriteFailureLog(AdsWriteFailureLogInfo loginfo) {
-        AdsWriteFailureLogWriter adsWriteFailureLogWriter = AdsWriteFailureLogWriter.getInstance(
-                PersoniumUnitConfig.getAdsWriteFailureLogDir(),
-                PersoniumUnitConfig.getCoreVersion(),
-                PersoniumUnitConfig.getAdsWriteFailureLogPhysicalDelete());
-        try {
-            adsWriteFailureLogWriter.writeActiveFile(loginfo);
-        } catch (AdsWriteFailureLogException e2) {
-            PersoniumCoreLog.Server.WRITE_ADS_FAILURE_LOG_ERROR.reason(e2).writeLog();
-            PersoniumCoreLog.Server.WRITE_ADS_FAILURE_LOG_INFO.params(loginfo.toString());
         }
     }
 

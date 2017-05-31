@@ -16,17 +16,10 @@
  */
 package io.personium.core.model.impl.es.accessor;
 
-import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumDeleteResponse;
 import io.personium.common.es.response.PersoniumIndexResponse;
-import io.personium.common.es.util.PersoniumUUID;
-import io.personium.core.PersoniumCoreLog;
-import io.personium.core.model.impl.es.EsModel;
-import io.personium.core.model.impl.es.ads.AdsException;
 import io.personium.core.model.impl.es.doc.LinkDocHandler;
-import io.personium.core.model.lock.Lock;
-import io.personium.core.model.lock.LockKeyComposer;
 
 /**
  * ODataLink情報のアクセス処理を実装したクラス.
@@ -44,16 +37,6 @@ public class ODataLinkAccessor extends DataSourceAccessor {
     }
 
     /**
-     * UUIDでODataLinkのデータ登録を行う.
-     * @param docHandler 登録データ
-     * @return 登録結果
-     */
-    public PersoniumIndexResponse create(final LinkDocHandler docHandler) {
-        String id = PersoniumUUID.randomUUID();
-        return this.create(id, docHandler);
-    }
-
-    /**
      * ODataLinkのデータ登録を行う.
      * @param id 登録データのID
      * @param docHandler 登録データ
@@ -64,82 +47,7 @@ public class ODataLinkAccessor extends DataSourceAccessor {
         super.prepareDataUpdate(getIndex().getName());
         docHandler.setId(id);
         PersoniumIndexResponse response = super.create(id, docHandler.createLinkDoc());
-        createAds(docHandler);
         return response;
-    }
-
-    /**
-     * マスターデータを登録する.
-     * @param docHandler 登録データ
-     */
-    protected void createAds(LinkDocHandler docHandler) {
-        // 登録に成功した場合、マスタデータを書き込む
-        if (getAds() != null) {
-            try {
-                getAds().createLink(getIndex().getName(), docHandler);
-            } catch (AdsException e) {
-                PersoniumCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
-
-                // Adsの登録に失敗した場合は、専用のログに書込む
-                String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
-                        docHandler.getCellId(), null, docHandler.getNodeId());
-                AdsWriteFailureLogInfo loginfo = new AdsWriteFailureLogInfo(
-                        this.getIndex().getName(), EsModel.TYPE_CTL_LINK, lockKey,
-                        docHandler.getCellId(), docHandler.getId(),
-                        AdsWriteFailureLogInfo.OperationKind.CREATE, 1, docHandler.getUpdated());
-                recordAdsWriteFailureLog(loginfo);
-            }
-        }
-    }
-
-    /**
-     * ODataLinkのデータ更新を行う.
-     * @param id 更新データのID
-     * @param docHandler 登録データ
-     * @return 更新結果
-     */
-    public PersoniumIndexResponse update(String id, LinkDocHandler docHandler) {
-        return this.update(id, docHandler, -1);
-    }
-
-    /**
-     * バージョン指定ありでODataLinkのデータ更新を行う.
-     * @param id 更新データのID
-     * @param docHandler 登録データ
-     * @param version バージョン情報
-     * @return 更新結果
-     */
-    public PersoniumIndexResponse update(String id, LinkDocHandler docHandler, long version) {
-        // マスタ書き込みでエラーが発生したためES更新を不可能とする
-        super.prepareDataUpdate(getIndex().getName());
-        PersoniumIndexResponse response = super.update(id, docHandler.createLinkDoc(), version);
-        updateAds(docHandler, response.getVersion());
-        return response;
-    }
-
-    /**
-     * マスターデータを更新する.
-     * @param docHandler 更新データ
-     * @param version Elasticsearchに登録されたドキュメントのバージョン
-     */
-    protected void updateAds(LinkDocHandler docHandler, long version) {
-        // 更新に成功した場合、マスタデータを書き込む
-        if (getAds() != null) {
-            try {
-                getAds().updateLink(getIndex().getName(), docHandler);
-            } catch (AdsException e) {
-                PersoniumCoreLog.Server.DATA_STORE_ENTITY_UPDATE_FAIL.params(e.getMessage()).reason(e).writeLog();
-
-                // Adsの登録に失敗した場合は、専用のログに書込む
-                String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
-                        docHandler.getCellId(), null, docHandler.getNodeId());
-                AdsWriteFailureLogInfo loginfo = new AdsWriteFailureLogInfo(
-                        this.getIndex().getName(), EsModel.TYPE_CTL_LINK, lockKey,
-                        docHandler.getCellId(), docHandler.getId(),
-                        AdsWriteFailureLogInfo.OperationKind.UPDATE, version, docHandler.getUpdated());
-                recordAdsWriteFailureLog(loginfo);
-            }
-        }
     }
 
     /**
@@ -163,34 +71,7 @@ public class ODataLinkAccessor extends DataSourceAccessor {
         // マスタ書き込みでエラーが発生したためES更新を不可能とする
         super.prepareDataUpdate(getIndex().getName());
         PersoniumDeleteResponse response = super.delete(id, version);
-        deleteAds(docHandler, response.getVersion());
         return response;
     }
 
-    /**
-     * マスターデータを削除する.
-     * @param docHandler 削除データ
-     * @param version 削除したデータのバージョン
-     */
-    protected void deleteAds(LinkDocHandler docHandler, long version) {
-        String id = docHandler.getId();
-
-        // 削除に成功した場合、マスタデータを書き込む
-        if (getAds() != null) {
-            try {
-                getAds().deleteLink(getIndex().getName(), id);
-            } catch (AdsException e) {
-                PersoniumCoreLog.Server.DATA_STORE_ENTITY_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
-
-                // Adsの登録に失敗した場合は、専用のログに書込む
-                String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
-                        docHandler.getCellId(), null, docHandler.getNodeId());
-                AdsWriteFailureLogInfo loginfo = new AdsWriteFailureLogInfo(
-                        this.getIndex().getName(), EsModel.TYPE_CTL_LINK, lockKey,
-                        docHandler.getCellId(), docHandler.getId(),
-                        AdsWriteFailureLogInfo.OperationKind.DELETE, version, docHandler.getUpdated());
-                recordAdsWriteFailureLog(loginfo);
-            }
-        }
-    }
 }

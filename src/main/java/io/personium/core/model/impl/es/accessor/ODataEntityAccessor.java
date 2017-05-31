@@ -16,15 +16,7 @@
  */
 package io.personium.core.model.impl.es.accessor;
 
-import java.sql.SQLException;
-
-import io.personium.common.ads.AdsWriteFailureLogInfo;
 import io.personium.common.es.EsIndex;
-import io.personium.core.PersoniumCoreLog;
-import io.personium.core.model.impl.es.ads.AdsException;
-import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
-import io.personium.core.model.lock.Lock;
-import io.personium.core.model.lock.LockKeyComposer;
 
 /**
  * ODataEntityのアクセス処理を実装したクラス.
@@ -41,103 +33,4 @@ public class ODataEntityAccessor extends AbstractEntitySetAccessor {
         super(index, name, routingId);
     }
 
-    /**
-     * マスターデータを登録する.
-     * @param docHandler 登録データ
-     */
-    protected void createAds(EntitySetDocHandler docHandler) {
-        // 登録に成功した場合、マスタデータを書き込む
-        if (getAds() != null) {
-            String indexName = getIndex().getName();
-            try {
-                getAds().createEntity(indexName, docHandler);
-            } catch (AdsException e) {
-                // Indexが存在しない場合はインデックスを作成する。
-                if (e.getCause() instanceof SQLException
-                        && MYSQL_BAD_TABLE_ERROR.equals(((SQLException) e.getCause()).getSQLState())) {
-                    PersoniumCoreLog.Server.ES_INDEX_NOT_EXIST.params(indexName).writeLog();
-                    createAdsIndex(indexName);
-                    try {
-                        getAds().createEntity(indexName, docHandler);
-                    } catch (AdsException e1) {
-                        PersoniumCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(
-                                e1.getMessage()).reason(e1).writeLog();
-
-                        // Adsの登録に失敗した場合は、専用のログに書込む
-                        String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
-                                docHandler.getCellId(), null, docHandler.getNodeId());
-                        AdsWriteFailureLogInfo loginfo = new AdsWriteFailureLogInfo(
-                                this.getIndex().getName(), docHandler.getType(), lockKey,
-                                docHandler.getCellId(), docHandler.getId(),
-                                AdsWriteFailureLogInfo.OperationKind.CREATE, 1, docHandler.getUpdated());
-                        recordAdsWriteFailureLog(loginfo);
-                    }
-                } else {
-                    PersoniumCoreLog.Server.DATA_STORE_ENTITY_CREATE_FAIL.params(e.getMessage()).reason(e).writeLog();
-
-                    // Adsの登録に失敗した場合は、専用のログに書込む
-                    String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
-                            docHandler.getCellId(), null, docHandler.getNodeId());
-                    AdsWriteFailureLogInfo loginfo = new AdsWriteFailureLogInfo(
-                            this.getIndex().getName(), docHandler.getType(), lockKey,
-                            docHandler.getCellId(), docHandler.getId(),
-                            AdsWriteFailureLogInfo.OperationKind.CREATE, 1, docHandler.getUpdated());
-                    recordAdsWriteFailureLog(loginfo);
-                }
-            }
-        }
-    }
-
-    /**
-     * マスターデータを更新する.
-     * @param docHandler 登録データ
-     * @param version Elasticsearchに登録されたドキュメントのバージョン
-     */
-    protected void updateAds(EntitySetDocHandler docHandler, long version) {
-        // 更新に成功した場合、マスタデータを更新する
-        if (getAds() != null) {
-            try {
-                getAds().updateEntity(getIndex().getName(), docHandler);
-            } catch (AdsException e) {
-                PersoniumCoreLog.Server.DATA_STORE_ENTITY_UPDATE_FAIL.params(e.getMessage()).reason(e).writeLog();
-
-                // Adsの登録に失敗した場合は、専用のログに書込む
-                String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
-                        docHandler.getCellId(), null, docHandler.getNodeId());
-                AdsWriteFailureLogInfo loginfo = new AdsWriteFailureLogInfo(
-                        this.getIndex().getName(), docHandler.getType(), lockKey,
-                        docHandler.getCellId(), docHandler.getId(),
-                        AdsWriteFailureLogInfo.OperationKind.UPDATE, version, docHandler.getUpdated());
-                recordAdsWriteFailureLog(loginfo);
-            }
-        }
-    }
-
-    /**
-     * マスタデータを削除する.
-     * @param docHandler 削除データ
-     * @param version 削除したデータのバージョン
-     */
-    @Override
-    protected void deleteAds(EntitySetDocHandler docHandler, long version) {
-        String id = docHandler.getId();
-
-        // 削除に成功した場合、マスタデータを削除する
-        if (getAds() != null) {
-            try {
-                getAds().deleteEntity(getIndex().getName(), id);
-            } catch (AdsException e) {
-                PersoniumCoreLog.Server.DATA_STORE_ENTITY_DELETE_FAIL.params(e.getMessage()).reason(e).writeLog();
-
-                // Adsの登録に失敗した場合は、専用のログに書込む
-                String lockKey = LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_ODATA,
-                        docHandler.getCellId(), null, docHandler.getNodeId());
-                AdsWriteFailureLogInfo loginfo = new AdsWriteFailureLogInfo(
-                        this.getIndex().getName(), docHandler.getType(), lockKey,
-                        docHandler.getCellId(), docHandler.getId(),
-                        AdsWriteFailureLogInfo.OperationKind.DELETE, version, docHandler.getUpdated());
-                recordAdsWriteFailureLog(loginfo);
-            }
-        }
-    }
 }

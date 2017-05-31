@@ -60,6 +60,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import io.personium.common.auth.token.Role;
+import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
@@ -81,6 +82,8 @@ import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.model.file.BinaryDataNotFoundException;
 import io.personium.core.model.file.StreamingOutputForDavFile;
 import io.personium.core.model.file.StreamingOutputForDavFileWithRange;
+import io.personium.core.model.impl.es.EsModel;
+import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.odata.UserSchemaODataProducer;
 import io.personium.core.model.jaxb.Ace;
 import io.personium.core.model.jaxb.Acl;
@@ -1148,6 +1151,24 @@ public class DavCmpFsImpl implements DavCmp {
         // go to the top ancestor DavCmp (BoxCmp) recursively, and BoxCmp
         // overrides here and give root url.
         return this.parent.getUrl() + "/" + this.name;
+    }
+
+    /**
+     * BoxIdでEsを検索する.
+     * @param cellObj Cell
+     * @param boxId ボックスId
+     * @return 検索結果
+     */
+    public static Map<String, Object> searchBox(final Cell cellObj, final String boxId) {
+
+        EntitySetAccessor boxType = EsModel.box(cellObj);
+        PersoniumGetResponse getRes = boxType.get(boxId);
+        if (getRes == null || !getRes.isExists()) {
+            PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Box Id Not Hit").writeLog();
+
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
+        }
+        return getRes.getSource();
     }
 
     /**
