@@ -40,9 +40,6 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.EsModel;
-import io.personium.core.model.impl.es.ads.AdsConnectionException;
-import io.personium.core.model.impl.es.ads.AdsException;
-import io.personium.core.model.impl.es.ads.JdbcAds;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.model.impl.es.doc.LinkDocHandler;
 
@@ -52,7 +49,6 @@ import io.personium.core.model.impl.es.doc.LinkDocHandler;
 public class DataSourceAccessor {
     private EsIndex index;
     private EsType type;
-    private JdbcAds ads;
     private String routingid;
 
     /** ログ用オブジェクト. */
@@ -64,17 +60,6 @@ public class DataSourceAccessor {
      */
     public DataSourceAccessor(EsIndex index) {
         this.index = index;
-        try {
-            if (PersoniumUnitConfig.getEsAdsType().equals(PersoniumUnitConfig.ES.ADS.TYPE_JDBC)) {
-                ads = new JdbcAds();
-            } else {
-                ads = null;
-            }
-        } catch (AdsConnectionException ex) {
-            // 初回接続エラー時は接続エラーのログを出力する.
-            PersoniumCoreLog.Server.ADS_CONNECTION_ERROR.params(ex.getMessage()).reason(ex).writeLog();
-            throw PersoniumCoreException.Server.ADS_CONNECTION_ERROR;
-        }
     }
 
     /**
@@ -89,33 +74,6 @@ public class DataSourceAccessor {
         int interval = Integer.valueOf(PersoniumUnitConfig.getESRetryInterval());
         this.type = EsModel.type(index.getName(), name, routingId, times, interval);
         this.routingid = routingId;
-        try {
-            if (PersoniumUnitConfig.getEsAdsType().equals(PersoniumUnitConfig.ES.ADS.TYPE_JDBC)) {
-                ads = new JdbcAds();
-            } else {
-                ads = null;
-            }
-        } catch (AdsConnectionException ex) {
-            // 初回接続エラー時は接続エラーのログを出力する.
-            PersoniumCoreLog.Server.ADS_CONNECTION_ERROR.params(ex.getMessage()).reason(ex).writeLog();
-            throw PersoniumCoreException.Server.ADS_CONNECTION_ERROR;
-        }
-    }
-
-    /**
-     * Adsのゲッター.
-     * @return JdbcAds
-     */
-    protected JdbcAds getAds() {
-        return this.ads;
-    }
-
-    /**
-     * Adsのセッター.
-     * @param ads JdbcAds
-     */
-    protected void setAds(JdbcAds ads) {
-        this.ads = ads;
     }
 
     /**
@@ -194,7 +152,6 @@ public class DataSourceAccessor {
             PersoniumCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
             try {
                 this.index.create();
-                createAdsIndex(null);
                 return this.type.create(id, data);
             } catch (EsClientException.EsNoResponseException esRetry) {
                 throw PersoniumCoreException.Server.ES_RETRY_OVER.params(esRetry.getMessage());
@@ -221,7 +178,6 @@ public class DataSourceAccessor {
             PersoniumCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
             try {
                 this.index.create();
-                createAdsIndex(docHandler.getUnitUserName());
                 return this.type.create(id, data);
             } catch (EsClientException.EsNoResponseException esRetry) {
                 throw PersoniumCoreException.Server.ES_RETRY_OVER.params(esRetry.getMessage());
@@ -248,7 +204,6 @@ public class DataSourceAccessor {
             PersoniumCoreLog.Server.ES_INDEX_NOT_EXIST.params(this.index.getName()).writeLog();
             try {
                 this.index.create();
-                createAdsIndex(null);
                 return this.type.update(id, data, version);
             } catch (EsClientException.EsNoResponseException esRetry) {
                 throw PersoniumCoreException.Server.ES_RETRY_OVER.params(esRetry.getMessage());
@@ -379,8 +334,6 @@ public class DataSourceAccessor {
     public PersoniumBulkResponse bulkCreate(List<EsBulkRequest> esBulkRequest,
             List<EntitySetDocHandler> adsBulkRequest,
             String routingId) {
-        // マスタ書き込みでエラーが発生したためES更新を不可能とする
-        prepareDataUpdate(this.index.getName());
 
         PersoniumBulkResponse response = null;
         try {
@@ -404,8 +357,6 @@ public class DataSourceAccessor {
             List<EntitySetDocHandler> adsBulkEntityRequest,
             List<LinkDocHandler> adsBulkLinkRequest,
             String routingId) {
-        // マスタ書き込みでエラーが発生したためES更新を不可能とする
-        prepareDataUpdate(this.index.getName());
 
         PersoniumBulkResponse response = null;
         try {
@@ -423,18 +374,6 @@ public class DataSourceAccessor {
      */
     protected void deleteByQuery(String routingId, PersoniumQueryBuilder deleteQuery) {
         this.index.deleteByQuery(routingId, deleteQuery);
-    }
-
-    /**
-     * 指定されたIDのセルのリソースを削除する.
-     * @param cellId 削除対象のセルID
-     * @param unitUserName ユニットユーザ名
-     * @throws AdsException 削除に失敗
-     */
-    protected void cellBulkDeletionAds(String cellId, String unitUserName) throws AdsException {
-        this.ads.deleteCellResourceFromEntity(unitUserName, cellId);
-        this.ads.deleteCellResourceFromDavNode(unitUserName, cellId);
-        this.ads.deleteCellResourceFromLink(unitUserName, cellId);
     }
 
     /**
@@ -472,49 +411,6 @@ public class DataSourceAccessor {
             return this.index.multiSearch(routingId, queryList);
         } catch (EsClientException.EsNoResponseException e) {
             throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
-        }
-    }
-
-    /**
-     * 引数で渡されたUnitUser名でADS上にUnitUserを作成する.
-     * @param unitUserName UnitUser名。nullの場合はEsIndexの値を使用する。
-     */
-    protected void createAdsIndex(String unitUserName) {
-        if (ads == null) {
-            return;
-        }
-        String indexName = this.index.getName();
-        if (unitUserName != null) {
-            indexName = unitUserName;
-        }
-        try {
-            ads.createIndex(indexName);
-        } catch (AdsException adsEx) {
-            // TODO エラー処理が必要？参照モードにする必要があるのでは？要検討。
-            PersoniumCoreLog.Server.FAILED_TO_CREATE_ADS.params(indexName).reason(adsEx).writeLog();
-        }
-    }
-
-    /**
-     * データの登録/更新/削除実行前の処理.
-     * @param unitId unitId
-     */
-    protected void prepareDataUpdate(final String unitId) {
-        checkAdsConnection();
-    }
-
-    /**
-     * Adsの接続確認を行う.
-     */
-    protected void checkAdsConnection() {
-        try {
-            if (ads != null) {
-                ads.checkConnection();
-            }
-        } catch (AdsException e) {
-            // 接続に失敗した場合はエラーレスポンスを返却する
-            PersoniumCoreLog.Server.ADS_CONNECTION_ERROR.params(e.getMessage()).reason(e).writeLog();
-            throw PersoniumCoreException.Server.ADS_CONNECTION_ERROR.reason(e);
         }
     }
 

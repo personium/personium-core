@@ -19,11 +19,9 @@ package io.personium.core.model.impl.es.accessor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
@@ -129,44 +127,8 @@ public class CellAccessorTest {
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
 
-        // マスタにデータが登録されていることを確認
-        if (cellAccessor.getAds() != null) {
-            JdbcAds ads = null;
-            try {
-                ads = new JdbcAds();
-                assertEquals(1, ads.countCell(esUnitPrefix + INDEX_NAME));
-            } catch (Exception e) {
-                fail(e.getMessage());
-            }
-        }
-
         // データを削除する
         cellAccessor.delete(docHandler);
-    }
-
-    /**
-     * create処理にてAdsが例外を上げた場合でも正常に終了すること.
-     */
-    @Test
-    public void create処理にてAdsが例外を上げた場合でも正常に終了すること() {
-        // 事前準備
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
-        EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
-        assertNotNull(index);
-        CellAccessor cellAccessor = new CellAccessor(index, TYPE_NAME, ROUTING_ID_NAME);
-        CellDocHandler docHandler = createTestCellDocHandler();
-        try {
-            cellAccessor.setAds(new JdbcAdsMock());
-        } catch (Exception e1) {
-            throw new RuntimeException(e1);
-        }
-
-        // データ登録実行
-        PersoniumIndexResponse response = cellAccessor.create(docHandler);
-
-        // レスポンスのチェック
-        assertNotNull(response);
-        assertFalse(response.getId().equals(""));
     }
 
     /**
@@ -195,53 +157,8 @@ public class CellAccessorTest {
         assertNotNull(updateResponse);
         assertEquals(createResponse.getId(), updateResponse.getId());
 
-        // マスタにデータが更新されていることを確認
-        if (cellAccessor.getAds() != null) {
-            JdbcAds ads = null;
-            try {
-                ads = new JdbcAds();
-                List<JSONObject> list = ads.getCellList(esUnitPrefix + INDEX_NAME, 0, 1);
-                assertEquals(1, list.size());
-                assertEquals(JSONObject.toJSONString(staticFields), ((JSONObject) list.get(0).get("source")).get("s"));
-            } catch (Exception e) {
-                fail(e.getMessage());
-            }
-        }
-
         // データを削除する
         cellAccessor.delete(docHandler);
-    }
-
-    /**
-     * update処理にてAdsが例外を上げた場合でも正常に終了すること.
-     */
-    @Test
-    public void update処理にてAdsが例外を上げた場合でも正常に終了すること() {
-        // 事前準備
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
-        EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
-        assertNotNull(index);
-        CellAccessor cellAccessor = new CellAccessor(index, TYPE_NAME, ROUTING_ID_NAME);
-        CellDocHandler docHandler = createTestCellDocHandler();
-        PersoniumIndexResponse createResponse = cellAccessor.create(docHandler);
-        assertNotNull(createResponse);
-        assertFalse(createResponse.getId().equals(""));
-
-        // データ更新実行
-        try {
-            cellAccessor.setAds(new JdbcAdsMock());
-        } catch (Exception e1) {
-            throw new RuntimeException(e1);
-        }
-        Map<String, Object> staticFields = new HashMap<String, Object>();
-        staticFields.put("test", "testdata");
-        docHandler.setStaticFields(staticFields);
-
-        PersoniumIndexResponse updateResponse = cellAccessor.update(createResponse.getId(), docHandler);
-
-        // レスポンスのチェック
-        assertNotNull(updateResponse);
-        assertEquals(createResponse.getId(), updateResponse.getId());
     }
 
     /**
@@ -262,40 +179,6 @@ public class CellAccessorTest {
         // データを削除する
         cellAccessor.delete(docHandler);
 
-        // データが削除されていることを確認する
-        if (cellAccessor.getAds() != null) {
-            JdbcAds ads = null;
-            try {
-                ads = new JdbcAds();
-                assertEquals(0, ads.countCell(esUnitPrefix + INDEX_NAME));
-            } catch (Exception e) {
-                fail(e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * delete処理にてAdsが例外を上げた場合でも正常に終了すること.
-     */
-    @Test
-    public void delete処理にてAdsが例外を上げた場合でも正常に終了すること() {
-        // 事前準備
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
-        EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
-        assertNotNull(index);
-        CellAccessor cellAccessor = new CellAccessor(index, TYPE_NAME, ROUTING_ID_NAME);
-        CellDocHandler docHandler = createTestCellDocHandler();
-        PersoniumIndexResponse response = cellAccessor.create(docHandler);
-        assertNotNull(response);
-        assertFalse(response.getId().equals(""));
-        try {
-            cellAccessor.setAds(new JdbcAdsMock());
-        } catch (Exception e1) {
-            throw new RuntimeException(e1);
-        }
-
-        // データを削除する
-        cellAccessor.delete(docHandler);
     }
 
     /**

@@ -43,8 +43,6 @@ public class ODataLinkAccessor extends DataSourceAccessor {
      * @return 登録結果
      */
     public PersoniumIndexResponse create(String id, LinkDocHandler docHandler) {
-        // マスタ書き込みでエラーが発生したためES更新を不可能とする
-        super.prepareDataUpdate(getIndex().getName());
         docHandler.setId(id);
         PersoniumIndexResponse response = super.create(id, docHandler.createLinkDoc());
         return response;
@@ -68,8 +66,6 @@ public class ODataLinkAccessor extends DataSourceAccessor {
     public PersoniumDeleteResponse delete(final LinkDocHandler docHandler, long version) {
         String id = docHandler.getId();
 
-        // マスタ書き込みでエラーが発生したためES更新を不可能とする
-        super.prepareDataUpdate(getIndex().getName());
         PersoniumDeleteResponse response = super.delete(id, version);
         return response;
     }

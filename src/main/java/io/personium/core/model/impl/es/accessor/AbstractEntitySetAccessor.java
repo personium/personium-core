@@ -60,8 +60,6 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
      * @return 登録結果
      */
     public PersoniumIndexResponse create(String id, EntitySetDocHandler docHandler) {
-        // マスタ書き込みでエラーが発生したためES更新を不可能とする
-        prepareDataUpdate(getIndex().getName());
         docHandler.setId(id);
         PersoniumIndexResponse response = create(id, docHandler.getSource(), docHandler);
         return response;
@@ -86,8 +84,6 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
      * @return 更新結果
      */
     public PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler, long version) {
-        // マスタ書き込みでエラーが発生したためES更新を不可能とする
-        prepareDataUpdate(getIndex().getName());
         PersoniumIndexResponse response = update(id, docHandler.getSource(), version);
         return response;
     }
@@ -112,8 +108,6 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     public PersoniumDeleteResponse delete(EntitySetDocHandler docHandler, long version) {
         String id = docHandler.getId();
 
-        // マスタ書き込みでエラーが発生したためES更新を不可能とする
-        super.prepareDataUpdate(getIndex().getName());
         PersoniumDeleteResponse response = super.delete(id, version);
         return response;
     }
