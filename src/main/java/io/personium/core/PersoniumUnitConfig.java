@@ -207,6 +207,11 @@ public class PersoniumUnitConfig {
          * トークンを暗号化する際に利用している秘密鍵.
          */
         public static final String AUTH_PASSWORD_SALT = KEY_ROOT + "security.auth.password.salt";
+
+        /**
+         * Encrypt the DAV file (true: enabled false: disabled (default)).
+         */
+        public static final String DAV_ENCRYPT_ENABLED = KEY_ROOT + "security.dav.encrypt.enabled";
     }
 
     /**
@@ -1505,6 +1510,14 @@ public class PersoniumUnitConfig {
      */
     public static String getAuthPasswordSalt() {
         return get(Security.AUTH_PASSWORD_SALT);
+    }
+
+    /**
+     * Encrypt the DAV file.
+     * @return true: enabled false: disabled
+     */
+    public static boolean isDavEncryptEnabled() {
+        return Boolean.parseBoolean(get(Security.DAV_ENCRYPT_ENABLED));
     }
 
     /**

@@ -304,14 +304,8 @@ public final class PersoniumEngineSvcCollectionResource {
         if (davCmp instanceof DavCmpFsImpl) {
             DavCmpFsImpl dcmp = (DavCmpFsImpl) davCmp;
             req.addHeader("X-Personium-Fs-Path", dcmp.getFsPath());
+            req.addHeader("X-Personium-Fs-Routing-Id", dcmp.getCellId());
         }
-//        } else if (davCmp instanceof DavCmpEsImpl) {
-//            DavCmpEsImpl dcmp = (DavCmpEsImpl) davCmp;
-//            req.addHeader("X-Personium-Es-Index", dcmp.getEsColType().getIndex().getName());
-//            req.addHeader("X-Personium-Es-Id", dcmp.getNodeId());
-//            req.addHeader("X-Personium-Es-Type", dcmp.getEsColType().getType());
-//            req.addHeader("X-Personium-Es-Routing-Id", this.davRsCmp.getCell().getId());
-//        }
         req.addHeader("X-Personium-Box-Schema", this.davRsCmp.getBox().getSchema());
 
         // リレイまでのヘッダを追加

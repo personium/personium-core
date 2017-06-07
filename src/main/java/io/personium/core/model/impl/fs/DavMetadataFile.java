@@ -41,31 +41,34 @@ public class DavMetadataFile {
 
     JSONObject json = new JSONObject();
 
-    /* JSON Key for ID. */
+    /** JSON Key for ID. */
     private static final String KEY_ID = "i";
 
-    /* JSON Key for Node Type. */
+    /** JSON Key for Node Type. */
     private static final String KEY_NODE_TYPE = "t";
 
-    /* JSON Key for ACL. */
+    /** JSON Key for ACL. */
     private static final String KEY_ACL = "a";
 
-    /* JSON Key for PROPSを保存するJSONキー. */
+    /** JSON Key for PROPSを保存するJSONキー. */
     private static final String KEY_PROPS = "d";
 
-    /* JSON Key for published. */
+    /** JSON Key for published. */
     private static final String KEY_PUBLISHED = "p";
 
-    /* JSON Key for updated. */
+    /** JSON Key for updated. */
     private static final String KEY_UPDATED = "u";
 
-    /* JSON Key for ContentType. */
+    /** JSON Key for ContentType. */
     private static final String KEY_CONTENT_TYPE = "ct";
 
-    /* JSON Key for Content Length. */
+    /** JSON Key for Content Length. */
     private static final String KEY_CONTENT_LENGTH = "cl";
 
-    /* JSON Key for Version. */
+    /** JSON Key for Encryption Type. */
+    private static final String KEY_ENCRYPTION_TYPE = "et";
+
+    /** JSON Key for Version. */
     private static final String KEY_VERSION = "v";
 
     /**
@@ -289,6 +292,21 @@ public class DavMetadataFile {
     @SuppressWarnings("unchecked")
     public void setContentLength(long contentLength) {
         this.json.put(KEY_CONTENT_LENGTH, contentLength);
+    }
+
+    /**
+     * @return encryption type string.
+     */
+    public String getEncryptionType() {
+        return (String) this.json.get(KEY_ENCRYPTION_TYPE);
+    }
+
+    /**
+     * @param encryptionType encryption type string
+     */
+    @SuppressWarnings("unchecked")
+    public void setEncryptionType(String encryptionType) {
+        this.json.put(KEY_ENCRYPTION_TYPE, encryptionType);
     }
 
     /**
