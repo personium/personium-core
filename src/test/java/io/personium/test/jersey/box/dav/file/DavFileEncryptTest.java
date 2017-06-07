@@ -50,6 +50,7 @@ public class DavFileEncryptTest extends DavFileTest {
      */
     @AfterClass
     public static void afterClass() {
-        PersoniumUnitConfig.set("io.personium.core.security.dav.encrypt.enabled", encryptEnabled);
+        PersoniumUnitConfig.set("io.personium.core.security.dav.encrypt.enabled",
+                encryptEnabled != null ? encryptEnabled : "false"); // CHECKSTYLE IGNORE
     }
 }
