@@ -19,6 +19,7 @@ package io.personium.core.model.impl.fs;
 import static java.lang.ClassLoader.getSystemResourceAsStream;
 import static javax.ws.rs.core.HttpHeaders.ETAG;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
+import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_NO_CONTENT;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -26,17 +27,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -48,17 +54,25 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
+import io.personium.core.http.header.RangeHeaderHandler;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavDestination;
 import io.personium.core.model.DavRsCmp;
+import io.personium.core.model.file.DataCryptor;
+import io.personium.core.model.file.StreamingOutputForDavFile;
+import io.personium.core.model.file.StreamingOutputForDavFileWithRange;
 import io.personium.core.model.lock.Lock;
 import io.personium.test.categories.Unit;
 
@@ -66,7 +80,8 @@ import io.personium.test.categories.Unit;
  * Unit Test class for DavCmpFsImpl.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DavCmpFsImpl.class, AccessContext.class})
+@PowerMockIgnore({"javax.crypto.*" })
+@PrepareForTest({DavCmpFsImpl.class, AccessContext.class, PersoniumUnitConfig.class, DavMetadataFile.class})
 @Category({ Unit.class })
 public class DavCmpFsImplTest {
 
@@ -82,6 +97,10 @@ public class DavCmpFsImplTest {
     private static final String SOURCE_FILE = "source";
     /** Dest file name for move. */
     private static final String DEST_FILE = "target";
+    /** AES key string. */
+    private static final String AES_KEY = "abcdef0123456789";
+    /** Cell ID(AES IV:dIlleCtseTmuinos). */
+    private static final String CELL_ID = "PersoniumTestCellId";
 
     /** Test class. */
     private DavCmpFsImpl davCmpFsImpl;
@@ -107,64 +126,383 @@ public class DavCmpFsImplTest {
     }
 
     /**
-     * Test doPutForUpdate().
+     * Test doPutForCreate().
      * normal.
+     * DavEncryptEnabled is false.
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void doPutForUpdate_Normal() throws Exception {
+    public void doPutForCreate_Normal_encrypt_false() throws Exception {
+        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        File contentFile = new File(contentPath);
+        InputStream inputStream = null;
+        FileInputStream contentStream = null;
+        try {
+            // --------------------
+            // Test method args
+            // --------------------
+            String contentType = "text/plain";
+            inputStream = getSystemResourceAsStream("davFile/file01.txt");
+
+            // --------------------
+            // Mock settings
+            // --------------------
+            davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
+            PowerMockito.doNothing().when(davCmpFsImpl, "checkChildResourceCount");
+
+            PowerMockito.mockStatic(PersoniumUnitConfig.class);
+            PowerMockito.doReturn(false).when(PersoniumUnitConfig.class, "isDavEncryptEnabled");
+
+            Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
+
+            PowerMockito.doReturn(contentPath).when(davCmpFsImpl, "getContentFilePath");
+
+            DavMetadataFile davMetaDataFile = mock(DavMetadataFile.class);
+            PowerMockito.mockStatic(DavMetadataFile.class);
+            PowerMockito.doReturn(davMetaDataFile).when(DavMetadataFile.class,
+                    "prepareNewFile", anyObject(), anyString());
+
+            doNothing().when(davMetaDataFile).setContentType(anyString());
+            doNothing().when(davMetaDataFile).setContentLength(anyLong());
+            doNothing().when(davMetaDataFile).setEncryptionType(anyString());
+            doNothing().when(davMetaDataFile).save();
+
+            doReturn("\"1-1487652733383\"").when(davCmpFsImpl).getEtag();
+
+            // --------------------
+            // Expected result
+            // --------------------
+            boolean contentFileExists = true;
+            String sourceFileMD5 = md5Hex(getSystemResourceAsStream("davFile/file01.txt"));
+            ResponseBuilder expected = Response.ok().status(SC_CREATED).header(ETAG, "\"1-1487652733383\"");
+
+            // --------------------
+            // Run method
+            // --------------------
+            // Load methods for private
+            Method method = DavCmpFsImpl.class.getDeclaredMethod("doPutForCreate", String.class, InputStream.class);
+            method.setAccessible(true);
+            // Run method
+            ResponseBuilder actual = (ResponseBuilder) method.invoke(davCmpFsImpl, contentType, inputStream);
+
+            // --------------------
+            // Confirm result
+            // --------------------
+            ArgumentCaptor<String> contentTypeCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<Long> contentLengthCaptor = ArgumentCaptor.forClass(Long.class);
+            ArgumentCaptor<String> encryptionTypeCaptor = ArgumentCaptor.forClass(String.class);
+            verify(davMetaDataFile, times(1)).setContentType(contentTypeCaptor.capture());
+            verify(davMetaDataFile, times(1)).setContentLength(contentLengthCaptor.capture());
+            verify(davMetaDataFile, times(1)).setEncryptionType(encryptionTypeCaptor.capture());
+            verify(davMetaDataFile, times(1)).save();
+            assertThat(contentTypeCaptor.getValue(), is(contentType));
+            assertThat(contentLengthCaptor.getValue(), is(16L));
+            assertThat(encryptionTypeCaptor.getValue(), is(DataCryptor.ENCRYPTION_TYPE_NONE));
+
+            assertThat(contentFile.exists(), is(contentFileExists));
+            contentStream = new FileInputStream(contentFile);
+            assertThat(md5Hex(contentStream), is(sourceFileMD5));
+            assertThat(actual.build().getStatus(), is(expected.build().getStatus()));
+            assertThat(actual.build().getMetadata().toString(), is(expected.build().getMetadata().toString()));
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (contentStream != null) {
+                contentStream.close();
+            }
+            contentFile.delete();
+        }
+    }
+
+    /**
+     * Test doPutForCreate().
+     * normal.
+     * DavEncryptEnabled is true.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void doPutForCreate_Normal_encrypt_true() throws Exception {
+        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        File contentFile = new File(contentPath);
+        InputStream inputStream = null;
+        FileInputStream contentStream = null;
+        try {
+            // --------------------
+            // Test method args
+            // --------------------
+            String contentType = "text/plain";
+            inputStream = getSystemResourceAsStream("davFile/decrypt01.txt");
+
+            // --------------------
+            // Mock settings
+            // --------------------
+            davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
+            PowerMockito.doNothing().when(davCmpFsImpl, "checkChildResourceCount");
+
+            PowerMockito.mockStatic(PersoniumUnitConfig.class);
+            PowerMockito.doReturn(true).when(PersoniumUnitConfig.class, "isDavEncryptEnabled");
+
+            doReturn(CELL_ID).when(davCmpFsImpl).getCellId();
+            DataCryptor.setKeyString(AES_KEY);
+
+            Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
+
+            PowerMockito.doReturn(contentPath).when(davCmpFsImpl, "getContentFilePath");
+
+            DavMetadataFile davMetaDataFile = mock(DavMetadataFile.class);
+            PowerMockito.mockStatic(DavMetadataFile.class);
+            PowerMockito.doReturn(davMetaDataFile).when(DavMetadataFile.class,
+                    "prepareNewFile", anyObject(), anyString());
+
+            doNothing().when(davMetaDataFile).setContentType(anyString());
+            doNothing().when(davMetaDataFile).setContentLength(anyLong());
+            doNothing().when(davMetaDataFile).setEncryptionType(anyString());
+            doNothing().when(davMetaDataFile).save();
+
+            doReturn("\"1-1487652733383\"").when(davCmpFsImpl).getEtag();
+
+            // --------------------
+            // Expected result
+            // --------------------
+            boolean contentFileExists = true;
+            String sourceFileMD5 = md5Hex(getSystemResourceAsStream("davFile/encrypt01.txt"));
+            ResponseBuilder expected = Response.ok().status(SC_CREATED).header(ETAG, "\"1-1487652733383\"");
+
+            // --------------------
+            // Run method
+            // --------------------
+            // Load methods for private
+            Method method = DavCmpFsImpl.class.getDeclaredMethod("doPutForCreate", String.class, InputStream.class);
+            method.setAccessible(true);
+            // Run method
+            ResponseBuilder actual = (ResponseBuilder) method.invoke(davCmpFsImpl, contentType, inputStream);
+
+            // --------------------
+            // Confirm result
+            // --------------------
+            ArgumentCaptor<String> contentTypeCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<Long> contentLengthCaptor = ArgumentCaptor.forClass(Long.class);
+            ArgumentCaptor<String> encryptionTypeCaptor = ArgumentCaptor.forClass(String.class);
+            verify(davMetaDataFile, times(1)).setContentType(contentTypeCaptor.capture());
+            verify(davMetaDataFile, times(1)).setContentLength(contentLengthCaptor.capture());
+            verify(davMetaDataFile, times(1)).setEncryptionType(encryptionTypeCaptor.capture());
+            verify(davMetaDataFile, times(1)).save();
+            assertThat(contentTypeCaptor.getValue(), is(contentType));
+            assertThat(contentLengthCaptor.getValue(), is(98L));
+            assertThat(encryptionTypeCaptor.getValue(), is(DataCryptor.ENCRYPTION_TYPE_AES));
+
+            assertThat(contentFile.exists(), is(contentFileExists));
+            contentStream = new FileInputStream(contentFile);
+            assertThat(md5Hex(contentStream), is(sourceFileMD5));
+            assertThat(actual.build().getStatus(), is(expected.build().getStatus()));
+            assertThat(actual.build().getMetadata().toString(), is(expected.build().getMetadata().toString()));
+
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (contentStream != null) {
+                contentStream.close();
+            }
+            contentFile.delete();
+        }
+    }
+
+    /**
+     * Test doPutForUpdate().
+     * normal.
+     * DavEncryptEnabled is false.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void doPutForUpdate_Normal_encrypt_false() throws Exception {
         String contentPath = TEST_DIR_PATH + CONTENT_FILE;
         String tempContentPath = TEST_DIR_PATH + TEMP_CONTENT_FILE;
+        InputStream inputStream = null;
+        FileInputStream contentStream = null;
         File contentFile = new File(contentPath);
         File tempContentFile = new File(tempContentPath);
         try {
             contentFile.createNewFile();
+            // --------------------
             // Test method args
-            String contentType = "application/json";
-            InputStream inputStream = getSystemResourceAsStream("request/unit/cell-create.txt");
+            // --------------------
+            String contentType = "text/plain";
+            inputStream = getSystemResourceAsStream("davFile/file01.txt");
             String etag = "\"1-1487652733383\"";
 
-            // Expected result
-            boolean contentFileExists = true;
-            boolean tempFileExists = false;
-            String sourceFileMD5 = md5Hex(getSystemResourceAsStream("request/unit/cell-create.txt"));
-            ResponseBuilder expected = Response.ok().status(SC_NO_CONTENT).header(ETAG, "\"1-1487652733383\"");
-
+            // --------------------
             // Mock settings
+            // --------------------
             davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
             DavMetadataFile davMetaDataFile = mock(DavMetadataFile.class);
             Whitebox.setInternalState(davCmpFsImpl, "metaFile", davMetaDataFile);
+
             doNothing().when(davCmpFsImpl).load();
             doReturn(true).when(davCmpFsImpl).exists();
             doReturn("\"1-1487652733383\"").when(davCmpFsImpl).getEtag();
             PowerMockito.doReturn(true).when(davCmpFsImpl, "matchesETag", anyString());
+
+            PowerMockito.mockStatic(PersoniumUnitConfig.class);
+            PowerMockito.doReturn(false).when(PersoniumUnitConfig.class, "isDavEncryptEnabled");
+
             PowerMockito.doReturn(tempContentPath).when(davCmpFsImpl, "getTempContentFilePath");
             PowerMockito.doReturn(contentPath).when(davCmpFsImpl, "getContentFilePath");
 
             doNothing().when(davMetaDataFile).setUpdated(anyLong());
             doNothing().when(davMetaDataFile).setContentType(anyString());
             doNothing().when(davMetaDataFile).setContentLength(anyLong());
+            doNothing().when(davMetaDataFile).setEncryptionType(anyString());
             doNothing().when(davMetaDataFile).save();
 
+            // --------------------
+            // Expected result
+            // --------------------
+            boolean contentFileExists = true;
+            boolean tempFileExists = false;
+            String sourceFileMD5 = md5Hex(getSystemResourceAsStream("davFile/file01.txt"));
+            ResponseBuilder expected = Response.ok().status(SC_NO_CONTENT).header(ETAG, "\"1-1487652733383\"");
+
+            // --------------------
+            // Run method
+            // --------------------
             // Load methods for private
             Method method = DavCmpFsImpl.class.getDeclaredMethod("doPutForUpdate",
                     String.class, InputStream.class, String.class);
             method.setAccessible(true);
-
             // Run method
             ResponseBuilder actual = (ResponseBuilder) method.invoke(davCmpFsImpl, contentType, inputStream, etag);
 
+            // --------------------
             // Confirm result
+            // --------------------
+            ArgumentCaptor<String> contentTypeCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<Long> contentLengthCaptor = ArgumentCaptor.forClass(Long.class);
+            ArgumentCaptor<String> encryptionTypeCaptor = ArgumentCaptor.forClass(String.class);
+            verify(davMetaDataFile, times(1)).setUpdated(anyLong());
+            verify(davMetaDataFile, times(1)).setContentType(contentTypeCaptor.capture());
+            verify(davMetaDataFile, times(1)).setContentLength(contentLengthCaptor.capture());
+            verify(davMetaDataFile, times(1)).setEncryptionType(encryptionTypeCaptor.capture());
+            verify(davMetaDataFile, times(1)).save();
+            assertThat(contentTypeCaptor.getValue(), is(contentType));
+            assertThat(contentLengthCaptor.getValue(), is(16L));
+            assertThat(encryptionTypeCaptor.getValue(), is(DataCryptor.ENCRYPTION_TYPE_NONE));
+
             assertThat(contentFile.exists(), is(contentFileExists));
             assertThat(tempContentFile.exists(), is(tempFileExists));
-            FileInputStream contentStream = new FileInputStream(contentFile);
+            contentStream = new FileInputStream(contentFile);
             assertThat(md5Hex(contentStream), is(sourceFileMD5));
             assertThat(actual.build().getStatus(), is(expected.build().getStatus()));
             assertThat(actual.build().getMetadata().toString(), is(expected.build().getMetadata().toString()));
-
-            inputStream.close();
-            contentStream.close();
         } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (contentStream != null) {
+                contentStream.close();
+            }
+            contentFile.delete();
+            tempContentFile.delete();
+        }
+    }
+
+    /**
+     * Test doPutForUpdate().
+     * normal.
+     * DavEncryptEnabled is true.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void doPutForUpdate_Normal_encrypt_true() throws Exception {
+        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        String tempContentPath = TEST_DIR_PATH + TEMP_CONTENT_FILE;
+        InputStream inputStream = null;
+        FileInputStream contentStream = null;
+        File contentFile = new File(contentPath);
+        File tempContentFile = new File(tempContentPath);
+        try {
+            contentFile.createNewFile();
+            // --------------------
+            // Test method args
+            // --------------------
+            String contentType = "text/plain";
+            inputStream = getSystemResourceAsStream("davFile/decrypt01.txt");
+            String etag = "\"1-1487652733383\"";
+
+            // --------------------
+            // Mock settings
+            // --------------------
+            davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
+            DavMetadataFile davMetaDataFile = mock(DavMetadataFile.class);
+            Whitebox.setInternalState(davCmpFsImpl, "metaFile", davMetaDataFile);
+
+            doNothing().when(davCmpFsImpl).load();
+            doReturn(true).when(davCmpFsImpl).exists();
+            doReturn("\"1-1487652733383\"").when(davCmpFsImpl).getEtag();
+            PowerMockito.doReturn(true).when(davCmpFsImpl, "matchesETag", anyString());
+
+            PowerMockito.mockStatic(PersoniumUnitConfig.class);
+            PowerMockito.doReturn(true).when(PersoniumUnitConfig.class, "isDavEncryptEnabled");
+
+            doReturn(CELL_ID).when(davCmpFsImpl).getCellId();
+            DataCryptor.setKeyString(AES_KEY);
+
+            PowerMockito.doReturn(tempContentPath).when(davCmpFsImpl, "getTempContentFilePath");
+            PowerMockito.doReturn(contentPath).when(davCmpFsImpl, "getContentFilePath");
+
+            doNothing().when(davMetaDataFile).setUpdated(anyLong());
+            doNothing().when(davMetaDataFile).setContentType(anyString());
+            doNothing().when(davMetaDataFile).setContentLength(anyLong());
+            doNothing().when(davMetaDataFile).setEncryptionType(anyString());
+            doNothing().when(davMetaDataFile).save();
+
+            // --------------------
+            // Expected result
+            // --------------------
+            boolean contentFileExists = true;
+            boolean tempFileExists = false;
+            String sourceFileMD5 = md5Hex(getSystemResourceAsStream("davFile/encrypt01.txt"));
+            ResponseBuilder expected = Response.ok().status(SC_NO_CONTENT).header(ETAG, "\"1-1487652733383\"");
+
+            // --------------------
+            // Run method
+            // --------------------
+            // Load methods for private
+            Method method = DavCmpFsImpl.class.getDeclaredMethod("doPutForUpdate",
+                    String.class, InputStream.class, String.class);
+            method.setAccessible(true);
+            // Run method
+            ResponseBuilder actual = (ResponseBuilder) method.invoke(davCmpFsImpl, contentType, inputStream, etag);
+
+            // --------------------
+            // Confirm result
+            // --------------------
+            ArgumentCaptor<String> contentTypeCaptor = ArgumentCaptor.forClass(String.class);
+            ArgumentCaptor<Long> contentLengthCaptor = ArgumentCaptor.forClass(Long.class);
+            ArgumentCaptor<String> encryptionTypeCaptor = ArgumentCaptor.forClass(String.class);
+            verify(davMetaDataFile, times(1)).setUpdated(anyLong());
+            verify(davMetaDataFile, times(1)).setContentType(contentTypeCaptor.capture());
+            verify(davMetaDataFile, times(1)).setContentLength(contentLengthCaptor.capture());
+            verify(davMetaDataFile, times(1)).setEncryptionType(encryptionTypeCaptor.capture());
+            verify(davMetaDataFile, times(1)).save();
+            assertThat(contentTypeCaptor.getValue(), is(contentType));
+            assertThat(contentLengthCaptor.getValue(), is(98L));
+            assertThat(encryptionTypeCaptor.getValue(), is(DataCryptor.ENCRYPTION_TYPE_AES));
+
+            assertThat(contentFile.exists(), is(contentFileExists));
+            assertThat(tempContentFile.exists(), is(tempFileExists));
+            contentStream = new FileInputStream(contentFile);
+            assertThat(md5Hex(contentStream), is(sourceFileMD5));
+            assertThat(actual.build().getStatus(), is(expected.build().getStatus()));
+            assertThat(actual.build().getMetadata().toString(), is(expected.build().getMetadata().toString()));
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (contentStream != null) {
+                contentStream.close();
+            }
             contentFile.delete();
             tempContentFile.delete();
         }
@@ -227,6 +565,270 @@ public class DavCmpFsImplTest {
         } finally {
             contentFile.delete();
             tempContentFile.delete();
+        }
+    }
+
+    /**
+     * Test get().
+     * normal.
+     * DavEncryptEnabled is false.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void get_Normal_encrypt_false() throws Exception {
+        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        InputStream inputStream = null;
+        File contentFile = new File(contentPath);
+        try {
+            inputStream = getSystemResourceAsStream("davFile/file01.txt");
+            Files.copy(inputStream, contentFile.toPath());
+            // --------------------
+            // Test method args
+            // --------------------
+            String rangeHeaderField = null;
+
+            // --------------------
+            // Mock settings
+            // --------------------
+            davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
+
+            Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
+
+            doReturn("text/plain").when(davCmpFsImpl).getContentType();
+            doReturn(98L).when(davCmpFsImpl).getContentLength();
+            doReturn(DataCryptor.ENCRYPTION_TYPE_NONE).when(davCmpFsImpl).getEncryptionType();
+            doReturn(CELL_ID).when(davCmpFsImpl).getCellId();
+            doReturn("\"1-1487652733383\"").when(davCmpFsImpl).getEtag();
+
+            // --------------------
+            // Expected result
+            // --------------------
+            String sourceFileMD5 = md5Hex(getSystemResourceAsStream("davFile/file01.txt"));
+            ResponseBuilder expected = Response.ok().header(HttpHeaders.CONTENT_LENGTH, 98L)
+                    .header(HttpHeaders.CONTENT_TYPE, "text/plain")
+                    .header(ETAG, "\"1-1487652733383\"")
+                    .header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES, RangeHeaderHandler.BYTES_UNIT);
+
+            // --------------------
+            // Run method
+            // --------------------
+            ResponseBuilder actual = davCmpFsImpl.get(rangeHeaderField);
+
+            // --------------------
+            // Confirm result
+            // --------------------
+            assertThat(actual.build().getStatus(), is(expected.build().getStatus()));
+            assertThat(actual.build().getMetadata().toString(), is(expected.build().getMetadata().toString()));
+
+            StreamingOutputForDavFile entity = (StreamingOutputForDavFile) actual.build().getEntity();
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            entity.write(output);
+            assertThat(md5Hex(output.toByteArray()), is(sourceFileMD5));
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            contentFile.delete();
+        }
+    }
+
+    /**
+     * Test get().
+     * normal.
+     * DavEncryptEnabled is true.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void get_Normal_encrypt_true() throws Exception {
+        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        InputStream inputStream = null;
+        File contentFile = new File(contentPath);
+        try {
+            inputStream = getSystemResourceAsStream("davFile/encrypt01.txt");
+            Files.copy(inputStream, contentFile.toPath());
+            // --------------------
+            // Test method args
+            // --------------------
+            String rangeHeaderField = null;
+
+            // --------------------
+            // Mock settings
+            // --------------------
+            davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
+
+            Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
+
+            doReturn("text/plain").when(davCmpFsImpl).getContentType();
+            doReturn(98L).when(davCmpFsImpl).getContentLength();
+            doReturn(DataCryptor.ENCRYPTION_TYPE_AES).when(davCmpFsImpl).getEncryptionType();
+            DataCryptor.setKeyString(AES_KEY);
+            doReturn(CELL_ID).when(davCmpFsImpl).getCellId();
+            doReturn("\"1-1487652733383\"").when(davCmpFsImpl).getEtag();
+
+            // --------------------
+            // Expected result
+            // --------------------
+            String sourceFileMD5 = md5Hex(getSystemResourceAsStream("davFile/decrypt01.txt"));
+            ResponseBuilder expected = Response.ok().header(HttpHeaders.CONTENT_LENGTH, 98L)
+                    .header(HttpHeaders.CONTENT_TYPE, "text/plain")
+                    .header(ETAG, "\"1-1487652733383\"")
+                    .header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES, RangeHeaderHandler.BYTES_UNIT);
+
+            // --------------------
+            // Run method
+            // --------------------
+            ResponseBuilder actual = davCmpFsImpl.get(rangeHeaderField);
+
+            // --------------------
+            // Confirm result
+            // --------------------
+            assertThat(actual.build().getStatus(), is(expected.build().getStatus()));
+            assertThat(actual.build().getMetadata().toString(), is(expected.build().getMetadata().toString()));
+
+            StreamingOutputForDavFile entity = (StreamingOutputForDavFile) actual.build().getEntity();
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            entity.write(output);
+            assertThat(md5Hex(output.toByteArray()), is(sourceFileMD5));
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            contentFile.delete();
+        }
+    }
+
+    /**
+     * Test get().
+     * normal.
+     * Range specification.
+     * DavEncryptEnabled is false.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void get_Normal_range_encrypt_false() throws Exception {
+        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        InputStream inputStream = null;
+        File contentFile = new File(contentPath);
+        try {
+            inputStream = getSystemResourceAsStream("davFile/decrypt01.txt");
+            Files.copy(inputStream, contentFile.toPath());
+            // --------------------
+            // Test method args
+            // --------------------
+            String rangeHeaderField = "bytes=10-40";
+
+            // --------------------
+            // Mock settings
+            // --------------------
+            davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
+
+            Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
+
+            doReturn("text/plain").when(davCmpFsImpl).getContentType();
+            doReturn(98L).when(davCmpFsImpl).getContentLength();
+            doReturn(DataCryptor.ENCRYPTION_TYPE_NONE).when(davCmpFsImpl).getEncryptionType();
+            doReturn(CELL_ID).when(davCmpFsImpl).getCellId();
+            doReturn("\"1-1487652733383\"").when(davCmpFsImpl).getEtag();
+
+            // --------------------
+            // Expected result
+            // --------------------
+            String sourceFileMD5 = md5Hex(getSystemResourceAsStream("davFile/range01.txt"));
+            ResponseBuilder expected = Response.status(HttpStatus.SC_PARTIAL_CONTENT)
+                    .header(PersoniumCoreUtils.HttpHeaders.CONTENT_RANGE, "bytes 10-40/98")
+                    .header(HttpHeaders.CONTENT_LENGTH, 31L)
+                    .header(HttpHeaders.CONTENT_TYPE, "text/plain")
+                    .header(ETAG, "\"1-1487652733383\"")
+                    .header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES, RangeHeaderHandler.BYTES_UNIT);
+
+            // --------------------
+            // Run method
+            // --------------------
+            ResponseBuilder actual = davCmpFsImpl.get(rangeHeaderField);
+
+            // --------------------
+            // Confirm result
+            // --------------------
+            assertThat(actual.build().getStatus(), is(expected.build().getStatus()));
+            assertThat(actual.build().getMetadata().toString(), is(expected.build().getMetadata().toString()));
+
+            StreamingOutputForDavFileWithRange entity = (StreamingOutputForDavFileWithRange) actual.build().getEntity();
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            entity.write(output);
+            assertThat(md5Hex(output.toByteArray()), is(sourceFileMD5));
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            contentFile.delete();
+        }
+    }
+
+    /**
+     * Test get().
+     * normal.
+     * Range specification.
+     * DavEncryptEnabled is true.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void get_Normal_range_encrypt_true() throws Exception {
+        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        InputStream inputStream = null;
+        File contentFile = new File(contentPath);
+        try {
+            inputStream = getSystemResourceAsStream("davFile/encrypt01.txt");
+            Files.copy(inputStream, contentFile.toPath());
+            // --------------------
+            // Test method args
+            // --------------------
+            String rangeHeaderField = "bytes=10-40";
+
+            // --------------------
+            // Mock settings
+            // --------------------
+            davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
+
+            Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
+
+            doReturn("text/plain").when(davCmpFsImpl).getContentType();
+            doReturn(98L).when(davCmpFsImpl).getContentLength();
+            doReturn(DataCryptor.ENCRYPTION_TYPE_AES).when(davCmpFsImpl).getEncryptionType();
+            DataCryptor.setKeyString(AES_KEY);
+            doReturn(CELL_ID).when(davCmpFsImpl).getCellId();
+            doReturn("\"1-1487652733383\"").when(davCmpFsImpl).getEtag();
+
+            // --------------------
+            // Expected result
+            // --------------------
+            String sourceFileMD5 = md5Hex(getSystemResourceAsStream("davFile/range01.txt"));
+            ResponseBuilder expected = Response.status(HttpStatus.SC_PARTIAL_CONTENT)
+                    .header(PersoniumCoreUtils.HttpHeaders.CONTENT_RANGE, "bytes 10-40/98")
+                    .header(HttpHeaders.CONTENT_LENGTH, 31L)
+                    .header(HttpHeaders.CONTENT_TYPE, "text/plain")
+                    .header(ETAG, "\"1-1487652733383\"")
+                    .header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES, RangeHeaderHandler.BYTES_UNIT);
+
+            // --------------------
+            // Run method
+            // --------------------
+            ResponseBuilder actual = davCmpFsImpl.get(rangeHeaderField);
+
+            // --------------------
+            // Confirm result
+            // --------------------
+            assertThat(actual.build().getStatus(), is(expected.build().getStatus()));
+            assertThat(actual.build().getMetadata().toString(), is(expected.build().getMetadata().toString()));
+
+            StreamingOutputForDavFile entity = (StreamingOutputForDavFile) actual.build().getEntity();
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            entity.write(output);
+            assertThat(md5Hex(output.toByteArray()), is(sourceFileMD5));
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            contentFile.delete();
         }
     }
 

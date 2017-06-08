@@ -58,14 +58,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavMoveResource;
 import io.personium.core.model.DavRsCmp;
-import io.personium.core.model.impl.es.DavCmpEsImpl;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
 
 /**
@@ -305,12 +304,7 @@ public final class PersoniumEngineSvcCollectionResource {
         if (davCmp instanceof DavCmpFsImpl) {
             DavCmpFsImpl dcmp = (DavCmpFsImpl) davCmp;
             req.addHeader("X-Personium-Fs-Path", dcmp.getFsPath());
-        } else if (davCmp instanceof DavCmpEsImpl) {
-            DavCmpEsImpl dcmp = (DavCmpEsImpl) davCmp;
-            req.addHeader("X-Personium-Es-Index", dcmp.getEsColType().getIndex().getName());
-            req.addHeader("X-Personium-Es-Id", dcmp.getNodeId());
-            req.addHeader("X-Personium-Es-Type", dcmp.getEsColType().getType());
-            req.addHeader("X-Personium-Es-Routing-Id", this.davRsCmp.getCell().getId());
+            req.addHeader("X-Personium-Fs-Routing-Id", dcmp.getCellId());
         }
         req.addHeader("X-Personium-Box-Schema", this.davRsCmp.getBox().getSchema());
 

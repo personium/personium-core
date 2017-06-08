@@ -31,6 +31,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.JerseyTest;
+
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.Role;
@@ -54,7 +56,6 @@ import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * 認証のテスト.
@@ -493,7 +494,7 @@ public class AuthTest extends JerseyTest {
             tresponse.statusCode(HttpStatus.SC_NO_CONTENT);
 
             // ロール削除
-            RoleUtils.delete(TEST_CELL2, MASTER_TOKEN, null, testrole);
+            RoleUtils.delete(TEST_CELL2, MASTER_TOKEN, testrole, null);
 
             // 1.ExtCell更新（元に戻す）
             ExtCellUtils.update(MASTER_TOKEN, TEST_CELL2, localunitCell1Url, httpCell1Url, HttpStatus.SC_NO_CONTENT);
@@ -624,7 +625,7 @@ public class AuthTest extends JerseyTest {
             RelationUtils.delete(TEST_CELL2, MASTER_TOKEN, testrelation, null, HttpStatus.SC_NO_CONTENT);
 
             // ロール削除
-            RoleUtils.delete(TEST_CELL2, MASTER_TOKEN, null, testrole);
+            RoleUtils.delete(TEST_CELL2, MASTER_TOKEN, testrole, null);
 
             // 1.ExtCell更新（元に戻す）
             ExtCellUtils.update(MASTER_TOKEN, TEST_CELL2, localunitCell1Url, httpCell1Url, HttpStatus.SC_NO_CONTENT);

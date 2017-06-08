@@ -194,7 +194,7 @@ public class RelationDeleteTest extends ODataCommon {
             body.put("Name", relationName);
             body.put("_Box.Name", null);
             RelationUtils.create(cellName, token, body, HttpStatus.SC_CREATED);
-            RoleUtils.create(cellName, token, boxName, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(cellName, token, roleName, boxName, HttpStatus.SC_CREATED);
             ResourceUtils.linksWithBody(cellName, Relation.EDM_TYPE_NAME, relationName, "null",
                     Role.EDM_TYPE_NAME, UrlUtils.roleUrl(cellName, null, roleName), token,
                     HttpStatus.SC_NO_CONTENT);
@@ -209,7 +209,7 @@ public class RelationDeleteTest extends ODataCommon {
         } finally {
             ResourceUtils.linksDelete(cellName, Relation.EDM_TYPE_NAME, relationName, "null",
                     Role.EDM_TYPE_NAME, "_Box.Name=null,Name='" + roleName + "'", token);
-            RoleUtils.delete(cellName, token, boxName, roleName, -1);
+            RoleUtils.delete(cellName, token, roleName, boxName, -1);
             RelationUtils.delete(cellName, token, relationName, null, -1);
         }
     }

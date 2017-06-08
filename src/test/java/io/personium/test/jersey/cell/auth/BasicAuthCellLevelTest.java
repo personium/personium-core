@@ -594,7 +594,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
             AuthTestCommon.checkAuthenticateHeaderNotExists(res);
 
         } finally {
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, testBox, testRole, -1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, testRole, testBox, -1);
         }
     }
 
@@ -646,8 +646,8 @@ public class BasicAuthCellLevelTest extends JerseyTest {
             AuthTestCommon.checkAuthenticateHeaderNotExists(res);
 
         } finally {
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, null, testRole, -1);
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, testBox, testRole, -1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, testRole, null, -1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, testRole, testBox, -1);
         }
     }
 
@@ -683,7 +683,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
         String testRoleKey = RoleUtils.keyString(testRole, testBox);
         try {
             // 事前準備
-            RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, testBox, testRole, HttpStatus.SC_CREATED);
+            RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, testRole, testBox, HttpStatus.SC_CREATED);
 
             // 401エラーとなること
             TResponse res = RoleUtils.deleteLinkWithAuthSchema(cellName, testRoleKey, "Box", testBox, authorization,
@@ -698,8 +698,8 @@ public class BasicAuthCellLevelTest extends JerseyTest {
             AuthTestCommon.checkAuthenticateHeaderNotExists(res);
 
         } finally {
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, null, testRole, -1);
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, testBox, testRole, -1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, testRole, null, -1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, testRole, testBox, -1);
         }
     }
 

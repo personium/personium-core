@@ -23,10 +23,6 @@
 	id="WebApp_ID" version="3.0">
 	<display-name>personium-core</display-name>
 
-    <listener>
-        <listener-class>io.personium.core.webcontainer.listener.WebContainerListenerForAdsRepair</listener-class>
-    </listener>
-
 	<!-- Servlet  -->
 	<servlet>
 		<servlet-name>PersoniumCoreApp</servlet-name>

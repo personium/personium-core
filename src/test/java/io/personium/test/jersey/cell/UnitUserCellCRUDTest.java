@@ -197,8 +197,8 @@ public class UnitUserCellCRUDTest extends JerseyTest {
                     UNIT_USER_ACCOUNT, UNIT_USER_ACCOUNT_PASS, HttpStatus.SC_CREATED);
 
             // ロール追加（ユニットアドミンロール）
-            RoleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, null,
-                    UNIT_ADMIN_ROLE, HttpStatus.SC_CREATED);
+            RoleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, UNIT_ADMIN_ROLE,
+                    null, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
             ResourceUtils.linkAccountRole(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME,
@@ -238,7 +238,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
             ResourceUtils.linkAccountRollDelete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME,
                     UNIT_USER_ACCOUNT, null, UNIT_ADMIN_ROLE);
             // ロール削除（BOXに結びつかない）
-            RoleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, null, UNIT_ADMIN_ROLE);
+            RoleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, UNIT_ADMIN_ROLE, null);
             // アカウント削除
             AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME,
                     UNIT_USER_ACCOUNT, -1);

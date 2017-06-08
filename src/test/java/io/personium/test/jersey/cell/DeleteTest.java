@@ -41,9 +41,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
@@ -412,7 +412,7 @@ public class DeleteTest extends ODataCommon {
 
         try {
             // Role作成
-            RoleUtils.create(this.cellInfo.cellName, MASTER_TOKEN_NAME, null, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(this.cellInfo.cellName, MASTER_TOKEN_NAME, roleName, null, HttpStatus.SC_CREATED);
 
             // Cellを削除
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
@@ -433,8 +433,8 @@ public class DeleteTest extends ODataCommon {
             assertEquals(MediaType.APPLICATION_JSON, res.getResponseHeaders(HttpHeaders.CONTENT_TYPE)[0].getValue());
 
             // Role削除
-            RoleUtils.delete(this.cellInfo.cellName, MASTER_TOKEN_NAME, null,
-                    roleName, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(this.cellInfo.cellName, MASTER_TOKEN_NAME, roleName,
+                    null, HttpStatus.SC_NO_CONTENT);
 
             // Cellを削除（Role削除済のため、削除可能）
             CellUtils.delete(MASTER_TOKEN_NAME, this.cellInfo.cellId, HttpStatus.SC_NO_CONTENT);
@@ -443,8 +443,8 @@ public class DeleteTest extends ODataCommon {
             // Cell作成
             CellUtils.create(this.cellInfo.cellName, MASTER_TOKEN_NAME, -1);
             // Role削除
-            RoleUtils.delete(this.cellInfo.cellName, MASTER_TOKEN_NAME, null,
-                    roleName, -1);
+            RoleUtils.delete(this.cellInfo.cellName, MASTER_TOKEN_NAME, roleName,
+                    null, -1);
         }
     }
 

@@ -31,9 +31,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
@@ -545,7 +545,7 @@ public class RoleCreateTest extends ODataCommon {
             RoleUtils.createViaNP(Setup.TEST_CELL1, Setup.MASTER_TOKEN_NAME, "Box", "'" + Setup.TEST_BOX1 + "'",
                     roleName, HttpStatus.SC_CREATED);
         } finally {
-            RoleUtils.delete(Setup.TEST_CELL1, Setup.MASTER_TOKEN_NAME, Setup.TEST_BOX1, roleName, -1);
+            RoleUtils.delete(Setup.TEST_CELL1, Setup.MASTER_TOKEN_NAME, roleName, Setup.TEST_BOX1, -1);
         }
     }
 

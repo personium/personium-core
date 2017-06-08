@@ -605,36 +605,34 @@ public final class MessageODataResource extends AbstractODataResource {
      */
     @Override
     public void validate(List<OProperty<?>> props) {
-        // メッセージ受信のときのチェック
         if (ReceivedMessage.EDM_TYPE_NAME.equals(this.getEntitySetName())) {
+            // メッセージ受信のときのチェック
             validateReceivedBoxBoundSchema(this.odataResource, propMap.get(ReceivedMessagePort.P_SCHEMA.getName()));
-            MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
+            validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
                     propMap.get(ReceivedMessage.P_MULTICAST_TO.getName()));
-            MessageODataResource.validateBody(propMap.get(ReceivedMessage.P_BODY.getName()),
+            validateBody(propMap.get(ReceivedMessage.P_BODY.getName()),
                     Common.MAX_MESSAGE_BODY_LENGTH);
-            MessageODataResource.validateStatus(propMap.get(ReceivedMessage.P_TYPE.getName()),
+            validateStatus(propMap.get(ReceivedMessage.P_TYPE.getName()),
                     propMap.get(ReceivedMessage.P_STATUS.getName()));
-            MessageODataResource.validateReqRelation(propMap.get(ReceivedMessage.P_TYPE.getName()),
+            validateReqRelation(propMap.get(ReceivedMessage.P_TYPE.getName()),
                     propMap.get(ReceivedMessage.P_REQUEST_RELATION.getName()),
                     propMap.get(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName()));
-        }
-        // メッセージ送信のときのチェック
-        if (SentMessage.EDM_TYPE_NAME.equals(this.getEntitySetName())) {
+        } else if (SentMessage.EDM_TYPE_NAME.equals(this.getEntitySetName())) {
+            // メッセージ送信のときのチェック
             validateSentBoxBoundSchema(this.odataResource,
                     Boolean.valueOf(propMap.get(SentMessagePort.P_BOX_BOUND.getName())));
-            MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(), propMap.get(SentMessage.P_TO.getName()));
-            MessageODataResource.validateBody(propMap.get(SentMessage.P_BODY.getName()),
+            validateUriCsv(SentMessage.P_TO.getName(), propMap.get(SentMessage.P_TO.getName()));
+            validateBody(propMap.get(SentMessage.P_BODY.getName()),
                     Common.MAX_MESSAGE_BODY_LENGTH);
-            MessageODataResource.validateToAndToRelation(
+            validateToAndToRelation(
                     propMap.get(SentMessage.P_TO.getName()),
                     propMap.get(SentMessage.P_TO_RELATION.getName()));
-            MessageODataResource.validateToValue(
+            validateToValue(
                     propMap.get(SentMessage.P_TO.getName()),
                     this.odataResource.getAccessContext().getBaseUri());
-            MessageODataResource.validateReqRelation(propMap.get(SentMessage.P_TYPE.getName()),
+            validateReqRelation(propMap.get(SentMessage.P_TYPE.getName()),
                     propMap.get(SentMessage.P_REQUEST_RELATION.getName()),
                     propMap.get(SentMessage.P_REQUEST_RELATION_TARGET.getName()));
-
         }
     }
 
@@ -762,11 +760,13 @@ public final class MessageODataResource extends AbstractODataResource {
      * @param status ステータス
      */
     public static void validateStatus(String type, String status) {
-        // Typeがmessageの場合unread：未読
-        // Typeがreq.relation.build/req.relation.breakの場合 none：未決
+        // Unread if Type is message
+        // None if Type is req.relation.build/req.relation.break/req.role.grant/req.role.revoke
         if (!(ReceivedMessage.TYPE_MESSAGE.equals(type) && ReceivedMessage.STATUS_UNREAD.equals(status))
                 && !((ReceivedMessage.TYPE_REQ_RELATION_BUILD.equals(type)
-                || ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type))
+                || ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type)
+                || ReceivedMessage.TYPE_REQ_ROLE_GRANT.equals(type)
+                || ReceivedMessage.TYPE_REQ_ROLE_REVOKE.equals(type))
                 && ReceivedMessage.STATUS_NONE.equals(status))) {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ReceivedMessage.P_STATUS.getName());
         }
@@ -779,12 +779,29 @@ public final class MessageODataResource extends AbstractODataResource {
      * @param requestRelationTarget 関係登録依頼CellURL
      */
     public static void validateReqRelation(String type, String requestRelation, String requestRelationTarget) {
+        // Conditional required check
         if ((ReceivedMessage.TYPE_REQ_RELATION_BUILD.equals(type)
-                || ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type))
+                || ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type)
+                || ReceivedMessage.TYPE_REQ_ROLE_GRANT.equals(type)
+                || ReceivedMessage.TYPE_REQ_ROLE_REVOKE.equals(type))
                 && (requestRelation == null || requestRelationTarget == null)) {
             String detail = ReceivedMessage.P_REQUEST_RELATION.getName()
                     + "," + ReceivedMessage.P_REQUEST_RELATION_TARGET.getName();
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(detail);
+        }
+        // Correlation format check
+        if ((ReceivedMessage.TYPE_REQ_RELATION_BUILD.equals(type)
+                || ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type))
+                && !ODataUtils.validateClassUrl(requestRelation, Common.PATTERN_RELATION_CLASS_URL)
+                && !ODataUtils.validateRegEx(requestRelation, Common.PATTERN_RELATION_NAME)) {
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_REQUEST_RELATION.getName());
+        } else if ((ReceivedMessage.TYPE_REQ_ROLE_GRANT.equals(type)
+                || ReceivedMessage.TYPE_REQ_ROLE_REVOKE.equals(type))
+                && !ODataUtils.validateClassUrl(requestRelation, Common.PATTERN_ROLE_CLASS_URL)
+                && !ODataUtils.validateRegEx(requestRelation, Common.PATTERN_NAME)) {
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    ReceivedMessage.P_REQUEST_RELATION.getName());
         }
     }
 

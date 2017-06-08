@@ -34,6 +34,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
@@ -55,8 +58,6 @@ import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * 認証のテスト.
@@ -145,8 +146,8 @@ public class AuthCookieTest extends JerseyTest {
                     USERNAME, PASS, HttpStatus.SC_CREATED);
 
             // ロール追加（BOXに結びつかない）
-            RoleUtils.create(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, null,
-                    ROLENAMENONEBOX, HttpStatus.SC_CREATED);
+            RoleUtils.create(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, ROLENAMENONEBOX,
+                    null, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
             ResourceUtils.linkAccountRole(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
@@ -167,7 +168,7 @@ public class AuthCookieTest extends JerseyTest {
             AccountUtils.delete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
                     USERNAME, HttpStatus.SC_NO_CONTENT);
             // ロール削除（BOXに結びつかない）
-            RoleUtils.delete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, null, ROLENAMENONEBOX);
+            RoleUtils.delete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, ROLENAMENONEBOX, null);
             // 本テスト用セルの削除
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, TESTCELL_NAME, -1);
         }
@@ -188,8 +189,8 @@ public class AuthCookieTest extends JerseyTest {
                     USERNAME, PASS, HttpStatus.SC_CREATED);
 
             // ロール追加（BOXに結びつかない）
-            RoleUtils.create(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, null,
-                    ROLENAMENONEBOX, HttpStatus.SC_CREATED);
+            RoleUtils.create(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, ROLENAMENONEBOX,
+                    null, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
             ResourceUtils.linkAccountRole(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
@@ -210,7 +211,7 @@ public class AuthCookieTest extends JerseyTest {
             AccountUtils.delete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
                     USERNAME, HttpStatus.SC_NO_CONTENT);
             // ロール削除（BOXに結びつかない）
-            RoleUtils.delete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, null, ROLENAMENONEBOX);
+            RoleUtils.delete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, ROLENAMENONEBOX, null);
             // 本テスト用セルの削除
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, TESTCELL_NAME, -1);
         }
@@ -244,8 +245,8 @@ public class AuthCookieTest extends JerseyTest {
                     USERNAME, PASS, HttpStatus.SC_CREATED);
 
             // ロール追加（BOXに結びつかない）
-            RoleUtils.create(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, null,
-                    ROLENAMENONEBOX, HttpStatus.SC_CREATED);
+            RoleUtils.create(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, ROLENAMENONEBOX,
+                    null, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
             ResourceUtils.linkAccountRole(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
@@ -266,7 +267,7 @@ public class AuthCookieTest extends JerseyTest {
             AccountUtils.delete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
                     USERNAME, HttpStatus.SC_NO_CONTENT);
             // ロール削除（BOXに結びつかない）
-            RoleUtils.delete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, null, ROLENAMENONEBOX);
+            RoleUtils.delete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME, ROLENAMENONEBOX, null);
             // 本テスト用セルの削除
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, TESTCELL_NAME, -1);
         }

@@ -60,6 +60,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import io.personium.common.auth.token.Role;
+import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
@@ -79,8 +80,12 @@ import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.EntityType;
 import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.model.file.BinaryDataNotFoundException;
+import io.personium.core.model.file.CipherInputStream;
+import io.personium.core.model.file.DataCryptor;
 import io.personium.core.model.file.StreamingOutputForDavFile;
 import io.personium.core.model.file.StreamingOutputForDavFileWithRange;
+import io.personium.core.model.impl.es.EsModel;
+import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.odata.UserSchemaODataProducer;
 import io.personium.core.model.jaxb.Ace;
 import io.personium.core.model.jaxb.Acl;
@@ -552,34 +557,57 @@ public class DavCmpFsImpl implements DavCmp {
         }
     }
 
-    /*
-     * newly create the resource
+    /**
+     * Newly create the resource.
+     * @param contentType ContentType of the generated file
+     * @param inputStream Stream of generated file
+     * @return ResponseBuilder
      */
-    final ResponseBuilder doPutForCreate(final String contentType, final InputStream inputStream) {
+    private ResponseBuilder doPutForCreate(final String contentType, final InputStream inputStream) {
         // check the resource count
         checkChildResourceCount();
 
-        BufferedInputStream bufferedInput = new BufferedInputStream(inputStream);
+        InputStream input = inputStream;
+        if (PersoniumUnitConfig.isDavEncryptEnabled()) {
+            // Perform encryption.
+            DataCryptor cryptor = new DataCryptor(getCellId());
+            input = cryptor.encode(inputStream);
+        }
+
+        BufferedInputStream bufferedInput = new BufferedInputStream(input);
         try {
             // create new directory.
-            Files.createDirectory(Paths.get(this.fsPath));
+            Files.createDirectories(Paths.get(this.fsPath));
             // store the file content.
-            File newFile = new File(this.getContentFilePath());
+            File newFile = new File(getContentFilePath());
             Files.copy(bufferedInput, newFile.toPath());
             long writtenBytes = newFile.length();
+            String encryptionType = DataCryptor.ENCRYPTION_TYPE_NONE;
+            if (PersoniumUnitConfig.isDavEncryptEnabled()) {
+                writtenBytes = ((CipherInputStream) input).getReadLengthBeforEncryption();
+                encryptionType = DataCryptor.ENCRYPTION_TYPE_AES;
+            }
             // create new metadata file.
             this.metaFile = DavMetadataFile.prepareNewFile(this, DavCmp.TYPE_DAV_FILE);
             this.metaFile.setContentType(contentType);
             this.metaFile.setContentLength(writtenBytes);
+            this.metaFile.setEncryptionType(encryptionType);
             this.metaFile.save();
         } catch (IOException ex) {
             throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(ex);
         }
         this.isPhantom = false;
-        return javax.ws.rs.core.Response.ok().status(HttpStatus.SC_CREATED).header(HttpHeaders.ETAG, this.getEtag());
+        return javax.ws.rs.core.Response.ok().status(HttpStatus.SC_CREATED).header(HttpHeaders.ETAG, getEtag());
     }
 
-    final ResponseBuilder doPutForUpdate(final String contentType, final InputStream inputStream, String etag) {
+    /**
+     * Overwrite resources..
+     * @param contentType ContentType of the update file
+     * @param inputStream Stream of update file
+     * @param etag Etag
+     * @return ResponseBuilder
+     */
+    private ResponseBuilder doPutForUpdate(final String contentType, final InputStream inputStream, String etag) {
         // 現在時刻を取得
         long now = new Date().getTime();
         // 最新ノード情報をロード
@@ -589,7 +617,7 @@ public class DavCmpFsImpl implements DavCmp {
         // クリティカルなタイミング(ロック～ロードまでの間)でWebDavの管理データが削除された場合の対応
         // WebDavの管理データがこの時点で存在しない場合は404エラーとする
         if (!this.exists()) {
-            throw getNotFoundException().params(this.getUrl());
+            throw getNotFoundException().params(getUrl());
         }
 
         // 指定etagがあり、かつそれが*ではなく内部データから導出されるものと異なるときはエラー
@@ -599,35 +627,52 @@ public class DavCmpFsImpl implements DavCmp {
 
         try {
             // Update Content
-            BufferedInputStream bufferedInput = new BufferedInputStream(inputStream);
-            File tmpFile = new File(this.getTempContentFilePath());
-            File contentFile = new File(this.getContentFilePath());
+            InputStream input = inputStream;
+            if (PersoniumUnitConfig.isDavEncryptEnabled()) {
+                // Perform encryption.
+                DataCryptor cryptor = new DataCryptor(getCellId());
+                input = cryptor.encode(inputStream);
+            }
+            BufferedInputStream bufferedInput = new BufferedInputStream(input);
+            File tmpFile = new File(getTempContentFilePath());
+            File contentFile = new File(getContentFilePath());
             Files.copy(bufferedInput, tmpFile.toPath());
-
             Files.delete(contentFile.toPath());
             Files.move(tmpFile.toPath(), contentFile.toPath());
+
+            long writtenBytes = contentFile.length();
+            String encryptionType = DataCryptor.ENCRYPTION_TYPE_NONE;
+            if (PersoniumUnitConfig.isDavEncryptEnabled()) {
+                writtenBytes = ((CipherInputStream) input).getReadLengthBeforEncryption();
+                encryptionType = DataCryptor.ENCRYPTION_TYPE_AES;
+            }
 
             // Update Metadata
             this.metaFile.setUpdated(now);
             this.metaFile.setContentType(contentType);
-            this.metaFile.setContentLength(contentFile.length());
+            this.metaFile.setContentLength(writtenBytes);
+            this.metaFile.setEncryptionType(encryptionType);
             this.metaFile.save();
         } catch (IOException ex) {
             throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(ex);
         }
 
         // response
-        return javax.ws.rs.core.Response.ok().status(HttpStatus.SC_NO_CONTENT).header(HttpHeaders.ETAG, this.getEtag());
+        return javax.ws.rs.core.Response.ok().status(HttpStatus.SC_NO_CONTENT).header(HttpHeaders.ETAG, getEtag());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final ResponseBuilder get(final String rangeHeaderField) {
 
-        String contentType = this.getContentType();
+        String contentType = getContentType();
 
         ResponseBuilder res = null;
         String fileFullPath = this.fsPath + File.separator + CONTENT_FILE_NAME;
-        final long fileSize = this.getContentLength();
+        long fileSize = getContentLength();
+        String encryptionType = getEncryptionType();
 
         // Rangeヘッダ解析処理
         final RangeHeaderHandler range = RangeHeaderHandler.parse(rangeHeaderField, fileSize);
@@ -637,7 +682,7 @@ public class DavCmpFsImpl implements DavCmp {
             // Rangeヘッダ指定の時とで処理の切り分け
             if (!range.isValid()) {
                 // ファイル全体返却
-                StreamingOutput sout = new StreamingOutputForDavFile(fileFullPath);
+                StreamingOutput sout = new StreamingOutputForDavFile(fileFullPath, getCellId(), encryptionType);
                 res = davFileResponse(sout, fileSize, contentType);
             } else {
                 // Range対応部分レスポンス
@@ -652,17 +697,18 @@ public class DavCmpFsImpl implements DavCmp {
                     // MultiPartレスポンスには未対応
                     throw PersoniumCoreException.Misc.NOT_IMPLEMENTED.params("Range-MultiPart");
                 } else {
-                    StreamingOutput sout = new StreamingOutputForDavFileWithRange(fileFullPath, fileSize, range);
+                    StreamingOutput sout = new StreamingOutputForDavFileWithRange(
+                            fileFullPath, fileSize, range, getCellId(), encryptionType);
                     res = davFileResponseForRange(sout, contentType, range);
                 }
             }
-            return res.header(HttpHeaders.ETAG, this.getEtag()).header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES,
+            return res.header(HttpHeaders.ETAG, getEtag()).header(PersoniumCoreUtils.HttpHeaders.ACCEPT_RANGES,
                     RangeHeaderHandler.BYTES_UNIT);
 
         } catch (BinaryDataNotFoundException nex) {
             this.load();
-            if (!this.exists()) {
-                throw getNotFoundException().params(this.getUrl());
+            if (!exists()) {
+                throw getNotFoundException().params(getUrl());
             }
             throw PersoniumCoreException.Dav.DAV_UNAVAILABLE.reason(nex);
         }
@@ -1151,6 +1197,24 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
+     * BoxIdでEsを検索する.
+     * @param cellObj Cell
+     * @param boxId ボックスId
+     * @return 検索結果
+     */
+    public static Map<String, Object> searchBox(final Cell cellObj, final String boxId) {
+
+        EntitySetAccessor boxType = EsModel.box(cellObj);
+        PersoniumGetResponse getRes = boxType.get(boxId);
+        if (getRes == null || !getRes.isExists()) {
+            PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Box Id Not Hit").writeLog();
+
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
+        }
+        return getRes.getSource();
+    }
+
+    /**
      * retruns NotFoundException for this resource. <br />
      * messages should vary among resource type Cell, box, file, etc..
      * Each *Cmp class should override this method and define the proper exception <br />
@@ -1189,6 +1253,11 @@ public class DavCmpFsImpl implements DavCmp {
     @Override
     public String getContentType() {
         return this.metaFile.getContentType();
+    }
+
+    @Override
+    public String getEncryptionType() {
+        return this.metaFile.getEncryptionType();
     }
 
     @Override

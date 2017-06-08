@@ -43,12 +43,16 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
      * @param fileFullPath 読み込むファイルのフルパス
      * @param fileSize 読み込むファイルのサイズ
      * @param range RangeHeader
+     * @param cellId Cell ID
+     * @param encryptionType encryption type
      * @throws BinaryDataNotFoundException ファイルが存在しない場合.
      */
     public StreamingOutputForDavFileWithRange(final String fileFullPath,
             final long fileSize,
-            final RangeHeaderHandler range) throws BinaryDataNotFoundException {
-        super(fileFullPath);
+            final RangeHeaderHandler range,
+            String cellId,
+            String encryptionType) throws BinaryDataNotFoundException {
+        super(fileFullPath, cellId, encryptionType);
         this.range = range;
         this.fileSize = fileSize;
     }

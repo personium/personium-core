@@ -18,12 +18,12 @@ package io.personium.core.model.impl.es.odata;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -39,6 +39,7 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -47,6 +48,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.odata4j.core.OEntity;
+import org.odata4j.core.OEntityId;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.edm.EdmEntitySet;
 import org.powermock.api.mockito.PowerMockito;
@@ -58,9 +60,11 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.ctl.Common;
+import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.ReceivedMessagePort;
 import io.personium.core.model.ctl.Relation;
+import io.personium.core.model.ctl.Role;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.impl.es.CellEsImpl;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
@@ -308,32 +312,6 @@ public class CellCtlODataProducerTest {
         assertFalse(cellCtlODataProducer.isValidCurrentStatus(
                 ReceivedMessagePort.TYPE_REQ_RELATION_BREAK,
                 ReceivedMessagePort.STATUS_REJECTED));
-    }
-
-    /**
-     * extCellの取得で存在する場合にEntitySetDocHandlerが返却されること.
-     */
-    @Test
-    public void extCellの取得で存在する場合にEntitySetDocHandlerが返却されること() {
-        doReturn(new OEntityDocHandler()).when(cellCtlODataProducer).retrieveWithKey(anyObject(), anyObject());
-        assertTrue(cellCtlODataProducer.getExtCell("https://example.com/test0110/") != null);
-    }
-
-    /**
-     * リレーションクラスURLのフォーマットが不正な場合はnullが取得できること.
-     */
-    @Test
-    public void extCellの存在確認でOEntityKeyのパースに失敗した場合はREQUEST_RELATION_TARGET_PARSE_ERRORが発生すること() {
-        try {
-            doReturn(new OEntityDocHandler()).when(cellCtlODataProducer).retrieveWithKey(anyObject(), anyObject());
-            cellCtlODataProducer.getExtCell("https://example.com/'/");
-            fail("PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_PARSE_ERROR does not occurred.");
-        } catch (PersoniumCoreException e) {
-            PersoniumCoreException expected =
-                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_PARSE_ERROR;
-            assertEquals(expected.getCode(), e.getCode());
-            assertEquals(expected.getMessage(), e.getMessage());
-        }
     }
 
     /**
@@ -1004,38 +982,40 @@ public class CellCtlODataProducerTest {
         assertThat(captor.getValue(), is(entitySet));
     }
 
+
     /**
-     * Test buildRelation().
-     * Relation and extcell is not exists.
+     * Test updateRelation().
+     * boxName is null.
      * @throws Exception Unexpected error
      */
     @Test
-    public void buildRelation_Normal_not_exists_relation_and_extcell() throws Exception {
+    public void updateRelation_Normal_boxName_is_null() throws Exception  {
         cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
         // --------------------
         // Test method args
         // --------------------
         EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
+        String status = ReceivedMessage.STATUS_APPROVED;
 
         // --------------------
         // Mock settings
         // --------------------
         Map<String, Object> mockStaticFields = new HashMap<String, Object>();
+        mockStaticFields.put(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_MESSAGE);
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "dummyRelation");
+        mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBox");
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
         doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
 
-        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation("dummyRelation");
-        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation("dummyRelation");
+        doReturn("dummyRelation").when(cellCtlODataProducer).getNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_MESSAGE);
 
-        doReturn(null).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
-        PowerMockito.doNothing().when(cellCtlODataProducer, "createRelationEntity", "dummyRelation", "dummyBoxName");
+        doReturn(null).when(cellCtlODataProducer).getBoxNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_MESSAGE);
 
-        doReturn(null).when(cellCtlODataProducer).getExtCell("http://personium/dummyExtCell/");
-        PowerMockito.doNothing().when(cellCtlODataProducer, "createExtCellEntity", "http://personium/dummyExtCell/");
-
-        PowerMockito.doNothing().when(cellCtlODataProducer, "createRelationExtCellLinks", "dummyRelation",
-                "dummyBoxName", "http://personium/dummyExtCell/");
+        Map<String, Object> entityKeyMap = new HashMap<String, Object>();
+        PowerMockito.doReturn(entityKeyMap).when(cellCtlODataProducer, "getEntityKeyMapFromType",
+                "dummyRelation", "dummyBox", ReceivedMessage.TYPE_MESSAGE);
 
         // --------------------
         // Expected result
@@ -1046,114 +1026,65 @@ public class CellCtlODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = CellCtlODataProducer.class.getDeclaredMethod("buildRelation", EntitySetDocHandler.class);
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "updateRelation", EntitySetDocHandler.class, String.class);
         method.setAccessible(true);
         // Run method
-        method.invoke(cellCtlODataProducer, entitySetDocHandler);
+        method.invoke(cellCtlODataProducer, entitySetDocHandler, status);
 
         // --------------------
         // Confirm result
         // --------------------
         // Confirm function call
+        verify(cellCtlODataProducer, times(1)).getNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_MESSAGE);
+        verify(cellCtlODataProducer, times(1)).getBoxNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_MESSAGE);
         PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke(
-                "createRelationEntity", "dummyRelation", "dummyBoxName");
-        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke(
-                "createExtCellEntity", "http://personium/dummyExtCell/");
-        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke(
-                "createRelationExtCellLinks", "dummyRelation", "dummyBoxName", "http://personium/dummyExtCell/");
+                "getEntityKeyMapFromType", "dummyRelation", "dummyBox", ReceivedMessage.TYPE_MESSAGE);
+
+        PowerMockito.verifyPrivate(cellCtlODataProducer, never()).invoke(
+                "registerRelation", anyString(), anyObject(), anyObject());
+        PowerMockito.verifyPrivate(cellCtlODataProducer, never()).invoke(
+                "deleteRelation", anyString(), anyObject(), anyObject());
     }
 
     /**
-     * Test buildRelation().
-     * Relation and extcell is exists.
+     * Test updateRelation().
+     * extCellUrl is not trailing slash.
      * @throws Exception Unexpected error
      */
+    @SuppressWarnings("rawtypes")
     @Test
-    public void buildRelation_Normal_exists_relation_and_extcell() throws Exception {
+    public void updateRelation_Normal_extCellUrl_is_not_trailing_slash() throws Exception  {
         cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
         // --------------------
         // Test method args
         // --------------------
         EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
+        String status = ReceivedMessage.STATUS_APPROVED;
 
         // --------------------
         // Mock settings
         // --------------------
         Map<String, Object> mockStaticFields = new HashMap<String, Object>();
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "dummyRelation");
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
-        doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
-
-        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation("dummyRelation");
-        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation("dummyRelation");
-
-        doReturn(new OEntityDocHandler()).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
-        PowerMockito.doNothing().when(cellCtlODataProducer, "createRelationEntity", "dummyRelation", "dummyBoxName");
-
-        doReturn(new OEntityDocHandler()).when(cellCtlODataProducer).getExtCell("http://personium/dummyExtCell/");
-        PowerMockito.doNothing().when(cellCtlODataProducer, "createExtCellEntity", "http://personium/dummyExtCell/");
-
-        PowerMockito.doNothing().when(cellCtlODataProducer, "createRelationExtCellLinks", "dummyRelation",
-                "dummyBoxName", "http://personium/dummyExtCell/");
-
-        // --------------------
-        // Expected result
-        // --------------------
-        // Nothing.
-
-        // --------------------
-        // Run method
-        // --------------------
-        // Load methods for private
-        Method method = CellCtlODataProducer.class.getDeclaredMethod("buildRelation", EntitySetDocHandler.class);
-        method.setAccessible(true);
-        // Run method
-        method.invoke(cellCtlODataProducer, entitySetDocHandler);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        // Confirm function call
-        PowerMockito.verifyPrivate(cellCtlODataProducer, never()).invoke(
-                "createRelationEntity", "dummyRelation", "dummyBoxName");
-        PowerMockito.verifyPrivate(cellCtlODataProducer, never()).invoke(
-                "createExtCellEntity", "http://personium/dummyExtCell/");
-        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke(
-                "createRelationExtCellLinks", "dummyRelation", "dummyBoxName", "http://personium/dummyExtCell/");
-    }
-
-    /**
-     * Test buildRelation().
-     * requestExtCell does not end with a slash.
-     * @throws Exception Unexpected error
-     */
-    @Test
-    public void buildRelation_Normal_requestExtCell_does_not_endwith_slash() throws Exception {
-        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
-        // --------------------
-        // Test method args
-        // --------------------
-        EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Map<String, Object> mockStaticFields = new HashMap<String, Object>();
+        mockStaticFields.put(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQ_RELATION_BUILD);
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "dummyRelation");
         mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell");
         doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
 
-        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation("dummyRelation");
-        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation("dummyRelation");
+        doReturn("dummyRelation").when(cellCtlODataProducer).getNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_RELATION_BUILD);
 
-        doReturn(null).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
-        PowerMockito.doNothing().when(cellCtlODataProducer, "createRelationEntity", "dummyRelation", "dummyBoxName");
+        doReturn("dummyBox").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_RELATION_BUILD);
 
-        doReturn(null).when(cellCtlODataProducer).getExtCell("http://personium/dummyExtCell/");
-        PowerMockito.doNothing().when(cellCtlODataProducer, "createExtCellEntity", "http://personium/dummyExtCell/");
+        Map<String, Object> entityKeyMap = new HashMap<String, Object>();
+        entityKeyMap.put(Common.P_BOX_NAME.getName(), "dummyBox");
+        PowerMockito.doReturn(entityKeyMap).when(cellCtlODataProducer, "getEntityKeyMapFromType",
+                "dummyRelation", "dummyBox", ReceivedMessage.TYPE_REQ_RELATION_BUILD);
 
-        PowerMockito.doNothing().when(cellCtlODataProducer, "createRelationExtCellLinks", "dummyRelation",
-                "dummyBoxName", "http://personium/dummyExtCell/");
+        PowerMockito.doNothing().when(cellCtlODataProducer, "registerRelation", anyString(), anyObject(), anyObject());
 
         // --------------------
         // Expected result
@@ -1164,35 +1095,353 @@ public class CellCtlODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = CellCtlODataProducer.class.getDeclaredMethod("buildRelation", EntitySetDocHandler.class);
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "updateRelation", EntitySetDocHandler.class, String.class);
         method.setAccessible(true);
         // Run method
-        method.invoke(cellCtlODataProducer, entitySetDocHandler);
+        method.invoke(cellCtlODataProducer, entitySetDocHandler, status);
 
         // --------------------
         // Confirm result
         // --------------------
         // Confirm function call
+        verify(cellCtlODataProducer, times(1)).getNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_RELATION_BUILD);
+        verify(cellCtlODataProducer, times(1)).getBoxNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_RELATION_BUILD);
         PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke(
-                "createRelationEntity", "dummyRelation", "dummyBoxName");
-        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke(
-                "createExtCellEntity", "http://personium/dummyExtCell/");
-        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke(
-                "createRelationExtCellLinks", "dummyRelation", "dummyBoxName", "http://personium/dummyExtCell/");
+                "getEntityKeyMapFromType", "dummyRelation", "dummyBox", ReceivedMessage.TYPE_REQ_RELATION_BUILD);
+
+        ArgumentCaptor<String> edmTypeCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> entityKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Map> extCellKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke("registerRelation",
+                edmTypeCaptor.capture(), entityKeyMapCaptor.capture(), extCellKeyMapCaptor.capture());
+        PowerMockito.verifyPrivate(cellCtlODataProducer, never()).invoke("deleteRelation",
+                anyString(), anyObject(), anyObject());
+
+        assertThat(edmTypeCaptor.getValue(), is(Relation.EDM_TYPE_NAME));
+        assertThat(entityKeyMapCaptor.getValue().get(Common.P_BOX_NAME.getName()), is("dummyBox"));
+        assertThat(extCellKeyMapCaptor.getValue().get(ExtCell.P_URL.getName()), is("http://personium/dummyExtCell/"));
     }
 
     /**
-     * Test createRelationOEntityKey().
-     * BoxName is not null.
+     * Test updateRelation().
+     * Type is relationBuild.
      * @throws Exception Unexpected error
      */
+    @SuppressWarnings("rawtypes")
     @Test
-    public void createRelationOEntityKey_Normal_boxName_is_not_null() throws Exception {
+    public void updateRelation_Normal_type_is_relation_build() throws Exception  {
+        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
         // --------------------
         // Test method args
         // --------------------
-        String relationName = "dummyRelationName";
-        String boxName = "dummyBoxName";
+        EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
+        String status = ReceivedMessage.STATUS_APPROVED;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Map<String, Object> mockStaticFields = new HashMap<String, Object>();
+        mockStaticFields.put(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQ_RELATION_BUILD);
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "dummyRelation");
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
+        doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
+
+        doReturn("dummyRelation").when(cellCtlODataProducer).getNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_RELATION_BUILD);
+
+        doReturn("dummyBox").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_RELATION_BUILD);
+
+        Map<String, Object> entityKeyMap = new HashMap<String, Object>();
+        entityKeyMap.put(Common.P_BOX_NAME.getName(), "dummyBox");
+        PowerMockito.doReturn(entityKeyMap).when(cellCtlODataProducer, "getEntityKeyMapFromType",
+                "dummyRelation", "dummyBox", ReceivedMessage.TYPE_REQ_RELATION_BUILD);
+
+        PowerMockito.doNothing().when(cellCtlODataProducer, "registerRelation", anyString(), anyObject(), anyObject());
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "updateRelation", EntitySetDocHandler.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        method.invoke(cellCtlODataProducer, entitySetDocHandler, status);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(cellCtlODataProducer, times(1)).getNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_RELATION_BUILD);
+        verify(cellCtlODataProducer, times(1)).getBoxNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_RELATION_BUILD);
+        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke(
+                "getEntityKeyMapFromType", "dummyRelation", "dummyBox", ReceivedMessage.TYPE_REQ_RELATION_BUILD);
+
+        ArgumentCaptor<String> edmTypeCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> entityKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Map> extCellKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke("registerRelation",
+                edmTypeCaptor.capture(), entityKeyMapCaptor.capture(), extCellKeyMapCaptor.capture());
+        PowerMockito.verifyPrivate(cellCtlODataProducer, never()).invoke("deleteRelation",
+                anyString(), anyObject(), anyObject());
+
+        assertThat(edmTypeCaptor.getValue(), is(Relation.EDM_TYPE_NAME));
+        assertThat(entityKeyMapCaptor.getValue().get(Common.P_BOX_NAME.getName()), is("dummyBox"));
+        assertThat(extCellKeyMapCaptor.getValue().get(ExtCell.P_URL.getName()), is("http://personium/dummyExtCell/"));
+    }
+
+    /**
+     * Test updateRelation().
+     * Type is relationBreak.
+     * @throws Exception Unexpected error
+     */
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void updateRelation_Normal_type_is_relation_break() throws Exception  {
+        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
+        // --------------------
+        // Test method args
+        // --------------------
+        EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
+        String status = ReceivedMessage.STATUS_APPROVED;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Map<String, Object> mockStaticFields = new HashMap<String, Object>();
+        mockStaticFields.put(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQ_RELATION_BREAK);
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "dummyRelation");
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
+        doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
+
+        doReturn("dummyRelation").when(cellCtlODataProducer).getNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_RELATION_BREAK);
+
+        doReturn("dummyBox").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_RELATION_BREAK);
+
+        Map<String, Object> entityKeyMap = new HashMap<String, Object>();
+        entityKeyMap.put(Common.P_BOX_NAME.getName(), "dummyBox");
+        PowerMockito.doReturn(entityKeyMap).when(cellCtlODataProducer, "getEntityKeyMapFromType",
+                "dummyRelation", "dummyBox", ReceivedMessage.TYPE_REQ_RELATION_BREAK);
+
+        PowerMockito.doNothing().when(cellCtlODataProducer, "deleteRelation", anyString(), anyObject(), anyObject());
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "updateRelation", EntitySetDocHandler.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        method.invoke(cellCtlODataProducer, entitySetDocHandler, status);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(cellCtlODataProducer, times(1)).getNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_RELATION_BREAK);
+        verify(cellCtlODataProducer, times(1)).getBoxNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_RELATION_BREAK);
+        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke(
+                "getEntityKeyMapFromType", "dummyRelation", "dummyBox", ReceivedMessage.TYPE_REQ_RELATION_BREAK);
+
+        ArgumentCaptor<String> edmTypeCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> entityKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Map> extCellKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+        PowerMockito.verifyPrivate(cellCtlODataProducer, never()).invoke("registerRelation",
+                anyString(), anyObject(), anyObject());
+        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke("deleteRelation",
+                edmTypeCaptor.capture(), entityKeyMapCaptor.capture(), extCellKeyMapCaptor.capture());
+
+        assertThat(edmTypeCaptor.getValue(), is(Relation.EDM_TYPE_NAME));
+        assertThat(entityKeyMapCaptor.getValue().get(Common.P_BOX_NAME.getName()), is("dummyBox"));
+        assertThat(extCellKeyMapCaptor.getValue().get(ExtCell.P_URL.getName()), is("http://personium/dummyExtCell/"));
+    }
+
+    /**
+     * Test updateRelation().
+     * Type is roleGrant.
+     * @throws Exception Unexpected error
+     */
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void updateRelation_Normal_type_is_role_grant() throws Exception  {
+        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
+        // --------------------
+        // Test method args
+        // --------------------
+        EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
+        String status = ReceivedMessage.STATUS_APPROVED;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Map<String, Object> mockStaticFields = new HashMap<String, Object>();
+        mockStaticFields.put(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQ_ROLE_GRANT);
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "dummyRelation");
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
+        doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
+
+        doReturn("dummyRelation").when(cellCtlODataProducer).getNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_ROLE_GRANT);
+
+        doReturn("dummyBox").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_ROLE_GRANT);
+
+        Map<String, Object> entityKeyMap = new HashMap<String, Object>();
+        entityKeyMap.put(Common.P_BOX_NAME.getName(), "dummyBox");
+        PowerMockito.doReturn(entityKeyMap).when(cellCtlODataProducer, "getEntityKeyMapFromType",
+                "dummyRelation", "dummyBox", ReceivedMessage.TYPE_REQ_ROLE_GRANT);
+
+        PowerMockito.doNothing().when(cellCtlODataProducer, "registerRelation", anyString(), anyObject(), anyObject());
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "updateRelation", EntitySetDocHandler.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        method.invoke(cellCtlODataProducer, entitySetDocHandler, status);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(cellCtlODataProducer, times(1)).getNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_ROLE_GRANT);
+        verify(cellCtlODataProducer, times(1)).getBoxNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_ROLE_GRANT);
+        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke(
+                "getEntityKeyMapFromType", "dummyRelation", "dummyBox", ReceivedMessage.TYPE_REQ_ROLE_GRANT);
+
+        ArgumentCaptor<String> edmTypeCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> entityKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Map> extCellKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke("registerRelation",
+                edmTypeCaptor.capture(), entityKeyMapCaptor.capture(), extCellKeyMapCaptor.capture());
+        PowerMockito.verifyPrivate(cellCtlODataProducer, never()).invoke("deleteRelation",
+                anyString(), anyObject(), anyObject());
+
+        assertThat(edmTypeCaptor.getValue(), is(Role.EDM_TYPE_NAME));
+        assertThat(entityKeyMapCaptor.getValue().get(Common.P_BOX_NAME.getName()), is("dummyBox"));
+        assertThat(extCellKeyMapCaptor.getValue().get(ExtCell.P_URL.getName()), is("http://personium/dummyExtCell/"));
+    }
+
+    /**
+     * Test updateRelation().
+     * Type is roleRevoke.
+     * @throws Exception Unexpected error
+     */
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void updateRelation_Normal_type_is_role_revoke() throws Exception  {
+        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
+        // --------------------
+        // Test method args
+        // --------------------
+        EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
+        String status = ReceivedMessage.STATUS_APPROVED;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Map<String, Object> mockStaticFields = new HashMap<String, Object>();
+        mockStaticFields.put(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQ_ROLE_REVOKE);
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(), "dummyRelation");
+        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
+        doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
+
+        doReturn("dummyRelation").when(cellCtlODataProducer).getNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_ROLE_REVOKE);
+
+        doReturn("dummyBox").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_ROLE_REVOKE);
+
+        Map<String, Object> entityKeyMap = new HashMap<String, Object>();
+        entityKeyMap.put(Common.P_BOX_NAME.getName(), "dummyBox");
+        PowerMockito.doReturn(entityKeyMap).when(cellCtlODataProducer, "getEntityKeyMapFromType",
+                "dummyRelation", "dummyBox", ReceivedMessage.TYPE_REQ_ROLE_REVOKE);
+
+        PowerMockito.doNothing().when(cellCtlODataProducer, "deleteRelation", anyString(), anyObject(), anyObject());
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "updateRelation", EntitySetDocHandler.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        method.invoke(cellCtlODataProducer, entitySetDocHandler, status);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(cellCtlODataProducer, times(1)).getNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_ROLE_REVOKE);
+        verify(cellCtlODataProducer, times(1)).getBoxNameFromRequestRelation(
+                "dummyRelation", ReceivedMessage.TYPE_REQ_ROLE_REVOKE);
+        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke(
+                "getEntityKeyMapFromType", "dummyRelation", "dummyBox", ReceivedMessage.TYPE_REQ_ROLE_REVOKE);
+
+        ArgumentCaptor<String> edmTypeCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> entityKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Map> extCellKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+        PowerMockito.verifyPrivate(cellCtlODataProducer, never()).invoke("registerRelation",
+                anyString(), anyObject(), anyObject());
+        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke("deleteRelation",
+                edmTypeCaptor.capture(), entityKeyMapCaptor.capture(), extCellKeyMapCaptor.capture());
+
+        assertThat(edmTypeCaptor.getValue(), is(Role.EDM_TYPE_NAME));
+        assertThat(entityKeyMapCaptor.getValue().get(Common.P_BOX_NAME.getName()), is("dummyBox"));
+        assertThat(extCellKeyMapCaptor.getValue().get(ExtCell.P_URL.getName()), is("http://personium/dummyExtCell/"));
+    }
+
+    /**
+     * Test updateRelation().
+     * Status is not approved.
+     * @throws Exception Unexpected error
+     */
+    @Test
+    public void updateRelation_Normal_status_is_not_approved() throws Exception  {
+        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
+        // --------------------
+        // Test method args
+        // --------------------
+        EntitySetDocHandler entitySetDocHandler = null;
+        String status = ReceivedMessage.STATUS_REJECTED;
 
         // --------------------
         // Mock settings
@@ -1202,84 +1451,704 @@ public class CellCtlODataProducerTest {
         // --------------------
         // Expected result
         // --------------------
-        OEntityKey expectedOEntityKey = OEntityKey.create(
-                Relation.P_NAME.getName(), relationName,
-                Common.P_BOX_NAME.getName(), boxName);
+        // Nothing.
 
         // --------------------
         // Run method
         // --------------------
         // Load methods for private
-        Method method = CellCtlODataProducer.class.getDeclaredMethod("createRelationOEntityKey",
-                String.class, String.class);
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "updateRelation", EntitySetDocHandler.class, String.class);
         method.setAccessible(true);
         // Run method
-        OEntityKey resultOEntityKey = (OEntityKey) method.invoke(cellCtlODataProducer, relationName, boxName);
+        method.invoke(cellCtlODataProducer, entitySetDocHandler, status);
 
         // --------------------
         // Confirm result
         // --------------------
-        assertThat(resultOEntityKey.toString(), is(expectedOEntityKey.toString()));
+        // OK if Exception has not occurred.
     }
 
     /**
-     * Test createRelationOEntityKey().
-     * BoxName is null.
-     * @throws Exception Unexpected error
+     * Test getNameFromRequestRelation().
+     * Normal test.
+     * RequestRelation is ClassURL.
+     * @throws Exception Unexpected error.
      */
     @Test
-    public void createRelationOEntityKey_Normal_boxName_is_null() throws Exception {
+    public void getNameFromRequestRelation_Normal_requestRelation_is_classURL() throws Exception {
+        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
         // --------------------
         // Test method args
         // --------------------
-        String relationName = "dummyRelationName";
-        String boxName = null;
+        String requestRelation = "personium-localunit:/dummyAppCell/__relation/__/dummyRelation";
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
 
         // --------------------
         // Mock settings
         // --------------------
-        // Nothing.
+        Cell mockCell = mock(Cell.class);
+        cellCtlODataProducer.cell = mockCell;
+        doReturn("http://personium").when(mockCell).getUnitUrl();
+
+        PowerMockito.mockStatic(UriUtils.class);
+        PowerMockito.doReturn("http://personium/dummyAppCell/__relation/__/dummyRelation").when(
+                UriUtils.class, "convertSchemeFromLocalUnitToHttp", "http://personium", requestRelation);
+
+        PowerMockito.doReturn(Common.PATTERN_RELATION_CLASS_URL).when(cellCtlODataProducer, "getRegexFromType", type);
 
         // --------------------
         // Expected result
         // --------------------
-        OEntityKey expectedOEntityKey = OEntityKey.create(
-                Relation.P_NAME.getName(), relationName);
+        String expectedRelationName = "dummyRelation";
 
         // --------------------
         // Run method
         // --------------------
-        // Load methods for private
-        Method method = CellCtlODataProducer.class.getDeclaredMethod("createRelationOEntityKey",
-                String.class, String.class);
-        method.setAccessible(true);
-        // Run method
-        OEntityKey resultOEntityKey = (OEntityKey) method.invoke(cellCtlODataProducer, relationName, boxName);
+        String actualRelationName = cellCtlODataProducer.getNameFromRequestRelation(requestRelation, type);
 
         // --------------------
         // Confirm result
         // --------------------
-        assertThat(resultOEntityKey.toString(), is(expectedOEntityKey.toString()));
+        assertThat(actualRelationName, is(expectedRelationName));
     }
 
     /**
-     * Test createRelationOEntityKey().
+     * Test getNameFromRequestRelation().
+     * Normal test.
+     * RequestRelation is Name.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getNameFromRequestRelation_Normal_requestRelation_is_name() throws Exception {
+        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
+        // --------------------
+        // Test method args
+        // --------------------
+        String requestRelation = "dummyRelation";
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Cell mockCell = mock(Cell.class);
+        cellCtlODataProducer.cell = mockCell;
+        doReturn("http://personium").when(mockCell).getUnitUrl();
+
+        PowerMockito.mockStatic(UriUtils.class);
+        PowerMockito.doReturn(requestRelation).when(
+                UriUtils.class, "convertSchemeFromLocalUnitToHttp", "http://personium", requestRelation);
+
+        PowerMockito.doReturn(Common.PATTERN_RELATION_CLASS_URL).when(cellCtlODataProducer, "getRegexFromType", type);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expectedRelationName = "dummyRelation";
+
+        // --------------------
+        // Run method
+        // --------------------
+        String actualRelationName = cellCtlODataProducer.getNameFromRequestRelation(requestRelation, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualRelationName, is(expectedRelationName));
+    }
+
+    /**
+     * Test getBoxNameFromRequestRelation().
+     * Normal test.
+     * RequestRelation is RelationClassURL.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getBoxNameFromRequestRelation_Normal_requestRelation_is_classURL() throws Exception {
+        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
+        // --------------------
+        // Test method args
+        // --------------------
+        String requestRelation = "personium-localunit:/dummyAppCell/__relation/__/dummyRelation";
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Cell mockCell = mock(Cell.class);
+        cellCtlODataProducer.cell = mockCell;
+        doReturn("http://personium").when(mockCell).getUnitUrl();
+
+        PowerMockito.mockStatic(UriUtils.class);
+        PowerMockito.doReturn("http://personium/dummyAppCell/__relation/__/dummyRelation").when(
+            UriUtils.class, "convertSchemeFromLocalUnitToHttp", "http://personium", requestRelation);
+
+        PowerMockito.doReturn(Common.PATTERN_RELATION_CLASS_URL).when(cellCtlODataProducer, "getRegexFromType", type);
+
+        Box mockBox = PowerMockito.mock(Box.class);
+        doReturn("dummyBoxName").when(mockBox).getName();
+        doReturn(mockBox).when(mockCell).getBoxForSchema("http://personium/dummyAppCell/");
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expectedBoxName = "dummyBoxName";
+
+        // --------------------
+        // Run method
+        // --------------------
+        String actualBoxName = cellCtlODataProducer.getBoxNameFromRequestRelation(requestRelation, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualBoxName, is(expectedBoxName));
+    }
+
+    /**
+     * Test getBoxNameFromRequestRelation().
+     * Normal test.
+     * RequestRelation is RelationName.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getBoxNameFromRequestRelation_Normal_requestRelation_is_name() throws Exception {
+        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
+        // --------------------
+        // Test method args
+        // --------------------
+        String requestRelation = "dummyRelation";
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Cell mockCell = mock(Cell.class);
+        cellCtlODataProducer.cell = mockCell;
+        doReturn("http://personium").when(mockCell).getUnitUrl();
+
+        PowerMockito.mockStatic(UriUtils.class);
+        PowerMockito.doReturn(requestRelation).when(
+                UriUtils.class, "convertSchemeFromLocalUnitToHttp", "http://personium", requestRelation);
+
+        PowerMockito.doReturn(Common.PATTERN_RELATION_CLASS_URL).when(cellCtlODataProducer, "getRegexFromType", type);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expectedBoxName = null;
+
+        // --------------------
+        // Run method
+        // --------------------
+        String actualBoxName = cellCtlODataProducer.getBoxNameFromRequestRelation(requestRelation, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualBoxName, is(expectedBoxName));
+    }
+
+    /**
+     * Test getBoxNameFromRequestRelation().
      * Error test.
-     * EntityKey parse failed.
-     * @throws Exception Unexpected error
+     * Box associated with class URL does not exist.
+     * @throws Exception Unexpected error.
      */
     @Test
-    public void createRelationOEntityKey_Error_entityKey_parse_failed() throws Exception {
+    public void getBoxNameFromRequestRelation_Error_box_associated_with_classURL_does_not_exist() throws Exception {
+        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
         // --------------------
         // Test method args
         // --------------------
-        String relationName = "'dummy'";
-        String boxName = null;
+        String requestRelation = "personium-localunit:/dummyAppCell/__relation/__/dummyRelation";
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Cell mockCell = mock(Cell.class);
+        cellCtlODataProducer.cell = mockCell;
+        doReturn("http://personium").when(mockCell).getUnitUrl();
+
+        PowerMockito.mockStatic(UriUtils.class);
+        PowerMockito.doReturn("http://personium/dummyAppCell/__relation/__/dummyRelation").when(
+                UriUtils.class, "convertSchemeFromLocalUnitToHttp", "http://personium", requestRelation);
+
+        PowerMockito.doReturn(Common.PATTERN_RELATION_CLASS_URL).when(cellCtlODataProducer, "getRegexFromType", type);
+
+        doReturn(null).when(mockCell).getBoxForSchema("http://personium/dummyAppCell/");
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            cellCtlODataProducer.getBoxNameFromRequestRelation(requestRelation, type);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage
+                    .BOX_THAT_MATCHES_RELATION_CLASS_URL_NOT_EXISTS.params(
+                    "http://personium/dummyAppCell/__relation/__/dummyRelation");
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test getBoxNameFromRequestRelation().
+     * Normal test.
+     * Type is relationBuild.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getRegexFromType_Normal_type_is_relation_build() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
 
         // --------------------
         // Mock settings
         // --------------------
         // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expectedRegex = Common.PATTERN_RELATION_CLASS_URL;
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod("getRegexFromType", String.class);
+        method.setAccessible(true);
+        // Run method
+        String actualRegex = (String) method.invoke(cellCtlODataProducer, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualRegex, is(expectedRegex));
+    }
+
+    /**
+     * Test getBoxNameFromRequestRelation().
+     * Normal test.
+     * Type is relationBreak.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getRegexFromType_Normal_type_is_relation_break() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expectedRegex = Common.PATTERN_RELATION_CLASS_URL;
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod("getRegexFromType", String.class);
+        method.setAccessible(true);
+        // Run method
+        String actualRegex = (String) method.invoke(cellCtlODataProducer, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualRegex, is(expectedRegex));
+    }
+
+    /**
+     * Test getBoxNameFromRequestRelation().
+     * Normal test.
+     * Type is roleGrant.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getRegexFromType_Normal_type_is_role_grant() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_ROLE_GRANT;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expectedRegex = Common.PATTERN_ROLE_CLASS_URL;
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod("getRegexFromType", String.class);
+        method.setAccessible(true);
+        // Run method
+        String actualRegex = (String) method.invoke(cellCtlODataProducer, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualRegex, is(expectedRegex));
+    }
+
+    /**
+     * Test getBoxNameFromRequestRelation().
+     * Normal test.
+     * Type is roleRevoke.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getRegexFromType_Normal_type_is_role_revoke() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_REQ_ROLE_REVOKE;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expectedRegex = Common.PATTERN_ROLE_CLASS_URL;
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod("getRegexFromType", String.class);
+        method.setAccessible(true);
+        // Run method
+        String actualRegex = (String) method.invoke(cellCtlODataProducer, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualRegex, is(expectedRegex));
+    }
+
+    /**
+     * Test getBoxNameFromRequestRelation().
+     * Normal test.
+     * Type is other.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void getRegexFromType_Normal_type_is_other() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String type = ReceivedMessage.TYPE_MESSAGE;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expectedRegex = "";
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod("getRegexFromType", String.class);
+        method.setAccessible(true);
+        // Run method
+        String actualRegex = (String) method.invoke(cellCtlODataProducer, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualRegex, is(expectedRegex));
+    }
+
+    /**
+     * Test getEntityKeyMapFromType().
+     * Normal test.
+     * boxName is not null.
+     * @throws Exception Unexpected error.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getEntityKeyMapFromType_Normal_boxName_is_not_null() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String name = "dummyName";
+        String boxName = "dummyBox";
+        String type = ReceivedMessage.TYPE_MESSAGE;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        Map<String, Object> expectedEntityKeyMap = new HashMap<>();
+        expectedEntityKeyMap.put(Common.P_BOX_NAME.getName(), boxName);
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "getEntityKeyMapFromType", String.class, String.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        Map<String, Object> actualEntityKeyMap = (Map<String, Object>) method.invoke(
+                cellCtlODataProducer, name, boxName, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(actualEntityKeyMap.get(Common.P_BOX_NAME.getName()),
+                is(expectedEntityKeyMap.get(Common.P_BOX_NAME.getName())));
+        assertNull(actualEntityKeyMap.get(Relation.P_NAME.getName()));
+        assertNull(actualEntityKeyMap.get(Role.P_NAME.getName()));
+    }
+
+    /**
+     * Test getEntityKeyMapFromType().
+     * Normal test.
+     * type is relationBuild.
+     * @throws Exception Unexpected error.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getEntityKeyMapFromType_Normal_type_is_relation_build() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String name = "dummyName";
+        String boxName = null;
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        Map<String, Object> expectedEntityKeyMap = new HashMap<>();
+        expectedEntityKeyMap.put(Relation.P_NAME.getName(), name);
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "getEntityKeyMapFromType", String.class, String.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        Map<String, Object> actualEntityKeyMap = (Map<String, Object>) method.invoke(
+                cellCtlODataProducer, name, boxName, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertNull(actualEntityKeyMap.get(Common.P_BOX_NAME.getName()));
+        assertThat(actualEntityKeyMap.get(Relation.P_NAME.getName()),
+                is(expectedEntityKeyMap.get(Relation.P_NAME.getName())));
+    }
+
+    /**
+     * Test getEntityKeyMapFromType().
+     * Normal test.
+     * type is relationBreak.
+     * @throws Exception Unexpected error.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getEntityKeyMapFromType_Normal_type_is_relation_break() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String name = "dummyName";
+        String boxName = null;
+        String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        Map<String, Object> expectedEntityKeyMap = new HashMap<>();
+        expectedEntityKeyMap.put(Relation.P_NAME.getName(), name);
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "getEntityKeyMapFromType", String.class, String.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        Map<String, Object> actualEntityKeyMap = (Map<String, Object>) method.invoke(
+                cellCtlODataProducer, name, boxName, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertNull(actualEntityKeyMap.get(Common.P_BOX_NAME.getName()));
+        assertThat(actualEntityKeyMap.get(Relation.P_NAME.getName()),
+                is(expectedEntityKeyMap.get(Relation.P_NAME.getName())));
+    }
+
+    /**
+     * Test getEntityKeyMapFromType().
+     * Normal test.
+     * type is roleGrant.
+     * @throws Exception Unexpected error.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getEntityKeyMapFromType_Normal_type_is_role_grant() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String name = "dummyName";
+        String boxName = null;
+        String type = ReceivedMessage.TYPE_REQ_ROLE_GRANT;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        Map<String, Object> expectedEntityKeyMap = new HashMap<>();
+        expectedEntityKeyMap.put(Role.P_NAME.getName(), name);
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "getEntityKeyMapFromType", String.class, String.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        Map<String, Object> actualEntityKeyMap = (Map<String, Object>) method.invoke(
+                cellCtlODataProducer, name, boxName, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertNull(actualEntityKeyMap.get(Common.P_BOX_NAME.getName()));
+        assertThat(actualEntityKeyMap.get(Role.P_NAME.getName()),
+                is(expectedEntityKeyMap.get(Role.P_NAME.getName())));
+    }
+
+    /**
+     * Test getEntityKeyMapFromType().
+     * Normal test.
+     * type is roleRevoke.
+     * @throws Exception Unexpected error.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getEntityKeyMapFromType_Normal_type_is_role_revoke() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String name = "dummyName";
+        String boxName = null;
+        String type = ReceivedMessage.TYPE_REQ_ROLE_REVOKE;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Expected result
+        // --------------------
+        Map<String, Object> expectedEntityKeyMap = new HashMap<>();
+        expectedEntityKeyMap.put(Role.P_NAME.getName(), name);
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "getEntityKeyMapFromType", String.class, String.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        Map<String, Object> actualEntityKeyMap = (Map<String, Object>) method.invoke(
+                cellCtlODataProducer, name, boxName, type);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertNull(actualEntityKeyMap.get(Common.P_BOX_NAME.getName()));
+        assertThat(actualEntityKeyMap.get(Role.P_NAME.getName()),
+                is(expectedEntityKeyMap.get(Role.P_NAME.getName())));
+    }
+
+    /**
+     * Test registerRelation().
+     * Entity and extcell is not exists.
+     * @throws Exception Unexpected error
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Test
+    public void registerRelation_Normal_not_exists_entity_and_extcell() throws Exception {
+        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
+        // --------------------
+        // Test method args
+        // --------------------
+        String edmType = Relation.EDM_TYPE_NAME;
+        Map<String, Object> entityKeyMap = new HashMap<>();
+        entityKeyMap.put("dummyKey1", "dummyValue1");
+        Map<String, Object> extCellKeyMap = new HashMap<>();
+        extCellKeyMap.put("dummyKey2", "dummyValue2");
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doReturn(null).when(cellCtlODataProducer).getEntitySetDocHandler(anyString(), anyMap());
+        PowerMockito.doNothing().when(cellCtlODataProducer,
+                "createOEntity", anyString(), anyMapOf(String.class, Object.class));
+        PowerMockito.doNothing().when(cellCtlODataProducer, "createExtCellLinks", anyString(), anyMap(), anyMap());
 
         // --------------------
         // Expected result
@@ -1290,47 +2159,258 @@ public class CellCtlODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = CellCtlODataProducer.class.getDeclaredMethod("createRelationOEntityKey",
-                String.class, String.class);
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "registerRelation", String.class, Map.class, Map.class);
         method.setAccessible(true);
         // Run method
+        method.invoke(cellCtlODataProducer, edmType, entityKeyMap, extCellKeyMap);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        ArgumentCaptor<String> edmTypeCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> entityKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Map> extCellKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+
+
+        verify(cellCtlODataProducer, times(2)).getEntitySetDocHandler(
+                edmTypeCaptor.capture(), entityKeyMapCaptor.capture());
+        List<String> edmTypeCaptorValueList = edmTypeCaptor.getAllValues();
+        List<Map> entityKeyMapCaptorValueList = entityKeyMapCaptor.getAllValues();
+        assertThat(edmType, is(edmTypeCaptorValueList.get(0)));
+        assertThat(entityKeyMap, is(entityKeyMapCaptorValueList.get(0)));
+        assertThat(ExtCell.EDM_TYPE_NAME, is(edmTypeCaptorValueList.get(1)));
+        assertThat(extCellKeyMap, is(entityKeyMapCaptorValueList.get(1)));
+
+        PowerMockito.verifyPrivate(cellCtlODataProducer, times(2)).invoke(
+                "createOEntity", edmTypeCaptor.capture(), entityKeyMapCaptor.capture());
+        edmTypeCaptorValueList = edmTypeCaptor.getAllValues();
+        entityKeyMapCaptorValueList = entityKeyMapCaptor.getAllValues();
+        assertThat(edmType, is(edmTypeCaptorValueList.get(0)));
+        assertThat(entityKeyMap, is(entityKeyMapCaptorValueList.get(0)));
+        assertThat(ExtCell.EDM_TYPE_NAME, is(edmTypeCaptorValueList.get(1)));
+        assertThat(extCellKeyMap, is(entityKeyMapCaptorValueList.get(1)));
+
+        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke("createExtCellLinks",
+                edmTypeCaptor.capture(), entityKeyMapCaptor.capture(), extCellKeyMapCaptor.capture());
+        assertThat(edmType, is(edmTypeCaptor.getValue()));
+        assertThat(entityKeyMap, is(entityKeyMapCaptor.getValue()));
+        assertThat(extCellKeyMap, is(extCellKeyMapCaptor.getValue()));
+    }
+
+    /**
+     * Test registerRelation().
+     * Entity and extcell is exists.
+     * @throws Exception Unexpected error
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Test
+    public void registerRelation_Normal_exists_entity_and_extcell() throws Exception {
+        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
+        // --------------------
+        // Test method args
+        // --------------------
+        String edmType = Relation.EDM_TYPE_NAME;
+        Map<String, Object> entityKeyMap = new HashMap<>();
+        entityKeyMap.put("dummyKey1", "dummyValue1");
+        Map<String, Object> extCellKeyMap = new HashMap<>();
+        extCellKeyMap.put("dummyKey2", "dummyValue2");
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        EntitySetDocHandler mockDocHandler = mock(EntitySetDocHandler.class);
+        doReturn(mockDocHandler).when(cellCtlODataProducer).getEntitySetDocHandler(anyString(), anyMap());
+        PowerMockito.doNothing().when(cellCtlODataProducer, "createExtCellLinks", anyString(), anyMap(), anyMap());
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "registerRelation", String.class, Map.class, Map.class);
+        method.setAccessible(true);
+        // Run method
+        method.invoke(cellCtlODataProducer, edmType, entityKeyMap, extCellKeyMap);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        ArgumentCaptor<String> edmTypeCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> entityKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<Map> extCellKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+
+
+        verify(cellCtlODataProducer, times(2)).getEntitySetDocHandler(
+                edmTypeCaptor.capture(), entityKeyMapCaptor.capture());
+        List<String> edmTypeCaptorValueList = edmTypeCaptor.getAllValues();
+        List<Map> entityKeyMapCaptorValueList = entityKeyMapCaptor.getAllValues();
+        assertThat(edmType, is(edmTypeCaptorValueList.get(0)));
+        assertThat(entityKeyMap, is(entityKeyMapCaptorValueList.get(0)));
+        assertThat(ExtCell.EDM_TYPE_NAME, is(edmTypeCaptorValueList.get(1)));
+        assertThat(extCellKeyMap, is(entityKeyMapCaptorValueList.get(1)));
+
+        PowerMockito.verifyPrivate(cellCtlODataProducer, never()).invoke(
+                "createOEntity", edmTypeCaptor.capture(), entityKeyMapCaptor.capture());
+
+        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke("createExtCellLinks",
+                edmTypeCaptor.capture(), entityKeyMapCaptor.capture(), extCellKeyMapCaptor.capture());
+        assertThat(edmType, is(edmTypeCaptor.getValue()));
+        assertThat(entityKeyMap, is(entityKeyMapCaptor.getValue()));
+        assertThat(extCellKeyMap, is(extCellKeyMapCaptor.getValue()));
+    }
+
+    /**
+     * Test deleteRelation().
+     * Normal test.
+     * @throws Exception Unexpected error
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Test
+    public void deleteRelation_Normal() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String edmType = Relation.EDM_TYPE_NAME;
+        Map<String, Object> entityKeyMap = new HashMap<>();
+        entityKeyMap.put("dummyKey1", "dummyValue1");
+        Map<String, Object> extCellKeyMap = new HashMap<>();
+        extCellKeyMap.put("dummyKey2", "dummyValue2");
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        EntitySetDocHandler entity = new OEntityDocHandler();
+        EntitySetDocHandler extCell = new OEntityDocHandler();
+        doReturn(entity).when(cellCtlODataProducer).getEntitySetDocHandler(edmType, entityKeyMap);
+        doReturn(extCell).when(cellCtlODataProducer).getEntitySetDocHandler(ExtCell.EDM_TYPE_NAME, extCellKeyMap);
+
+        doReturn(true).when(cellCtlODataProducer).deleteLinkEntity(entity, extCell);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "deleteRelation", String.class, Map.class, Map.class);
+        method.setAccessible(true);
+        // Run method
+        method.invoke(cellCtlODataProducer, edmType, entityKeyMap, extCellKeyMap);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        ArgumentCaptor<String> edmTypeCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> entityKeyMapCaptor = ArgumentCaptor.forClass(Map.class);
+
+        verify(cellCtlODataProducer, times(2)).getEntitySetDocHandler(
+                edmTypeCaptor.capture(), entityKeyMapCaptor.capture());
+        List<String> edmTypeCaptorValueList = edmTypeCaptor.getAllValues();
+        List<Map> entityKeyMapCaptorValueList = entityKeyMapCaptor.getAllValues();
+        assertThat(edmType, is(edmTypeCaptorValueList.get(0)));
+        assertThat(entityKeyMap, is(entityKeyMapCaptorValueList.get(0)));
+        assertThat(ExtCell.EDM_TYPE_NAME, is(edmTypeCaptorValueList.get(1)));
+        assertThat(extCellKeyMap, is(entityKeyMapCaptorValueList.get(1)));
+
+        verify(cellCtlODataProducer, times(1)).deleteLinkEntity(entity, extCell);
+    }
+
+    /**
+     * Test deleteRelation().
+     * Error test.
+     * entity is null.
+     * @throws Exception Unexpected error
+     */
+    @Test
+    public void deleteRelation_Error_entity_is_null() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String edmType = Relation.EDM_TYPE_NAME;
+        Map<String, Object> entityKeyMap = new HashMap<>();
+        entityKeyMap.put("dummyKey1", "dummyValue1");
+        Map<String, Object> extCellKeyMap = new HashMap<>();
+        extCellKeyMap.put("dummyKey2", "dummyValue2");
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        EntitySetDocHandler entity = null;
+        EntitySetDocHandler extCell = new OEntityDocHandler();
+        doReturn(entity).when(cellCtlODataProducer).getEntitySetDocHandler(edmType, entityKeyMap);
+        doReturn(extCell).when(cellCtlODataProducer).getEntitySetDocHandler(ExtCell.EDM_TYPE_NAME, extCellKeyMap);
+
+        doReturn(true).when(cellCtlODataProducer).deleteLinkEntity(entity, extCell);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "deleteRelation", String.class, Map.class, Map.class);
+        method.setAccessible(true);
         try {
-            method.invoke(cellCtlODataProducer, relationName, boxName);
+            // Run method
+            method.invoke(cellCtlODataProducer, edmType, entityKeyMap, extCellKeyMap);
             fail("Not exception.");
         } catch (InvocationTargetException e) {
             // --------------------
             // Confirm result
             // --------------------
-            IllegalArgumentException cause = new IllegalArgumentException(
-                    "bad valueString [''dummy''] as part of keyString [''dummy'']");
             PersoniumCoreException expected =
-                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_PARSE_ERROR.reason(cause);
+                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params(
+                            edmType, entityKeyMap.toString());
             PersoniumCoreException exception = (PersoniumCoreException) e.getCause();
             assertThat(exception.getStatus(), is(expected.getStatus()));
             assertThat(exception.getCode(), is(expected.getCode()));
             assertThat(exception.getMessage(), is(expected.getMessage()));
-            assertThat(exception.getCause().getMessage(), is(expected.getCause().getMessage()));
         }
     }
 
     /**
-     * Test createRelationEntity().
-     * BoxName is not null.
+     * Test deleteRelation().
+     * Error test.
+     * extCell is null.
      * @throws Exception Unexpected error
      */
     @Test
-    public void createRelationEntity_Normal_boxName_is_not_null() throws Exception {
-        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
+    public void deleteRelation_Error_extCell_is_null() throws Exception {
         // --------------------
         // Test method args
         // --------------------
-        String relationName = "dummyRelationName";
-        String boxName = "dummyBoxName";
+        String edmType = Relation.EDM_TYPE_NAME;
+        Map<String, Object> entityKeyMap = new HashMap<>();
+        entityKeyMap.put("dummyKey1", "dummyValue1");
+        Map<String, Object> extCellKeyMap = new HashMap<>();
+        extCellKeyMap.put("dummyKey2", "dummyValue2");
 
         // --------------------
         // Mock settings
         // --------------------
-        PowerMockito.doNothing().when(cellCtlODataProducer, "createEntity", anyString(), anyMap());
+        EntitySetDocHandler entity = new OEntityDocHandler();
+        EntitySetDocHandler extCell = null;
+        doReturn(entity).when(cellCtlODataProducer).getEntitySetDocHandler(edmType, entityKeyMap);
+        doReturn(extCell).when(cellCtlODataProducer).getEntitySetDocHandler(ExtCell.EDM_TYPE_NAME, extCellKeyMap);
+
+        doReturn(true).when(cellCtlODataProducer).deleteLinkEntity(entity, extCell);
 
         // --------------------
         // Expected result
@@ -1341,41 +2421,53 @@ public class CellCtlODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = CellCtlODataProducer.class.getDeclaredMethod("createRelationEntity",
-                String.class, String.class);
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "deleteRelation", String.class, Map.class, Map.class);
         method.setAccessible(true);
-        // Run method
-        method.invoke(cellCtlODataProducer, relationName, boxName);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        // Confirm function call
-        Map<String, Object> staticFields = new HashMap<String, Object>();
-        staticFields.put(Relation.P_NAME.getName(), relationName);
-        staticFields.put(Common.P_BOX_NAME.getName(), boxName);
-        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke("createEntity",
-                Relation.EDM_TYPE_NAME, staticFields);
+        try {
+            // Run method
+            method.invoke(cellCtlODataProducer, edmType, entityKeyMap, extCellKeyMap);
+            fail("Not exception.");
+        } catch (InvocationTargetException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected =
+                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_TARGET_DOES_NOT_EXISTS.params(
+                            ExtCell.EDM_TYPE_NAME, extCellKeyMap.toString());
+            PersoniumCoreException exception = (PersoniumCoreException) e.getCause();
+            assertThat(exception.getStatus(), is(expected.getStatus()));
+            assertThat(exception.getCode(), is(expected.getCode()));
+            assertThat(exception.getMessage(), is(expected.getMessage()));
+        }
     }
 
     /**
-     * Test createRelationEntity().
-     * BoxName is null.
+     * Test deleteRelation().
+     * Error test.
+     * deleteLinkEntity is false.
      * @throws Exception Unexpected error
      */
     @Test
-    public void createRelationEntity_Normal_boxName_is_null() throws Exception {
-        cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
+    public void deleteRelation_Error_deleteLinkEntity_is_false() throws Exception {
         // --------------------
         // Test method args
         // --------------------
-        String relationName = "dummyRelationName";
-        String boxName = null;
+        String edmType = Relation.EDM_TYPE_NAME;
+        Map<String, Object> entityKeyMap = new HashMap<>();
+        entityKeyMap.put("dummyKey1", "dummyValue1");
+        Map<String, Object> extCellKeyMap = new HashMap<>();
+        extCellKeyMap.put("dummyKey2", "dummyValue2");
 
         // --------------------
         // Mock settings
         // --------------------
-        PowerMockito.doNothing().when(cellCtlODataProducer, "createEntity", anyString(), anyMap());
+        EntitySetDocHandler entity = new OEntityDocHandler();
+        EntitySetDocHandler extCell = new OEntityDocHandler();
+        doReturn(entity).when(cellCtlODataProducer).getEntitySetDocHandler(edmType, entityKeyMap);
+        doReturn(extCell).when(cellCtlODataProducer).getEntitySetDocHandler(ExtCell.EDM_TYPE_NAME, extCellKeyMap);
+
+        doReturn(false).when(cellCtlODataProducer).deleteLinkEntity(entity, extCell);
 
         // --------------------
         // Expected result
@@ -1386,29 +2478,71 @@ public class CellCtlODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = CellCtlODataProducer.class.getDeclaredMethod("createRelationEntity",
-                String.class, String.class);
+        Method method = CellCtlODataProducer.class.getDeclaredMethod(
+                "deleteRelation", String.class, Map.class, Map.class);
         method.setAccessible(true);
+        try {
+            // Run method
+            method.invoke(cellCtlODataProducer, edmType, entityKeyMap, extCellKeyMap);
+            fail("Not exception.");
+        } catch (InvocationTargetException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            PersoniumCoreException expected =
+                    PersoniumCoreException.ReceivedMessage.LINK_DOES_NOT_EXISTS.params(
+                            edmType, entityKeyMap.toString(), ExtCell.EDM_TYPE_NAME, extCellKeyMap.toString());
+            PersoniumCoreException exception = (PersoniumCoreException) e.getCause();
+            assertThat(exception.getStatus(), is(expected.getStatus()));
+            assertThat(exception.getCode(), is(expected.getCode()));
+            assertThat(exception.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test getEntitySetDocHandler().
+     * Normal test.
+     */
+    @Test
+    public void getEntitySetDocHandler_Normal() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String edmType = Relation.EDM_TYPE_NAME;
+        Map<String, Object> entityKeyMap = new HashMap<>();
+        entityKeyMap.put(Relation.P_NAME.getName(), "relationName");
+        entityKeyMap.put(Common.P_BOX_NAME.getName(), "boxName");
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        EntitySetDocHandler entitySetDocHandler = new OEntityDocHandler();
+        entitySetDocHandler.setStaticFields(entityKeyMap);
+        doReturn(entitySetDocHandler).when(cellCtlODataProducer).retrieveWithKey(anyObject(), anyObject());
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
         // Run method
-        method.invoke(cellCtlODataProducer, relationName, boxName);
+        // --------------------
+        EntitySetDocHandler actual = cellCtlODataProducer.getEntitySetDocHandler(edmType, entityKeyMap);
 
         // --------------------
         // Confirm result
         // --------------------
-        // Confirm function call
-        Map<String, Object> staticFields = new HashMap<String, Object>();
-        staticFields.put(Relation.P_NAME.getName(), relationName);
-        PowerMockito.verifyPrivate(cellCtlODataProducer, times(1)).invoke("createEntity",
-                Relation.EDM_TYPE_NAME, staticFields);
+        assertThat(actual, is(entitySetDocHandler));
     }
 
     /**
-     * Test createEntity().
+     * Test createOEntity().
      * EntityKey type is complex.
      * @throws Exception Unexpected error
      */
     @Test
-    public void createEntity_Normal_entitykey_type_is_complex() throws Exception {
+    public void createOEntity_Normal_entitykey_type_is_complex() throws Exception {
         cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
         // --------------------
         // Test method args
@@ -1444,7 +2578,7 @@ public class CellCtlODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = CellCtlODataProducer.class.getDeclaredMethod("createEntity",
+        Method method = CellCtlODataProducer.class.getDeclaredMethod("createOEntity",
                 String.class, Map.class);
         method.setAccessible(true);
         // Run method
@@ -1482,12 +2616,12 @@ public class CellCtlODataProducerTest {
     }
 
     /**
-     * Test createEntity().
+     * Test createOEntity().
      * EntityKey type is not complex.
      * @throws Exception Unexpected error
      */
     @Test
-    public void createEntity_Normal_entitykey_type_is_not_complex() throws Exception {
+    public void createOEntity_Normal_entitykey_type_is_not_complex() throws Exception {
         cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
         // --------------------
         // Test method args
@@ -1522,7 +2656,7 @@ public class CellCtlODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = CellCtlODataProducer.class.getDeclaredMethod("createEntity",
+        Method method = CellCtlODataProducer.class.getDeclaredMethod("createOEntity",
                 String.class, Map.class);
         method.setAccessible(true);
         // Run method
@@ -1570,13 +2704,13 @@ public class CellCtlODataProducerTest {
     }
 
     /**
-     * Test createEntity().
+     * Test createOEntity().
      * Error test.
      * setLinksFromOEntityKey fail.
      * @throws Exception Unexpected error
      */
     @Test
-    public void createEntity_Error_setLinksFromOEntityKey_fail() throws Exception {
+    public void createOEntity_Error_setLinksFromOEntityKey_fail() throws Exception {
         cellCtlODataProducer = PowerMockito.spy(new CellCtlODataProducer(new CellEsImpl()));
         // --------------------
         // Test method args
@@ -1604,7 +2738,7 @@ public class CellCtlODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = CellCtlODataProducer.class.getDeclaredMethod("createEntity",
+        Method method = CellCtlODataProducer.class.getDeclaredMethod("createOEntity",
                 String.class, Map.class);
         method.setAccessible(true);
         try {
@@ -1717,37 +2851,26 @@ public class CellCtlODataProducerTest {
     }
 
     /**
-     * Test breakRelation().
+     * Test createExtCellLinks().
      * Normal test.
-     * getBoxNameFromRequestRelation() is not null.
+     * @throws Exception Unexpected error
      */
     @Test
-    public void breakRelation_Normal_getBoxNameFromRequestRelation_is_not_null() {
+    public void createExtCellLinks_Normal() throws Exception {
         // --------------------
         // Test method args
         // --------------------
-        EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
+        String edmType = Relation.EDM_TYPE_NAME;
+        Map<String, Object> entityKeyMap = new HashMap<>();
+        entityKeyMap.put(Relation.P_NAME.getName(), "relationName");
+        entityKeyMap.put(Common.P_BOX_NAME.getName(), "boxName");
+        Map<String, Object> extCellKeyMap = new HashMap<>();
+        extCellKeyMap.put(ExtCell.P_URL.getName(), "http://personium/ExtCell/");
 
         // --------------------
         // Mock settings
         // --------------------
-        Map<String, Object> mockStaticFields = new HashMap<String, Object>();
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(),
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
-        doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
-
-        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation(
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-
-        EntitySetDocHandler relation = new OEntityDocHandler();
-        EntitySetDocHandler extCell = new OEntityDocHandler();
-        doReturn(relation).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
-        doReturn(extCell).when(cellCtlODataProducer).getExtCell("http://personium/dummyExtCell/");
-
-        doReturn(true).when(cellCtlODataProducer).deleteLinkEntity(relation, extCell);
+        doNothing().when(cellCtlODataProducer).createLinks(anyObject(), anyObject());
 
         // --------------------
         // Expected result
@@ -1757,93 +2880,55 @@ public class CellCtlODataProducerTest {
         // --------------------
         // Run method
         // --------------------
-        cellCtlODataProducer.breakRelation(entitySetDocHandler);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        // Confirm function call
-        verify(cellCtlODataProducer, times(1)).deleteLinkEntity(relation, extCell);
-    }
-
-    /**
-     * Test breakRelation().
-     * Normal test.
-     * getBoxNameFromRequestRelation() is null.
-     */
-    @Test
-    public void breakRelation_Normal_getBoxNameFromRequestRelation_is_null() {
-        // --------------------
-        // Test method args
-        // --------------------
-        EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Map<String, Object> mockStaticFields = new HashMap<String, Object>();
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(),
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-        mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBoxName");
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
-        doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
-
-        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation(
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-        doReturn(null).when(cellCtlODataProducer).getBoxNameFromRequestRelation(
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-
-        EntitySetDocHandler relation = new OEntityDocHandler();
-        EntitySetDocHandler extCell = new OEntityDocHandler();
-        doReturn(relation).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
-        doReturn(extCell).when(cellCtlODataProducer).getExtCell("http://personium/dummyExtCell/");
-
-        doReturn(true).when(cellCtlODataProducer).deleteLinkEntity(relation, extCell);
-
-        // --------------------
-        // Expected result
-        // --------------------
-        // Nothing.
-
-        // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod("createExtCellLinks",
+                String.class, Map.class, Map.class);
+        method.setAccessible(true);
         // Run method
-        // --------------------
-        cellCtlODataProducer.breakRelation(entitySetDocHandler);
+        method.invoke(cellCtlODataProducer, edmType, entityKeyMap, extCellKeyMap);
 
         // --------------------
         // Confirm result
         // --------------------
-        // Confirm function call
-        verify(cellCtlODataProducer, times(1)).deleteLinkEntity(relation, extCell);
+        ArgumentCaptor<OEntityId> entityIdCaptor = ArgumentCaptor.forClass(OEntityId.class);
+        ArgumentCaptor<OEntityId> extCellEntityIdCaptor = ArgumentCaptor.forClass(OEntityId.class);
+
+        verify(cellCtlODataProducer, times(1)).createLinks(entityIdCaptor.capture(), extCellEntityIdCaptor.capture());
+        OEntityId actualEntityId = entityIdCaptor.getValue();
+        OEntityKey actualOEntityKey = actualEntityId.getEntityKey();
+        assertThat(actualEntityId.getEntitySetName(), is(Relation.EDM_TYPE_NAME));
+        assertThat(actualOEntityKey.toKeyString(),
+                is("(" + Relation.P_NAME.getName() + "='relationName'," + Common.P_BOX_NAME.getName() + "='boxName')"));
+
+        OEntityId actualExtCellEntityId = extCellEntityIdCaptor.getValue();
+        OEntityKey actualExtCellOEntityKey = actualExtCellEntityId.getEntityKey();
+        assertThat(actualExtCellEntityId.getEntitySetName(), is(ExtCell.EDM_TYPE_NAME));
+        assertThat(actualExtCellOEntityKey.toKeyString(), is("('http://personium/ExtCell/')"));
     }
 
     /**
-     * Test breakRelation().
+     * Test createExtCellLinks().
      * Error test.
-     * relation is null.
+     * createLinks fail.
+     * @throws Exception Unexpected error
      */
     @Test
-    public void breakRelation_Error_relation_is_null() {
+    public void createExtCellLinks_Error_createLinks_fail() throws Exception {
         // --------------------
         // Test method args
         // --------------------
-        EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
+        String edmType = Relation.EDM_TYPE_NAME;
+        Map<String, Object> entityKeyMap = new HashMap<>();
+        entityKeyMap.put(Relation.P_NAME.getName(), "relationName");
+        entityKeyMap.put(Common.P_BOX_NAME.getName(), "boxName");
+        Map<String, Object> extCellKeyMap = new HashMap<>();
+        extCellKeyMap.put(ExtCell.P_URL.getName(), "http://personium/ExtCell/");
 
         // --------------------
         // Mock settings
         // --------------------
-        Map<String, Object> mockStaticFields = new HashMap<String, Object>();
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(),
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
-        doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
-
-        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation(
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-
-        doReturn(null).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
+        doThrow(PersoniumCoreException.OData.CONFLICT_LINKS).when(cellCtlODataProducer).createLinks(
+                anyObject(), anyObject());
 
         // --------------------
         // Expected result
@@ -1853,342 +2938,23 @@ public class CellCtlODataProducerTest {
         // --------------------
         // Run method
         // --------------------
+        // Load methods for private
+        Method method = CellCtlODataProducer.class.getDeclaredMethod("createExtCellLinks",
+                String.class, Map.class, Map.class);
+        method.setAccessible(true);
         try {
-            cellCtlODataProducer.breakRelation(entitySetDocHandler);
+            // Run method
+            method.invoke(cellCtlODataProducer, edmType, entityKeyMap, extCellKeyMap);
             fail("Not exception.");
-        } catch (PersoniumCoreException e) {
+        } catch (InvocationTargetException e) {
             // --------------------
             // Confirm result
             // --------------------
-            PersoniumCoreException expected =
-                    PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params("dummyRelation");
-            assertThat(e.getStatus(), is(expected.getStatus()));
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
+            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_EXISTS_ERROR;
+            PersoniumCoreException exception = (PersoniumCoreException) e.getCause();
+            assertThat(exception.getStatus(), is(expected.getStatus()));
+            assertThat(exception.getCode(), is(expected.getCode()));
+            assertThat(exception.getMessage(), is(expected.getMessage()));
         }
-    }
-
-    /**
-     * Test breakRelation().
-     * Error test.
-     * extCell is null.
-     */
-    @Test
-    public void breakRelation_Error_extCell_is_null() {
-        // --------------------
-        // Test method args
-        // --------------------
-        EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Map<String, Object> mockStaticFields = new HashMap<String, Object>();
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(),
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-        mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBoxName");
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
-        doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
-
-        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation(
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-
-        EntitySetDocHandler relation = new OEntityDocHandler();
-        doReturn(relation).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
-        doReturn(null).when(cellCtlODataProducer).getExtCell("http://personium/dummyExtCell/");
-
-        // --------------------
-        // Expected result
-        // --------------------
-        // Nothing.
-
-        // --------------------
-        // Run method
-        // --------------------
-        try {
-            cellCtlODataProducer.breakRelation(entitySetDocHandler);
-            fail("Not exception.");
-        } catch (PersoniumCoreException e) {
-            // --------------------
-            // Confirm result
-            // --------------------
-            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage
-                    .REQUEST_RELATION_TARGET_DOES_NOT_EXISTS.params("http://personium/dummyExtCell/");
-            assertThat(e.getStatus(), is(expected.getStatus()));
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
-        }
-    }
-
-    /**
-     * Test breakRelation().
-     * Error test.
-     * deleteLinkEntity is false.
-     */
-    @Test
-    public void breakRelation_Error_deleteLinkEntity_is_false() {
-        // --------------------
-        // Test method args
-        // --------------------
-        EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Map<String, Object> mockStaticFields = new HashMap<String, Object>();
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION.getName(),
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-        mockStaticFields.put(ReceivedMessage.P_BOX_NAME.getName(), "dummyBoxName");
-        mockStaticFields.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://personium/dummyExtCell/");
-        doReturn(mockStaticFields).when(entitySetDocHandler).getStaticFields();
-
-        doReturn("dummyRelation").when(cellCtlODataProducer).getRelationNameFromRequestRelation(
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-        doReturn("dummyBoxName").when(cellCtlODataProducer).getBoxNameFromRequestRelation(
-                "http://personium/dummyAppCell/__relation/__/dummyRelation");
-
-        EntitySetDocHandler relation = new OEntityDocHandler();
-        EntitySetDocHandler extCell = new OEntityDocHandler();
-        doReturn(relation).when(cellCtlODataProducer).getRelation("dummyRelation", "dummyBoxName");
-        doReturn(extCell).when(cellCtlODataProducer).getExtCell("http://personium/dummyExtCell/");
-
-        doReturn(false).when(cellCtlODataProducer).deleteLinkEntity(relation, extCell);
-
-        // --------------------
-        // Expected result
-        // --------------------
-        // Nothing.
-
-        // --------------------
-        // Run method
-        // --------------------
-        try {
-            cellCtlODataProducer.breakRelation(entitySetDocHandler);
-            fail("Not exception.");
-        } catch (PersoniumCoreException e) {
-            // --------------------
-            // Confirm result
-            // --------------------
-            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage.LINK_DOES_NOT_EXISTS.params(
-                    "dummyRelation", "http://personium/dummyExtCell/");
-            assertThat(e.getStatus(), is(expected.getStatus()));
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
-        }
-    }
-
-    /**
-     * Test getBoxNameFromRequestRelation().
-     * Normal test.
-     * RequestRelation is RelationClassURL.
-     * @throws Exception Unexpected error.
-     */
-    @Test
-    public void getBoxNameFromRequestRelation_Normal_requestRelation_is_classURL() throws Exception {
-        // --------------------
-        // Test method args
-        // --------------------
-        String requestRelation = "http://personium/dummyAppCell/__relation/__/dummyRelation";
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Cell mockCell = mock(Cell.class);
-        cellCtlODataProducer.cell = mockCell;
-        doReturn("http://personium").when(mockCell).getUnitUrl();
-
-        PowerMockito.mockStatic(UriUtils.class);
-        PowerMockito.doReturn(requestRelation).when(UriUtils.class, "convertSchemeFromLocalUnitToHttp",
-                "http://personium", requestRelation);
-
-        Box mockBox = PowerMockito.mock(Box.class);
-        doReturn("dummyBoxName").when(mockBox).getName();
-        doReturn(mockBox).when(mockCell).getBoxForSchema("http://personium/dummyAppCell/");
-
-        // --------------------
-        // Expected result
-        // --------------------
-        String expectedBoxName = "dummyBoxName";
-
-        // --------------------
-        // Run method
-        // --------------------
-        String actualBoxName = cellCtlODataProducer.getBoxNameFromRequestRelation(requestRelation);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertThat(actualBoxName, is(expectedBoxName));
-    }
-
-    /**
-     * Test getBoxNameFromRequestRelation().
-     * Normal test.
-     * RequestRelation is RelationName.
-     * @throws Exception Unexpected error.
-     */
-    @Test
-    public void getBoxNameFromRequestRelation_Normal_requestRelation_is_name() throws Exception {
-        // --------------------
-        // Test method args
-        // --------------------
-        String requestRelation = "dummyRelation";
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Cell mockCell = mock(Cell.class);
-        cellCtlODataProducer.cell = mockCell;
-        doReturn("http://personium").when(mockCell).getUnitUrl();
-
-        PowerMockito.mockStatic(UriUtils.class);
-        PowerMockito.doReturn(requestRelation).when(UriUtils.class, "convertSchemeFromLocalUnitToHttp",
-                "http://personium", requestRelation);
-
-        // --------------------
-        // Expected result
-        // --------------------
-        String expectedBoxName = null;
-
-        // --------------------
-        // Run method
-        // --------------------
-        String actualBoxName = cellCtlODataProducer.getBoxNameFromRequestRelation(requestRelation);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertThat(actualBoxName, is(expectedBoxName));
-    }
-
-    /**
-     * Test getBoxNameFromRequestRelation().
-     * Error test.
-     * Box associated with class URL does not exist.
-     * @throws Exception Unexpected error.
-     */
-    @Test
-    public void getBoxNameFromRequestRelation_Error_box_associated_with_classURL_does_not_exist() throws Exception {
-        // --------------------
-        // Test method args
-        // --------------------
-        String requestRelation = "http://personium/dummyAppCell/__relation/__/dummyRelation";
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Cell mockCell = mock(Cell.class);
-        cellCtlODataProducer.cell = mockCell;
-        doReturn("http://personium").when(mockCell).getUnitUrl();
-
-        PowerMockito.mockStatic(UriUtils.class);
-        PowerMockito.doReturn(requestRelation).when(UriUtils.class, "convertSchemeFromLocalUnitToHttp",
-                "http://personium", requestRelation);
-
-        doReturn(null).when(mockCell).getBoxForSchema("http://personium/dummyAppCell/");
-
-        // --------------------
-        // Expected result
-        // --------------------
-        // Nothing.
-
-        // --------------------
-        // Run method
-        // --------------------
-        try {
-            cellCtlODataProducer.getBoxNameFromRequestRelation(requestRelation);
-            fail("Not exception.");
-        } catch (PersoniumCoreException e) {
-            // --------------------
-            // Confirm result
-            // --------------------
-            PersoniumCoreException expected = PersoniumCoreException.ReceivedMessage
-                    .BOX_THAT_MATCHES_RELATION_CLASS_URL_NOT_EXISTS.params(requestRelation);
-            assertThat(e.getStatus(), is(expected.getStatus()));
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
-        }
-    }
-
-    /**
-     * Test getRelationNameFromRequestRelation().
-     * Normal test.
-     * RequestRelation is RelationClassURL.
-     * @throws Exception Unexpected error.
-     */
-    @Test
-    public void getRelationNameFromRequestRelation_Normal_requestRelation_is_classURL() throws Exception {
-        // --------------------
-        // Test method args
-        // --------------------
-        String requestRelation = "http://personium/dummyAppCell/__relation/__/dummyRelation";
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Cell mockCell = mock(Cell.class);
-        cellCtlODataProducer.cell = mockCell;
-        doReturn("http://personium").when(mockCell).getUnitUrl();
-
-        PowerMockito.mockStatic(UriUtils.class);
-        PowerMockito.doReturn(requestRelation).when(UriUtils.class, "convertSchemeFromLocalUnitToHttp",
-                "http://personium", requestRelation);
-
-        // --------------------
-        // Expected result
-        // --------------------
-        String expectedRelationName = "dummyRelation";
-
-        // --------------------
-        // Run method
-        // --------------------
-        String actualRelationName = cellCtlODataProducer.getRelationNameFromRequestRelation(requestRelation);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertThat(actualRelationName, is(expectedRelationName));
-    }
-
-    /**
-     * Test getRelationNameFromRequestRelation().
-     * Normal test.
-     * RequestRelation is RelationName.
-     * @throws Exception Unexpected error.
-     */
-    @Test
-    public void getRelationNameFromRequestRelation_Normal_requestRelation_is_name() throws Exception {
-        // --------------------
-        // Test method args
-        // --------------------
-        String requestRelation = "dummyRelation";
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Cell mockCell = mock(Cell.class);
-        cellCtlODataProducer.cell = mockCell;
-        doReturn("http://personium").when(mockCell).getUnitUrl();
-
-        PowerMockito.mockStatic(UriUtils.class);
-        PowerMockito.doReturn(requestRelation).when(UriUtils.class, "convertSchemeFromLocalUnitToHttp",
-                "http://personium", requestRelation);
-
-        // --------------------
-        // Expected result
-        // --------------------
-        String expectedRelationName = "dummyRelation";
-
-        // --------------------
-        // Run method
-        // --------------------
-        String actualRelationName = cellCtlODataProducer.getRelationNameFromRequestRelation(requestRelation);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertThat(actualRelationName, is(expectedRelationName));
     }
 }

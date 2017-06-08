@@ -29,8 +29,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
@@ -384,7 +384,7 @@ public class AccountRoleLinkTest extends AccountTest {
             AccountUtils.deleteLinksWithRole(Setup.TEST_CELL1, null, MASTER_TOKEN_NAME, testAccountName4Uri,
                     testRoleName, -1);
             AccountUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, testAccountName4Uri, -1);
-            RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, null, testRoleName, -1);
+            RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, testRoleName, null, -1);
 
         }
     }
