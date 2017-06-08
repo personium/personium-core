@@ -128,6 +128,11 @@ public interface DavCmp {
     String getContentType();
 
     /**
+     * @return Encryption type
+     */
+    String getEncryptionType();
+
+    /**
      * @return true if Cell Level
      */
     boolean isCellLevel();

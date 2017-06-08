@@ -35,6 +35,11 @@ public class Common {
     private Common() {
     }
 
+    /** Regular expression in generic name. */
+    private static final String REGEX_NAME = "[a-zA-Z0-9][a-zA-Z0-9-_]{0,127}";
+    /** Regular expression in relation name. */
+    private static final String REGEX_RELATION_NAME = "[a-zA-Z0-9-\\+][a-zA-Z0-9-_\\+:]{0,127}";
+
     /**
      * UnitCtlの名前空間名.
      */
@@ -78,26 +83,32 @@ public class Common {
     /** 拡張スキーマFormat定義.1つ以上のスペース区切り英数字. */
     public static final String P_FORMAT_PATTERN_USUSST = "unordered-set-of-unique-space-separated-tokens";
     /** 先頭が-,_以外で始まる半角英数大小文字,-,_が1文字から128文字. */
-    public static final String PATTERN_NAME = "^[a-zA-Z0-9][a-zA-Z0-9-_]{0,127}$";
+    public static final String PATTERN_NAME = "^" + REGEX_NAME + "$";
     /** 先頭が半角記号以外で始まる半角英数大小文字,半角記号(-_!#$%*+/=^`{|}~.@)が1文字から128文字. */
     public static final String PATTERN_NAME_WITH_SIGN = "^[a-zA-Z0-9][a-zA-Z0-9-_!$*=^`{|}~.@]{0,127}$";
     /** 先頭が_,:以外で始まる半角英数大小文字,-,_,+,:が1文字から128文字. */
-    public static final String PATTERN_RELATION_NAME = "^[a-zA-Z0-9-\\+][a-zA-Z0-9-_\\+:]{0,127}$";
+    public static final String PATTERN_RELATION_NAME = "^" + REGEX_RELATION_NAME + "$";
     /** String containing "/__relation/__/".<br>
      * Explanation of applicable group.<br>
      * $1:BaseURL
      * $2:CellName
      * $3:RelationName */
-    public static final String PATTERN_RELATION_CLASS_URL = "(^.+)/([^/]+)/__relation/__/([^/]+)/?";
+    public static final String PATTERN_RELATION_CLASS_URL = "(^.+)/([^/]+)/__relation/__/(" + REGEX_RELATION_NAME + ")/?$"; // CHECKSTYLE IGNORE - To maintain readability
+    /** String containing "/__role/__/".<br>
+     * Explanation of applicable group.<br>
+     * $1:BaseURL
+     * $2:CellName
+     * $3:RoleName */
+    public static final String PATTERN_ROLE_CLASS_URL = "(^.+)/([^/]+)/__role/__/(" + REGEX_NAME + ")/?$";
     /** multiplicityのFormat定義. */
     public static final String PATTERN_MULTIPLICITY = "0\\.\\.1|1|\\*";
     /** 先頭が-,_以外で始まる半角英数大小文字,-,_が1文字から200文字. */
     public static final String PATTERN_ID = "^[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}$";
     /** InReplyTo32文字. */
     public static final String PATTERN_IN_REPLY_TO = "^.{32}$";
-    /** メッセージタイプ_messageまたはreq.relation.buildまたはreq.relation.break. */
+    /** MessageType message or req.relation.build or req.relation.break or req.role.grant or req.role.revoke. */
     public static final String PATTERN_MESSAGE_TYPE =
-         "^(message)|(req\\.relation\\.build)|(req\\.relation\\.break)$";
+         "^(message)|(req\\.relation\\.build)|(req\\.relation\\.break)|(req\\.role\\.grant)|(req\\.role\\.revoke)$";
     /** メッセージタイトル0文字から256文字文字. */
     public static final String PATTERN_MESSAGE_TITLE = "^.{0,256}$";
     /** メッセージプライオリティ 1から5. */

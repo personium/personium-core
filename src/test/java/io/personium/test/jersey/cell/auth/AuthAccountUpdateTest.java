@@ -21,6 +21,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.JerseyTest;
+
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -36,7 +38,6 @@ import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * 認証（Account名更新）のテスト.
@@ -111,7 +112,7 @@ public class AuthAccountUpdateTest extends JerseyTest {
             ResourceUtils.linkAccountRollDelete(cellName, AbstractCase.MASTER_TOKEN_NAME, accountNameUpdated,
                     null, roleName);
             // Roleの削除
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, null, roleName, -1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
             // Accountの削除
             AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, accountNameUpdated, -1);
             AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, accountName, -1);
@@ -179,7 +180,7 @@ public class AuthAccountUpdateTest extends JerseyTest {
             ResourceUtils.linkAccountRollDelete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountNameUpdated,
                     null, roleName);
             // Roleの削除
-            RoleUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, null, roleName, -1);
+            RoleUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
             // Accountの削除
             AccountUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountNameUpdated, -1);
             AccountUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountName, -1);
@@ -238,7 +239,7 @@ public class AuthAccountUpdateTest extends JerseyTest {
             DavResourceUtils.setACL(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK,
                     "", "box/acl-authtest.txt", Setup.TEST_BOX1, "");
             // Roleの削除
-            RoleUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, null, roleName, -1);
+            RoleUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
             // Accountの削除
             AccountUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountNameUpdated, -1);
             AccountUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountName, -1);
@@ -345,7 +346,7 @@ public class AuthAccountUpdateTest extends JerseyTest {
             ResourceUtils.linkAccountRollDelete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountNameUpdated,
                     null, roleName);
             // Roleの削除
-            RoleUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, null, roleName, -1);
+            RoleUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
             // Accountの削除
             AccountUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountNameUpdated, -1);
             AccountUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountName, -1);

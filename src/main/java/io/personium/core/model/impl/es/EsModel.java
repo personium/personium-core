@@ -23,13 +23,12 @@ import io.personium.common.es.EsClient.Event;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.EsRequestLogInfo;
 import io.personium.common.es.EsType;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreLog;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.impl.es.accessor.CellAccessor;
 import io.personium.core.model.impl.es.accessor.DataSourceAccessor;
-import io.personium.core.model.impl.es.accessor.DavNodeAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.accessor.ODataEntityAccessor;
 import io.personium.core.model.impl.es.accessor.ODataLinkAccessor;
@@ -220,15 +219,6 @@ public class EsModel {
      * Link 情報を保存する Type名.
      */
     public static final String TYPE_CTL_LINK = "link";
-
-    /**
-     * 指定Cell, BoxのDavノード情報Typeの操作オブジェクトを返します.
-     * @param cell Cell
-     * @return Typeオブジェクト
-     */
-    public static DavNodeAccessor col(final Cell cell) {
-        return new DavNodeAccessor(idxUser(cell.getOwner()), "dav", cell.getId());
-    }
 
     /**
      * Cell用のBulkDataAccessorを返します.

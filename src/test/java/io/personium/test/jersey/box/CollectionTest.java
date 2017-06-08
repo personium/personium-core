@@ -39,6 +39,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.sun.jersey.test.framework.JerseyTest;
+
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.test.categories.Integration;
@@ -59,7 +61,6 @@ import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TestMethodUtils;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * MKCOLのテスト.
@@ -1433,7 +1434,7 @@ public class CollectionTest extends JerseyTest {
             BoxUtils.create(Setup.TEST_CELL1, testBox, TOKEN);
 
             // Boxに紐付かないRoleの作成
-            RoleUtils.create(Setup.TEST_CELL1, TOKEN, null, testRole, HttpStatus.SC_CREATED);
+            RoleUtils.create(Setup.TEST_CELL1, TOKEN, testRole, null, HttpStatus.SC_CREATED);
 
             // ACLの設定
             Http.request("box/acl-setting-single-collection.txt")
@@ -1447,7 +1448,7 @@ public class CollectionTest extends JerseyTest {
                     .statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             // Roleの削除
-            RoleUtils.delete(Setup.TEST_CELL1, TOKEN, null, testRole);
+            RoleUtils.delete(Setup.TEST_CELL1, TOKEN, testRole, null);
 
             // Box1の削除
             BoxUtils.delete(Setup.TEST_CELL1, TOKEN, testBox);
@@ -1520,7 +1521,7 @@ public class CollectionTest extends JerseyTest {
                 try {
                     // 前準備
                     // 名前に大文字を含むロール登録
-                    RoleUtils.create(testcell, token, path, role, HttpStatus.SC_CREATED);
+                    RoleUtils.create(testcell, token, role, path, HttpStatus.SC_CREATED);
 
                     // ACLの設定
                     DavResourceUtils.setACLwithBox(testcell, token, HttpStatus.SC_OK,
@@ -1545,7 +1546,7 @@ public class CollectionTest extends JerseyTest {
 
                 } finally {
                     // Role削除
-                    RoleUtils.delete(testcell, token, path, role);
+                    RoleUtils.delete(testcell, token, role, path);
                 }
             }
         } finally {
@@ -1572,11 +1573,11 @@ public class CollectionTest extends JerseyTest {
                     accountReadAcl, accountReadAcl, HttpStatus.SC_CREATED);
 
             // ロール追加（Read）
-            RoleUtils.create(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, null,
-                    "roleRead", HttpStatus.SC_CREATED);
+            RoleUtils.create(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "roleRead",
+                    null, HttpStatus.SC_CREATED);
             // ロール追加（Read-Acl）
-            RoleUtils.create(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, null,
-                    "roleReadAcl", HttpStatus.SC_CREATED);
+            RoleUtils.create(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "roleReadAcl",
+                    null, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
             ResourceUtils.linkAccountRole(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
@@ -1621,8 +1622,8 @@ public class CollectionTest extends JerseyTest {
             ResourceUtils.linkAccountRollDelete(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
                     accountRead, null, "roleRead");
             // Roleの削除
-            RoleUtils.delete(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, null, "roleRead");
-            RoleUtils.delete(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, null, "roleReadAcl");
+            RoleUtils.delete(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "roleRead", null);
+            RoleUtils.delete(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "roleReadAcl", null);
             // Accountの削除
             AccountUtils.delete(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
                     accountReadAcl, HttpStatus.SC_NO_CONTENT);

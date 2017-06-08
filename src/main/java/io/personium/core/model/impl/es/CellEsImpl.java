@@ -78,6 +78,7 @@ import io.personium.core.model.impl.es.cache.CellCache;
 import io.personium.core.model.impl.es.doc.CellDocHandler;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
+import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.model.lock.CellLockManager;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.utils.UriUtils;
@@ -699,7 +700,7 @@ public final class CellEsImpl implements Cell {
         String boxName = null;
         if (boxId != null) {
             // Boxの検索
-            Map<String, Object> boxsrc = DavCmpEsImpl.searchBox(this, boxId);
+            Map<String, Object> boxsrc = DavCmpFsImpl.searchBox(this, boxId);
             Map<String, Object> boxs = (Map<String, Object>) boxsrc.get("s");
             boxName = (String) boxs.get(KEY_NAME);
         }

@@ -19,14 +19,11 @@ package io.personium.core.model.impl.es.accessor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,9 +34,6 @@ import io.personium.common.es.EsClient;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.model.impl.es.ads.AdsException;
-import io.personium.core.model.impl.es.ads.JdbcAds;
-import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
@@ -77,36 +71,8 @@ public class ODataEntityAccessorTest {
         EsIndex index = esClient.idxUser(esUnitPrefix, INDEX_NAME);
         try {
             index.delete();
-            JdbcAds ads = new JdbcAds();
-            ads.deleteIndex(esUnitPrefix + "_" + INDEX_NAME);
         } catch (Exception ex) {
             System.out.println("");
-        }
-    }
-
-    /**
-     * 例外用Mock.
-     * @author Administrator
-     */
-    class JdbcAdsMock extends JdbcAds {
-
-        JdbcAdsMock() throws Exception {
-            super();
-        }
-
-        @Override
-        public void createEntity(String index, EntitySetDocHandler docHandler) throws AdsException {
-            throw new AdsException("MockErrorCreare");
-        }
-
-        @Override
-        public void updateEntity(String index, EntitySetDocHandler docHandler) throws AdsException {
-            throw new AdsException("MockErrorUpdate");
-        }
-
-        @Override
-        public void deleteEntity(String index, String id) throws AdsException {
-            throw new AdsException("MockErrorDelete");
         }
     }
 
@@ -129,44 +95,8 @@ public class ODataEntityAccessorTest {
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
 
-        // マスタにデータが登録されていることを確認
-        if (entityAccessor.getAds() != null) {
-            JdbcAds ads = null;
-            try {
-                ads = new JdbcAds();
-                assertEquals(1, ads.countEntity(esUnitPrefix + "_" + INDEX_NAME));
-            } catch (Exception e) {
-                fail(e.getMessage());
-            }
-        }
-
         // データを削除する
         entityAccessor.delete(docHandler);
-    }
-
-    /**
-     * create処理にてAdsが例外を上げた場合でも正常に終了すること.
-     */
-    @Test
-    public void create処理にてAdsが例外を上げた場合でも正常に終了すること() {
-        // 事前準備
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
-        EsIndex index = esClient.idxUser(esUnitPrefix, INDEX_NAME);
-        assertNotNull(index);
-        ODataEntityAccessor entityAccessor = new ODataEntityAccessor(index, TYPE_NAME, ROUTING_ID);
-        OEntityDocHandler docHandler = createTestOEntityDocHandler();
-        try {
-            entityAccessor.setAds(new JdbcAdsMock());
-        } catch (Exception e1) {
-            throw new RuntimeException(e1);
-        }
-
-        // データ登録実行
-        PersoniumIndexResponse response = entityAccessor.create(docHandler);
-
-        // レスポンスのチェック
-        assertNotNull(response);
-        assertFalse(response.getId().equals(""));
     }
 
     /**
@@ -195,53 +125,8 @@ public class ODataEntityAccessorTest {
         assertNotNull(updateResponse);
         assertEquals(createResponse.getId(), updateResponse.getId());
 
-        // マスタにデータが更新されていることを確認
-        if (entityAccessor.getAds() != null) {
-            JdbcAds ads = null;
-            try {
-                ads = new JdbcAds();
-                List<JSONObject> list = ads.getEntityList(esUnitPrefix + "_" + INDEX_NAME, 0, 1);
-                assertEquals(1, list.size());
-                assertEquals(JSONObject.toJSONString(staticFields), ((JSONObject) list.get(0).get("source")).get("s"));
-            } catch (Exception e) {
-                fail(e.getMessage());
-            }
-        }
-
         // データを削除する
         entityAccessor.delete(docHandler);
-    }
-
-    /**
-     * update処理にてAdsが例外を上げた場合でも正常に終了すること.
-     */
-    @Test
-    public void update処理にてAdsが例外を上げた場合でも正常に終了すること() {
-        // 事前準備
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
-        EsIndex index = esClient.idxUser(esUnitPrefix, INDEX_NAME);
-        assertNotNull(index);
-        ODataEntityAccessor entityAccessor = new ODataEntityAccessor(index, TYPE_NAME, ROUTING_ID);
-        OEntityDocHandler docHandler = createTestOEntityDocHandler();
-        PersoniumIndexResponse createResponse = entityAccessor.create(docHandler);
-        assertNotNull(createResponse);
-        assertFalse(createResponse.getId().equals(""));
-        try {
-            entityAccessor.setAds(new JdbcAdsMock());
-        } catch (Exception e1) {
-            throw new RuntimeException(e1);
-        }
-
-        // データ更新実行
-        Map<String, Object> staticFields = new HashMap<String, Object>();
-        staticFields.put("test", "testdata");
-        docHandler.setStaticFields(staticFields);
-
-        PersoniumIndexResponse updateResponse = entityAccessor.update(createResponse.getId(), docHandler);
-
-        // レスポンスのチェック
-        assertNotNull(updateResponse);
-        assertEquals(createResponse.getId(), updateResponse.getId());
     }
 
     /**
@@ -258,41 +143,6 @@ public class ODataEntityAccessorTest {
         PersoniumIndexResponse response = entityAccessor.create(docHandler);
         assertNotNull(response);
         assertFalse(response.getId().equals(""));
-
-        // データを削除する
-        entityAccessor.delete(docHandler);
-
-        // データが削除されていることを確認する
-        if (entityAccessor.getAds() != null) {
-            JdbcAds ads = null;
-            try {
-                ads = new JdbcAds();
-                assertEquals(0, ads.countEntity(esUnitPrefix + "_" + INDEX_NAME));
-            } catch (Exception e) {
-                fail(e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * delete処理にてAdsが例外を上げた場合でも正常に終了すること.
-     */
-    @Test
-    public void delete処理にてAdsが例外を上げた場合でも正常に終了すること() {
-        // 事前準備
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix();
-        EsIndex index = esClient.idxUser(esUnitPrefix, INDEX_NAME);
-        assertNotNull(index);
-        ODataEntityAccessor entityAccessor = new ODataEntityAccessor(index, TYPE_NAME, ROUTING_ID);
-        OEntityDocHandler docHandler = createTestOEntityDocHandler();
-        PersoniumIndexResponse response = entityAccessor.create(docHandler);
-        assertNotNull(response);
-        assertFalse(response.getId().equals(""));
-        try {
-            entityAccessor.setAds(new JdbcAdsMock());
-        } catch (Exception e1) {
-            throw new RuntimeException(e1);
-        }
 
         // データを削除する
         entityAccessor.delete(docHandler);

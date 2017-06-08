@@ -28,7 +28,6 @@ import org.junit.experimental.categories.Category;
 
 import io.personium.core.bar.BarFileReadRunner;
 import io.personium.core.model.DavCmp;
-import io.personium.core.model.impl.es.DavCmpEsImpl;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.test.categories.Unit;
 
@@ -42,9 +41,6 @@ public class BarFileContentsTest {
     }
     private static DavCmp newDavCmpFsImpl(String name) {
         return DavCmpFsImpl.create(name, null);
-    }
-    private static DavCmp newDavCmpEsImpl(String name) {
-        return new DavCmpEsImpl(name, null, null, null, null);
     }
 
     private static final String ODATA_COL_NAME = "odataCol";

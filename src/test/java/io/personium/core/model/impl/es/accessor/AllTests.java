@@ -27,9 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
     CellAccessorTest.class,
     DataSourceAccessorTest.class,
-    DavNodeAccessorTest.class,
-    ODataEntityAccessorTest.class,
-    ODataLinkAccessorTest.class
+    ODataEntityAccessorTest.class
     })
 public class AllTests {
 }

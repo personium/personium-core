@@ -35,13 +35,16 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.box.acl.jaxb.Acl;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -55,8 +58,6 @@ import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * Basic認証のテスト.
@@ -490,7 +491,7 @@ public class AuthBasicTest extends JerseyTest {
         DavResourceUtils.createODataCollection(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED, MY_CELL,
                 TEST_BOX1, TEST_ODATA);
         // 認証に必要な情報
-        RoleUtils.create(MY_CELL, AbstractCase.MASTER_TOKEN_NAME, TEST_BOX1, TEST_ROLE, HttpStatus.SC_CREATED);
+        RoleUtils.create(MY_CELL, AbstractCase.MASTER_TOKEN_NAME, TEST_ROLE, TEST_BOX1, HttpStatus.SC_CREATED);
         AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, MY_CELL, TEST_ACCOUNT, TEST_ACCOUNT_PASSWORD,
                 HttpStatus.SC_CREATED);
         AccountUtils.createLinkWithRole(AbstractCase.MASTER_TOKEN_NAME, MY_CELL, TEST_BOX1, TEST_ACCOUNT,

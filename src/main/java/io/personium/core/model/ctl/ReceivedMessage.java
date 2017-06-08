@@ -41,12 +41,16 @@ public class ReceivedMessage {
      */
     public static final String EDM_NPNAME_FOR_ACCOUNT = "_AccountRead";
 
-    /** タイプ メッセージ. */
+    /** Type message. */
     public static final String TYPE_MESSAGE = "message";
-    /** タイプ 関係登録. */
+    /** Type register relation. */
     public static final String TYPE_REQ_RELATION_BUILD = "req.relation.build";
-    /** タイプ 関係削除. */
+    /** Type delete relation. */
     public static final String TYPE_REQ_RELATION_BREAK = "req.relation.break";
+    /** Type register relation role. */
+    public static final String TYPE_REQ_ROLE_GRANT = "req.role.grant";
+    /** Type delete relation role. */
+    public static final String TYPE_REQ_ROLE_REVOKE = "req.role.revoke";
 
     /** ステータス 未読. */
     public static final String STATUS_UNREAD = "unread";

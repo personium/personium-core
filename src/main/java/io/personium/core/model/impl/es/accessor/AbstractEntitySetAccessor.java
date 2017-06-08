@@ -43,26 +43,6 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     * マスターデータを登録する.
-     * @param docHandler 登録データ
-     */
-    protected abstract void createAds(EntitySetDocHandler docHandler);
-
-    /**
-     * マスターデータを更新する.
-     * @param docHandler 登録データ
-     * @param version Elasticsearchに登録されたドキュメントのバージョン
-     */
-    protected abstract void updateAds(EntitySetDocHandler docHandler, long version);
-
-    /**
-     * マスタデータを削除する.
-     * @param docHandler 削除データ
-     * @param version 削除したデータのバージョン
-     */
-    protected abstract void deleteAds(EntitySetDocHandler docHandler, long version);
-
-    /**
      * UUIDでODataEntityのデータ登録を行う.
      * @param docHandler 登録データ
      * @return 登録結果
@@ -80,11 +60,8 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
      * @return 登録結果
      */
     public PersoniumIndexResponse create(String id, EntitySetDocHandler docHandler) {
-        // マスタ書き込みでエラーが発生したためES更新を不可能とする
-        prepareDataUpdate(getIndex().getName());
         docHandler.setId(id);
         PersoniumIndexResponse response = create(id, docHandler.getSource(), docHandler);
-        createAds(docHandler);
         return response;
     }
 
@@ -107,10 +84,7 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
      * @return 更新結果
      */
     public PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler, long version) {
-        // マスタ書き込みでエラーが発生したためES更新を不可能とする
-        prepareDataUpdate(getIndex().getName());
         PersoniumIndexResponse response = update(id, docHandler.getSource(), version);
-        updateAds(docHandler, response.getVersion());
         return response;
     }
 
@@ -134,10 +108,7 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     public PersoniumDeleteResponse delete(EntitySetDocHandler docHandler, long version) {
         String id = docHandler.getId();
 
-        // マスタ書き込みでエラーが発生したためES更新を不可能とする
-        super.prepareDataUpdate(getIndex().getName());
         PersoniumDeleteResponse response = super.delete(id, version);
-        deleteAds(docHandler, response.getVersion());
         return response;
     }
 }

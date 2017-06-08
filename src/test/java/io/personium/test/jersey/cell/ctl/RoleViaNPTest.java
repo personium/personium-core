@@ -94,7 +94,7 @@ public class RoleViaNPTest extends ODataCommon {
                     "Relation", RelationUtils.keyString(relationName), -1);
 
             // Role削除
-            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, null, roleName, -1);
+            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, roleName, null, -1);
 
             // Relation削除
             RelationUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, relationName, null, -1);
@@ -122,7 +122,7 @@ public class RoleViaNPTest extends ODataCommon {
                     roleName, HttpStatus.SC_CONFLICT);
         } finally {
             // Role削除
-            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, null, roleName, -1);
+            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, roleName, null, -1);
 
             // Relation削除
             RelationUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, relationName, null, -1);

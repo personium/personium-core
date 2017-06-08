@@ -529,9 +529,9 @@ public class AclTest extends AbstractCase {
             BoxUtils.create(TEST_CELL1, testBox, TOKEN);
 
             // Boxに紐付くRoleの作成
-            RoleUtils.create(TEST_CELL1, TOKEN, testBox, testRole, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, testRole, testBox, HttpStatus.SC_CREATED);
             // Boxに紐づかないRoleの作成
-            RoleUtils.create(TEST_CELL1, TOKEN, null, testRole, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, testRole, null, HttpStatus.SC_CREATED);
 
             // ACLをtestcell1に設定
             Http.request("cell/acl-setting-single.txt")
@@ -583,9 +583,9 @@ public class AclTest extends AbstractCase {
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
             // Roleの削除(Boxに紐づく)
-            RoleUtils.delete(TEST_CELL1, TOKEN, testBox, testRole);
+            RoleUtils.delete(TEST_CELL1, TOKEN, testRole, testBox);
             // Roleの削除(Boxに紐づかない)
-            RoleUtils.delete(TEST_CELL1, TOKEN, null, testRole);
+            RoleUtils.delete(TEST_CELL1, TOKEN, testRole, null);
             // Boxの削除
             BoxUtils.delete(TEST_CELL1, TOKEN, testBox);
         }
@@ -769,8 +769,8 @@ public class AclTest extends AbstractCase {
         String box2 = "box2";
         try {
             // box2に紐付くロール作成
-            RoleUtils.create(TEST_CELL1, TOKEN, box2, "role02", HttpStatus.SC_CREATED);
-            RoleUtils.create(TEST_CELL1, TOKEN, box2, "role03", HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, "role02", box2, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, "role03", box2, HttpStatus.SC_CREATED);
 
             // role2・role3を含むACLをtestcell1に設定
             Http.request("cell/acl-setting-base.txt")
@@ -813,8 +813,8 @@ public class AclTest extends AbstractCase {
 
         } finally {
             // ロールの削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, box2, "role02");
-            RoleUtils.delete(TEST_CELL1, TOKEN, box2, "role03");
+            RoleUtils.delete(TEST_CELL1, TOKEN, "role02", box2);
+            RoleUtils.delete(TEST_CELL1, TOKEN, "role03", box2);
 
             // ACLの設定を元に戻す
             Http.request("cell/acl-default.txt")
@@ -841,8 +841,8 @@ public class AclTest extends AbstractCase {
         String roleDelete = "role002";
         try {
             // box2に紐付くロール作成
-            RoleUtils.create(TEST_CELL1, TOKEN, box2, roleNotDelete, HttpStatus.SC_CREATED);
-            RoleUtils.create(TEST_CELL1, TOKEN, box2, roleDelete, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, roleNotDelete, box2, HttpStatus.SC_CREATED);
+            RoleUtils.create(TEST_CELL1, TOKEN, roleDelete, box2, HttpStatus.SC_CREATED);
 
             // ACLをtestcell1に設定
             Http.request("cell/acl-setting-base.txt")
@@ -855,7 +855,7 @@ public class AclTest extends AbstractCase {
                     .statusCode(HttpStatus.SC_OK);
 
             // roleを削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, box2, roleDelete, HttpStatus.SC_NO_CONTENT);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleDelete, box2, HttpStatus.SC_NO_CONTENT);
 
             // PROPFINDでtestcell1のACLを取得
             TResponse tresponse = CellUtils.propfind(TEST_CELL1, TOKEN, "0",
@@ -870,8 +870,8 @@ public class AclTest extends AbstractCase {
 
         } finally {
             // ロールの削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, box2, roleNotDelete, -1);
-            RoleUtils.delete(TEST_CELL1, TOKEN, box2, roleDelete, -1);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleNotDelete, box2, -1);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleDelete, box2, -1);
 
             // ACLの設定を元に戻す
             Http.request("cell/acl-default.txt")
@@ -1175,7 +1175,7 @@ public class AclTest extends AbstractCase {
 
             // ACL設定がされたRoleの削除
             AccountUtils.deleteLinksWithRole(cellName, null, AbstractCase.MASTER_TOKEN_NAME, account, role1, -1);
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, null, role1);
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, role1, null);
 
             // アクセスするアカウントはRoleと結びついていないとaceのチェック前で権限エラーとなるため、ACL設定がされていないRoleの作成
             RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, role2, -1);
@@ -1296,12 +1296,12 @@ public class AclTest extends AbstractCase {
         String testRoleName2 = "testRole2";
         String testRoleName3 = "testRole3";
         // Roleの作成 POST authが必要
-        RoleUtils.create(TEST_CELL1, account.get(0), null, testRoleName, HttpStatus.SC_FORBIDDEN);
-        RoleUtils.create(TEST_CELL1, account.get(1), null, testRoleName, HttpStatus.SC_CREATED);
-        RoleUtils.create(TEST_CELL1, account.get(3), null, testRoleName, HttpStatus.SC_FORBIDDEN);
-        RoleUtils.create(TEST_CELL1, account.get(9), null, testRoleName2, HttpStatus.SC_CREATED);
-        RoleUtils.create(TEST_CELL1, account.get(10), null, testRoleName3, HttpStatus.SC_CREATED);
-        RoleUtils.create(TEST_CELL1, account.get(11), null, testRoleName, HttpStatus.SC_FORBIDDEN);
+        RoleUtils.create(TEST_CELL1, account.get(0), testRoleName, null, HttpStatus.SC_FORBIDDEN);
+        RoleUtils.create(TEST_CELL1, account.get(1), testRoleName, null, HttpStatus.SC_CREATED);
+        RoleUtils.create(TEST_CELL1, account.get(3), testRoleName, null, HttpStatus.SC_FORBIDDEN);
+        RoleUtils.create(TEST_CELL1, account.get(9), testRoleName2, null, HttpStatus.SC_CREATED);
+        RoleUtils.create(TEST_CELL1, account.get(10), testRoleName3, null, HttpStatus.SC_CREATED);
+        RoleUtils.create(TEST_CELL1, account.get(11), testRoleName, null, HttpStatus.SC_FORBIDDEN);
 
         // Roleの取得 GET auth-readが必要
         RoleUtils.list(account.get(0), TEST_CELL1, HttpStatus.SC_FORBIDDEN);
@@ -1326,12 +1326,12 @@ public class AclTest extends AbstractCase {
                 HttpStatus.SC_FORBIDDEN);
 
         // Roleの削除 DELETE authが必要
-        RoleUtils.delete(TEST_CELL1, account.get(0), null, testRoleName, HttpStatus.SC_FORBIDDEN);
-        RoleUtils.delete(TEST_CELL1, account.get(1), null, testRoleName, HttpStatus.SC_NO_CONTENT);
-        RoleUtils.delete(TEST_CELL1, account.get(3), null, testRoleName, HttpStatus.SC_FORBIDDEN);
-        RoleUtils.delete(TEST_CELL1, account.get(9), null, testRoleName2, HttpStatus.SC_NO_CONTENT);
-        RoleUtils.delete(TEST_CELL1, account.get(10), null, testRoleName3, HttpStatus.SC_NO_CONTENT);
-        RoleUtils.delete(TEST_CELL1, account.get(11), null, testRoleName, HttpStatus.SC_FORBIDDEN);
+        RoleUtils.delete(TEST_CELL1, account.get(0), testRoleName, null, HttpStatus.SC_FORBIDDEN);
+        RoleUtils.delete(TEST_CELL1, account.get(1), testRoleName, null, HttpStatus.SC_NO_CONTENT);
+        RoleUtils.delete(TEST_CELL1, account.get(3), testRoleName, null, HttpStatus.SC_FORBIDDEN);
+        RoleUtils.delete(TEST_CELL1, account.get(9), testRoleName2, null, HttpStatus.SC_NO_CONTENT);
+        RoleUtils.delete(TEST_CELL1, account.get(10), testRoleName3, null, HttpStatus.SC_NO_CONTENT);
+        RoleUtils.delete(TEST_CELL1, account.get(11), testRoleName, null, HttpStatus.SC_FORBIDDEN);
 
     }
 
@@ -2021,14 +2021,14 @@ public class AclTest extends AbstractCase {
             // 作成した$linkの削除
             ResourceUtils.linkAccountRollDelete(TEST_CELL1, TOKEN, "account11", null, roleName);
             // 作成したRole削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, null, roleName);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleName, null);
 
             CellUtils.createNp(post, TEST_CELL1, Account.EDM_TYPE_NAME, "account11", "_" + Role.EDM_TYPE_NAME,
                     roleBody, account.get(10), HttpStatus.SC_CREATED);
             // 作成した$linkの削除
             ResourceUtils.linkAccountRollDelete(TEST_CELL1, TOKEN, "account11", null, roleName);
             // 作成したRole削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, null, roleName);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleName, null);
 
             // Relationとroleの$link→SOCIALとAUTH権限が必要
             // Relationの作成
@@ -2053,7 +2053,7 @@ public class AclTest extends AbstractCase {
             ResourceUtils.linksDelete(TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, "null",
                     Role.EDM_TYPE_NAME, "_Box.Name=null,Name='" + roleName + "'", TOKEN);
             // 作成したRole削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, null, roleName);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleName, null);
 
             CellUtils.createNp(post, TEST_CELL1, Relation.EDM_TYPE_NAME, relationName,
                     "_" + Role.EDM_TYPE_NAME,
@@ -2062,7 +2062,7 @@ public class AclTest extends AbstractCase {
             ResourceUtils.linksDelete(TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, "null",
                     Role.EDM_TYPE_NAME, "_Box.Name=null,Name='" + roleName + "'", TOKEN);
             // 作成したRole削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, null, roleName);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleName, null);
 
             // RelationとextCellの$link→SOCIAL権限が必要
             JSONObject extCellBody = new JSONObject();
@@ -2109,7 +2109,7 @@ public class AclTest extends AbstractCase {
             ResourceUtils.linkExtCellRoleDelete(TEST_CELL1, TOKEN,
                     PersoniumCoreUtils.encodeUrlComp(extCellUrl), null, roleName);
             // Role削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, null, roleName);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleName, null);
             CellUtils.createNp(post, TEST_CELL1, ExtCell.EDM_TYPE_NAME,
                     PersoniumCoreUtils.encodeUrlComp(extCellUrl),
                     "_" + Role.EDM_TYPE_NAME,
@@ -2118,7 +2118,7 @@ public class AclTest extends AbstractCase {
             ResourceUtils.linkExtCellRoleDelete(TEST_CELL1, TOKEN,
                     PersoniumCoreUtils.encodeUrlComp(extCellUrl), null, roleName);
             // Role削除
-            RoleUtils.delete(TEST_CELL1, TOKEN, null, roleName);
+            RoleUtils.delete(TEST_CELL1, TOKEN, roleName, null);
 
         } finally {
             // 作成した$linkの削除

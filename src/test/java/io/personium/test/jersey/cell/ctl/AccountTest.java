@@ -46,9 +46,9 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
@@ -222,7 +222,7 @@ public class AccountTest extends ODataCommon {
         try {
             // 準備。アカウント、ロール作ってリンクさせる。
             AccountUtils.create(token, cellName, accountName, pass, HttpStatus.SC_CREATED);
-            RoleUtils.create(cellName, token, boxName, roleName, HttpStatus.SC_CREATED);
+            RoleUtils.create(cellName, token, roleName, boxName, HttpStatus.SC_CREATED);
             ResourceUtils.linkAccountRole(cellName, token, accountName, boxName, roleName, HttpStatus.SC_NO_CONTENT);
 
             // 削除できないことの確認
@@ -233,7 +233,7 @@ public class AccountTest extends ODataCommon {
             AccountUtils.delete(cellName, token, accountName, HttpStatus.SC_NO_CONTENT);
         } finally {
             ResourceUtils.linkAccountRollDelete(cellName, token, accountName, boxName, roleName);
-            RoleUtils.delete(accountName, token, boxName, roleName, -1);
+            RoleUtils.delete(accountName, token, roleName, boxName, -1);
             AccountUtils.delete(cellName, token, accountName, -1);
         }
 

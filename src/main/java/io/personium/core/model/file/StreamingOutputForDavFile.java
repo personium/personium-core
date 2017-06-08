@@ -62,11 +62,14 @@ public class StreamingOutputForDavFile implements StreamingOutput {
     InputStream hardLinkInput = null;
 
     /**
-     * コンストラクタ.
-     * @param fileFullPath 読み込むファイルのフルパス
-     * @throws BinaryDataNotFoundException ファイルが存在しない場合.
+     * Constructor.
+     * @param fileFullPath Full path of the file to be read
+     * @param cellId Cell ID
+     * @param encryptionType encryption type
+     * @throws BinaryDataNotFoundException Error when file does not exist.
      */
-    public StreamingOutputForDavFile(String fileFullPath) throws BinaryDataNotFoundException {
+    public StreamingOutputForDavFile(String fileFullPath, String cellId, String encryptionType)
+            throws BinaryDataNotFoundException {
         if (!Files.exists(Paths.get(fileFullPath))) {
             throw new BinaryDataNotFoundException(fileFullPath);
         }
@@ -81,7 +84,15 @@ public class StreamingOutputForDavFile implements StreamingOutput {
                     hardLinkPath = Files.createLink(Paths.get(hardLinkName), Paths.get(fileFullPath));
                 }
                 // ハードリンクからの入力ストリームを取得
-                hardLinkInput = new BufferedInputStream(new FileInputStream(hardLinkPath.toFile()));
+                InputStream inputStream;
+                if (DataCryptor.ENCRYPTION_TYPE_AES.equals(encryptionType)) {
+                    // Perform decryption.
+                    DataCryptor cryptor = new DataCryptor(cellId);
+                    inputStream = cryptor.decode(new FileInputStream(hardLinkPath.toFile()));
+                } else {
+                    inputStream = new FileInputStream(hardLinkPath.toFile());
+                }
+                hardLinkInput = new BufferedInputStream(inputStream);
                 // 成功したら終了
                 return;
             } catch (IOException e) {
@@ -98,6 +109,9 @@ public class StreamingOutputForDavFile implements StreamingOutput {
         throw new BinaryDataNotFoundException("Unable to create hard link for DAV file: " + hardLinkName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void write(OutputStream output) throws IOException, WebApplicationException {
         if (null == hardLinkInput) {

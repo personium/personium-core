@@ -30,7 +30,6 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.common.es.EsIndex;
-import io.personium.core.model.impl.es.accessor.DavNodeAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.accessor.ODataLinkAccessor;
 import io.personium.test.categories.Unit;
@@ -165,12 +164,4 @@ public class EsModelTest {
         assertNotNull(cellCtlLink);
     }
 
-    /**
-     * colメソッドでnullを指定した場合にNullPointerExceptionをスローする.
-     */
-    @Test(expected = NullPointerException.class)
-    public void colメソッドでnullを指定した場合にNullPointerExceptionをスローする() {
-        DavNodeAccessor col = EsModel.col(null);
-        assertNotNull(col);
-    }
 }
