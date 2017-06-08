@@ -1,3 +1,9 @@
+## 1.5.1
+IMPROVEMENTS:
+* Make relationship registration possible by role. ([#24](https://github.com/personium/personium-core/issues/24))
+* If ads: none, unnecessary logs are output.([#25](https://github.com/personium/personium-core/issues/25))
+* WebDAV file encryption.([#27](https://github.com/personium/personium-core/issues/27))
+
 ## 1.5.0
 BUG FIXES:
 * Unavailability of TLS 1.2.
