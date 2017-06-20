@@ -26,7 +26,6 @@ import org.odata4j.expression.CommonExpression;
 import org.odata4j.expression.EntitySimpleProperty;
 import org.odata4j.expression.OrderByExpression;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
@@ -78,11 +77,7 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
             String key = getSearchKey(expr.getExpression(), true);
             String orderOption = getOrderOption(expr.getDirection());
             Map<String, Object> orderByValue = null;
-            if (PersoniumUnitConfig.getOrderbySortOrder()) {
-                orderByValue = UserDataQueryHandlerHelper.getOrderByValueForMissingFirst(orderOption, key);
-            } else {
-                orderByValue = UserDataQueryHandlerHelper.getOrderByValue(orderOption, key);
-            }
+            orderByValue = UserDataQueryHandlerHelper.getOrderByValue(orderOption, key);
             this.orderBy.put(UserDataQueryHandlerHelper.getOrderByKey(key), orderByValue);
         }
     }

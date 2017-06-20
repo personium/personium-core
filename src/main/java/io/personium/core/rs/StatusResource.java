@@ -23,7 +23,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -64,9 +63,6 @@ public class StatusResource {
         // Cell作成/削除
         //responseJson.put("service", checkServiceStatus());
 
-        // Adsの死活チェック
-        responseJson.put("ads", checkAds());
-
         // ElasticSearch Health
         EsClient client = EsModel.client();
         JSONObject esJson = new JSONObject();
@@ -86,20 +82,6 @@ public class StatusResource {
         // プロパティリロード
         PersoniumUnitConfig.reload();
         return Response.status(HttpStatus.SC_NO_CONTENT).build();
-    }
-
-    /**
-     * Adb(MasterDatabase)のコネクション確認.
-     * @return 正常に接続できればTrue
-     */
-    Boolean checkAds() {
-        try {
-            Properties p = PersoniumUnitConfig.getEsAdsDbcpProps();
-            BasicDataSourceFactory.createDataSource(p);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
 }

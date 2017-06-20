@@ -70,7 +70,6 @@ import org.odata4j.producer.EntityResponse;
 
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.PersoniumCoreException;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.Property;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker;
@@ -1018,12 +1017,7 @@ public abstract class AbstractODataResource {
         // Default値が特定の関数である場合は、値を生成する。
         if (EdmSimpleType.STRING.equals(edmType)) {
             // Typeが文字列でDefault値がCELLID()のとき。
-            if (defaultValue.equals("CELLID()")) {
-                String newCellid = PersoniumUnitConfig.getCouchDbCellCreationTarget() + "_"
-                        + UUID.randomUUID().toString().replaceAll("-", "");
-                op = OProperties.string(propName, newCellid);
-                // etag = newCellid;
-            } else if (defaultValue.equals("UUID()")) {
+            if (defaultValue.equals("UUID()")) {
                 // Typeが文字列でDefault値がUUID()のとき。
                 String newUuid = UUID.randomUUID().toString().replaceAll("-", "");
                 op = OProperties.string(propName, newUuid);
