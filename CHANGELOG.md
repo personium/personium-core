@@ -1,3 +1,11 @@
+## 1.5.2
+BUG FIXES:
+When multiple accesses to the same Box occurred, 500 Errors occurred.([#28](https://github.com/personium/personium-core/issues/28))
+
+IMPROVEMENTS:
+* Enable to switch accessible data scope of token from Cell-admin app to general app.([#21](https://github.com/personium/personium-core/issues/21))
+* Organize PersoniumUnitConfig.([#32](https://github.com/personium/personium-core/issues/32))
+
 ## 1.5.1
 IMPROVEMENTS:
 * Make relationship registration possible by role. ([#24](https://github.com/personium/personium-core/issues/24))
