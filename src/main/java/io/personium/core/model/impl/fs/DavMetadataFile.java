@@ -26,6 +26,8 @@ import org.apache.commons.io.Charsets;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.PersoniumCoreException;
@@ -34,8 +36,16 @@ import io.personium.core.PersoniumCoreException;
  * a class for handling internal fs file storing Dav metadata.
  */
 public class DavMetadataFile {
+    /** Logger. */
+    private static Logger log = LoggerFactory.getLogger(DavMetadataFile.class);
+
     // TODO ファイル名はUnix, Windowsで使えるけれどDAVでは使えない名前がいい。
     private static final String DAV_META_FILE_NAME = ".pmeta";
+
+    /** Milliseconds to wait of metafile reading retries. */
+    private static final long META_LOAD_RETRY_WAIT = 100L;
+    /** Maximum number of metafile reading retries. */
+    private static final int META_LOAD_RETRY_MAX = 5;
 
     File file;
 
@@ -134,6 +144,35 @@ public class DavMetadataFile {
      * load from the file.
      */
     public void load() {
+        // Coping with core issue #28.
+        // When an Exception occurs Retry several times.
+        int retryCount = 0;
+        while (true) {
+            try {
+                doLoad();
+                break;
+            } catch (PersoniumCoreException pe) {
+                if (retryCount < META_LOAD_RETRY_MAX) {
+                    try {
+                        Thread.sleep(META_LOAD_RETRY_WAIT);
+                    } catch (InterruptedException ie) {
+                        // If sleep fails, Error
+                        throw new RuntimeException(ie);
+                    }
+                    retryCount++;
+                    log.info("Meta file load retry. RetryCount:" + retryCount);
+                } else {
+                    // IO failure or JSON is broken
+                    throw pe;
+                }
+            }
+        }
+    }
+
+    /**
+     * load from the file.
+     */
+    private void doLoad() throws PersoniumCoreException {
         try (Reader reader = Files.newBufferedReader(file.toPath(), Charsets.UTF_8)) {
             JSONParser parser = new JSONParser();
             this.json = (JSONObject) parser.parse(reader);

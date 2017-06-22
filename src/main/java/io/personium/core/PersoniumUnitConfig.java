@@ -67,11 +67,6 @@ public class PersoniumUnitConfig {
     public static final String UNIT_SCHEME = KEY_ROOT + "unitScheme";
 
     /**
-     * ステータス取得用のリクエストＵＲＬ.
-     */
-    public static final String STATUS_REQUEST_URL = KEY_ROOT + "status.requestProxyUrl";
-
-    /**
      * プラグインのパス設定キー.
      */
     public static final String PLUGIN_PATH = KEY_ROOT + "plugin.path";
@@ -80,16 +75,6 @@ public class PersoniumUnitConfig {
      * OData廻りの設定.
      */
     public static final class OData {
-        /**
-         * $batch処理を行う際の処理単位のサイズ（件数）.
-         */
-        public static final String BATCH_BULK_SIZE = KEY_ROOT + "odata.batch.bulkSize";
-
-        /**
-         * $batch処理を行う際の処理単位間のSleepミリ秒.
-         */
-        public static final String BATCH_BULK_INTERVAL = KEY_ROOT + "odata.batch.bulkInterval";
-
         /**
          * $batch処理を行う際のリクエスト最大件数.
          */
@@ -109,11 +94,6 @@ public class PersoniumUnitConfig {
          * $batch処理のスリープ間隔.
          */
         public static final String BATCH_SLEEP_INTERVAL_IN_MILLIS = KEY_ROOT + "odata.batch.sleepIntervalInMillis";
-
-        /**
-         * リクエストボディのプロパティの最大要素数.
-         */
-        public static final String PROPERTY_MAX_NUM = KEY_ROOT + "odata.property.maxnum";
 
         /**
          * N:Nの$linksが作成可能な最大件数.
@@ -160,13 +140,6 @@ public class PersoniumUnitConfig {
          */
         public static final String EXPAND_PROPERTY_MAX_NUM_RETRIEVE = KEY_ROOT
                 + "odata.query.expand.property.maxnum.retrieve";
-
-        /**
-         * $orderbyのソート順を変更するための設定値.
-         */
-        public static final String ORDERBY_SORT_ORDER = KEY_ROOT
-                + "odata.query.orderby.sort.order";
-
     }
 
     /**
@@ -266,31 +239,6 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Proxy関連の設定.
-     */
-    public static final class Proxy {
-        /**
-         * PROXY ホスト名.
-         */
-        public static final String HOST_NAME = KEY_ROOT + "proxy.host";
-
-        /**
-         * PROXY ポート番号.
-         */
-        public static final String PORT_NUMBER = KEY_ROOT + "proxy.port";
-
-        /**
-         * PROXY ユーザ名.
-         */
-        public static final String USER_NAME = KEY_ROOT + "proxy.user";
-
-        /**
-         * PROXY パスワード.
-         */
-        public static final String USER_PSWD = KEY_ROOT + "proxy.pswd";
-    }
-
-    /**
      * Elastic Search 関連の設定.
      */
     public static final class ES {
@@ -310,18 +258,9 @@ public class PersoniumUnitConfig {
         public static final String UNIT_PREFIX = KEY_ROOT + "es.unitPrefix";
 
         /**
-         * Elastic Search を使用する際、CELL生成時に用いるCellId命名に用いるプレフィクス設定のプロパティキー.
-         */
-        public static final String CELL_CREATION_TARGET = KEY_ROOT + "es.creationTarget.cell";
-        /**
          * Elastic Search の検索結果出力上限設定のプロパティキー.
          */
         public static final String TOP_NUM = KEY_ROOT + "es.topnum";
-
-        /**
-         * ルーティングフラグ .
-         */
-        public static final String ROUTING_FLAG = KEY_ROOT + "es.routingFlag";
 
         /**
          * エラー発生時のリトライ回数.
@@ -332,62 +271,6 @@ public class PersoniumUnitConfig {
          * エラー発生時のリトライ間隔.
          */
         public static final String RETRY_INTERVAL = KEY_ROOT + "es.retryInterval";
-
-        /**
-         * AuthenticDataStoreの設定.
-         */
-        public static final class ADS {
-            /**
-             * AuthenticDataStore jdbc.
-             */
-            public static final String TYPE_JDBC = "jdbc";
-            static final String ADS_ROOT = KEY_ROOT + "es.ads.";
-            /**
-             * AuthenticDataStoreのタイプ.
-             * 許容値： none/jdbc
-             */
-            public static final String TYPE = ADS_ROOT + "type";
-
-            /**
-             * JDBCドライバクラス名.タイプがdbcpであるときのみ有効.
-             */
-            public static final String JDBC_DRIVER_CLASSNAME = ADS_ROOT + "jdbc.driverClassName";
-
-            /**
-             * JDBC接続先URL.
-             */
-            public static final String JDBC_URL = ADS_ROOT + "jdbc.url";
-
-            /**
-             * JDBC接続ユーザ名.
-             */
-            public static final String JDBC_USER = ADS_ROOT + "jdbc.user";
-
-            /**
-             * JDBC接続パスワード.
-             */
-            public static final String JDBC_PASSWORD = ADS_ROOT + "jdbc.password";
-            /**
-             * コネクションプールのInitial Size.
-             */
-            public static final String CP_INITIAL_SIZE = ADS_ROOT + "jdbc.cp.initialSize";
-            /**
-             * コネクションプールの Max Active.
-             */
-            public static final String CP_MAX_ACTIVE = ADS_ROOT + "jdbc.cp.maxActive";
-            /**
-             * コネクションプールの Max Idle.
-             */
-            public static final String CP_MAX_IDLE = ADS_ROOT + "jdbc.cp.maxIdle";
-            /**
-             * コネクションプールのMax Wait.
-             */
-            public static final String CP_MAX_WAIT = ADS_ROOT + "jdbc.cp.maxWait";
-            /**
-             * コネクションプールのvalidationQuery.
-             */
-            public static final String CP_VALIDATION_QUERY = ADS_ROOT + "jdbc.cp.validationQuery";
-        }
     }
 
     /**
@@ -420,12 +303,6 @@ public class PersoniumUnitConfig {
      * Blobの設定.
      */
     public static final class BlobStore {
-        /**
-         * Elastic Search を使用する際、blobデータを格納する方式設定のプロパティキー.
-         * 有効値: fs
-         */
-        public static final String TYPE = KEY_ROOT + "blobStore.type";
-
         /**
          * Elastic Search を使用する際、blobデータを格納するルート(URL, PATH)設定のプロパティキー.
          */
@@ -524,12 +401,6 @@ public class PersoniumUnitConfig {
      */
     public static final class Engine {
         /**
-         * Engineの有効化.
-         * 許容値： true/false
-         */
-        public static final String ENABLED = KEY_ROOT + "engine.enabled";
-
-        /**
          * EngineのHostキー.
          */
         public static final String HOST = KEY_ROOT + "engine.host";
@@ -562,36 +433,6 @@ public class PersoniumUnitConfig {
          * X509秘密鍵を配置したパス設定のプロパティキー.
          */
         public static final String KEY = KEY_ROOT + "x509.key";
-    }
-
-    /**
-     * CouchDB関連の設定.
-     */
-    public static final class COUCHDB {
-        /**
-         * CouchDBホスト設定のプロパティキー.
-         */
-        public static final String HOST = KEY_ROOT + "couchdb.host";
-
-        /**
-         * CouchDBポート設定のプロパティキー.
-         */
-        public static final String PORT = KEY_ROOT + "couchdb.port";
-
-        /**
-         * CouchDBを使用する際、DB生成時に用いるDB命名に用いるUNIT名に対応したプレフィクス設定のプロパティキー.
-         */
-        public static final String UNIT_PREFIX = KEY_ROOT + "couchdb.unitPrefix";
-
-        /**
-         * CouchDBを使用する際、CELL生成時に用いるCellId命名に用いるプレフィクス設定のプロパティキー.
-         */
-        public static final String CELL_CREATION_TARGET = KEY_ROOT + "couchdb.creationTarget.cell";
-
-        /**
-         * CouchDBを使用する際、Box生成時に用いるbox内部id命名に用いるプレフィクス設定のプロパティキー.
-         */
-        public static final String BOX_CREATION_TARGET = KEY_ROOT + "couchdb.creationTarget.box";
     }
 
     /**
@@ -629,73 +470,6 @@ public class PersoniumUnitConfig {
          */
         public static final String BAR_PROGRESS_EXPIRE_IN_SEC = KEY_ROOT + "bar.progress.expireInSec";
     }
-
-    /**
-     * Ads Repair処理スケジューラー周りの設定.
-     */
-    public static final class AdsRepair {
-        /**
-         * Repair処理が最初に起動するまでの遅延時間.
-         */
-        public static final String REPAIR_SERVICE_INITIAL_DELAY_IN_SEC = KEY_ROOT + "es.ads.repair.initialDelayInSec";
-        static final long DEFAULT_REPAIR_SERVICE_INITIAL_DELAY_IN_SEC = 120L;
-        /**
-         * Repair処理間の実行間隔.
-         */
-        public static final String REPAIR_SERVICE_DELAY_INTERVAL_IN_SEC = KEY_ROOT + "es.ads.repair.intervalInSec";
-        static final long DEFAULT_REPAIR_SERVICE_DELAY_INTERVAL_IN_SEC = 60L;
-        /**
-         * shutdown時、実行中タスクの完了待ち時間.
-         */
-        public static final String REPAIR_SERVICE_AWAIT_SHUTDOWN_IN_SEC = KEY_ROOT + "es.ads.repair.awaitShutdownInSec";
-        static final long DEFAULT_REPAIR_SERVICE_AWAIT_SHUTDOWN_IN_SEC = 600L;
-
-        /**
-         * RepairAdsを起動するか否かを示すファイルのパス. ファイルが存在する場合のみ、RepairAdsが起動する。
-         */
-        public static final String REPAIR_ADS_INVOCATION_FILE_PATH = KEY_ROOT + "es.ads.repair.invocationFlagFile";
-        static final String DEFAULT_REPAIR_ADS_INVOCATION_FILE_PATH = "/personium/personium-core/invokeRepair";
-    }
-
-    /**
-     * Ads失敗ログ用の設定.
-     */
-    public static final class AdsFailureLog {
-        /**
-         * Ads失敗ログの出力先ディレクトリ.
-         */
-        public static final String LOG_DIR = KEY_ROOT + "es.ads.log.dir";
-        /**
-         * Ads失敗ログを物理削除するかどうかのフラグ (true: 物理削除, false: 論理削除) .
-         */
-        public static final String PHYSICAL_DELETE = KEY_ROOT + "es.ads.physical.delete";
-        /**
-         * AuthenticDataStoreへのデータ補正時に使用するログの読み込み行数.
-         */
-        public static final String COUNT_ITERATION = KEY_ROOT + "es.ads.log.count.iteration";
-    }
-
-    /**
-     * OpenID Connect用の設定.
-     */
-    public static final class OIDC {
-        /**
-         * Google OpenID Connectにおいて、このユニットが信頼するClientIDを指定するためのキー.
-         */
-        public static final String OIDC_GOOGLE_TRUSTED_CLIENTIDS = KEY_ROOT + "oidc.google.trustedClientIds";
-
-        /**
-         * 引数のGoogleClientIDがこのユニットが信頼するリストに含まれるかどうか判定する.
-         * @param clientId ClientID
-         * @return boolean 含まれる場合：True
-         */
-        public static boolean isGoogleClientIdTrusted(String clientId) {
-            String val = get(OIDC_GOOGLE_TRUSTED_CLIENTIDS);
-            //アスタリスクが指定されていたら無条件にtrue
-            return isAstarisk(val) || isSpaceSeparatedValueIncluded(val, clientId);
-        }
-    }
-
 
     static {
         // 各種メッセージ出力クラスを強制的にロードする
@@ -778,14 +552,6 @@ public class PersoniumUnitConfig {
         return false;
     }
 
-    private static boolean isAstarisk(String val) {
-        if (val == null) {
-            return false;
-        } else if ("*".equals(val)) {
-                return true;
-        }
-        return false;
-    }
     /**
      * personium-unit-config-default.propertiesファイルを読み込む.
      * @return personium-unit-config-default.properties
@@ -842,7 +608,6 @@ public class PersoniumUnitConfig {
      * @param configFilePath 設定ファイルパス
      * @return personium-unit-config.properties
      */
-    @SuppressWarnings("resource")
     protected InputStream getConfigFileInputStream(String configFilePath) {
         Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
         InputStream configFileInputStream = null;
@@ -941,24 +706,10 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @return ステータス取得用のリクエストＵＲＬ.
-     */
-    public static String getStatusRequestUrl() {
-        return get(STATUS_REQUEST_URL);
-    }
-
-    /**
      * @return プラグインのパス設定キー.
      */
     public static String getPluginPath() {
         return get(PLUGIN_PATH);
-    }
-
-    /**
-     * @return $batch処理を行う際の処理単位のサイズ（件数）.
-     */
-    public static String getOdataBatchBulkSize() {
-        return get(OData.BATCH_BULK_SIZE);
     }
 
     /**
@@ -1007,13 +758,6 @@ public class PersoniumUnitConfig {
             return Long.parseLong(mSecInStr);
         }
         return DEFAULT_BATCH_SLEEP_INTERVAL;
-    }
-
-    /**
-     * @return $batch処理を行う際の処理単位間のSleepミリ秒.
-     */
-    public static String getOdataBatchBulkInterval() {
-        return get(OData.BATCH_BULK_INTERVAL);
     }
 
     /**
@@ -1101,13 +845,6 @@ public class PersoniumUnitConfig {
      */
     public static int getExpandPropertyMaxSizeForRetrieve() {
         return Integer.parseInt(get(OData.EXPAND_PROPERTY_MAX_NUM_RETRIEVE));
-    }
-
-    /**
-     * @return $orderbyのソート順を変更するための設定値.
-     */
-    public static boolean getOrderbySortOrder() {
-        return Boolean.parseBoolean(get(OData.ORDERBY_SORT_ORDER));
     }
 
     /**
@@ -1205,24 +942,10 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @return CELL生成時に用いるCellId命名に用いるプレフィクス.
-     */
-    public static String getEsCellCreationTarget() {
-        return get(ES.CELL_CREATION_TARGET);
-    }
-
-    /**
      * @return Esの検索結果出力上限の設定値を取得します.
      */
     public static int getEsTopNum() {
         return Integer.parseInt(get(ES.TOP_NUM));
-    }
-
-    /**
-     * @return blobデータを格納する方式.
-     */
-    public static String getBlobStoreType() {
-        return get(BlobStore.TYPE);
     }
 
     /**
@@ -1257,20 +980,6 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @return ES ADS (Elastic Search Authentic Data Store) のタイプ.
-     */
-    public static String getEsAdsType() {
-        return get(ES.ADS.TYPE);
-    }
-
-    /**
-     * @return ルーティングフラグ (trueの場合、ルーティング処理を行う).
-     */
-    public static boolean getRoutingFlag() {
-        return Boolean.parseBoolean(get(ES.ROUTING_FLAG));
-    }
-
-    /**
      * @return ESでエラー発生時のリトライ回数.
      */
     public static String getESRetryTimes() {
@@ -1289,51 +998,6 @@ public class PersoniumUnitConfig {
      */
     public static String getBarInstallProgressLifeTimeExpireInSec() {
         return get(BAR.BAR_PROGRESS_EXPIRE_IN_SEC);
-    }
-
-    /**
-     * @return ES ADSにjdbcを使うときの、DBCP用Property.
-     */
-    public static Properties getEsAdsDbcpProps() {
-        Properties ret = new Properties();
-        ret.setProperty("driverClassName", get(ES.ADS.JDBC_DRIVER_CLASSNAME));
-        ret.setProperty("url", get(ES.ADS.JDBC_URL));
-        ret.setProperty("username", get(ES.ADS.JDBC_USER));
-        ret.setProperty("password", get(ES.ADS.JDBC_PASSWORD));
-        ret.setProperty("initialSize", get(ES.ADS.CP_INITIAL_SIZE));
-        ret.setProperty("maxActive", get(ES.ADS.CP_MAX_ACTIVE));
-        ret.setProperty("maxIdle", get(ES.ADS.CP_MAX_IDLE));
-        ret.setProperty("maxWait", get(ES.ADS.CP_MAX_WAIT));
-        ret.setProperty("validationQuery", get(ES.ADS.CP_VALIDATION_QUERY));
-        return ret;
-    }
-
-    /**
-     * @return $proxyホスト名.
-     */
-    public static String getProxyHostName() {
-        return get(Proxy.HOST_NAME);
-    }
-
-    /**
-     * @return $proxyホスト番号.
-     */
-    public static int getProxyHostNumber() {
-        return Integer.parseInt(get(Proxy.PORT_NUMBER));
-    }
-
-    /**
-     * @return $proxyユーザ名.
-     */
-    public static String getProxyUserName() {
-        return get(Proxy.USER_NAME);
-    }
-
-    /**
-     * @return $proxyパスワード.
-     */
-    public static String getProxyPassword() {
-        return get(Proxy.USER_PSWD);
     }
 
     /**
@@ -1396,14 +1060,6 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Engineが有効かどうかを返却する.
-     * @return true:Engine有効 / false:Engine無効
-     */
-    public static String getEngineEnabled() {
-        return get(Engine.ENABLED);
-    }
-
-    /**
      * Enineのホスト名設定値を取得します.
      * @return 設定値
      */
@@ -1457,46 +1113,6 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * CouchDBホストの設定値を取得します.
-     * @return 設定値
-     */
-    public static String getCouchDbHost() {
-        return get(COUCHDB.HOST);
-    }
-
-    /**
-     * CouchDBポートの設定値を取得します.
-     * @return 設定値
-     */
-    public static String getCouchDbPort() {
-        return get(COUCHDB.PORT);
-    }
-
-    /**
-     * CouchDBを使用する際、DB生成時に用いるDB命名に用いるUNIT名に対応したプレフィクス設定.
-     * @return 設定値
-     */
-    public static String getCouchDbUnitPrefix() {
-        return get(COUCHDB.UNIT_PREFIX);
-    }
-
-    /**
-     * CouchDBを使用する際、CELL生成時に用いるCellId命名に用いるプレフィクス設定.
-     * @return 設定値
-     */
-    public static String getCouchDbCellCreationTarget() {
-        return get(COUCHDB.CELL_CREATION_TARGET);
-    }
-
-    /**
-     * CouchDBを使用する際、Box生成時に用いるbox内部id命名に用いるプレフィクス設定.
-     * @return 設定値
-     */
-    public static String getCouchDbBoxCreationTarget() {
-        return get(COUCHDB.BOX_CREATION_TARGET);
-    }
-
-    /**
      * トークンを暗号化する際に利用している秘密鍵設定.
      * @return 設定値
      */
@@ -1518,62 +1134,6 @@ public class PersoniumUnitConfig {
      */
     public static boolean isDavEncryptEnabled() {
         return Boolean.parseBoolean(get(Security.DAV_ENCRYPT_ENABLED));
-    }
-
-    /**
-     * Repair処理が最初に起動するまでの遅延時間.
-     * @return Repair処理が最初に起動するまでの遅延時間.
-     */
-    public static long getAdsRepairInitialDelayInSec() {
-        String value = get(AdsRepair.REPAIR_SERVICE_INITIAL_DELAY_IN_SEC);
-        if (null != value && !value.isEmpty()) {
-            return Long.valueOf(value);
-        } else {
-            // Default値.
-            return AdsRepair.DEFAULT_REPAIR_SERVICE_INITIAL_DELAY_IN_SEC;
-        }
-    }
-
-    /**
-     * Repair処理間の実行間隔.
-     * @return Repair処理間の実行間隔.
-     */
-    public static long getAdsRepairIntervalInSec() {
-        String value = get(AdsRepair.REPAIR_SERVICE_DELAY_INTERVAL_IN_SEC);
-        if (null != value && !value.isEmpty()) {
-            return Long.valueOf(value);
-        } else {
-            // Default値.
-            return AdsRepair.DEFAULT_REPAIR_SERVICE_DELAY_INTERVAL_IN_SEC;
-        }
-    }
-
-    /**
-     * RepairAdsを起動するか否かを示すファイルのパス. ファイルが存在する場合のみ、RepairAdsが起動する.
-     * @return RepairAdsを起動するか否かを示すファイルのパス.
-     */
-    public static String getRepairAdsInvocationFilePath() {
-        String value = get(AdsRepair.REPAIR_ADS_INVOCATION_FILE_PATH);
-        if (null != value && !value.isEmpty()) {
-            return value;
-        } else {
-            // Default値.
-            return AdsRepair.DEFAULT_REPAIR_ADS_INVOCATION_FILE_PATH;
-        }
-    }
-
-    /**
-     * shutdown時、実行中タスクの完了待ち時間.
-     * @return shutdown時、実行中タスクの完了待ち時間.
-     */
-    public static long getAdsRepairAwaitShutdownInSec() {
-        String value = get(AdsRepair.REPAIR_SERVICE_AWAIT_SHUTDOWN_IN_SEC);
-        if (null != value && !value.isEmpty()) {
-            return Long.valueOf(value);
-        } else {
-            // Default値.
-            return AdsRepair.DEFAULT_REPAIR_SERVICE_AWAIT_SHUTDOWN_IN_SEC;
-        }
     }
 
     /**
@@ -1633,30 +1193,6 @@ public class PersoniumUnitConfig {
         int depth = getUserdataSimpleTypePropertyLimits().length;
         String expr = get(UserDataProperties.COMPLEX_TYPE_PROPERTY_LIMITS);
         return getPropertyLimits(expr, depth);
-    }
-
-    /**
-     * Ads失敗ログの出力先ディレクトリを取得.
-     * @return Ads失敗ログの出力先ディレクトリ
-     */
-    public static String getAdsWriteFailureLogDir() {
-        return get(AdsFailureLog.LOG_DIR);
-    }
-
-    /**
-     * Ads失敗ログを物理削除するかどうかのフラグ を取得 (true: 物理削除, false: 論理削除) .
-     * @return Ads失敗ログを物理削除するかどうかのフラグ
-     */
-    public static boolean getAdsWriteFailureLogPhysicalDelete() {
-        return Boolean.parseBoolean(get(AdsFailureLog.PHYSICAL_DELETE));
-    }
-
-    /**
-     * Ads書き込み失敗ログの読み込み行数を取得.
-     * @return Ads書き込み失敗ログの読み込み行数
-     */
-    public static int getAdsWriteFailureLogCountPerIteration() {
-        return Integer.parseInt(get(AdsFailureLog.COUNT_ITERATION));
     }
 
     /**

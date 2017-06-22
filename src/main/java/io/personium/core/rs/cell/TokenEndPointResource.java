@@ -88,7 +88,7 @@ import io.personium.plugin.base.auth.AuthPlugin;
 import io.personium.plugin.base.auth.AuthenticatedIdentity;
 
 /**
- * 認証処理を司るJAX-RSリソース.
+ * JAX-RS Resource class for authentication.
  */
 public class TokenEndPointResource {
 
@@ -103,10 +103,8 @@ public class TokenEndPointResource {
 
     /**
      * constructor.
-     * @param cell
-     *            Cell
-     * @param davRsCmp
-     *            davRsCmp
+     * @param cell  Cell
+     * @param davRsCmp davRsCmp
      */
     public TokenEndPointResource(final Cell cell, final DavRsCmp davRsCmp) {
         this.cell = cell;
@@ -114,43 +112,29 @@ public class TokenEndPointResource {
     }
 
     /**
-     * 認証のエンドポイント. <h2>トークンの発行しわけ</h2>
+     * OAuth2.0 Token Endpoint. <h2>Issue some kinds of tokens.</h2>
      * <ul>
      * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
      * <li>scopeがなければCellLocalを発行する。</li>
      * </ul>
-     * @param uriInfo
-     *            URI情報
-     * @param authzHeader
-     *            Authorization ヘッダ
-     * @param grantType
-     *            クエリパラメタ
-     * @param username
-     *            クエリパラメタ
-     * @param password
-     *            クエリパラメタ
-     * @param pTarget
-     *            クエリパラメタ
-     * @param pOwner
-     *            クエリパラメタ
-     * @param assertion
-     *            クエリパラメタ
-     * @param refreshToken
-     *            クエリパラメタ
-     * @param clientId
-     *            クエリパラメタ
-     * @param clientSecret
-     *            クエリパラメタ
-     * @param pCookie
-     *            クエリパラメタ
-     * @param idToken
-     *            IDトークン
-     * @param host
-     *            Hostヘッダ
+     * @param uriInfo  URI information
+     * @param authzHeader Authorization Header
+     * @param grantType  One of query parameters
+     * @param username One of query parameters
+     * @param password One of query parameters
+     * @param pTarget One of query parameters
+     * @param pOwner One of query parameters
+     * @param assertion One of query parameters
+     * @param refreshToken One of query parameters
+     * @param clientId One of query parameters
+     * @param clientSecret One of query parameters
+     * @param pCookie One of query parameters
+     * @param idToken One of query parameters
+     * @param host Host header
      * @return JAX-RS Response Object
      */
     @POST
-    public final Response auth(@Context final UriInfo uriInfo,
+    public final Response token(@Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,
             @FormParam(Key.GRANT_TYPE) final String grantType,
             @FormParam(Key.USERNAME) final String username,
@@ -208,7 +192,7 @@ public class TokenEndPointResource {
         } else if (OAuth2Helper.GrantType.SAML2_BEARER.equals(grantType)) {
             return this.receiveSaml2(target, pOwner, schema, assertion);
         } else if (OAuth2Helper.GrantType.REFRESH_TOKEN.equals(grantType)) {
-            return this.receiveRefresh(target, pOwner, host, refreshToken);
+            return this.receiveRefresh(target, pOwner, schema, host, refreshToken);
         } else {
             // Call Auth Plugins
             return this.callAuthPlugins(grantType, idToken, target, pOwner,
@@ -317,7 +301,6 @@ public class TokenEndPointResource {
 
     /**
      * クライアント認証処理.
-     * @param scope
      * @param clientId
      * @param clientSecret
      * @param authzHeader
@@ -490,65 +473,70 @@ public class TokenEndPointResource {
     }
 
     /**
-     * リフレッシュ認証処理.
+     * Authentication with Refresh token.
      * @param target
      * @param owner
+     * @param schema
      * @param host
      * @param refreshToken
      * @return
      */
-    private Response receiveRefresh(final String target, String owner,
+    private Response receiveRefresh(final String target, String owner, String schema,
             final String host, final String refreshToken) {
+        if (refreshToken == null) {
+            // refreshTokenが未設定の場合、パースエラーとみなす
+            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
+        }
+
+        AbstractOAuth2Token token;
         try {
-            // refreshTokenのnullチェック
-            if (refreshToken == null) {
-                // refreshTokenが未設定の場合、パースエラーとみなす
-                throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR
-                        .realm(this.cell.getUrl());
+            token = AbstractOAuth2Token.parse(refreshToken, cell.getUrl(), host);
+        } catch (TokenParseException e) {
+            // パースに失敗したので
+            PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
+            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl()).reason(e);
+        } catch (TokenDsigException e) {
+            // 証明書検証に失敗したので
+            PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
+            throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID.realm(this.cell.getUrl());
+        } catch (TokenRootCrtException e) {
+            // ルートCA証明書の設定エラー
+            PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
+            throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
+        }
+
+        if (!(token instanceof IRefreshToken)) {
+            throw PersoniumCoreAuthnException.NOT_REFRESH_TOKEN.realm(this.cell.getUrl());
+        }
+
+        // Check if expired.
+        if (token.isRefreshExpired()) {
+            throw PersoniumCoreAuthnException.TOKEN_EXPIRED.realm(this.cell.getUrl());
+        }
+
+        long issuedAt = new Date().getTime();
+
+        if (Key.TRUE_STR.equals(owner)) {
+            // 自分セルリフレッシュの場合のみ昇格できる。
+            if (token.getClass() != CellLocalRefreshToken.class) {
+                throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER.realm(this.cell.getUrl());
+            }
+            // ユニット昇格権限設定のチェック
+            if (!this.davRsCmp.checkOwnerRepresentativeAccounts(token.getSubject())) {
+                throw PersoniumCoreAuthnException.NOT_ALLOWED_REPRESENT_OWNER.realm(this.cell.getUrl());
+            }
+            // セルのオーナーが未設定のセルに対しては昇格させない。
+            if (cell.getOwner() == null) {
+                throw PersoniumCoreAuthnException.NO_CELL_OWNER.realm(this.cell.getUrl());
             }
 
-            AbstractOAuth2Token token = AbstractOAuth2Token.parse(refreshToken,
-                    cell.getUrl(), host);
+            // uluut発行処理
+            UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt,
+                    UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
+                    cell.getOwner(), host);
 
-            if (!(token instanceof IRefreshToken)) {
-                throw PersoniumCoreAuthnException.NOT_REFRESH_TOKEN
-                        .realm(this.cell.getUrl());
-            }
-
-            // リフレッシュトークンの有効期限チェック
-            if (token.isRefreshExpired()) {
-                throw PersoniumCoreAuthnException.TOKEN_EXPIRED.realm(this.cell.getUrl());
-            }
-
-            long issuedAt = new Date().getTime();
-
-            if (Key.TRUE_STR.equals(owner)) {
-                // 自分セルリフレッシュの場合のみ昇格できる。
-                if (token.getClass() != CellLocalRefreshToken.class) {
-                    throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER
-                            .realm(this.cell.getUrl());
-                }
-                // ユニット昇格権限設定のチェック
-                if (!this.davRsCmp.checkOwnerRepresentativeAccounts(token
-                        .getSubject())) {
-                    throw PersoniumCoreAuthnException.NOT_ALLOWED_REPRESENT_OWNER
-                            .realm(this.cell.getUrl());
-                }
-                // セルのオーナーが未設定のセルに対しては昇格させない。
-                if (cell.getOwner() == null) {
-                    throw PersoniumCoreAuthnException.NO_CELL_OWNER
-                            .realm(this.cell.getUrl());
-                }
-
-                // uluut発行処理
-                UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(
-                        issuedAt,
-                        UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR
-                                * MILLISECS_IN_AN_HOUR, cell.getOwner(), host);
-
-                return this.responseAuthSuccess(uluut, null);
-            }
-
+            return this.responseAuthSuccess(uluut, null);
+        } else {
             // 受け取ったRefresh Tokenから AccessTokenとRefreshTokenを再生成
             IRefreshToken rToken = (IRefreshToken) token;
             rToken = rToken.refreshRefreshToken(issuedAt);
@@ -557,14 +545,11 @@ public class TokenEndPointResource {
             if (rToken instanceof CellLocalRefreshToken) {
                 String subject = rToken.getSubject();
                 List<Role> roleList = cell.getRoleListForAccount(subject);
-                aToken = rToken.refreshAccessToken(issuedAt, target,
-                        cell.getUrl(), roleList);
+                aToken = rToken.refreshAccessToken(issuedAt, target, cell.getUrl(), roleList, schema);
             } else {
                 // CELLに依頼してトークン発行元のロールから自分のところのロールを決定する。
-                List<Role> rolesHere = cell
-                        .getRoleListHere((IExtRoleContainingToken) rToken);
-                aToken = rToken.refreshAccessToken(issuedAt, target,
-                        cell.getUrl(), rolesHere);
+                List<Role> rolesHere = cell.getRoleListHere((IExtRoleContainingToken) rToken);
+                aToken = rToken.refreshAccessToken(issuedAt, target, cell.getUrl(), rolesHere, schema);
             }
 
             if (aToken instanceof TransCellAccessToken) {
@@ -573,23 +558,6 @@ public class TokenEndPointResource {
                 // return this.responseAuthSuccess(tcToken);
             }
             return this.responseAuthSuccess(aToken, rToken);
-        } catch (TokenParseException e) {
-            // パースに失敗したので
-            PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage())
-                    .writeLog();
-            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(
-                    this.cell.getUrl()).reason(e);
-        } catch (TokenDsigException e) {
-            // 証明書検証に失敗したので
-            PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage())
-                    .writeLog();
-            throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID
-                    .realm(this.cell.getUrl());
-        } catch (TokenRootCrtException e) {
-            // ルートCA証明書の設定エラー
-            PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(
-                    e.getMessage()).writeLog();
-            throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
         }
     }
 
@@ -752,7 +720,7 @@ public class TokenEndPointResource {
     }
 
     /**
-     * OPTIONSメソッド.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS

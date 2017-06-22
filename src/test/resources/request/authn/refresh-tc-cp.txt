@@ -1,0 +1,8 @@
+POST /${remoteCell}/__token HTTP/1.1
+Host: ?
+Content-Type: application/x-www-form-urlencoded
+Content-Length: ?
+Accept: application/json
+Connection: close
+
+grant_type=refresh_token&refresh_token=${refresh_token}&p_target=${p_target}&client_id=${client_id}&client_secret=${client_secret}

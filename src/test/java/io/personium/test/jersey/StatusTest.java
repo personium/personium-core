@@ -48,6 +48,5 @@ public class StatusTest extends ODataCommon {
 
         assertNotNull(json.get("ElasticSearch"));
         assertNotNull(json.get("properties"));
-        assertNotNull(json.get("ads"));
     }
 }

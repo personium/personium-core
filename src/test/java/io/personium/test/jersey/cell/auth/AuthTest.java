@@ -16,7 +16,10 @@
  */
 package io.personium.test.jersey.cell.auth;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -33,9 +36,14 @@ import org.junit.runner.RunWith;
 
 import com.sun.jersey.test.framework.JerseyTest;
 
+import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
+import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
+import io.personium.common.auth.token.AccountAccessToken;
+import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.Role;
+import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.auth.OAuth2Helper;
@@ -81,6 +89,10 @@ import io.personium.test.utils.TResponse;
  * １１．スキーマ付きパスワード認証リフレッシュトークンー自セルトークン.
  * １３．スキーマ付きトークン認証リフレッシュトークンートランセル.
  * １５．スキーマ付きトークン認証リフレッシュトークンー他人セルトークン.
+ * １７．スキーマ付き自セルリフレッシュートランスセルトークン.
+ * １８．スキーマ付き自セルリフレッシュー自セルトークン.
+ * １９．スキーマ付きトランスセルリフレッシュートランスセルトークン.
+ * ２０．スキーマ付きトランスセルリフレッシュー自セルトークン.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
@@ -1402,4 +1414,381 @@ public class AuthTest extends JerseyTest {
         }
 
     }
+
+    /**
+     * １７．スキーマ付き自セルリフレッシュートランスセルトークン.
+     */
+    @Test
+    public void スキーマ付き自セルリフレッシュートランスセルトークン() {
+        try {
+            // Authenticate to user cell
+            TResponse res =
+                    Http.request("authn/password-cl-c0.txt")
+                            .with("remoteCell", TEST_CELL1)
+                            .with("username", "account1")
+                            .with("password", "password1")
+                            .returns()
+                            .statusCode(HttpStatus.SC_OK);
+
+            String cellAccessToken = (String) res.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            String refreshToken = (String) res.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
+
+            // One second stop to use the refresh token
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                fail();
+            }
+
+            // Authenticate to app cell
+            TResponse res2 =
+                    Http.request("authn/password-tc-c0.txt")
+                            .with("remoteCell", TEST_APP_CELL1)
+                            .with("username", "account1")
+                            .with("password", "password1")
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
+                            .returns()
+                            .statusCode(HttpStatus.SC_OK);
+
+            String schemaTransCellAccessToken = (String) res2.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // ------------------------------
+            // Schema authentication (body)
+            // ------------------------------
+            TResponse res3 = Http.request("authn/refresh-tc-cp.txt")
+                    .with("remoteCell", TEST_CELL1)
+                    .with("refresh_token", refreshToken)
+                    .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
+                    .with("client_id", UrlUtils.cellRoot(TEST_APP_CELL1))
+                    .with("client_secret", schemaTransCellAccessToken)
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            String transCellAccessToken = (String) res3.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            TransCellAccessToken aToken = (TransCellAccessToken) TransCellAccessToken.parse(transCellAccessToken,
+                    UrlUtils.cellRoot(TEST_CELL1), UrlUtils.getHost());
+
+            // Token check
+            assertTrue(!cellAccessToken.equals(transCellAccessToken));
+            assertThat(aToken.getIssuer(), is(UrlUtils.cellRoot(TEST_CELL1)));
+            assertThat(aToken.getSchema(), is(UrlUtils.cellRoot(TEST_APP_CELL1) + "#c"));
+            assertThat(aToken.getTarget(), is(UrlUtils.cellRoot(TEST_CELL2)));
+            assertThat(aToken.getSubject(), is(UrlUtils.cellRoot(TEST_CELL1) + "#account1"));
+
+            // ------------------------------
+            // Schema authentication (header)
+            // ------------------------------
+            String schemaTransCellAccessTokenHeader = PersoniumCoreUtils.createBasicAuthzHeader(
+                    UrlUtils.cellRoot(TEST_APP_CELL1), schemaTransCellAccessToken);
+
+            res3 = Http.request("authn/refresh-tc-ch.txt")
+                    .with("remoteCell", TEST_CELL1)
+                    .with("refresh_token", refreshToken)
+                    .with("base64idpw", schemaTransCellAccessTokenHeader)
+                    .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            transCellAccessToken = (String) res3.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            aToken = (TransCellAccessToken) TransCellAccessToken.parse(transCellAccessToken,
+                    UrlUtils.cellRoot(TEST_CELL1), UrlUtils.getHost());
+
+            // Token check
+            assertTrue(!cellAccessToken.equals(transCellAccessToken));
+            assertThat(aToken.getIssuer(), is(UrlUtils.cellRoot(TEST_CELL1)));
+            assertThat(aToken.getSchema(), is(UrlUtils.cellRoot(TEST_APP_CELL1) + "#c"));
+            assertThat(aToken.getTarget(), is(UrlUtils.cellRoot(TEST_CELL2)));
+            assertThat(aToken.getSubject(), is(UrlUtils.cellRoot(TEST_CELL1) + "#account1"));
+
+        } catch (TokenParseException | TokenDsigException | TokenRootCrtException e) {
+            fail();
+        }
+    }
+
+    /**
+     * １８．スキーマ付き自セルリフレッシュー自セルトークン.
+     */
+    @Test
+    public void スキーマ付き自セルリフレッシュー自セルトークン() {
+        try {
+            // Authenticate to user cell
+            TResponse res =
+                    Http.request("authn/password-cl-c0.txt")
+                            .with("remoteCell", TEST_CELL1)
+                            .with("username", "account1")
+                            .with("password", "password1")
+                            .returns()
+                            .statusCode(HttpStatus.SC_OK);
+
+            String cellAccessToken = (String) res.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            String refreshToken = (String) res.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
+
+            // One second stop to use the refresh token
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                fail();
+            }
+
+            // Authenticate to app cell
+            TResponse res2 =
+                    Http.request("authn/password-tc-c0.txt")
+                            .with("remoteCell", TEST_APP_CELL1)
+                            .with("username", "account1")
+                            .with("password", "password1")
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
+                            .returns()
+                            .statusCode(HttpStatus.SC_OK);
+
+            String schemaTransCellAccessToken = (String) res2.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // ------------------------------
+            // Schema authentication (body)
+            // ------------------------------
+            TResponse res3 = Http.request("authn/refresh-cl-cp.txt")
+                    .with("remoteCell", TEST_CELL1)
+                    .with("refresh_token", refreshToken)
+                    .with("client_id", UrlUtils.cellRoot(TEST_APP_CELL1))
+                    .with("client_secret", schemaTransCellAccessToken)
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            String cellAccessToken2 = (String) res3.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            AccountAccessToken aToken = (AccountAccessToken) AccountAccessToken.parse(
+                    cellAccessToken2, UrlUtils.cellRoot(TEST_CELL1));
+
+            // Token check
+            assertTrue(!cellAccessToken.equals(cellAccessToken2));
+            assertThat(aToken.getIssuer(), is(UrlUtils.cellRoot(TEST_CELL1)));
+            assertThat(aToken.getSchema(), is(UrlUtils.cellRoot(TEST_APP_CELL1) + "#c"));
+            assertNull(aToken.getTarget());
+            assertThat(aToken.getSubject(), is("account1"));
+
+            // ------------------------------
+            // Schema authentication (header)
+            // ------------------------------
+            String schemaTransCellAccessTokenHeader = PersoniumCoreUtils.createBasicAuthzHeader(
+                    UrlUtils.cellRoot(TEST_APP_CELL1), schemaTransCellAccessToken);
+
+            res3 = Http.request("authn/refresh-cl-ch.txt")
+                    .with("remoteCell", TEST_CELL1)
+                    .with("refresh_token", refreshToken)
+                    .with("base64idpw", schemaTransCellAccessTokenHeader)
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            cellAccessToken2 = (String) res3.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            aToken = (AccountAccessToken) AccountAccessToken.parse(
+                    cellAccessToken2, UrlUtils.cellRoot(TEST_CELL1));
+
+            // Token check
+            assertTrue(!cellAccessToken.equals(cellAccessToken2));
+            assertThat(aToken.getIssuer(), is(UrlUtils.cellRoot(TEST_CELL1)));
+            assertThat(aToken.getSchema(), is(UrlUtils.cellRoot(TEST_APP_CELL1) + "#c"));
+            assertNull(aToken.getTarget());
+            assertThat(aToken.getSubject(), is("account1"));
+
+        } catch (TokenParseException e) {
+            fail();
+        }
+    }
+
+    /**
+     * １９．スキーマ付きトランスセルリフレッシュートランスセルトークン.
+     */
+    @Test
+    public void スキーマ付きトランスセルリフレッシュートランスセルトークン() {
+        try {
+            // Authenticate to user cell (get TransCellAccessToken)
+            TResponse res =
+                    Http.request("authn/password-tc-c0.txt")
+                            .with("remoteCell", TEST_CELL1)
+                            .with("username", "account1")
+                            .with("password", "password1")
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
+                            .returns()
+                            .statusCode(HttpStatus.SC_OK);
+
+            String transCellAccessToken = (String) res.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // Authenticate to user cell (get TransCellRefreshToken)
+            TResponse res2 =
+                    Http.request("authn/saml-cl-c0.txt")
+                            .with("remoteCell", TEST_CELL2)
+                            .with("assertion", transCellAccessToken)
+                            .returns()
+                            .statusCode(HttpStatus.SC_OK);
+            String cellAccessToken = (String) res2.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            String refreshToken = (String) res2.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
+
+            // One second stop to use the refresh token
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                fail();
+            }
+
+            // Authenticate to app cell
+            TResponse res3 =
+                    Http.request("authn/password-tc-c0.txt")
+                            .with("remoteCell", TEST_APP_CELL1)
+                            .with("username", "account1")
+                            .with("password", "password1")
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
+                            .returns()
+                            .statusCode(HttpStatus.SC_OK);
+
+            String schemaTransCellAccessToken = (String) res3.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // ------------------------------
+            // Schema authentication (body)
+            // ------------------------------
+            TResponse res4 = Http.request("authn/refresh-tc-cp.txt")
+                    .with("remoteCell", TEST_CELL2)
+                    .with("refresh_token", refreshToken)
+                    .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
+                    .with("client_id", UrlUtils.cellRoot(TEST_APP_CELL1))
+                    .with("client_secret", schemaTransCellAccessToken)
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            String transCellAccessToken2 = (String) res4.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            TransCellAccessToken aToken = (TransCellAccessToken) TransCellAccessToken.parse(transCellAccessToken2,
+                    UrlUtils.cellRoot(TEST_CELL1), UrlUtils.getHost());
+
+            // Token check
+            assertTrue(!cellAccessToken.equals(transCellAccessToken2));
+            assertThat(aToken.getIssuer(), is(UrlUtils.cellRoot(TEST_CELL2)));
+            assertThat(aToken.getSchema(), is(UrlUtils.cellRoot(TEST_APP_CELL1) + "#c"));
+            assertThat(aToken.getTarget(), is(UrlUtils.cellRoot(TEST_CELL1)));
+            assertThat(aToken.getSubject(), is(UrlUtils.cellRoot(TEST_CELL1) + "#account1"));
+
+            // ------------------------------
+            // Schema authentication (header)
+            // ------------------------------
+            String schemaTransCellAccessTokenHeader = PersoniumCoreUtils.createBasicAuthzHeader(
+                    UrlUtils.cellRoot(TEST_APP_CELL1), schemaTransCellAccessToken);
+
+            res4 = Http.request("authn/refresh-tc-ch.txt")
+                    .with("remoteCell", TEST_CELL2)
+                    .with("refresh_token", refreshToken)
+                    .with("base64idpw", schemaTransCellAccessTokenHeader)
+                    .with("p_target", UrlUtils.cellRoot(TEST_CELL1))
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            transCellAccessToken2 = (String) res4.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            aToken = (TransCellAccessToken) TransCellAccessToken.parse(transCellAccessToken2,
+                    UrlUtils.cellRoot(TEST_CELL1), UrlUtils.getHost());
+
+            // Token check
+            assertTrue(!cellAccessToken.equals(transCellAccessToken2));
+            assertThat(aToken.getIssuer(), is(UrlUtils.cellRoot(TEST_CELL2)));
+            assertThat(aToken.getSchema(), is(UrlUtils.cellRoot(TEST_APP_CELL1) + "#c"));
+            assertThat(aToken.getTarget(), is(UrlUtils.cellRoot(TEST_CELL1)));
+            assertThat(aToken.getSubject(), is(UrlUtils.cellRoot(TEST_CELL1) + "#account1"));
+
+        } catch (TokenParseException | TokenDsigException | TokenRootCrtException e) {
+            fail();
+        }
+    }
+
+    /**
+     * ２０．スキーマ付きトランスセルリフレッシュー自セルトークン.
+     */
+    @Test
+    public void スキーマ付きトランスセルリフレッシュー自セルトークン() {
+        try {
+            // Authenticate to user cell (get TransCellAccessToken)
+            TResponse res =
+                    Http.request("authn/password-tc-c0.txt")
+                            .with("remoteCell", TEST_CELL1)
+                            .with("username", "account1")
+                            .with("password", "password1")
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
+                            .returns()
+                            .statusCode(HttpStatus.SC_OK);
+
+            String transCellAccessToken = (String) res.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // Authenticate to user cell (get TransCellRefreshToken)
+            TResponse res2 =
+                    Http.request("authn/saml-cl-c0.txt")
+                            .with("remoteCell", TEST_CELL2)
+                            .with("assertion", transCellAccessToken)
+                            .returns()
+                            .statusCode(HttpStatus.SC_OK);
+            String cellAccessToken = (String) res2.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            String refreshToken = (String) res2.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
+
+            // One second stop to use the refresh token
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                fail();
+            }
+
+            // Authenticate to app cell
+            TResponse res3 =
+                    Http.request("authn/password-tc-c0.txt")
+                            .with("remoteCell", TEST_APP_CELL1)
+                            .with("username", "account1")
+                            .with("password", "password1")
+                            .with("p_target", UrlUtils.cellRoot(TEST_CELL2))
+                            .returns()
+                            .statusCode(HttpStatus.SC_OK);
+
+            String schemaTransCellAccessToken = (String) res3.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // ------------------------------
+            // Schema authentication (body)
+            // ------------------------------
+            TResponse res4 = Http.request("authn/refresh-cl-cp.txt")
+                    .with("remoteCell", TEST_CELL2)
+                    .with("refresh_token", refreshToken)
+                    .with("client_id", UrlUtils.cellRoot(TEST_APP_CELL1))
+                    .with("client_secret", schemaTransCellAccessToken)
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            String cellAccessToken2 = (String) res4.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            CellLocalAccessToken aToken = (CellLocalAccessToken) CellLocalAccessToken.parse(
+                    cellAccessToken2, UrlUtils.cellRoot(TEST_CELL2));
+
+            // Token check
+            assertTrue(!cellAccessToken.equals(cellAccessToken2));
+            assertThat(aToken.getIssuer(), is(UrlUtils.cellRoot(TEST_CELL2)));
+            assertThat(aToken.getSchema(), is(UrlUtils.cellRoot(TEST_APP_CELL1) + "#c"));
+            assertNull(aToken.getTarget());
+            assertThat(aToken.getSubject(), is(UrlUtils.cellRoot(TEST_CELL1) + "#account1"));
+
+            // ------------------------------
+            // Schema authentication (header)
+            // ------------------------------
+            String schemaTransCellAccessTokenHeader = PersoniumCoreUtils.createBasicAuthzHeader(
+                    UrlUtils.cellRoot(TEST_APP_CELL1), schemaTransCellAccessToken);
+
+            res4 = Http.request("authn/refresh-cl-ch.txt")
+                    .with("remoteCell", TEST_CELL2)
+                    .with("refresh_token", refreshToken)
+                    .with("base64idpw", schemaTransCellAccessTokenHeader)
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+
+            cellAccessToken2 = (String) res4.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
+            aToken = (CellLocalAccessToken) CellLocalAccessToken.parse(
+                    cellAccessToken2, UrlUtils.cellRoot(TEST_CELL2));
+
+            // Token check
+            assertTrue(!cellAccessToken.equals(cellAccessToken2));
+            assertThat(aToken.getIssuer(), is(UrlUtils.cellRoot(TEST_CELL2)));
+            assertThat(aToken.getSchema(), is(UrlUtils.cellRoot(TEST_APP_CELL1) + "#c"));
+            assertNull(aToken.getTarget());
+            assertThat(aToken.getSubject(), is(UrlUtils.cellRoot(TEST_CELL1) + "#account1"));
+
+        } catch (TokenParseException e) {
+            fail();
+        }
+    }
+
 }
