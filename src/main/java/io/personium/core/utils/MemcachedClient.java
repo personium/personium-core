@@ -127,7 +127,7 @@ public class MemcachedClient implements CacheClient {
     public Boolean put(String key, int expiresIn, Object object) {
         try {
             if (!this.spyClient.replace(key, expiresIn, object).get()) {
-                if (!this.spyClient.add(key, expiresIn, object).get()) {
+                if (!this.spyClient.add(key, expiresIn, object).get()) { //NOPMD - To maintain readability
                     // Coping with core issue #35.
                     // Correspondence to failure where processing fails when accessing at the same time.
                     return this.spyClient.replace(key, expiresIn, object).get();
