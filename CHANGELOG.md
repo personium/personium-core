@@ -1,6 +1,8 @@
 ## 1.5.3
 IMPROVEMENTS:
 * Improve error output level when installing bar files.([#34](https://github.com/personium/personium-core/issues/34))
+
+BUG FIXES:
 * (Provisional coping) Memcached Changes the behavior at update failure.([#35](https://github.com/personium/personium-core/issues/35))
 
 ## 1.5.2
