@@ -126,11 +126,14 @@ public class MemcachedClient implements CacheClient {
     @Override
     public Boolean put(String key, int expiresIn, Object object) {
         try {
-            if (this.spyClient.replace(key, expiresIn, object).get()) {
-                return true;
-            } else {
-                return this.spyClient.add(key, expiresIn, object).get();
+            if (!this.spyClient.replace(key, expiresIn, object).get()) {
+                if (!this.spyClient.add(key, expiresIn, object).get()) {
+                    // Coping with core issue #35.
+                    // Correspondence to failure where processing fails when accessing at the same time.
+                    return this.spyClient.replace(key, expiresIn, object).get();
+                }
             }
+            return true;
         } catch (InterruptedException e) {
             PersoniumCoreLog.Server.MEMCACHED_SET_FAIL.params(e.getMessage()).reason(e).writeLog();
         } catch (ExecutionException e) {
@@ -139,7 +142,7 @@ public class MemcachedClient implements CacheClient {
             log.info(e.getMessage(), e);
             throw new MemcachedClientException(e);
         }
-        return Boolean.FALSE;
+        return false;
     }
 
     /**
