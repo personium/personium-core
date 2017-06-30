@@ -1,6 +1,11 @@
+## 1.5.3
+IMPROVEMENTS:
+* Improve error output level when installing bar files.([#34](https://github.com/personium/personium-core/issues/34))
+* (Provisional coping) Memcached Changes the behavior at update failure.([#35](https://github.com/personium/personium-core/issues/35))
+
 ## 1.5.2
 BUG FIXES:
-When multiple accesses to the same Box occurred, 500 Errors occurred.([#28](https://github.com/personium/personium-core/issues/28))
+* When multiple accesses to the same Box occurred, 500 Errors occurred.([#28](https://github.com/personium/personium-core/issues/28))
 
 IMPROVEMENTS:
 * Enable to switch accessible data scope of token from Cell-admin app to general app.([#21](https://github.com/personium/personium-core/issues/21))
