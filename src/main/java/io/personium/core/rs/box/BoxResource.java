@@ -50,8 +50,8 @@ import io.personium.core.annotations.ACL;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.bar.BarFileInstaller;
-import io.personium.core.eventbus.PersoniumEventBus;
 import io.personium.core.eventbus.JSONEvent;
+import io.personium.core.eventbus.PersoniumEventBus;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.BoxRsCmp;
@@ -369,8 +369,8 @@ public final class BoxResource {
             // TODO 内部イベントの正式対応が必要
             if (e instanceof PersoniumCoreException) {
                 event.setResult(Integer.toString(((PersoniumCoreException) e).getStatus()));
-                if (((PersoniumCoreException) e).getStatus() > HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-                    event.setLevel(LEVEL.WARN);
+                if (((PersoniumCoreException) e).getStatus() < HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+                    event.setLevel(LEVEL.INFO);
                 } else {
                     event.setLevel(LEVEL.ERROR);
                 }

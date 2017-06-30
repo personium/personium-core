@@ -40,11 +40,7 @@ public abstract class AccountLockManager extends LockManager {
      */
     public static void registAccountLockObjct(final String accountId) {
         String key =  CATEGORY_ACCOUNT_LOCK + accountId;
-        Boolean success = singleton.doPutAccountLock(key, "", accountLockLifeTime);
-        if (success) {
-            return;
-        }
-        throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
+        singleton.doPutAccountLock(key, "", accountLockLifeTime);
     }
 
     /**
