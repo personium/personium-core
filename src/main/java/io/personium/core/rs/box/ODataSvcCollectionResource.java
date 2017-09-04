@@ -55,7 +55,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
      * @param davCmp DavCmp
      */
     public ODataSvcCollectionResource(final DavRsCmp parent, final DavCmp davCmp) {
-        super(parent.getAccessContext(), parent.getUrl() + davCmp.getName() + "/", davCmp.getODataProducer());
+        super(parent.getAccessContext(), parent.getUrl() + "/" + davCmp.getName() + "/", davCmp.getODataProducer());
         this.davRsCmp = new DavRsCmp(parent, davCmp);
     }
 
