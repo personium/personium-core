@@ -23,10 +23,6 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
@@ -37,8 +33,6 @@ import io.personium.test.categories.Unit;
 /**
  * ODataSvcCollectionResource unit test classs.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ODataSvcCollectionResource.class})
 @Category({ Unit.class })
 public class ODataSvcCollectionResourceTest {
 
@@ -48,9 +42,8 @@ public class ODataSvcCollectionResourceTest {
     /**
      * Test constructor.
      */
-    @SuppressWarnings("unchecked")
     @Test
-    public void constructor() throws Exception {
+    public void constructor_Normal() {
         DavRsCmp davRsCmp = mock(DavRsCmp.class);
         DavCmp davCmp = mock(DavCmp.class);
         PersoniumODataProducer producer = mock(PersoniumODataProducer.class);

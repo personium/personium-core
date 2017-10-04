@@ -24,7 +24,6 @@ import static org.mockito.Mockito.mock;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -39,7 +38,7 @@ import io.personium.test.categories.Unit;
  * ODataSvcSchemaResource unit test classs.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ODataSvcSchemaResource.class, ODataSvcCollectionResource.class})
+@PrepareForTest({ODataSvcCollectionResource.class})
 @Category({ Unit.class })
 public class ODataSvcSchemaResourceTest {
 
@@ -49,9 +48,8 @@ public class ODataSvcSchemaResourceTest {
     /**
      * Test constructor.
      */
-    @SuppressWarnings("unchecked")
     @Test
-    public void constructor() throws Exception {
+    public void constructor_Normal() {
         DavRsCmp davRsCmp = mock(DavRsCmp.class);
         DavCmp davCmp = mock(DavCmp.class);
         PersoniumODataProducer producer = mock(PersoniumODataProducer.class);
