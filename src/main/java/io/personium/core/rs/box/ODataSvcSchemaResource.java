@@ -78,7 +78,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
     ODataSvcSchemaResource(
             final DavRsCmp davRsCmp, final ODataSvcCollectionResource odataSvcCollectionReource) {
         super(davRsCmp.getAccessContext(),
-                davRsCmp.getUrl() + davRsCmp.getDavCmp().getName() + "/",
+                davRsCmp.getUrl() + "/" + davRsCmp.getDavCmp().getName() + "/",
                 davRsCmp.getDavCmp().getSchemaODataProducer(davRsCmp.getCell()));
         this.odataSvcCollectionReource = odataSvcCollectionReource;
         this.davRsCmp = davRsCmp;
