@@ -164,13 +164,7 @@ public final class MessageODataResource extends AbstractODataResource {
     protected Response changeMessageStatus(Reader reader, String key) {
 
         JSONObject body;
-        try {
-            body = ResourceUtils.parseBodyAsJSON(reader);
-        } catch (IOException e1) {
-            throw PersoniumCoreException.OData.JSON_PARSE_ERROR.reason(e1);
-        } catch (ParseException e1) {
-            throw PersoniumCoreException.OData.JSON_PARSE_ERROR.reason(e1);
-        }
+        body = ResourceUtils.parseBodyAsJSON(reader);
 
         String status = (String) body.get(ReceivedMessage.MESSAGE_COMMAND);
         // ステータスのチェック

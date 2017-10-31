@@ -85,13 +85,9 @@ public class StreamingOutputForDavFile implements StreamingOutput {
                 }
                 // ハードリンクからの入力ストリームを取得
                 InputStream inputStream;
-                if (DataCryptor.ENCRYPTION_TYPE_AES.equals(encryptionType)) {
-                    // Perform decryption.
-                    DataCryptor cryptor = new DataCryptor(cellId);
-                    inputStream = cryptor.decode(new FileInputStream(hardLinkPath.toFile()));
-                } else {
-                    inputStream = new FileInputStream(hardLinkPath.toFile());
-                }
+                // Perform decryption.
+                DataCryptor cryptor = new DataCryptor(cellId);
+                inputStream = cryptor.decode(new FileInputStream(hardLinkPath.toFile()), encryptionType);
                 hardLinkInput = new BufferedInputStream(inputStream);
                 // 成功したら終了
                 return;

@@ -36,108 +36,71 @@ public class PersoniumUnitConfig {
     private static final int DEFAULT_BATCH_SLEEP_INTERVAL = 1000;
     private static final int DEFAULT_BATCH_SLEEP = 50;
 
-    /**
-     * personium-unit-config.propertiesの設定ファイルパスキー.
-     */
+    /** personium-unit-config.propertiesの設定ファイルパスキー. */
     static final String KEY_CONFIG_FILE = "io.personium.configurationFile";
 
-    /**
-     * 本アプリで使うプロパティキーのプレフィクス.
-     */
+    /** 本アプリで使うプロパティキーのプレフィクス. */
     static final String KEY_ROOT = "io.personium.core.";
 
-    /**
-     * Core version設定のキー.
-     */
+    /** Core version設定のキー. */
     public static final String CORE_VERSION = KEY_ROOT + "version";
 
-    /**
-     * マスタートークン設定のキー.
-     */
+    /** Thread pool num key. */
+    public static final String THREAD_POOL_NUM = KEY_ROOT + "thread.pool.num";
+
+    /** マスタートークン設定のキー. */
     public static final String MASTER_TOKEN = KEY_ROOT + "masterToken";
 
-    /**
-     * ユニットユーザトークン発行者として認定するホスト名.
-     */
+    /** ユニットユーザトークン発行者として認定するホスト名. */
     public static final String UNIT_USER_ISSUERS = KEY_ROOT + "unitUser.issuers";
 
-    /**
-     * ユニットのスキーム設定キー.
-     */
+    /** ユニットのスキーム設定キー. */
     public static final String UNIT_SCHEME = KEY_ROOT + "unitScheme";
 
-    /**
-     * プラグインのパス設定キー.
-     */
+    /** プラグインのパス設定キー. */
     public static final String PLUGIN_PATH = KEY_ROOT + "plugin.path";
 
     /**
      * OData廻りの設定.
      */
     public static final class OData {
-        /**
-         * $batch処理を行う際のリクエスト最大件数.
-         */
+        /** $batch処理を行う際のリクエスト最大件数. */
         public static final String BATCH_BULK_REQUEST_MAX_SIZE = KEY_ROOT + "odata.batch.bulkRequestMaxSize";
 
-        /**
-         * $batch処理のタイムアウト時間.
-         */
+        /** $batch処理のタイムアウト時間. */
         public static final String BATCH_REQUEST_TIMEOUT_IN_MILLIS = KEY_ROOT + "odata.batch.timeoutInMillis";
 
-        /**
-         * $batch処理のスリープ時間.
-         */
+        /** $batch処理のスリープ時間. */
         public static final String BATCH_SLEEP_IN_MILLIS = KEY_ROOT + "odata.batch.sleepInMillis";
 
-        /**
-         * $batch処理のスリープ間隔.
-         */
+        /** $batch処理のスリープ間隔. */
         public static final String BATCH_SLEEP_INTERVAL_IN_MILLIS = KEY_ROOT + "odata.batch.sleepIntervalInMillis";
 
-        /**
-         * N:Nの$linksが作成可能な最大件数.
-         */
+        /** N:Nの$linksが作成可能な最大件数. */
         public static final String NN_LINKS_MAX_NUM = KEY_ROOT + "odata.links.NtoN.maxnum";
 
-        /**
-         * $expand指定時の$top最大数.
-         */
+        /** $expand指定時の$top最大数. */
         public static final String EXPAND_TOP_MAXNUM = KEY_ROOT + "odata.query.expand.top.maxnum";
 
-        /**
-         * $expandの最大展開数（一覧取得時）.
-         */
+        /** $expandの最大展開数（一覧取得時）. */
         public static final String EXPAND_LIST_MAXNUM = KEY_ROOT + "odata.expand.list.maxnum";
 
-        /**
-         * $expandの最大展開数（一件取得時）.
-         */
+        /** $expandの最大展開数（一件取得時）. */
         public static final String EXPAND_RETRIEVE_MAXNUM = KEY_ROOT + "odata.expand.retrieve.maxnum";
 
-        /**
-         * $topの最大値数.
-         */
+        /** $topの最大値数. */
         public static final String TOP_MAX_NUM = KEY_ROOT + "odata.query.top.maxnum";
 
-        /**
-         * $skipの最大値数.
-         */
+        /** $skipの最大値数. */
         public static final String SKIP_MAX_NUM = KEY_ROOT + "odata.query.skip.maxnum";
 
-        /**
-         * 一覧取得時のデフォルト返却件数.
-         */
+        /** 一覧取得時のデフォルト返却件数. */
         public static final String TOP_DEFAULT_NUM = KEY_ROOT + "odata.query.top.defaultnum";
 
-        /**
-         * $expandのプロパティの最大値数（一覧取得時）.
-         */
+        /** $expandのプロパティの最大値数（一覧取得時）. */
         public static final String EXPAND_PROPERTY_MAX_NUM_LIST = KEY_ROOT + "odata.query.expand.property.maxnum.list";
 
-        /**
-         * $expandのプロパティの最大値数（一件取得時）.
-         */
+        /** $expandのプロパティの最大値数（一件取得時）. */
         public static final String EXPAND_PROPERTY_MAX_NUM_RETRIEVE = KEY_ROOT
                 + "odata.query.expand.property.maxnum.retrieve";
     }
@@ -146,9 +109,7 @@ public class PersoniumUnitConfig {
      * Account廻りの設定.
      */
     public static final class Account {
-        /**
-         * パスワード認証成功時に、Accountの最終ログイン時刻を更新するか否か(true:更新する(デフォルト) false:更新しない).
-         */
+        /** パスワード認証成功時に、Accountの最終ログイン時刻を更新するか否か(true:更新する(デフォルト) false:更新しない). */
         public static final String ACCOUNT_LAST_AUTHENTICATED_ENABLED = KEY_ROOT + "account.lastauthenticated.enabled";
     }
 
@@ -156,14 +117,10 @@ public class PersoniumUnitConfig {
      * Dav廻りの設定.
      */
     public static final class Dav {
-        /**
-         * コレクションの子要素の最大数.
-         */
+        /** コレクションの子要素の最大数. */
         public static final String COLLECTION_CHILDRESOURCE_MAX_NUM = KEY_ROOT + "dav.childresource.maxnum";
 
-        /**
-         * コレクションの階層の深さの最大数.
-         */
+        /** コレクションの階層の深さの最大数. */
         public static final String COLLECTION_DEPTH_MAX_NUM = KEY_ROOT + "dav.depth.maxnum";
     }
 
@@ -171,19 +128,13 @@ public class PersoniumUnitConfig {
      * Security廻りの設定.
      */
     public static final class Security {
-        /**
-         * トークンを暗号化する際に利用している秘密鍵.
-         */
+        /** トークンを暗号化する際に利用している秘密鍵. */
         public static final String TOKEN_SECRET_KEY = KEY_ROOT + "security.secret16";
 
-        /**
-         * トークンを暗号化する際に利用している秘密鍵.
-         */
+        /** トークンを暗号化する際に利用している秘密鍵. */
         public static final String AUTH_PASSWORD_SALT = KEY_ROOT + "security.auth.password.salt";
 
-        /**
-         * Encrypt the DAV file (true: enabled false: disabled (default)).
-         */
+        /** Encrypt the DAV file (true: enabled false: disabled (default)). */
         public static final String DAV_ENCRYPT_ENABLED = KEY_ROOT + "security.dav.encrypt.enabled";
     }
 
@@ -191,50 +142,31 @@ public class PersoniumUnitConfig {
      * Lockの設定.
      */
     public static final class Lock {
-        /**
-         * Lockのタイプ.
-         * 許容値： memcached
-         */
+        /** Lockのタイプ. 許容値： memcached */
         public static final String TYPE = KEY_ROOT + "lock.type";
 
-        /**
-         * アカウントロックの有効期限(s).
-         */
+        /** アカウントロックの有効期限(s). */
         public static final String ACCOUNTLOCK_LIFETIME = KEY_ROOT + "lock.accountlock.time";
 
-        /**
-         * ロック取得時のリトライ回数.
-         */
+        /** ロック取得時のリトライ回数. */
         public static final String RETRY_TIMES = KEY_ROOT + "lock.retry.times";
 
-        /**
-         * ロック取得リトライ時の間隔.
-         */
+        /** ロック取得リトライ時の間隔. */
         public static final String RETRY_INTERVAL = KEY_ROOT + "lock.retry.interval";
 
-        /**
-         * セルロック取得時のリトライ回数.
-         */
+        /** セルロック取得時のリトライ回数. */
         public static final String CELL_RETRY_TIMES = KEY_ROOT + "lock.cell.retry.times";
 
-        /**
-         * セルロック取得リトライ時の間隔.
-         */
+        /** セルロック取得リトライ時の間隔. */
         public static final String CELL_RETRY_INTERVAL = KEY_ROOT + "lock.cell.retry.interval";
 
-        /**
-         * ロックをmemcachedに保持する際のmemcachedホスト名.
-         */
+        /** ロックをmemcachedに保持する際のmemcachedホスト名. */
         public static final String MEMCACHED_HOST = KEY_ROOT + "lock.memcached.host";
 
-        /**
-         * ロックをmemcachedに保持する際のmemcachedポート番号.
-         */
+        /** ロックをmemcachedに保持する際のmemcachedポート番号. */
         public static final String MEMCACHED_PORT = KEY_ROOT + "lock.memcached.port";
 
-        /**
-         * ロック用memcached operationタイムアウト値(ms).
-         */
+        /** ロック用memcached operationタイムアウト値(ms). */
         public static final String MEMCACHED_OPTIMEOUT = KEY_ROOT + "lock.memcached.opTimeout";
     }
 
@@ -242,34 +174,22 @@ public class PersoniumUnitConfig {
      * Elastic Search 関連の設定.
      */
     public static final class ES {
-        /**
-         * Elastic Search ホスト設定のプロパティキー.
-         */
+        /** Elastic Search ホスト設定のプロパティキー. */
         public static final String HOSTS = KEY_ROOT + "es.hosts";
 
-        /**
-         * Elastic Search クラスタ名設定のプロパティキー.
-         */
+        /** Elastic Search クラスタ名設定のプロパティキー. */
         public static final String CLUSTERNAME = KEY_ROOT + "es.cluster.name";
 
-        /**
-         * Elastic Search を使用する際、DB生成時に用いるDB命名に用いるUNIT名に対応したプレフィクス設定のプロパティキー.
-         */
+        /** Elastic Search を使用する際、DB生成時に用いるDB命名に用いるUNIT名に対応したプレフィクス設定のプロパティキー. */
         public static final String UNIT_PREFIX = KEY_ROOT + "es.unitPrefix";
 
-        /**
-         * Elastic Search の検索結果出力上限設定のプロパティキー.
-         */
+        /** Elastic Search の検索結果出力上限設定のプロパティキー. */
         public static final String TOP_NUM = KEY_ROOT + "es.topnum";
 
-        /**
-         * エラー発生時のリトライ回数.
-         */
+        /** エラー発生時のリトライ回数. */
         public static final String RETRY_TIMES = KEY_ROOT + "es.retryTimes";
 
-        /**
-         * エラー発生時のリトライ間隔.
-         */
+        /** エラー発生時のリトライ間隔. */
         public static final String RETRY_INTERVAL = KEY_ROOT + "es.retryInterval";
     }
 
@@ -277,25 +197,16 @@ public class PersoniumUnitConfig {
      * BinaryDataの設定.
      */
     public static final class BinaryData {
-        /**
-         * ファイル削除時に物理削除するかどうかの設定.
-         * 有効値 boolean(true: 物理削除, false: 論理削除)
-         */
+        /** ファイル削除時に物理削除するかどうかの設定.(true: 物理削除, false: 論理削除). */
         public static final String PHYSICAL_DELETE_MODE = KEY_ROOT + "binaryData.physical.delete.mode";
 
-        /**
-         * ファイルへの書き込み時にfsyncを有効にするか否か(true:有効 false:無効(デフォルト)).
-         */
+        /** ファイルへの書き込み時にfsyncを有効にするか否か(true:有効 false:無効(デフォルト)). */
         public static final String FSYNC_ENABLED = KEY_ROOT + "binaryData.fsync.enabled";
 
-        /**
-         * Davファイルの読み書き時、ハードリンク作成/ファイル名改変時の最大リトライ回数.
-         */
+        /** Davファイルの読み書き時、ハードリンク作成/ファイル名改変時の最大リトライ回数. */
         public static final String MAX_RETRY_COUNT = KEY_ROOT + "binaryData.dav.retry.count";
 
-        /**
-         * Davファイルの読み書き時、ハードリンク作成/ファイル名改変時のリトライ間隔(msec).
-         */
+        /** Davファイルの読み書き時、ハードリンク作成/ファイル名改変時のリトライ間隔(msec). */
         public static final String RETRY_INTERVAL = KEY_ROOT + "binaryData.dav.retry.interval";
     }
 
@@ -303,9 +214,7 @@ public class PersoniumUnitConfig {
      * Blobの設定.
      */
     public static final class BlobStore {
-        /**
-         * Elastic Search を使用する際、blobデータを格納するルート(URL, PATH)設定のプロパティキー.
-         */
+        /** Elastic Search を使用する際、blobデータを格納するルート(URL, PATH)設定のプロパティキー. */
         public static final String ROOT = KEY_ROOT + "blobStore.root";
     }
 
@@ -313,26 +222,17 @@ public class PersoniumUnitConfig {
      * ユーザデータ内のプロパティの数、階層の制限設定.
      */
     public static final class UserDataProperties {
-
-        /**
-         * EntityTypeの最大数制限.
-         */
+        /** EntityTypeの最大数制限. */
         public static final String MAX_ENTITY_TYPES = KEY_ROOT + "box.odata.schema.MaxEntityTypes";
 
-        /**
-         * EntityTypeに含まれるプロパティの最大数.
-         */
+        /** EntityTypeに含まれるプロパティの最大数. */
         public static final String MAX_PROPERTY_COUNT_IN_ENTITY = KEY_ROOT + "box.odata.schema.MaxProperties";
 
-        /**
-         * 各階層のSimpleTypeの制限数 (e.g. 400,100,20,0).
-         */
+        /** 各階層のSimpleTypeの制限数 (e.g. 400,100,20,0). */
         public static final String SIMPLE_TYPE_PROPERTY_LIMITS =
                 KEY_ROOT + "box.odata.schema.property.LayerLimits.SimpleType";
 
-        /**
-         * 各階層のComplexTypeの制限数 (e.g. 20,20,50,0).
-         */
+        /** 各階層のComplexTypeの制限数 (e.g. 20,20,50,0). */
         public static final String COMPLEX_TYPE_PROPERTY_LIMITS =
                 KEY_ROOT + "box.odata.schema.property.LayerLimits.ComplexType";
     }
@@ -341,9 +241,7 @@ public class PersoniumUnitConfig {
      * イベントの設定.
      */
     public static final class Event {
-        /**
-         * 最新のイベントログファイルの格納ディレクトリ.
-         */
+        /** 最新のイベントログファイルの格納ディレクトリ. */
         public static final String EVENT_LOG_CURRENT_DIR = KEY_ROOT + "event.log.current.dir";
     }
 
@@ -351,48 +249,28 @@ public class PersoniumUnitConfig {
      * Cache廻りの設定.
      */
     public static final class Cache {
-        /**
-         * Cacheのタイプ.
-         * 許容値： none/memcached
-         */
+        /** Cacheのタイプ. 許容値： none/memcached */
         public static final String TYPE = KEY_ROOT + "cache.type";
 
-        /**
-         * セルのキャッシュを有効とするか否か.
-         * 許容値： true/false
-         */
+        /** セルのキャッシュを有効とするか否か. 許容値： true/false */
         public static final String CELL_CACHE_ENABLED = KEY_ROOT + "cache.cell.enabled";
 
-        /**
-         * ボックスのキャッシュを有効とするか否か.
-         * 許容値： true/false
-         */
+        /** ボックスのキャッシュを有効とするか否か. 許容値： true/false */
         public static final String BOX_CACHE_ENABLED = KEY_ROOT + "cache.box.enabled";
 
-        /**
-         * スキーマのキャッシュを有効とするか否か.
-         * 許容値： true/false
-         */
+        /** スキーマのキャッシュを有効とするか否か. 許容値： true/false */
         public static final String SCHEMA_CACHE_ENABLED = KEY_ROOT + "cache.schema.enabled";
 
-        /**
-         * memcachedホスト名.
-         */
+        /** memcachedホスト名. */
         public static final String MEMCACHED_HOST = KEY_ROOT + "cache.memcached.host";
 
-        /**
-         * memcachedポート番号.
-         */
+        /** memcachedポート番号. */
         public static final String MEMCACHED_PORT = KEY_ROOT + "cache.memcached.port";
 
-        /**
-         * memcached operationタイムアウト値(ms).
-         */
+        /** memcached operationタイムアウト値(ms). */
         public static final String MEMCACHED_OPTIMEOUT = KEY_ROOT + "cache.memcached.opTimeout";
 
-        /**
-         * キャッシュ有効期限.
-         */
+        /** キャッシュ有効期限. */
         public static final String MEMCACHED_EXPIRES_IN = KEY_ROOT + "cache.memcached.expiresin";
     }
 
@@ -400,19 +278,13 @@ public class PersoniumUnitConfig {
      * Engine廻りの設定.
      */
     public static final class Engine {
-        /**
-         * EngineのHostキー.
-         */
+        /** EngineのHostキー. */
         public static final String HOST = KEY_ROOT + "engine.host";
 
-        /**
-         * EngineのPortキー.
-         */
+        /** EngineのPortキー. */
         public static final String PORT = KEY_ROOT + "engine.port";
 
-        /**
-         * EngineのPathキー.
-         */
+        /** EngineのPathキー. */
         public static final String PATH = KEY_ROOT + "engine.path";
     }
 
@@ -420,18 +292,13 @@ public class PersoniumUnitConfig {
      * X509廻りの設定.
      */
     public static final class X509 {
-        /**
-         * X509ルート証明書を配置したパス設定のプロパティキー.
-         */
+        /** X509ルート証明書を配置したパス設定のプロパティキー. */
         public static final String ROOT_CRT = KEY_ROOT + "x509.root";
-        /**
-         * X509証明書を配置したパス設定のプロパティキー.
-         */
+
+        /** X509証明書を配置したパス設定のプロパティキー. */
         public static final String CRT = KEY_ROOT + "x509.crt";
 
-        /**
-         * X509秘密鍵を配置したパス設定のプロパティキー.
-         */
+        /** X509秘密鍵を配置したパス設定のプロパティキー. */
         public static final String KEY = KEY_ROOT + "x509.key";
     }
 
@@ -439,36 +306,32 @@ public class PersoniumUnitConfig {
      * bar file export/install関連の設定.
      */
     public static final class BAR {
-        /**
-         * barファイルの最大ファイルサイズ(MB)のプロパティキー.
-         */
+        /** barファイルの最大ファイルサイズ(MB)のプロパティキー. */
         public static final String BAR_FILE_MAX_SIZE = KEY_ROOT + "bar.file.maxSize";
 
-        /**
-         * barファイル内エントリの最大ファイルサイズ(MB)のプロパティキー.
-         */
+        /** barファイル内エントリの最大ファイルサイズ(MB)のプロパティキー. */
         public static final String BAR_ENTRY_MAX_SIZE = KEY_ROOT + "bar.entry.maxSize";
 
-        /**
-         * ユーザデータのリンク処理時にレスポンスを返却するサイズのプロパティキー.
-         */
+        /** ユーザデータのリンク処理時にレスポンスを返却するサイズのプロパティキー. */
         public static final String BAR_USERDATA_LINKS_OUTPUT_STREAM_SIZE = KEY_ROOT
                 + "bar.userdata.linksOutputStreamSize";
 
-        /**
-         * ユーザデータの一括登録件数のプロパティキー.
-         */
+        /** ユーザデータの一括登録件数のプロパティキー. */
         public static final String BAR_USERDATA_BULK_SIZE = KEY_ROOT + "bar.userdata.bulkSize";
 
-        /**
-         * barファイルやログ詳細の格納用ルートディレクトリ.
-         */
+        /** barファイルやログ詳細の格納用ルートディレクトリ. */
         public static final String BAR_INSTALLFILE_DIR = KEY_ROOT + "bar.installfile.dir";
 
-        /**
-         * memcachedに格納するbarインストール処理状況の有効期限（秒).
-         */
+        /** memcachedに格納するbarインストール処理状況の有効期限（秒). */
         public static final String BAR_PROGRESS_EXPIRE_IN_SEC = KEY_ROOT + "bar.progress.expireInSec";
+    }
+
+    /**
+     * cell export configurations.
+     */
+    public static final class CellExport {
+        /** Root directory path to store the cell export file. */
+        public static final String ROOT = KEY_ROOT + "cellExport.root";
     }
 
     static {
@@ -478,21 +341,15 @@ public class PersoniumUnitConfig {
         PersoniumCoreAuthnException.loadConfig();
     }
 
-    /**
-     * singleton.
-     */
+    /** singleton. */
     private static PersoniumUnitConfig singleton = new PersoniumUnitConfig();
 
     // static Logger log = LoggerFactory.getLogger(PersoniumCoreConfig.class);
 
-    /**
-     * 設定値を格納するプロパティ実体.
-     */
+    /** 設定値を格納するプロパティ実体. */
     private final Properties props = new Properties();
 
-    /**
-     * オーバーライドする設定値を格納するプロパティ実体.
-     */
+    /** オーバーライドする設定値を格納するプロパティ実体. */
     private final Properties propsOverride = new Properties();
 
     /**
@@ -681,6 +538,14 @@ public class PersoniumUnitConfig {
      */
     public static String getCoreVersion() {
         return get(CORE_VERSION);
+    }
+
+    /**
+     * Get thread pool num.
+     * @return thread pool num
+     */
+    public static int getThreadPoolNum() {
+        return Integer.parseInt(get(THREAD_POOL_NUM));
     }
 
     /**
@@ -953,6 +818,14 @@ public class PersoniumUnitConfig {
      */
     public static String getBlobStoreRoot() {
         return get(BlobStore.ROOT);
+    }
+
+    /**
+     * Get root directory path to store cell export file.
+     * @return root directory path to store cell export file
+     */
+    public static String getCellExportRoot() {
+        return get(CellExport.ROOT);
     }
 
     /**

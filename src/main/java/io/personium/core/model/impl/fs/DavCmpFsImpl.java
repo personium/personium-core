@@ -116,7 +116,7 @@ public class DavCmpFsImpl implements DavCmp {
     /**
      * Fixed File Name for storing file.
      */
-    private static final String CONTENT_FILE_NAME = "content";
+    public static final String CONTENT_FILE_NAME = "content";
     private static final String TEMP_FILE_NAME = "tmp";
 
     /*
@@ -129,23 +129,17 @@ public class DavCmpFsImpl implements DavCmp {
 
     /**
      * constructor.
-     * @param name
-     *            name of the path component
-     * @param parent
-     *            parent DavCmp object
-     * @param cell
-     *            Cell
-     * @param box
-     *            Box
+     * @param name name of the path component
+     * @param parent parent DavCmp object
      */
-    private DavCmpFsImpl(final String name, final DavCmpFsImpl parent) {
+    protected DavCmpFsImpl(final String name, final DavCmpFsImpl parent) {
         this.name = name;
         this.of = new ObjectFactory();
 
         this.parent = parent;
 
         if (parent == null) {
-            this.metaFile = DavMetadataFile.newInstance(this);
+            this.metaFile = DavMetadataFile.newInstance(this.fsPath);
             return;
         }
         this.cell = parent.getCell();
@@ -153,7 +147,7 @@ public class DavCmpFsImpl implements DavCmp {
         this.fsPath = this.parent.fsPath + File.separator + this.name;
         this.fsDir = new File(this.fsPath);
 
-        this.metaFile = DavMetadataFile.newInstance(this);
+        this.metaFile = DavMetadataFile.newInstance(this.fsPath);
     }
 
     /**
@@ -532,7 +526,7 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     @Override
-    public final ResponseBuilder putForUpdate(final String contentType, final InputStream inputStream, String etag) {
+    public ResponseBuilder putForUpdate(final String contentType, final InputStream inputStream, String etag) {
         // ロック
         Lock lock = this.lock();
         try {
@@ -563,16 +557,14 @@ public class DavCmpFsImpl implements DavCmp {
      * @param inputStream Stream of generated file
      * @return ResponseBuilder
      */
-    private ResponseBuilder doPutForCreate(final String contentType, final InputStream inputStream) {
+    protected ResponseBuilder doPutForCreate(final String contentType, final InputStream inputStream) {
         // check the resource count
         checkChildResourceCount();
 
         InputStream input = inputStream;
-        if (PersoniumUnitConfig.isDavEncryptEnabled()) {
-            // Perform encryption.
-            DataCryptor cryptor = new DataCryptor(getCellId());
-            input = cryptor.encode(inputStream);
-        }
+        // Perform encryption.
+        DataCryptor cryptor = new DataCryptor(getCellId());
+        input = cryptor.encode(inputStream, PersoniumUnitConfig.isDavEncryptEnabled());
 
         BufferedInputStream bufferedInput = new BufferedInputStream(input);
         try {
@@ -607,7 +599,7 @@ public class DavCmpFsImpl implements DavCmp {
      * @param etag Etag
      * @return ResponseBuilder
      */
-    private ResponseBuilder doPutForUpdate(final String contentType, final InputStream inputStream, String etag) {
+    protected ResponseBuilder doPutForUpdate(final String contentType, final InputStream inputStream, String etag) {
         // 現在時刻を取得
         long now = new Date().getTime();
         // 最新ノード情報をロード
@@ -628,11 +620,9 @@ public class DavCmpFsImpl implements DavCmp {
         try {
             // Update Content
             InputStream input = inputStream;
-            if (PersoniumUnitConfig.isDavEncryptEnabled()) {
-                // Perform encryption.
-                DataCryptor cryptor = new DataCryptor(getCellId());
-                input = cryptor.encode(inputStream);
-            }
+            // Perform encryption.
+            DataCryptor cryptor = new DataCryptor(getCellId());
+            input = cryptor.encode(inputStream, PersoniumUnitConfig.isDavEncryptEnabled());
             BufferedInputStream bufferedInput = new BufferedInputStream(input);
             File tmpFile = new File(getTempContentFilePath());
             File contentFile = new File(getContentFilePath());
@@ -758,8 +748,11 @@ public class DavCmpFsImpl implements DavCmp {
         return this.name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public final DavCmp getChild(final String childName) {
+    public DavCmp getChild(final String childName) {
         // if self is phantom then all children should be phantom.
         if (this.isPhantom) {
             return DavCmpFsImpl.createPhantom(childName, this);
@@ -915,7 +908,10 @@ public class DavCmpFsImpl implements DavCmp {
         return res;
     }
 
-    private void checkChildResourceCount() {
+    /**
+     * Check number of collection/file in parent collection.
+     */
+    protected void checkChildResourceCount() {
         // 親コレクション内のコレクション・ファイル数のチェック
         int maxChildResource = PersoniumUnitConfig.getMaxChildResourceCount();
         if (this.parent.getChildrenCount() >= maxChildResource) {
@@ -1145,7 +1141,7 @@ public class DavCmpFsImpl implements DavCmp {
      * @param etag string
      * @return true if given string matches  the stored Etag
      */
-    private boolean matchesETag(String etag) {
+    protected boolean matchesETag(String etag) {
         if (etag == null) {
             return false;
         }
@@ -1179,11 +1175,19 @@ public class DavCmpFsImpl implements DavCmp {
         return this.fsPath;
     }
 
-    private String getContentFilePath() {
+    /**
+     * Get content file path.
+     * @return content file path
+     */
+    protected String getContentFilePath() {
         return this.fsPath + File.separator + CONTENT_FILE_NAME;
     }
 
-    private String getTempContentFilePath() {
+    /**
+     * Get temp content file path.
+     * @return temp content file path
+     */
+    protected String getTempContentFilePath() {
         return this.fsPath + File.separator + TEMP_FILE_NAME;
     }
 
@@ -1258,6 +1262,11 @@ public class DavCmpFsImpl implements DavCmp {
     @Override
     public String getEncryptionType() {
         return this.metaFile.getEncryptionType();
+    }
+
+    @Override
+    public String getCellStatus() {
+        return metaFile.getCellStatus() == null ? Cell.STATUS_NORMAL : metaFile.getCellStatus(); // CHECKSTYLE IGNORE
     }
 
     @Override

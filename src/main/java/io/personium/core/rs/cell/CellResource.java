@@ -74,9 +74,11 @@ public final class CellResource {
     /**
      * constructor.
      * @param accessContext AccessContext
+     * @param httpServletRequest HttpServletRequest
      */
     public CellResource(
-            final AccessContext accessContext) {
+            final AccessContext accessContext,
+            HttpServletRequest httpServletRequest) {
         // Cellが存在しないときは例外
         this.accessContext = accessContext;
         this.cell = this.accessContext.getCell();
@@ -91,6 +93,20 @@ public final class CellResource {
 
         this.cellRsCmp = new CellRsCmp(this.cellCmp, this.cell, this.accessContext);
         checkReferenceMode();
+
+        // If cell status is import failed, APIs other than import or token or BulkDeletion are not accepted.
+        if (Cell.STATUS_IMPORT_ERROR.equals(cellCmp.getCellStatus())) {
+            String[] paths = httpServletRequest.getPathInfo().split("/");
+            // Since the Cell name is stored at the second, check the third value.
+            // ex.[, "testcell", "__token"]
+            if (paths.length <= 2) {
+                if (!HttpMethod.DELETE.equals(httpServletRequest.getMethod())) {
+                    throw PersoniumCoreException.Common.CELL_STATUS_IMPORT_FAILED;
+                }
+            } else if (!"__import".equals(paths[2]) && !"__token".equals(paths[2])) {
+                throw PersoniumCoreException.Common.CELL_STATUS_IMPORT_FAILED;
+            }
+        }
     }
 
     private void checkReferenceMode() {
@@ -352,6 +368,35 @@ public final class CellResource {
     }
 
     /**
+     * Export endpoint.
+     * @return CellExportResource
+     */
+    @Path("__export")
+    public CellExportResource export() {
+        return new CellExportResource(cellRsCmp);
+    }
+
+    /**
+     * Snapshot endpoint.
+     * @return CellSnapshotResource
+     */
+    @Path("__snapshot")
+    public CellSnapshotResource snapshot() {
+        return new CellSnapshotResource(cellRsCmp);
+    }
+
+    /**
+     * Import endpoint.
+     * <p>
+     * Since "import" is a reserved word of java, changed the method name to "importCell".
+     * @return CellImportResource
+     */
+    @Path("__import")
+    public CellImportResource importCell() {
+        return new CellImportResource(cellRsCmp);
+    }
+
+    /**
      * 次のパスをBoxResourceへ渡すメソッド.
      * @param request HTPPサーブレットリクエスト
      * @param boxName Boxパス名
@@ -379,9 +424,10 @@ public final class CellResource {
             @DefaultValue("0") @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
-
+        // Access Control
+        this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.PROPFIND);
         return this.cellRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
-                CellPrivilege.PROPFIND, CellPrivilege.ACL_READ);
+                CellPrivilege.ACL_READ);
     }
 
     // TODO Interim correspondence.(For security reasons)

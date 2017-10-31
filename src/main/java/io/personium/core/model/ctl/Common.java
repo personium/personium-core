@@ -37,6 +37,8 @@ public class Common {
 
     /** Regular expression in generic name. */
     private static final String REGEX_NAME = "[a-zA-Z0-9][a-zA-Z0-9-_]{0,127}";
+    /** Regular expression in snapshot file name. */
+    private static final String REGEX_SNAPSHOT_NAME = "[a-zA-Z0-9-_]{1,192}";
     /** Regular expression in relation name. */
     private static final String REGEX_RELATION_NAME = "[a-zA-Z0-9-\\+][a-zA-Z0-9-_\\+:]{0,127}";
 
@@ -84,6 +86,8 @@ public class Common {
     public static final String P_FORMAT_PATTERN_USUSST = "unordered-set-of-unique-space-separated-tokens";
     /** 先頭が-,_以外で始まる半角英数大小文字,-,_が1文字から128文字. */
     public static final String PATTERN_NAME = "^" + REGEX_NAME + "$";
+    /** Pattern snapshot name. */
+    public static final String PATTERN_SNAPSHOT_NAME = "^" + REGEX_SNAPSHOT_NAME + "$";
     /** 先頭が半角記号以外で始まる半角英数大小文字,半角記号(-_!#$%*+/=^`{|}~.@)が1文字から128文字. */
     public static final String PATTERN_NAME_WITH_SIGN = "^[a-zA-Z0-9][a-zA-Z0-9-_!$*=^`{|}~.@]{0,127}$";
     /** 先頭が_,:以外で始まる半角英数大小文字,-,_,+,:が1文字から128文字. */

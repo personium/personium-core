@@ -266,12 +266,12 @@ public class LogResource {
 
         // イベントログのCollection名のチェック
         if (!isValidLogCollection(logCollection)) {
-            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
+            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(logCollection);
         }
 
         // ファイル名がdefault.log以外の場合は404を返却
         if (!isValidLogFile(logCollection, fileName)) {
-            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
+            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(fileName);
         }
 
         String cellId = davRsCmp.getCell().getId();
@@ -296,7 +296,7 @@ public class LogResource {
                 final InputStream isInvariable = new FileInputStream(logFile);
                 return createResponse(isInvariable);
             } catch (FileNotFoundException e) {
-                throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
+                throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(logFile.getName());
             }
         } else {
             ZipArchiveInputStream zipArchiveInputStream = null;
@@ -319,7 +319,8 @@ public class LogResource {
                 return createResponse(bis);
             } catch (FileNotFoundException e1) {
                 // 圧縮ファイルが存在しない場合は404エラーを返却
-                throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
+                String[] split = archiveLogFileName.split(File.separator);
+                throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(split[split.length - 1]);
             } catch (IOException e) {
                 log.info("Failed to read archive entry : " + e.getMessage());
                 throw PersoniumCoreException.Event.ARCHIVE_FILE_CANNOT_OPEN;

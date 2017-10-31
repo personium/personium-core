@@ -222,16 +222,11 @@ public class DavRsCmp {
      * @param depth Depthヘッ ダ
      * @param contentLength Content-Lengthヘッダ
      * @param transferEncoding Transfer-Encodingヘッダ
-     * @param requiredForPropfind PROPFIND実行に必要なPrivilege
      * @param requiredForReadAcl ACL読み出しに必要なPrivilege
      * @return Jax-RS 応答オブジェクト
      */
     public final Response doPropfind(final Reader requestBodyXml, final String depth,
-            final Long contentLength, final String transferEncoding, final Privilege requiredForPropfind,
-            final Privilege requiredForReadAcl) {
-
-        // アクセス制御
-        this.checkAccessContext(this.getAccessContext(), requiredForPropfind);
+            final Long contentLength, final String transferEncoding, final Privilege requiredForReadAcl) {
 
         // ユニットユーザもしくはACLのPrivilegeが設定せれている場合のみ、ACL設定の出力が可能
         boolean canAclRead = false;
@@ -552,6 +547,18 @@ public class DavRsCmp {
             listElement.add(element);
             ret.setPropertyOk(colRt);
 
+        } else if (DavCmp.TYPE_CELL.equals(type)) {
+            // Cell
+            Resourcetype colRt = of.createResourcetype();
+            colRt.setCollection(of.createCollection());
+            ret.setPropertyOk(colRt);
+
+            // Add cellstatus.
+            QName qname = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, PersoniumCoreUtils.XmlConst.CELL_STATUS,
+                    PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
+            Element element = WebDAVModelHelper.createElement(qname);
+            element.setTextContent(dCmp.getCellStatus());
+            ret.setPropertyOk(element);
         } else {
             // Col リソースとしての処理
             Resourcetype colRt = of.createResourcetype();

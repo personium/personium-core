@@ -22,8 +22,8 @@ import org.apache.wink.webdav.model.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.DavCmp;
@@ -60,7 +60,7 @@ public class BoxCmpFsImpl extends DavCmpFsImpl implements BoxCmp {
             this.createDir();
             this.createNewMetadataFile();
         } else {
-            this.metaFile = DavMetadataFile.newInstance(this);
+            this.metaFile = DavMetadataFile.newInstance(this.fsPath);
         }
 
         // load info from fs
