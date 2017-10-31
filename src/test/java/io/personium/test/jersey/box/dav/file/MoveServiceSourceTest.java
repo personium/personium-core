@@ -149,7 +149,7 @@ public class MoveServiceSourceTest extends JerseyTest {
             // リクエスト実行
             PersoniumResponse response = AbstractCase.request(req);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_NOT_FOUND);
-            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
+            PersoniumCoreException expectedException = PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(url);
             ODataCommon.checkErrorResponseBody(response, expectedException.getCode(), expectedException.getMessage());
 
         } finally {

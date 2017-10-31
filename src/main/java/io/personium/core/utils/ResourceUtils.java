@@ -40,8 +40,6 @@ public class ResourceUtils {
      * Readerからリクエストボディを取得してJSONObjectにする.
      * @param reader リクエストボディ
      * @return JSONObject
-     * @throws IOException IO例外
-     * @throws ParseException Parse例外
      */
     public static JSONObject parseBodyAsJSON(Reader reader) {
         StringBuilder sb = new StringBuilder();

@@ -766,7 +766,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
      * @param valO プロパティの値
      * @param edmType タイプ
      */
-    protected void addSimpleTypeProperty(List<OProperty<?>> properties, EdmProperty prop, Object valO, EdmType edmType) {
+    protected void addSimpleTypeProperty(List<OProperty<?>> properties, EdmProperty prop, Object valO,
+            EdmType edmType) {
         if (edmType.equals(EdmSimpleType.STRING)) {
             if (valO == null) {
                 properties.add(OProperties.string(prop.getName(), null));
