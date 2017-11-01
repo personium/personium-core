@@ -37,6 +37,46 @@ import io.personium.core.odata.OEntityWrapper;
 public interface Cell {
 
     /**
+     * Edm.Entity Type Name.
+     */
+    String EDM_TYPE_NAME = "Cell";
+
+    /** Status normal. */
+    String STATUS_NORMAL = "normal";
+    /** Status import error. */
+    String STATUS_IMPORT_ERROR = "import failed";
+
+    /** Error file name. */
+    String IMPORT_ERROR_FILE_NAME = "import.error";
+
+    /**
+     * Name Definition of property.
+     */
+    EdmProperty.Builder P_PATH_NAME = EdmProperty.newBuilder("Name")
+            .setNullable(false)
+            .setAnnotations(Common.P_FORMAT_NAME)
+            .setType(EdmSimpleType.STRING);
+    /**
+     * Property List.
+     */
+    List<EdmProperty.Builder> PROPS = Collections.unmodifiableList(Arrays.asList(
+            new EdmProperty.Builder[] {
+                    P_PATH_NAME, Common.P_PUBLISHED, Common.P_UPDATED}
+            ));
+    /**
+     * Key List.
+     */
+    List<String> KEYS = Collections.unmodifiableList(Arrays.asList(
+            new String[] {P_PATH_NAME.getName()}
+            ));;
+
+    /**
+     * EntityType Builder of the Cell.
+     */
+    EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder().setNamespace(Common.EDM_NS_UNIT_CTL)
+            .setName(EDM_TYPE_NAME).addProperties(Enumerable.create(PROPS).toList()).addKeys(KEYS);
+
+    /**
      * returns Cell name.
      * @return Cell name
      */
@@ -168,38 +208,4 @@ public interface Cell {
      * @return internal id of the given role
      */
     String roleResourceUrlToId(String roleUrl, String baseUrl);
-
-    /**
-     * Edm.Entity Type Name.
-     */
-    String EDM_TYPE_NAME = "Cell";
-
-    /**
-     * Name Definition of property.
-     */
-    EdmProperty.Builder P_PATH_NAME = EdmProperty.newBuilder("Name")
-            .setNullable(false)
-            .setAnnotations(Common.P_FORMAT_NAME)
-            .setType(EdmSimpleType.STRING);
-
-    /**
-     * Property List.
-     */
-    List<EdmProperty.Builder> PROPS = Collections.unmodifiableList(Arrays.asList(
-            new EdmProperty.Builder[] {
-                    P_PATH_NAME, Common.P_PUBLISHED, Common.P_UPDATED}
-            ));
-    /**
-     * Key List.
-     */
-    List<String> KEYS = Collections.unmodifiableList(Arrays.asList(
-            new String[] {P_PATH_NAME.getName()}
-            ));;
-
-    /**
-     * EntityType Builder of the Cell.
-     */
-    EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder().setNamespace(Common.EDM_NS_UNIT_CTL)
-            .setName(EDM_TYPE_NAME).addProperties(Enumerable.create(PROPS).toList()).addKeys(KEYS);
-
 }

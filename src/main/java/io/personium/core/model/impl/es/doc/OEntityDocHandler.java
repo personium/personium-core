@@ -59,8 +59,8 @@ import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchHitField;
 import io.personium.common.es.util.IndexNameEncoder;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.Property;
@@ -766,7 +766,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
      * @param valO プロパティの値
      * @param edmType タイプ
      */
-    private void addSimpleTypeProperty(List<OProperty<?>> properties, EdmProperty prop, Object valO, EdmType edmType) {
+    protected void addSimpleTypeProperty(List<OProperty<?>> properties, EdmProperty prop, Object valO,
+            EdmType edmType) {
         if (edmType.equals(EdmSimpleType.STRING)) {
             if (valO == null) {
                 properties.add(OProperties.string(prop.getName(), null));

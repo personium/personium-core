@@ -10,4 +10,6 @@
   <suppress checks="MethodName" files=".*Test\.java"/>
   <suppress checks="MagicNumber" files=".*Test\.java"/>
   <suppress checks="JavadocPackage" files="[\\/]test[\\/]"/>
+  <suppress checks="." files=".*\.bar" />
+  <suppress checks="." files="[\\/]test[\\/]resources[\\/]x509[\\/]" />
 </suppressions>

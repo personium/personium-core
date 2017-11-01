@@ -26,6 +26,7 @@ import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 import io.personium.core.model.impl.es.odata.UserSchemaODataProducer;
 import io.personium.core.model.impl.fs.BoxCmpFsImpl;
 import io.personium.core.model.impl.fs.CellCmpFsImpl;
+import io.personium.core.model.impl.fs.CellSnapshotCellCmpFsImpl;
 import io.personium.core.odata.PersoniumODataProducer;
 
 /**
@@ -76,6 +77,15 @@ public final class ModelFactory {
      */
     public static CellCmp cellCmp(final Cell cell) {
         return new CellCmpFsImpl(cell);
+    }
+
+    /**
+     * Create CellExport's internal implementation model object.
+     * @param cell Cell
+     * @return CellExport's internal implementation model object
+     */
+    public static CellSnapshotCellCmp cellSnapshotCellCmp(final Cell cell) {
+        return new CellSnapshotCellCmpFsImpl(cell);
     }
 
     /**

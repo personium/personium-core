@@ -21,4 +21,9 @@ package io.personium.core.model;
  */
 public interface CellCmp extends DavCmp {
 
+    /**
+     * Set cell status and save metadata file.
+     * @param status cell status
+     */
+    void setCellStatusAndSave(String status);
 }

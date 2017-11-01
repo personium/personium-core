@@ -101,9 +101,10 @@ public final class PersoniumEngineSvcCollectionResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
-
+        // Access Control
+        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
         return this.davRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
-                BoxPrivilege.READ_PROPERTIES, BoxPrivilege.READ_ACL);
+                BoxPrivilege.READ_ACL);
 
     }
 
@@ -176,7 +177,7 @@ public final class PersoniumEngineSvcCollectionResource {
             return new PersoniumEngineSourceCollection(this.davRsCmp, nextCmp);
         } else {
             // サービスソースコレクションが存在しないため404エラーとする
-            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND;
+            throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(nextCmp.getUrl());
         }
     }
 

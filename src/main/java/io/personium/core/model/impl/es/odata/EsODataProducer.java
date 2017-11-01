@@ -3093,13 +3093,11 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         // 登録対象のみのリクエストデータを生成する
         Map<String, String> keyMap = new HashMap<String, String>();
         List<EsBulkRequest> esBulkRequest = new ArrayList<EsBulkRequest>();
-        List<EntitySetDocHandler> adsBulkRequest = new ArrayList<EntitySetDocHandler>();
         for (Entry<String, BulkRequest> request : bulkRequests.entrySet()) {
             if (request.getValue().getError() == null) {
                 keyMap.put(request.getValue().getId(), request.getKey());
 
                 esBulkRequest.add(request.getValue());
-                adsBulkRequest.add(request.getValue().getDocHandler());
             }
         }
         if (esBulkRequest.size() == 0) {
@@ -3107,7 +3105,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         }
         // 一括登録を実行する
         try {
-            PersoniumBulkResponse bulkResponse = accessor.bulkCreate(esBulkRequest, adsBulkRequest, cellId);
+            PersoniumBulkResponse bulkResponse = accessor.bulkCreate(esBulkRequest, cellId);
             // EntitiesResponse組み立て
             for (PersoniumBulkItemResponse itemResponse : bulkResponse.items()) {
                 String key = keyMap.get(itemResponse.getId());

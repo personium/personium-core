@@ -90,7 +90,7 @@ public class FacadeResource {
 
         CellLockManager.incrementReferenceCount(cell.getId());
         httpServletRequest.setAttribute("cellId", cell.getId());
-        return new CellResource(ac);
+        return new CellResource(ac, httpServletRequest);
     }
 
     /**

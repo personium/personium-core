@@ -16,10 +16,6 @@
  */
 package io.personium.core.rs;
 
-import io.personium.core.PersoniumCoreException;
-import io.personium.core.exceptions.ODataErrorMessage;
-import io.personium.plugin.base.PluginMessageUtils.Severity;
-
 import java.util.UUID;
 
 import javax.ws.rs.WebApplicationException;
@@ -30,6 +26,10 @@ import javax.ws.rs.ext.Provider;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.exceptions.ODataErrorMessage;
+import io.personium.plugin.base.PluginMessageUtils.Severity;
 
 /**
  * 本アプリケーションの例外マッパー. ログ出力と適切な形でのエラー応答出力を行う。
@@ -103,6 +103,8 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
         Response res = webappException.getResponse();
         if (HttpStatus.SC_METHOD_NOT_ALLOWED == res.getStatus()) {
             return this.handlePersoniumCoreException(PersoniumCoreException.Misc.METHOD_NOT_ALLOWED);
+        } else if (HttpStatus.SC_NOT_FOUND == res.getStatus()) {
+            return this.handlePersoniumCoreException(PersoniumCoreException.Misc.NOT_FOUND);
         }
         return res;
     }

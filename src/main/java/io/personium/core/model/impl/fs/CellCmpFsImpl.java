@@ -26,8 +26,8 @@ import org.apache.wink.webdav.model.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.DavCmp;
@@ -41,6 +41,11 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
 
     static Logger log = LoggerFactory.getLogger(CellCmpFsImpl.class);
 
+    /**
+     * Default constructor.
+     */
+    CellCmpFsImpl() {
+    }
 
     /**
      * constructor.
@@ -61,7 +66,7 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
             this.createDir();
             this.createNewMetadataFile();
         } else {
-            this.metaFile = DavMetadataFile.newInstance(this);
+            this.metaFile = DavMetadataFile.newInstance(this.fsPath);
         }
         this.load();
     }
@@ -74,6 +79,16 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
             // Failed to create directory.
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void createNewMetadataFile() {
+        metaFile = DavMetadataFile.prepareNewFile(this, this.getType());
+        metaFile.setCellStatus(Cell.STATUS_NORMAL);
+        metaFile.save();
     }
 
     @Override
@@ -112,5 +127,14 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
     @Override
     public PersoniumCoreException getNotFoundException() {
         return PersoniumCoreException.Dav.CELL_NOT_FOUND;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setCellStatusAndSave(String status) {
+        metaFile.setCellStatus(status);
+        metaFile.save();
     }
 }

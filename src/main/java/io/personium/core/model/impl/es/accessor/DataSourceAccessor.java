@@ -327,12 +327,10 @@ public class DataSourceAccessor {
      * バルクでデータを登録する.<br />
      * 更新、削除は未サポート.
      * @param esBulkRequest ES用バルク登録ドキュメントリスト
-     * @param adsBulkRequest ADS用バルク登録ドキュメントリスト
      * @param routingId routingId
      * @return バルクレスポンス
      */
     public PersoniumBulkResponse bulkCreate(List<EsBulkRequest> esBulkRequest,
-            List<EntitySetDocHandler> adsBulkRequest,
             String routingId) {
 
         PersoniumBulkResponse response = null;
@@ -374,6 +372,28 @@ public class DataSourceAccessor {
      */
     protected void deleteByQuery(String routingId, PersoniumQueryBuilder deleteQuery) {
         this.index.deleteByQuery(routingId, deleteQuery);
+    }
+
+    /**
+     * Count documents.
+     * @param routingId routingId
+     * @param query query
+     * @return Number of documents
+     */
+    public long countForIndex(String routingId, Map<String, Object> query) {
+        Map<String, Object> requestQuery = null;
+        if (query != null) {
+            requestQuery = new HashMap<String, Object>(query);
+        } else {
+            requestQuery = new HashMap<String, Object>();
+        }
+        requestQuery.put("size", 0);
+        try {
+            PersoniumSearchResponse hit = this.index.search(routingId, requestQuery);
+            return hit.getHits().getAllPages();
+        } catch (EsClientException.EsNoResponseException e) {
+            throw PersoniumCoreException.Server.ES_RETRY_OVER.params(e.getMessage());
+        }
     }
 
     /**

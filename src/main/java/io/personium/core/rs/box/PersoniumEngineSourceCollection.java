@@ -85,9 +85,10 @@ public class PersoniumEngineSourceCollection {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
-
+        // Access Control
+        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
         return this.davRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
-                BoxPrivilege.READ_PROPERTIES, BoxPrivilege.READ_ACL);
+                BoxPrivilege.READ_ACL);
     }
 
     /**
