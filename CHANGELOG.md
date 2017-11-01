@@ -1,3 +1,12 @@
+## 1.5.4
+BUG FIXES:
+* Memcached Changes the behavior at update failure.([#35](https://github.com/personium/personium-core/issues/35))
+* REST API error handling improvement.([#26](https://github.com/personium/personium-core/issues/26))
+* Incorrect argument is passed to constructor ODataResource(). ([#44](https://github.com/personium/personium-core/issues/44))
+
+IMPROVEMENTS:
+* Add Cell export import function.(Prerelease. Partial abnormal case and tests are not implemented yet.)([#43](https://github.com/personium/personium-core/issues/43))
+
 ## 1.5.3
 IMPROVEMENTS:
 * Improve error output level when installing bar files.([#34](https://github.com/personium/personium-core/issues/34))
