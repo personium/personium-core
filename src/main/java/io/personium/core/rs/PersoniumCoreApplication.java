@@ -23,6 +23,7 @@ import javax.ws.rs.core.Application;
 
 import io.personium.common.auth.token.LocalToken;
 import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.common.utils.PersoniumThread;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.file.DataCryptor;
@@ -40,6 +41,7 @@ public class PersoniumCoreApplication extends Application {
                     PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
             LocalToken.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
             DataCryptor.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
+            PersoniumThread.createThreadPool(PersoniumUnitConfig.getThreadPoolNum());
             pm = new PluginManager();
         } catch (Exception e) {
             PersoniumCoreLog.Server.FAILED_TO_START_SERVER.reason(e).writeLog();

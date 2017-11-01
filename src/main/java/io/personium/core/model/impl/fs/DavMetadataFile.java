@@ -39,8 +39,9 @@ public class DavMetadataFile {
     /** Logger. */
     private static Logger log = LoggerFactory.getLogger(DavMetadataFile.class);
 
+    /** Metadata file name. */
     // TODO ファイル名はUnix, Windowsで使えるけれどDAVでは使えない名前がいい。
-    private static final String DAV_META_FILE_NAME = ".pmeta";
+    public static final String DAV_META_FILE_NAME = ".pmeta";
 
     /** Milliseconds to wait of metafile reading retries. */
     private static final long META_LOAD_RETRY_WAIT = 100L;
@@ -81,6 +82,9 @@ public class DavMetadataFile {
     /** JSON Key for Version. */
     private static final String KEY_VERSION = "v";
 
+    /** JSON Key for Cell Status. */
+    private static final String KEY_CELL_STATUS = "cs";
+
     /**
      * constructor.
      */
@@ -110,12 +114,26 @@ public class DavMetadataFile {
 
     /**
      * factory method.
-     * @param dc DavCmpFsImpl
+     * @param fsPath dav file path
      * @return DavMetadataFile
      */
-    public static DavMetadataFile newInstance(DavCmpFsImpl dc) {
-        String path = dc.fsPath + File.separator + DAV_META_FILE_NAME;
+    public static DavMetadataFile newInstance(String fsPath) {
+        String path = fsPath + File.separator + DAV_META_FILE_NAME;
         return newInstance(new File(path));
+    }
+
+    /**
+     * Factory method for non-existing metadata file.
+     * to create new file, create a object using this method and save().
+     * @param file File
+     * @param type type string defined in DavCmp.TYPE* constants.
+     * @return DavMetadataFile
+     */
+    public static DavMetadataFile prepareNewFile(File file, String type) {
+        DavMetadataFile ret = new DavMetadataFile(file);
+        ret.setDefault();
+        ret.setNodeType(type);
+        return ret;
     }
 
     /**
@@ -205,6 +223,14 @@ public class DavMetadataFile {
      */
     public JSONObject getJSON() {
         return this.json;
+    }
+
+    /**
+     * Returns the content of metadata as JSONString.
+     * @return JSONString
+     */
+    public String toJSONString() {
+        return json.toJSONString();
     }
 
     /**
@@ -346,6 +372,21 @@ public class DavMetadataFile {
     @SuppressWarnings("unchecked")
     public void setEncryptionType(String encryptionType) {
         this.json.put(KEY_ENCRYPTION_TYPE, encryptionType);
+    }
+
+    /**
+     * @return cell status string.
+     */
+    public String getCellStatus() {
+        return (String) this.json.get(KEY_CELL_STATUS);
+    }
+
+    /**
+     * @param cellStatus cell status string
+     */
+    @SuppressWarnings("unchecked")
+    public void setCellStatus(String cellStatus) {
+        this.json.put(KEY_CELL_STATUS, cellStatus);
     }
 
     /**

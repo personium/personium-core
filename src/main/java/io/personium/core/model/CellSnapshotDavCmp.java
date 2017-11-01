@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,8 @@
 package io.personium.core.model;
 
 /**
- * Cellに対応する部品のインターフェース.
+ * An delegate object interface for JaxRS Resources handling DAV related persistence.
  */
-public interface CellCmp extends DavCmp {
+public interface CellSnapshotDavCmp extends DavCmp {
 
-    /**
-     * Set cell status and save metadata file.
-     * @param status cell status
-     */
-    void setCellStatusAndSave(String status);
 }

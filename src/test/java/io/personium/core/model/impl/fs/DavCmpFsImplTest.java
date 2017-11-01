@@ -27,7 +27,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -153,6 +152,8 @@ public class DavCmpFsImplTest {
             PowerMockito.mockStatic(PersoniumUnitConfig.class);
             PowerMockito.doReturn(false).when(PersoniumUnitConfig.class, "isDavEncryptEnabled");
 
+            doReturn(CELL_ID).when(davCmpFsImpl).getCellId();
+
             Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
 
             PowerMockito.doReturn(contentPath).when(davCmpFsImpl, "getContentFilePath");
@@ -160,7 +161,7 @@ public class DavCmpFsImplTest {
             DavMetadataFile davMetaDataFile = mock(DavMetadataFile.class);
             PowerMockito.mockStatic(DavMetadataFile.class);
             PowerMockito.doReturn(davMetaDataFile).when(DavMetadataFile.class,
-                    "prepareNewFile", anyObject(), anyString());
+                    "prepareNewFile", davCmpFsImpl, DavCmp.TYPE_DAV_FILE);
 
             doNothing().when(davMetaDataFile).setContentType(anyString());
             doNothing().when(davMetaDataFile).setContentLength(anyLong());
@@ -253,7 +254,7 @@ public class DavCmpFsImplTest {
             DavMetadataFile davMetaDataFile = mock(DavMetadataFile.class);
             PowerMockito.mockStatic(DavMetadataFile.class);
             PowerMockito.doReturn(davMetaDataFile).when(DavMetadataFile.class,
-                    "prepareNewFile", anyObject(), anyString());
+                    "prepareNewFile", davCmpFsImpl, DavCmp.TYPE_DAV_FILE);
 
             doNothing().when(davMetaDataFile).setContentType(anyString());
             doNothing().when(davMetaDataFile).setContentLength(anyLong());
@@ -346,6 +347,8 @@ public class DavCmpFsImplTest {
 
             PowerMockito.mockStatic(PersoniumUnitConfig.class);
             PowerMockito.doReturn(false).when(PersoniumUnitConfig.class, "isDavEncryptEnabled");
+
+            doReturn(CELL_ID).when(davCmpFsImpl).getCellId();
 
             PowerMockito.doReturn(tempContentPath).when(davCmpFsImpl, "getTempContentFilePath");
             PowerMockito.doReturn(contentPath).when(davCmpFsImpl, "getContentFilePath");

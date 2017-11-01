@@ -469,6 +469,12 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException HAS_NOT_PARENT = create("PR409-DV-0001");
         /**
+         * File already exists.
+         * <p>
+         * {0} : File name
+         */
+        public static final PersoniumCoreException FILE_ALREADY_EXISTS = create("PR409-DV-0002");
+        /**
          * 該当リソースのEtagがマッチしない.
          */
         public static final PersoniumCoreException ETAG_NOT_MATCH = create("PR412-DV-0001");
@@ -840,6 +846,10 @@ public class PersoniumCoreException extends RuntimeException {
      */
     public static class Misc {
         /**
+         * Unexpected URI.
+         */
+        public static final PersoniumCoreException NOT_FOUND = create("PR404-MC-0001");
+        /**
          * メソッドが受け付けられないとき.
          */
         public static final PersoniumCoreException METHOD_NOT_ALLOWED = create("PR405-MC-0001");
@@ -870,6 +880,57 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException TOO_MANY_CONCURRENT_REQUESTS = create("PR503-SV-0001");
 
+    }
+
+    /**
+     * Common.
+     */
+    public static class Common {
+        /**
+         * Required key missing.
+         * <p>
+         * {0} : Required key
+         */
+        public static final PersoniumCoreException REQUEST_BODY_REQUIRED_KEY_MISSING = create("PR400-CM-0001");
+        /**
+         * Field format error.
+         * <p>
+         * {0} : Field name
+         * {1} : Format
+         */
+        public static final PersoniumCoreException REQUEST_BODY_FIELD_FORMAT_ERROR = create("PR400-CM-0002");
+        /**
+         * Unknown key specified.
+         * <p>
+         * {0} : Unknown key
+         */
+        public static final PersoniumCoreException REQUEST_BODY_UNKNOWN_KEY_SPECIFIED = create("PR400-CM-0003");
+        /**
+         * JSON parse error.
+         * <p>
+         * {0} : Parse string
+         */
+        public static final PersoniumCoreException JSON_PARSE_ERROR = create("PR400-CM-0004");
+        /**
+         * Executing API that is not allowed when the cell status is "import failed".
+         */
+        public static final PersoniumCoreException CELL_STATUS_IMPORT_FAILED = create("PR400-CM-0005");
+        /**
+         * File or Directory does not exist in the snapshot file.
+         * <p>
+         * {0} : File or Directory path in zip
+         */
+        public static final PersoniumCoreException NOT_FOUND_IN_SNAPSHOT = create("PR404-CM-0001");
+        /**
+         * Failed to load the request body.
+         */
+        public static final PersoniumCoreException REQUEST_BODY_LOAD_FAILED = create("PR500-CM-0001");
+        /**
+         * File I/O error.
+         * <p>
+         * {0} : Overview of failed processing
+         */
+        public static final PersoniumCoreException FILE_IO_ERROR = create("PR500-CM-0002");
     }
 
     /**

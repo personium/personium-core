@@ -133,6 +133,11 @@ public interface DavCmp {
     String getEncryptionType();
 
     /**
+     * @return Cell status.
+     */
+    String getCellStatus();
+
+    /**
      * @return true if Cell Level
      */
     boolean isCellLevel();

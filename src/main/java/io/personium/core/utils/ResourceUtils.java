@@ -23,6 +23,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import io.personium.core.PersoniumCoreException;
+
 /**
  * リソース系ユーティリティ関数を集めたクラス.
  */
@@ -38,18 +40,24 @@ public class ResourceUtils {
      * Readerからリクエストボディを取得してJSONObjectにする.
      * @param reader リクエストボディ
      * @return JSONObject
-     * @throws IOException IO例外
-     * @throws ParseException Parse例外
      */
-    public static JSONObject parseBodyAsJSON(Reader reader)
-            throws IOException, ParseException {
+    public static JSONObject parseBodyAsJSON(Reader reader) {
         StringBuilder sb = new StringBuilder();
         int character;
         JSONObject body;
-        while ((character = reader.read()) != -1) {
-            sb.append((char) character);
+        try {
+            while ((character = reader.read()) != -1) {
+                sb.append((char) character);
+            }
+        } catch (IOException e) {
+            throw PersoniumCoreException.Common.REQUEST_BODY_LOAD_FAILED.reason(e);
         }
-        body = (JSONObject) (new JSONParser()).parse(sb.toString());
+        String bodyString = sb.toString();
+        try {
+            body = (JSONObject) (new JSONParser()).parse(bodyString);
+        } catch (ParseException e) {
+            throw PersoniumCoreException.Common.JSON_PARSE_ERROR.params(bodyString);
+        }
         return body;
     }
 

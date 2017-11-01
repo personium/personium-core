@@ -27,7 +27,6 @@ import io.personium.core.auth.Privilege;
  */
 public class CellRsCmp extends DavRsCmp {
 
-    DavCmp davCmp;
     Cell cell;
     AccessContext accessContext;
 
@@ -41,7 +40,6 @@ public class CellRsCmp extends DavRsCmp {
         super(null, davCmp);
         this.cell = cell;
         this.accessContext = accessContext;
-        this.davCmp = davCmp;
     }
 
     /**
@@ -66,14 +64,6 @@ public class CellRsCmp extends DavRsCmp {
      */
     public Box getBox() {
         return null;
-    }
-
-    /**
-     * このリソースのdavCmpを返します.
-     * @return davCmp
-     */
-    public DavCmp getDavCmp() {
-        return this.davCmp;
     }
 
     /**
