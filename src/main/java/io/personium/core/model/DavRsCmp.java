@@ -76,7 +76,8 @@ import io.personium.core.rs.box.PersoniumEngineSvcCollectionResource;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- * JaxRS Resource オブジェクトから処理の委譲を受けてDav関連の永続化を除く処理を行うクラス.
+ * A component class to process WebDAV related request delegated from JaxRS Resource objects. 
+ * Some process are further delegated to DavCmp classes.
  */
 public class DavRsCmp {
     /**
@@ -89,11 +90,10 @@ public class DavRsCmp {
     String pathName;
     ObjectFactory of;
 
-
     /**
      * constructor.
-     * @param parent 親リソース
-     * @param davCmp バックエンド実装に依存する処理を受け持つ部品
+     * @param parent Parent Object
+     * @param davCmp Component that handle processes dependent on backend implementation
      */
     public DavRsCmp(final DavRsCmp parent, final DavCmp davCmp) {
         this.parent = parent;
@@ -106,14 +106,14 @@ public class DavRsCmp {
     }
 
     /**
-     * 現在のリソースの一つ下位パスを担当するJax-RSリソースを返す.
-     * @param nextPath 一つ下のパス名
-     * @param request リクエスト
-     * @return 下位パスを担当するJax-RSリソースオブジェクト
+     * returns Jax-RS resource in charge of child path.
+     * @param nextPath child path name 
+     * @param request HttpServletRequest
+     * @return Jax-RS resource in charge of the child path
      */
     public Object nextPath(final String nextPath, final HttpServletRequest request) {
 
-        // nextPathを確認し、タイプをしらべて、new して返す
+        // return NullResource (Non-Existent) if davCmp does not exist.
         if (this.davCmp == null) {
             return new NullResource(this, null, true);
         }
@@ -121,9 +121,7 @@ public class DavRsCmp {
         String type = nextCmp.getType();
 
         if (DavCmp.TYPE_NULL.equals(type)) {
-            // 現在リソースを判断する
             if (DavCmp.TYPE_NULL.equals(this.davCmp.getType())) {
-                // 現在リソースが存在しないパスの場合、次リソースから見て親リソースはNullResorce
                 return new NullResource(this, nextCmp, true);
             } else {
                 return new NullResource(this, nextCmp, false);
@@ -146,7 +144,7 @@ public class DavRsCmp {
      * @return URL String
      */
     public String getUrl() {
-        // 再帰的に最上位のBoxResourceまでいって、BoxResourceではここをオーバーライドしてルートURLを与えている。
+        // recursively goes to the BoxResource. BoxResource overrides this method and provide root url.
         return this.parent.getUrl() + "/" + this.pathName;
     }
 
@@ -155,7 +153,7 @@ public class DavRsCmp {
      * @return Cell Object
      */
     public Cell getCell() {
-        // 再帰的に最上位のBoxResourceまでいって、そこからCellにたどりつくため、BoxResourceではここをオーバーライドしている。
+        // recursively goes to the BoxResource. BoxResource overrides this method and provide Cell object.
         return this.parent.getCell();
     }
 
@@ -164,12 +162,12 @@ public class DavRsCmp {
      * @return Box Object
      */
     public Box getBox() {
-        // 再帰的に最上位のBoxResourceまでいって、そこからCellにたどりつくため、BoxResourceではここをオーバーライドしている。
+        // recursively goes to the BoxResource. BoxResource overrides this method and provide Box object.
         return this.parent.getBox();
     }
 
     /**
-     * このリソースのdavCmpを返します.
+     * Returns davCmp Object.
      * @return davCmp
      */
     public DavCmp getDavCmp() {
@@ -177,7 +175,7 @@ public class DavRsCmp {
     }
 
     /**
-     * このリソースのparentを返します.
+     * returns parent DavRsCmp object.
      * @return DavRsCmp
      */
     public DavRsCmp getParent() {
@@ -203,6 +201,7 @@ public class DavRsCmp {
         String weakEtag = "W/" +  storedEtag;
         return etag.equals(storedEtag) || etag.equals(weakEtag);
     }
+
     /**
      * Process a GET request.
      * @param ifNoneMatch ifNoneMatch header
@@ -216,26 +215,27 @@ public class DavRsCmp {
         }
         return this.davCmp.get(rangeHeaderField);
     }
+
     /**
-     * PROPFINDの処理. バックエンド実装に依らない共通的な振る舞い.
+     * Process PROPFIND method. Common behavior independent from backend implementation.
      * @param requestBodyXml requestBody
-     * @param depth Depthヘッ ダ
-     * @param contentLength Content-Lengthヘッダ
-     * @param transferEncoding Transfer-Encodingヘッダ
-     * @param requiredForReadAcl ACL読み出しに必要なPrivilege
-     * @return Jax-RS 応答オブジェクト
+     * @param depth Depth Header
+     * @param contentLength Content-Length Header
+     * @param transferEncoding Transfer-Encoding Header
+     * @param requiredForReadAcl Privilege required for ACL reading
+     * @return Jax-RS Response object
      */
     public final Response doPropfind(final Reader requestBodyXml, final String depth,
             final Long contentLength, final String transferEncoding, final Privilege requiredForReadAcl) {
 
-        // ユニットユーザもしくはACLのPrivilegeが設定せれている場合のみ、ACL設定の出力が可能
+        // ACL config output is allowed by Unit User or when ACL Privilege is configured.
         boolean canAclRead = false;
         if (this.getAccessContext().isUnitUserToken()
                 || this.hasPrivilege(this.getAccessContext(), requiredForReadAcl)) {
             canAclRead = true;
         }
 
-        // リクエストをパースして pfオブジェクトを作成する
+        // Parse the request and create propfind object
         Propfind propfind = null;
         if (ResourceUtils.hasApparentlyRequestBody(contentLength, transferEncoding)) {
             BufferedReader br = null;
@@ -249,8 +249,8 @@ public class DavRsCmp {
             log.debug("Content-Length 0");
         }
 
-        // Depthヘッダの有効な値は 0, 1
-        // infinityの場合はサポートしないので403で返す
+        // Valid values for Depth Header are either 0 or 1
+        // We do not support infinity so return 403
         if ("infinity".equals(depth)) {
             throw PersoniumCoreException.Dav.PROPFIND_FINITE_DEPTH;
         } else if (depth == null) {
@@ -260,12 +260,12 @@ public class DavRsCmp {
         }
 
         String reqUri = this.getUrl();
-        // 最後が/でおわるときは、それを取る
+        // take away trailing slash 
         if (reqUri.endsWith("/")) {
             reqUri = reqUri.substring(0, reqUri.length() - 1);
         }
 
-        // リソース名がマルチバイトの場合、URLエスケープを行う
+        // URL esacaping if the resource name is multibyte
         int resourcePos = reqUri.lastIndexOf("/");
         if (resourcePos != -1) {
             String resourceName = reqUri.substring(resourcePos + 1);
@@ -278,7 +278,7 @@ public class DavRsCmp {
             reqUri = collectionUrl + "/" + resourceName;
         }
 
-        // 実際の処理
+        // The actural processing
         final Multistatus ms = this.of.createMultistatus();
         List<org.apache.wink.webdav.model.Response> resList = ms.getResponse();
         resList.add(createDavResponse(pathName, reqUri, this.davCmp, propfind, canAclRead));
@@ -292,7 +292,7 @@ public class DavRsCmp {
             }
         }
 
-        // 処理結果を出力
+        // output the result
         StreamingOutput str = new StreamingOutput() {
             @Override
             public void write(final OutputStream os) throws IOException {
@@ -306,13 +306,13 @@ public class DavRsCmp {
     }
 
     /**
-     * PROPPATCHの処理. 実サブクラスで必要に応じて呼び出すことを想定。 バックエンド実装に依らない共通的な振る舞い.
+     * process PROPPATCH request. 
      * @param reqBodyXml requestBody
-     * @return Jax-RS 応答オブジェクト
+     * @return Jax-RS Response object
      */
     public final Response doProppatch(final Reader reqBodyXml) {
 
-        // リクエストをパースして pu オブジェクトを作成する
+        // parse the requet and create Propertyupdate object
         BufferedReader br = null;
         Propertyupdate pu = null;
         try {
@@ -322,10 +322,10 @@ public class DavRsCmp {
             throw PersoniumCoreException.Dav.XML_ERROR.reason(e1);
         }
 
-        // 実際の処理
+        // Actual Logic
         final Multistatus ms = this.davCmp.proppatch(pu, this.getUrl());
 
-        // 処理結果を出力
+        // Output the results
         StreamingOutput str = new StreamingOutput() {
             @Override
             public void write(final OutputStream os) throws IOException {
@@ -339,8 +339,8 @@ public class DavRsCmp {
     }
 
     /**
-     * ACLメソッドの実処理. ACLの設定を行う. 実サブクラスで必要に応じて呼び出すことを想定。 バックエンド実装に依らない共通的な振る舞いをここに実装.
-     * @param reader 設定XML
+     * ACL Method. configuring ACL. 
+     * @param reader Configuration XML
      * @return JAX-RS Response
      */
     public final Response doAcl(final Reader reader) {
@@ -349,7 +349,7 @@ public class DavRsCmp {
     }
 
     /**
-     * @return スキーマ認証レベル取得
+     * @return Schema Authentication level
      */
     public String getConfidentialLevel() {
         String confidentialStringTmp = null;
@@ -361,7 +361,8 @@ public class DavRsCmp {
 
         if (confidentialStringTmp == null || "".equals(confidentialStringTmp)) {
             if (this.parent == null) {
-                // BOXまで遡っても設定が存在しない場合はスキーマ認証は必要なしとみなす。
+                // App Authn regarded not necessary 
+                // if there is no configuration up to box
                 return OAuth2Helper.SchemaLevel.NONE;
             }
             confidentialStringTmp = this.parent.getConfidentialLevel();
@@ -370,20 +371,20 @@ public class DavRsCmp {
     }
 
     /**
-     * 親のACL情報とマージし、アクセス可能か判断する.
-     * @param ac アクセスコンテキスト
-     * @param privilege ACLのプリビレッジ（readとかwrite）
+     * merging with ancestorial ACL, and check if it is accessible.
+     * @param ac AccessContext
+     * @param privilege ACL Privilege (read/write)
      * @return boolean
      */
     public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
-
-        // davCmpが無い（存在しないリソースが指定された）場合はそのリソースのACLチェック飛ばす
+	// skip ACL check if davCmp does not exist.
+        //  (nonexistent resource is specified)
         if (this.davCmp != null
                 && this.getAccessContext().requirePrivilege(this.davCmp.getAcl(), privilege, this.getCell().getUrl())) {
             return true;
         }
 
-        // 親の設定をチェックする。
+        // check parent (recursively)
         if (this.parent != null && this.parent.hasPrivilege(ac, privilege)) {
             return true;
         }
@@ -392,12 +393,12 @@ public class DavRsCmp {
     }
 
     /**
-     * OPTIONSメソッド.
+     * OPTIONS Method.
      * @return JAX-RS Response
      */
     @OPTIONS
     public Response options() {
-        // アクセス制御
+        // AccessControl
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
 
         return PersoniumCoreUtils.responseBuilderForOptions(
@@ -412,29 +413,30 @@ public class DavRsCmp {
     }
 
     /**
-     * アクセス制御を行う.
-     * @param ac アクセスコンテキスト
-     * @param privilege アクセス可能な権限
+     * Check Access Control. 
+     * Exceptions are thrown if it does not have the privilege
+     * @param ac AccessContext
+     * @param privilege Privilege to check if it is given
      */
     public void checkAccessContext(final AccessContext ac, Privilege privilege) {
-        // ユニットユーザトークンチェック
+        // if accessed with valid UnitUserToken then fine.
         if (ac.isUnitUserToken()) {
             return;
         }
 
         AcceptableAuthScheme allowedAuthScheme = getAcceptableAuthScheme();
 
-        // スキーマ認証チェック
+        // check Schema Authn
         ac.checkSchemaAccess(this.getConfidentialLevel(), this.getBox(), allowedAuthScheme);
 
-        // Basic認証できるかチェック
+        // check if Basic Authn is possible
         ac.updateBasicAuthenticationStateForResource(this.getBox());
 
-        // アクセス権チェック
+        // check Access Privilege
         if (!this.hasPrivilege(ac, privilege)) {
-            // トークンの有効性チェック
-            // トークンがINVALIDでもACL設定でPrivilegeがallに設定されているとアクセスを許可する必要があるのでこのタイミングでチェック
-
+            // check token validity
+            // check here because access should be allowed when Privilege "all" is configured
+            // even if the token is invalid
             if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
                 ac.throwInvalidTokenException(allowedAuthScheme);
             } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
@@ -445,14 +447,14 @@ public class DavRsCmp {
     }
 
     /**
-     * 認証に使用できるAuth Schemeを取得する.
-     * @return 認証に使用できるAuth Scheme
+     * get Acceptable Auth Scheme.
+     * @return AcceptableAuthScheme
      */
     public AcceptableAuthScheme getAcceptableAuthScheme() {
         AcceptableAuthScheme allowedAuthScheme = AcceptableAuthScheme.ALL;
-        // スキーマ有のBox配下のリソースであるかチェックする
+        // check if this resource if under a box with Schema URL
         String boxSchema = this.getBox().getSchema();
-        // ボックスのスキーマが設定されている場合はBasicのWWW-Authenticateヘッダは付加しない
+        // only Bearer scheme is allowed if Box Schema URL is defined
         if (boxSchema != null && boxSchema.length() > 0 && !Role.DEFAULT_BOX_NAME.equals(this.getBox().getName())) {
             allowedAuthScheme = AcceptableAuthScheme.BEARER;
         }
@@ -460,9 +462,10 @@ public class DavRsCmp {
     }
 
     /**
-     * ユニット昇格権限設定チェック.
-     * @param account チェックするアカウント
-     * @return 権限の有無
+     * check if the specified account can be the representative of the Cell Owner Unit User.
+     * @param account Account name to check
+     * @return true if it has privilege
+     * @deprecated
      */
     public boolean checkOwnerRepresentativeAccounts(final String account) {
         List<String> ownerRepresentativeAccountsSetting = this.davCmp.getOwnerRepresentativeAccounts();
@@ -488,7 +491,7 @@ public class DavRsCmp {
         org.apache.wink.webdav.model.Response ret = of.createResponse();
         ret.getHref().add(href);
 
-        // TODO v1.1 PROPFINDの内容によって返すものを変える
+        // TODO change what to return depending on PROPFIND request content
         if (propfind != null) {
 
             log.debug("isAllProp:" + propfind.isAllprop());
@@ -515,7 +518,7 @@ public class DavRsCmp {
         }
         String type = dCmp.getType();
         if (DavCmp.TYPE_DAV_FILE.equals(type)) {
-            // Dav リソースとしての処理
+            // Dav File
             Resourcetype rt1 = of.createResourcetype();
             ret.setPropertyOk(rt1);
             Getcontentlength gcl = new Getcontentlength();
@@ -526,7 +529,7 @@ public class DavRsCmp {
             gct.setValue(contentType);
             ret.setPropertyOk(gct);
         } else if (DavCmp.TYPE_COL_ODATA.equals(type)) {
-            // OData リソースとしての処理
+            // OData Service Resource
             Resourcetype colRt = of.createResourcetype();
             colRt.setCollection(of.createCollection());
             List<Element> listElement = colRt.getAny();
@@ -537,7 +540,7 @@ public class DavRsCmp {
             ret.setPropertyOk(colRt);
 
         } else if (DavCmp.TYPE_COL_SVC.equals(type)) {
-            // Service リソースとしての処理
+            // Engine Service Resource
             Resourcetype colRt = of.createResourcetype();
             colRt.setCollection(of.createCollection());
             List<Element> listElement = colRt.getAny();
@@ -560,14 +563,14 @@ public class DavRsCmp {
             element.setTextContent(dCmp.getCellStatus());
             ret.setPropertyOk(element);
         } else {
-            // Col リソースとしての処理
+            // Collection Resource 
             Resourcetype colRt = of.createResourcetype();
             colRt.setCollection(of.createCollection());
             ret.setPropertyOk(colRt);
 
         }
 
-        // ACLの処理
+        // Processing ACL
         Acl acl = dCmp.getAcl();
         if (isAclRead && acl != null) {
 
@@ -586,7 +589,9 @@ public class DavRsCmp {
                 ret.setPropertyOk(e);
             }
         }
+	
 
+	// Processing Other Props
         Map<String, String> props = dCmp.getProperties();
         if (props != null) {
             List<String> nsList = new ArrayList<String>();
@@ -610,7 +615,6 @@ public class DavRsCmp {
         return ret;
     }
     private static Element parseProp(String value) {
-        // valをDOMでElement化
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = null;
