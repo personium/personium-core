@@ -846,6 +846,12 @@ public class PersoniumCoreException extends RuntimeException {
      */
     public static class Misc {
         /**
+         * File or Directory does not exist in the snapshot file.
+         * <p>
+         * {0} : File or Directory path in zip
+         */
+        public static final PersoniumCoreException NOT_FOUND_IN_SNAPSHOT = create("PR400-MC-0001");
+        /**
          * Unexpected URI.
          */
         public static final PersoniumCoreException NOT_FOUND = create("PR404-MC-0001");
@@ -859,7 +865,7 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException SERVER_REQUEST_TIMEOUT = create("PR408-MC-0001");
         /**
-         * セル一括削除時に削除対象のセルにアクセスがあったとき.
+         * There is other access to the target cell when processing to the cell.
          */
         public static final PersoniumCoreException CONFLICT_CELLACCESS = create("PR409-MC-0001");
         /**
@@ -914,13 +920,13 @@ public class PersoniumCoreException extends RuntimeException {
         /**
          * Executing API that is not allowed when the cell status is "import failed".
          */
-        public static final PersoniumCoreException CELL_STATUS_IMPORT_FAILED = create("PR400-CM-0005");
+        public static final PersoniumCoreException CELL_STATUS_IMPORT_FAILED = create("PR409-CM-0001");
         /**
-         * File or Directory does not exist in the snapshot file.
+         * Error when writing to cell is locked.
          * <p>
-         * {0} : File or Directory path in zip
+         * {0} : Processing that caused lock.
          */
-        public static final PersoniumCoreException NOT_FOUND_IN_SNAPSHOT = create("PR404-CM-0001");
+        public static final PersoniumCoreException LOCK_WRITING_TO_CELL = create("PR409-CM-0002");
         /**
          * Failed to load the request body.
          */

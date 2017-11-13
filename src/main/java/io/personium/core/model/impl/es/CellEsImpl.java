@@ -60,6 +60,7 @@ import io.personium.core.event.EventUtils;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.Cell;
+import io.personium.core.model.CellSnapshotCellCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
@@ -217,7 +218,9 @@ public final class CellEsImpl implements Cell {
         rPath = rPath.substring(bPath.length());
         String[] paths = StringUtils.split(rPath, "/");
 
-        return findCell("s.Name.untouched", paths[0], uriInfo);
+        CellEsImpl cell = (CellEsImpl) findCell("s.Name.untouched", paths[0]);
+        cell.url = getBaseUri(uriInfo, cell.name);
+        return cell;
     }
 
     /**
@@ -246,6 +249,16 @@ public final class CellEsImpl implements Cell {
         }
     }
 
+    /**
+     * Get cell from the specified cell name.
+     * However, the parameter "url" of Cell is not set.
+     * @param cellName target cell name
+     * @return cell
+     */
+    public static Cell load(String cellName) {
+        return findCell("s.Name.untouched", cellName);
+    }
+
     private static String getBaseUri(final UriInfo uriInfo, String cellName) {
         // URLを生成してSet
         StringBuilder urlSb = new StringBuilder();
@@ -263,11 +276,9 @@ public final class CellEsImpl implements Cell {
      *            Cellを検索する際のキー(Cell名)
      * @param queryValue
      *            Cellを検索する際のキーに対する値
-     * @param uriInfo
-     *            UriInfo
      * @return Cell オブジェクト 該当するCellが存在しないとき、又はqueryKeyの値が無効な場合はnull
      */
-    public static Cell findCell(String queryKey, String queryValue, UriInfo uriInfo) {
+    private static Cell findCell(String queryKey, String queryValue) {
         if (!queryKey.equals("_id") && !queryKey.equals("s.Name.untouched")) {
             return null;
         }
@@ -314,7 +325,6 @@ public final class CellEsImpl implements Cell {
             ret.setJson(cache);
             ret.id = (String) cache.get("_id");
         }
-        ret.url = getBaseUri(uriInfo, ret.name);
         return ret;
     }
 
@@ -910,11 +920,11 @@ public final class CellEsImpl implements Cell {
     @Override
     public void delete(boolean recursive, String unitUserName) {
         // Cellに対するアクセス数を確認して、アクセスをロックする
-        int maxLoopCount = Integer.valueOf(PersoniumUnitConfig.getCellLockRetryTimes());
-        long interval = Long.valueOf(PersoniumUnitConfig.getCellLockRetryInterval());
+        int maxLoopCount = PersoniumUnitConfig.getCellLockRetryTimes();
+        long interval = PersoniumUnitConfig.getCellLockRetryInterval();
         waitCellAccessible(this.id, maxLoopCount, interval);
 
-        CellLockManager.setBulkDeletionStatus(this.id);
+        CellLockManager.setCellStatus(this.id, CellLockManager.STATUS.BULK_DELETION);
 
         // Cellエンティティを削除する
         CellAccessor cellAccessor = (CellAccessor) EsModel.cell();
@@ -924,7 +934,7 @@ public final class CellEsImpl implements Cell {
             log.info("Cell Entity Deletion End.");
         } finally {
             CellCache.clear(this.getName());
-            CellLockManager.resetBulkDeletionStatus(this.getId());
+            CellLockManager.setCellStatus(this.getId(), CellLockManager.STATUS.NORMAL);
         }
 
         // Make this cell empty asynchronously
@@ -986,6 +996,16 @@ public final class CellEsImpl implements Cell {
             }
         }
         log.info("DavFile Deletion End.");
+
+        // delete CellSnapshot
+        CellSnapshotCellCmp snapshotCmp = ModelFactory.cellSnapshotCellCmp(this);
+        try {
+            snapshotCmp.delete(null, false);
+        } catch (PersoniumCoreException e) {
+            // If the deletion fails, output a log and continue processing.
+            log.warn(String.format("Delete CellSnapshot Failed."), e);
+        }
+        log.info("CellSnapshotFile Deletion End.");
 
         // delete EventLog file
         try {

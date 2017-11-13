@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.model.DavRsCmp;
@@ -72,6 +73,7 @@ public final class MessageResource extends ODataCtlResource {
      * @param reader リクエストボディ
      * @return レスポンス
      */
+    @WriteAPI
     @POST
     @Path("send")
     public Response messages(
@@ -95,6 +97,7 @@ public final class MessageResource extends ODataCtlResource {
      * @param reader リクエストボディ
      * @return レスポンス
      */
+    @WriteAPI
     @POST
     @Path("port")
     public Response messagesPort(
@@ -116,6 +119,7 @@ public final class MessageResource extends ODataCtlResource {
      * @param reader リクエストボディ
      * @return レスポンス
      */
+    @WriteAPI
     @POST
     @Path("received/{key}")
     public Response messagesApprove(@PathParam("key") final String key,

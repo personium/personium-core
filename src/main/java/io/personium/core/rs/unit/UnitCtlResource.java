@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.core.PersoniumCoreAuthzException;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
@@ -43,6 +43,7 @@ import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
+import io.personium.core.model.CellSnapshotCellCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.file.BinaryDataAccessException;
 import io.personium.core.model.lock.UnitUserLockManager;
@@ -190,6 +191,10 @@ public class UnitCtlResource extends ODataResource {
                 log.warn("Failed to delete eventlog. CellName=[" + this.cell.getName() + "] owner=[" + owner + "] "
                         + e.getMessage());
             }
+
+            // delete CellSnapshot
+            CellSnapshotCellCmp snapshotCmp = ModelFactory.cellSnapshotCellCmp(cell);
+            snapshotCmp.delete(null, false);
 
             // delete Main Box DavCmp
             Box box = new Box(this.cell, null);

@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.REPORT;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavCommon;
@@ -97,6 +98,7 @@ public class NullResource {
      * @param inputStream リクエストボディ
      * @return Jax-RS Responseオブジェクトト
      */
+    @WriteAPI
     @PUT
     public final Response put(
             @HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
@@ -130,6 +132,7 @@ public class NullResource {
      * @param inputStream リクエストボディ
      * @return JAX-RS Response
      */
+    @WriteAPI
     @WebDAVMethod.MKCOL
     public Response mkcol(@HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             @HeaderParam("Content-Length") final Long contentLength,

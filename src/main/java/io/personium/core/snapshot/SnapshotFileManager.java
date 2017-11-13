@@ -21,11 +21,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.personium.common.utils.PersoniumThread;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
+import io.personium.core.model.lock.CellLockManager;
 
 /**
  * Manage the snapshot file.
@@ -37,8 +41,8 @@ import io.personium.core.model.impl.fs.DavCmpFsImpl;
  */
 public class SnapshotFileManager {
 
-//    /** Logger. */
-//    private static Logger log = LoggerFactory.getLogger(SnapshotFileManager.class);
+    /** Logger. */
+    private static Logger log = LoggerFactory.getLogger(SnapshotFileManager.class);
 
     /** Extension of the snapshot file to be created. */
     private static final String SNAPSHOT_FILE_EXTENSION = ".zip";
@@ -62,7 +66,7 @@ public class SnapshotFileManager {
      * Execute export.
      */
     public void exportSnapshot() {
-        Path snapshotDirPath = Paths.get(PersoniumUnitConfig.getCellExportRoot(),
+        Path snapshotDirPath = Paths.get(PersoniumUnitConfig.getCellSnapshotRoot(),
                 targetCell.getId(), snapshotFileName);
         // File duplication check
         if (Files.exists(snapshotDirPath)) {
@@ -78,15 +82,25 @@ public class SnapshotFileManager {
 
         Path snapshotFilePath = snapshotDirPath.resolve(DavCmpFsImpl.CONTENT_FILE_NAME);
 
-        SnapshotFileExportRunner runner = new SnapshotFileExportRunner(targetCell, snapshotFilePath);
-        PersoniumThread.execute(runner);
+        waitCellAccessible(targetCell.getId());
+        try {
+            CellLockManager.setCellStatus(targetCell.getId(), CellLockManager.STATUS.EXPORT);
+            SnapshotFileExportRunner runner = new SnapshotFileExportRunner(targetCell, snapshotFilePath);
+            PersoniumThread.execute(runner);
+        } catch (Throwable e) {
+            // If an exception occurs before the execution of the thread, return the lock status to its original state.
+            // If it is normal, lock is released in the thread.
+            CellLockManager.setCellStatus(targetCell.getId(), CellLockManager.STATUS.NORMAL);
+            throw e;
+        }
     }
 
     /**
      * Execute import.
      */
     public void importSnapshot() {
-        Path snapshotDirPath = Paths.get(PersoniumUnitConfig.getCellExportRoot(), targetCell.getId(), snapshotFileName);
+        Path snapshotDirPath = Paths.get(PersoniumUnitConfig.getCellSnapshotRoot(),
+                targetCell.getId(), snapshotFileName);
         // File exists check.
         if (!Files.exists(snapshotDirPath)) {
             throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(snapshotFileName);
@@ -94,7 +108,42 @@ public class SnapshotFileManager {
 
         Path snapshotFilePath = snapshotDirPath.resolve(DavCmpFsImpl.CONTENT_FILE_NAME);
 
-        SnapshotFileImportRunner runner = new SnapshotFileImportRunner(targetCell, snapshotFilePath);
-        PersoniumThread.execute(runner);
+        waitCellAccessible(targetCell.getId());
+        try {
+            CellLockManager.setCellStatus(targetCell.getId(), CellLockManager.STATUS.IMPORT);
+            SnapshotFileImportRunner runner = new SnapshotFileImportRunner(targetCell, snapshotFilePath);
+            PersoniumThread.execute(runner);
+        } catch (Throwable e) {
+            // If an exception occurs before the execution of the thread, return the lock status to its original state.
+            // If it is normal, lock is released in the thread.
+            CellLockManager.setCellStatus(targetCell.getId(), CellLockManager.STATUS.NORMAL);
+            throw e;
+        }
+    }
+
+    /**
+     * Wait for other access to the specified cell to be completed.
+     * Exception is thrown if maximum wait time set by UnitConfig elapses.
+     * @param cellId target cell id
+     * @throws maximum wait time elapses
+     */
+    private void waitCellAccessible(String cellId) throws PersoniumCoreException {
+        int maxLoopCount = PersoniumUnitConfig.getCellLockRetryTimes();
+        long interval = PersoniumUnitConfig.getCellLockRetryInterval();
+
+        for (int loopCount = 0; loopCount < maxLoopCount; loopCount++) {
+            long count = CellLockManager.getReferenceCount(cellId);
+            // Since it includes this request, it is larger than 1 if there are other requests.
+            if (count <= 1) {
+                return;
+            }
+            try {
+                log.info(String.format("Wait for other access to cell. ReferenceCount:%d", count));
+                Thread.sleep(interval);
+            } catch (InterruptedException e) {
+                throw PersoniumCoreException.Misc.CONFLICT_CELLACCESS;
+            }
+        }
+        throw PersoniumCoreException.Misc.CONFLICT_CELLACCESS;
     }
 }

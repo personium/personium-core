@@ -16,22 +16,68 @@
  */
 package io.personium.core.model.lock;
 
+import java.util.HashMap;
+import java.util.Map;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * セルLockを管理するユーティリティ.
  */
 public abstract class CellLockManager extends LockManager {
 
+    /** Logger. */
+    private static Logger log = LoggerFactory.getLogger(CellLockManager.class);
+
+    /** Map of Cell status with status ID key. */
+    private static Map<Long, STATUS> statusMap = new HashMap<>();
+
     /**
-     * セルの処理状態：通常.
+     * Status enum.
      */
-    public static final long CELL_STATUS_NORMAL = 0L;
-    /**
-     * セルの処理状態：一括削除中.
-     */
-    public static final long CELL_STATUS_BULK_DELETION = 1L;
+    public enum STATUS {
+        /** Normal. */
+        NORMAL(0L, "normal"),
+        /** Bulk deletion. */
+        BULK_DELETION(1L, "cell bulk deletion"),
+        /** Export. */
+        EXPORT(2L, "cell export"),
+        /** Import. */
+        IMPORT(3L, "cell import");
+
+        /** ID. */
+        private long id;
+        /** Message. */
+        private String message;
+
+        /**
+         * Constructor.
+         * @param id id
+         * @param message message
+         */
+        STATUS(long id, String message) {
+            this.id = id;
+            this.message = message;
+            statusMap.put(id, this);
+        }
+
+        /**
+         * Get id.
+         * @return id
+         */
+        public long getId() {
+            return id;
+        }
+
+        /**
+         * Get message.
+         * @return message
+         */
+        public String getMessage() {
+            return message;
+        }
+    }
 
     abstract Lock getLock(String fullKey);
     abstract Boolean putLock(String fullKey, Lock lock);
@@ -47,54 +93,36 @@ public abstract class CellLockManager extends LockManager {
     public static final String CELL_STATUS_PREFIX = "CellStatus_";
 
     /**
-     * 指定したIDのセルの処理ステータスを返す.
-     * @param cellId 処理ステータスを取得する対象のセルID
-     * @return 指定したセルの処理ステータス
+     * Returns processing status of cell with the specified ID.
+     * @param cellId Target cell id
+     * @return Processing status of cell
      */
-    public static long getCellStatus(String cellId) {
+    public static STATUS getCellStatus(String cellId) {
         String key =  CELL_STATUS_PREFIX + cellId;
-        long status = singleton.doGetCellStatus(key);
-        if (status < 0) {
-            // 存在しない場合は何もしていないので「0:通常」を返す
-            status = CELL_STATUS_NORMAL;
+        STATUS status = statusMap.get(singleton.doGetCellStatus(key));
+        if (status == null) {
+            status = STATUS.NORMAL;
         }
         return status;
     }
 
     /**
-     * セルの処理ステータスを「一括削除中」に設定する.
-     * @param cellId 対象のセルID
-     * @return 設定に成功した場合true、エラーとなった場合はfalse
+     * Set the processing status of the cell with the specified value.
+     * When "Normal" is specified as the status, data is deleted from the cache.
+     * @param cellId Target cell id
+     * @param status processing status
+     * @return Processing result
      */
-    public static Boolean setBulkDeletionStatus(String cellId) {
-        return setCellStatus(cellId, CELL_STATUS_BULK_DELETION);
-    }
-
-    /**
-     * セルの処理ステータスを「一括削除中」に設定する.
-     * @param cellId 対象のセルID
-     * @return 設定に成功した場合true、エラーとなった場合はfalse
-     */
-    public static Boolean resetBulkDeletionStatus(String cellId) {
-        return setCellStatus(cellId, CELL_STATUS_NORMAL);
-    }
-
-    /**
-     * 指定した初期値でセルの処理ステータスを設定する.
-     * ステータスに「0:通常」を指定した場合は設定済みのステータスオブジェクトを削除する.
-     * @param cellId 対象のセルID
-     * @param status 処理ステータス (0:通常 1:一括削除処理中)
-     * @return 設定後の処理ステータス
-     */
-    private static Boolean setCellStatus(String cellId, long status) {
+    public static Boolean setCellStatus(String cellId, STATUS status) {
         String key =  CELL_STATUS_PREFIX + cellId;
         Boolean success = true;
-        if (status == CELL_STATUS_NORMAL) {
+        if (STATUS.NORMAL.equals(status)) {
             // 通常状態に戻す場合はデータ自体を削除する
             singleton.doDeleteCellStatus(key);
         } else {
-            success = singleton.doSetCellStatus(key, status);
+            success = singleton.doSetCellStatus(key, status.getId());
         }
+        log.info(String.format("Changed cell lock status. CellID:%s, LockStatus:%s", cellId, status.getMessage()));
         return success;
     }
 

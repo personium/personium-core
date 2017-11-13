@@ -50,15 +50,16 @@ import org.odata4j.producer.EntityResponse;
 import org.odata4j.producer.resources.OptionsQueryParser;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.MERGE;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
+import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.PersoniumOptionsQueryParser;
-import io.personium.core.odata.OEntityWrapper;
 
 /**
  * ODataのEntityリソース(id指定されたURL)を扱うJAX-RS リソース.
@@ -265,6 +266,7 @@ public class ODataEntityResource extends AbstractODataResource {
      * @param ifMatch If-Match ヘッダ
      * @return JAX-RSResponse
      */
+    @WriteAPI
     @PUT
     public Response put(Reader reader,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
@@ -322,6 +324,7 @@ public class ODataEntityResource extends AbstractODataResource {
      * @param ifMatch If-Match ヘッダ
      * @return JAX-RSResponse
      */
+    @WriteAPI
     @MERGE
     public Response merge(Reader reader,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
@@ -337,6 +340,7 @@ public class ODataEntityResource extends AbstractODataResource {
      * @param ifMatch If-Match ヘッダ
      * @return JAX-RS Response
      */
+    @WriteAPI
     @DELETE
     public Response delete(
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,

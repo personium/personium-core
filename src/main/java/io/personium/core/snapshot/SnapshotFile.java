@@ -28,6 +28,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,7 +89,7 @@ public class SnapshotFile implements Closeable {
     public void checkStructure() {
         for (Path path : pathMap.values()) {
             if (!Files.exists(path)) {
-                throw PersoniumCoreException.Common.NOT_FOUND_IN_SNAPSHOT.params(path.toString());
+                throw PersoniumCoreException.Misc.NOT_FOUND_IN_SNAPSHOT.params(path.toString());
             }
         }
     }
@@ -194,12 +195,25 @@ public class SnapshotFile implements Closeable {
     }
 
     /**
+     * Create data pjson.
+     */
+    public void createDataPJson() {
+        Path pathInZip = pathMap.get(DATA_PJSON);
+        try {
+            Files.createFile(pathInZip);
+        } catch (IOException e) {
+            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("create data pjson to snapshot file").reason(e);
+        }
+    }
+
+    /**
      * Write to data pjson.
      * @param data Data to write
      */
     public void writeDataPJson(String data) {
         Path pathInZip = pathMap.get(DATA_PJSON);
-        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8,
+                StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
             writer.write(data);
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add data pjson to snapshot file").reason(e);

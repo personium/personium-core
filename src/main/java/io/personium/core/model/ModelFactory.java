@@ -62,6 +62,16 @@ public final class ModelFactory {
     }
 
     /**
+     * Get cell from the specified cell name.
+     * However, the parameter "url" of Cell is not set.
+     * @param cellName target cell name
+     * @return cell
+     */
+    public static Cell cell(String cellName) {
+        return CellEsImpl.load(cellName);
+    }
+
+    /**
      * Boxの内部実装モデルオブジェクトを生成して返します.
      * @param box Boxクラス
      * @return Boxの内部実装モデルオブジェクト

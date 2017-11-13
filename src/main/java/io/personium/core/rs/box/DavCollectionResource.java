@@ -36,6 +36,7 @@ import org.apache.wink.webdav.WebDAVMethod;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavMoveResource;
@@ -75,6 +76,7 @@ public final class DavCollectionResource {
      * @param requestBodyXml Request Body
      * @return JAX-RS Response
      */
+    @WriteAPI
     @WebDAVMethod.PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         // アクセス制御
@@ -88,6 +90,7 @@ public final class DavCollectionResource {
      * @param recursiveHeader recursive header
      * @return JAX-RS応答オブジェクト
      */
+    @WriteAPI
     @DELETE
     public Response delete(
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
@@ -159,6 +162,7 @@ public final class DavCollectionResource {
      * @param reader 設定XML
      * @return JAX-RS Response
      */
+    @WriteAPI
     @ACL
     public Response acl(final Reader reader) {
         // アクセス制御
@@ -192,6 +196,7 @@ public final class DavCollectionResource {
      * @param headers ヘッダ情報
      * @return JAX-RS応答オブジェクト
      */
+    @WriteAPI
     @WebDAVMethod.MOVE
     public Response move(
             @Context HttpHeaders headers) {

@@ -41,9 +41,6 @@ import io.personium.core.model.ModelFactory;
  */
 public class CellSnapshotResource {
 
-//    /** Logger. */
-//    private static Logger log = LoggerFactory.getLogger(CellSnapshotResource.class);
-
     /** Class that performs actual processing. */
     private CellSnapshotCellRsCmp cellSnapshotCellRsCmp;
 

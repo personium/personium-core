@@ -61,6 +61,7 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavMoveResource;
@@ -112,6 +113,7 @@ public final class PersoniumEngineSvcCollectionResource {
      * DELETEメソッドを処理してこのリソースを削除します.
      * @return JAX-RS応答オブジェクト
      */
+    @WriteAPI
     @DELETE
     public Response delete() {
         // アクセス制御
@@ -129,6 +131,7 @@ public final class PersoniumEngineSvcCollectionResource {
      * @param requestBodyXml リクエストボディ
      * @return JAX-RS Response
      */
+    @WriteAPI
     @WebDAVMethod.PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         // アクセス制御
@@ -142,6 +145,7 @@ public final class PersoniumEngineSvcCollectionResource {
      * @param reader 設定XML
      * @return JAX-RS Response
      */
+    @WriteAPI
     @ACL
     public Response acl(final Reader reader) {
         // アクセス制御
@@ -206,6 +210,7 @@ public final class PersoniumEngineSvcCollectionResource {
      * @param is リクエストボディ
      * @return JAX-RS Response
      */
+    @WriteAPI
     @Path("{path}")
     @POST
     public Response relaypost(@PathParam("path") String path,
@@ -225,6 +230,7 @@ public final class PersoniumEngineSvcCollectionResource {
      * @param is リクエストボディ
      * @return JAX-RS Response
      */
+    @WriteAPI
     @Path("{path}")
     @PUT
     public Response relayput(@PathParam("path") String path,
@@ -243,6 +249,7 @@ public final class PersoniumEngineSvcCollectionResource {
      * @param headers ヘッダ
      * @return JAX-RS Response
      */
+    @WriteAPI
     @Path("{path}")
     @DELETE
     public Response relaydelete(@PathParam("path") String path,
@@ -400,6 +407,7 @@ public final class PersoniumEngineSvcCollectionResource {
      * @param headers ヘッダ情報
      * @return JAX-RS応答オブジェクト
      */
+    @WriteAPI
     @WebDAVMethod.MOVE
     public Response move(
             @Context HttpHeaders headers) {

@@ -54,9 +54,10 @@ import org.odata4j.producer.QueryInfo;
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
-import io.personium.core.odata.PersoniumFormatWriterFactory;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.odata.PersoniumFormatWriterFactory;
 
 /**
  * Navigationプロパティを扱うリソース.
@@ -104,6 +105,7 @@ public class ODataPropertyResource extends AbstractODataResource {
      * @param reader リクエストボディ
      * @return JAX-RS Response
      */
+    @WriteAPI
     @POST
     public final Response postEntity(
             @Context final UriInfo uriInfo,

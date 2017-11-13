@@ -327,11 +327,11 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * cell export configurations.
+     * cell snapshot configurations.
      */
-    public static final class CellExport {
+    public static final class CellSnapshot {
         /** Root directory path to store the cell export file. */
-        public static final String ROOT = KEY_ROOT + "cellExport.root";
+        public static final String ROOT = KEY_ROOT + "cellSnapshot.root";
     }
 
     static {
@@ -743,15 +743,15 @@ public class PersoniumUnitConfig {
     /**
      * @return セルロック取得時のリトライ回数.
      */
-    public static String getCellLockRetryTimes() {
-        return get(Lock.CELL_RETRY_TIMES);
+    public static int getCellLockRetryTimes() {
+        return Integer.parseInt(get(Lock.CELL_RETRY_TIMES));
     }
 
     /**
      * @return セルロック取得リトライ時の間隔.
      */
-    public static String getCellLockRetryInterval() {
-        return get(Lock.CELL_RETRY_INTERVAL);
+    public static long getCellLockRetryInterval() {
+        return Long.parseLong(get(Lock.CELL_RETRY_INTERVAL));
     }
 
     /**
@@ -821,11 +821,11 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Get root directory path to store cell export file.
-     * @return root directory path to store cell export file
+     * Get root directory path to store cell snapshot file.
+     * @return root directory path to store cell snapshot file
      */
-    public static String getCellExportRoot() {
-        return get(CellExport.ROOT);
+    public static String getCellSnapshotRoot() {
+        return get(CellSnapshot.ROOT);
     }
 
     /**

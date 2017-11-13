@@ -31,6 +31,8 @@ import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.response.PersoniumSearchHit;
@@ -47,14 +49,15 @@ import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.odata.EsQueryHandler;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.model.impl.fs.DavMetadataFile;
+import io.personium.core.model.lock.CellLockManager;
 
 /**
  * Runner that performs cell export processing.
  */
 public class SnapshotFileExportRunner implements Runnable {
 
-//    /** Logger. */
-//    private static Logger log = LoggerFactory.getLogger(SnapshotFileExportRunner.class);
+    /** Logger. */
+    private static Logger log = LoggerFactory.getLogger(SnapshotFileExportRunner.class);
 
     /** Limit when retrieving OData. */
     private static final int SEARCH_LIMIT = 1000;
@@ -96,7 +99,8 @@ public class SnapshotFileExportRunner implements Runnable {
                 targetCell.getDataBundleName(), targetCell.getId());
         long entryCount = countODataEntry() + countWebDAVFile(webdavRootPath.toFile());
         progressInfo = new SnapshotFileExportProgressInfo(this.targetCell.getId(), snapshotName, entryCount);
-        progressInfo.writeToCache(true);
+        log.info(String.format("Setup cell export. CellName:%s, EntryCount:%d, SnapshotName:%s",
+                this.targetCell.getName(), entryCount, snapshotName));
     }
 
     /**
@@ -105,6 +109,9 @@ public class SnapshotFileExportRunner implements Runnable {
     @Override
     public void run() {
         try {
+            log.info(String.format("Start export. CellName:%s", targetCell.getName()));
+            // start export.
+            progressInfo.writeToCache(true);
             try (SnapshotFile snapshotFile = SnapshotFile.newInstance(snapshotFilePath)) {
                 // Make the contents of the zip file.
                 makeSnapshotFile(snapshotFile);
@@ -121,9 +128,13 @@ public class SnapshotFileExportRunner implements Runnable {
             deleteSnapshotFile();
             // Create error file.
             makeErrorFile(e);
+            log.info(String.format("Made error file."));
         } finally {
             // Delete progress info.
             progressInfo.deleteFromCache();
+            // Unlock the cell.
+            CellLockManager.setCellStatus(targetCell.getId(), CellLockManager.STATUS.NORMAL);
+            log.info(String.format("End export. CellName:%s", targetCell.getName()));
         }
     }
 
@@ -175,9 +186,13 @@ public class SnapshotFileExportRunner implements Runnable {
      */
     private void makeSnapshotFile(SnapshotFile snapshotFile) {
         addManifestToZip(snapshotFile);
+        log.info(String.format("Added manifest json."));
         addCellToZip(snapshotFile);
+        log.info(String.format("Added cell json."));
         addDataToZip(snapshotFile);
+        log.info(String.format("Added odata pjson."));
         addWebDAVToZip(snapshotFile);
+        log.info(String.format("Added webdav file."));
     }
 
     /**
@@ -244,6 +259,8 @@ public class SnapshotFileExportRunner implements Runnable {
         String indexName = targetCell.getDataBundleName();
         DataSourceAccessor dataSourceAccessor = EsModel.getDataSourceAccessorFromIndexName(indexName);
 
+        // At least create an empty file.
+        snapshotFile.createDataPJson();
         while (true) {
             // Search Es
             PersoniumSearchResponse response = dataSourceAccessor.searchForIndex(
@@ -330,7 +347,7 @@ public class SnapshotFileExportRunner implements Runnable {
     private void makeErrorFile(Throwable e) {
         String snapshotFileName = snapshotFilePath.getParent().getFileName().toString();
         String errorFileName = FilenameUtils.getBaseName(snapshotFileName) + ERROR_FILE_EXTENSION;
-        Path errorDirPath = Paths.get(PersoniumUnitConfig.getCellExportRoot(), targetCell.getId(), errorFileName);
+        Path errorDirPath = Paths.get(PersoniumUnitConfig.getCellSnapshotRoot(), targetCell.getId(), errorFileName);
         try {
             Files.createDirectory(errorDirPath);
         } catch (IOException e1) {

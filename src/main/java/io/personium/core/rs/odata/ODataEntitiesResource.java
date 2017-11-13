@@ -52,8 +52,9 @@ import org.odata4j.producer.InlineCount;
 import org.odata4j.producer.QueryInfo;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
@@ -163,6 +164,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
      * @param reader リクエストボディ
      * @return JAX-RS Response
      */
+    @WriteAPI
     @POST
     public Response post(
             @Context final UriInfo uriInfo,

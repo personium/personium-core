@@ -47,6 +47,7 @@ import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.event.EventBus;
@@ -151,6 +152,7 @@ public final class CellResource {
      * @param recursiveHeader X-Personium-Recursive Header
      * @return JAX-RS Response Object
      */
+    @WriteAPI
     @DELETE
     public Response cellBulkDeletion(
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
@@ -283,6 +285,7 @@ public final class CellResource {
      * @param reader 入力
      * @return JAXRS応答
      */
+    @WriteAPI
     @POST
     @Path("__event/{boxName}")
     public Response postEvent(
@@ -461,6 +464,7 @@ public final class CellResource {
      * @param reader 設定XML
      * @return JAX-RS Response
      */
+    @WriteAPI
     @ACL
     public Response acl(final Reader reader) {
         // アクセス制御
