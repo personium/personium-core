@@ -83,8 +83,8 @@ public class FacadeResource {
             throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
         }
 
-        long cellStatus = CellLockManager.getCellStatus(cell.getId());
-        if (cellStatus == CellLockManager.CELL_STATUS_BULK_DELETION) {
+        CellLockManager.STATUS cellStatus = CellLockManager.getCellStatus(cell.getId());
+        if (CellLockManager.STATUS.BULK_DELETION.equals(cellStatus)) {
             throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
         }
 

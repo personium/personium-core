@@ -937,7 +937,7 @@ public class DavCmpFsImpl implements DavCmp {
      * @return JaxRS応答オブジェクトビルダ
      */
     @Override
-    public final ResponseBuilder delete(final String ifMatch, boolean recursive) {
+    public ResponseBuilder delete(final String ifMatch, boolean recursive) {
         // 指定etagがあり、かつそれが*ではなく内部データから導出されるものと異なるときはエラー
         if (ifMatch != null && !"*".equals(ifMatch) && !matchesETag(ifMatch)) {
             throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;

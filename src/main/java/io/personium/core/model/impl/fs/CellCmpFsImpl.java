@@ -136,5 +136,6 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
     public void setCellStatusAndSave(String status) {
         metaFile.setCellStatus(status);
         metaFile.save();
+        log.info(String.format("Changed cell status. CellName:%s, CellStatus:%s", getName(), status));
     }
 }

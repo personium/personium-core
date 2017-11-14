@@ -16,8 +16,6 @@
  */
 package io.personium.test.setup;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -39,13 +37,11 @@ import org.json.simple.parser.ParseException;
 import org.junit.Test;
 import org.odata4j.edm.EdmSimpleType;
 
-import io.personium.common.auth.token.Role;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
-import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.Relation;
 import io.personium.test.jersey.AbstractCase;
@@ -382,11 +378,12 @@ public class Setup extends AbstractCase {
 
         // Role作成
         for (RoleConfig role : conf.role) {
-            String roleUrl = this.createRole(conf.cellName, role.roleName);
+            TResponse res = createRole(conf.cellName, role.roleName);
+            String roleUrl = res.getLocationHeader();
             // Role紐付け作成
             if (role.linkAccounts != null) {
                 for (AccountConfig account : role.linkAccounts) {
-                    this.matchRole(conf.cellName, account.accountName, roleUrl);
+                    this.linkAccountAndRole(conf.cellName, account.accountName, roleUrl);
                 }
             }
             // ExtRoleとRoleの紐付け
@@ -407,7 +404,7 @@ public class Setup extends AbstractCase {
 
         // Box作成
         for (BoxConfig box : conf.box) {
-            this.createBox2(conf.cellName, box.boxName, box.boxSchema);
+            this.createBox(conf.cellName, box.boxName, box.boxSchema);
             // box1にのみACL設定
             if ("box1".equals(box.boxName)) {
                 // BoxレベルACLテスト用
@@ -417,17 +414,17 @@ public class Setup extends AbstractCase {
         }
 
         if ("testcell1".equals(conf.cellName) || "testcell2".equals(conf.cellName)) {
-            this.createColSvc("setservice", conf.cellName);
-            createColOdata(TEST_ODATA, conf.cellName);
-            createColOdata(SEARCH_ODATA, conf.cellName);
+            createServiceCollection(conf.cellName, TEST_BOX1, "setservice");
+            createOdataCollection(conf.cellName, TEST_BOX1, TEST_ODATA);
+            createOdataCollection(conf.cellName, TEST_BOX1, SEARCH_ODATA);
 
             DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, TEST_ODATA,
                     "box/acl-authtest.txt", Setup.TEST_BOX1, "");
-            this.createColDav("setdavcol", conf.cellName);
+            createWebdavCollection(conf.cellName, TEST_BOX1, "setdavcol");
             DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, "setdavcol",
                     "box/acl-authtest.txt", Setup.TEST_BOX1, "");
             this.createPatch2("setservice", conf.cellName);
-            this.createColSvc("service_relay", conf.cellName);
+            createServiceCollection(conf.cellName, TEST_BOX1, "service_relay");
             DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, "service_relay",
                     "box/acl-authtest.txt", Setup.TEST_BOX1, "");
 
@@ -451,16 +448,16 @@ public class Setup extends AbstractCase {
         }
 
         if (TEST_CELL_BASIC.equals(conf.cellName)) {
-            this.createColSvc("setservice", conf.cellName);
-            createColOdata(TEST_ODATA, conf.cellName);
+            createServiceCollection(conf.cellName, TEST_BOX1, "setservice");
+            createOdataCollection(conf.cellName, TEST_BOX1, TEST_ODATA);
 
             DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, TEST_ODATA,
                     "box/acl-authtest.txt", Setup.TEST_BOX1, "");
-            this.createColDav("setdavcol", conf.cellName);
+            createWebdavCollection(conf.cellName, TEST_BOX1, "setdavcol");
             DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, "setdavcol",
                     "box/acl-authtest.txt", Setup.TEST_BOX1, "");
             this.createPatch2("setservice", conf.cellName);
-            this.createColSvc("service_relay", conf.cellName);
+            createServiceCollection(conf.cellName, TEST_BOX1, "service_relay");
             DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, "service_relay",
                     "box/acl-authtest.txt", Setup.TEST_BOX1, "");
 
@@ -586,8 +583,8 @@ public class Setup extends AbstractCase {
      * @param conf
      *            設定ファイル
      */
-    public static void createNPTestCollectionSchema(Config conf) {
-        createColOdata(UserDataListWithNPTest.ODATA_COLLECTION, conf.cellName);
+    public void createNPTestCollectionSchema(Config conf) {
+        createOdataCollection(conf.cellName, TEST_BOX1, UserDataListWithNPTest.ODATA_COLLECTION);
 
         // EntitySetを登録する
         entityTypePost(UserDataListWithNPTest.ODATA_COLLECTION, TEST_BOX1, UserDataListWithNPTest.ENTITY_TYPE_A,
@@ -1550,27 +1547,6 @@ public class Setup extends AbstractCase {
     }
 
     /**
-     * アカウント作成.
-      * @param cellName
-     *            セル名
-     * @param name
-     *            アカウント名
-     * @param pass
-     *            パスワード
-     * @return 作成されたAccountのURL
-     */
-    private String createAccount(final String cellName, final String name, final String pass) {
-        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(cellName, Account.EDM_TYPE_NAME));
-        req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).header(
-                PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL, pass).addJsonBody("Name", name);
-        PersoniumResponse res = request(req);
-        assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
-        String accLocHeader = res.getFirstHeader(HttpHeaders.LOCATION);
-        assertNotNull(accLocHeader);
-        return accLocHeader;
-    }
-
-    /**
      * アカウントの一覧取得用のベースデータ作成.
      * アカウントの最終ログイン時刻を検索条件に指定するテストに用いるため、LastAuthenticatedに時刻を入れて作成している。
       * @param cellName
@@ -1608,112 +1584,6 @@ public class Setup extends AbstractCase {
             AccountUtils.createViaNPNonCredential(cellName, AbstractCase.MASTER_TOKEN_NAME, "Role", roleName, body,
                     HttpStatus.SC_CREATED);
         }
-    }
-
-    /**
-     * ロールを作成.
-      * @param cellName
-     *            セル名
-     * @param testRoleName
-     * @return 作成されたRoleのURL
-     */
-    private String createRole(final String cellName, final String testRoleName) {
-        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(cellName, Role.EDM_TYPE_NAME));
-        req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", testRoleName)
-                .addJsonBody("_Box.Name", null);
-        PersoniumResponse res = request(req);
-        assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
-        String roleLocHeader = res.getFirstHeader(HttpHeaders.LOCATION);
-        assertNotNull(roleLocHeader);
-        return roleLocHeader;
-    }
-
-    /**
-     * アカウントとロールの紐付け.
-      * @param cellName
-     *            セル名
-     * @param testRoleName
-     * @return 作成されたRoleのURL
-     */
-    private void matchRole(final String cellName, final String accountName, final String roleUrl) {
-        PersoniumRequest req = PersoniumRequest.post(UrlUtils.accountLinks(cellName, accountName));
-        req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("uri", roleUrl);
-        PersoniumResponse res = request(req);
-        assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
-    }
-
-    /**
-     * BOX作成.
-      * @param cellName
-     *            セル名
-     * @param boxName
-     *            ボックス名
-     * @param boxSchema
-     *            ボックススキーマ
-     * @return boxURL
-     */
-    private String createBox2(final String cellName, final String boxName, final String boxSchema) {
-        PersoniumRequest req = PersoniumRequest.post(UrlUtils.cellCtl(cellName, Box.EDM_TYPE_NAME));
-        req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", boxName);
-        if (boxSchema != null) {
-            req.addJsonBody("Schema", boxSchema);
-        }
-        PersoniumResponse res = request(req);
-        assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
-        String url = res.getFirstHeader(HttpHeaders.LOCATION);
-        assertNotNull(url);
-        return url;
-    }
-
-    /**
-     * サービスコレクション作成.
-      * @param cellName
-     *            セル名
-     * @param path
-     *            パス名
-     * @return boxURL
-     */
-    private TResponse createColSvc(final String path, final String cellPath) {
-        TResponse tresponseWebDav = null;
-        // DAVコレクションの作成
-        tresponseWebDav = Http.request("box/mkcol-service.txt").with("cellPath", cellPath).with("path", path)
-                .with("token", AbstractCase.MASTER_TOKEN_NAME).returns();
-        tresponseWebDav.statusCode(HttpStatus.SC_CREATED);
-        return tresponseWebDav;
-    }
-
-    /**
-     * Davコレクション作成.
-      * @param cellName
-     *            セル名
-     * @param path
-     *            パス名
-     * @return boxURL
-     */
-    private TResponse createColDav(final String path, final String cellPath) {
-        TResponse tresponseWebDav = null;
-        // DAVコレクションの作成
-        tresponseWebDav = Http.request("box/mkcol-normal.txt").with("cellPath", cellPath).with("path", path)
-                .with("token", AbstractCase.MASTER_TOKEN_NAME).returns();
-        tresponseWebDav.statusCode(HttpStatus.SC_CREATED);
-        return tresponseWebDav;
-    }
-
-    /**
-     * Odataコレクション作成.
-      * @param path
-     *            パス名
-     * @param cellPath
-     *            セル名
-     * @return boxURL
-     */
-    public static TResponse createColOdata(final String path, final String cellPath) {
-        TResponse tresponseWebDav = null;
-        // DAVコレクションの作成
-        tresponseWebDav = Http.request("box/mkcol-odata.txt").with("cellPath", cellPath).with("boxPath", "box1")
-                .with("path", path).with("token", AbstractCase.MASTER_TOKEN_NAME).returns();
-        tresponseWebDav.statusCode(HttpStatus.SC_CREATED);
-        return tresponseWebDav;
     }
 
     /**

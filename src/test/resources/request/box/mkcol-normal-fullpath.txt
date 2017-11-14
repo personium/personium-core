@@ -12,7 +12,6 @@ Authorization: ${token}
     <D:prop>
       <D:resourcetype>
         <D:collection/>
-        <p:service/>
       </D:resourcetype>
     </D:prop>
   </D:set>

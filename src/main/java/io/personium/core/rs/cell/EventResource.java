@@ -35,10 +35,11 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
-import io.personium.core.eventbus.PersoniumEventBus;
 import io.personium.core.eventbus.JSONEvent;
+import io.personium.core.eventbus.PersoniumEventBus;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ctl.Event;
@@ -77,6 +78,7 @@ public class EventResource {
      * @param requestKey X-Personium-RequestKeyヘッダー値
      * @return JAXRS Response
      */
+    @WriteAPI
     @POST
     public final Response receiveEvent(final Reader reader,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VERSION) final String version,
@@ -117,6 +119,7 @@ public class EventResource {
      * ログ設定更新.
      * @return レスポンス
      */
+    @WriteAPI
     @PROPPATCH
     public final Response updateLogSettings() {
         // TODO アクセス制御

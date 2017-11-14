@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
@@ -111,6 +112,7 @@ public final class ODataLinksResource {
      * @param reqBody リクエストボディ
      * @return JAX-RS Response
      */
+    @WriteAPI
     @POST
     public Response createLink(
             @Context UriInfo uriInfo,
@@ -158,6 +160,7 @@ public final class ODataLinksResource {
      * @param reqBody リクエストボディ
      * @return JAX-RS Response
      */
+    @WriteAPI
     @PUT
     public Response updateLink(
             @Context UriInfo uriInfo,
@@ -247,6 +250,7 @@ public final class ODataLinksResource {
      * DELETEメソッドを受けて linkを削除する.
      * @return JAX-RS Response
      */
+    @WriteAPI
     @DELETE
     public Response deleteLink() {
 

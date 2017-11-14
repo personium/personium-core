@@ -61,6 +61,7 @@ import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumReadDeleteModeManager;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.Privilege;
 import io.personium.core.exceptions.ODataErrorMessage;
@@ -139,6 +140,7 @@ public class ODataBatchResource extends AbstractODataResource {
      * @param reader reader
      * @return レスポンス
      */
+    @WriteAPI
     @POST
     public Response batchRequest(
             @Context UriInfo uriInfo,

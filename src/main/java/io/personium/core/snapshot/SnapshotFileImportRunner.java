@@ -34,6 +34,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.EsBulkRequest;
 import io.personium.core.PersoniumCoreException;
@@ -44,12 +46,16 @@ import io.personium.core.model.ModelFactory;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.accessor.CellAccessor;
 import io.personium.core.model.impl.es.accessor.DataSourceAccessor;
+import io.personium.core.model.lock.CellLockManager;
 import io.personium.core.rs.odata.MapBulkRequest;
 
 /**
  * Runner that performs cell import processing.
  */
 public class SnapshotFileImportRunner implements Runnable {
+
+    /** Logger. */
+    private static Logger log = LoggerFactory.getLogger(SnapshotFileImportRunner.class);
 
     /** Limit when bulk request. */
     private static final int BULK_REQUEST_LIMIT = 1000;
@@ -72,7 +78,8 @@ public class SnapshotFileImportRunner implements Runnable {
         String snapshotName = FilenameUtils.getBaseName(this.snapshotFilePath.getParent().getFileName().toString());
         long entryCount = countEntry();
         progressInfo = new SnapshotFileImportProgressInfo(this.targetCell.getId(), snapshotName, entryCount);
-        progressInfo.writeToCache(true);
+        log.info(String.format("Setup cell import. CellName:%s, EntryCount:%d, SnapshotName:%s",
+                this.targetCell.getName(), entryCount, snapshotName));
     }
 
     /**
@@ -81,7 +88,10 @@ public class SnapshotFileImportRunner implements Runnable {
     @Override
     public void run() {
         try {
+            log.info(String.format("Start import. CellName:%s", targetCell.getName()));
             try (SnapshotFile snapshotFile = SnapshotFile.newInstance(snapshotFilePath)) {
+                // start import.
+                progressInfo.writeToCache(true);
                 // Check export file structure.
                 snapshotFile.checkStructure();
                 // Delete cell data.
@@ -102,11 +112,15 @@ public class SnapshotFileImportRunner implements Runnable {
             progressInfo.setStatus(SnapshotFileImportProgressInfo.STATUS.IMPORT_FAILED);
             // Create error file.
             makeErrorFile(e);
+            log.info(String.format("Made error file."));
             // Change cell status.
             changeCellStatus(Cell.STATUS_IMPORT_ERROR);
         } finally {
             // Delete progress info.
             progressInfo.deleteFromCache();
+            // Unlock the cell.
+            CellLockManager.setCellStatus(targetCell.getId(), CellLockManager.STATUS.NORMAL);
+            log.info(String.format("End import. CellName:%s", targetCell.getName()));
         }
     }
 
@@ -137,7 +151,7 @@ public class SnapshotFileImportRunner implements Runnable {
         Path webdavRootPath = Paths.get(PersoniumUnitConfig.getBlobStoreRoot(),
                 targetCell.getDataBundleName(), targetCell.getId());
         try {
-            FileUtils.deleteDirectory(webdavRootPath.toFile());
+            FileUtils.cleanDirectory(webdavRootPath.toFile());
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("delete WebDAV files").reason(e);
         }
@@ -157,8 +171,11 @@ public class SnapshotFileImportRunner implements Runnable {
      */
     private void makeCellData(SnapshotFile snapshotFile) {
         modifyCellInfo(snapshotFile);
+        log.info(String.format("Modified cell info."));
         addDataToCell(snapshotFile);
+        log.info(String.format("Added odata."));
         addWebDAVToCell(snapshotFile);
+        log.info(String.format("Added webdav file."));
     }
 
     /**
@@ -238,7 +255,7 @@ public class SnapshotFileImportRunner implements Runnable {
      * @param snapshotFile snapshot file
      */
     private void addWebDAVToCell(SnapshotFile snapshotFile) {
-        Path webdavRootPathInZip = snapshotFile.getWebDAVDirPath().resolve(targetCell.getId());
+        Path webdavRootPathInZip = snapshotFile.getWebDAVDirPath();
         Path webdavRootPath = Paths.get(PersoniumUnitConfig.getBlobStoreRoot(),
                 targetCell.getDataBundleName(), targetCell.getId());
         // Use FileVisitor to process files recursively

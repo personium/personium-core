@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
@@ -45,6 +46,7 @@ public final class PersoniumEngineSourceFileResource extends DavFileResource {
      * @param reader 設定XML
      * @return JAX-RS Response
      */
+    @WriteAPI
     @ACL
     public Response acl(final Reader reader) {
         // アクセス制御

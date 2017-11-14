@@ -78,6 +78,23 @@ public class RelationUtils {
     }
 
     /**
+     * Create relation.
+     * @param cellName Cell name
+     * @param relationName Relation name
+     * @param boxName Box name
+     * @param token Token
+     * @param code Expected response code
+     * @return API response
+     */
+    @SuppressWarnings("unchecked")
+    public static TResponse create(String cellName, String relationName, String boxName, String token, int code) {
+        JSONObject bodyJson = new JSONObject();
+        bodyJson.put("Name", relationName);
+        bodyJson.put("_Box.Name", boxName);
+        return create(cellName, token, bodyJson, code);
+    }
+
+    /**
      * Relationを作成するユーティリティ.
      * @param cellName セル名
      * @param token トークン

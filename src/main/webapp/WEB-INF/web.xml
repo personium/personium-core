@@ -40,6 +40,10 @@
             <param-value>io.personium.core.jersey.filter.PersoniumCoreContainerFilter</param-value>
         </init-param>
         <init-param>
+            <param-name>com.sun.jersey.spi.container.ResourceFilters</param-name>
+            <param-value>io.personium.core.jersey.filter.PersoniumCoreResourceFilterFactory</param-value>
+        </init-param>
+        <init-param>
             <param-name>com.sun.jersey.config.feature.DisableWADL</param-name>
             <param-value>true</param-value>
         </init-param>

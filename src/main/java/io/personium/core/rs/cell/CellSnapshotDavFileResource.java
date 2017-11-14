@@ -32,6 +32,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.wink.webdav.WebDAVMethod;
 
 import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.model.CellSnapshotCellRsCmp;
 import io.personium.core.model.DavCmp;
@@ -85,6 +86,7 @@ public class CellSnapshotDavFileResource {
      * @param inputStream Request Body
      * @return JAX-RS response object
      */
+    @WriteAPI
     @PUT
     public Response put(@HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
@@ -101,6 +103,7 @@ public class CellSnapshotDavFileResource {
      * @param ifMatch If-Match header
      * @return JAX-RS response object
      */
+    @WriteAPI
     @DELETE
     public Response delete(@HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
         // Check exist

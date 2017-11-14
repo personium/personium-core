@@ -34,6 +34,7 @@ import org.apache.wink.webdav.WebDAVMethod;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavMoveResource;
@@ -62,6 +63,7 @@ public class DavFileResource {
      * @param inputStream Request Body
      * @return JAX-RS response object
      */
+    @WriteAPI
     @PUT
     public Response put(@HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
@@ -97,6 +99,7 @@ public class DavFileResource {
      * @param ifMatch If-Match header
      * @return JAX-RS response object
      */
+    @WriteAPI
     @DELETE
     public Response delete(@HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
         // Access Control
@@ -112,6 +115,7 @@ public class DavFileResource {
      * @param requestBodyXml request body
      * @return JAX-RS response object
      */
+    @WriteAPI
     @WebDAVMethod.PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         // Access Control
@@ -144,6 +148,7 @@ public class DavFileResource {
      * @param reader request body
      * @return JAX-RS Response
      */
+    @WriteAPI
     @ACL
     public Response acl(final Reader reader) {
         // Access Control
@@ -156,6 +161,7 @@ public class DavFileResource {
      * @param headers Http headers
      * @return JAX-RS response object
      */
+    @WriteAPI
     @WebDAVMethod.MOVE
     public Response move(
             @Context HttpHeaders headers) {

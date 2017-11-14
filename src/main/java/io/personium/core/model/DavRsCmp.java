@@ -76,7 +76,7 @@ import io.personium.core.rs.box.PersoniumEngineSvcCollectionResource;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- * A component class to process WebDAV related request delegated from JaxRS Resource objects. 
+ * A component class to process WebDAV related request delegated from JaxRS Resource objects.
  * Some process are further delegated to DavCmp classes.
  */
 public class DavRsCmp {
@@ -107,7 +107,7 @@ public class DavRsCmp {
 
     /**
      * returns Jax-RS resource in charge of child path.
-     * @param nextPath child path name 
+     * @param nextPath child path name
      * @param request HttpServletRequest
      * @return Jax-RS resource in charge of the child path
      */
@@ -260,7 +260,7 @@ public class DavRsCmp {
         }
 
         String reqUri = this.getUrl();
-        // take away trailing slash 
+        // take away trailing slash
         if (reqUri.endsWith("/")) {
             reqUri = reqUri.substring(0, reqUri.length() - 1);
         }
@@ -306,7 +306,7 @@ public class DavRsCmp {
     }
 
     /**
-     * process PROPPATCH request. 
+     * process PROPPATCH request.
      * @param reqBodyXml requestBody
      * @return Jax-RS Response object
      */
@@ -339,7 +339,7 @@ public class DavRsCmp {
     }
 
     /**
-     * ACL Method. configuring ACL. 
+     * ACL Method. configuring ACL.
      * @param reader Configuration XML
      * @return JAX-RS Response
      */
@@ -361,7 +361,7 @@ public class DavRsCmp {
 
         if (confidentialStringTmp == null || "".equals(confidentialStringTmp)) {
             if (this.parent == null) {
-                // App Authn regarded not necessary 
+                // App Authn regarded not necessary
                 // if there is no configuration up to box
                 return OAuth2Helper.SchemaLevel.NONE;
             }
@@ -377,8 +377,8 @@ public class DavRsCmp {
      * @return boolean
      */
     public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
-	// skip ACL check if davCmp does not exist.
-        //  (nonexistent resource is specified)
+        // skip ACL check if davCmp does not exist.
+        // (nonexistent resource is specified)
         if (this.davCmp != null
                 && this.getAccessContext().requirePrivilege(this.davCmp.getAcl(), privilege, this.getCell().getUrl())) {
             return true;
@@ -413,7 +413,7 @@ public class DavRsCmp {
     }
 
     /**
-     * Check Access Control. 
+     * Check Access Control.
      * Exceptions are thrown if it does not have the privilege
      * @param ac AccessContext
      * @param privilege Privilege to check if it is given
@@ -563,7 +563,7 @@ public class DavRsCmp {
             element.setTextContent(dCmp.getCellStatus());
             ret.setPropertyOk(element);
         } else {
-            // Collection Resource 
+            // Collection Resource
             Resourcetype colRt = of.createResourcetype();
             colRt.setCollection(of.createCollection());
             ret.setPropertyOk(colRt);
@@ -589,9 +589,8 @@ public class DavRsCmp {
                 ret.setPropertyOk(e);
             }
         }
-	
 
-	// Processing Other Props
+        // Processing Other Props
         Map<String, String> props = dCmp.getProperties();
         if (props != null) {
             List<String> nsList = new ArrayList<String>();

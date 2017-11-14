@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
@@ -70,6 +71,7 @@ public class PasswordResource {
      * パスワードの変更をする.
      * @return ODataEntityResourceクラスのオブジェクト
      */
+    @WriteAPI
     @PUT
     public Response mypass() {
         // アクセス制御

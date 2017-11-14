@@ -37,6 +37,7 @@ import org.json.simple.JSONObject;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellRsCmp;
@@ -53,9 +54,6 @@ import io.personium.core.utils.ResourceUtils;
  *  logics for the url path /{cell name}/__import.
  */
 public class CellImportResource {
-
-//    /** Logger. */
-//    private static Logger log = LoggerFactory.getLogger(CellImportResource.class);
 
     /** Key of JSON specified by Body : Name. */
     private static final String BODY_JSON_KEY_NAME = "Name";
@@ -110,6 +108,7 @@ public class CellImportResource {
      * @param reader Request body
      * @return JAX-RS Response
      */
+    @WriteAPI
     @POST
     public Response post(final Reader reader) {
         // Check the authority required for execution.

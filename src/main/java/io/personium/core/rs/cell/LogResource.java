@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.event.EventUtils;
@@ -355,6 +356,7 @@ public class LogResource {
      * @return レスポンス
      */
     @Path("{logCollection}/{filename}")
+    @WriteAPI
     @DELETE
     public final Response deleteLogFile() {
         throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;

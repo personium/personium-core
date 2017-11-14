@@ -45,12 +45,14 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.model.Box;
-import io.personium.core.model.Cell;
-import io.personium.test.unit.core.UrlUtils;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
+
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.model.Cell;
+import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.Http;
+import io.personium.test.utils.TResponse;
 
 /**
  * JerseyTestFrameworkを利用したユニットテスト.
@@ -155,32 +157,169 @@ public class AbstractCase extends JerseyTest {
     }
 
     /**
-     * Box作成.
-     * @param cellName cell名
-     * @param boxName Box名
-     * @return Box作成時のレスポンスオブジェクト
+     * Create cell.
+     * @param cellName Cell name
+     * @param owner Owner
+     * @return API response
+     */
+    public TResponse createCell(String cellName, String owner) {
+        if (owner != null) {
+            return Http.request("cell-createWithOwner.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("owner", owner)
+                    .with("cellPath", cellName)
+                    .returns().debug().statusCode(HttpStatus.SC_CREATED);
+        } else {
+            return Http.request("cell-create.txt")
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("cellPath", cellName)
+                    .returns().debug().statusCode(HttpStatus.SC_CREATED);
+        }
+    }
+
+    /**
+     * Create box.
+     * @param cellName Cell name
+     * @param boxName Box name
+     * @return API response
+     */
+    public TResponse createBox(String cellName, String boxName) {
+        return createBox(cellName, boxName, null);
+    }
+
+    /**
+     * Create box.
+     * @param cellName Cell name
+     * @param boxName Box name
+     * @param boxSchema Box schema
+     * @return API response
+     */
+    public TResponse createBox(String cellName, String boxName, String boxSchema) {
+        if (boxSchema != null) {
+            return Http.request("cell/box-create-with-scheme.txt")
+                    .with("cellPath", cellName)
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("boxPath", boxName)
+                    .with("schema", boxSchema)
+                    .returns().debug().statusCode(HttpStatus.SC_CREATED);
+        } else {
+            return Http.request("cell/box-create.txt")
+                    .with("cellPath", cellName)
+                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                    .with("boxPath", boxName)
+                    .returns().debug().statusCode(HttpStatus.SC_CREATED);
+        }
+    }
+
+    /**
+     * Create account.
+     * Type is basic.
+     * @param cellName Cell name
+     * @param accountName Account name
+     * @param password Password
+     * @return API response
+     */
+    public TResponse createAccount(String cellName, String accountName, String password) {
+        return Http.request("account-create.txt")
+                .with("cellPath", cellName)
+                .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                .with("password", password)
+                .with("username", accountName)
+                .returns().debug().statusCode(HttpStatus.SC_CREATED);
+    }
+
+    /**
+     * Create role.
+     * @param cellName Cell name
+     * @param roleName Role name
+     * @return API response
+     */
+    public TResponse createRole(String cellName, String roleName) {
+        return createRole(cellName, roleName, null);
+    }
+
+    /**
+     * Create role.
+     * @param cellName Cell name
+     * @param roleName Role name
+     * @param boxName Box name
+     * @return API response
      */
     @SuppressWarnings("unchecked")
-    public final PersoniumResponse createBox(final String cellName, final String boxName) {
-        PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        PersoniumResponse res = null;
+    public TResponse createRole(String cellName, String roleName, String boxName) {
+        JSONObject jsonBody = new JSONObject();
+        jsonBody.put("Name", roleName);
+        jsonBody.put("_Box.Name", boxName);
 
-        // リクエストヘッダをセット
-        HashMap<String, String> requestheaders = new HashMap<String, String>();
-        requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
+        return Http.request("role-create.txt")
+                .with("cellPath", cellName)
+                .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                .with("body", jsonBody.toJSONString())
+                .returns().debug().statusCode(HttpStatus.SC_CREATED);
+    }
 
-        // リクエストボディを生成
-        JSONObject requestBody = new JSONObject();
-        requestBody.put("Name", boxName);
-        String data = requestBody.toJSONString();
+    /**
+     * Link account and role.
+     * @param cellName Cell name
+     * @param accountName Account name
+     * @param roleUrl Role url
+     * @return API response
+     */
+    public TResponse linkAccountAndRole(String cellName, String accountName, String roleUrl) {
+        return Http.request("cell/link-account-role.txt")
+                .with("cellPath", cellName)
+                .with("username", accountName)
+                .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                .with("roleUrl", roleUrl)
+                .returns().debug().statusCode(HttpStatus.SC_NO_CONTENT);
+    }
 
-        // リクエスト
-        try {
-            res = rest.post(UrlUtils.cellCtl(cellName, Box.EDM_TYPE_NAME), data, requestheaders);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        return res;
+    /**
+     * Create service collection.
+     * @param cellName Cell name
+     * @param boxName Box name
+     * @param path Path
+     * @return API response
+     */
+    public TResponse createServiceCollection(String cellName, String boxName, String path) {
+        return Http.request("box/mkcol-service-fullpath.txt")
+                .with("cell", cellName)
+                .with("box", boxName)
+                .with("path", path)
+                .with("token", AbstractCase.BEARER_MASTER_TOKEN)
+                .returns().debug().statusCode(HttpStatus.SC_CREATED);
+    }
+
+    /**
+     * Create webdav collection.
+     * @param cellName Cell name
+     * @param boxName Box name
+     * @param path Path
+     * @return API response
+     */
+    public TResponse createWebdavCollection(String cellName, String boxName, String path) {
+        return Http.request("box/mkcol-normal-fullpath.txt")
+                .with("cell", cellName)
+                .with("box", boxName)
+                .with("path", path)
+                .with("token", AbstractCase.BEARER_MASTER_TOKEN)
+                .returns().debug().statusCode(HttpStatus.SC_CREATED);
+    }
+
+    /**
+     * Create odata collection.
+     * @param cellName Cell name
+     * @param boxName Box name
+     * @param path Path
+     * @return API response
+     */
+    public TResponse createOdataCollection(String cellName, String boxName, String path) {
+        return Http.request("box/mkcol-odata.txt")
+                .with("cellPath", cellName)
+                .with("boxPath", boxName)
+                .with("path", path)
+                .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                .returns().debug().statusCode(HttpStatus.SC_CREATED);
     }
 
     /**

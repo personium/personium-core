@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.bar.BarFileInstaller;
@@ -281,6 +282,7 @@ public final class BoxResource {
      * @param requestBodyXml Request Body
      * @return JAX-RS Response
      */
+    @WriteAPI
     @WebDAVMethod.PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         // アクセス制御
@@ -302,6 +304,7 @@ public final class BoxResource {
      * @param reader 設定XML
      * @return JAX-RS Response
      */
+    @WriteAPI
     @ACL
     public Response acl(final Reader reader) {
         // アクセス制御
@@ -319,6 +322,7 @@ public final class BoxResource {
      * @param inStream HttpリクエストのInputStream
      * @return JAX-RS Response
      */
+    @WriteAPI
     @WebDAVMethod.MKCOL
     public Response mkcol(
             @Context final UriInfo uriInfo,
