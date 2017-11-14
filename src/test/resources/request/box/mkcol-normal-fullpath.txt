@@ -1,4 +1,4 @@
-MKCOL /${cell}/{box}/${path} HTTP/1.1
+MKCOL /${cell}/${box}/${path} HTTP/1.1
 Host: ?
 Content-Length: ?
 Connection: close

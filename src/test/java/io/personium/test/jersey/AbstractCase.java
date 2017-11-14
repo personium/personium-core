@@ -168,12 +168,12 @@ public class AbstractCase extends JerseyTest {
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
                     .with("owner", owner)
                     .with("cellPath", cellName)
-                    .returns().statusCode(HttpStatus.SC_CREATED);
+                    .returns().debug().statusCode(HttpStatus.SC_CREATED);
         } else {
             return Http.request("cell-create.txt")
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
                     .with("cellPath", cellName)
-                    .returns().statusCode(HttpStatus.SC_CREATED);
+                    .returns().debug().statusCode(HttpStatus.SC_CREATED);
         }
     }
 
@@ -201,13 +201,13 @@ public class AbstractCase extends JerseyTest {
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
                     .with("boxPath", boxName)
                     .with("schema", boxSchema)
-                    .returns().statusCode(HttpStatus.SC_CREATED);
+                    .returns().debug().statusCode(HttpStatus.SC_CREATED);
         } else {
             return Http.request("cell/box-create.txt")
                     .with("cellPath", cellName)
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
                     .with("boxPath", boxName)
-                    .returns().statusCode(HttpStatus.SC_CREATED);
+                    .returns().debug().statusCode(HttpStatus.SC_CREATED);
         }
     }
 
@@ -225,7 +225,7 @@ public class AbstractCase extends JerseyTest {
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("password", password)
                 .with("username", accountName)
-                .returns().statusCode(HttpStatus.SC_CREATED);
+                .returns().debug().statusCode(HttpStatus.SC_CREATED);
     }
 
     /**
@@ -255,7 +255,7 @@ public class AbstractCase extends JerseyTest {
                 .with("cellPath", cellName)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("body", jsonBody.toJSONString())
-                .returns().statusCode(HttpStatus.SC_CREATED);
+                .returns().debug().statusCode(HttpStatus.SC_CREATED);
     }
 
     /**
@@ -271,7 +271,7 @@ public class AbstractCase extends JerseyTest {
                 .with("username", accountName)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("roleUrl", roleUrl)
-                .returns().statusCode(HttpStatus.SC_NO_CONTENT);
+                .returns().debug().statusCode(HttpStatus.SC_NO_CONTENT);
     }
 
     /**
@@ -287,7 +287,7 @@ public class AbstractCase extends JerseyTest {
                 .with("box", boxName)
                 .with("path", path)
                 .with("token", AbstractCase.BEARER_MASTER_TOKEN)
-                .returns().statusCode(HttpStatus.SC_CREATED);
+                .returns().debug().statusCode(HttpStatus.SC_CREATED);
     }
 
     /**
@@ -303,7 +303,7 @@ public class AbstractCase extends JerseyTest {
                 .with("box", boxName)
                 .with("path", path)
                 .with("token", AbstractCase.BEARER_MASTER_TOKEN)
-                .returns().statusCode(HttpStatus.SC_CREATED);
+                .returns().debug().statusCode(HttpStatus.SC_CREATED);
     }
 
     /**
@@ -319,7 +319,7 @@ public class AbstractCase extends JerseyTest {
                 .with("boxPath", boxName)
                 .with("path", path)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .returns().statusCode(HttpStatus.SC_CREATED);
+                .returns().debug().statusCode(HttpStatus.SC_CREATED);
     }
 
     /**
