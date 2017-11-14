@@ -129,9 +129,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -149,9 +148,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -169,9 +167,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -189,9 +186,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -209,9 +205,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -229,9 +224,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -250,9 +244,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -271,9 +264,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -291,9 +283,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -311,9 +302,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -331,9 +321,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -351,9 +340,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -371,9 +359,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -391,9 +378,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -417,9 +403,8 @@ public class RoleCreateTest extends ODataCommon {
             PersoniumResponse resBox = createBox(boxname);
             locationHeaderBox = resBox.getFirstHeader(HttpHeaders.LOCATION);
 
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
 
         } finally {
             if (locationHeader != null) {
@@ -447,9 +432,8 @@ public class RoleCreateTest extends ODataCommon {
             PersoniumResponse resBox = createBox(boxname);
             locationHeaderBox = resBox.getFirstHeader(HttpHeaders.LOCATION);
 
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -476,9 +460,8 @@ public class RoleCreateTest extends ODataCommon {
             PersoniumResponse resBox = createBox(boxname);
             locationHeaderBox = resBox.getFirstHeader(HttpHeaders.LOCATION);
 
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -499,9 +482,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
                 CellCtlUtils.deleteOdataResource(locationHeader);
@@ -519,9 +501,8 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createTestRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
 
             // メッセージ確認
             ODataCommon.checkErrorResponseBody(res,
@@ -607,8 +588,8 @@ public class RoleCreateTest extends ODataCommon {
      * @param 期待するエラーステータスコード
      * @return ロケーションヘッダ
      */
-    private TResponse createTestRole(String roleName, String boxname) {
-        return createRole(cellName, roleName, boxname);
+    private TResponse createTestRole(String roleName, String boxname, int code) {
+        return RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, boxname, code);
     }
 
     /**

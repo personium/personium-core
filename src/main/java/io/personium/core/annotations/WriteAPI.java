@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  * Annotation given to the method of API that performs writing(deletion).
  * When the cell is locking write, make the corresponding method inoperable.
  */
-@Target({ElementType.METHOD})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WriteAPI {
 }

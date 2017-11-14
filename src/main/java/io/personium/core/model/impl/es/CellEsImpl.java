@@ -219,7 +219,9 @@ public final class CellEsImpl implements Cell {
         String[] paths = StringUtils.split(rPath, "/");
 
         CellEsImpl cell = (CellEsImpl) findCell("s.Name.untouched", paths[0]);
-        cell.url = getBaseUri(uriInfo, cell.name);
+        if (cell != null) {
+            cell.url = getBaseUri(uriInfo, cell.name);
+        }
         return cell;
     }
 
