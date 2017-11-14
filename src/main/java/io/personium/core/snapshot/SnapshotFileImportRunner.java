@@ -151,7 +151,7 @@ public class SnapshotFileImportRunner implements Runnable {
         Path webdavRootPath = Paths.get(PersoniumUnitConfig.getBlobStoreRoot(),
                 targetCell.getDataBundleName(), targetCell.getId());
         try {
-            FileUtils.deleteDirectory(webdavRootPath.toFile());
+            FileUtils.cleanDirectory(webdavRootPath.toFile());
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("delete WebDAV files").reason(e);
         }
@@ -255,7 +255,7 @@ public class SnapshotFileImportRunner implements Runnable {
      * @param snapshotFile snapshot file
      */
     private void addWebDAVToCell(SnapshotFile snapshotFile) {
-        Path webdavRootPathInZip = snapshotFile.getWebDAVDirPath().resolve(targetCell.getId());
+        Path webdavRootPathInZip = snapshotFile.getWebDAVDirPath();
         Path webdavRootPath = Paths.get(PersoniumUnitConfig.getBlobStoreRoot(),
                 targetCell.getDataBundleName(), targetCell.getId());
         // Use FileVisitor to process files recursively

@@ -72,7 +72,7 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
         // Create directory
         Path relativePath = webdavRootDirInZip.relativize(dir);
         Path path = webdavRootDir.resolve(relativePath.toString());
-        Files.createDirectory(path);
+        Files.createDirectories(path);
         return FileVisitResult.CONTINUE;
     }
 

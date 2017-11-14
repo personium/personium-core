@@ -16,6 +16,9 @@
  */
 package io.personium.core.jersey.filter;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 import com.sun.jersey.spi.container.ContainerResponseFilter;
@@ -54,7 +57,20 @@ public class WriteMethodFilter implements ResourceFilter, ContainerRequestFilter
     @Override
     public ContainerRequest filter(ContainerRequest request) {
         // Get cell name from URI.
-        String cellName = request.getPathSegments().get(0).getPath();
+        String path = request.getPathSegments().get(0).getPath();
+        if ("__ctl".equals(path)) {
+            // For __ctl it is UnitLevelAPI.
+            // Get {name} from [Cell('{name}') or Cell(Name='{name}')].
+            path = request.getPathSegments().get(1).getPath();
+            Pattern formatPattern = Pattern.compile("'(.+)'");
+            Matcher formatMatcher = formatPattern.matcher(path);
+            if (formatMatcher.find()) {
+                path = formatMatcher.group(1);
+            } else {
+                return request;
+            }
+        }
+        String cellName = path;
         Cell cell = ModelFactory.cell(cellName);
         if (cell != null) {
             CellLockManager.STATUS lockStatus = CellLockManager.getCellStatus(cell.getId());

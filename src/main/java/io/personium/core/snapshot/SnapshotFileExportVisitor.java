@@ -74,7 +74,7 @@ public class SnapshotFileExportVisitor implements FileVisitor<Path> {
         // Create directory in zip
         Path relativePath = webdavRootDir.relativize(dir);
         Path pathInZip = webdavRootDirInZip.resolve(relativePath.toString());
-        Files.createDirectory(pathInZip);
+        Files.createDirectories(pathInZip);
         return FileVisitResult.CONTINUE;
     }
 

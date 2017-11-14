@@ -303,7 +303,7 @@ public class SnapshotFileExportRunner implements Runnable {
      * @param snapshotFile snapshot file
      */
     private void addWebDAVToZip(SnapshotFile snapshotFile) {
-        Path webdavRootPathInZip = snapshotFile.getWebDAVDirPath().resolve(targetCell.getId());
+        Path webdavRootPathInZip = snapshotFile.getWebDAVDirPath();
         Path webdavRootPath = Paths.get(PersoniumUnitConfig.getBlobStoreRoot(),
                 targetCell.getDataBundleName(), targetCell.getId());
         // Use FileVisitor to process files recursively
