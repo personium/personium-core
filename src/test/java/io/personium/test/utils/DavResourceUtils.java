@@ -55,6 +55,25 @@ public class DavResourceUtils {
     }
 
     /**
+     * Create webdav collection.
+     * @param cellName Cell name
+     * @param boxName Box name
+     * @param path Path after box name
+     * @param token Token
+     * @param code Expected response code
+     * @return API response
+     */
+    public static TResponse createWebDAVCollection(
+            String cellName, String boxName, String path, String token, int code) {
+        return Http.request("box/mkcol-normal-fullpath.txt")
+                .with("cell", cellName)
+                .with("box", boxName)
+                .with("path", path)
+                .with("token", token)
+                .returns().debug().statusCode(code);
+    }
+
+    /**
      * コレクション作成及びACL設定(deleteやACLのテスト用).
      * @param path 対象のコレクションのパス
      * @param cellName セル名
@@ -180,7 +199,7 @@ public class DavResourceUtils {
      */
     public static TResponse createServiceCollection(String token, int code, String cell, String box, String col) {
         TResponse res = Http.request("box/mkcol-service-fullpath.txt")
-                .with("cell", cell).with("box", box).with("col", col)
+                .with("cell", cell).with("box", box).with("path", col)
                 .with("token", token).returns().debug();
         res.statusCode(code);
         return res;
@@ -872,6 +891,29 @@ public class DavResourceUtils {
         TResponse res = Http.request(fileName).with("cellPath", cell).with("token", token).with("box", boxName)
                 .with("path", path).returns().statusCode(code);
         return res;
+    }
+
+    /**
+     * Create webdav file.
+     * @param cellName Cell name
+     * @param boxName Box name
+     * @param path Path after box name
+     * @param contentType content-type
+     * @param token Token
+     * @param fileBody body
+     * @param code Expected response code
+     * @return API response
+     */
+    public static TResponse createWebDAVFile(
+            String cellName, String boxName, String path, String contentType, String token, String fileBody, int code) {
+        return Http.request("box/dav-put.txt")
+                .with("cellPath", cellName)
+                .with("box", boxName)
+                .with("path", path)
+                .with("contentType", contentType)
+                .with("token", token)
+                .with("source", fileBody)
+                .returns().debug().statusCode(code);
     }
 
     /**

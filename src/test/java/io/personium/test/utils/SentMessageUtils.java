@@ -37,6 +37,25 @@ public class SentMessageUtils {
     }
 
     /**
+     * Sent message.
+     * @param cellName Cell name
+     * @param to To
+     * @param title Title
+     * @param body Message body
+     * @param token Token
+     * @param code Expected response code
+     * @return API response
+     */
+    @SuppressWarnings("unchecked")
+    public static TResponse sent(String cellName, String to, String title, String body, String token, int code) {
+        JSONObject jsonBody = new JSONObject();
+        jsonBody.put("To", to);
+        jsonBody.put("Title", title);
+        jsonBody.put("Body", body);
+        return sent(token, cellName, jsonBody.toJSONString(), code);
+    }
+
+    /**
      * Messageの送信.
      * @param token トークン
      * @param cellName セル名

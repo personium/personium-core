@@ -190,7 +190,7 @@ public class AccountRoleLinkListTest extends AccountTest {
             createBox2(Setup.TEST_BOX2, null);
             accountUrl = this.createAccount(testAccountName, testAccountPass);
             role = createTestRole(testRoleName, Setup.TEST_BOX1);
-            role2 = createRole(testRoleName2, Setup.TEST_BOX2);
+            role2 = createTestRole(testRoleName2, Setup.TEST_BOX2);
 
             roleUrl = role.getHeader("Location");
             roleUrl2 = role2.getHeader("Location");
