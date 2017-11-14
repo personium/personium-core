@@ -22,7 +22,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
-import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -32,8 +31,8 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
@@ -190,7 +189,7 @@ public class AccountRoleLinkListTest extends AccountTest {
             createBox2(Setup.TEST_BOX1, null);
             createBox2(Setup.TEST_BOX2, null);
             accountUrl = this.createAccount(testAccountName, testAccountPass);
-            role = createRole(testRoleName, Setup.TEST_BOX1);
+            role = createTestRole(testRoleName, Setup.TEST_BOX1);
             role2 = createRole(testRoleName2, Setup.TEST_BOX2);
 
             roleUrl = role.getHeader("Location");
@@ -283,18 +282,8 @@ public class AccountRoleLinkListTest extends AccountTest {
      * @param boxname
      * @return レスポンス
      */
-    @SuppressWarnings("unchecked")
-    private TResponse createRole(String roleName, String boxname) {
-        JSONObject body = new JSONObject();
-        body.put("Name", roleName);
-        body.put("_Box.Name", boxname);
-
-        return Http.request("role-create.txt")
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", cellName)
-                .with("body", body.toString())
-                .returns()
-                .debug();
+    private TResponse createTestRole(String roleName, String boxname) {
+        return createRole(cellName, roleName, boxname);
     }
 
     /**

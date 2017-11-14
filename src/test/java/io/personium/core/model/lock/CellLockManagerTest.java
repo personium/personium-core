@@ -146,11 +146,12 @@ public class CellLockManagerTest {
     @Test
     public void セルの処理状態を一括削除処理中に設定する() {
         try {
-            Boolean createdResult = CellLockManager.setBulkDeletionStatus("TestingCellId");
+            Boolean createdResult = CellLockManager.setCellStatus("TestingCellId",
+                    CellLockManager.STATUS.BULK_DELETION);
             assertTrue(createdResult);
 
-            long fetchedCount = CellLockManager.getCellStatus("TestingCellId");
-            assertEquals(1, fetchedCount);
+            CellLockManager.STATUS status = CellLockManager.getCellStatus("TestingCellId");
+            assertEquals(CellLockManager.STATUS.BULK_DELETION, status);
         } catch (PersoniumCoreException e) {
             fail();
         }
@@ -162,11 +163,11 @@ public class CellLockManagerTest {
     @Test
     public void セルの処理状態を一括削除してない中に設定する() {
         try {
-            Boolean createdResult = CellLockManager.resetBulkDeletionStatus("TestingCellId");
+            Boolean createdResult = CellLockManager.setCellStatus("TestingCellId", CellLockManager.STATUS.NORMAL);
             assertTrue(createdResult);
 
-            long fetchedCount = CellLockManager.getCellStatus("TestingCellId");
-            assertEquals(0, fetchedCount);
+            CellLockManager.STATUS status = CellLockManager.getCellStatus("TestingCellId");
+            assertEquals(CellLockManager.STATUS.NORMAL, status);
         } catch (PersoniumCoreException e) {
             fail();
         }
@@ -178,17 +179,17 @@ public class CellLockManagerTest {
     @Test
     public void セルの処理状態が一括削除してない中の場合に状態を一括削除処理中に更新する() {
         try {
-            Boolean result = CellLockManager.resetBulkDeletionStatus("TestingCellId");
+            Boolean result = CellLockManager.setCellStatus("TestingCellId", CellLockManager.STATUS.NORMAL);
             assertTrue(result);
 
-            long fetchedCount = CellLockManager.getCellStatus("TestingCellId");
-            assertEquals(0, fetchedCount);
+            CellLockManager.STATUS status = CellLockManager.getCellStatus("TestingCellId");
+            assertEquals(CellLockManager.STATUS.NORMAL, status);
 
-            Boolean updateResult = CellLockManager.setBulkDeletionStatus("TestingCellId");
-            assertTrue(updateResult);
+            result = CellLockManager.setCellStatus("TestingCellId", CellLockManager.STATUS.BULK_DELETION);
+            assertTrue(result);
 
-            fetchedCount = CellLockManager.getCellStatus("TestingCellId");
-            assertEquals(1, fetchedCount);
+            status = CellLockManager.getCellStatus("TestingCellId");
+            assertEquals(CellLockManager.STATUS.BULK_DELETION, status);
         } catch (PersoniumCoreException e) {
             fail();
         }

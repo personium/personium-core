@@ -129,7 +129,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -149,7 +149,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -169,7 +169,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -189,7 +189,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -209,7 +209,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -229,7 +229,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_CREATED);
         } finally {
@@ -250,7 +250,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_CREATED);
         } finally {
@@ -271,7 +271,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -291,7 +291,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -311,7 +311,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -331,7 +331,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -351,7 +351,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -371,7 +371,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -391,7 +391,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -417,7 +417,7 @@ public class RoleCreateTest extends ODataCommon {
             PersoniumResponse resBox = createBox(boxname);
             locationHeaderBox = resBox.getFirstHeader(HttpHeaders.LOCATION);
 
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_CREATED);
 
@@ -447,7 +447,7 @@ public class RoleCreateTest extends ODataCommon {
             PersoniumResponse resBox = createBox(boxname);
             locationHeaderBox = resBox.getFirstHeader(HttpHeaders.LOCATION);
 
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_CREATED);
         } finally {
@@ -476,7 +476,7 @@ public class RoleCreateTest extends ODataCommon {
             PersoniumResponse resBox = createBox(boxname);
             locationHeaderBox = resBox.getFirstHeader(HttpHeaders.LOCATION);
 
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -499,7 +499,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
@@ -519,7 +519,7 @@ public class RoleCreateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createRole(roleName, boxname);
+            TResponse res = createTestRole(roleName, boxname);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
 
@@ -607,18 +607,8 @@ public class RoleCreateTest extends ODataCommon {
      * @param 期待するエラーステータスコード
      * @return ロケーションヘッダ
      */
-    @SuppressWarnings("unchecked")
-    private TResponse createRole(String roleName, String boxname) {
-        JSONObject body = new JSONObject();
-        body.put("Name", roleName);
-        body.put("_Box.Name", boxname);
-
-        return Http.request("role-create.txt")
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", cellName)
-                .with("body", body.toString())
-                .returns()
-                .debug();
+    private TResponse createTestRole(String roleName, String boxname) {
+        return createRole(cellName, roleName, boxname);
     }
 
     /**

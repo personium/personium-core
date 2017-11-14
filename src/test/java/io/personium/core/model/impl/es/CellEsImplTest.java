@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.model.impl.es;
+package io.personium.core.model.impl.es;
 
 import static org.junit.Assert.assertNull;
+
+import java.lang.reflect.Method;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.model.impl.es.CellEsImpl;
 import io.personium.test.categories.Unit;
 
 /**
@@ -35,34 +36,54 @@ public class CellEsImplTest {
 
     /**
      * 空白を含むCell名を指定してnullが返却されること.
+     * @throws Exception Unexpected error
      */
     @Test
-    public void 空白を含むCell名を指定してnullが返却されること() {
-        assertNull(CellEsImpl.findCell("s.Name.untouched", "cell test", null));
+    public void 空白を含むCell名を指定してnullが返却されること() throws Exception {
+        // Load methods for private
+        Method method = CellEsImpl.class.getDeclaredMethod("findCell", String.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        assertNull(method.invoke(null, "s.Name.untouched", "cell test"));
     }
 
     /**
      * 改行制御コードを含むCell名を指定してnullが返却されること.
+     * @throws Exception Unexpected error
      */
     @Test
-    public void 改行制御コードを含むCell名を指定してnullが返却されること() {
-        assertNull(CellEsImpl.findCell("s.Name.untouched", "cell\ntest", null));
+    public void 改行制御コードを含むCell名を指定してnullが返却されること() throws Exception {
+        // Load methods for private
+        Method method = CellEsImpl.class.getDeclaredMethod("findCell", String.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        assertNull(method.invoke(null, "s.Name.untouched", "cell\ntest"));
     }
 
     /**
      * タブ制御コードを含むCell名を指定してnullが返却されること.
+     * @throws Exception Unexpected error
      */
     @Test
-    public void タブ制御コードを含むCell名を指定してnullが返却されること() {
-        assertNull(CellEsImpl.findCell("s.Name.untouched", "cell\ttest", null));
+    public void タブ制御コードを含むCell名を指定してnullが返却されること() throws Exception {
+        // Load methods for private
+        Method method = CellEsImpl.class.getDeclaredMethod("findCell", String.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        assertNull(method.invoke(null, "s.Name.untouched", "cell\ttest"));
     }
 
     /**
      * リターンコードを含むCell名を指定してnullが返却されること.
+     * @throws Exception Unexpected error
      */
     @Test
-    public void リターンコードを含むCell名を指定してnullが返却されること() {
-        assertNull(CellEsImpl.findCell("s.Name.untouched", "cell\rtest", null));
+    public void リターンコードを含むCell名を指定してnullが返却されること() throws Exception {
+        // Load methods for private
+        Method method = CellEsImpl.class.getDeclaredMethod("findCell", String.class, String.class);
+        method.setAccessible(true);
+        // Run method
+        assertNull(method.invoke(null, "s.Name.untouched", "cell\rtest"));
     }
 
     /**
