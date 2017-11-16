@@ -1,3 +1,7 @@
+## 1.5.5
+IMPROVEMENTS:
+* Add Cell export import function.(Release.)([#43](https://github.com/personium/personium-core/issues/43))
+
 ## 1.5.4
 BUG FIXES:
 * Memcached Changes the behavior at update failure.([#35](https://github.com/personium/personium-core/issues/35))
