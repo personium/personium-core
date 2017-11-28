@@ -1567,11 +1567,12 @@ public class UserDataLinkTest extends AbstractUserDataTest {
     }
 
     /**
-     * link済みのユーザデータを削除できないこと_AssociationEndがアスタ対アスタ.
+     * Noramal test.
+     * Delete linked userdata. many-many.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void link済みのユーザデータを削除できないこと_AssociationEndがアスタ対アスタ() {
+    public final void normal_delete_linked_userdata_many_many() {
         String srcEntityType = "Product";
         String targetEntityType = "Sales";
         String srcUserDataId = "src-Id";
@@ -1592,7 +1593,7 @@ public class UserDataLinkTest extends AbstractUserDataTest {
 
             // $links先のユーザデータ削除
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_CONFLICT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
 
             // $links一覧取得
             TResponse resList = Http.request("box/odatacol/list-link.txt")
@@ -1607,17 +1608,15 @@ public class UserDataLinkTest extends AbstractUserDataTest {
                     .statusCode(HttpStatus.SC_OK)
                     .debug();
             ArrayList<String> expectedUriList = new ArrayList<String>();
-            expectedUriList.add(UrlUtils.userdata(Setup.TEST_CELL1, Setup.TEST_BOX1,
-                    Setup.TEST_ODATA, targetEntityType, targetUserDataId));
             // レスポンスボディのチェック
             ODataCommon.checkLinResponseBody(resList.bodyAsJson(), expectedUriList);
         } finally {
             ResourceUtils.deleteUserDataLinks(srcUserDataId, targetUserDataId, targetEntityType, Setup.TEST_CELL1,
                     Setup.TEST_BOX1, Setup.TEST_ODATA, srcEntityType, -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    srcEntityType, srcUserDataId, PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA,
-                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), HttpStatus.SC_NO_CONTENT);
+                    targetEntityType, targetUserDataId, PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
