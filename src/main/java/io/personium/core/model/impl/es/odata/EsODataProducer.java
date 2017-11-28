@@ -326,37 +326,6 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * N:N、1-0:1-0の削除処理時にリンクの検索処理を行う.
-     * @param np EdmNavigationProperty
-     * @param entityKey entityKey
-     * @return 存在する場合true
-     */
-    public boolean findLinks(final EdmNavigationProperty np, final OEntityKey entityKey) {
-        EdmAssociationEnd from = np.getFromRole();
-        EdmAssociationEnd to = np.getToRole();
-        if (EdmMultiplicity.MANY.equals(from.getMultiplicity())
-                && EdmMultiplicity.MANY.equals(to.getMultiplicity())) {
-            OEntityId oeId = OEntityIds.create(from.getType().getName(), entityKey);
-            EntityIdResponse response = null;
-            String npName = np.getName();
-            response = this.getLinks(oeId, npName);
-            int count;
-            if (response.getMultiplicity() == EdmMultiplicity.MANY) {
-                count = response.getEntities().size();
-            } else {
-                OEntityId entityId = Enumerable.create(response.getEntities()).firstOrNull();
-                if (entityId == null) {
-                    count = 0;
-                } else {
-                    count = 1;
-                }
-            }
-            return count > 0;
-        }
-        return false;
-    }
-
-    /**
      * PK, UKで指定されたユニーク性確保のためOData空間のLockを行う.
      * @param lock
      */
@@ -1026,12 +995,17 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
             // Linkデータの有無を確認する
             for (EdmNavigationProperty np : srcType.getDeclaredNavigationProperties().toList()) {
-                if (this.findMultiPoint(np, entityKey) || this.findLinks(np, entityKey)) {
+                if (this.findMultiPoint(np, entityKey)) {
                     throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
                 }
             }
 
             // Link情報の削除
+            // N:N
+            for (EdmNavigationProperty np : srcType.getDeclaredNavigationProperties().toList()) {
+                deleteLinks(np, hit);
+            }
+            // N:1
             // 紐ついているリンク情報を取得する
             Map<String, Object> target = hit.getManyToOnelinkId();
             for (Entry<String, Object> entry : target.entrySet()) {
@@ -2070,6 +2044,41 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
+     * Delete N:N links.
+     * @param navigationProperty EdmNavigationProperty
+     * @param fromDocHandler dochandler
+     */
+    private void deleteLinks(EdmNavigationProperty navigationProperty, EntitySetDocHandler fromDocHandler) {
+        EdmAssociationEnd from = navigationProperty.getFromRole();
+        EdmAssociationEnd to = navigationProperty.getToRole();
+        if (EdmMultiplicity.MANY.equals(from.getMultiplicity())
+                && EdmMultiplicity.MANY.equals(to.getMultiplicity())) {
+            String toTypeName = to.getType().getName();
+            // In the case of links of user data, get _id of EntityType.
+            String toEntityTypeId = null;
+            if (UserDataODataProducer.USER_ODATA_NAMESPACE.equals(fromDocHandler.getType())) {
+                toEntityTypeId = getEntityTypeId(toTypeName);
+            }
+            // Get links up to the registered number limit.
+            EntitySetAccessor toEsType = getAccessorForEntitySet(toTypeName);
+            QueryInfo queryInfo = QueryInfo.newBuilder().setTop(PersoniumUnitConfig.getLinksNtoNMaxSize())
+                    .setInlineCount(InlineCount.NONE).build();
+            List<String> idvals = LinkDocHandler.query(this.getAccessorForLink(),
+                    fromDocHandler, toEsType.getType(), toEntityTypeId, queryInfo);
+
+            PersoniumSearchHits searchHits = ODataProducerUtils.searchLinksNN(idvals, toEsType, null);
+            if (searchHits == null || searchHits.getCount() == 0) {
+                return;
+            }
+            // Delete links.
+            for (PersoniumSearchHit hit : searchHits.getHits()) {
+                EntitySetDocHandler toDocHandler = getDocHandler(hit, toTypeName);
+                deleteLinkEntity(fromDocHandler, toDocHandler);
+            }
+        }
+    }
+
+    /**
      * N:Nのリンク情報を削除する.
      * @param sourceEntityId リクエストURLにて指定されたEntity
      * @param targetEntityKey リクエストBODYにて指定されたEntity
@@ -2339,8 +2348,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             List<String> idvals = LinkDocHandler.query(this.getAccessorForLink(),
                     src, tgtEsType.getType(), targetEntityTypeId, qi);
 
-            PersoniumSearchHits sHits = ODataProducerUtils.searchLinksNN(
-                    src, targetSetName, idvals, tgtEsType, queryInfo);
+            PersoniumSearchHits sHits = ODataProducerUtils.searchLinksNN(idvals, tgtEsType, queryInfo);
             oeids = getOEntityIds(sHits, targetSetName, tgtSet);
 
         } else if ((assoc.getEnd1().getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE //NOPMD -To maintain readability

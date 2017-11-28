@@ -41,6 +41,8 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
+import io.personium.core.model.ctl.Account;
+import io.personium.core.model.ctl.Role;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -58,6 +60,7 @@ import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.EntityTypeUtils;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.ODataSchemaUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
@@ -937,18 +940,18 @@ public class AclAlterSchemaTest extends JerseyTest {
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_NO_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_ALL_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_COMB_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
-        AccountUtils.createLinkWithRole(
-                MASTER_TOKEN, CELL_NAME, null, ACCOUNT_READ, roleRead, HttpStatus.SC_NO_CONTENT);
-        AccountUtils.createLinkWithRole(
-                MASTER_TOKEN, CELL_NAME, null, ACCOUNT_WRITE, roleWrite, HttpStatus.SC_NO_CONTENT);
-        AccountUtils.createLinkWithRole(
-                MASTER_TOKEN, CELL_NAME, null, ACCOUNT_ALTER_SCHEMA, roleAlterSchema, HttpStatus.SC_NO_CONTENT);
-        AccountUtils.createLinkWithRole(
-                MASTER_TOKEN, CELL_NAME, null, ACCOUNT_NO_PRIVILEGE, roleNoPrivilege, HttpStatus.SC_NO_CONTENT);
-        AccountUtils.createLinkWithRole(
-                MASTER_TOKEN, CELL_NAME, null, ACCOUNT_ALL_PRIVILEGE, roleAllPrivilege, HttpStatus.SC_NO_CONTENT);
-        AccountUtils.createLinkWithRole(
-                MASTER_TOKEN, CELL_NAME, null, ACCOUNT_COMB_PRIVILEGE, roleCombPrivilege, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_READ, null,
+                Role.EDM_TYPE_NAME, roleRead, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_WRITE, null,
+                Role.EDM_TYPE_NAME, roleWrite, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_ALTER_SCHEMA, null,
+                Role.EDM_TYPE_NAME, roleAlterSchema, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_NO_PRIVILEGE, null,
+                Role.EDM_TYPE_NAME, roleNoPrivilege, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_ALL_PRIVILEGE, null,
+                Role.EDM_TYPE_NAME, roleAllPrivilege, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_COMB_PRIVILEGE, null,
+                Role.EDM_TYPE_NAME, roleCombPrivilege, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
     }
 
 }

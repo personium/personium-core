@@ -42,8 +42,8 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
-import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.Relation;
+import io.personium.core.model.ctl.Role;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumRequest;
@@ -60,8 +60,8 @@ import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.ExtRoleUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RelationUtils;
-import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
@@ -360,8 +360,8 @@ public class Setup extends AbstractCase {
                     HttpStatus.SC_CREATED);
             // RelationとExtCellの$link
             for (String extCell : relation.linkExtCell) {
-                ResourceUtils.linksWithBody(conf.cellName, Relation.EDM_TYPE_NAME, relation.name, "null",
-                        ExtCell.EDM_TYPE_NAME, UrlUtils.extCellResource(conf.cellName, extCell),
+                LinksUtils.createLinksExtCell(conf.cellName, PersoniumCoreUtils.encodeUrlComp(extCell),
+                        Relation.EDM_TYPE_NAME, relation.name, null,
                         AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
             }
         }
@@ -389,9 +389,9 @@ public class Setup extends AbstractCase {
             // ExtRoleとRoleの紐付け
             if (role.linkExtRole != null) {
                 for (ExtRoleConfig extRole : role.linkExtRole) {
-                    ResourceUtils.linksExtRoleToRole(conf.cellName, PersoniumCoreUtils.encodeUrlComp(extRole.extRole),
-                            "'" + extRole.relationName + "'", extRole.relationBoxName, roleUrl,
-                            AbstractCase.MASTER_TOKEN_NAME);
+                    LinksUtils.createLinksExtRole(conf.cellName, PersoniumCoreUtils.encodeUrlComp(extRole.extRole),
+                            extRole.relationName, extRole.relationBoxName, Role.EDM_TYPE_NAME, role.roleName, null,
+                            AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
                 }
             }
             if ("testcell2".equals(conf.cellName)) {

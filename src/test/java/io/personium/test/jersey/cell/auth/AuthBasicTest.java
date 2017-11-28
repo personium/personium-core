@@ -39,6 +39,8 @@ import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
 
 import io.personium.core.PersoniumCoreAuthzException;
+import io.personium.core.model.ctl.Account;
+import io.personium.core.model.ctl.Role;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -54,6 +56,7 @@ import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
@@ -494,8 +497,8 @@ public class AuthBasicTest extends JerseyTest {
         RoleUtils.create(MY_CELL, AbstractCase.MASTER_TOKEN_NAME, TEST_ROLE, TEST_BOX1, HttpStatus.SC_CREATED);
         AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, MY_CELL, TEST_ACCOUNT, TEST_ACCOUNT_PASSWORD,
                 HttpStatus.SC_CREATED);
-        AccountUtils.createLinkWithRole(AbstractCase.MASTER_TOKEN_NAME, MY_CELL, TEST_BOX1, TEST_ACCOUNT,
-                TEST_ROLE, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(MY_CELL, Account.EDM_TYPE_NAME, TEST_ACCOUNT, null,
+                Role.EDM_TYPE_NAME, TEST_ROLE, TEST_BOX1, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
         Acl acl = new Acl();
         List<String> privileges = new ArrayList<String>();

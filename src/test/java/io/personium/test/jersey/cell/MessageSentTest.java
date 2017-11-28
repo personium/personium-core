@@ -34,8 +34,10 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessagePort;
+import io.personium.core.model.ctl.Role;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -49,9 +51,9 @@ import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.ReceivedMessageUtils;
 import io.personium.test.utils.RelationUtils;
-import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.SentMessageUtils;
 import io.personium.test.utils.TResponse;
@@ -1988,8 +1990,8 @@ public class MessageSentTest extends ODataCommon {
                     .with("roleBaseUrl", UrlUtils.roleResource(srcCellName, null, "")).returns()
                     .statusCode(HttpStatus.SC_OK);
             // Set links account and role
-            ResourceUtils.linkAccountRole(srcCellName, MASTER_TOKEN_NAME, "account4", null,
-                    "testRole001", HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // App auth
             TResponse authnRes = CellUtils.tokenAuthenticationWithTarget(appCellName, "account0",
@@ -2058,7 +2060,8 @@ public class MessageSentTest extends ODataCommon {
             // Delete received message
             deleteReceivedMessage(targetCellName, UrlUtils.cellRoot(srcCellName), messageType, "title", "body");
             // Delete Role and Account $links
-            ResourceUtils.linkAccountRollDelete(srcCellName, MASTER_TOKEN_NAME, "account4", null, "testRole001");
+            LinksUtils.deleteLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, -1);
             // Delete role
             RoleUtils.delete(srcCellName, MASTER_TOKEN_NAME, "testRole001", null, -1);
         }
@@ -2105,8 +2108,8 @@ public class MessageSentTest extends ODataCommon {
                     .with("roleBaseUrl", UrlUtils.roleResource(srcCellName, null, "")).returns()
                     .statusCode(HttpStatus.SC_OK);
             // Set links account and role
-            ResourceUtils.linkAccountRole(srcCellName, MASTER_TOKEN_NAME, "account4", null,
-                    "testRole001", HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // App auth
             TResponse authnRes = CellUtils.tokenAuthenticationWithTarget(appCellName, "account0",
@@ -2175,7 +2178,8 @@ public class MessageSentTest extends ODataCommon {
             // Delete received message
             deleteReceivedMessage(targetCellName, UrlUtils.cellRoot(srcCellName), messageType, "title", "body");
             // Delete Role and Account $links
-            ResourceUtils.linkAccountRollDelete(srcCellName, MASTER_TOKEN_NAME, "account4", null, "testRole001");
+            LinksUtils.deleteLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, -1);
             // Delete role
             RoleUtils.delete(srcCellName, MASTER_TOKEN_NAME, "testRole001", null, -1);
         }
@@ -2222,8 +2226,8 @@ public class MessageSentTest extends ODataCommon {
                     .with("roleBaseUrl", UrlUtils.roleResource(srcCellName, null, "")).returns()
                     .statusCode(HttpStatus.SC_OK);
             // Set links account and role
-            ResourceUtils.linkAccountRole(srcCellName, MASTER_TOKEN_NAME, "account4", null, "testRole001",
-                    HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // App auth
             TResponse authnRes = CellUtils.tokenAuthenticationWithTarget(appCellName, "account0", "password0",
@@ -2292,7 +2296,8 @@ public class MessageSentTest extends ODataCommon {
             // Delete received message
             deleteReceivedMessage(targetCellName, UrlUtils.cellRoot(srcCellName), messageType, "title", "body");
             // Delete Role and Account $links
-            ResourceUtils.linkAccountRollDelete(srcCellName, MASTER_TOKEN_NAME, "account4", null, "testRole001");
+            LinksUtils.deleteLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, -1);
             // Delete role
             RoleUtils.delete(srcCellName, MASTER_TOKEN_NAME, "testRole001", null, -1);
         }
@@ -2339,8 +2344,8 @@ public class MessageSentTest extends ODataCommon {
                     .with("roleBaseUrl", UrlUtils.roleResource(srcCellName, null, "")).returns()
                     .statusCode(HttpStatus.SC_OK);
             // Set links account and role
-            ResourceUtils.linkAccountRole(srcCellName, MASTER_TOKEN_NAME, "account4", null,
-                    "testRole001", HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // App auth
             TResponse authnRes = CellUtils.tokenAuthenticationWithTarget(appCellName, "account0",
@@ -2409,7 +2414,8 @@ public class MessageSentTest extends ODataCommon {
             // Delete received message
             deleteReceivedMessage(targetCellName, UrlUtils.cellRoot(srcCellName), messageType, "title", "body");
             // Delete Role and Account $links
-            ResourceUtils.linkAccountRollDelete(srcCellName, MASTER_TOKEN_NAME, "account4", null, "testRole001");
+            LinksUtils.deleteLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, -1);
             // Delete role
             RoleUtils.delete(srcCellName, MASTER_TOKEN_NAME, "testRole001", null, -1);
         }
@@ -2456,8 +2462,8 @@ public class MessageSentTest extends ODataCommon {
                     .with("roleBaseUrl", UrlUtils.roleResource(srcCellName, null, "")).returns()
                     .statusCode(HttpStatus.SC_OK);
             // Set links account and role
-            ResourceUtils.linkAccountRole(srcCellName, MASTER_TOKEN_NAME, "account4", null, "testRole001",
-                    HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // App auth
             TResponse authnRes = CellUtils.tokenAuthenticationWithTarget(appCellName, "account0", "password0",
@@ -2526,7 +2532,8 @@ public class MessageSentTest extends ODataCommon {
             // Delete received message
             deleteReceivedMessage(targetCellName, UrlUtils.cellRoot(srcCellName), messageType, "title", "body");
             // Delete Role and Account $links
-            ResourceUtils.linkAccountRollDelete(srcCellName, MASTER_TOKEN_NAME, "account4", null, "testRole001");
+            LinksUtils.deleteLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, -1);
             // Delete role
             RoleUtils.delete(srcCellName, MASTER_TOKEN_NAME, "testRole001", null, -1);
         }
@@ -2578,8 +2585,8 @@ public class MessageSentTest extends ODataCommon {
                     .with("roleBaseUrl", UrlUtils.roleResource(srcCellName, null, "")).returns()
                     .statusCode(HttpStatus.SC_OK);
             // Set links account and role
-            ResourceUtils.linkAccountRole(srcCellName, MASTER_TOKEN_NAME, "account4", null,
-                    "testRole001", HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // App auth
             TResponse authnRes = CellUtils.tokenAuthenticationWithTarget(appCellName, "account0",
@@ -2623,7 +2630,8 @@ public class MessageSentTest extends ODataCommon {
             // Delete Cell
             CellUtils.delete(MASTER_TOKEN_NAME, appCellName, -1);
             // Delete Role and Account $links
-            ResourceUtils.linkAccountRollDelete(srcCellName, MASTER_TOKEN_NAME, "account4", null, "testRole001");
+            LinksUtils.deleteLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, -1);
             // Delete role
             RoleUtils.delete(srcCellName, MASTER_TOKEN_NAME, "testRole001", null, -1);
         }
@@ -2678,8 +2686,8 @@ public class MessageSentTest extends ODataCommon {
                     .with("roleBaseUrl", UrlUtils.roleResource(srcCellName, null, "")).returns()
                     .statusCode(HttpStatus.SC_OK);
             // Set links account and role
-            ResourceUtils.linkAccountRole(srcCellName, MASTER_TOKEN_NAME, "account4", null,
-                    "testRole001", HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // App auth
             TResponse authnRes = CellUtils.tokenAuthenticationWithTarget(appCellName, "account0",
@@ -2752,7 +2760,8 @@ public class MessageSentTest extends ODataCommon {
             // Delete Cell
             CellUtils.delete(MASTER_TOKEN_NAME, appCellName, -1);
             // Delete Role and Account $links
-            ResourceUtils.linkAccountRollDelete(srcCellName, MASTER_TOKEN_NAME, "account4", null, "testRole001");
+            LinksUtils.deleteLinks(srcCellName, Account.EDM_TYPE_NAME, "account4", null,
+                    Role.EDM_TYPE_NAME, "testRole001", null, MASTER_TOKEN_NAME, -1);
             // Delete role
             RoleUtils.delete(srcCellName, MASTER_TOKEN_NAME, "testRole001", null, -1);
         }

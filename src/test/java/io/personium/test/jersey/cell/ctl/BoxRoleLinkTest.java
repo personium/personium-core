@@ -30,6 +30,8 @@ import org.junit.runner.RunWith;
 
 import com.sun.jersey.test.framework.JerseyTest;
 
+import io.personium.core.model.Box;
+import io.personium.core.model.ctl.Role;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -41,6 +43,7 @@ import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
@@ -99,10 +102,9 @@ public class BoxRoleLinkTest extends JerseyTest {
     @Test
     public final void BoxとRoleのlinkを登録しresponseが204であること() {
         try {
-            Http.request("links-request-with-body.txt")
-                    .with("method", "POST")
+            Http.request("links-create.txt")
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", CELL_NAME)
+                    .with("cellName", CELL_NAME)
                     .with("entitySet", ENTITY_SET_BOX)
                     .with("key", KEY)
                     .with("navProp", NAV_PROP_ROLE)
@@ -120,10 +122,9 @@ public class BoxRoleLinkTest extends JerseyTest {
     public final void RoleとBoxのlinkを登録しresponseが204であること() {
         String boxUri = UrlUtils.cellCtlWithoutSingleQuote(CELL_NAME, ENTITY_SET_BOX, KEY);
         try {
-            Http.request("links-request-with-body.txt")
-                    .with("method", "POST")
+            Http.request("links-create.txt")
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", CELL_NAME)
+                    .with("cellName", CELL_NAME)
                     .with("entitySet", ENTITY_SET_ROLE)
                     .with("key", roleKey)
                     .with("navProp", NAV_PROP_BOX).with("uri", boxUri).returns()
@@ -151,11 +152,10 @@ public class BoxRoleLinkTest extends JerseyTest {
             BoxUtils.create(cellName, boxName, TOKEN);
 
             // Role-Box $links登録
-            RoleUtils.createLink(cellName, TOKEN, RoleUtils.keyString(roleName), "Box", "'" + baseBoxName + "'",
-                    HttpStatus.SC_NO_CONTENT);
-            RoleUtils.createLink(cellName, TOKEN, RoleUtils.keyString(roleName, baseBoxName),
-                    "Box", "'" + boxName + "'",
-                    HttpStatus.SC_CONFLICT);
+            LinksUtils.createLinks(cellName, Role.EDM_TYPE_NAME, roleName, null,
+                    Box.EDM_TYPE_NAME, baseBoxName, null, TOKEN, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(cellName, Role.EDM_TYPE_NAME, roleName, baseBoxName,
+                    Box.EDM_TYPE_NAME, boxName, null, TOKEN, HttpStatus.SC_CONFLICT);
         } finally {
             // Role削除
             RoleUtils.delete(cellName, TOKEN, roleName, null, -1);
@@ -184,11 +184,10 @@ public class BoxRoleLinkTest extends JerseyTest {
             BoxUtils.create(cellName, boxName, TOKEN);
 
             // Role-Box $links登録
-            RoleUtils.createLink(cellName, TOKEN, RoleUtils.keyString(roleName), "Box", "'" + boxName + "'",
-                    HttpStatus.SC_NO_CONTENT);
-            RoleUtils.createLink(cellName, TOKEN, RoleUtils.keyString(roleName, boxName),
-                    "Box", "'" + boxName + "'",
-                    HttpStatus.SC_CONFLICT);
+            LinksUtils.createLinks(cellName, Role.EDM_TYPE_NAME, roleName, null,
+                    Box.EDM_TYPE_NAME, boxName, null, TOKEN, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(cellName, Role.EDM_TYPE_NAME, roleName, boxName,
+                    Box.EDM_TYPE_NAME, boxName, null, TOKEN, HttpStatus.SC_CONFLICT);
         } finally {
             // Role削除
             RoleUtils.delete(cellName, TOKEN, roleName, boxName, -1);
@@ -204,10 +203,9 @@ public class BoxRoleLinkTest extends JerseyTest {
      */
     @Test
     public final void 存在しないBoxを指定してRoleのlinkを登録した場合responseが404であること() {
-        Http.request("links-request-with-body.txt")
-                .with("method", "POST")
+        Http.request("links-create.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", "'boxx'")
                 .with("navProp", NAV_PROP_ROLE)
@@ -222,10 +220,9 @@ public class BoxRoleLinkTest extends JerseyTest {
     public final void 存在しないRoleを指定してBoxのlinkを登録した場合responseが400であること() {
         String noRoleUri = UrlUtils.cellCtlWithoutSingleQuote(CELL_NAME, ENTITY_SET_ROLE, "Name='keyx',_Box.Name="
                 + KEY);
-        Http.request("links-request-with-body.txt")
-                .with("method", "POST")
+        Http.request("links-create.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", KEY)
                 .with("navProp", NAV_PROP_ROLE)
@@ -238,10 +235,9 @@ public class BoxRoleLinkTest extends JerseyTest {
      */
     @Test
     public final void 存在しないEntitySetにRoleのlinkを登録しresponseが404であること() {
-        Http.request("links-request-with-body.txt")
-                .with("method", "POST")
+        Http.request("links-create.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", "test")
                 .with("key", KEY)
                 .with("navProp", NAV_PROP_ROLE)
@@ -254,10 +250,9 @@ public class BoxRoleLinkTest extends JerseyTest {
      */
     @Test
     public final void Boxに存在しないNavigationPropetiesを指定してlinkを登録しresponseが400であること() {
-        Http.request("links-request-with-body.txt")
-                .with("method", "POST")
+        Http.request("links-create.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", KEY)
                 .with("navProp", "_test")
@@ -274,10 +269,9 @@ public class BoxRoleLinkTest extends JerseyTest {
             createLink();
 
             // 再度同一のリクエストを実行して409になることを確認
-            Http.request("links-request-with-body.txt")
-                    .with("method", "POST")
+            Http.request("links-create.txt")
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", CELL_NAME)
+                    .with("cellName", CELL_NAME)
                     .with("entitySet", ENTITY_SET_BOX)
                     .with("key", KEY)
                     .with("navProp", NAV_PROP_ROLE)
@@ -296,10 +290,9 @@ public class BoxRoleLinkTest extends JerseyTest {
     public final void BoxとRoleのlink作成時uriの値に前丸カッコがない場合400になること() {
         String targetUri = UrlUtils.cellRoot(Setup.TEST_CELL1)
                 + "__ctl/RoleName='confidentialClient',_Box.Name=null)";
-        Http.request("links-request-with-body.txt")
-                .with("method", "POST")
+        Http.request("links-create.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", KEY)
                 .with("navProp", NAV_PROP_ROLE)
@@ -315,10 +308,9 @@ public class BoxRoleLinkTest extends JerseyTest {
     public final void BoxとRoleのlink作成時uriの値に後ろ丸カッコがない場合400になること() {
         String targetUri = UrlUtils.cellRoot(Setup.TEST_CELL1)
                 + "__ctl/Role(Name='confidentialClient',_Box.Name=null";
-        Http.request("links-request-with-body.txt")
-                .with("method", "POST")
+        Http.request("links-create.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", KEY)
                 .with("navProp", NAV_PROP_ROLE)
@@ -334,10 +326,9 @@ public class BoxRoleLinkTest extends JerseyTest {
     public final void BoxとRoleのlink作成時URLのNP名とボディのエンティティ名が異なる場合400になること() {
         String targetUri = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
                 + "__ctl/Role(Name='confidentialClient',_Box.Name=null)";
-        Http.request("links-request-with-body.txt")
-                .with("method", "POST")
+        Http.request("links-create.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", Setup.TEST_CELL_SCHEMA1)
+                .with("cellName", Setup.TEST_CELL_SCHEMA1)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", KEY)
                 .with("navProp", "_Relation")
@@ -354,10 +345,9 @@ public class BoxRoleLinkTest extends JerseyTest {
         String linkPath = "__ctl/" + ENTITY_SET_BOX + "\\('" + KEY + "'\\)/\\$links/" + NAV_PROP_ROLE;
 
         try {
-            Http.request("links-request-with-body.txt")
-                    .with("method", "POST")
+            Http.request("links-create.txt")
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", CELL_NAME)
+                    .with("cellName", CELL_NAME)
                     .with("entitySet", ENTITY_SET_BOX)
                     .with("key", KEY)
                     .with("navProp", NAV_PROP_ROLE)
@@ -387,10 +377,9 @@ public class BoxRoleLinkTest extends JerseyTest {
                 + NAV_PROP_ROLE + "\\(" + roleKey + "\\)";
 
         try {
-            Http.request("links-request-with-body.txt")
-                    .with("method", "POST")
+            Http.request("links-create.txt")
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", CELL_NAME)
+                    .with("cellName", CELL_NAME)
                     .with("entitySet", ENTITY_SET_BOX)
                     .with("key", KEY)
                     .with("navProp", NAV_PROP_ROLE)
@@ -418,10 +407,9 @@ public class BoxRoleLinkTest extends JerseyTest {
     public final void BoxとRoleのlinkを削除しresponseが204であること() {
         createLink();
 
-        Http.request("links-request.txt")
-                .with("method", "DELETE")
+        Http.request("links-delete.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", KEY)
                 .with("navProp", NAV_PROP_ROLE)
@@ -437,10 +425,9 @@ public class BoxRoleLinkTest extends JerseyTest {
     public final void RoleとBoxのlinkを削除しresponseが204であること() {
         createLink();
 
-        Http.request("links-request.txt")
-                .with("method", "DELETE")
+        Http.request("links-delete.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_ROLE)
                 .with("key", roleChangedKey)
                 .with("navProp", NAV_PROP_BOX)
@@ -454,10 +441,9 @@ public class BoxRoleLinkTest extends JerseyTest {
      */
     @Test
     public final void 存在しないBoxとRoleのlinkを削除しresponseが404であること() {
-        Http.request("links-request.txt")
-                .with("method", "DELETE")
+        Http.request("links-delete.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", "'boxx'")
                 .with("navProp", NAV_PROP_ROLE)
@@ -471,10 +457,9 @@ public class BoxRoleLinkTest extends JerseyTest {
      */
     @Test
     public final void BoxとLinkを登録していないRoleのlinkを削除しresponseが404であること() {
-        Http.request("links-request.txt")
-                .with("method", "DELETE")
+        Http.request("links-delete.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", "'box2'")
                 .with("navProp", NAV_PROP_ROLE)
@@ -488,10 +473,9 @@ public class BoxRoleLinkTest extends JerseyTest {
      */
     @Test
     public final void Boxと存在しないRoleのlinkを削除しresponseが404であること() {
-        Http.request("links-request.txt")
-                .with("method", "DELETE")
+        Http.request("links-delete.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", KEY)
                 .with("navProp", NAV_PROP_ROLE)
@@ -643,10 +627,9 @@ public class BoxRoleLinkTest extends JerseyTest {
         String boxUri = UrlUtils.cellCtlWithoutSingleQuote(CELL_NAME, ENTITY_SET_BOX, KEY);
 
         try {
-            Http.request("links-request-with-body.txt")
-                    .with("method", "POST")
+            Http.request("links-create.txt")
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", CELL_NAME)
+                    .with("cellName", CELL_NAME)
                     .with("entitySet", ENTITY_SET_ROLE)
                     .with("key", roleKey)
                     .with("navProp", NAV_PROP_BOX)
@@ -677,10 +660,9 @@ public class BoxRoleLinkTest extends JerseyTest {
         String boxUri = UrlUtils.cellCtlWithoutSingleQuote(CELL_NAME, ENTITY_SET_BOX, KEY);
 
         try {
-            Http.request("links-request-with-body.txt")
-                    .with("method", "POST")
+            Http.request("links-create.txt")
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", CELL_NAME)
+                    .with("cellName", CELL_NAME)
                     .with("entitySet", ENTITY_SET_ROLE)
                     .with("key", roleKey)
                     .with("navProp", NAV_PROP_BOX)
@@ -915,10 +897,9 @@ public class BoxRoleLinkTest extends JerseyTest {
     }
 
     private void deleteBoxRoleLink(final String boxName, final String linkRoleKey, final int status) {
-        Http.request("links-request.txt")
-                .with("method", "DELETE")
+        Http.request("links-delete.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", "'" + boxName + "'")
                 .with("navProp", NAV_PROP_ROLE)
@@ -929,10 +910,9 @@ public class BoxRoleLinkTest extends JerseyTest {
     }
 
     private void deleteRoleBoxLink(final String roleName, final String linkBoxKey, final int status) {
-        Http.request("links-request.txt")
-                .with("method", "DELETE")
+        Http.request("links-delete.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_ROLE)
                 .with("key", roleName)
                 .with("navProp", NAV_PROP_BOX)
@@ -944,10 +924,9 @@ public class BoxRoleLinkTest extends JerseyTest {
 
     private void createBoxRoleLink(final String boxName, final String roleName, final int expectedStatus) {
         String url = UrlUtils.cellCtl(CELL_NAME, ENTITY_SET_ROLE, roleName);
-        Http.request("links-request-with-body.txt")
-                .with("method", "POST")
+        Http.request("links-create.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", "'" + boxName + "'")
                 .with("navProp", NAV_PROP_ROLE)
@@ -959,10 +938,9 @@ public class BoxRoleLinkTest extends JerseyTest {
 
     private void createRoleBoxLink(final String roleName, final String boxName, final int expectedStatus) {
         String url = UrlUtils.cellCtl(CELL_NAME, ENTITY_SET_BOX, boxName);
-        Http.request("links-request-with-body.txt")
-                .with("method", "POST")
+        Http.request("links-create.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_ROLE)
                 .with("key", "'" + roleName + "'")
                 .with("navProp", NAV_PROP_BOX)
@@ -976,10 +954,9 @@ public class BoxRoleLinkTest extends JerseyTest {
      * Linkを登録する.
      */
     private void createLink() {
-        Http.request("links-request-with-body.txt")
-                .with("method", "POST")
+        Http.request("links-create.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", KEY)
                 .with("navProp", NAV_PROP_ROLE)
@@ -991,10 +968,9 @@ public class BoxRoleLinkTest extends JerseyTest {
      * Linkを削除する.
      */
     private void deleteLink() {
-        Http.request("links-request.txt")
-                .with("method", "DELETE")
+        Http.request("links-delete.txt")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", CELL_NAME)
+                .with("cellName", CELL_NAME)
                 .with("entitySet", ENTITY_SET_BOX)
                 .with("key", KEY)
                 .with("navProp", NAV_PROP_ROLE)

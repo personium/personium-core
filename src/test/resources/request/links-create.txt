@@ -1,4 +1,4 @@
-${method} /${cellPath}/__ctl/${entitySet}(${key})/$links/${navProp} HTTP/1.1
+POST /${cellName}/__ctl/${entitySet}(${key})/$links/${navProp} HTTP/1.1
 Host: ?
 Content-Length: ?
 Connection: close

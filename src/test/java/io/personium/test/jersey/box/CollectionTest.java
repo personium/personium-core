@@ -43,6 +43,8 @@ import com.sun.jersey.test.framework.JerseyTest;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
+import io.personium.core.model.ctl.Account;
+import io.personium.core.model.ctl.Role;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -57,6 +59,7 @@ import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
@@ -1580,11 +1583,11 @@ public class CollectionTest extends JerseyTest {
                     null, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
-            ResourceUtils.linkAccountRole(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
-                    accountRead, null, "roleRead", HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(Setup.TEST_CELL1, Account.EDM_TYPE_NAME, accountRead, null,
+                    Role.EDM_TYPE_NAME, "roleRead", null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
-            ResourceUtils.linkAccountRole(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
-                    accountReadAcl, null, "roleReadAcl", HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(Setup.TEST_CELL1, Account.EDM_TYPE_NAME, accountReadAcl, null,
+                    Role.EDM_TYPE_NAME, "roleReadAcl", null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // コレクション作成
             DavResourceUtils.createODataCollection(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED,
@@ -1617,10 +1620,10 @@ public class CollectionTest extends JerseyTest {
             DavResourceUtils.deleteCollection(Setup.TEST_CELL1, Setup.TEST_BOX1, testCol,
                     AbstractCase.MASTER_TOKEN_NAME, -1);
             // 結びつけの解除
-            ResourceUtils.linkAccountRollDelete(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
-                    accountReadAcl, null, "roleReadAcl");
-            ResourceUtils.linkAccountRollDelete(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
-                    accountRead, null, "roleRead");
+            LinksUtils.deleteLinks(Setup.TEST_CELL1, Account.EDM_TYPE_NAME, accountReadAcl, null,
+                    Role.EDM_TYPE_NAME, "roleReadAcl", null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.deleteLinks(Setup.TEST_CELL1, Account.EDM_TYPE_NAME, accountRead, null,
+                    Role.EDM_TYPE_NAME, "roleRead", null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
             // Roleの削除
             RoleUtils.delete(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "roleRead", null);
             RoleUtils.delete(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "roleReadAcl", null);

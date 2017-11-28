@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.response.PersoniumSearchHits;
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
@@ -159,15 +159,13 @@ public final class ODataProducerUtils {
 
     /**
      * N:NのLinks情報を検索する.
-     * @param src リクエストURLにて指定されたEntity
-     * @param targetSetName リクエストURLにて指定されたNavPropのEntitySet名
      * @param idvals idvals
      * @param tgtEsType tgtEsType
      * @param queryInfo リクエストで指定されたクエリ情報
      * @return Links情報の検索結果
      */
-    public static PersoniumSearchHits searchLinksNN(EntitySetDocHandler src,
-            String targetSetName, List<String> idvals, EntitySetAccessor tgtEsType, QueryInfo queryInfo) {
+    public static PersoniumSearchHits searchLinksNN(
+            List<String> idvals, EntitySetAccessor tgtEsType, QueryInfo queryInfo) {
 
         if (idvals.size() == 0) {
             return null;

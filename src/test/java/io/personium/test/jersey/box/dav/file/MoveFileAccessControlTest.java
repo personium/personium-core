@@ -31,15 +31,20 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
+import io.personium.core.model.ctl.Account;
+import io.personium.core.model.ctl.Role;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.box.acl.jaxb.Acl;
 import io.personium.test.jersey.cell.auth.AuthTestCommon;
 import io.personium.test.unit.core.UrlUtils;
@@ -47,11 +52,10 @@ import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * ファイルのMOVEに対するアクセス制御のテスト.
@@ -618,16 +622,16 @@ public class MoveFileAccessControlTest extends JerseyTest {
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_NO_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_ALL_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
         AccountUtils.create(MASTER_TOKEN, CELL_NAME, ACCOUNT_COMB_PRIVILEGE, PASSWORD, HttpStatus.SC_CREATED);
-        AccountUtils.createLinkWithRole(
-                MASTER_TOKEN, CELL_NAME, null, ACCOUNT_READ, ROLE_READ, HttpStatus.SC_NO_CONTENT);
-        AccountUtils.createLinkWithRole(
-                MASTER_TOKEN, CELL_NAME, null, ACCOUNT_WRITE, ROLE_WRITE, HttpStatus.SC_NO_CONTENT);
-        AccountUtils.createLinkWithRole(
-                MASTER_TOKEN, CELL_NAME, null, ACCOUNT_NO_PRIVILEGE, ROLE_NO_PRIVILEGE, HttpStatus.SC_NO_CONTENT);
-        AccountUtils.createLinkWithRole(
-                MASTER_TOKEN, CELL_NAME, null, ACCOUNT_ALL_PRIVILEGE, ROLE_ALL_PRIVILEGE, HttpStatus.SC_NO_CONTENT);
-        AccountUtils.createLinkWithRole(
-                MASTER_TOKEN, CELL_NAME, null, ACCOUNT_COMB_PRIVILEGE, ROLE_COMB_PRIVILEGE, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_READ, null,
+                Role.EDM_TYPE_NAME, ROLE_READ, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_WRITE, null,
+                Role.EDM_TYPE_NAME, ROLE_WRITE, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_NO_PRIVILEGE, null,
+                Role.EDM_TYPE_NAME, ROLE_NO_PRIVILEGE, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_ALL_PRIVILEGE, null,
+                Role.EDM_TYPE_NAME, ROLE_ALL_PRIVILEGE, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(CELL_NAME, Account.EDM_TYPE_NAME, ACCOUNT_COMB_PRIVILEGE, null,
+                Role.EDM_TYPE_NAME, ROLE_COMB_PRIVILEGE, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
     }
 
     /**

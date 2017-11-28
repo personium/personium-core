@@ -47,7 +47,6 @@ import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.auth.OAuth2Helper;
-import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.Relation;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -60,6 +59,7 @@ import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.ExtCellUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
@@ -525,7 +525,6 @@ public class AuthTest extends JerseyTest {
         String testfile = "testfile.txt";
         String testrole = "transCellTestRole";
         String testrelation = "testRelation";
-        String roleUrl = UrlUtils.roleUrl(TEST_CELL2, null, testrole);
         // main box を使用（box1にはACL設定がありテストには不適切であるため）
         String testBox = "__";
 
@@ -547,12 +546,11 @@ public class AuthTest extends JerseyTest {
             RelationUtils.create(TEST_CELL2, MASTER_TOKEN, body, HttpStatus.SC_CREATED);
 
             // Cell1のExtCellとRelationを結びつけ
-            ResourceUtils.linksWithBody(TEST_CELL2, Relation.EDM_TYPE_NAME, testrelation, "null",
-                    ExtCell.EDM_TYPE_NAME, UrlUtils.extCellResource(TEST_CELL2, localunitCell1Url),
-                    MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinksExtCell(TEST_CELL2, PersoniumCoreUtils.encodeUrlComp(localunitCell1Url),
+                    Relation.EDM_TYPE_NAME, testrelation, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
             // Cell1のRelationとRoleを結びつけ
-            ResourceUtils.linksWithBody(TEST_CELL2, Relation.EDM_TYPE_NAME, testrelation, "null",
-                    Role.EDM_TYPE_NAME, roleUrl, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(TEST_CELL2, Relation.EDM_TYPE_NAME, testrelation, null,
+                    Role.EDM_TYPE_NAME, testrole, null, MASTER_TOKEN, HttpStatus.SC_NO_CONTENT);
 
             // 3.リソースを配置
             Http.request("box/dav-put.txt")
@@ -625,13 +623,12 @@ public class AuthTest extends JerseyTest {
             resResource.statusCode(HttpStatus.SC_NO_CONTENT);
 
             // Cell1のRelationとRoleの削除
-            ResourceUtils.linksDelete(TEST_CELL2, Relation.EDM_TYPE_NAME, testrelation, "null",
-                    Role.EDM_TYPE_NAME, "_Box.Name=null,Name='" + testrole + "'", MASTER_TOKEN);
+            LinksUtils.deleteLinks(TEST_CELL2, Relation.EDM_TYPE_NAME, testrelation, null,
+                    Role.EDM_TYPE_NAME, testrole, null, MASTER_TOKEN, -1);
 
             // Cell1のExtCellとRelationの削除
-            ResourceUtils.linksDelete(TEST_CELL2, Relation.EDM_TYPE_NAME, testrelation,
-                    "null", ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(localunitCell1Url) + "'", MASTER_TOKEN);
+            LinksUtils.deleteLinksExtCell(TEST_CELL2, PersoniumCoreUtils.encodeUrlComp(localunitCell1Url),
+                    Relation.EDM_TYPE_NAME, testrelation, null, MASTER_TOKEN, -1);
 
             // Cell1のRelationを削除
             RelationUtils.delete(TEST_CELL2, MASTER_TOKEN, testrelation, null, HttpStatus.SC_NO_CONTENT);

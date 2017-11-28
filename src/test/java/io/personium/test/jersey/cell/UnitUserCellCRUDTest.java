@@ -39,6 +39,7 @@ import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.model.ctl.Account;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -52,7 +53,7 @@ import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
-import io.personium.test.utils.ResourceUtils;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 
@@ -201,8 +202,8 @@ public class UnitUserCellCRUDTest extends JerseyTest {
                     null, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
-            ResourceUtils.linkAccountRole(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME,
-                    UNIT_USER_ACCOUNT, null, UNIT_ADMIN_ROLE, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(UNIT_USER_CELL, Account.EDM_TYPE_NAME, UNIT_USER_ACCOUNT, null, Role.EDM_TYPE_NAME,
+                    UNIT_ADMIN_ROLE, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // 認証（ユニットユーザートークン取得）
             TResponse res = Http.request("authn/password-tc-c0.txt")
@@ -235,8 +236,8 @@ public class UnitUserCellCRUDTest extends JerseyTest {
             CellUtils.get(CREATE_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK);
         } finally {
             // ロール結びつけ削除（BOXに結びつかないロールとアカウント結びつけ）
-            ResourceUtils.linkAccountRollDelete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME,
-                    UNIT_USER_ACCOUNT, null, UNIT_ADMIN_ROLE);
+            LinksUtils.deleteLinks(UNIT_USER_CELL, Account.EDM_TYPE_NAME, UNIT_USER_ACCOUNT, null,
+                    Role.EDM_TYPE_NAME, UNIT_ADMIN_ROLE, null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // ロール削除（BOXに結びつかない）
             RoleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, UNIT_ADMIN_ROLE, null);
             // アカウント削除

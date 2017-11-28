@@ -48,6 +48,7 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
+import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.AssociationEnd;
 import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.ComplexTypeProperty;
@@ -75,8 +76,8 @@ import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.ExtCellUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RelationUtils;
-import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.TestMethodUtils;
@@ -238,33 +239,21 @@ public class BarInstallTest extends JerseyTest {
         try {
             // Delete link.
             String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellName/__role/__/role2");
-            Http.request("links-request.txt")
-                    .with("method", "DELETE")
-                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", Setup.TEST_CELL1)
-                    .with("entitySet", Role.EDM_TYPE_NAME)
-                    .with("key", "Name='role1',_Box.Name='" + INSTALL_TARGET + "'")
-                    .with("navProp", "_" + ExtRole.EDM_TYPE_NAME)
-                    .with("navKey", "ExtRole='" + extRole + "'"
-                            + ",_Relation.Name='relation1',_Relation._Box.Name='" + INSTALL_TARGET + "'")
-                    .returns()
-                    .debug();
+            String key = "Name='role1',_Box.Name='" + INSTALL_TARGET + "'";
+            String navKey = "ExtRole='" + extRole + "'"
+                    + ",_Relation.Name='relation1',_Relation._Box.Name='" + INSTALL_TARGET + "'";
+            LinksUtils.deleteLinks(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, key,
+                    ExtRole.EDM_TYPE_NAME, navKey, AbstractCase.MASTER_TOKEN_NAME, -1);
         } catch (Exception ex) {
             log.debug(ex.getMessage());
         }
 
         try {
             // Delete link.
-            Http.request("links-request.txt")
-                    .with("method", "DELETE")
-                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", Setup.TEST_CELL1)
-                    .with("entitySet", Relation.EDM_TYPE_NAME)
-                    .with("key", "Name='relation1',_Box.Name='" + INSTALL_TARGET + "'")
-                    .with("navProp", "_" + Role.EDM_TYPE_NAME)
-                    .with("navKey", "Name='role1',_Box.Name='" + INSTALL_TARGET + "'")
-                    .returns()
-                    .debug();
+            String key = "Name='relation1',_Box.Name='" + INSTALL_TARGET + "'";
+            String navKey = "Name='role1',_Box.Name='" + INSTALL_TARGET + "'";
+            LinksUtils.deleteLinks(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, key,
+                    Role.EDM_TYPE_NAME, navKey, AbstractCase.MASTER_TOKEN_NAME, -1);
         } catch (Exception ex) {
             log.debug(ex.getMessage());
         }
@@ -741,13 +730,15 @@ public class BarInstallTest extends JerseyTest {
 
         String role1 = "Name='role1',_Box.Name='" + INSTALL_TARGET + "'";
         // Role <--> Relation
-        deleteLink(Relation.EDM_TYPE_NAME, "Name='relation1',_Box.Name='" + INSTALL_TARGET + "'",
-                "_" + Role.EDM_TYPE_NAME, role1);
+        LinksUtils.deleteLinks(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME,
+                "Name='relation1',_Box.Name='" + INSTALL_TARGET + "'", Role.EDM_TYPE_NAME,
+                role1, AbstractCase.MASTER_TOKEN_NAME, -1);
         // Role <--> ExtRole
         String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellName/__role/__/role2");
-        deleteLink(Role.EDM_TYPE_NAME, role1, "_" + ExtRole.EDM_TYPE_NAME,
-                "ExtRole='" + extRole + "'"
-                        + ",_Relation.Name='relation1',_Relation._Box.Name='" + INSTALL_TARGET + "'");
+        LinksUtils.deleteLinks(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, role1, ExtRole.EDM_TYPE_NAME,
+                "ExtRole='" + extRole + "'" + ",_Relation.Name='relation1',_Relation._Box.Name='"
+                + INSTALL_TARGET + "'",
+                AbstractCase.MASTER_TOKEN_NAME, -1);
 
         // ExtRole
         resourceUrl = UrlUtils.extRoleUrl(Setup.TEST_CELL1, INSTALL_TARGET, "relation1", extRole);
@@ -1000,27 +991,6 @@ public class BarInstallTest extends JerseyTest {
         JSONObject results = (JSONObject) ((JSONObject) json.get("d")).get("results");
         String value = results.get("__id").toString();
         assertEquals(userId, value);
-    }
-
-    /**
-     * $linksの削除リクエスト.
-     * @param entitySet EntitySet名
-     * @param key EntitySetのキー名
-     * @param navProp NavigationProperty名
-     * @param navKey NavigationPropertyのキー名
-     */
-    protected void deleteLink(String entitySet, String key, String navProp, String navKey) {
-        Http.request("links-request.txt")
-                .with("method", "DELETE")
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", Setup.TEST_CELL1)
-                .with("entitySet", entitySet)
-                .with("key", key)
-                .with("navProp", navProp)
-                .with("navKey", navKey)
-                .returns()
-                .statusCode(-1)
-                .debug();
     }
 
     /**
@@ -2144,8 +2114,8 @@ public class BarInstallTest extends JerseyTest {
         RoleUtils.create(reqCellName, AbstractCase.MASTER_TOKEN_NAME, "boxInstallTestRole",
                 HttpStatus.SC_CREATED);
         // Account-Role $links作成
-        ResourceUtils.linkAccountRole(reqCellName, AbstractCase.MASTER_TOKEN_NAME, userName, null,
-                "boxInstallTestRole", HttpStatus.SC_NO_CONTENT);
+        LinksUtils.createLinks(reqCellName, Account.EDM_TYPE_NAME, userName, null, Role.EDM_TYPE_NAME,
+                "boxInstallTestRole", null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
         if (!isForbiddenUser) {
             // Box-install権限設定
