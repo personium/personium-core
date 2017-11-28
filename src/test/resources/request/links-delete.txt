@@ -1,4 +1,4 @@
-${method} /${cellPath}/__ctl/${entitySet}(${key})/$links/${navProp}(${navKey}) HTTP/1.1
+DELETE /${cellName}/__ctl/${entitySet}(${key})/$links/${navProp}(${navKey}) HTTP/1.1
 Host: ?
 Content-Length: ?
 Connection: close

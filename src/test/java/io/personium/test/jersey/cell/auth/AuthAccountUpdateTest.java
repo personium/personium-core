@@ -23,6 +23,8 @@ import org.junit.runner.RunWith;
 
 import com.sun.jersey.test.framework.JerseyTest;
 
+import io.personium.core.model.ctl.Account;
+import io.personium.core.model.ctl.Role;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -36,6 +38,7 @@ import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 
@@ -78,8 +81,8 @@ public class AuthAccountUpdateTest extends JerseyTest {
             CellCtlUtils.createRole(cellName, roleName);
 
             // RoleとAccountの結びつけ
-            ResourceUtils.linkAccountRole(cellName, AbstractCase.MASTER_TOKEN_NAME, accountName, null,
-                    roleName, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(cellName, Account.EDM_TYPE_NAME, accountName, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // CellにACLの設定
             Http.request("cell/acl-setting-single-request.txt")
@@ -109,8 +112,8 @@ public class AuthAccountUpdateTest extends JerseyTest {
 
         } finally {
             // RoleとAccountの結びつけの削除
-            ResourceUtils.linkAccountRollDelete(cellName, AbstractCase.MASTER_TOKEN_NAME, accountNameUpdated,
-                    null, roleName);
+            LinksUtils.deleteLinks(cellName, Account.EDM_TYPE_NAME, accountNameUpdated, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // Roleの削除
             RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
             // Accountの削除
@@ -140,8 +143,8 @@ public class AuthAccountUpdateTest extends JerseyTest {
             CellCtlUtils.createRole(TEST_CELL1, roleName);
 
             // RoleとAccountの結びつけ
-            ResourceUtils.linkAccountRole(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountName, null,
-                    roleName, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(TEST_CELL1, Account.EDM_TYPE_NAME, accountName, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // Box1にACLの設定
             Http.request("box/acl-setting.txt")
@@ -177,8 +180,8 @@ public class AuthAccountUpdateTest extends JerseyTest {
             DavResourceUtils.setACL(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK,
                     "", "box/acl-authtest.txt", Setup.TEST_BOX1, "");
             // RoleとAccountの結びつけの削除
-            ResourceUtils.linkAccountRollDelete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountNameUpdated,
-                    null, roleName);
+            LinksUtils.deleteLinks(TEST_CELL1, Account.EDM_TYPE_NAME, accountNameUpdated, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // Roleの削除
             RoleUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
             // Accountの削除
@@ -303,8 +306,8 @@ public class AuthAccountUpdateTest extends JerseyTest {
             CellCtlUtils.createRole(TEST_CELL1, roleName);
 
             // RoleとAccountの結びつけ
-            ResourceUtils.linkAccountRole(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountName, null,
-                    roleName, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(TEST_CELL1, Account.EDM_TYPE_NAME, accountName, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // Box1にACLの設定
             Http.request("box/acl-setting.txt")
@@ -341,10 +344,10 @@ public class AuthAccountUpdateTest extends JerseyTest {
             DavResourceUtils.setACL(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK,
                     "", "box/acl-authtest.txt", Setup.TEST_BOX1, "");
             // RoleとAccountの結びつけの削除
-            ResourceUtils.linkAccountRollDelete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountName,
-                    null, roleName);
-            ResourceUtils.linkAccountRollDelete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, accountNameUpdated,
-                    null, roleName);
+            LinksUtils.deleteLinks(TEST_CELL1, Account.EDM_TYPE_NAME, accountName, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, -1);
+            LinksUtils.deleteLinks(TEST_CELL1, Account.EDM_TYPE_NAME, accountNameUpdated, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // Roleの削除
             RoleUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
             // Accountの削除

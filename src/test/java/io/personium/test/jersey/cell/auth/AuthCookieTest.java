@@ -42,6 +42,7 @@ import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
+import io.personium.core.model.ctl.Account;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -55,7 +56,7 @@ import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.ExtCellUtils;
 import io.personium.test.utils.Http;
-import io.personium.test.utils.ResourceUtils;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 
@@ -150,8 +151,8 @@ public class AuthCookieTest extends JerseyTest {
                     null, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
-            ResourceUtils.linkAccountRole(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
-                    USERNAME, null, ROLENAMENONEBOX, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(TESTCELL_NAME, Account.EDM_TYPE_NAME, USERNAME, null, Role.EDM_TYPE_NAME,
+                    ROLENAMENONEBOX, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             TResponse passRes = requestAuthorizationWithTarget(TESTCELL_NAME, USERNAME,
                     PASS, "true", UrlUtils.cellRoot(TEST_CELL1), HttpStatus.SC_OK);
@@ -162,8 +163,8 @@ public class AuthCookieTest extends JerseyTest {
         } finally {
             // １．ボックスと結びつかないロールのトランスセル確認
             // ロール結びつけ削除（BOXに結びつかないロールとアカウント結びつけ）
-            ResourceUtils.linkAccountRollDelete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
-                    USERNAME, null, ROLENAMENONEBOX);
+            LinksUtils.deleteLinks(TESTCELL_NAME, Account.EDM_TYPE_NAME, USERNAME, null,
+                    Role.EDM_TYPE_NAME, ROLENAMENONEBOX, null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // アカウント削除
             AccountUtils.delete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
                     USERNAME, HttpStatus.SC_NO_CONTENT);
@@ -193,8 +194,8 @@ public class AuthCookieTest extends JerseyTest {
                     null, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
-            ResourceUtils.linkAccountRole(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
-                    USERNAME, null, ROLENAMENONEBOX, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(TESTCELL_NAME, Account.EDM_TYPE_NAME, USERNAME, null, Role.EDM_TYPE_NAME,
+                    ROLENAMENONEBOX, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             TResponse passRes = requestAuthorizationWithTarget(TESTCELL_NAME, USERNAME,
                     PASS, "false", UrlUtils.cellRoot(TEST_CELL1), HttpStatus.SC_OK);
@@ -205,8 +206,8 @@ public class AuthCookieTest extends JerseyTest {
         } finally {
             // １．ボックスと結びつかないロールのトランスセル確認
             // ロール結びつけ削除（BOXに結びつかないロールとアカウント結びつけ）
-            ResourceUtils.linkAccountRollDelete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
-                    USERNAME, null, ROLENAMENONEBOX);
+            LinksUtils.deleteLinks(TESTCELL_NAME, Account.EDM_TYPE_NAME, USERNAME, null,
+                    Role.EDM_TYPE_NAME, ROLENAMENONEBOX, null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // アカウント削除
             AccountUtils.delete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
                     USERNAME, HttpStatus.SC_NO_CONTENT);
@@ -249,8 +250,8 @@ public class AuthCookieTest extends JerseyTest {
                     null, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
-            ResourceUtils.linkAccountRole(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
-                    USERNAME, null, ROLENAMENONEBOX, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(TESTCELL_NAME, Account.EDM_TYPE_NAME, USERNAME, null, Role.EDM_TYPE_NAME,
+                    ROLENAMENONEBOX, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             TResponse passRes = requestAuthorizationWithTarget(TESTCELL_NAME, USERNAME,
                     PASS, null, UrlUtils.cellRoot(TEST_CELL1), HttpStatus.SC_OK);
@@ -261,8 +262,8 @@ public class AuthCookieTest extends JerseyTest {
         } finally {
             // １．ボックスと結びつかないロールのトランスセル確認
             // ロール結びつけ削除（BOXに結びつかないロールとアカウント結びつけ）
-            ResourceUtils.linkAccountRollDelete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
-                    USERNAME, null, ROLENAMENONEBOX);
+            LinksUtils.deleteLinks(TESTCELL_NAME, Account.EDM_TYPE_NAME, USERNAME, null,
+                    Role.EDM_TYPE_NAME, ROLENAMENONEBOX, null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // アカウント削除
             AccountUtils.delete(TESTCELL_NAME, AbstractCase.MASTER_TOKEN_NAME,
                     USERNAME, HttpStatus.SC_NO_CONTENT);

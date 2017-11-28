@@ -60,9 +60,9 @@ import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.ExtCellUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.ReceivedMessageUtils;
 import io.personium.test.utils.RelationUtils;
-import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 
@@ -363,8 +363,9 @@ public class MessageApproveTest extends ODataCommon {
             e.printStackTrace();
         } finally {
             // Relation-ExtCell $links削除
-            ResourceUtils.linkExtCellRelationDelete(MASTER_TOKEN_NAME, Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("targetCell"), relationName, -1);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, null, MASTER_TOKEN_NAME, -1);
             // Relation削除
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, null, -1);
             // ExtCell削除
@@ -438,8 +439,9 @@ public class MessageApproveTest extends ODataCommon {
             e.printStackTrace();
         } finally {
             // Relation-ExtCell $links削除
-            ResourceUtils.linkExtCellRelationDelete(MASTER_TOKEN_NAME, Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("targetCell"), relationName, -1);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, null, MASTER_TOKEN_NAME, -1);
             // Relation削除
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, null, -1);
             // ExtCell削除
@@ -527,9 +529,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(response.getLocationHeader());
             }
             // Delete Relation-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Relation
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
             // Delete ExtCell
@@ -603,9 +605,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(response.getLocationHeader());
             }
             // Delete Relation-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Relation
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
             // Delete ExtCell
@@ -700,9 +702,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(breakResponse.getLocationHeader());
             }
             // Delete Relation-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Relation
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
             // Delete ExtCell
@@ -851,9 +853,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(response.getLocationHeader());
             }
             // Delete Relation-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Relation
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
             // Delete ExtCell
@@ -938,9 +940,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(response.getLocationHeader());
             }
             // Delete Relation-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Relation
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
             // Delete ExtCell
@@ -1015,9 +1017,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(response.getLocationHeader());
             }
             // Delete Relation-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Relation
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
             // Delete ExtCell
@@ -1113,9 +1115,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(breakResponse.getLocationHeader());
             }
             // Delete Relation-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Relation
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
             // Delete ExtCell
@@ -1271,9 +1273,9 @@ public class MessageApproveTest extends ODataCommon {
             // Delete Box
             BoxUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, "testBox002", -1);
             // Delete Relation-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Relation
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
             // Delete ExtCell
@@ -1375,9 +1377,9 @@ public class MessageApproveTest extends ODataCommon {
             // Delete Box
             BoxUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, "testBox002", -1);
             // Delete Relation-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Relation
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
             // Delete ExtCell
@@ -1461,9 +1463,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(response.getLocationHeader());
             }
             // Delete Role-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, roleName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Role.EDM_TYPE_NAME, roleName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Role
             RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, -1);
             // Delete ExtCell
@@ -1537,9 +1539,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(response.getLocationHeader());
             }
             // Delete Role-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, roleName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Role.EDM_TYPE_NAME, roleName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Role
             RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, -1);
             // Delete ExtCell
@@ -1634,9 +1636,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(breakResponse.getLocationHeader());
             }
             // Delete Role-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, roleName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Role.EDM_TYPE_NAME, roleName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Role
             RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, -1);
             // Delete ExtCell
@@ -1785,9 +1787,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(response.getLocationHeader());
             }
             // Delete Role-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, roleName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Role.EDM_TYPE_NAME, roleName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Role
             RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, -1);
             // Delete ExtCell
@@ -1872,9 +1874,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(response.getLocationHeader());
             }
             // Delete Role-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, roleName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Role.EDM_TYPE_NAME, roleName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Role
             RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, -1);
             // Delete ExtCell
@@ -1949,9 +1951,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(response.getLocationHeader());
             }
             // Delete Role-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, roleName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Role.EDM_TYPE_NAME, roleName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Role
             RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, -1);
             // Delete ExtCell
@@ -2047,9 +2049,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(breakResponse.getLocationHeader());
             }
             // Delete Role-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, roleName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Role.EDM_TYPE_NAME, roleName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Role
             RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, -1);
             // Delete ExtCell
@@ -2205,9 +2207,9 @@ public class MessageApproveTest extends ODataCommon {
             // Delete Box
             BoxUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, "testBox002", -1);
             // Delete Role-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, roleName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Role.EDM_TYPE_NAME, roleName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Role
             RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, -1);
             // Delete ExtCell
@@ -2309,9 +2311,9 @@ public class MessageApproveTest extends ODataCommon {
             // Delete Box
             BoxUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, "testBox002", -1);
             // Delete Role-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, roleName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Role.EDM_TYPE_NAME, roleName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Role
             RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, -1);
             // Delete ExtCell
@@ -2386,9 +2388,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(response.getLocationHeader());
             }
             // Delete Relation-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Relation
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
             // Delete ExtCell
@@ -2463,9 +2465,9 @@ public class MessageApproveTest extends ODataCommon {
                 deleteOdataResource(response.getLocationHeader());
             }
             // Delete Role-ExtCell $links
-            ResourceUtils.linksDelete(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, roleName, boxName,
-                    ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")) + "'", MASTER_TOKEN_NAME);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Role.EDM_TYPE_NAME, roleName, boxName, MASTER_TOKEN_NAME, -1);
             // Delete Role
             RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, -1);
             // Delete ExtCell
@@ -2507,10 +2509,9 @@ public class MessageApproveTest extends ODataCommon {
             ExtCellUtils.create(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"),
                     HttpStatus.SC_CREATED);
             // Relation-ExtCell $links
-            ResourceUtils.linksWithBody(Setup.TEST_CELL1, Relation.EDM_TYPE_NAME, relationName, null,
-                    ExtCell.EDM_TYPE_NAME,
-                    UrlUtils.cellCtl(Setup.TEST_CELL1, ExtCell.EDM_TYPE_NAME, UrlUtils.cellRoot("targetCell")),
-                    MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, null, MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
@@ -2536,8 +2537,9 @@ public class MessageApproveTest extends ODataCommon {
             e.printStackTrace();
         } finally {
             // Relation-ExtCell $links削除
-            ResourceUtils.linkExtCellRelationDelete(MASTER_TOKEN_NAME, Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("targetCell"), relationName, -1);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, null, MASTER_TOKEN_NAME, -1);
             // Relation削除
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, null, -1);
             // ExtCell削除
@@ -2797,8 +2799,9 @@ public class MessageApproveTest extends ODataCommon {
             e.printStackTrace();
         } finally {
             // Relation-ExtCell $links削除
-            ResourceUtils.linkExtCellRelationDelete(MASTER_TOKEN_NAME, Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("targetCell"), relationName, -1);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, null, MASTER_TOKEN_NAME, -1);
             // Relation削除
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, null, -1);
             // ExtCell削除
@@ -2990,8 +2993,9 @@ public class MessageApproveTest extends ODataCommon {
             e.printStackTrace();
         } finally {
             // Relation-ExtCell $links削除
-            ResourceUtils.linkExtCellRelationDelete(MASTER_TOKEN_NAME, Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("targetCell"), relationName, -1);
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, null, MASTER_TOKEN_NAME, -1);
             // Relation削除
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, null, -1);
             // ExtCell削除

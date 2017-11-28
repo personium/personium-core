@@ -27,6 +27,7 @@ import org.odata4j.core.ODataVersion;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.model.ctl.Role;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -36,8 +37,8 @@ import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.ExtCellUtils;
 import io.personium.test.utils.ExtRoleUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RelationUtils;
-import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 
@@ -150,11 +151,12 @@ public class ExtRoleDeleteTest extends ODataCommon {
     }
 
     /**
-     * RoleとLinkされているExtRoleを削除するとresponseが409であること.
+     * Normal test.
+     * Delete extrole linked with role.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void RoleとLinkされているExtRoleを削除するとresponseが409であること() {
+    public final void normal_delete_extrole_linked_with_role() {
         String boxName = null;
         String roleName = "role";
         String extRole = "extRole";
@@ -172,19 +174,13 @@ public class ExtRoleDeleteTest extends ODataCommon {
             RelationUtils.create(cellName, token, relationBody, -1);
             ExtRoleUtils.create(token, cellName, extRoleBody, HttpStatus.SC_CREATED);
             RoleUtils.create(cellName, token, roleName, boxName, HttpStatus.SC_CREATED);
-            ResourceUtils.linksExtRoleToRole(cellName, PersoniumCoreUtils.encodeUrlComp(extRoleName),
-                    "'relation'", "null", UrlUtils.roleUrl(cellName, null, roleName), token);
+            LinksUtils.createLinksExtRole(cellName, PersoniumCoreUtils.encodeUrlComp(extRoleName),
+                    "relation", null, Role.EDM_TYPE_NAME, roleName, null, token, HttpStatus.SC_NO_CONTENT);
 
-            // 削除できないことの確認
-            ExtRoleUtils.delete(token, cellName, extRoleName, "'relation'", "null", HttpStatus.SC_CONFLICT);
-
-            // リンクを解除し、削除できるようになることの確認
-            ResourceUtils.linksDeleteExtRoleToRole(cellName, PersoniumCoreUtils.encodeUrlComp(extRoleName),
-                    "relation", "null", roleName, token);
             ExtRoleUtils.delete(token, cellName, extRoleName, "'relation'", "null", HttpStatus.SC_NO_CONTENT);
         } finally {
-            ResourceUtils.linksDeleteExtRoleToRole(cellName, PersoniumCoreUtils.encodeUrlComp(extRoleName),
-                    "relation", "null", roleName, token);
+            LinksUtils.deleteLinksExtRole(cellName, PersoniumCoreUtils.encodeUrlComp(extRoleName),
+                    "relation", null, Role.EDM_TYPE_NAME, roleName, null, token, -1);
             RoleUtils.delete(cellName, token, roleName, boxName, -1);
             ExtRoleUtils.delete(token, cellName, extRoleName, "'relation'", "null", -1);
             RelationUtils.delete(cellName, token, "relation", null, -1);

@@ -37,6 +37,8 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.model.ctl.Account;
+import io.personium.core.model.ctl.Role;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -51,6 +53,7 @@ import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
@@ -744,7 +747,8 @@ public class AclTest extends JerseyTest {
             DavResourceUtils.createODataCollection(AbstractCase.MASTER_TOKEN_NAME, -1, cellName, boxName, colName);
             AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, account, "password", -1);
             RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, role1, boxName, -1);
-            AccountUtils.createLinkWithRole(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName, account, role1, -1);
+            LinksUtils.createLinks(cellName, Account.EDM_TYPE_NAME, account, null,
+                    Role.EDM_TYPE_NAME, role1, boxName, AbstractCase.MASTER_TOKEN_NAME, -1);
 
             // BoxにACL設定
             Http.request("box/acl-setting-single.txt").with("cell", cellName)
@@ -774,7 +778,8 @@ public class AclTest extends JerseyTest {
 
             // アクセスするアカウントはRoleと結びついていないとaceのチェック前で権限エラーとなるため、ACL設定がされていないRoleの作成
             RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, role2, boxName, -1);
-            AccountUtils.createLinkWithRole(AbstractCase.MASTER_TOKEN_NAME, cellName, boxName, account, role2, -1);
+            LinksUtils.createLinks(cellName, Account.EDM_TYPE_NAME, account, null,
+                    Role.EDM_TYPE_NAME, role2, boxName, AbstractCase.MASTER_TOKEN_NAME, -1);
 
             // ここから実際のテスト
             // Boxレベルに認証トークンを使用してリクエストを実行(403が返却されること)

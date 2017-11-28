@@ -22,8 +22,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.Relation;
+import io.personium.core.model.ctl.Role;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -31,8 +31,8 @@ import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.ExtCellUtils;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RelationUtils;
-import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 
 /**
@@ -51,44 +51,39 @@ public class ExtCellDeleteTest extends ODataCommon {
     }
 
     /**
-     * RoleとLinkされているExtCellを削除するとresponseが409であること.
+     * Normal test.
+     * Delete extcell linked with role.
      */
     @Test
-    public final void RoleとLinkされているExtCellを削除するとresponseが409であること() {
+    public void normal_delete_extcell_linked_with_role() {
         String token = AbstractCase.MASTER_TOKEN_NAME;
         String extCellUrl = UrlUtils.cellRoot("cellHoge");
         String boxName = null;
         String roleName = "role";
-        String roleUrl = UrlUtils.roleUrl(cellName, boxName, roleName);
 
         try {
             // 準備。ExtCell、ロール作ってリンクさせる。
             ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);
             RoleUtils.create(cellName, token, roleName, boxName, HttpStatus.SC_CREATED);
-            ResourceUtils.linkExtCelltoRole(PersoniumCoreUtils.encodeUrlComp(extCellUrl), cellName,
-                    roleUrl, token, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinksExtCell(cellName, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    Role.EDM_TYPE_NAME, roleName, boxName, token, HttpStatus.SC_NO_CONTENT);
 
-            // 削除できないことの確認
-            ExtCellUtils.delete(token, cellName, extCellUrl, HttpStatus.SC_CONFLICT);
-
-            // リンクを解除し、削除できるようになることの確認
-            ResourceUtils.linkExtCellRoleDelete(cellName, token, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
-                    boxName, roleName);
             ExtCellUtils.delete(token, cellName, extCellUrl, HttpStatus.SC_NO_CONTENT);
         } finally {
-            ResourceUtils.linkExtCellRoleDelete(cellName, token,
-                    PersoniumCoreUtils.encodeUrlComp(extCellUrl), boxName, roleName);
+            LinksUtils.deleteLinksExtCell(cellName, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    Role.EDM_TYPE_NAME, roleName, boxName, token, -1);
             RoleUtils.delete(cellName, token, roleName, boxName, -1);
             ExtCellUtils.delete(token, cellName, extCellUrl, -1);
         }
     }
 
     /**
-     * RelationとLinkされているExtCellを削除するとresponseが409であること.
+     * Normal test.
+     * Delete extcell linked with relation.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void RelationとLinkされているExtCellを削除するとresponseが409であること() {
+    public final void normal_delete_extcell_linked_with_relation() {
         String token = AbstractCase.MASTER_TOKEN_NAME;
         String extCellUrl = UrlUtils.cellRoot("cellhoge");
         String boxName = null;
@@ -101,22 +96,13 @@ public class ExtCellDeleteTest extends ODataCommon {
             // 準備。ExtCell、Relation作ってリンクさせる。
             ExtCellUtils.create(token, cellName, extCellUrl, HttpStatus.SC_CREATED);
             RelationUtils.create(cellName, token, body, HttpStatus.SC_CREATED);
-            ResourceUtils.linksWithBody(cellName, Relation.EDM_TYPE_NAME, relationName, "null",
-                    ExtCell.EDM_TYPE_NAME, UrlUtils.extCellResource(cellName, extCellUrl),
-                    token, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinksExtCell(cellName, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    Relation.EDM_TYPE_NAME, relationName, null, token, HttpStatus.SC_NO_CONTENT);
 
-            // 削除できないことの確認
-            ExtCellUtils.delete(token, cellName, extCellUrl, HttpStatus.SC_CONFLICT);
-
-            // リンクを解除し、削除できるようになることの確認
-            ResourceUtils.linksDelete(cellName, Relation.EDM_TYPE_NAME, relationName,
-                    "null", ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(extCellUrl + "'"), token);
             ExtCellUtils.delete(token, cellName, extCellUrl, HttpStatus.SC_NO_CONTENT);
         } finally {
-            ResourceUtils.linksDelete(cellName, Relation.EDM_TYPE_NAME, relationName,
-                    "null", ExtCell.EDM_TYPE_NAME,
-                    "'" + PersoniumCoreUtils.encodeUrlComp(extCellUrl + "'"), token);
+            LinksUtils.deleteLinksExtCell(cellName, PersoniumCoreUtils.encodeUrlComp(extCellUrl),
+                    Relation.EDM_TYPE_NAME, relationName, null, token, -1);
             RelationUtils.delete(cellName, token, relationName, boxName, -1);
             ExtCellUtils.delete(token, cellName, extCellUrl, -1);
         }

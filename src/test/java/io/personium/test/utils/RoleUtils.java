@@ -327,36 +327,6 @@ public class RoleUtils {
     /**
      * NP経由でRoleを作成するユーティリティ.
      * @param cellName セル名
-     * @param token トークン
-     * @param roleKeyString ソース側エンティティキー文字列（例："Name='xxx'"）
-     * @param targetEntityName ターゲット側エンティティタイプ名
-     * @param targetEntityKeyString ターゲット側エンティティキー文字列（例："Name='xxx'"）
-     * @param code レスポンスコード
-     * @return レスポンス
-     */
-    public static TResponse createLink(
-            final String cellName,
-            final String token,
-            final String roleKeyString,
-            final String targetEntityName,
-            final String targetEntityKeyString,
-            final int code) {
-
-        return Http.request("links-request-with-body.txt")
-                .with("method", "POST")
-                .with("token", token)
-                .with("cellPath", cellName)
-                .with("entitySet", "Role")
-                .with("key", roleKeyString)
-                .with("navProp", "_" + targetEntityName)
-                .with("uri", UrlUtils.cellCtlWithoutSingleQuote(cellName, targetEntityName, targetEntityKeyString))
-                .returns()
-                .statusCode(code);
-    }
-
-    /**
-     * NP経由でRoleを作成するユーティリティ.
-     * @param cellName セル名
      * @param roleKeyString ソース側エンティティキー文字列（例："Name='xxx'"）
      * @param targetEntityName ターゲット側エンティティタイプ名
      * @param targetEntityKeyString ターゲット側エンティティキー文字列（例："Name='xxx'"）

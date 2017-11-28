@@ -318,10 +318,9 @@ public class AccountRoleLinkTest extends AccountTest {
             roleUrl = this.createRole(testRoleName);
 
             // アカウント・ロールの$link
-            Http.request("links-request-with-body.txt")
-                    .with("method", "POST")
+            Http.request("links-create.txt")
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", cellName)
+                    .with("cellName", cellName)
                     .with("entitySet", "Account")
                     .with("key", "'test_account'")
                     .with("navProp", "_Hoge")

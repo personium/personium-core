@@ -24,16 +24,19 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import io.personium.core.model.Box;
+import io.personium.core.model.ctl.Relation;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.TResponse;
 
@@ -492,10 +495,9 @@ public class BoxRelationLinkTest extends ODataCommon {
                     + "__ctl/Relation(Name='" + Setup.CELL_RELATION + "',_Box.Name=null)";
 
         // Box-Relationの$link
-         Http.request("links-request-with-body.txt")
-            .with("method", "POST")
+         Http.request("links-create.txt")
             .with("token", AbstractCase.MASTER_TOKEN_NAME)
-            .with("cellPath", Setup.TEST_CELL1)
+            .with("cellName", Setup.TEST_CELL1)
             .with("entitySet", "Box")
             .with("key", "'" + Setup.TEST_BOX1 + "'")
             .with("navProp", "_Role")
@@ -505,40 +507,20 @@ public class BoxRelationLinkTest extends ODataCommon {
     }
 
     private void deleteBoxRelationLink(final String boxName, final String linkRoleKey, final int status) {
-        Http.request("links-request.txt")
-        .with("method", "DELETE")
-        .with("token", AbstractCase.MASTER_TOKEN_NAME)
-        .with("cellPath", CELL_NAME)
-        .with("entitySet", ENTITY_SET_BOX)
-        .with("key", "'" + boxName + "'")
-        .with("navProp", NAV_PROP_RELATION)
-        .with("navKey", linkRoleKey)
-        .returns()
-        .debug()
-        .statusCode(status);
+        LinksUtils.deleteLinks(CELL_NAME, ENTITY_SET_BOX, "'" + boxName + "'", Relation.EDM_TYPE_NAME, linkRoleKey,
+                AbstractCase.MASTER_TOKEN_NAME, status);
     }
 
     private void deleteRelationBoxLink(final String roleName, final String linkBoxKey, final int status) {
-        Http.request("links-request.txt")
-        .with("method", "DELETE")
-        .with("token", AbstractCase.MASTER_TOKEN_NAME)
-        .with("cellPath", CELL_NAME)
-        .with("entitySet", ENTITY_SET_RELATION)
-        .with("key", roleName)
-        .with("navProp", NAV_PROP_BOX)
-        .with("navKey", "'" + linkBoxKey + "'")
-        .returns()
-        .debug()
-        .statusCode(status);
+        LinksUtils.deleteLinks(CELL_NAME, ENTITY_SET_RELATION, roleName, Box.EDM_TYPE_NAME, "'" + linkBoxKey + "'",
+                AbstractCase.MASTER_TOKEN_NAME, status);
     }
-
 
     private void createBoxRelationLink(final String boxName, final String relationName, final int expectedStatus) {
         String url  = UrlUtils.cellCtl(CELL_NAME, ENTITY_SET_RELATION, relationName);
-        Http.request("links-request-with-body.txt")
-        .with("method", "POST")
+        Http.request("links-create.txt")
         .with("token", AbstractCase.MASTER_TOKEN_NAME)
-        .with("cellPath", CELL_NAME)
+        .with("cellName", CELL_NAME)
         .with("entitySet", ENTITY_SET_BOX)
         .with("key", "'" + boxName + "'")
         .with("navProp", NAV_PROP_RELATION)
@@ -550,10 +532,9 @@ public class BoxRelationLinkTest extends ODataCommon {
 
     private void createRelationBoxLink(final String relationName, final String boxName, final int expectedStatus) {
         String url  = UrlUtils.cellCtl(CELL_NAME, ENTITY_SET_BOX, boxName);
-        Http.request("links-request-with-body.txt")
-        .with("method", "POST")
+        Http.request("links-create.txt")
         .with("token", AbstractCase.MASTER_TOKEN_NAME)
-        .with("cellPath", CELL_NAME)
+        .with("cellName", CELL_NAME)
         .with("entitySet", ENTITY_SET_RELATION)
         .with("key", "'" + relationName + "'")
         .with("navProp", NAV_PROP_BOX)

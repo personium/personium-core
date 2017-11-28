@@ -23,9 +23,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpStatus;
 
-import io.personium.test.jersey.AbstractCase;
-import io.personium.test.unit.core.UrlUtils;
-
 /**
  * Httpリクエストドキュメントを利用するユーティリティ.
  */
@@ -162,29 +159,6 @@ public class AccountUtils {
                 .returns()
                 .statusCode(code);
         return tresponse;
-    }
-
-    /**
-     * AccountとRoleの$links登録.
-     * @param token トークン
-     * @param cellName セル名
-     * @param boxName ボックス名
-     * @param userName ユーザ名
-     * @param roleName ロール名
-     * @param code ステータスコード
-     * @return レスポンス
-     */
-    public static TResponse createLinkWithRole(final String token, final String cellName, final String boxName,
-            final String userName, final String roleName, int code) {
-        // アカウント・ロールの$link
-        return Http.request("link-account-role.txt")
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", cellName)
-                .with("username", userName)
-                .with("roleUrl", UrlUtils.roleUrl(cellName, boxName, roleName))
-                .returns()
-                .statusCode(code)
-                .debug();
     }
 
     /**

@@ -35,8 +35,8 @@ import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.ExtRoleUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RelationUtils;
-import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 
@@ -178,11 +178,12 @@ public class RelationDeleteTest extends ODataCommon {
     }
 
     /**
-     * RoleとLinkされているRelationを削除するとresponseが409であること.
+     * Normal test.
+     * Delete relation linked with role.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void RoleとLinkされているRelationを削除するとresponseが409であること() {
+    public final void normal_delete_relation_linked_with_role() {
         String token = AbstractCase.MASTER_TOKEN_NAME;
         String boxName = null;
         String roleName = "role";
@@ -195,31 +196,25 @@ public class RelationDeleteTest extends ODataCommon {
             body.put("_Box.Name", null);
             RelationUtils.create(cellName, token, body, HttpStatus.SC_CREATED);
             RoleUtils.create(cellName, token, roleName, boxName, HttpStatus.SC_CREATED);
-            ResourceUtils.linksWithBody(cellName, Relation.EDM_TYPE_NAME, relationName, "null",
-                    Role.EDM_TYPE_NAME, UrlUtils.roleUrl(cellName, null, roleName), token,
-                    HttpStatus.SC_NO_CONTENT);
+            LinksUtils.createLinks(cellName, Relation.EDM_TYPE_NAME, relationName, null,
+                    Role.EDM_TYPE_NAME, roleName, null, token, HttpStatus.SC_NO_CONTENT);
 
-            // 削除できないことの確認
-            RelationUtils.delete(cellName, token, relationName, null, HttpStatus.SC_CONFLICT);
-
-            // リンクを解除し、削除できるようになることの確認
-            ResourceUtils.linksDelete(cellName, Relation.EDM_TYPE_NAME, relationName, "null",
-                    Role.EDM_TYPE_NAME, "_Box.Name=null,Name='" + roleName + "'", token);
             RelationUtils.delete(cellName, token, relationName, null, HttpStatus.SC_NO_CONTENT);
         } finally {
-            ResourceUtils.linksDelete(cellName, Relation.EDM_TYPE_NAME, relationName, "null",
-                    Role.EDM_TYPE_NAME, "_Box.Name=null,Name='" + roleName + "'", token);
+            LinksUtils.deleteLinks(cellName, Relation.EDM_TYPE_NAME, relationName, null,
+                    Role.EDM_TYPE_NAME, roleName, null, token, -1);
             RoleUtils.delete(cellName, token, roleName, boxName, -1);
             RelationUtils.delete(cellName, token, relationName, null, -1);
         }
     }
 
     /**
-     * RelationとLinkされているBoxを削除するとresponseが409であること.
+     * Error test.
+     * Delete box linked with relation.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void RelationとLinkされているBoxを削除するとresponseが409であること() {
+    public final void error_delete_box_linked_with_relation() {
         String token = AbstractCase.MASTER_TOKEN_NAME;
         String boxName = "boxhuga";
         String relationName = "relationhuge";
@@ -231,21 +226,23 @@ public class RelationDeleteTest extends ODataCommon {
             // 準備。Relation、ロール作ってリンクさせる。
             JSONObject body = new JSONObject();
             body.put("Name", relationName);
-            body.put("_Box.Name", boxName);
+            body.put("_Box.Name", null);
             RelationUtils.create(cellName, token, body, HttpStatus.SC_CREATED);
+            LinksUtils.createLinks(cellName, Relation.EDM_TYPE_NAME, relationName, null,
+                    Box.EDM_TYPE_NAME, boxName, null, token, HttpStatus.SC_NO_CONTENT);
 
             // 削除できないことの確認
             BoxUtils.delete(cellName, token, boxName, HttpStatus.SC_CONFLICT);
 
             // リンクを解除し、削除できるようになることの確認
-            ResourceUtils.linksDelete(cellName, Relation.EDM_TYPE_NAME, relationName, "null",
-                    Box.EDM_TYPE_NAME, "Name='" + boxName + "'", token);
-            RelationUtils.delete(cellName, token, relationName, boxName, HttpStatus.SC_NO_CONTENT);
+            LinksUtils.deleteLinks(cellName, Relation.EDM_TYPE_NAME, relationName, boxName,
+                    Box.EDM_TYPE_NAME, boxName, null, token, HttpStatus.SC_NO_CONTENT);
+            BoxUtils.delete(cellName, token, boxName, HttpStatus.SC_NO_CONTENT);
         } finally {
-            ResourceUtils.linksDelete(cellName, Relation.EDM_TYPE_NAME, relationName, "null",
-                    Box.EDM_TYPE_NAME, "Name='" + boxName + "'", token);
+            LinksUtils.deleteLinks(cellName, Relation.EDM_TYPE_NAME, relationName, boxName,
+                    Box.EDM_TYPE_NAME, boxName, null, token, -1);
             BoxUtils.delete(cellName, token, boxName, -1);
-            RelationUtils.delete(cellName, token, relationName, boxName, -1);
+            RelationUtils.delete(cellName, token, relationName, null, -1);
         }
     }
 
