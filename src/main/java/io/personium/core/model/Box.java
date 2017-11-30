@@ -35,7 +35,7 @@ import io.personium.core.odata.OEntityWrapper;
 /**
  * Model class for personium Box.
  */
-public final class Box {
+public class Box {
     private Cell cell;
     private String schema;
     private String name;

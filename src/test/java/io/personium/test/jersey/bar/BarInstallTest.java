@@ -186,7 +186,7 @@ public class BarInstallTest extends JerseyTest {
 
         try {
             // コレクションの削除
-            Http.request("box/delete-box-col.txt")
+            Http.request("box/delete-col.txt")
                     .with("cellPath", reqCell)
                     .with("box", "installBox")
                     .with("path", "col1/col11")
@@ -199,7 +199,7 @@ public class BarInstallTest extends JerseyTest {
 
         try {
             // コレクションの削除
-            Http.request("box/delete-box-col.txt")
+            Http.request("box/delete-col.txt")
                     .with("cellPath", reqCell)
                     .with("box", "installBox")
                     .with("path", "col1")
@@ -212,7 +212,7 @@ public class BarInstallTest extends JerseyTest {
 
         try {
             // コレクションの削除
-            Http.request("box/delete-box-col.txt")
+            Http.request("box/delete-col.txt")
                     .with("cellPath", reqCell)
                     .with("box", "installBox")
                     .with("path", "col3")
@@ -225,7 +225,7 @@ public class BarInstallTest extends JerseyTest {
 
         try {
             // コレクションの削除
-            Http.request("box/delete-box-col.txt")
+            Http.request("box/delete-col.txt")
                     .with("cellPath", reqCell)
                     .with("box", "installBox")
                     .with("path", "col2")

@@ -261,7 +261,7 @@ public class DavResourceUtils {
      * @return レスポンス
      */
     public static TResponse deleteCollection(String cellName, String box, String path, String token, int code) {
-        TResponse res = Http.request("box/delete-box-col.txt").with("cellPath", cellName).with("box", box)
+        TResponse res = Http.request("box/delete-col.txt").with("cellPath", cellName).with("box", box)
                 .with("path", path).with("token", token).returns().statusCode(code);
         return res;
     }

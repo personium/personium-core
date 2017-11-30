@@ -329,6 +329,7 @@ public class ResourceUtils {
     public static void delete(String fileName, String cell, String token, int code, String path) {
         Http.request(fileName)
                 .with("cellPath", cell)
+                .with("box", "box1")
                 .with("path", path)
                 .with("token", token)
                 .returns()

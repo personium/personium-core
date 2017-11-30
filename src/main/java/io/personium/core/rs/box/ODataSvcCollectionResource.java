@@ -109,21 +109,31 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     * DELETEメソッドを処理してこのリソースを削除します.
-     * @return JAX-RS応答オブジェクト
+     * DELETE method.
+     * @param recursiveHeader X-Personium-Recursive Header
+     * @return JAX-RS response
      */
     @WriteAPI
     @DELETE
-    public Response delete() {
-        // アクセス制御
-        // ODataSvcCollectionResourceは必ず親(最上位はBox)を持つため、this.davRsCmp.getParent()の結果がnullになることはない
+    public Response delete(
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
+        // X-Personium-Recursive Header
+        if (recursiveHeader != null
+                && !"true".equalsIgnoreCase(recursiveHeader)
+                && !"false".equalsIgnoreCase(recursiveHeader)) {
+            throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
+                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
+        }
+        boolean recursive = Boolean.valueOf(recursiveHeader);
+        // Check acl.
+        // Since ODataSvcCollectionResource always has a parent, result of this.davRsCmp.getParent() will never be null.
         this.davRsCmp.getParent().checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE);
 
-        // ODataのスキーマ・データがすでにある場合、処理を失敗させる。
-        if (!this.davRsCmp.getDavCmp().isEmpty()) {
+        // If OData schema/data already exists, an error
+        if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
             throw PersoniumCoreException.Dav.HAS_CHILDREN;
         }
-        return this.davRsCmp.getDavCmp().delete(null, false).build();
+        return this.davRsCmp.getDavCmp().delete(null, recursive).build();
     }
 
     /**

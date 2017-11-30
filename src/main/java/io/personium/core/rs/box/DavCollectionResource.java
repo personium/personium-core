@@ -86,26 +86,24 @@ public final class DavCollectionResource {
     }
 
     /**
-     * DELETEメソッドを処理してこのリソースを削除します.
+     * DELETE method.
      * @param recursiveHeader recursive header
-     * @return JAX-RS応答オブジェクト
+     * @return JAX-RS response
      */
     @WriteAPI
     @DELETE
     public Response delete(
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
-        boolean recursive = false;
         // X-Personium-Recursive Header
-        if (recursiveHeader != null) {
-            try {
-                recursive = Boolean.valueOf(recursiveHeader);
-            } catch (Exception e) {
-                throw PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
-                        PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
-            }
+        if (recursiveHeader != null
+                && !"true".equalsIgnoreCase(recursiveHeader)
+                && !"false".equalsIgnoreCase(recursiveHeader)) {
+            throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
+                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
         }
-        // アクセス制御(親の権限をチェックする)
-        // DavCollectionResourceは必ず親(最上位はBox)を持つため、this.davRsCmp.getParent()の結果がnullになることはない
+        boolean recursive = Boolean.valueOf(recursiveHeader);
+        // Check acl.(Parent acl check)
+        // Since DavCollectionResource always has a parent, result of this.davRsCmp.getParent() will never be null.
         this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
         if (!this.davRsCmp.getDavCmp().isEmpty()) {

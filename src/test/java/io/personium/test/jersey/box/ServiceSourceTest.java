@@ -31,6 +31,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.sun.jersey.test.framework.JerseyTest;
+
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -41,7 +43,6 @@ import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * MKCOLのテスト.
@@ -523,6 +524,7 @@ public class ServiceSourceTest extends JerseyTest {
         // Boxの削除
         Http.request("box/delete-col.txt")
                 .with("cellPath", "testcell1")
+                .with("box", "box1")
                 .with("path", path)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .returns()

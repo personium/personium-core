@@ -1,4 +1,4 @@
-DELETE /${cellPath}/box1/${path} HTTP/1.1
+DELETE /${cellPath}/${box}/${path} HTTP/1.1
 Host: ?
 Content-Length: 0
 Connection: close

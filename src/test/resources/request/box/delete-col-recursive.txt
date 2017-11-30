@@ -5,4 +5,5 @@ Connection: close
 Accept: application/xml
 Content-Type: application/xml
 Authorization: Bearer ${token}
+X-Personium-Recursive: ${recursive}
 

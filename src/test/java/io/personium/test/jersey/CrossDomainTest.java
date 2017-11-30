@@ -1310,6 +1310,7 @@ public class CrossDomainTest extends JerseyTest {
     private void deleteServiceCollection() {
         Http.request("box/delete-col.txt")
                 .with("cellPath", "testcell1")
+                .with("box", "box1")
                 .with("path", "servicecol")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .returns()
@@ -1334,6 +1335,7 @@ public class CrossDomainTest extends JerseyTest {
     private void deleteDavCollection() {
         Http.request("box/delete-col.txt")
                 .with("cellPath", "testcell1")
+                .with("box", "box1")
                 .with("path", "davcol")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .returns()
@@ -1359,6 +1361,7 @@ public class CrossDomainTest extends JerseyTest {
     private void deleteODataCollection() {
         Http.request("box/delete-col.txt")
                 .with("cellPath", "testcell1")
+                .with("box", "box1")
                 .with("path", ODATA_COL)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .returns()

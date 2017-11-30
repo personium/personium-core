@@ -1542,7 +1542,7 @@ public class Setup extends AbstractCase {
      *            セル名
      */
     public static void deleteCol(final String path, final String cellPath) {
-        Http.request("box/delete-col.txt").with("cellPath", cellPath).with("path", path)
+        Http.request("box/delete-col.txt").with("cellPath", cellPath).with("box", "box1").with("path", path)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME).returns();
     }
 
