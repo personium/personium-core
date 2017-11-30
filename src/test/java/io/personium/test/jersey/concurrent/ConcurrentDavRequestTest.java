@@ -16,10 +16,10 @@
  */
 package io.personium.test.jersey.concurrent;
 
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +36,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.JerseyTest;
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -48,8 +51,6 @@ import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * Dav系APIへの同時リクエストテスト.
@@ -1267,6 +1268,7 @@ public class ConcurrentDavRequestTest extends JerseyTest {
     private Http deleteColRequest(String cellName, String colName) {
         return Http.request("box/delete-col.txt")
                 .with("cellPath", cellName)
+                .with("box", "box1")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("path", colName);
     }

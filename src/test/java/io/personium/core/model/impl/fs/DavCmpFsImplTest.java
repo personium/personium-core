@@ -60,18 +60,22 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import io.personium.common.es.EsClient;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.http.header.RangeHeaderHandler;
+import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavDestination;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.file.DataCryptor;
 import io.personium.core.model.file.StreamingOutputForDavFile;
 import io.personium.core.model.file.StreamingOutputForDavFileWithRange;
+import io.personium.core.model.impl.es.EsModel;
+import io.personium.core.model.impl.es.accessor.CellAccessor;
 import io.personium.core.model.lock.Lock;
 import io.personium.test.categories.Unit;
 
@@ -80,7 +84,8 @@ import io.personium.test.categories.Unit;
  */
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({"javax.crypto.*" })
-@PrepareForTest({DavCmpFsImpl.class, AccessContext.class, PersoniumUnitConfig.class, DavMetadataFile.class})
+@PrepareForTest({DavCmpFsImpl.class, AccessContext.class, PersoniumUnitConfig.class, DavMetadataFile.class,
+    EsClient.class, EsModel.class})
 @Category({ Unit.class })
 public class DavCmpFsImplTest {
 
@@ -971,7 +976,7 @@ public class DavCmpFsImplTest {
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void delete_Normal() throws Exception {
+    public void delete_Normal_Recursive_false() throws Exception {
         // Test method args
         String ifMatch = "\"1-1487652733383\"";
         boolean recursive = false;
@@ -990,6 +995,39 @@ public class DavCmpFsImplTest {
         Whitebox.setInternalState(davCmpFsImpl, "metaFile", davMetaDataFile);
         doReturn("testType").when(davCmpFsImpl).getType();
         doReturn(1).when(davCmpFsImpl).getChildrenCount();
+        PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
+
+        // Run method
+        ResponseBuilder actual = davCmpFsImpl.delete(ifMatch, recursive);
+
+        // Confirm result
+        assertThat(actual.build().getStatus(), is(expected.build().getStatus()));
+    }
+
+    /**
+     * Test delete().
+     * normal.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void delete_Normal_Recursive_true() throws Exception {
+        // Test method args
+        String ifMatch = "\"1-1487652733383\"";
+        boolean recursive = true;
+
+        // Expected result
+        ResponseBuilder expected = Response.ok().status(HttpStatus.SC_NO_CONTENT);
+
+        // Mock settings
+        davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
+        PowerMockito.doReturn(true).when(davCmpFsImpl, "matchesETag", anyString());
+        Lock lock = mock(Lock.class);
+        doNothing().when(lock).release();
+        doReturn(lock).when(davCmpFsImpl).lock();
+        doNothing().when(davCmpFsImpl).load();
+        DavMetadataFile davMetaDataFile = DavMetadataFile.newInstance(new File(""));
+        Whitebox.setInternalState(davCmpFsImpl, "metaFile", davMetaDataFile);
+        PowerMockito.doNothing().when(davCmpFsImpl, "doRecursiveDelete");
         PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
 
         // Run method
@@ -1022,6 +1060,73 @@ public class DavCmpFsImplTest {
         } catch (PersoniumCoreException e) {
             // Confirm result
             assertThat(e.getCode(), is(PersoniumCoreException.Dav.ETAG_NOT_MATCH.getCode()));
+        }
+    }
+
+    /**
+     * Test doRecursiveDelete().
+     * normal.
+     * Type is OData collection.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void doRecursiveDelete_Normal_Type_ODataCollection() throws Exception {
+        // Mock settings
+        davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
+
+        doReturn(DavCmpFsImpl.TYPE_COL_ODATA).when(davCmpFsImpl).getType();
+
+        Lock lock = mock(Lock.class);
+        doNothing().when(lock).release();
+        PowerMockito.doReturn(lock).when(davCmpFsImpl, "lockOData");
+
+        PowerMockito.whenNew(EsClient.class).withAnyArguments().thenReturn(null);
+        PowerMockito.mockStatic(EsModel.class);
+        PowerMockito.doReturn(null).when(EsModel.class, "type", "", "", "", 0, 0);
+
+        CellAccessor cellAccessor = mock(CellAccessor.class);
+        PowerMockito.doReturn(cellAccessor).when(EsModel.class, "cell");
+
+        doReturn("cellId").when(davCmpFsImpl).getCellId();
+        doReturn("nodeId").when(davCmpFsImpl).getId();
+        Cell cell = mock(Cell.class);
+        doReturn("bundleName").when(cell).getDataBundleNameWithOutPrefix();
+        davCmpFsImpl.cell = cell;
+        doNothing().when(cellAccessor).bulkDeleteODataCollection("cellId", "nodeId", "bundleName");
+
+        // Load methods for private
+        Method method = DavCmpFsImpl.class.getDeclaredMethod("doRecursiveDelete");
+        method.setAccessible(true);
+        // Run method
+        method.invoke(davCmpFsImpl);
+    }
+
+    /**
+     * Test doRecursiveDelete().
+     * error.
+     * Type is WebDAV collection.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void doRecursiveDelete_Error_Type_WebDAVCollection() throws Exception {
+        // Mock settings
+        davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
+
+        doReturn(DavCmpFsImpl.TYPE_COL_WEBDAV).when(davCmpFsImpl).getType();
+
+        // Load methods for private
+        Method method = DavCmpFsImpl.class.getDeclaredMethod("doRecursiveDelete");
+        method.setAccessible(true);
+
+        // Run method
+        try {
+            method.invoke(davCmpFsImpl);
+            fail("Not throws exception.");
+        } catch (InvocationTargetException e) {
+            // Confirm result
+            assertThat(e.getCause(), is(instanceOf(PersoniumCoreException.class)));
+            PersoniumCoreException exception = (PersoniumCoreException) e.getCause();
+            assertThat(exception.getCode(), is(PersoniumCoreException.Misc.NOT_IMPLEMENTED.getCode()));
         }
     }
 

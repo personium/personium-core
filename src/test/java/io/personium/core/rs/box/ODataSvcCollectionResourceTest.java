@@ -27,7 +27,6 @@ import org.junit.experimental.categories.Category;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.odata.PersoniumODataProducer;
-import io.personium.core.rs.box.ODataSvcCollectionResource;
 import io.personium.test.categories.Unit;
 
 /**
@@ -47,7 +46,7 @@ public class ODataSvcCollectionResourceTest {
         DavRsCmp davRsCmp = mock(DavRsCmp.class);
         DavCmp davCmp = mock(DavCmp.class);
         PersoniumODataProducer producer = mock(PersoniumODataProducer.class);
- 
+
         // --------------------
         // Test method args
         // --------------------
@@ -67,7 +66,7 @@ public class ODataSvcCollectionResourceTest {
         // Expected result
         // --------------------
         String expected = url + "/" + name + "/";
-        
+
         // --------------------
         // Run method
         // --------------------

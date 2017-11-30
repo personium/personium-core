@@ -16,166 +16,83 @@
  */
 package io.personium.core.model.impl.es.accessor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.simple.JSONObject;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.common.es.EsClient;
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.PersoniumIndexResponse;
-import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.model.impl.es.doc.CellDocHandler;
+import io.personium.common.es.impl.EsIndexImpl;
+import io.personium.common.es.query.PersoniumQueryBuilder;
+import io.personium.common.es.query.PersoniumQueryBuilders;
+import io.personium.common.es.query.impl.PersoniumQueryBuilderImpl;
+import io.personium.core.model.impl.es.EsModel;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.unit.core.UrlUtils;
 
 /**
- * CellAccessorTestの単体テストケース.
+ * Unit Test class for CellAccessor.
  */
-@RunWith(PersoniumIntegTestRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({EsClient.class, EsModel.class, PersoniumQueryBuilders.class})
 @Category({Unit.class })
 public class CellAccessorTest {
 
-    private static final String INDEX_NAME = "index_for_test";
-    private static final String TYPE_NAME = "TypeForTest";
-    private static final String ROUTING_ID_NAME = "routing_id_for_test";
-
-    private EsClient esClient;
+    /** Test class. */
+    private CellAccessor cellAccessor;
 
     /**
-     * 各テスト実行前の初期化処理.
-     * @throws Exception 異常が発生した場合の例外
-     */
-    @Before
-    public void setUp() throws Exception {
-        esClient = new EsClient(PersoniumUnitConfig.getEsClusterName(), PersoniumUnitConfig.getEsHosts());
-    }
-
-    /**
-     * 各テスト実行後のクリーンアップ処理.
-     * @throws Exception 異常が発生した場合の例外
-     */
-    @After
-    public void tearDown() throws Exception {
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
-        EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
-        try {
-            index.delete();
-        } catch (Exception ex) {
-            System.out.println("");
-        }
-    }
-
-    /**
-     * create処理が正常に終了する.
+     * Test bulkDeleteODataCollection().
+     * normal.
+     * @throws Exception Unintended exception in test
      */
     @Test
-    public void create処理が正常に終了する() {
-        // 事前準備
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
-        EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
-        assertNotNull(index);
-        CellAccessor cellAccessor = new CellAccessor(index, TYPE_NAME, ROUTING_ID_NAME);
-        CellDocHandler docHandler = createTestCellDocHandler();
+    public void bulkDeleteODataCollection_Normal() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String cellId = "cellId";
+        String nodeId = "nodeId";
+        String unitUserName = "unitUserName";
 
-        // データ登録実行
-        PersoniumIndexResponse response = cellAccessor.create(docHandler);
+        // --------------------
+        // Mock settings
+        // --------------------
+        PowerMockito.whenNew(EsClient.class).withAnyArguments().thenReturn(null);
+        PowerMockito.mockStatic(EsModel.class);
+        PowerMockito.doReturn(null).when(EsModel.class, "type", "", "", "", 0, 0);
 
-        // レスポンスのチェック
-        assertNotNull(response);
-        assertFalse(response.getId().equals(""));
+        EsIndex index = new EsIndexImpl("", "", 0, 0, null);
+        cellAccessor = spy(new CellAccessor(index, "", ""));
 
-        // データを削除する
-        cellAccessor.delete(docHandler);
-    }
+        DataSourceAccessor accessor = mock(DataSourceAccessor.class);
+        PowerMockito.doReturn(accessor).when(EsModel.class, "dsa", unitUserName);
 
-    /**
-     * update処理が正常に終了する.
-     */
-    @Test
-    public void update処理が正常に終了する() {
-        // 事前準備
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
-        EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
-        assertNotNull(index);
-        CellAccessor cellAccessor = new CellAccessor(index, TYPE_NAME, ROUTING_ID_NAME);
-        CellDocHandler docHandler = createTestCellDocHandler();
-        PersoniumIndexResponse createResponse = cellAccessor.create(docHandler);
-        assertNotNull(createResponse);
-        assertFalse(createResponse.getId().equals(""));
+        PersoniumQueryBuilder matchQuery = new PersoniumQueryBuilderImpl(null);
+        PowerMockito.mockStatic(PersoniumQueryBuilders.class);
+        PowerMockito.doReturn(matchQuery).when(PersoniumQueryBuilders.class, "matchQuery", "n", nodeId);
 
-        // データ更新実行
-        Map<String, Object> staticFields = new HashMap<String, Object>();
-        staticFields.put("test", "testdata");
-        docHandler.setStaticFields(staticFields);
+        doNothing().when(accessor).deleteByQuery(cellId, matchQuery);
 
-        PersoniumIndexResponse updateResponse = cellAccessor.update(createResponse.getId(), docHandler);
+        // --------------------
+        // Expected result
+        // --------------------
+        // None.
 
-        // レスポンスのチェック
-        assertNotNull(updateResponse);
-        assertEquals(createResponse.getId(), updateResponse.getId());
+        // --------------------
+        // Run method
+        // --------------------
+        cellAccessor.bulkDeleteODataCollection(cellId, nodeId, unitUserName);
 
-        // データを削除する
-        cellAccessor.delete(docHandler);
-    }
-
-    /**
-     * delete処理が正常に終了する.
-     */
-    @Test
-    public void delete処理が正常に終了する() {
-        // 事前準備
-        String esUnitPrefix = PersoniumUnitConfig.getEsUnitPrefix() + "_";
-        EsIndex index = esClient.idxAdmin(esUnitPrefix + INDEX_NAME);
-        assertNotNull(index);
-        CellAccessor cellAccessor = new CellAccessor(index, TYPE_NAME, ROUTING_ID_NAME);
-        CellDocHandler docHandler = createTestCellDocHandler();
-        PersoniumIndexResponse response = cellAccessor.create(docHandler);
-        assertNotNull(response);
-        assertFalse(response.getId().equals(""));
-
-        // データを削除する
-        cellAccessor.delete(docHandler);
-
-    }
-
-    /**
-     * CellDocHandlerを生成する.
-     * @return
-     */
-    private CellDocHandler createTestCellDocHandler() {
-        long dateTime = new Date().getTime();
-        Map<String, Object> dynamicField = new HashMap<String, Object>();
-        Map<String, Object> staticFields = new HashMap<String, Object>();
-        Map<String, Object> hiddenFields = new HashMap<String, Object>();
-        Map<String, JSONObject> aclFields = new HashMap<String, JSONObject>();
-        Map<String, Object> link = new HashMap<String, Object>();
-        CellDocHandler docHandler = new CellDocHandler();
-        docHandler.setType("testType");
-        docHandler.setCellId("testCellId");
-        docHandler.setBoxId("testBoxId");
-        docHandler.setNodeId("testNodeId");
-        docHandler.setPublished(dateTime);
-        docHandler.setUpdated(dateTime);
-        docHandler.setDynamicFields(dynamicField);
-        docHandler.setStaticFields(staticFields);
-        docHandler.setHiddenFields(hiddenFields);
-        docHandler.setAclFields(aclFields);
-        docHandler.setManyToOnelinkId(link);
-        String url = UrlUtils.getBaseUrl() + "#" + INDEX_NAME;
-        hiddenFields.put("Owner", url);
-        docHandler.resolveUnitUserName(hiddenFields);
-        return docHandler;
+        // --------------------
+        // Confirm result
+        // --------------------
+        // None.
     }
 }

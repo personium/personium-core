@@ -129,4 +129,16 @@ public class CellAccessor extends AbstractEntitySetAccessor {
         }
     }
 
+
+    /**
+     * Bulk delete of ODataServiceCollection.
+     * @param cellId Target cell id
+     * @param nodeId Target collection id
+     * @param unitUserName Unit user name of target cell
+     */
+    public void bulkDeleteODataCollection(String cellId, String nodeId, String unitUserName) {
+        DataSourceAccessor accessor = EsModel.dsa(unitUserName);
+        PersoniumQueryBuilder matchQuery = PersoniumQueryBuilders.matchQuery("n", nodeId);
+        accessor.deleteByQuery(cellId, matchQuery);
+    }
 }

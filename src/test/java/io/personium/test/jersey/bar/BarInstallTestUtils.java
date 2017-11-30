@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.core.model.progress.ProgressInfo;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
@@ -190,7 +190,7 @@ public class BarInstallTestUtils {
      */
     public static void deleteCollection(final String colName) {
         // Boxの削除
-        Http.request("box/delete-box-col.txt")
+        Http.request("box/delete-col.txt")
                 .with("cellPath", Setup.TEST_CELL1)
                 .with("box", INSTALL_TARGET)
                 .with("path", colName)

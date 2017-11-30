@@ -85,6 +85,7 @@ import io.personium.core.model.file.DataCryptor;
 import io.personium.core.model.file.StreamingOutputForDavFile;
 import io.personium.core.model.file.StreamingOutputForDavFileWithRange;
 import io.personium.core.model.impl.es.EsModel;
+import io.personium.core.model.impl.es.accessor.CellAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.odata.UserSchemaODataProducer;
 import io.personium.core.model.jaxb.Ace;
@@ -263,6 +264,14 @@ public class DavCmpFsImpl implements DavCmp {
     public Lock lock() {
         log.debug("lock:" + LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_DAV, null, this.box.getId(), null));
         return LockManager.getLock(Lock.CATEGORY_DAV, null, this.box.getId(), null);
+    }
+
+    /**
+     * Lock OData space.
+     * @return Lock object
+     */
+    private Lock lockOData() {
+        return LockManager.getLock(Lock.CATEGORY_ODATA, getCellId(), getBox().getId(), getId());
     }
 
     /**
@@ -956,8 +965,7 @@ public class DavCmpFsImpl implements DavCmp {
                     throw PersoniumCoreException.Dav.HAS_CHILDREN;
                 }
             } else {
-                // TODO impl recursive
-                throw PersoniumCoreException.Misc.NOT_IMPLEMENTED;
+                doRecursiveDelete();
             }
             this.doDelete();
         } finally {
@@ -973,6 +981,24 @@ public class DavCmpFsImpl implements DavCmp {
             FileUtils.deleteDirectory(this.fsDir);
         } catch (IOException e) {
             throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(e);
+        }
+    }
+
+    /**
+     * Exec recursive delete.
+     */
+    private void doRecursiveDelete() {
+        if (TYPE_COL_ODATA.equals(getType())) {
+            Lock lock = lockOData();
+            try {
+                CellAccessor cellAccessor = (CellAccessor) EsModel.cell();
+                cellAccessor.bulkDeleteODataCollection(getCellId(), getId(), cell.getDataBundleNameWithOutPrefix());
+            } finally {
+                lock.release();
+            }
+        } else {
+            // TODO impl recursive
+            throw PersoniumCoreException.Misc.NOT_IMPLEMENTED;
         }
     }
 

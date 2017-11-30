@@ -110,20 +110,24 @@ public final class ODataSvcCollectionResource extends ODataResource {
 
     /**
      * DELETEメソッドを処理してこのリソースを削除します.
+     * @param recursiveHeader X-Personium-Recursive Header
      * @return JAX-RS応答オブジェクト
      */
     @WriteAPI
     @DELETE
-    public Response delete() {
+    public Response delete(
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
+        // X-Personium-Recursive Header
+        boolean recursive = Boolean.valueOf(recursiveHeader);
         // アクセス制御
         // ODataSvcCollectionResourceは必ず親(最上位はBox)を持つため、this.davRsCmp.getParent()の結果がnullになることはない
         this.davRsCmp.getParent().checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE);
 
         // ODataのスキーマ・データがすでにある場合、処理を失敗させる。
-        if (!this.davRsCmp.getDavCmp().isEmpty()) {
+        if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
             throw PersoniumCoreException.Dav.HAS_CHILDREN;
         }
-        return this.davRsCmp.getDavCmp().delete(null, false).build();
+        return this.davRsCmp.getDavCmp().delete(null, recursive).build();
     }
 
     /**

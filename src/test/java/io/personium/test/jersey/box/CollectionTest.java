@@ -686,6 +686,46 @@ public class CollectionTest extends JerseyTest {
     }
 
     /**
+     * Normal test.
+     * Recursive delete OData collection.
+     */
+    @Test
+    public void normal_recursive_delete_OData_collection() {
+        String odataName = "deleteOdata";
+        String entityType = "deleteEntType";
+        String accept = "application/xml";
+        String complexTypeName = "deleteComplexType";
+        String complexTypePropertyName = "deleteComplexTypeProperty";
+
+        try {
+            // Create OData collection.
+            DavResourceUtils.createODataCollection(TOKEN, HttpStatus.SC_CREATED, Setup.TEST_CELL1, Setup.TEST_BOX1,
+                    odataName);
+            // Create entity type.
+            Http.request("box/entitySet-post.txt")
+                    .with("cellPath", Setup.TEST_CELL1)
+                    .with("boxPath", Setup.TEST_BOX1)
+                    .with("odataSvcPath", odataName)
+                    .with("token", "Bearer " + TOKEN)
+                    .with("accept", accept)
+                    .with("Name", entityType)
+                    .returns()
+                    .statusCode(HttpStatus.SC_CREATED);
+            // Create complex type.
+            ComplexTypeUtils.create(Setup.TEST_CELL1, Setup.TEST_BOX1,
+                    odataName, complexTypeName, HttpStatus.SC_CREATED);
+            // Create complex type property.
+            ComplexTypePropertyUtils.create(Setup.TEST_CELL1, Setup.TEST_BOX1, odataName, complexTypePropertyName,
+                    complexTypeName, "Edm.String", HttpStatus.SC_CREATED);
+
+            // Recursive delete OData collection.
+            deleteRecursive(odataName, HttpStatus.SC_NO_CONTENT);
+        } finally {
+            deleteRecursive(odataName, -1);
+        }
+    }
+
+    /**
      * Odata削除時の子供データチェックテスト. 階層の内容↓ deleteOdata ┗deleteEntType
      */
     @Test
@@ -835,9 +875,25 @@ public class CollectionTest extends JerseyTest {
         // コレクションの削除
         return Http.request("box/delete-col.txt")
                 .with("cellPath", "testcell1")
+                .with("box", "box1")
                 .with("path", path)
                 .with("token", TOKEN)
                 .returns()
+                .statusCode(code);
+    }
+
+    /**
+     * Delete collection recursive.
+     * @return API response
+     */
+    private TResponse deleteRecursive(String path, int code) {
+        return Http.request("box/delete-col-recursive.txt")
+                .with("cellPath", "testcell1")
+                .with("box", "box1")
+                .with("path", path)
+                .with("token", TOKEN)
+                .returns()
+                .debug()
                 .statusCode(code);
     }
 

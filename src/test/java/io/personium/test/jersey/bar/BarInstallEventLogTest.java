@@ -38,6 +38,8 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.jersey.test.framework.JerseyTest;
+
 import io.personium.core.model.progress.ProgressInfo;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -48,7 +50,6 @@ import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * barファイルインストール用テスト.
@@ -108,7 +109,7 @@ public class BarInstallEventLogTest extends JerseyTest {
 
         try {
             // コレクションの削除
-            Http.request("box/delete-box-col.txt")
+            Http.request("box/delete-col.txt")
                     .with("cellPath", reqCell)
                     .with("box", "installBox")
                     .with("path", "col1/col11")
@@ -121,7 +122,7 @@ public class BarInstallEventLogTest extends JerseyTest {
 
         try {
             // コレクションの削除
-            Http.request("box/delete-box-col.txt")
+            Http.request("box/delete-col.txt")
                     .with("cellPath", reqCell)
                     .with("box", "installBox")
                     .with("path", "col1")
@@ -134,7 +135,7 @@ public class BarInstallEventLogTest extends JerseyTest {
 
         try {
             // コレクションの削除
-            Http.request("box/delete-box-col.txt")
+            Http.request("box/delete-col.txt")
                     .with("cellPath", reqCell)
                     .with("box", "installBox")
                     .with("path", "col3")
@@ -147,7 +148,7 @@ public class BarInstallEventLogTest extends JerseyTest {
 
         try {
             // コレクションの削除
-            Http.request("box/delete-box-col.txt")
+            Http.request("box/delete-col.txt")
                     .with("cellPath", reqCell)
                     .with("box", "installBox")
                     .with("path", "col2")
