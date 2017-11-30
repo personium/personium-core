@@ -16,22 +16,15 @@
  */
 package io.personium.core.model.impl.es.accessor;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.util.Map;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -58,7 +51,6 @@ public class CellAccessorTest {
      * normal.
      * @throws Exception Unintended exception in test
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void bulkDeleteODataCollection_Normal() throws Exception {
         // --------------------
@@ -97,14 +89,6 @@ public class CellAccessorTest {
         // --------------------
         // Confirm result
         // --------------------
-        ArgumentCaptor<String> cellIdCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Map> deleteQueryCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(accessor, times(1)).deleteByQuery(cellIdCaptor.capture(), deleteQueryCaptor.capture());
-
-        Map<String, Object> deleteQuery = deleteQueryCaptor.getValue();
-        assertThat(cellIdCaptor.getValue(), is(cellId));
-        assertThat(deleteQuery.get("c"), is(cellId));
-        assertThat(deleteQuery.get("b"), is(boxId));
-        assertThat(deleteQuery.get("n"), is(nodeId));
+        // None.
     }
 }
