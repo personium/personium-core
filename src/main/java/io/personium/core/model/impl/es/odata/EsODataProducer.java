@@ -972,52 +972,52 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         this.deleteEntity(entitySetName, entityKey, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteEntity(String entitySetName, OEntityKey entityKey, String etag) {
         EdmEntitySet eSet = this.getMetadata().findEdmEntitySet(entitySetName);
-        // 注）EntitySetの存在保証は予め呼び出し側で行われているため、ここではチェックしない。
+        // Since the existence guarantee of EntitySet is done on the caller side in advance, it is not checked here.
         EntitySetAccessor esType = this.getAccessorForEntitySet(entitySetName);
         EdmEntitySet srcSet = this.getMetadata().findEdmEntitySet(entitySetName);
         EdmEntityType srcType = srcSet.getType();
 
-        // OData 空間全体をlockする
+        // Lock OData space.
         Lock lock = this.lock();
         try {
-            // レコードの存在確認＆削除のためのES id取得
             EntitySetDocHandler hit = this.retrieveWithKey(eSet, entityKey);
 
-            // データが存在しないときは404を返す
             if (hit == null) {
                 throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
             }
-            // If-MatchヘッダとEtagの値が等しいかチェック
+            // Check if the value of If-Match header and Etag are equal.
             ODataUtils.checkEtag(etag, hit);
 
-            // Linkデータの有無を確認する
+            // Search for N side link of 1-0:N
             for (EdmNavigationProperty np : srcType.getDeclaredNavigationProperties().toList()) {
                 if (this.findMultiPoint(np, entityKey)) {
                     throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
                 }
             }
 
-            // Link情報の削除
+            // Delete link
             // N:N
             for (EdmNavigationProperty np : srcType.getDeclaredNavigationProperties().toList()) {
                 deleteLinks(np, hit);
             }
             // N:1
-            // 紐ついているリンク情報を取得する
             Map<String, Object> target = hit.getManyToOnelinkId();
             for (Entry<String, Object> entry : target.entrySet()) {
                 String key = entry.getKey();
                 EntitySetAccessor targetEsType = this.getAccessorForEntitySet(key);
 
-                // 削除するデータと紐ついているデータを取得する
+                // Get linked entity
                 PersoniumGetResponse linksRes = targetEsType.get(entry.getValue().toString());
                 EntitySetDocHandler linksDocHandler = getDocHandler(linksRes, entitySetName);
                 Map<String, Object> links = linksDocHandler.getManyToOnelinkId();
 
-                // 取得したデータがlinks情報を持っている場合、links情報を削除してデータ更新する
+                // When the acquired data has the link information, delete the link information and update the data.
                 String linksKey = getLinkskey(entitySetName);
                 if (links.containsKey(linksKey)) {
                     links.remove(linksKey);
@@ -1026,27 +1026,27 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 }
             }
 
-            // 削除前処理
+            // Befor delete
             this.beforeDelete(entitySetName, entityKey, hit);
             PersoniumDeleteResponse res = null;
-            // 削除処理
+            // Delete
             res = esType.delete(hit);
 
             if (res == null) {
                 throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(new RuntimeException("not found"));
             }
-            // TransportClient内でリトライ処理が行われた場合、レスポンスとしてNotFoundが返却される。
-            // このため、ここではそのチェックは行わず、NotFoundが返却されても正常終了とする。
+            // If retry processing is done within TransportClient, NotFound is returned as a response.
+            // Therefore, even if NotFound is returned, it is regarded as normal termination.
             if (res.isNotFound()) {
                 log.info("Request data is already deleted. Then, return success response.");
             }
 
-            // 削除後の処理
+            // After delete
             this.afterDelete();
 
         } finally {
             log.debug("unlock");
-            // unlockする
+            // unlock
             lock.release();
         }
     }

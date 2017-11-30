@@ -158,11 +158,11 @@ public final class ODataProducerUtils {
     }
 
     /**
-     * N:NのLinks情報を検索する.
+     * Search N:N links.
      * @param idvals idvals
      * @param tgtEsType tgtEsType
-     * @param queryInfo リクエストで指定されたクエリ情報
-     * @return Links情報の検索結果
+     * @param queryInfo Request query
+     * @return Search result
      */
     public static PersoniumSearchHits searchLinksNN(
             List<String> idvals, EntitySetAccessor tgtEsType, QueryInfo queryInfo) {
@@ -171,8 +171,7 @@ public final class ODataProducerUtils {
             return null;
         }
 
-        // リクエストでクエリが指定されていない場合は、デフォルト値を設定する
-        // linksの一覧取得で設定できるクエリは、$top,$skipのみのため、$top,$skipのみデフォルト値を設定している
+        // If no query is specified, the default value is set.
         Integer size = PersoniumUnitConfig.getTopQueryDefaultSize();
         Integer from = 0;
         if (queryInfo != null) {
@@ -184,7 +183,7 @@ public final class ODataProducerUtils {
             }
         }
 
-        // ターゲットUUID列から、ターゲット主キー列の取得
+        // Obtain target primary key column from target UUID column.
         Map<String, Object> source = new HashMap<String, Object>();
         Map<String, Object> filter = new HashMap<String, Object>();
         Map<String, Object> ids = new HashMap<String, Object>();
