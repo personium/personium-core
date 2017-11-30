@@ -16,13 +16,22 @@
  */
 package io.personium.core.model.impl.es.accessor;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -30,9 +39,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import io.personium.common.es.EsClient;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.impl.EsIndexImpl;
-import io.personium.common.es.query.PersoniumQueryBuilder;
-import io.personium.common.es.query.PersoniumQueryBuilders;
-import io.personium.common.es.query.impl.PersoniumQueryBuilderImpl;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.test.categories.Unit;
 
@@ -40,7 +46,7 @@ import io.personium.test.categories.Unit;
  * Unit Test class for CellAccessor.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({EsClient.class, EsModel.class, PersoniumQueryBuilders.class})
+@PrepareForTest({EsClient.class, EsModel.class})
 @Category({Unit.class })
 public class CellAccessorTest {
 
@@ -52,12 +58,14 @@ public class CellAccessorTest {
      * normal.
      * @throws Exception Unintended exception in test
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void bulkDeleteODataCollection_Normal() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String cellId = "cellId";
+        String boxId = "boxId";
         String nodeId = "nodeId";
         String unitUserName = "unitUserName";
 
@@ -74,11 +82,7 @@ public class CellAccessorTest {
         DataSourceAccessor accessor = mock(DataSourceAccessor.class);
         PowerMockito.doReturn(accessor).when(EsModel.class, "dsa", unitUserName);
 
-        PersoniumQueryBuilder matchQuery = new PersoniumQueryBuilderImpl(null);
-        PowerMockito.mockStatic(PersoniumQueryBuilders.class);
-        PowerMockito.doReturn(matchQuery).when(PersoniumQueryBuilders.class, "matchQuery", "n", nodeId);
-
-        doNothing().when(accessor).deleteByQuery(cellId, matchQuery);
+        doNothing().when(accessor).deleteByQuery(anyString(), any());
 
         // --------------------
         // Expected result
@@ -88,11 +92,19 @@ public class CellAccessorTest {
         // --------------------
         // Run method
         // --------------------
-        cellAccessor.bulkDeleteODataCollection(cellId, nodeId, unitUserName);
+        cellAccessor.bulkDeleteODataCollection(cellId, boxId, nodeId, unitUserName);
 
         // --------------------
         // Confirm result
         // --------------------
-        // None.
+        ArgumentCaptor<String> cellIdCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Map> deleteQueryCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(accessor, times(1)).deleteByQuery(cellIdCaptor.capture(), deleteQueryCaptor.capture());
+
+        Map<String, Object> deleteQuery = deleteQueryCaptor.getValue();
+        assertThat(cellIdCaptor.getValue(), is(cellId));
+        assertThat(deleteQuery.get("c"), is(cellId));
+        assertThat(deleteQuery.get("b"), is(boxId));
+        assertThat(deleteQuery.get("n"), is(nodeId));
     }
 }

@@ -16,6 +16,8 @@
  */
 package io.personium.test.jersey.box;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -29,6 +31,7 @@ import java.util.Map;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
+import org.json.simple.JSONObject;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -41,6 +44,7 @@ import org.w3c.dom.NodeList;
 
 import com.sun.jersey.test.framework.JerseyTest;
 
+import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Account;
@@ -719,9 +723,58 @@ public class CollectionTest extends JerseyTest {
                     complexTypeName, "Edm.String", HttpStatus.SC_CREATED);
 
             // Recursive delete OData collection.
-            deleteRecursive(odataName, HttpStatus.SC_NO_CONTENT);
+            deleteRecursive(odataName, "true", HttpStatus.SC_NO_CONTENT);
         } finally {
-            deleteRecursive(odataName, -1);
+            deleteRecursive(odataName, "true", -1);
+        }
+    }
+
+    /**
+     * Error test.
+     * Recursive delete OData collection.
+     * Invalid character string of X-Personium-Recursive.
+     */
+    @Test
+    public void error_recursive_delete_OData_collection_recursive_header_error() {
+        String odataName = "deleteOdata";
+        String entityType = "deleteEntType";
+        String accept = "application/xml";
+        String complexTypeName = "deleteComplexType";
+        String complexTypePropertyName = "deleteComplexTypeProperty";
+
+        try {
+            // Create OData collection.
+            DavResourceUtils.createODataCollection(TOKEN, HttpStatus.SC_CREATED, Setup.TEST_CELL1, Setup.TEST_BOX1,
+                    odataName);
+            // Create entity type.
+            Http.request("box/entitySet-post.txt")
+                    .with("cellPath", Setup.TEST_CELL1)
+                    .with("boxPath", Setup.TEST_BOX1)
+                    .with("odataSvcPath", odataName)
+                    .with("token", "Bearer " + TOKEN)
+                    .with("accept", accept)
+                    .with("Name", entityType)
+                    .returns()
+                    .statusCode(HttpStatus.SC_CREATED);
+            // Create complex type.
+            ComplexTypeUtils.create(Setup.TEST_CELL1, Setup.TEST_BOX1,
+                    odataName, complexTypeName, HttpStatus.SC_CREATED);
+            // Create complex type property.
+            ComplexTypePropertyUtils.create(Setup.TEST_CELL1, Setup.TEST_BOX1, odataName, complexTypePropertyName,
+                    complexTypeName, "Edm.String", HttpStatus.SC_CREATED);
+
+            // Recursive delete OData collection.
+            TResponse response = deleteRecursive(odataName, "dummy", HttpStatus.SC_BAD_REQUEST);
+
+            // Confirm results
+            PersoniumCoreException expected = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
+                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
+            JSONObject bodyJson = response.bodyAsJson();
+            JSONObject messageJson = (JSONObject) bodyJson.get("message");
+            assertThat(bodyJson.get("code"), is(expected.getCode()));
+            assertThat(messageJson.get("value"), is(expected.getMessage()));
+        } finally {
+            deleteRecursive(odataName, "true", -1);
         }
     }
 
@@ -886,12 +939,13 @@ public class CollectionTest extends JerseyTest {
      * Delete collection recursive.
      * @return API response
      */
-    private TResponse deleteRecursive(String path, int code) {
+    private TResponse deleteRecursive(String path, String recursive, int code) {
         return Http.request("box/delete-col-recursive.txt")
                 .with("cellPath", "testcell1")
                 .with("box", "box1")
                 .with("path", path)
                 .with("token", TOKEN)
+                .with("recursive", recursive)
                 .returns()
                 .debug()
                 .statusCode(code);

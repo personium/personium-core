@@ -67,6 +67,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.http.header.RangeHeaderHandler;
+import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavDestination;
@@ -1087,12 +1088,15 @@ public class DavCmpFsImplTest {
         CellAccessor cellAccessor = mock(CellAccessor.class);
         PowerMockito.doReturn(cellAccessor).when(EsModel.class, "cell");
 
+        Box box = mock(Box.class);
+        doReturn(box).when(davCmpFsImpl).getBox();
         doReturn("cellId").when(davCmpFsImpl).getCellId();
+        doReturn("boxId").when(box).getId();
         doReturn("nodeId").when(davCmpFsImpl).getId();
         Cell cell = mock(Cell.class);
         doReturn("bundleName").when(cell).getDataBundleNameWithOutPrefix();
         davCmpFsImpl.cell = cell;
-        doNothing().when(cellAccessor).bulkDeleteODataCollection("cellId", "nodeId", "bundleName");
+        doNothing().when(cellAccessor).bulkDeleteODataCollection("cellId", "boxId", "nodeId", "bundleName");
 
         // Load methods for private
         Method method = DavCmpFsImpl.class.getDeclaredMethod("doRecursiveDelete");

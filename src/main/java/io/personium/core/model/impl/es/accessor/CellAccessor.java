@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.query.PersoniumQueryBuilder;
-import io.personium.common.es.query.PersoniumQueryBuilders;
 import io.personium.common.es.response.EsClientException;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchResponse;
@@ -110,35 +108,54 @@ public class CellAccessor extends AbstractEntitySetAccessor {
         return countQuery;
     }
     /**
-     * セル配下のエンティティを一括削除する.
-     * @param cellId 削除対象のセルID
-     * @param unitUserName ユニットユーザ名
+     * Bulk delete of cell.
+     * @param cellId Target cell ID
+     * @param unitUserName Unit user name
      */
     public void cellBulkDeletion(String cellId, String unitUserName) {
         DataSourceAccessor accessor = EsModel.dsa(unitUserName);
 
-        // セルIDを指定してelasticsearchからセル関連エンティティを一括削除する
-        PersoniumQueryBuilder matchQuery = PersoniumQueryBuilders.matchQuery("c", cellId);
+        // Specify cell ID and delete all cell related entities in bulk.
+        Map<String, Object> filter = new HashMap<String, Object>();
+        filter = QueryMapFactory.termQuery("c", cellId);
+        Map<String, Object> filtered = new HashMap<String, Object>();
+        filtered = QueryMapFactory.filteredQuery(null, filter);
+        // Generate query
+        Map<String, Object> query = new HashMap<String, Object>();
+        query.put("query", filtered);
+
         try {
-            accessor.deleteByQuery(cellId, matchQuery);
+            accessor.deleteByQuery(cellId, query);
             log.info("KVS Deletion Success.");
         } catch (EsClientException e) {
-            // 削除に失敗した場合はログを出力して処理を続行する
+            // If the deletion fails, output a log and continue processing.
             log.warn(String.format("Delete CellResource From KVS Failed. CellId:[%s], CellUnitUserName:[%s]",
                     cellId, unitUserName), e);
         }
     }
 
-
     /**
      * Bulk delete of ODataServiceCollection.
      * @param cellId Target cell id
+     * @param boxId Target box id
      * @param nodeId Target collection id
      * @param unitUserName Unit user name of target cell
      */
-    public void bulkDeleteODataCollection(String cellId, String nodeId, String unitUserName) {
+    public void bulkDeleteODataCollection(String cellId, String boxId, String nodeId, String unitUserName) {
         DataSourceAccessor accessor = EsModel.dsa(unitUserName);
-        PersoniumQueryBuilder matchQuery = PersoniumQueryBuilders.matchQuery("n", nodeId);
-        accessor.deleteByQuery(cellId, matchQuery);
+
+        // Specifying filter
+        List<Map<String, Object>> filters = new ArrayList<>();
+        filters.add(QueryMapFactory.termQuery("c", cellId));
+        filters.add(QueryMapFactory.termQuery("b", boxId));
+        filters.add(QueryMapFactory.termQuery("n", nodeId));
+        Map<String, Object> filter = QueryMapFactory.andFilter(filters);
+        Map<String, Object> filtered = new HashMap<String, Object>();
+        filtered = QueryMapFactory.filteredQuery(null, filter);
+        // Generate query
+        Map<String, Object> query = new HashMap<String, Object>();
+        query.put("query", filtered);
+
+        accessor.deleteByQuery(cellId, query);
     }
 }

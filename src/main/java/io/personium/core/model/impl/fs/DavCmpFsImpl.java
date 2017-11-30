@@ -992,7 +992,8 @@ public class DavCmpFsImpl implements DavCmp {
             Lock lock = lockOData();
             try {
                 CellAccessor cellAccessor = (CellAccessor) EsModel.cell();
-                cellAccessor.bulkDeleteODataCollection(getCellId(), getId(), cell.getDataBundleNameWithOutPrefix());
+                cellAccessor.bulkDeleteODataCollection(getCellId(), getBox().getId(), getId(),
+                        cell.getDataBundleNameWithOutPrefix());
             } finally {
                 lock.release();
             }

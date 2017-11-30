@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.EsBulkRequest;
 import io.personium.common.es.EsIndex;
 import io.personium.common.es.EsType;
-import io.personium.common.es.query.PersoniumQueryBuilder;
 import io.personium.common.es.response.EsClientException;
 import io.personium.common.es.response.PersoniumActionResponse;
 import io.personium.common.es.response.PersoniumBulkResponse;
@@ -366,11 +365,11 @@ public class DataSourceAccessor {
     }
 
     /**
-     * 指定されたクエリを使用してデータの削除を行う.
+     * Use queries to delete data.
      * @param routingId routingId
-     * @param deleteQuery 削除対象を指定するクエリ
+     * @param deleteQuery query
      */
-    protected void deleteByQuery(String routingId, PersoniumQueryBuilder deleteQuery) {
+    protected void deleteByQuery(String routingId, Map<String, Object> deleteQuery) {
         this.index.deleteByQuery(routingId, deleteQuery);
     }
 
