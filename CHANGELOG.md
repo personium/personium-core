@@ -1,3 +1,8 @@
+## 1.5.6
+IMPROVEMENTS:
+* OData with N:N relationship also deletes $links at the same time when deleting entities.([#65](https://github.com/personium/personium-core/issues/65))
+* recursive delete of OData Service Collection.([#69](https://github.com/personium/personium-core/issues/69))
+
 ## 1.5.5
 IMPROVEMENTS:
 * Add Cell export import function.(Release.)([#43](https://github.com/personium/personium-core/issues/43))
