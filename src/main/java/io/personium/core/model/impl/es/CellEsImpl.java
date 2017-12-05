@@ -205,11 +205,11 @@ public final class CellEsImpl implements Cell {
     }
 
     /**
-     * @param uriInfo
-     *            UriInfo
-     * @return Cell オブジェクト 該当するCellが存在しないときはnull
+     * Load cell info.
+     * @param uriInfo UriInfo
+     * @return CellObject. If Cell does not exist, it returns null.
      */
-    public static Cell load(final UriInfo uriInfo) {
+    public static Cell load(UriInfo uriInfo) {
         URI reqUri = uriInfo.getRequestUri();
         URI baseUri = uriInfo.getBaseUri();
 
@@ -221,18 +221,18 @@ public final class CellEsImpl implements Cell {
         CellEsImpl cell = (CellEsImpl) findCell("s.Name.untouched", paths[0]);
         if (cell != null) {
             cell.url = getBaseUri(uriInfo, cell.name);
+            cell.owner = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), cell.owner);
         }
         return cell;
     }
 
     /**
-     * @param id
-     *            id
-     * @param uriInfo
-     *            UriInfo
-     * @return Cell オブジェクト 該当するCellが存在しないときはnull
+     * Load cell info.
+     * @param id cell id
+     * @param uriInfo UriInfo
+     * @return CellObject. If Cell does not exist, it returns null.
      */
-    public static Cell load(final String id, final UriInfo uriInfo) {
+    public static Cell load(String id, UriInfo uriInfo) {
         log.debug(id);
         EntitySetAccessor esCells = EsModel.cell();
         PersoniumGetResponse resp = esCells.get(id);
@@ -242,6 +242,7 @@ public final class CellEsImpl implements Cell {
             ret.id = resp.getId();
             if (uriInfo != null) {
                 ret.url = getBaseUri(uriInfo, ret.name);
+                ret.owner = UriUtils.convertSchemeFromLocalUnitToHttp(ret.getUnitUrl(), ret.owner);
             } else {
                 ret.url = "/" + ret.name + "/";
             }
@@ -252,7 +253,7 @@ public final class CellEsImpl implements Cell {
     }
 
     /**
-     * Get cell from the specified cell name.
+     * Load cell from the specified cell name.
      * However, the parameter "url" of Cell is not set.
      * @param cellName target cell name
      * @return cell
@@ -345,8 +346,9 @@ public final class CellEsImpl implements Cell {
         Map<String, String> hJson = (Map<String, String>) json.get("h");
         this.published = (Long) json.get("p");
         this.name = urlJson.get("Name");
+        // TODO At this timing owner's localunit/http convert should be done.
+        // It is necessary to modify the source code so that UnitUrl can be read at this timing.
         this.owner = hJson.get("Owner");
-
     }
 
     @Override

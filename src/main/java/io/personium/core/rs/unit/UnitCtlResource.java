@@ -49,6 +49,7 @@ import io.personium.core.model.file.BinaryDataAccessException;
 import io.personium.core.model.lock.UnitUserLockManager;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.ODataResource;
+import io.personium.core.utils.UriUtils;
 
 /**
  * Jax-RS Resource handling Personium Unit Level Api.
@@ -126,14 +127,18 @@ public class UnitCtlResource extends ODataResource {
     public void checkSchemaAuth(AccessContext ac) {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void beforeCreate(final OEntityWrapper oEntityWrapper) {
+    public void beforeCreate(OEntityWrapper oEntityWrapper) {
         if (AccessContext.TYPE_UNIT_USER.equals(this.getAccessContext().getType())
                 || AccessContext.TYPE_UNIT_LOCAL.equals(this.getAccessContext().getType())) {
-            // ユニットユーザトークンでSubjectの値がある場合はその値にする。
+            // If there is a Subject value in UnitUserToken, set that value to Owner.
             String subject = this.getAccessContext().getSubject();
             if (subject != null) {
-                oEntityWrapper.put("Owner", subject);
+                String owner = UriUtils.convertSchemeFromHttpToLocalUnit(getAccessContext().getBaseUri(), subject);
+                oEntityWrapper.put("Owner", owner);
             }
         }
     }
@@ -227,18 +232,21 @@ public class UnitCtlResource extends ODataResource {
         return super.doGetOptionsMetadata();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void checkAccessContextPerEntity(AccessContext ac, OEntityWrapper oew) {
         Map<String, Object> meta = oew.getMetadata();
-        String owner = (String) meta.get("Owner");
+        String owner = UriUtils.convertSchemeFromLocalUnitToHttp(ac.getBaseUri(), (String) meta.get("Owner"));
 
-        // マスタートークンだったらチェック不要
+        // In case of master token, no check is required.
         if (AccessContext.TYPE_UNIT_MASTER.equals(ac.getType())) {
             return;
         }
 
-        // ユニットユーザトークン、ユニットローカルユニットユーザトークンではオーナーが同じセルに対してのみ操作を許す.
-        // Ownerが空の場合はマスタートークン以外許さない
+        // UnitUserToken, UnitLocalUnitUserToken Operation is allowed only for the same cell owner.
+        // If owner is empty only allow master token.
         if (owner == null || !owner.equals(ac.getSubject())) {
             throw PersoniumCoreException.Auth.NOT_YOURS;
         }

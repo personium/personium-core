@@ -22,8 +22,6 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.personium.test.categories.Unit;
 
@@ -32,7 +30,6 @@ import io.personium.test.categories.Unit;
  */
 @Category({ Unit.class })
 public class CellEsImplTest {
-    static Logger log = LoggerFactory.getLogger(CellEsImplTest.class);
 
     /**
      * 空白を含むCell名を指定してnullが返却されること.

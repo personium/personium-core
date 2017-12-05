@@ -89,7 +89,7 @@ public class UriUtils {
     }
 
     /**
-     * convert Scheme from LocalUnit to http.
+     * Convert scheme from LocalUnit to http.
      * @param unitUrl String
      * @param localUnitSchemeUrl String
      * @return Url with http scheme
@@ -100,6 +100,20 @@ public class UriUtils {
             return localUnitSchemeUrl.replace(SCHEME_UNIT_URI, unitUrl);
         }
         return localUnitSchemeUrl;
+    }
+
+    /**
+     * Convert scheme from http to LocalUnit.
+     * Convert only if the target URL matches UnitURL.
+     * @param unitUrl UnitURL
+     * @param url Target URL
+     * @return Url with LocalUnit scheme
+     */
+    public static String convertSchemeFromHttpToLocalUnit(String unitUrl, String url) {
+        if (url != null && url.startsWith(unitUrl)) {
+            return url.replace(unitUrl, SCHEME_UNIT_URI);
+        }
+        return url;
     }
 
     /**

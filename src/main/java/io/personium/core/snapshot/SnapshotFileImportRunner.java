@@ -48,6 +48,7 @@ import io.personium.core.model.impl.es.accessor.CellAccessor;
 import io.personium.core.model.impl.es.accessor.DataSourceAccessor;
 import io.personium.core.model.lock.CellLockManager;
 import io.personium.core.rs.odata.MapBulkRequest;
+import io.personium.core.utils.UriUtils;
 
 /**
  * Runner that performs cell import processing.
@@ -201,7 +202,8 @@ public class SnapshotFileImportRunner implements Runnable {
         Map<String, Object> s = (Map<String, Object>) map.get("s");
         s.put("Name", targetCell.getName());
         Map<String, Object> h = (Map<String, Object>) map.get("h");
-        h.put("Owner", targetCell.getOwner());
+        String owner = UriUtils.convertSchemeFromHttpToLocalUnit(targetCell.getUnitUrl(), targetCell.getOwner());
+        h.put("Owner", owner);
         map.put("u", System.currentTimeMillis());
 
         CellAccessor cellAccessor = (CellAccessor) EsModel.cell();
