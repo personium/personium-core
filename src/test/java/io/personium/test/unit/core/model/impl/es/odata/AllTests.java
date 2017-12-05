@@ -26,7 +26,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
         EsQueryHandlerTest.class,
-        UnitCtlODataProducerTest.class,
         PropertyLimitCheckerTest.class
     })
 public class AllTests {

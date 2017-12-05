@@ -25,7 +25,8 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    CellCtlODataProducerTest.class
+    CellCtlODataProducerTest.class,
+    UnitCtlODataProducerTest.class
     })
 public class AllTests {
 }

@@ -17,7 +17,6 @@
 package io.personium.core.model.impl.es.odata;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +34,7 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.impl.es.EsModel;
+import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.DataSourceAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.accessor.ODataLinkAccessor;
@@ -43,6 +43,7 @@ import io.personium.core.model.impl.es.doc.CellDocHandler;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.utils.UriUtils;
 
 /**
  * ユニット制御のODataサービスむけODataProvider.
@@ -64,21 +65,24 @@ public class UnitCtlODataProducer extends EsODataProducer {
     private static EdmDataServices.Builder edmDataServices = CtlSchema.getEdmDataServicesForUnitCtl();
 
     /**
-     * Cell / オーナー情報 に基づいた暗黙フィルタの作成.
-     * @param entitySetName エンティティセット名
-     * @return Cell / オーナー情報 に基づいた暗黙フィルタ
+     * Create and get implicit filter based on cell owner information.
+     * @param entitySetName Entity set name
+     * @return Implicit filter based on cell owner information
      */
     @Override
     protected List<Map<String, Object>> getImplicitFilters(String entitySetName) {
         List<Map<String, Object>> implicitFilters = new ArrayList<Map<String, Object>>();
-        // ユニットユーザトークン、ユニットローカルユニットユーザトークンだったらトークンのサブジェクトの値を検索条件に追加
+        // If UnitUserToken or UnitLocalUnitUserToken, add the value of the subject of token to the search condition.
         if (AccessContext.TYPE_UNIT_USER.equals(this.accesscontext.getType())
                 || AccessContext.TYPE_UNIT_LOCAL.equals(this.accesscontext.getType())) {
-            Map<String, Object> ownerAnd = new HashMap<String, Object>();
-            Map<String, Object> ownerTerm = new HashMap<String, Object>();
-            ownerAnd.put("term", ownerTerm);
-            ownerTerm.put(OEntityDocHandler.KEY_OWNER, this.accesscontext.getSubject());
-            implicitFilters.add(ownerAnd);
+            // Search for matching owner in http format or localunit format.
+            String localOwner = UriUtils.convertSchemeFromHttpToLocalUnit(
+                    accesscontext.getBaseUri(), accesscontext.getSubject());
+            List<Map<String, Object>> orQueries = new ArrayList<Map<String, Object>>();
+            orQueries.add(QueryMapFactory.termQuery(OEntityDocHandler.KEY_OWNER, accesscontext.getSubject()));
+            orQueries.add(QueryMapFactory.termQuery(OEntityDocHandler.KEY_OWNER, localOwner));
+
+            implicitFilters.add(QueryMapFactory.shouldQuery(orQueries));
         }
         return implicitFilters;
     }
