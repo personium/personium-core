@@ -1,0 +1,13 @@
+# Auto detect text files and perform LF normalization.
+* text=auto
+
+# Explicitly declare text file. These files perform LF normalization.
+*.java text eol=lf
+*.properties text eol=lf
+*.xml text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
+
+# Explicitly declare non-text file. These files not perform LF normalization.
+*.bar binary
