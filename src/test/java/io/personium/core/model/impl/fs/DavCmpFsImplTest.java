@@ -203,7 +203,7 @@ public class DavCmpFsImplTest {
             verify(davMetaDataFile, times(1)).setEncryptionType(encryptionTypeCaptor.capture());
             verify(davMetaDataFile, times(1)).save();
             assertThat(contentTypeCaptor.getValue(), is(contentType));
-            assertThat(contentLengthCaptor.getValue(), is(16L));
+            assertThat(contentLengthCaptor.getValue(), is(15L));
             assertThat(encryptionTypeCaptor.getValue(), is(DataCryptor.ENCRYPTION_TYPE_NONE));
 
             assertThat(contentFile.exists(), is(contentFileExists));
@@ -296,7 +296,7 @@ public class DavCmpFsImplTest {
             verify(davMetaDataFile, times(1)).setEncryptionType(encryptionTypeCaptor.capture());
             verify(davMetaDataFile, times(1)).save();
             assertThat(contentTypeCaptor.getValue(), is(contentType));
-            assertThat(contentLengthCaptor.getValue(), is(98L));
+            assertThat(contentLengthCaptor.getValue(), is(94L));
             assertThat(encryptionTypeCaptor.getValue(), is(DataCryptor.ENCRYPTION_TYPE_AES));
 
             assertThat(contentFile.exists(), is(contentFileExists));
@@ -395,7 +395,7 @@ public class DavCmpFsImplTest {
             verify(davMetaDataFile, times(1)).setEncryptionType(encryptionTypeCaptor.capture());
             verify(davMetaDataFile, times(1)).save();
             assertThat(contentTypeCaptor.getValue(), is(contentType));
-            assertThat(contentLengthCaptor.getValue(), is(16L));
+            assertThat(contentLengthCaptor.getValue(), is(15L));
             assertThat(encryptionTypeCaptor.getValue(), is(DataCryptor.ENCRYPTION_TYPE_NONE));
 
             assertThat(contentFile.exists(), is(contentFileExists));
@@ -496,7 +496,7 @@ public class DavCmpFsImplTest {
             verify(davMetaDataFile, times(1)).setEncryptionType(encryptionTypeCaptor.capture());
             verify(davMetaDataFile, times(1)).save();
             assertThat(contentTypeCaptor.getValue(), is(contentType));
-            assertThat(contentLengthCaptor.getValue(), is(98L));
+            assertThat(contentLengthCaptor.getValue(), is(94L));
             assertThat(encryptionTypeCaptor.getValue(), is(DataCryptor.ENCRYPTION_TYPE_AES));
 
             assertThat(contentFile.exists(), is(contentFileExists));
