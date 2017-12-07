@@ -273,6 +273,11 @@ public interface DavCmp {
     ResponseBuilder delete(String ifMatch, boolean recursive);
 
     /**
+     * Exec recursive delete.
+     */
+    void doRecursiveDelete();
+
+    /**
      * process GET method.
      * @param rangeHeaderField Rangeヘッダ
      * @return JAX-RS ResponseBuilder

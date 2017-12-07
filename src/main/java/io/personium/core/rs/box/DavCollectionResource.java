@@ -106,7 +106,7 @@ public final class DavCollectionResource {
         // Since DavCollectionResource always has a parent, result of this.davRsCmp.getParent() will never be null.
         this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
-        if (!this.davRsCmp.getDavCmp().isEmpty()) {
+        if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
             return Response.status(HttpStatus.SC_CONFLICT).entity("delete children first").build();
         }
         return this.davRsCmp.getDavCmp().delete(null, recursive).build();
