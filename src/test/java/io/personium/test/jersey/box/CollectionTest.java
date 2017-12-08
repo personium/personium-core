@@ -602,10 +602,10 @@ public class CollectionTest extends JerseyTest {
                     davCol1 + "/" + davCol2 + "/" + davFileName, HttpStatus.SC_CREATED);
 
             // コレクションの削除→子供（DavFile）があるため削除出来ない
-            deleteTest(davCol1 + "/" + davCol2, HttpStatus.SC_CONFLICT);
+            deleteTest(davCol1 + "/" + davCol2, HttpStatus.SC_FORBIDDEN);
 
             // コレクションの削除→子供（davcol2）があるため削除出来ない
-            deleteTest(davCol1, HttpStatus.SC_CONFLICT);
+            deleteTest(davCol1, HttpStatus.SC_FORBIDDEN);
 
             // Davファイルの削除
             DavResourceUtils.deleteWebDavFile("box/dav-delete.txt", Setup.TEST_CELL1, TOKEN,
