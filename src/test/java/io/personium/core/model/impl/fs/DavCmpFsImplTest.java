@@ -42,6 +42,8 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -1029,7 +1031,6 @@ public class DavCmpFsImplTest {
         DavMetadataFile davMetaDataFile = DavMetadataFile.newInstance(new File(""));
         Whitebox.setInternalState(davCmpFsImpl, "metaFile", davMetaDataFile);
         PowerMockito.doNothing().when(davCmpFsImpl, "doRecursiveDelete");
-        PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
 
         // Run method
         ResponseBuilder actual = davCmpFsImpl.delete(ifMatch, recursive);
@@ -1097,41 +1098,64 @@ public class DavCmpFsImplTest {
         doReturn("bundleName").when(cell).getDataBundleNameWithOutPrefix();
         davCmpFsImpl.cell = cell;
         doNothing().when(cellAccessor).bulkDeleteODataCollection("cellId", "boxId", "nodeId", "bundleName");
+        PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
 
-        // Load methods for private
-        Method method = DavCmpFsImpl.class.getDeclaredMethod("doRecursiveDelete");
-        method.setAccessible(true);
         // Run method
-        method.invoke(davCmpFsImpl);
+        davCmpFsImpl.doRecursiveDelete();
     }
 
     /**
      * Test doRecursiveDelete().
-     * error.
+     * normal.
      * Type is WebDAV collection.
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void doRecursiveDelete_Error_Type_WebDAVCollection() throws Exception {
+    public void doRecursiveDelete_Normal_Type_WebDAVCollection() throws Exception {
         // Mock settings
         davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
 
         doReturn(DavCmpFsImpl.TYPE_COL_WEBDAV).when(davCmpFsImpl).getType();
 
-        // Load methods for private
-        Method method = DavCmpFsImpl.class.getDeclaredMethod("doRecursiveDelete");
-        method.setAccessible(true);
+        Map<String, DavCmp> children = new HashMap<>();
+        doReturn(children).when(davCmpFsImpl).getChildren();
+        DavCmp child01 = mock(DavCmp.class);
+        DavCmp child02 = mock(DavCmp.class);
+        doNothing().when(child01).doRecursiveDelete();
+        doNothing().when(child02).doRecursiveDelete();
+        children.put("child01", child01);
+        children.put("child02", child02);
+
+        PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
 
         // Run method
-        try {
-            method.invoke(davCmpFsImpl);
-            fail("Not throws exception.");
-        } catch (InvocationTargetException e) {
-            // Confirm result
-            assertThat(e.getCause(), is(instanceOf(PersoniumCoreException.class)));
-            PersoniumCoreException exception = (PersoniumCoreException) e.getCause();
-            assertThat(exception.getCode(), is(PersoniumCoreException.Misc.NOT_IMPLEMENTED.getCode()));
-        }
+        davCmpFsImpl.doRecursiveDelete();
+
+        // Confirm result
+        verify(child01, times(1)).doRecursiveDelete();
+        verify(child02, times(1)).doRecursiveDelete();
+    }
+
+    /**
+     * Test doRecursiveDelete().
+     * normal.
+     * Type is EngineSvc collection.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void doRecursiveDelete_Normal_Type_EngineSvcCollection() throws Exception {
+        // Mock settings
+        davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
+
+        doReturn(DavCmpFsImpl.TYPE_COL_SVC).when(davCmpFsImpl).getType();
+
+        PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
+
+        // Run method
+        davCmpFsImpl.doRecursiveDelete();
+
+        // Confirm result
+        PowerMockito.verifyPrivate(davCmpFsImpl, times(1)).invoke("doDelete");
     }
 
     /**

@@ -894,6 +894,31 @@ public class DavResourceUtils {
     }
 
     /**
+     * Create service collection source.
+     * @param cellName Cell name
+     * @param boxName Box name
+     * @param path Path after box name
+     * @param sourceName service collection source name.
+     * @param contentType content-type
+     * @param token Token
+     * @param fileBody body
+     * @param code Expected response code
+     * @return API response
+     */
+    public static TResponse createServiceCollectionSource(
+            String cellName, String boxName, String path, String sourceName, String contentType, String token, String fileBody, int code) {
+        String sourcePath = path + "/__src/" + sourceName;
+        return Http.request("box/dav-put.txt")
+                .with("cellPath", cellName)
+                .with("box", boxName)
+                .with("path", sourcePath)
+                .with("contentType", contentType)
+                .with("token", token)
+                .with("source", fileBody)
+                .returns().debug().statusCode(code);
+    }
+
+    /**
      * Create webdav file.
      * @param cellName Cell name
      * @param boxName Box name

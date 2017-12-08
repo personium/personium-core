@@ -268,7 +268,6 @@ public class DavCmpFsImpl implements DavCmp {
 
     /**
      * Lock OData space.
-     * @param nodeId Node ID
      * @return Lock object
      */
     private Lock lockOData() {
@@ -944,7 +943,7 @@ public class DavCmpFsImpl implements DavCmp {
      * delete this resource.
      * @param ifMatch ifMatch header
      * @param recursive bool
-     * @return JaxRS応答オブジェクトビルダ
+     * @return JaxRS response builder
      */
     @Override
     public ResponseBuilder delete(final String ifMatch, boolean recursive) {
@@ -965,7 +964,7 @@ public class DavCmpFsImpl implements DavCmp {
                 if (TYPE_COL_WEBDAV.equals(this.getType()) && this.getChildrenCount() > 0) {
                     throw PersoniumCoreException.Dav.HAS_CHILDREN;
                 }
-                this.doDelete();
+                doDelete();
             } else {
                 doRecursiveDelete();
             }

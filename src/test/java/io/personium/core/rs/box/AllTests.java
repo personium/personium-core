@@ -26,7 +26,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
     ODataSvcCollectionResourceTest.class,
-    ODataSvcSchemaResourceTest.class
+    ODataSvcSchemaResourceTest.class,
+    DavCollectionResourceTest.class,
+    PersoniumEngineSvcCollectionResourceTest.class
 })
 public class AllTests {
 }

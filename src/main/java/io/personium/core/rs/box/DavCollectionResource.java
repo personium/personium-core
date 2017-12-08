@@ -45,7 +45,7 @@ import io.personium.core.model.DavRsCmp;
 /**
  * プレーンなWebDAVコレクションに対応するJAX-RS Resource クラス.
  */
-public final class DavCollectionResource {
+public class DavCollectionResource {
 
     DavRsCmp davRsCmp;
 
@@ -107,7 +107,7 @@ public final class DavCollectionResource {
         this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
         if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
-            return Response.status(HttpStatus.SC_CONFLICT).entity("delete children first").build();
+            throw PersoniumCoreException.Dav.HAS_CHILDREN;
         }
         return this.davRsCmp.getDavCmp().delete(null, recursive).build();
     }

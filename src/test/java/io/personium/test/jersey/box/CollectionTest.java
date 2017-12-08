@@ -695,21 +695,21 @@ public class CollectionTest extends JerseyTest {
      */
     @Test
     public void normal_recursive_delete_OData_collection() {
-        String odataName = "deleteOdata";
+        String collectionName = "deleteOdata";
         String entityType = "deleteEntType";
         String accept = "application/xml";
         String complexTypeName = "deleteComplexType";
         String complexTypePropertyName = "deleteComplexTypeProperty";
 
         try {
-            // Create OData collection.
+            // Create collection.
             DavResourceUtils.createODataCollection(TOKEN, HttpStatus.SC_CREATED, Setup.TEST_CELL1, Setup.TEST_BOX1,
-                    odataName);
+                    collectionName);
             // Create entity type.
             Http.request("box/entitySet-post.txt")
                     .with("cellPath", Setup.TEST_CELL1)
                     .with("boxPath", Setup.TEST_BOX1)
-                    .with("odataSvcPath", odataName)
+                    .with("odataSvcPath", collectionName)
                     .with("token", "Bearer " + TOKEN)
                     .with("accept", accept)
                     .with("Name", entityType)
@@ -717,40 +717,40 @@ public class CollectionTest extends JerseyTest {
                     .statusCode(HttpStatus.SC_CREATED);
             // Create complex type.
             ComplexTypeUtils.create(Setup.TEST_CELL1, Setup.TEST_BOX1,
-                    odataName, complexTypeName, HttpStatus.SC_CREATED);
+                    collectionName, complexTypeName, HttpStatus.SC_CREATED);
             // Create complex type property.
-            ComplexTypePropertyUtils.create(Setup.TEST_CELL1, Setup.TEST_BOX1, odataName, complexTypePropertyName,
+            ComplexTypePropertyUtils.create(Setup.TEST_CELL1, Setup.TEST_BOX1, collectionName, complexTypePropertyName,
                     complexTypeName, "Edm.String", HttpStatus.SC_CREATED);
 
-            // Recursive delete OData collection.
-            deleteRecursive(odataName, "true", HttpStatus.SC_NO_CONTENT);
+            // Recursive delete collection.
+            deleteRecursive(collectionName, "true", HttpStatus.SC_NO_CONTENT);
         } finally {
-            deleteRecursive(odataName, "true", -1);
+            deleteRecursive(collectionName, "true", -1);
         }
     }
 
     /**
      * Error test.
-     * Recursive delete OData collection.
+     * Delete OData collection.
      * Invalid character string of X-Personium-Recursive.
      */
     @Test
-    public void error_recursive_delete_OData_collection_recursive_header_error() {
-        String odataName = "deleteOdata";
+    public void error_delete_OData_collection_recursive_header_error() {
+        String collectionName = "deleteOdata";
         String entityType = "deleteEntType";
         String accept = "application/xml";
         String complexTypeName = "deleteComplexType";
         String complexTypePropertyName = "deleteComplexTypeProperty";
 
         try {
-            // Create OData collection.
+            // Create collection.
             DavResourceUtils.createODataCollection(TOKEN, HttpStatus.SC_CREATED, Setup.TEST_CELL1, Setup.TEST_BOX1,
-                    odataName);
+                    collectionName);
             // Create entity type.
             Http.request("box/entitySet-post.txt")
                     .with("cellPath", Setup.TEST_CELL1)
                     .with("boxPath", Setup.TEST_BOX1)
-                    .with("odataSvcPath", odataName)
+                    .with("odataSvcPath", collectionName)
                     .with("token", "Bearer " + TOKEN)
                     .with("accept", accept)
                     .with("Name", entityType)
@@ -758,13 +758,13 @@ public class CollectionTest extends JerseyTest {
                     .statusCode(HttpStatus.SC_CREATED);
             // Create complex type.
             ComplexTypeUtils.create(Setup.TEST_CELL1, Setup.TEST_BOX1,
-                    odataName, complexTypeName, HttpStatus.SC_CREATED);
+                    collectionName, complexTypeName, HttpStatus.SC_CREATED);
             // Create complex type property.
-            ComplexTypePropertyUtils.create(Setup.TEST_CELL1, Setup.TEST_BOX1, odataName, complexTypePropertyName,
+            ComplexTypePropertyUtils.create(Setup.TEST_CELL1, Setup.TEST_BOX1, collectionName, complexTypePropertyName,
                     complexTypeName, "Edm.String", HttpStatus.SC_CREATED);
 
-            // Recursive delete OData collection.
-            TResponse response = deleteRecursive(odataName, "dummy", HttpStatus.SC_BAD_REQUEST);
+            // Recursive delete collection.
+            TResponse response = deleteRecursive(collectionName, "dummy", HttpStatus.SC_BAD_REQUEST);
 
             // Confirm results
             PersoniumCoreException expected = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
@@ -774,7 +774,191 @@ public class CollectionTest extends JerseyTest {
             assertThat(bodyJson.get("code"), is(expected.getCode()));
             assertThat(messageJson.get("value"), is(expected.getMessage()));
         } finally {
-            deleteRecursive(odataName, "true", -1);
+            deleteRecursive(collectionName, "true", -1);
+        }
+    }
+
+    /**
+     * Normal test.
+     * Recursive delete WebDAV collection.
+     */
+    @Test
+    public void normal_recursive_delete_WebDAV_collection() {
+        String collectionName = "deleteDavCollection";
+        String davFileName = "davFile.txt";
+
+        try {
+            // Create collection.
+            DavResourceUtils.createWebDAVCollection(Setup.TEST_CELL1, Setup.TEST_BOX1, collectionName,
+                    Setup.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED);
+            // Create dav file.
+            DavResourceUtils.createWebDAVFile(Setup.TEST_CELL1, Setup.TEST_BOX1, collectionName + "/" + davFileName,
+                    "text/html", TOKEN, "foobar", HttpStatus.SC_CREATED);
+            // Recursive delete collection.
+            deleteRecursive(collectionName, "true", HttpStatus.SC_NO_CONTENT);
+        } finally {
+            deleteRecursive(collectionName, "true", -1);
+        }
+    }
+
+    /**
+     * Error test.
+     * Delete WebDAV collection.
+     * Invalid character string of X-Personium-Recursive.
+     */
+    @Test
+    public void error_delete_WebDAV_collection_recursive_header_error() {
+        String collectionName = "deleteDavCollection";
+        String davFileName = "davFile.txt";
+
+        try {
+            // Create collection.
+            DavResourceUtils.createWebDAVCollection(Setup.TEST_CELL1, Setup.TEST_BOX1, collectionName,
+                    Setup.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED);
+            // Create dav file.
+            DavResourceUtils.createWebDAVFile(Setup.TEST_CELL1, Setup.TEST_BOX1, collectionName + "/" + davFileName,
+                    "text/html", TOKEN, "foobar", HttpStatus.SC_CREATED);
+            // Recursive delete collection.
+            TResponse response = deleteRecursive(collectionName, "dummy", HttpStatus.SC_BAD_REQUEST);
+
+            // Confirm results
+            PersoniumCoreException expected = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
+                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
+            JSONObject bodyJson = response.bodyAsJson();
+            JSONObject messageJson = (JSONObject) bodyJson.get("message");
+            assertThat(bodyJson.get("code"), is(expected.getCode()));
+            assertThat(messageJson.get("value"), is(expected.getMessage()));
+        } finally {
+            deleteRecursive(collectionName, "true", -1);
+        }
+    }
+
+    /**
+     * Normal test.
+     * Recursive delete EngineService collection.
+     */
+    @Test
+    public void normal_recursive_delete_EngineService_collection() {
+        String collectionName = "deleteEngineSvcCollection";
+        String srcFileName = "srcFile.js";
+
+        try {
+            // Create collection.
+            DavResourceUtils.createServiceCollection(Setup.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED,
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, collectionName);
+            // Create dav file.
+            DavResourceUtils.createServiceCollectionSource(Setup.TEST_CELL1, Setup.TEST_BOX1, collectionName,
+                    srcFileName, "text/javascript", TOKEN, "foobar", HttpStatus.SC_CREATED);
+            // Recursive delete collection.
+            deleteRecursive(collectionName, "true", HttpStatus.SC_NO_CONTENT);
+        } finally {
+            deleteRecursive(collectionName, "true", -1);
+        }
+    }
+
+    /**
+     * Error test.
+     * Delete EngineService collection.
+     * Invalid character string of X-Personium-Recursive.
+     */
+    @Test
+    public void error_delete_EngineService_collection_recursive_header_error() {
+        String collectionName = "deleteEngineSvcCollection";
+        String srcFileName = "srcFile.js";
+
+        try {
+            // Create collection.
+            DavResourceUtils.createServiceCollection(Setup.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED,
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, collectionName);
+            // Create dav file.
+            DavResourceUtils.createServiceCollectionSource(Setup.TEST_CELL1, Setup.TEST_BOX1, collectionName,
+                    srcFileName, "text/javascript", TOKEN, "foobar", HttpStatus.SC_CREATED);
+            // Recursive delete collection.
+            TResponse response = deleteRecursive(collectionName, "dummy", HttpStatus.SC_BAD_REQUEST);
+
+            // Confirm results
+            PersoniumCoreException expected = PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
+                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, "dummy");
+            JSONObject bodyJson = response.bodyAsJson();
+            JSONObject messageJson = (JSONObject) bodyJson.get("message");
+            assertThat(bodyJson.get("code"), is(expected.getCode()));
+            assertThat(messageJson.get("value"), is(expected.getMessage()));
+        } finally {
+            deleteRecursive(collectionName, "true", -1);
+        }
+    }
+
+    /**
+     * Normal test.
+     * Recursive delete collection.
+     * There are multiple collections in WebDAV collection.
+     */
+    @Test
+    public void normal_recursive_delete_collection_in_WebDAV_collection() {
+        String topCollectionName = "topDavCollection";
+        String topDavFileName = "topFile.txt";
+
+        String odataCollectionName = "odataCollection";
+        String entityType = "deleteEntType";
+        String accept = "application/xml";
+        String complexTypeName = "deleteComplexType";
+        String complexTypePropertyName = "deleteComplexTypeProperty";
+
+        String davCollectionName = "davCollection";
+        String davFileName = "davFile.txt";
+
+        String enginesvcCollectionName = "engineSvcCollection";
+        String srcFileName = "srcFile.js";
+
+        try {
+            // Create top collection.
+            DavResourceUtils.createWebDAVCollection(Setup.TEST_CELL1, Setup.TEST_BOX1, topCollectionName,
+                    Setup.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED);
+            // Create top dav file.
+            DavResourceUtils.createWebDAVFile(Setup.TEST_CELL1, Setup.TEST_BOX1,
+                    topCollectionName + "/" + topDavFileName, "text/html", TOKEN, "foobar", HttpStatus.SC_CREATED);
+
+            // Create OData collection in top collection.
+            String odataCollectionPath = topCollectionName + "/" + odataCollectionName;
+            DavResourceUtils.createODataCollection(TOKEN, HttpStatus.SC_CREATED, Setup.TEST_CELL1, Setup.TEST_BOX1,
+                    odataCollectionPath);
+            // Create entity type.
+            Http.request("box/entitySet-post.txt")
+                    .with("cellPath", Setup.TEST_CELL1)
+                    .with("boxPath", Setup.TEST_BOX1)
+                    .with("odataSvcPath", odataCollectionPath)
+                    .with("token", "Bearer " + TOKEN)
+                    .with("accept", accept)
+                    .with("Name", entityType)
+                    .returns()
+                    .statusCode(HttpStatus.SC_CREATED);
+            // Create complex type.
+            ComplexTypeUtils.create(Setup.TEST_CELL1, Setup.TEST_BOX1,
+                    odataCollectionPath, complexTypeName, HttpStatus.SC_CREATED);
+            // Create complex type property.
+            ComplexTypePropertyUtils.create(Setup.TEST_CELL1, Setup.TEST_BOX1, odataCollectionPath,
+                    complexTypePropertyName, complexTypeName, "Edm.String", HttpStatus.SC_CREATED);
+
+            // Create WebDAV collection in top collection.
+            String davCollectionPath = topCollectionName + "/" + davCollectionName;
+            DavResourceUtils.createWebDAVCollection(Setup.TEST_CELL1, Setup.TEST_BOX1, davCollectionPath,
+                    Setup.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED);
+            // Create dav file.
+            DavResourceUtils.createWebDAVFile(Setup.TEST_CELL1, Setup.TEST_BOX1, davCollectionPath + "/" + davFileName,
+                    "text/html", TOKEN, "foobar", HttpStatus.SC_CREATED);
+
+            // Create EngineService collection in top collection.
+            String enginesvcCollectionPath = topCollectionName + "/" + enginesvcCollectionName;
+            DavResourceUtils.createServiceCollection(Setup.BEARER_MASTER_TOKEN, HttpStatus.SC_CREATED,
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, enginesvcCollectionPath);
+            // Create dav file.
+            DavResourceUtils.createServiceCollectionSource(Setup.TEST_CELL1, Setup.TEST_BOX1, enginesvcCollectionPath,
+                    srcFileName, "text/javascript", TOKEN, "foobar", HttpStatus.SC_CREATED);
+
+            // Recursive delete collection.
+            deleteRecursive(topCollectionName, "true", HttpStatus.SC_NO_CONTENT);
+        } finally {
+            deleteRecursive(topCollectionName, "true", -1);
         }
     }
 

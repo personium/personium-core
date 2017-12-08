@@ -71,7 +71,7 @@ import io.personium.core.model.impl.fs.DavCmpFsImpl;
 /**
  * PersoniumEngineSvcCollectionResourceを担当するJAX-RSリソース.
  */
-public final class PersoniumEngineSvcCollectionResource {
+public class PersoniumEngineSvcCollectionResource {
     private static Logger log = LoggerFactory.getLogger(PersoniumEngineSvcCollectionResource.class);
 
     DavCmp davCmp = null;
