@@ -1002,7 +1002,7 @@ public class DavCmpFsImpl implements DavCmp {
                 lock.release();
             }
         } else if (TYPE_COL_WEBDAV.equals(getType())) {
-            for(DavCmp child : getChildren().values()) {
+            for (DavCmp child : getChildren().values()) {
                 child.doRecursiveDelete();
             }
         }
