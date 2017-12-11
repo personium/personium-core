@@ -304,7 +304,7 @@ public final class OAuth2Helper {
     }
 
     /**
-     * スキーマ認証レベルの値.
+     * Schema Authz Level.
      */
     public static class SchemaLevel {
         /**
@@ -319,6 +319,23 @@ public final class OAuth2Helper {
          * confidential.
          */
         public static final String CONFIDENTIAL = "confidential";
+
+        /**
+         * Check whether it matches permitted value.
+         * Returns true if argument is null or empty.
+         * @param value Target value
+         * @return true:match false:not match
+         */
+        public static boolean isMatchPermittedValue(String value) {
+            if (value == null
+                    || value.isEmpty()
+                    || NONE.equals(value)
+                    || PUBLIC.equals(value)
+                    || CONFIDENTIAL.equals(value)) {
+                return true;
+            }
+            return false;
+        }
     }
 
     /**

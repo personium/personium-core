@@ -454,31 +454,32 @@ public class DavCmpFsImpl implements DavCmp {
         return ms;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final ResponseBuilder acl(final Reader reader) {
-        // リクエストが空でない場合、パースして適切な拡張を行う。
+        // If the request is not empty, parse and extend.
         Acl aclToSet = null;
         try {
             aclToSet = ObjectIo.unmarshal(reader, Acl.class);
         } catch (Exception e1) {
             throw PersoniumCoreException.Dav.XML_CONTENT_ERROR.reason(e1);
         }
-        if (!aclToSet.validateAcl(isCellLevel())) {
-            throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR;
-        }
-        // ロック
+        aclToSet.validateAcl(isCellLevel());
+        // Lock
         Lock lock = this.lock();
         try {
-            // リソースのリロード
+            // Reload
             this.load();
             if (!this.exists()) {
                 throw getNotFoundException().params(this.getUrl());
             }
 
-            // ACLのxml:baseの値を取得する
+            // Get the value of xml:base of ACL.
             String aclBase = aclToSet.getBase();
 
-            // principalのhref の値を ロール名（Name） を ロールID（__id） に変換する。
+            // Convert role name (Name) of href of principal into role ID (__id).
             List<Ace> aceList = aclToSet.getAceList();
             if (aceList != null) {
                 for (Ace ace : aceList) {
@@ -497,11 +498,11 @@ public class DavCmpFsImpl implements DavCmp {
             } catch (ParseException e) {
                 throw PersoniumCoreException.Dav.XML_ERROR.reason(e);
             }
-            // ESへxm:baseの値を登録しない TODO これでいいのか？
+            // Not register the value of xml: base in Elasticsearch. TODO これでいいのか？
             aclJson.remove(KEY_ACL_BASE);
             this.metaFile.setAcl(aclJson);
             this.metaFile.save();
-            // レスポンス
+            // Response
             return javax.ws.rs.core.Response.status(HttpStatus.SC_OK).header(HttpHeaders.ETAG, this.getEtag());
         } finally {
             lock.release();

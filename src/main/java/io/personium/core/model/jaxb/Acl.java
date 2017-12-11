@@ -41,6 +41,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.CellPrivilege;
+import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.Privilege;
 
 /**
@@ -192,51 +193,63 @@ public final class Acl {
     }
 
     /**
-     * ACLのバリデートチェック処理.
-     * @param isCellLevel Cellレベルかのフラグ
-     * @return バリデートに異常がある場合はfalseを返却
+     * Validate ACL.
+     * @param isCellLevel true:CellLevel
      */
-    public boolean validateAcl(boolean isCellLevel) {
+    public void validateAcl(boolean isCellLevel) {
+        // Check whether requireSchemaAuthz matches permitted value.
+        if (!OAuth2Helper.SchemaLevel.isMatchPermittedValue(requireSchemaAuthz)) {
+            String cause = String.format("Value [%s] of requireSchemaAuthz is invalid", requireSchemaAuthz);
+            throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(cause);
+        }
         // <!ELEMENT acl (ace*) >
         if (aces == null) {
-            return true;
+            return;
         }
         for (Ace ace : aces) {
             // <!ELEMENT ace ((principal or invert), (grant or deny), protected?,inherited?)>
-            if (ace.grant == null || ace.principal == null) {
-                return false;
+            if (ace.grant == null) {
+                throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params("Can not read grant");
+            }
+            if (ace.principal == null) {
+                throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params("Can not read principal");
             }
             // <!ELEMENT grant (privilege+)>
             if (ace.grant.privileges == null) {
-                return false;
+                throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params("Can not read privilege");
             }
             Map<String, CellPrivilege> cellPrivilegeMap = CellPrivilege.getPrivilegeMap();
             Map<String, BoxPrivilege> boxPrivilegeMap = BoxPrivilege.getPrivilegeMap();
 
             for (io.personium.core.model.jaxb.Privilege privilege : ace.grant.privileges) {
-                // privilegeが空でないこと
+                // Privilege is not empty.
                 if (privilege.body == null) {
-                    return false;
+                    throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params("Privilege is empty");
                 }
-                // Privilegeに設定可能なタグであるかチェック
+                // This tag that can be set to privilege?
+                String localName = privilege.body.getLocalName();
                 if (isCellLevel) {
-                    if (!cellPrivilegeMap.containsKey(privilege.body.getLocalName())
-                     && !boxPrivilegeMap.containsKey(privilege.body.getLocalName())) {
-                        return false;
+                    if (!cellPrivilegeMap.containsKey(localName)
+                     && !boxPrivilegeMap.containsKey(localName)) {
+                        String cause = String.format("[%s] that can not be set in privilege", localName);
+                        throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(cause);
                     }
                 } else {
-                    if (!boxPrivilegeMap.containsKey(privilege.body.getLocalName())) {
-                        return false;
+                    if (!boxPrivilegeMap.containsKey(localName)) {
+                        String cause = String.format("[%s] that can not be set in privilege", localName);
+                        throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(cause);
                     }
                 }
             }
             // <!ELEMENT principal (href or all)>
             // <!ELEMENT href ANY>
-            if (ace.principal.all == null && (ace.principal.href == null || ace.principal.href.equals(""))) {
-                return false;
+            if (ace.principal.all == null) {
+                if (ace.principal.href == null) {
+                    throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params("Principal is neither href nor all");
+                } else if (ace.principal.href.equals("")) {
+                    throw PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params("href in principal is empty");
+                }
             }
         }
-        return true;
     }
-
 }
