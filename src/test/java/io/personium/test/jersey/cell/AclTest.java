@@ -1140,8 +1140,9 @@ public class AclTest extends AbstractCase {
                 .with("body", body)
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
-        res.checkErrorResponse(PersoniumCoreException.Dav.XML_VALIDATE_ERROR.getCode(),
-                PersoniumCoreException.Dav.XML_VALIDATE_ERROR.getMessage());
+        PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
+                "Principal is neither href nor all");
+        res.checkErrorResponse(expected.getCode(), expected.getMessage());
     }
 
     /**
