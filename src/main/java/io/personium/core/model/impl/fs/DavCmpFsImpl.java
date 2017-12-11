@@ -943,39 +943,42 @@ public class DavCmpFsImpl implements DavCmp {
      * delete this resource.
      * @param ifMatch ifMatch header
      * @param recursive bool
-     * @return JaxRS応答オブジェクトビルダ
+     * @return JaxRS response builder
      */
     @Override
     public ResponseBuilder delete(final String ifMatch, boolean recursive) {
-        // 指定etagがあり、かつそれが*ではなく内部データから導出されるものと異なるときはエラー
+        // If etag is specified, etag is compared
         if (ifMatch != null && !"*".equals(ifMatch) && !matchesETag(ifMatch)) {
             throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;
         }
-        // ロック
+        // Lock
         Lock lock = this.lock();
         try {
-            // リロード
+            // Reload
             this.load();
             if (this.metaFile == null) {
                 throw getNotFoundException().params(this.getUrl());
             }
             if (!recursive) {
-                // WebDAVコレクションであって子孫リソースがあったら、エラーとする
+                // If there is subordinate resource in WebDAV collection, it is regarded as error.
                 if (TYPE_COL_WEBDAV.equals(this.getType()) && this.getChildrenCount() > 0) {
                     throw PersoniumCoreException.Dav.HAS_CHILDREN;
                 }
+                doDelete();
             } else {
                 doRecursiveDelete();
             }
-            this.doDelete();
         } finally {
-            // ★LOCK
+            // Release lock
             log.debug("unlock");
             lock.release();
         }
         return javax.ws.rs.core.Response.ok().status(HttpStatus.SC_NO_CONTENT);
     }
 
+    /**
+     * Exec delete.
+     */
     private void doDelete() {
         try {
             FileUtils.deleteDirectory(this.fsDir);
@@ -985,9 +988,10 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     * Exec recursive delete.
+     * {@inheritDoc}
      */
-    private void doRecursiveDelete() {
+    @Override
+    public void doRecursiveDelete() {
         if (TYPE_COL_ODATA.equals(getType())) {
             Lock lock = lockOData();
             try {
@@ -997,10 +1001,12 @@ public class DavCmpFsImpl implements DavCmp {
             } finally {
                 lock.release();
             }
-        } else {
-            // TODO impl recursive
-            throw PersoniumCoreException.Misc.NOT_IMPLEMENTED;
+        } else if (TYPE_COL_WEBDAV.equals(getType())) {
+            for (DavCmp child : getChildren().values()) {
+                child.doRecursiveDelete();
+            }
         }
+        doDelete();
     }
 
     /**
