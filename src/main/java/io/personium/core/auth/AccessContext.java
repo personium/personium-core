@@ -58,7 +58,7 @@ import io.personium.core.utils.UriUtils;
  * ACLとの突合でpermissionを生成する。 cell, id, pw → AC AC → Token(issuer, subj, roles) Token → AC AC + ACL → permissions
  * なお、本クラスでは認証・認可のチェック結果を保持しており、これらの情報を扱う場所によって対処方法が異なるため、安易に例外はスローしないこと。
  */
-public final class AccessContext {
+public class AccessContext {
     private Cell cell;
     private String accessType;
     private String subject;
@@ -674,21 +674,7 @@ public final class AccessContext {
         }
 
         // トークン内のスキーマチェック(Boxレベル以下かつマスタートークン以外のアクセスの場合のみ)
-        if (box != null) {
-            String boxSchema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), box.getSchema());
-            String tokenSchema = this.getSchema();
-
-            // ボックスのスキーマが未設定の場合チェックしない
-            if (boxSchema != null) {
-                if (tokenSchema == null) {
-                    throw PersoniumCoreException.Auth.SCHEMA_AUTH_REQUIRED;
-                    // トークンスキーマがConfidentialの場合、#cを削除して比較する
-                } else if (!tokenSchema.replaceAll(OAuth2Helper.Key.CONFIDENTIAL_MARKER, "").equals(boxSchema)) {
-                    // 認証・ボックスのスキーマが設定済かつ等しいくない場合
-                    throw PersoniumCoreException.Auth.SCHEMA_MISMATCH;
-                }
-            }
-        }
+        checkSchemaMatches(box);
 
         if (OAuth2Helper.SchemaLevel.PUBLIC.equals(settingConfidentialLevel)) {
             // 設定がPUBLICの場合はトークン（ac）のスキーマがPUBLICとCONFIDENTIALならOK
@@ -702,6 +688,27 @@ public final class AccessContext {
             return;
         }
         throw PersoniumCoreException.Auth.INSUFFICIENT_SCHEMA_AUTHZ_LEVEL;
+    }
+
+    /**
+     * Check if tokenSchema matches boxSchema.
+     * @param box target box
+     */
+    public void checkSchemaMatches(Box box) {
+        if (box != null) {
+            String boxSchema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), box.getSchema());
+            String tokenSchema = this.getSchema();
+
+            // Do not check if box schema is not set.
+            if (boxSchema != null) {
+                if (tokenSchema == null) {
+                    throw PersoniumCoreException.Auth.SCHEMA_AUTH_REQUIRED;
+                } else if (!tokenSchema.replaceAll(OAuth2Helper.Key.CONFIDENTIAL_MARKER, "").equals(boxSchema)) {
+                    // If token schema is Confidential, delete #c and compare.
+                    throw PersoniumCoreException.Auth.SCHEMA_MISMATCH;
+                }
+            }
+        }
     }
 
     /**

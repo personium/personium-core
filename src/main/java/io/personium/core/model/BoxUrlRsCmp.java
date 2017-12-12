@@ -40,29 +40,32 @@ public class BoxUrlRsCmp extends BoxRsCmp {
     }
 
     /**
-     * アクセス制御を行う.
-     * @param ac アクセスコンテキスト
-     * @param privilege アクセス可能な権限
+     * {@inheritDoc}
      */
     @Override
-    public void checkAccessContext(final AccessContext ac, Privilege privilege) {
+    public void checkAccessContext(AccessContext ac, Privilege privilege) {
         AcceptableAuthScheme allowedAuthScheme = getAcceptableAuthScheme();
 
-        // ユニットユーザトークンチェック
+        // For unit user token, do not check
         if (ac.isUnitUserToken()) {
             return;
         }
 
-        // スキーマ認証チェック
+        // For schema authenticated token of target box, do not check.
+        if (ac.getSchema() != null && isMatchesBoxSchema(ac)) {
+            return;
+        }
+
+        // Check auth schema.
         ac.checkSchemaAccess(this.getConfidentialLevel(), this.getBox(), allowedAuthScheme);
 
-        // Basic認証できるかチェック
+        // Check basic authentication.
         ac.updateBasicAuthenticationStateForResource(null);
 
-        // アクセス権チェック
+        // Check access control.
         if (!this.hasPrivilege(ac, privilege)) {
-            // トークンの有効性チェック
-            // トークンがINVALIDでもACL設定でPrivilegeがallに設定されているとアクセスを許可する必要があるのでこのタイミングでチェック
+            // If the token is INVALID or Privilege is set to all it is necessary to grant access.
+            // For this reason, check the validity of the token at this timing.
             if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
                 ac.throwInvalidTokenException(allowedAuthScheme);
             } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
@@ -70,6 +73,20 @@ public class BoxUrlRsCmp extends BoxRsCmp {
             }
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
+    }
+
+    /**
+     * Whether the schema of the token matches the schema of the box.
+     * @param ac access context
+     * @return true:match  false:not match
+     */
+    private boolean isMatchesBoxSchema(AccessContext ac) {
+        try {
+            ac.checkSchemaMatches(getBox());
+        } catch (PersoniumCoreException e) {
+            return false;
+        }
+        return true;
     }
 
     /**
