@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.auth;
+package io.personium.core.auth;
 
 import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_AN_HOUR;
 import static org.junit.Assert.assertEquals;
@@ -44,7 +44,6 @@ import io.personium.common.auth.token.LocalToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Cell;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.test.categories.Unit;

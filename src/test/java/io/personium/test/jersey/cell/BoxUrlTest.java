@@ -29,6 +29,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
@@ -37,16 +39,15 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.ResourceUtils;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * BoxURL取得 APIのテスト.
@@ -1157,10 +1158,10 @@ public class BoxUrlTest extends ODataCommon {
     }
 
     /**
-     * スキーマ設定がconfidentialの場合にPublicトークンを使用してボックスURLが取得できないこと.
+     * スキーマ設定がconfidentialの場合にPublicトークンを使用してボックスURLが取得できること.
      */
     @Test
-    public final void スキーマ設定がconfidentialの場合にPublicトークンを使用してボックスURLが取得できないこと() {
+    public final void スキーマ設定がconfidentialの場合にPublicトークンを使用してボックスURLが取得できること() {
         try {
             String aclXml = String.format("<D:acl xmlns:D='DAV:' xmlns:p='urn:x-personium:xmlns'"
                     + " p:requireSchemaAuthz='confidential' xml:base='%s/%s/__role/__/'>",
@@ -1184,9 +1185,8 @@ public class BoxUrlTest extends ODataCommon {
                     + getSchemaToken("client"));
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
-            assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
-            PersoniumCoreException e = PersoniumCoreException.Auth.INSUFFICIENT_SCHEMA_AUTHZ_LEVEL;
-            checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
+            assertEquals(HttpStatus.SC_OK, res.getStatusCode());
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
 
         } catch (PersoniumException e) {
             fail(e.getMessage());
