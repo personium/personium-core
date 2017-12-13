@@ -23,6 +23,8 @@ import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 import org.odata4j.expression.BooleanLiteral;
 import org.odata4j.expression.CommonExpression;
+import org.odata4j.expression.DateTimeLiteral;
+import org.odata4j.expression.DateTimeOffsetLiteral;
 import org.odata4j.expression.DoubleLiteral;
 import org.odata4j.expression.Int64Literal;
 import org.odata4j.expression.IntegralLiteral;
@@ -252,6 +254,10 @@ public class FilterConditionValidator {
                 value = ((IntegralLiteral) searchValue).getValue();
             } else if (searchValue instanceof Int64Literal) {
                 value = ((Int64Literal) searchValue).getValue();
+            } else if (searchValue instanceof DateTimeLiteral) {
+                value = ((DateTimeLiteral) searchValue).getValue().toDateTime().getMillis();
+            } else if (searchValue instanceof DateTimeOffsetLiteral) {
+                value = ((DateTimeOffsetLiteral) searchValue).getValue().getMillis();
             } else if (searchValue instanceof NullLiteral) {
                 value = 0;
             } else {
