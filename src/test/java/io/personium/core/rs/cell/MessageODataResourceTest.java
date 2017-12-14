@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.core.OProperties;
 import org.odata4j.core.OProperty;
+import org.odata4j.edm.EdmComplexType;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -43,9 +44,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Box;
-import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.ReceivedMessagePort;
+import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.ctl.SentMessagePort;
 import io.personium.core.model.impl.es.CellEsImpl;
@@ -55,7 +56,7 @@ import io.personium.test.categories.Unit;
  * MessageODataResource unit test classs.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({MessageODataResource.class, MessageResource.class, AccessContext.class, CellEsImpl.class})
+@PrepareForTest({ MessageODataResource.class, MessageResource.class, AccessContext.class, CellEsImpl.class })
 @Category({ Unit.class })
 public class MessageODataResourceTest {
 
@@ -101,9 +102,7 @@ public class MessageODataResourceTest {
         PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
-                Common.MAX_MESSAGE_BODY_LENGTH);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateStatus", "message", "unread");
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateReqRelation", "message", null, null);
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
         // Expected result
@@ -124,11 +123,7 @@ public class MessageODataResourceTest {
         PowerMockito.verifyStatic(times(1));
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", Common.MAX_MESSAGE_BODY_LENGTH);
-        PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateStatus("message", "unread");
-        PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateReqRelation("message", null, null);
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -166,12 +161,11 @@ public class MessageODataResourceTest {
         PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
                 SentMessage.P_TO.getName(), "http://personium/user001");
         PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
-                Common.MAX_MESSAGE_BODY_LENGTH);
+                SentMessage.MAX_MESSAGE_BODY_LENGTH);
         PowerMockito.doNothing().when(MessageODataResource.class, "validateToAndToRelation",
                 "http://personium/user001", null);
         PowerMockito.doNothing().when(MessageODataResource.class, "validateToValue",
                 "http://personium/user001", baseUri);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateReqRelation", "message", null, null);
 
         // --------------------
         // Expected result
@@ -191,13 +185,11 @@ public class MessageODataResourceTest {
         PowerMockito.verifyStatic(times(1));
         MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(), "http://personium/user001");
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", Common.MAX_MESSAGE_BODY_LENGTH);
+        MessageODataResource.validateBody("body", SentMessage.MAX_MESSAGE_BODY_LENGTH);
         PowerMockito.verifyStatic(times(1));
         MessageODataResource.validateToAndToRelation("http://personium/user001", null);
         PowerMockito.verifyStatic(times(1));
         MessageODataResource.validateToValue("http://personium/user001", baseUri);
-        PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateReqRelation("message", null, null);
     }
 
     /**
@@ -446,22 +438,39 @@ public class MessageODataResourceTest {
     }
 
     /**
-     * Test validateStatus().
+     * Test validate().
      * Normal test.
+     * EntitySetName is ReceivedMessage
      * Type is message.
+     * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validateStatus_Normal_type_is_message() {
+    public void validate_Normal_type_is_message() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_MESSAGE;
-        String status = ReceivedMessage.STATUS_UNREAD;
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), "http://personium/schema001"));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_MESSAGE));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), ReceivedMessage.STATUS_UNREAD));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        messageODataResource.collectProperties(props);
 
         // --------------------
         // Mock settings
         // --------------------
-        // Nothing.
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, "http://personium/schema001");
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
         // Expected result
@@ -471,30 +480,58 @@ public class MessageODataResourceTest {
         // --------------------
         // Run method
         // --------------------
-        try {
-            MessageODataResource.validateStatus(type, status);
-        } catch (PersoniumCoreException e) {
-            fail("Exception occurred.");
-        }
+        messageODataResource.validate(props);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                "http://personium/schema001");
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
-     * Test validateStatus().
+     * Test validate().
      * Normal test.
      * Type is relationBuild.
+     * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validateStatus_Normal_type_is_relation_build() {
+    public void validate_Normal_type_is_relation_build() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
-        String status = ReceivedMessage.STATUS_NONE;
+        String requestRelation = "http://personium/AppCell/__relation/__/-relationName_+:/";
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), "http://personium/schema001"));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQ_RELATION_BUILD));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), ReceivedMessage.STATUS_NONE));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), requestRelation));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), requestRelationTarget));
+        messageODataResource.collectProperties(props);
 
         // --------------------
         // Mock settings
         // --------------------
-        // Nothing.
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, "http://personium/schema001");
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateReqRelationOnRelation",
+                requestRelation, requestRelationTarget);
 
         // --------------------
         // Expected result
@@ -504,30 +541,60 @@ public class MessageODataResourceTest {
         // --------------------
         // Run method
         // --------------------
-        try {
-            MessageODataResource.validateStatus(type, status);
-        } catch (PersoniumCoreException e) {
-            fail("Exception occurred.");
-        }
+        messageODataResource.validate(props);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                "http://personium/schema001");
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
     }
 
     /**
-     * Test validateStatus().
+     * Test validate().
      * Normal test.
      * Type is roleGrant.
+     * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validateStatus_Normal_type_is_role_grant() {
+    public void validate_Normal_type_is_role_grant() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_ROLE_GRANT;
-        String status = ReceivedMessage.STATUS_NONE;
+        String requestRelation = "http://personium/AppCell/__role/__/roleName-_/";
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), "http://personium/schema001"));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQ_ROLE_GRANT));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), ReceivedMessage.STATUS_NONE));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), requestRelation));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), requestRelationTarget));
+        messageODataResource.collectProperties(props);
 
         // --------------------
         // Mock settings
         // --------------------
-        // Nothing.
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, "http://personium/schema001");
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateReqRelationOnRole",
+                requestRelation, requestRelationTarget);
 
         // --------------------
         // Expected result
@@ -537,30 +604,49 @@ public class MessageODataResourceTest {
         // --------------------
         // Run method
         // --------------------
-        try {
-            MessageODataResource.validateStatus(type, status);
-        } catch (PersoniumCoreException e) {
-            fail("Exception occurred.");
-        }
+        messageODataResource.validate(props);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                "http://personium/schema001");
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
     }
 
     /**
-     * Test validateStatus().
+     * Test validate().
      * Error test.
      * Type is message.
      */
     @Test
-    public void validateStatus_Error_type_is_message() {
+    public void validate_Error_type_is_message() {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_MESSAGE;
-        String status = ReceivedMessage.STATUS_READ;
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), "http://personium/schema001"));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_MESSAGE));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), ReceivedMessage.STATUS_READ));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        messageODataResource.collectProperties(props);
 
         // --------------------
         // Mock settings
         // --------------------
-        // Nothing.
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, "http://personium/schema001");
 
         // --------------------
         // Expected result
@@ -571,7 +657,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateStatus(type, status);
+            messageODataResource.validate(props);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -586,22 +672,35 @@ public class MessageODataResourceTest {
     }
 
     /**
-     * Test validateStatus().
+     * Test validate().
      * Error test.
      * Type is relationBuild.
      */
     @Test
-    public void validateStatus_Error_type_is_relation_build() {
+    public void validate_Error_type_is_relation_build() {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
-        String status = ReceivedMessage.STATUS_APPROVED;
+        String requestRelation = "http://personium/AppCell/__relation/__/-relationName_+:/";
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), "http://personium/schema001"));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQ_RELATION_BUILD));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), ReceivedMessage.STATUS_APPROVED));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), requestRelation));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), requestRelationTarget));
+        messageODataResource.collectProperties(props);
 
         // --------------------
         // Mock settings
         // --------------------
-        // Nothing.
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, "http://personium/schema001");
 
         // --------------------
         // Expected result
@@ -612,7 +711,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateStatus(type, status);
+            messageODataResource.validate(props);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -632,17 +731,30 @@ public class MessageODataResourceTest {
      * Type is relationBreak.
      */
     @Test
-    public void validateStatus_Error_type_is_relation_break() {
+    public void validate_Error_type_is_relation_break() {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
-        String status = ReceivedMessage.STATUS_REJECTED;
+        String requestRelation = "http://personium/AppCell/__relation/__/-relationName_+:/";
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), "http://personium/schema001"));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQ_RELATION_BREAK));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), ReceivedMessage.STATUS_REJECTED));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), requestRelation));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), requestRelationTarget));
+        messageODataResource.collectProperties(props);
 
         // --------------------
         // Mock settings
         // --------------------
-        // Nothing.
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, "http://personium/schema001");
 
         // --------------------
         // Expected result
@@ -653,7 +765,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateStatus(type, status);
+            messageODataResource.validate(props);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -668,22 +780,35 @@ public class MessageODataResourceTest {
     }
 
     /**
-     * Test validateStatus().
+     * Test validate().
      * Error test.
      * Type is roleGrant.
      */
     @Test
-    public void validateStatus_Error_type_is_role_grant() {
+    public void validate_Error_type_is_role_grant() {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_ROLE_GRANT;
-        String status = ReceivedMessage.STATUS_REJECTED;
+        String requestRelation = "http://personium/AppCell/__role/__/roleName-_/";
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), "http://personium/schema001"));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQ_ROLE_GRANT));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), ReceivedMessage.STATUS_REJECTED));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), requestRelation));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), requestRelationTarget));
+        messageODataResource.collectProperties(props);
 
         // --------------------
         // Mock settings
         // --------------------
-        // Nothing.
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, "http://personium/schema001");
 
         // --------------------
         // Expected result
@@ -694,7 +819,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateStatus(type, status);
+            messageODataResource.validate(props);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -709,22 +834,35 @@ public class MessageODataResourceTest {
     }
 
     /**
-     * Test validateStatus().
+     * Test validate().
      * Error test.
      * Type is roleRevoke.
      */
     @Test
     public void validateStatus_Error_type_is_role_revoke() {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_ROLE_REVOKE;
-        String status = ReceivedMessage.STATUS_APPROVED;
+        String requestRelation = "http://personium/AppCell/__role/__/roleName-_/";
+        String requestRelationTarget = "http://personium/ExtCell/";
+
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), "http://personium/schema001"));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQ_ROLE_REVOKE));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), ReceivedMessage.STATUS_APPROVED));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), requestRelation));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), requestRelationTarget));
+        messageODataResource.collectProperties(props);
 
         // --------------------
         // Mock settings
         // --------------------
-        // Nothing.
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, "http://personium/schema001");
 
         // --------------------
         // Expected result
@@ -735,7 +873,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateStatus(type, status);
+            messageODataResource.validate(props);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -759,7 +897,6 @@ public class MessageODataResourceTest {
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
         String requestRelation = "http://personium/AppCell/__relation/__/-relationName_+:/";
         String requestRelationTarget = "http://personium/ExtCell/";
 
@@ -777,7 +914,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            MessageODataResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
         } catch (PersoniumCoreException e) {
             fail("Exception occurred.");
         }
@@ -793,7 +930,6 @@ public class MessageODataResourceTest {
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_ROLE_GRANT;
         String requestRelation = "http://personium/AppCell/__role/__/roleName-_/";
         String requestRelationTarget = "http://personium/ExtCell/";
 
@@ -811,41 +947,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
-        } catch (PersoniumCoreException e) {
-            fail("Exception occurred.");
-        }
-    }
-
-    /**
-     * Test validateReqRelation().
-     * Normal test.
-     * Type is message.
-     */
-    @Test
-    public void validateReqRelation_Normal_type_is_message() {
-        // --------------------
-        // Test method args
-        // --------------------
-        String type = ReceivedMessage.TYPE_MESSAGE;
-        String requestRelation = null;
-        String requestRelationTarget = null;
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        // Nothing.
-
-        // --------------------
-        // Expected result
-        // --------------------
-        // Nothing.
-
-        // --------------------
-        // Run method
-        // --------------------
-        try {
-            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            MessageODataResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
         } catch (PersoniumCoreException e) {
             fail("Exception occurred.");
         }
@@ -861,7 +963,6 @@ public class MessageODataResourceTest {
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
         String requestRelation = null;
         String requestRelationTarget = "http://personium/ExtCell/";
 
@@ -879,7 +980,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            MessageODataResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -904,7 +1005,6 @@ public class MessageODataResourceTest {
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
         String requestRelation = "rerationName";
         String requestRelationTarget = null;
 
@@ -922,7 +1022,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            MessageODataResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -947,7 +1047,6 @@ public class MessageODataResourceTest {
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_ROLE_GRANT;
         String requestRelation = null;
         String requestRelationTarget = "http://personium/ExtCell/";
 
@@ -965,7 +1064,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            MessageODataResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -990,7 +1089,6 @@ public class MessageODataResourceTest {
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_ROLE_REVOKE;
         String requestRelation = "roleName";
         String requestRelationTarget = null;
 
@@ -1008,7 +1106,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            MessageODataResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1033,7 +1131,6 @@ public class MessageODataResourceTest {
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BUILD;
         String requestRelation = "http://personium/Cell/relationName";
         String requestRelationTarget = "http://personium/ExtCell/";
 
@@ -1051,7 +1148,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            MessageODataResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1075,7 +1172,6 @@ public class MessageODataResourceTest {
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_RELATION_BREAK;
         String requestRelation = "_rerationName-+:";
         String requestRelationTarget = "http://personium/ExtCell/";
 
@@ -1093,7 +1189,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            MessageODataResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1117,7 +1213,6 @@ public class MessageODataResourceTest {
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_ROLE_GRANT;
         String requestRelation = "http://personium/Cell/roleName";
         String requestRelationTarget = "http://personium/ExtCell/";
 
@@ -1135,7 +1230,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            MessageODataResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1159,7 +1254,6 @@ public class MessageODataResourceTest {
         // --------------------
         // Test method args
         // --------------------
-        String type = ReceivedMessage.TYPE_REQ_ROLE_REVOKE;
         String requestRelation = "-roleName_";
         String requestRelationTarget = "http://personium/ExtCell/";
 
@@ -1177,7 +1271,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelation(type, requestRelation, requestRelationTarget);
+            MessageODataResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1190,4 +1284,974 @@ public class MessageODataResourceTest {
             assertThat(e.getMessage(), is(expected.getMessage()));
         }
     }
+
+    /**
+     * Test validate().
+     * EntitySetName is ReceivedMessage.
+     * Type is req.rule.register.
+     * Status is none.
+     * RequestRule.Action is log.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Normal_ReceivedMessage_rule_register() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.register"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "none"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "log"));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        // Nothing.
+
+        // --------------------
+        // Run method
+        // --------------------
+        messageODataResource.validate(props);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Error test.
+     * EntitySetName is ReceivedMessage.
+     * Type is req.rule.register.
+     * Status is not none.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Error_ReceivedMessage_rule_register_status_not_none() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.register"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "approved"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "log"));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        PersoniumCoreException expected =
+                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ReceivedMessage.P_STATUS.getName());
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            messageODataResource.validate(props);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(0));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Error test.
+     * EntitySetName is ReceivedMessage.
+     * Type is req.rule.register.
+     * Status is none.
+     * RequestRule.Action is null.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Error_ReceivedMessage_rule_register_action_null() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.register"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "none"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_ACTION.getName(), null));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                ReceivedMessage.P_REQUEST_RULE.getName() + "." + Rule.P_ACTION.getName());
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            messageODataResource.validate(props);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(0));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Normal test.
+     * EntitySetName is ReceivedMessage.
+     * Schema exists.
+     * Type is req.rule.register.
+     * Status is none.
+     * RequestRule.Action is log.
+     * RequestRule.Object is localbox.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Normal_ReceivedMessage_rule_register_object_localbox() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.register"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "none"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "log"));
+        req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Run method
+        // --------------------
+        messageODataResource.validate(props);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Normal test.
+     * EntitySetName is ReceivedMessage.
+     * Schema exists.
+     * Type is req.rule.register.
+     * Status is none.
+     * RequestRule.Action is exec.
+     * RequestRule.Object is localbox.
+     * RequestRule.Service is localbox.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Normal_ReceivedMessage_rule_register_object_localbox_service_localbox() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.register"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "none"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "exec"));
+        req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
+        req.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localbox:/col/service"));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Run method
+        // --------------------
+        messageODataResource.validate(props);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Error test.
+     * EntitySetName is ReceivedMessage.
+     * Schema exists.
+     * Type is req.rule.register.
+     * Status is none.
+     * RequestRule.Action is exec.
+     * RequestRule.Object is localcell.
+     * RequestRule.Service is localbox.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Error_ReceivedMessage_rule_register_object_localcell() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.register"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "none"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "exec"));
+        req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localcell:/box/col/entity"));
+        req.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localbox:/col/entity"));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                ReceivedMessage.P_REQUEST_RULE.getName() + "." + Rule.P_OBJECT.getName());
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            messageODataResource.validate(props);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(0));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Error test.
+     * EntitySetName is ReceivedMessage.
+     * Schema exists.
+     * Type is req.rule.register.
+     * Status is none.
+     * RequestRule.Action is exec.
+     * RequestRule.Object is localbox.
+     * RequestRule.Service is localcell.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Error_ReceivedMessage_rule_register_object_localbox_service_localcell() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.register"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "none"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "exec"));
+        req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
+        req.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localcell:/box/col/entity"));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                ReceivedMessage.P_REQUEST_RULE.getName() + "." + Rule.P_SERVICE.getName());
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            messageODataResource.validate(props);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(0));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Error test.
+     * EntitySetName is ReceivedMessage.
+     * Schema exists.
+     * Type is req.rule.register.
+     * Status is none.
+     * RequestRule.Action is exec.
+     * RequestRule.Object is localbox.
+     * RequestRule.Service is null.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Error_ReceivedMessage_rule_register_object_localbox_service_null() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.register"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "none"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "exec"));
+        req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
+        req.add(OProperties.string(Rule.P_SERVICE.getName(), null));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                ReceivedMessage.P_REQUEST_RULE.getName() + "." + Rule.P_SERVICE.getName());
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            messageODataResource.validate(props);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(0));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Normal test.
+     * EntitySetName is ReceivedMessage.
+     * Schema exists.
+     * Type is req.rule.register.
+     * Status is none.
+     * RequestRule.Action is callback.
+     * RequestRule.Object is localbox.
+     * RequestRule.Service is localunit.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Normal_ReceivedMessage_rule_register_action_callback_object_localbox_service_localunit()
+            throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.register"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "none"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
+        req.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localunit:/cell/box/col/service"));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Run method
+        // --------------------
+        messageODataResource.validate(props);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Normal test.
+     * EntitySetName is ReceivedMessage.
+     * Schema exists.
+     * Type is req.rule.register.
+     * Status is none.
+     * RequestRule.Action is callback.
+     * RequestRule.Object is localbox.
+     * RequestRule.Service is http.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Normal_ReceivedMessage_rule_register_action_callback_object_localbox_service_http()
+            throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.register"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "none"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
+        req.add(OProperties.string(Rule.P_SERVICE.getName(), "http://personium/cell/box/col/service"));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Run method
+        // --------------------
+        messageODataResource.validate(props);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Normal test.
+     * EntitySetName is ReceivedMessage.
+     * Schema exists.
+     * Type is req.rule.register.
+     * Status is none.
+     * RequestRule.Action is callback.
+     * RequestRule.Object is localbox.
+     * RequestRule.Service is https.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Normal_ReceivedMessage_rule_register_action_callback_object_localbox_service_https()
+            throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.register"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "none"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
+        req.add(OProperties.string(Rule.P_SERVICE.getName(), "https://personium/cell/box/col/service"));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Run method
+        // --------------------
+        messageODataResource.validate(props);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Error test.
+     * EntitySetName is ReceivedMessage.
+     * Schema exists.
+     * Type is req.rule.register.
+     * Status is none.
+     * RequestRule.Action is callback.
+     * RequestRule.Object is localbox.
+     * RequestRule.Service is invalid.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Normal_ReceivedMessage_rule_register_action_callback_object_localbox_service_invalid()
+            throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.register"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "none"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
+        req.add(OProperties.string(Rule.P_SERVICE.getName(), "/personium/cell/box/col/service"));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                ReceivedMessage.P_REQUEST_RULE.getName() + "." + Rule.P_SERVICE.getName());
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            messageODataResource.validate(props);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(0));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Normal test.
+     * EntitySetName is ReceivedMessage.
+     * Schema exists.
+     * Type is req.rule.unregister.
+     * Status is none.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Normal_ReceivedMessage_rule_unregister() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.unregister"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "none"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_NAME.getName(), "ruleName"));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Run method
+        // --------------------
+        messageODataResource.validate(props);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    /**
+     * Test validate().
+     * Error test.
+     * EntitySetName is ReceivedMessage.
+     * Schema exists.
+     * Type is req.rule.unregister.
+     * Status is not none.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validate_Error_ReceivedMessage_rule_unregister_status_not_none() throws Exception {
+        MessageResource messageResource = PowerMockito.mock(MessageResource.class);
+        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        // --------------------
+        // Test method args
+        // --------------------
+        String schema = "http://personium/schema001";
+        List<OProperty<?>> props = new ArrayList<OProperty<?>>();
+        props.add(OProperties.string(ReceivedMessagePort.P_SCHEMA.getName(), schema));
+        props.add(OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_BODY.getName(), "body"));
+        props.add(OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.rule.unregister"));
+        props.add(OProperties.string(ReceivedMessage.P_STATUS.getName(), "read"));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
+        props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
+        List<OProperty<?>> req = new ArrayList<OProperty<?>>();
+        req.add(OProperties.string(Rule.P_NAME.getName(), "ruleName"));
+        props.add(OProperties.complex(
+                ReceivedMessage.P_REQUEST_RULE.getName(), EdmComplexType.newBuilder().build(), req));
+        messageODataResource.collectProperties(props);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
+                messageResource, schema);
+        PowerMockito.mockStatic(MessageODataResource.class);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+                ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+                ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                ReceivedMessage.P_STATUS.getName());
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            messageODataResource.validate(props);
+            fail("Not exception.");
+        } catch (PersoniumCoreException e) {
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        // Confirm function call
+        verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
+                schema);
+        PowerMockito.verifyStatic(times(1));
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        PowerMockito.verifyStatic(times(0));
+        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+    }
+
+    // ToDo add tests with RequestRule property on SentMessage
+
 }

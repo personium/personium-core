@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 /**
- * JUnit test.
+ * Classes of action for the event that matches a rule.
  */
-package io.personium.test.unit.core.event;
-
+package io.personium.core.rule.action;

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityId;
 import org.odata4j.core.OEntityIds;
 import org.odata4j.core.OEntityKey;
+import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmDataServices;
 import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.edm.EdmEntityType;
@@ -55,6 +56,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.MERGE;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.odata.OEntityWrapper;
@@ -140,8 +142,29 @@ public class ODataEntityResource extends AbstractODataResource {
         if (edmEntitySet == null) {
             throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
         }
+
+        // normalize entitykey
+        this.oEntityKey = AbstractODataResource.normalizeOEntityKey(this.oEntityKey, edmEntitySet);
+
         EdmEntityType edmEntityType = edmEntitySet.getType();
         validatePrimaryKey(oEntityKey, edmEntityType);
+    }
+
+    /**
+     * Costructor for derrived class.
+     * @param odataResource ODataResource object
+     * @param entitySetName name of the entityset
+     * @param keyString  key string processed already
+     * @param oEntityKey normalized OEntityKey object
+     */
+    protected ODataEntityResource(final ODataResource odataResource,
+            final String entitySetName, final String keyString, final OEntityKey oEntityKey) {
+        this.odataResource = odataResource;
+        this.accessContext = this.odataResource.accessContext;
+        setOdataProducer(this.odataResource.getODataProducer());
+        setEntitySetName(entitySetName);
+        this.keyString = keyString;
+        this.oEntityKey = oEntityKey;
     }
 
     /**
@@ -149,6 +172,7 @@ public class ODataEntityResource extends AbstractODataResource {
      * @param uriInfo UriInfo
      * @param accept Accept ヘッダ
      * @param ifNoneMatch If-None-Match ヘッダ
+     * @param requestKey X-Personium-RequestKey Header
      * @param format $format パラメタ
      * @param expand $expand パラメタ
      * @param select $select パラメタ
@@ -159,6 +183,7 @@ public class ODataEntityResource extends AbstractODataResource {
             @Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.ACCEPT) String accept,
             @HeaderParam(HttpHeaders.IF_NONE_MATCH) String ifNoneMatch,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @QueryParam("$format") String format,
             @QueryParam("$expand") String expand,
             @QueryParam("$select") String select) {
@@ -205,7 +230,20 @@ public class ODataEntityResource extends AbstractODataResource {
                 rb.header(HttpHeaders.ETAG, ODataResource.renderEtagHeader(etag));
             }
         }
-        return rb.entity(respStr).build();
+        Response res = rb.entity(respStr).build();
+
+        // post event to EventBus
+        String key = AbstractODataResource.replaceDummyKeyToNull(this.oEntityKey.toKeyString());
+        String object = String.format("%s%s%s",
+                this.odataResource.getRootUrl(),
+                getEntitySetName(),
+                key);
+        String info = String.format("%s,%s",
+                Integer.toString(res.getStatus()),
+                uriInfo.getRequestUri());
+        this.odataResource.postEvent(getEntitySetName(), object, info, requestKey, PersoniumEventType.Operation.GET);
+
+        return res;
     }
 
     /**
@@ -264,13 +302,15 @@ public class ODataEntityResource extends AbstractODataResource {
      * @param reader リクエストボディ
      * @param accept Accept ヘッダ
      * @param ifMatch If-Match ヘッダ
+     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RSResponse
      */
     @WriteAPI
     @PUT
     public Response put(Reader reader,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
-            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
+            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
 
         // メソッド実行可否チェック
         checkNotAllowedMethod();
@@ -287,10 +327,20 @@ public class ODataEntityResource extends AbstractODataResource {
         // 特に例外があがらなければ、レスポンスを返す。
         // oewに新たに登録されたETagを返す
         etag = oew.getEtag();
-        return Response.noContent()
+        Response res = Response.noContent()
                 .header(HttpHeaders.ETAG, ODataResource.renderEtagHeader(etag))
                 .header(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataVersion.V2.asString)
                 .build();
+
+        // post event to EventBus
+        String key = AbstractODataResource.replaceDummyKeyToNull(this.oEntityKey.toKeyString());
+        String object = this.odataResource.getRootUrl() + getEntitySetName() + key;
+        // set new entitykey's string to Info
+        String newKey = AbstractODataResource.replaceDummyKeyToNull(oew.getEntityKey().toKeyString());
+        String info = Integer.toString(res.getStatus()) + "," + newKey;
+        this.odataResource.postEvent(getEntitySetName(), object, info, requestKey, PersoniumEventType.Operation.UPDATE);
+
+        return res;
     }
 
     /**
@@ -322,36 +372,49 @@ public class ODataEntityResource extends AbstractODataResource {
      * @param reader リクエストボディ
      * @param accept Accept ヘッダ
      * @param ifMatch If-Match ヘッダ
+     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RSResponse
      */
     @WriteAPI
     @MERGE
     public Response merge(Reader reader,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
-            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
+            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
         ODataMergeResource oDataMergeResource = new ODataMergeResource(this.odataResource, this.getEntitySetName(),
-                this.keyString);
-        return oDataMergeResource.merge(reader, accept, ifMatch);
+                this.keyString, this.oEntityKey);
+        return oDataMergeResource.merge(reader, accept, ifMatch, requestKey);
     }
 
     /**
      * DELETEメソッドの処理.
      * @param accept Accept ヘッダ
      * @param ifMatch If-Match ヘッダ
+     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RS Response
      */
     @WriteAPI
     @DELETE
     public Response delete(
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
-            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
+            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
         // アクセス制御
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
 
         deleteEntity(ifMatch);
-        return Response.noContent().header(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataVersion.V2.asString)
+        Response res = Response.noContent()
+                .header(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataVersion.V2.asString)
                 .build();
+
+        // post event to EventBus
+        String key = AbstractODataResource.replaceDummyKeyToNull(this.oEntityKey.toKeyString());
+        String object = this.odataResource.getRootUrl() + getEntitySetName() + key;
+        String info = Integer.toString(res.getStatus());
+        this.odataResource.postEvent(getEntitySetName(), object, info, requestKey, PersoniumEventType.Operation.DELETE);
+
+        return res;
     }
 
     /**
@@ -379,8 +442,7 @@ public class ODataEntityResource extends AbstractODataResource {
      */
     @Path("{first: \\$}links/{targetNavProp:.+?}")
     public ODataLinksResource links(@PathParam("targetNavProp") final String targetNavProp) {
-        OEntityKey oeKey = OEntityKey.parse(this.keyString);
-        OEntityId oeId = OEntityIds.create(getEntitySetName(), oeKey);
+        OEntityId oeId = OEntityIds.create(getEntitySetName(), this.oEntityKey);
         return new ODataLinksResource(this.odataResource, oeId, targetNavProp, null);
     }
 
@@ -447,6 +509,14 @@ public class ODataEntityResource extends AbstractODataResource {
                 PersoniumCoreUtils.HttpMethod.MERGE,
                 HttpMethod.DELETE
                 ).build();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate(List<OProperty<?>> props) {
+        this.odataResource.validate(getEntitySetName(), props);
     }
 
     /**

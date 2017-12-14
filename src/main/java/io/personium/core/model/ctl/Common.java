@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,110 +28,133 @@ import org.odata4j.edm.EdmSimpleType;
 import io.personium.common.utils.PersoniumCoreUtils;
 
 /**
- * Edm 定義体で共通的に使う定数群を定義.
+ * Constant values commonly used in Edm.
  */
 public class Common {
 
+    /** Constructor. */
     private Common() {
     }
 
     /** Regular expression in generic name. */
     private static final String REGEX_NAME = "[a-zA-Z0-9][a-zA-Z0-9-_]{0,127}";
+    /** Regular expression in name with sign. */
+    private static final String REGEX_NAME_WITH_SIGN = "[a-zA-Z0-9][a-zA-Z0-9-_!$*=^`{|}~.@]{0,127}";
     /** Regular expression in snapshot file name. */
     private static final String REGEX_SNAPSHOT_NAME = "[a-zA-Z0-9-_]{1,192}";
     /** Regular expression in relation name. */
     private static final String REGEX_RELATION_NAME = "[a-zA-Z0-9-\\+][a-zA-Z0-9-_\\+:]{0,127}";
+    /** Regular expression in id. */
+    private static final String REGEX_ID = "[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}";
+    /** Regular expression in userdata key. */
+    private static final String REGEX_USERDATA_KEY = "[a-zA-Z0-9][a-zA-Z0-9-_]{0,127}";
+    /** Regular exporession in decimal. */
+    private static final String REGEX_DECIMAL = "-?[0-9]{1,5}\\.[0-9]{1,5}";
 
     /**
-     * UnitCtlの名前空間名.
+     * Namespace of UnitCtl.
      */
     public static final String EDM_NS_UNIT_CTL = "UnitCtl";
     /**
-     * CellCtlの名前空間名.
+     * Namespace of CellCtl.
      */
     public static final String EDM_NS_CELL_CTL = "CellCtl";
     /**
-     * ODataSvcSchemaの名前空間名.
+     * Namespace of ODataSvcSchema.
      */
     public static final String EDM_NS_ODATA_SVC_SCHEMA = "ODataSvcSchema";
-    /**
-     * Schema プロパティの定義体.
-     */
-    public static final EdmProperty.Builder P_SCHEMA = EdmProperty.newBuilder("Schema").setType(EdmSimpleType.STRING)
-            .setNullable(true).setDefaultValue("null");
-    /**
-     * _Box.Nameプロパティの定義体.
-     */
-    public static final EdmProperty.Builder P_BOX_NAME = EdmProperty.newBuilder("_Box.Name")
-            .setType(EdmSimpleType.STRING)
-            .setNullable(true);
-    /**
-     * id プロパティの定義体.
-     */
-    public static final EdmProperty.Builder P_ID = EdmProperty.newBuilder("__id")
-            .setType(EdmSimpleType.STRING).setDefaultValue("UUID()");
-    /** 拡張スキーマFormat定義. */
+
+    /** Extended schema Format. */
     public static final String P_FORMAT = "Format";
-    /** 拡張スキーマFormat正規表現定義. */
+    /** Extended schema Format regEx. */
     public static final String P_FORMAT_PATTERN_REGEX = "regEx";
-    /** 拡張スキーマFormat定義. */
+    /** Extended schema Format uri. */
     public static final String P_FORMAT_PATTERN_URI = "uri";
-    /** 拡張スキーマFormat定義. */
-    public static final String P_FORMAT_PATTERN_SCHEMA_URI = "schema-uri";
-    /** 拡張スキーマFormat定義. */
+    /** Extended schema Format cell-url. */
     public static final String P_FORMAT_PATTERN_CELL_URL = "cell-url";
-    /** Extended schema Format definition(Message RequestRelation). */
-    public static final String P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION = "message-request-relation";
-    /** 拡張スキーマFormat定義.1つ以上のスペース区切り英数字. */
+    /** Extended schema Format USUSST. */
     public static final String P_FORMAT_PATTERN_USUSST = "unordered-set-of-unique-space-separated-tokens";
-    /** 先頭が-,_以外で始まる半角英数大小文字,-,_が1文字から128文字. */
+
+    /** Pattern generic name. */
     public static final String PATTERN_NAME = "^" + REGEX_NAME + "$";
     /** Pattern snapshot name. */
     public static final String PATTERN_SNAPSHOT_NAME = "^" + REGEX_SNAPSHOT_NAME + "$";
-    /** 先頭が半角記号以外で始まる半角英数大小文字,半角記号(-_!#$%*+/=^`{|}~.@)が1文字から128文字. */
-    public static final String PATTERN_NAME_WITH_SIGN = "^[a-zA-Z0-9][a-zA-Z0-9-_!$*=^`{|}~.@]{0,127}$";
-    /** 先頭が_,:以外で始まる半角英数大小文字,-,_,+,:が1文字から128文字. */
+    /** Pattern name with sign. */
+    public static final String PATTERN_NAME_WITH_SIGN = "^" + REGEX_NAME_WITH_SIGN + "$";
+    /** Pattern relation name. */
     public static final String PATTERN_RELATION_NAME = "^" + REGEX_RELATION_NAME + "$";
-    /** String containing "/__relation/__/".<br>
+    /**
+     * Pattern relation class path "/$1/__relation/__/$2".<br>
+     * Explanation of applicable group.<br>
+     * $1:CellName
+     * $2:RelationName
+     */
+    public static final String PATTERN_RELATION_CLASS_PATH = "/(" + REGEX_NAME + ")/__relation/__/(" + REGEX_RELATION_NAME + ")/?$"; // CHECKSTYLE IGNORE - To maintain readability
+    /**
+     * Pattern relation class url "$1/$2/__relation/__/$3".<br>
      * Explanation of applicable group.<br>
      * $1:BaseURL
      * $2:CellName
-     * $3:RelationName */
-    public static final String PATTERN_RELATION_CLASS_URL = "(^.+)/([^/]+)/__relation/__/(" + REGEX_RELATION_NAME + ")/?$"; // CHECKSTYLE IGNORE - To maintain readability
-    /** String containing "/__role/__/".<br>
+     * $3:RelationName
+     */
+    public static final String PATTERN_RELATION_CLASS_URL = "(^.+)" + PATTERN_RELATION_CLASS_PATH;
+    /**
+     * Pattern role class path "/$1/__role/__/$2".<br>
+     * Explanation of applicable group.<br>
+     * $1:CellName
+     * $2:RoleName
+     */
+    public static final String PATTERN_ROLE_CLASS_PATH = "/(" + REGEX_NAME + ")/__role/__/(" + REGEX_NAME + ")/?$";
+    /**
+     * Pattern role class url "$1/$2/__role/__/$3".<br>
      * Explanation of applicable group.<br>
      * $1:BaseURL
      * $2:CellName
-     * $3:RoleName */
-    public static final String PATTERN_ROLE_CLASS_URL = "(^.+)/([^/]+)/__role/__/(" + REGEX_NAME + ")/?$";
-    /** multiplicityのFormat定義. */
+     * $3:RoleName
+     */
+    public static final String PATTERN_ROLE_CLASS_URL = "(^.+)" + PATTERN_ROLE_CLASS_PATH;
+    /**
+     * Pattern service path using personium-localbox "/$1/$2".<br>
+     * Explanation of applicable group.<br>
+     * $1:CollectionName
+     * $2:ServiceName
+     */
+    public static final String PATTERN_SERVICE_LOCALBOX_PATH = "/(" + REGEX_NAME + ")/(" + REGEX_NAME + ")$";
+    /**
+     * Pattern service path using personium-localcell "/$1/$2/$3".<br>
+     * Explanation of applicable group.<br>
+     * $1:BoxName
+     * $2:CollectionName
+     * $3:ServiceName
+     */
+    public static final String PATTERN_SERVICE_LOCALCELL_PATH = "/(" + REGEX_NAME + "|__)" + PATTERN_SERVICE_LOCALBOX_PATH; // CHECKSTYLE IGNORE - To maintain readability
+    /**
+     * Pattern service path "/$1/$2/$3/$4".<br>
+     * Explanation of applicable group.<br>
+     * $1:CellName
+     * $2:BoxName
+     * $3:CollectionName
+     * $4:ServiceName
+     */
+    public static final String PATTERN_SERVICE_PATH = "/(" + REGEX_NAME + ")" + PATTERN_SERVICE_LOCALCELL_PATH;
+    /** Pattern multiplicity. */
     public static final String PATTERN_MULTIPLICITY = "0\\.\\.1|1|\\*";
-    /** 先頭が-,_以外で始まる半角英数大小文字,-,_が1文字から200文字. */
-    public static final String PATTERN_ID = "^[a-zA-Z0-9][a-zA-Z0-9-_:]{0,199}$";
-    /** InReplyTo32文字. */
-    public static final String PATTERN_IN_REPLY_TO = "^.{32}$";
-    /** MessageType message or req.relation.build or req.relation.break or req.role.grant or req.role.revoke. */
-    public static final String PATTERN_MESSAGE_TYPE =
-         "^(message)|(req\\.relation\\.build)|(req\\.relation\\.break)|(req\\.role\\.grant)|(req\\.role\\.revoke)$";
-    /** メッセージタイトル0文字から256文字文字. */
-    public static final String PATTERN_MESSAGE_TITLE = "^.{0,256}$";
-    /** メッセージプライオリティ 1から5. */
-    public static final String PATTERN_MESSAGE_PRIORITY = "^[1-5]$";
-    /** メッセージの文字列型valueの最大長. */
-    public static final int MAX_MESSAGE_BODY_LENGTH = 1024 * 64;
+    /** Pattern id. */
+    public static final String PATTERN_ID = "^" + REGEX_ID + "$";
+    /** Pattern userdata key. */
+    public static final String PATTERN_USERDATA_KEY = "^" + REGEX_USERDATA_KEY + "$";
+    /** Pattern decimal. */
+    public static final String PATTERN_DECIMAL = "^" + REGEX_DECIMAL + "$";
 
-    /** ユーザデータのKeyのFormat定義. */
-    public static final String PATTERN_USERDATA_KEY = "^[a-zA-Z0-9][a-zA-Z0-9-_]{0,127}$";
-    /** ユーザデータの小数型valueのFormat定義. */
-    public static final String PATTERN_DECIMAL = "^-?[0-9]{1,5}\\.[0-9]{1,5}$";
-    /** ユーザデータの文字列型valueの最大長. */
+    /** Max length of userdata. */
     public static final int MAX_USERDATA_VALUE_LENGTH = 1024 * 50;
-    /** qクエリの最大長. */
+    /** Max length of query. */
     public static final int MAX_Q_VALUE_LENGTH = 255;
-    /** スキーマ定義で使用するシステム時間を指定するための予約語. */
+
+    /** Reserved word for setting uuid. */
+    public static final String UUID = "UUID()";
+    /** Reserved word for setting system time. */
     public static final String SYSUTCDATETIME = "SYSUTCDATETIME()";
-    /** イベントの文字列型valueの最大長. */
-    public static final int MAX_EVENT_VALUE_LENGTH = 1024 * 50;
 
     /**
      * Name項目に対するp:Formatの定義.
@@ -150,10 +173,6 @@ public class Common {
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_URI = new ArrayList<EdmAnnotation<?>>();
     /**
-     * p:FormatのSchema URI定義.
-     */
-    public static final List<EdmAnnotation<?>> P_FORMAT_SCHEMA_URI = new ArrayList<EdmAnnotation<?>>();
-    /**
      * p:FormatのCell URL定義.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_CELL_URL = new ArrayList<EdmAnnotation<?>>();
@@ -166,26 +185,6 @@ public class Common {
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_ID = new ArrayList<EdmAnnotation<?>>();
     /**
-     * InReplyTo項目に対するp:Formatの定義.
-     */
-    public static final List<EdmAnnotation<?>> P_FORMAT_IN_REPLY_TO = new ArrayList<EdmAnnotation<?>>();
-    /**
-     * MessageType項目に対するp:Formatの定義.
-     */
-    public static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_TYPE = new ArrayList<EdmAnnotation<?>>();
-    /**
-     * MessageTitle項目に対するp:Formatの定義.
-     */
-    public static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_TITLE = new ArrayList<EdmAnnotation<?>>();
-    /**
-     * MessagePriority項目に対するp:Formatの定義.
-     */
-    public static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_PRIORITY = new ArrayList<EdmAnnotation<?>>();
-    /**
-     * Definition of p: Format for MessageRequestRelation item.
-     */
-    public static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_REQUEST_RELATION = new ArrayList<EdmAnnotation<?>>();
-    /**
      * AccountType項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_ACCOUNT_TYPE = new ArrayList<EdmAnnotation<?>>();
@@ -197,12 +196,31 @@ public class Common {
             PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
 
     /**
-     * published プロパティの定義体.
+     * Name property.
+     */
+    public static final EdmProperty.Builder P_NAME = EdmProperty.newBuilder("Name")
+            .setType(EdmSimpleType.STRING)
+            .setNullable(false)
+            .setAnnotations(P_FORMAT_NAME);
+    /**
+     * _Box.Name property.
+     */
+    public static final EdmProperty.Builder P_BOX_NAME = EdmProperty.newBuilder("_Box.Name")
+            .setType(EdmSimpleType.STRING)
+            .setNullable(true)
+            .setAnnotations(P_FORMAT_NAME);
+    /**
+     * __id property.
+     */
+    public static final EdmProperty.Builder P_ID = EdmProperty.newBuilder("__id")
+            .setType(EdmSimpleType.STRING).setDefaultValue(UUID);
+    /**
+     * __published property.
      */
     public static final EdmProperty.Builder P_PUBLISHED = EdmProperty.newBuilder("__published")
             .setType(EdmSimpleType.DATETIME).setDefaultValue(SYSUTCDATETIME).setPrecision(3);
     /**
-     * updated プロパティの定義体.
+     * __updated property.
      */
     public static final EdmProperty.Builder P_UPDATED = EdmProperty.newBuilder("__updated")
             .setType(EdmSimpleType.DATETIME).setDefaultValue(SYSUTCDATETIME).setPrecision(3);
@@ -211,16 +229,10 @@ public class Common {
         P_FORMAT_NAME.add(createFormatNameAnnotation());
         P_FORMAT_NAME_WITH_SIGN.add(createFormatNameWithSignAnnotation());
         P_FORMAT_URI.add(createFormatUriAnnotation());
-        P_FORMAT_SCHEMA_URI.add(createFormatSchemaUriAnnotation());
         P_FORMAT_CELL_URL.add(createFormatCellUrlAnnotation());
         P_FORMAT_MULTIPLICITY.add(createFormatMultiplicityAnnotation());
         P_FORMAT_ID.add(createFormatIdAnnotation());
         P_FORMAT_RELATION_NAME.add(createFormatRelationNameAnnotation());
-        P_FORMAT_IN_REPLY_TO.add(createFormatInReplyToAnnotation());
-        P_FORMAT_MESSAGE_TYPE.add(createFormatMessageTypeAnnotation());
-        P_FORMAT_MESSAGE_TITLE.add(createFormatMessageTitleAnnotation());
-        P_FORMAT_MESSAGE_PRIORITY.add(createFormatMessagePriorityAnnotation());
-        P_FORMAT_MESSAGE_REQUEST_RELATION.add(createFormatMessageRequestRelation());
         P_FORMAT_ACCOUNT_TYPE.add(createFormatAccountTypeAnnotation());
     }
 
@@ -228,7 +240,7 @@ public class Common {
      * Name項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
-    public static EdmAnnotation<?> createFormatNameAnnotation() {
+    private static EdmAnnotation<?> createFormatNameAnnotation() {
         return new EdmAnnotationAttribute(
                 P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
                 P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_NAME + "')");
@@ -238,7 +250,7 @@ public class Common {
      * Name項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
-    public static EdmAnnotation<?> createFormatNameWithSignAnnotation() {
+    private static EdmAnnotation<?> createFormatNameWithSignAnnotation() {
         return new EdmAnnotationAttribute(
                 P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
                 P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_NAME_WITH_SIGN + "')");
@@ -248,7 +260,7 @@ public class Common {
      * RelationのName項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
-    public static EdmAnnotation<?> createFormatRelationNameAnnotation() {
+    private static EdmAnnotation<?> createFormatRelationNameAnnotation() {
         return new EdmAnnotationAttribute(
                 P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
                 P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_RELATION_NAME + "')");
@@ -258,27 +270,17 @@ public class Common {
      * p:FormatのURIのAnnotationを返却.
      * @return EdmAnnotation
      */
-    public static EdmAnnotation<?> createFormatUriAnnotation() {
+    private static EdmAnnotation<?> createFormatUriAnnotation() {
         return new EdmAnnotationAttribute(
                 P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
                 P_FORMAT, P_FORMAT_PATTERN_URI);
     }
 
     /**
-     * p:FormatのSchema URIのAnnotationを返却.
-     * @return EdmAnnotation
-     */
-    public static EdmAnnotation<?> createFormatSchemaUriAnnotation() {
-        return new EdmAnnotationAttribute(
-                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
-                P_FORMAT, P_FORMAT_PATTERN_SCHEMA_URI);
-    }
-
-    /**
      * p:FormatのCell URLのAnnotationを返却.
      * @return EdmAnnotation
      */
-    public static EdmAnnotation<?> createFormatCellUrlAnnotation() {
+    private static EdmAnnotation<?> createFormatCellUrlAnnotation() {
         return new EdmAnnotationAttribute(
                 P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
                 P_FORMAT, P_FORMAT_PATTERN_CELL_URL);
@@ -288,7 +290,7 @@ public class Common {
      * p:FormatのMultiplicityのAnnotationを返却.
      * @return EdmAnnotation
      */
-    public static EdmAnnotation<?> createFormatMultiplicityAnnotation() {
+    private static EdmAnnotation<?> createFormatMultiplicityAnnotation() {
         return new EdmAnnotationAttribute(
                 P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
                 P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MULTIPLICITY + "')");
@@ -298,67 +300,17 @@ public class Common {
      * ID項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
-    public static EdmAnnotation<?> createFormatIdAnnotation() {
+    private static EdmAnnotation<?> createFormatIdAnnotation() {
         return new EdmAnnotationAttribute(
                 P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
                 P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_ID + "')");
     }
 
     /**
-     * InReplyTo項目に対するp:FormatのAnnotationを返却.
-     * @return EdmAnnotation
-     */
-    public static EdmAnnotation<?> createFormatInReplyToAnnotation() {
-        return new EdmAnnotationAttribute(
-                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
-                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_IN_REPLY_TO + "')");
-    }
-
-    /**
-     * MessageType項目に対するp:FormatのAnnotationを返却.
-     * @return EdmAnnotation
-     */
-    public static EdmAnnotation<?> createFormatMessageTypeAnnotation() {
-        return new EdmAnnotationAttribute(
-                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
-                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MESSAGE_TYPE + "')");
-    }
-
-    /**
-     * MessageTitle項目に対するp:FormatのAnnotationを返却.
-     * @return EdmAnnotation
-     */
-    public static EdmAnnotation<?> createFormatMessageTitleAnnotation() {
-        return new EdmAnnotationAttribute(
-                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
-                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MESSAGE_TITLE + "')");
-    }
-
-    /**
-     * Message Priority 項目に対するp:FormatのAnnotationを返却.
-     * @return EdmAnnotation
-     */
-    public static EdmAnnotation<?> createFormatMessagePriorityAnnotation() {
-        return new EdmAnnotationAttribute(
-                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
-                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_MESSAGE_PRIORITY + "')");
-    }
-
-    /**
-     * Return p: Format Annotation for MessageRequestRelation item.
-     * @return EdmAnnotation
-     */
-    public static EdmAnnotation<?> createFormatMessageRequestRelation() {
-        return new EdmAnnotationAttribute(
-                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
-                P_FORMAT, P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION);
-    }
-
-    /**
      * Account Type 項目に対するp:FormatのAnnotationを返却.
      * @return EdmAnnotation
      */
-    public static EdmAnnotation<?> createFormatAccountTypeAnnotation() {
+    private static EdmAnnotation<?> createFormatAccountTypeAnnotation() {
         return new EdmAnnotationAttribute(
                 P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
                 P_FORMAT, P_FORMAT_PATTERN_USUSST + "('" + Account.TYPE_VALUE_BASIC + "', '"

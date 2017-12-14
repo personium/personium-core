@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1399,7 +1399,7 @@ public class MessageApproveTest extends ODataCommon {
 
         // Request body of relation
         JSONObject roleBody = new JSONObject();
-        roleBody.put(Role.P_NAME.getName(), roleName);
+        roleBody.put(Common.P_NAME.getName(), roleName);
         roleBody.put(Common.P_BOX_NAME.getName(), boxName);
 
         // Request body of message
@@ -1723,7 +1723,7 @@ public class MessageApproveTest extends ODataCommon {
 
         // Request body of role
         JSONObject roleBody = new JSONObject();
-        roleBody.put(Role.P_NAME.getName(), roleName);
+        roleBody.put(Common.P_NAME.getName(), roleName);
         roleBody.put(Common.P_BOX_NAME.getName(), boxName);
 
         // Request body of message
@@ -1809,7 +1809,7 @@ public class MessageApproveTest extends ODataCommon {
 
         // Request body of role
         JSONObject roleBody = new JSONObject();
-        roleBody.put(Role.P_NAME.getName(), roleName);
+        roleBody.put(Common.P_NAME.getName(), roleName);
         roleBody.put(Common.P_BOX_NAME.getName(), boxName);
 
         // Request body of message
@@ -2137,7 +2137,7 @@ public class MessageApproveTest extends ODataCommon {
 
         // Request body of relation
         JSONObject roleBody = new JSONObject();
-        roleBody.put(Role.P_NAME.getName(), roleName);
+        roleBody.put(Common.P_NAME.getName(), roleName);
         roleBody.put(Common.P_BOX_NAME.getName(), boxName);
 
         // Request body of message

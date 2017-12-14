@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,11 +42,11 @@ import io.personium.core.utils.ODataUtils;
 import io.personium.test.categories.Unit;
 
 /**
- * AbstractODataResourceユニットテストクラス.
+ * Unit Test class for AbstractODataResource.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({AbstractODataResourceTest.class, ODataUtils.class})
-@Category({Unit.class })
+@PrepareForTest({ AbstractODataResourceTest.class, ODataUtils.class })
+@Category({ Unit.class })
 public class AbstractODataResourceTest {
 
     /** Target class of unit test. */
@@ -218,11 +218,11 @@ public class AbstractODataResourceTest {
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
         PowerMockito.doReturn(true).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_RELATION_CLASS_URL);
+                requestRelation, Common.PATTERN_RELATION_CLASS_PATH);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
+                requestRelation, Common.PATTERN_ROLE_CLASS_PATH);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_NAME);
 
@@ -266,11 +266,11 @@ public class AbstractODataResourceTest {
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_RELATION_CLASS_URL);
+                requestRelation, Common.PATTERN_RELATION_CLASS_PATH);
         PowerMockito.doReturn(true).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
+                requestRelation, Common.PATTERN_ROLE_CLASS_PATH);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_NAME);
 
@@ -314,11 +314,11 @@ public class AbstractODataResourceTest {
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_RELATION_CLASS_URL);
+                requestRelation, Common.PATTERN_RELATION_CLASS_PATH);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
         PowerMockito.doReturn(true).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
+                requestRelation, Common.PATTERN_ROLE_CLASS_PATH);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_NAME);
 
@@ -362,11 +362,11 @@ public class AbstractODataResourceTest {
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_RELATION_CLASS_URL);
+                requestRelation, Common.PATTERN_RELATION_CLASS_PATH);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
+                requestRelation, Common.PATTERN_ROLE_CLASS_PATH);
         PowerMockito.doReturn(true).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_NAME);
 
@@ -410,11 +410,11 @@ public class AbstractODataResourceTest {
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_RELATION_CLASS_URL);
+                requestRelation, Common.PATTERN_RELATION_CLASS_PATH);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
+                requestRelation, Common.PATTERN_ROLE_CLASS_PATH);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_NAME);
 
@@ -434,6 +434,218 @@ public class AbstractODataResourceTest {
             // Confirm result
             // --------------------
             PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validatePropertyRuleObject().
+     * Normal test.
+     * Object is valid.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validatePropertyRuleObject_Normal_object_is_valid() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String object = "personium-localcell:/box";
+        String propName = "Object";
+        OProperty<?> op = OProperties.string(propName, object);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        PowerMockito.mockStatic(ODataUtils.class);
+        PowerMockito.doReturn(true).when(ODataUtils.class, "isValidLocalCellOrBoxUrl", object);
+
+        // --------------------
+        // Run method
+        // --------------------
+        abstractODataResource.validatePropertyRuleObject(propName, op);
+    }
+
+    /**
+     * Test validatePropertyRuleObject().
+     * Error test.
+     * Object is invalid.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validatePropertyRuleObject_Error_object_is_unexpected_format() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String object = "personium-localunit:/cell/box";
+        String propName = "Object";
+        OProperty<?> op = OProperties.string(propName, object);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        PowerMockito.mockStatic(ODataUtils.class);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "isValidLocalCellOrBoxUrl", object);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            abstractODataResource.validatePropertyRuleObject(propName, op);
+            fail("Exception occurred.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
+            assertThat(e.getStatus(), is(expected.getStatus()));
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test validatePropertyRuleService().
+     * Normal test.
+     * validateClassUrl is true.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validatePropertyRuleService_Normal_validateClassUrl_is_true() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String service = "personium-localunit:/cell/box/col/service";
+        String propName = "Service";
+        OProperty<?> op = OProperties.string(propName, service);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        PowerMockito.mockStatic(ODataUtils.class);
+        PowerMockito.doReturn(true).when(ODataUtils.class, "validateClassUrl",
+                service, Common.PATTERN_SERVICE_PATH);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateLocalCellUrl",
+                service, Common.PATTERN_SERVICE_LOCALCELL_PATH);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateLocalBoxUrl",
+                service, Common.PATTERN_SERVICE_LOCALBOX_PATH);
+
+        // --------------------
+        // Run method
+        // --------------------
+        abstractODataResource.validatePropertyRuleService(propName, op);
+    }
+
+    /**
+     * Test validatePropertyRuleService().
+     * Normal test.
+     * validateLocalCellUrl is true.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validatePropertyRuleService_Normal_validateLocalCellUrl_is_true() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String service = "personium-localcell:/box/col/service";
+        String propName = "Service";
+        OProperty<?> op = OProperties.string(propName, service);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        PowerMockito.mockStatic(ODataUtils.class);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
+                service, Common.PATTERN_SERVICE_PATH);
+        PowerMockito.doReturn(true).when(ODataUtils.class, "validateLocalCellUrl",
+                service, Common.PATTERN_SERVICE_LOCALCELL_PATH);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateLocalBoxUrl",
+                service, Common.PATTERN_SERVICE_LOCALBOX_PATH);
+
+        // --------------------
+        // Run method
+        // --------------------
+        abstractODataResource.validatePropertyRuleService(propName, op);
+    }
+
+    /**
+     * Test validatePropertyRuleService().
+     * Normal test.
+     * validateLocalBoxUrl is true.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validatePropertyRuleService_Normal_validateLocalBoxUrl_is_true() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String service = "personium-localbox:/col/service";
+        String propName = "Service";
+        OProperty<?> op = OProperties.string(propName, service);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        PowerMockito.mockStatic(ODataUtils.class);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
+                service, Common.PATTERN_SERVICE_PATH);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateLocalCellUrl",
+                service, Common.PATTERN_SERVICE_LOCALCELL_PATH);
+        PowerMockito.doReturn(true).when(ODataUtils.class, "validateLocalBoxUrl",
+                service, Common.PATTERN_SERVICE_LOCALBOX_PATH);
+
+        // --------------------
+        // Run method
+        // --------------------
+        abstractODataResource.validatePropertyRuleService(propName, op);
+    }
+
+    /**
+     * Test validatePropertyRuleService().
+     * Error test.
+     * Service is invalid.
+     * @throws Exception Unexpected error.
+     */
+    @Test
+    public void validatePropertyRuleService_Error_service_is_unexpected_format() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String service = "/personium/cell/box";
+        String propName = "Service";
+        OProperty<?> op = OProperties.string(propName, service);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        PowerMockito.mockStatic(ODataUtils.class);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
+                service, Common.PATTERN_SERVICE_PATH);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateLocalCellUrl",
+                service, Common.PATTERN_SERVICE_LOCALCELL_PATH);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "validateLocalBoxUrl",
+                service, Common.PATTERN_SERVICE_LOCALBOX_PATH);
+
+        // --------------------
+        // Expected result
+        // --------------------
+        PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+
+        // --------------------
+        // Run method
+        // --------------------
+        try {
+            abstractODataResource.validatePropertyRuleService(propName, op);
+            fail("Exception occurred.");
+        } catch (PersoniumCoreException e) {
+            // --------------------
+            // Confirm result
+            // --------------------
             assertThat(e.getStatus(), is(expected.getStatus()));
             assertThat(e.getCode(), is(expected.getCode()));
             assertThat(e.getMessage(), is(expected.getMessage()));

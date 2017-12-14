@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.util.List;
 import org.core4j.Enumerable;
 import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmProperty;
-import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.Role;
@@ -50,24 +49,17 @@ public interface Cell {
     String IMPORT_ERROR_FILE_NAME = "import.error";
 
     /**
-     * Name Definition of property.
-     */
-    EdmProperty.Builder P_PATH_NAME = EdmProperty.newBuilder("Name")
-            .setNullable(false)
-            .setAnnotations(Common.P_FORMAT_NAME)
-            .setType(EdmSimpleType.STRING);
-    /**
      * Property List.
      */
     List<EdmProperty.Builder> PROPS = Collections.unmodifiableList(Arrays.asList(
             new EdmProperty.Builder[] {
-                    P_PATH_NAME, Common.P_PUBLISHED, Common.P_UPDATED}
+                    Common.P_NAME, Common.P_PUBLISHED, Common.P_UPDATED}
             ));
     /**
      * Key List.
      */
     List<String> KEYS = Collections.unmodifiableList(Arrays.asList(
-            new String[] {P_PATH_NAME.getName()}
+            new String[] {Common.P_NAME.getName()}
             ));;
 
     /**

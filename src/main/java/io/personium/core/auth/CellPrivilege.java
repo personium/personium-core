@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,6 +108,14 @@ public final class CellPrivilege extends Privilege {
      * PROPFIND権限.
      */
     public static final CellPrivilege PROPFIND = new CellPrivilege("propfind", ROOT);
+    /**
+     * Rule operation privilege.
+     */
+    public static final CellPrivilege RULE = new CellPrivilege("rule", ROOT);
+    /**
+     * Rule read privilege.
+     */
+    public static final CellPrivilege RULE_READ = new CellPrivilege("rule-read", RULE);
 
     static Map<String, CellPrivilege> map = new HashMap<String, CellPrivilege>();
 
@@ -137,6 +145,8 @@ public final class CellPrivilege extends Privilege {
         register(ACL);
         register(ACL_READ);
         register(PROPFIND);
+        register(RULE);
+        register(RULE_READ);
     }
 
     private static void register(final CellPrivilege p) {

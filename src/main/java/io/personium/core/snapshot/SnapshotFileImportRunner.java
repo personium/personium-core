@@ -40,6 +40,9 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.EsBulkRequest;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.ModelFactory;
@@ -108,6 +111,14 @@ public class SnapshotFileImportRunner implements Runnable {
             changeCellStatus(Cell.STATUS_NORMAL);
             // Delete error file.
             deleteErrorFile();
+            // Post event to EventBus.
+            String object = UriUtils.SCHEME_LOCALCELL + ":/";
+            String info = "";
+            String type = PersoniumEventType.Category.CELL
+                    + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.IMPORT;
+            PersoniumEvent event = new PersoniumEvent(null, null, type, object, info, null);
+            EventBus eventBus = targetCell.getEventBus();
+            eventBus.post(event);
         } catch (Throwable e) {
             // When processing fails, output error file.
             progressInfo.setStatus(SnapshotFileImportProgressInfo.STATUS.IMPORT_FAILED);

@@ -551,7 +551,7 @@ public class AccessContext {
     /**
      * 必要な権限がACLのPrivilegeに設定されているかチェックする.
      * @param acePrivileges ACEに設定されたPrivilege設定のリスト
-     * @param Privilege 必要な権限
+     * @param resourcePrivilege 必要な権限
      * @return チェック可否
      */
     private boolean requireAcePrivilege(List<String> acePrivileges, Privilege resourcePrivilege) {

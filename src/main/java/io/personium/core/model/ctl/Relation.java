@@ -45,7 +45,7 @@ public class Relation {
      */
     public static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder()
             .setNamespace(Common.EDM_NS_CELL_CTL).setName(EDM_TYPE_NAME)
-            .addProperties(Enumerable.create(P_NAME, Common.P_BOX_NAME.setAnnotations(Common.P_FORMAT_NAME),
+            .addProperties(Enumerable.create(P_NAME, Common.P_BOX_NAME,
                     Common.P_PUBLISHED, Common.P_UPDATED).toList())
             .addKeys(P_NAME.getName(), Common.P_BOX_NAME.getName());
 

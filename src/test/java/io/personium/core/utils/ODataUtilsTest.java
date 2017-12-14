@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@ import io.personium.core.model.ctl.Common;
 import io.personium.test.categories.Unit;
 
 /**
- * ODataUtilsユニットテストクラス.
+ * Unit Test class for ODataUtils.
  */
-@Category({Unit.class })
+@Category({ Unit.class })
 public class ODataUtilsTest {
 
     /**
@@ -163,7 +163,7 @@ public class ODataUtilsTest {
     @Test
     public void validateClassUrl_Normal_scheme_is_null() {
         String str = "./dummyBox/dummyRelation";
-        String pFormat = Common.PATTERN_RELATION_CLASS_URL;
+        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
         assertThat(ODataUtils.validateClassUrl(str, pFormat), is(false));
     }
 
@@ -175,7 +175,7 @@ public class ODataUtilsTest {
     @Test
     public void validateClassUrl_Normal_scheme_is_not_allowed_format() {
         String str = "file://dummyFile";
-        String pFormat = Common.PATTERN_RELATION_CLASS_URL;
+        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
         assertThat(ODataUtils.validateClassUrl(str, pFormat), is(false));
     }
 
@@ -192,7 +192,7 @@ public class ODataUtilsTest {
             builder.append("a");
         }
         String str = new String(builder);
-        String pFormat = Common.PATTERN_RELATION_CLASS_URL;
+        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
         assertThat(ODataUtils.validateClassUrl(str, pFormat), is(false));
     }
 
@@ -204,19 +204,19 @@ public class ODataUtilsTest {
     @Test
     public void validateClassUrl_Normal_not_in_uri_format() {
         String str = "\\ %";
-        String pFormat = Common.PATTERN_RELATION_CLASS_URL;
+        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
         assertThat(ODataUtils.validateClassUrl(str, pFormat), is(false));
     }
 
     /**
      * Test validateClassUrl().
      * Normal test.
-     * Not match regular expression.
+     * Not match regular expression in box.
      */
     @Test
-    public void validateClassUrl_Normal_not_match_regular_expression() {
+    public void validateClassUrl_Normal_not_match_regular_expression_in_box() {
         String str = "http://personium/dummyCell/__relation/dummyBox/dummyRelation";
-        String pFormat = Common.PATTERN_RELATION_CLASS_URL;
+        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
         assertThat(ODataUtils.validateClassUrl(str, pFormat), is(false));
     }
 
@@ -228,8 +228,194 @@ public class ODataUtilsTest {
     @Test
     public void validateClassUrl_Normal_match_regular_expression() {
         String str = "http://personium/appCell/__relation/__/dummyRelation";
-        String pFormat = Common.PATTERN_RELATION_CLASS_URL;
+        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
         assertThat(ODataUtils.validateClassUrl(str, pFormat), is(true));
+    }
+
+    /**
+     * Test validateClassUrl().
+     * Normal test.
+     * Not match regular expression.
+     */
+    @Test
+    public void validateClassUrl_Normal_not_match_regular_expression() {
+        String str = "http://personium/otherpath/appCell/__relation/__/dummyRelation";
+        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
+        assertThat(ODataUtils.validateClassUrl(str, pFormat), is(false));
+    }
+
+    /**
+     * Test isValidLocalCellOrBoxUrl().
+     * Normal test.
+     * localcell url.
+     */
+    @Test
+    public void isValidLocalCellOrBoxUrl_Normal_localcell_url() {
+        String str = "personium-localcell:/dummyBox/dummyCol/dummyEntity";
+        assertThat(ODataUtils.isValidLocalCellOrBoxUrl(str), is(true));
+    }
+
+    /**
+     * Test isValidLocalCellOrBoxUrl().
+     * Normal test.
+     * localbox url.
+     */
+    @Test
+    public void isValidLocalCellOrBoxUrl_Normal_localbox_url() {
+        String str = "personium-localbox:/dummyCol/dummyEntity";
+        assertThat(ODataUtils.isValidLocalCellOrBoxUrl(str), is(true));
+    }
+
+    /**
+     * Test isValidLocalCellOrBoxUrl().
+     * Normal test.
+     * localbox url without path.
+     */
+    @Test
+    public void isValidLocalCellOrBoxUrl_Normal_localbox_url_without_path() {
+        String str = "personium-localbox:/";
+        assertThat(ODataUtils.isValidLocalCellOrBoxUrl(str), is(true));
+    }
+
+    /**
+     * Test isValidLocalCellOrBoxUrl().
+     * Normal test.
+     * localbox url with args.
+     */
+    @Test
+    public void isValidLocalCellOrBoxUrl_Normal_localbox_url_with_args() {
+        String str = "personium-localbox:/dummyCollection/dummyEntity?arg=hogehoge";
+        assertThat(ODataUtils.isValidLocalCellOrBoxUrl(str), is(true));
+    }
+
+    /**
+     * Test isValidLocalCellOrBoxUrl().
+     * Normal test.
+     * localunit url.
+     */
+    @Test
+    public void isValidLocalCellOrBoxUrl_Normal_localunit_url() {
+        String str = "personium-localunit:/dummyCollection/dummyEntity";
+        assertThat(ODataUtils.isValidLocalCellOrBoxUrl(str), is(false));
+    }
+
+    /**
+     * Test isValidLocalCellOrBoxUrl().
+     * Normal test.
+     * http scheme url.
+     */
+    @Test
+    public void isValidLocalCellOrBoxUrl_Normal_http_url() {
+        String str = "http://personium/dummyCollection/dummyEntity";
+        assertThat(ODataUtils.isValidLocalCellOrBoxUrl(str), is(false));
+    }
+
+    /**
+     * Test validateLocalBoxUrl().
+     * Normal test.
+     * Match regular expression.
+     */
+    @Test
+    public void validateLocalBoxUrl_Normal_match_regular_expression() {
+        String str = "personium-localbox:/dummyCollection/dummyService";
+        String pFormat = Common.PATTERN_SERVICE_LOCALBOX_PATH;
+        assertThat(ODataUtils.validateLocalBoxUrl(str, pFormat), is(true));
+    }
+
+    /**
+     * Test validateLocalBoxUrl().
+     * Normal test.
+     * Not match regular expression with args.
+     */
+    @Test
+    public void validateLocalBoxUrl_Normal_not_match_regular_expression_with_args() {
+        String str = "personium-localbox:/dummyCollection/dummyService?arg=hogehoge";
+        String pFormat = Common.PATTERN_SERVICE_LOCALBOX_PATH;
+        assertThat(ODataUtils.validateLocalBoxUrl(str, pFormat), is(false));
+    }
+
+    /**
+     * Test validateLocalBoxUrl().
+     * Normal test.
+     * Not match regular expression.
+     */
+    @Test
+    public void validateLocalBoxUrl_Normal_not_match_regular_expression() {
+        String str = "personium-localbox:/dummyService";
+        String pFormat = Common.PATTERN_SERVICE_LOCALBOX_PATH;
+        assertThat(ODataUtils.validateLocalBoxUrl(str, pFormat), is(false));
+    }
+
+    /**
+     * Test validateLocalBoxUrl().
+     * Normal test.
+     * Not match regular expression cause of different scheme.
+     */
+    @Test
+    public void validateLocalBoxUrl_Normal_not_match_regular_expression_scheme() {
+        String str = "personium-localunit:/dummyCollection/dummyService";
+        String pFormat = Common.PATTERN_SERVICE_LOCALBOX_PATH;
+        assertThat(ODataUtils.validateLocalBoxUrl(str, pFormat), is(false));
+    }
+
+    /**
+     * Test validateLocalCellUrl().
+     * Normal test.
+     * Match regular expression.
+     */
+    @Test
+    public void validateLocalCellUrl_Normal_match_regular_expression() {
+        String str = "personium-localcell:/dummyBox/dummyCollection/dummyService";
+        String pFormat = Common.PATTERN_SERVICE_LOCALCELL_PATH;
+        assertThat(ODataUtils.validateLocalCellUrl(str, pFormat), is(true));
+    }
+
+    /**
+     * Test validateLocalCellUrl().
+     * Normal test.
+     * Match regular expression on mainbox.
+     */
+    @Test
+    public void validateLocalCellUrl_Normal_match_regular_expression_on_mainbox() {
+        String str = "personium-localcell:/__/dummyCollection/dummyService";
+        String pFormat = Common.PATTERN_SERVICE_LOCALCELL_PATH;
+        assertThat(ODataUtils.validateLocalCellUrl(str, pFormat), is(true));
+    }
+
+    /**
+     * Test validateLocalCellUrl().
+     * Normal test.
+     * Not match regular expression with args.
+     */
+    @Test
+    public void validateLocalCellUrl_Normal_not_match_regular_expression_with_args() {
+        String str = "personium-localcell:/dummyBox/dummyCollection/dummyService?arg=hogehoge";
+        String pFormat = Common.PATTERN_SERVICE_LOCALCELL_PATH;
+        assertThat(ODataUtils.validateLocalCellUrl(str, pFormat), is(false));
+    }
+
+    /**
+     * Test validateLocalCellUrl().
+     * Normal test.
+     * Not match regular expression.
+     */
+    @Test
+    public void validateLocalCellUrl_Normal_not_match_regular_expression() {
+        String str = "personium-localcell:/dummyCollection/dummyService";
+        String pFormat = Common.PATTERN_SERVICE_LOCALCELL_PATH;
+        assertThat(ODataUtils.validateLocalCellUrl(str, pFormat), is(false));
+    }
+
+    /**
+     * Test validateLocalCellUrl().
+     * Normal test.
+     * Not match regular expression cause of different scheme.
+     */
+    @Test
+    public void validateLocalCellUrl_Normal_not_match_regular_expression_scheme() {
+        String str = "personium-localunit:/dummyBox/dummyCollection/dummyService";
+        String pFormat = Common.PATTERN_SERVICE_LOCALCELL_PATH;
+        assertThat(ODataUtils.validateLocalCellUrl(str, pFormat), is(false));
     }
 
 }

@@ -30,15 +30,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.odata.PersoniumODataProducer;
-import io.personium.core.rs.box.ODataSvcCollectionResource;
-import io.personium.core.rs.box.ODataSvcSchemaResource;
 import io.personium.test.categories.Unit;
 
 /**
  * ODataSvcSchemaResource unit test classs.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ODataSvcCollectionResource.class})
+@PrepareForTest({ ODataSvcCollectionResource.class })
 @Category({ Unit.class })
 public class ODataSvcSchemaResourceTest {
 
@@ -54,12 +52,12 @@ public class ODataSvcSchemaResourceTest {
         DavCmp davCmp = mock(DavCmp.class);
         PersoniumODataProducer producer = mock(PersoniumODataProducer.class);
         ODataSvcCollectionResource odataSvcCollectionResource = mock(ODataSvcCollectionResource.class);
- 
+
         // --------------------
         // Test method args
         // --------------------
         String url = "https://personium/cell/box/col";
-        String name = "col";
+        String name = "$metadata";
 
         // --------------------
         // Mock settings
@@ -68,7 +66,6 @@ public class ODataSvcSchemaResourceTest {
         doReturn(url).when(davRsCmp).getUrl();
         doReturn(davCmp).when(davRsCmp).getDavCmp();
         doReturn(null).when(davRsCmp).getCell();
-        doReturn(name).when(davCmp).getName();
         doReturn(producer).when(davCmp).getSchemaODataProducer(null);
         doReturn(null).when(producer).getMetadata();
 
@@ -76,7 +73,7 @@ public class ODataSvcSchemaResourceTest {
         // Expected result
         // --------------------
         String expected = url + "/" + name + "/";
-        
+
         // --------------------
         // Run method
         // --------------------

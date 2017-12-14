@@ -79,6 +79,7 @@ import io.personium.core.model.ctl.EntityType;
 import io.personium.core.model.ctl.ExtRole;
 import io.personium.core.model.ctl.Property;
 import io.personium.core.model.ctl.ReceivedMessage;
+import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.DataSourceAccessor;
@@ -980,75 +981,103 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         EdmEntitySet eSet = this.getMetadata().findEdmEntitySet(entitySetName);
         // Since the existence guarantee of EntitySet is done on the caller side in advance, it is not checked here.
         EntitySetAccessor esType = this.getAccessorForEntitySet(entitySetName);
-        EdmEntitySet srcSet = this.getMetadata().findEdmEntitySet(entitySetName);
-        EdmEntityType srcType = srcSet.getType();
 
         // Lock OData space.
         Lock lock = this.lock();
         try {
-            EntitySetDocHandler hit = this.retrieveWithKey(eSet, entityKey);
-
-            if (hit == null) {
-                throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
-            }
-            // Check if the value of If-Match header and Etag are equal.
-            ODataUtils.checkEtag(etag, hit);
-
-            // Search for N side link of 1-0:N
-            for (EdmNavigationProperty np : srcType.getDeclaredNavigationProperties().toList()) {
-                if (this.findMultiPoint(np, entityKey)) {
-                    throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
-                }
-            }
-
-            // Delete link
-            // N:N
-            for (EdmNavigationProperty np : srcType.getDeclaredNavigationProperties().toList()) {
-                deleteLinks(np, hit);
-            }
-            // N:1
-            Map<String, Object> target = hit.getManyToOnelinkId();
-            for (Entry<String, Object> entry : target.entrySet()) {
-                String key = entry.getKey();
-                EntitySetAccessor targetEsType = this.getAccessorForEntitySet(key);
-
-                // Get linked entity
-                PersoniumGetResponse linksRes = targetEsType.get(entry.getValue().toString());
-                EntitySetDocHandler linksDocHandler = getDocHandler(linksRes, entitySetName);
-                Map<String, Object> links = linksDocHandler.getManyToOnelinkId();
-
-                // When the acquired data has the link information, delete the link information and update the data.
-                String linksKey = getLinkskey(entitySetName);
-                if (links.containsKey(linksKey)) {
-                    links.remove(linksKey);
-                    linksDocHandler.setManyToOnelinkId(links);
-                    targetEsType.update(entry.getValue().toString(), linksDocHandler);
-                }
-            }
-
-            // Befor delete
-            this.beforeDelete(entitySetName, entityKey, hit);
-            PersoniumDeleteResponse res = null;
-            // Delete
-            res = esType.delete(hit);
-
-            if (res == null) {
-                throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(new RuntimeException("not found"));
-            }
-            // If retry processing is done within TransportClient, NotFound is returned as a response.
-            // Therefore, even if NotFound is returned, it is regarded as normal termination.
-            if (res.isNotFound()) {
-                log.info("Request data is already deleted. Then, return success response.");
-            }
-
-            // After delete
-            this.afterDelete();
-
+            deleteEntity(entitySetName, entityKey, etag, eSet, esType);
         } finally {
             log.debug("unlock");
-            // unlock
             lock.release();
         }
+    }
+
+    /**
+     * Delete entity without lock.
+     * @param entitySetName the entity-set name of the entity
+     * @param entityKey the entity-key of the entity
+     */
+    protected void deleteEntityWithoutLock(final String entitySetName, final OEntityKey entityKey) {
+        this.deleteEntityWithoutLock(entitySetName, entityKey, null);
+    }
+
+    /**
+     * Delete entity without lock.
+     * @param entitySetName the entity-set name of the entity
+     * @param entityKey the entity-key of the entity
+     * @param etag etag
+     */
+    protected void deleteEntityWithoutLock(String entitySetName, OEntityKey entityKey, String etag) {
+        EdmEntitySet eSet = this.getMetadata().findEdmEntitySet(entitySetName);
+        // Since the existence guarantee of EntitySet is done on the caller side in advance, it is not checked here.
+        EntitySetAccessor esType = this.getAccessorForEntitySet(entitySetName);
+
+        deleteEntity(entitySetName, entityKey, etag, eSet, esType);
+    }
+
+    /** Delete Entity. */
+    private void deleteEntity(String entitySetName, OEntityKey entityKey, String etag,
+            EdmEntitySet eSet, EntitySetAccessor esType) {
+        EdmEntityType srcType = eSet.getType();
+
+        // レコードの存在確認＆削除のためのES id取得
+        EntitySetDocHandler hit = this.retrieveWithKey(eSet, entityKey);
+
+        if (hit == null) {
+            throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
+        }
+        // Check if the value of If-Match header and Etag are equal.
+        ODataUtils.checkEtag(etag, hit);
+
+        // Search for N side link of 1-0:N
+        for (EdmNavigationProperty np : srcType.getDeclaredNavigationProperties().toList()) {
+            if (this.findMultiPoint(np, entityKey)) {
+                throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
+            }
+        }
+
+        // Delete link
+        // N:N
+        for (EdmNavigationProperty np : srcType.getDeclaredNavigationProperties().toList()) {
+            deleteLinks(np, hit);
+        }
+        // N:1
+        Map<String, Object> target = hit.getManyToOnelinkId();
+        for (Entry<String, Object> entry : target.entrySet()) {
+            String key = entry.getKey();
+            EntitySetAccessor targetEsType = this.getAccessorForEntitySet(key);
+
+            // Get linked entity
+            PersoniumGetResponse linksRes = targetEsType.get(entry.getValue().toString());
+            EntitySetDocHandler linksDocHandler = getDocHandler(linksRes, entitySetName);
+            Map<String, Object> links = linksDocHandler.getManyToOnelinkId();
+
+            // When the acquired data has the link information, delete the link information and update the data.
+            String linksKey = getLinkskey(entitySetName);
+            if (links.containsKey(linksKey)) {
+                links.remove(linksKey);
+                linksDocHandler.setManyToOnelinkId(links);
+                targetEsType.update(entry.getValue().toString(), linksDocHandler);
+            }
+        }
+
+        // Befor delete
+        this.beforeDelete(entitySetName, entityKey, hit);
+        PersoniumDeleteResponse res = null;
+        // Delete
+        res = esType.delete(hit);
+
+        if (res == null) {
+            throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(new RuntimeException("not found"));
+        }
+        // If retry processing is done within TransportClient, NotFound is returned as a response.
+        // Therefore, even if NotFound is returned, it is regarded as normal termination.
+        if (res.isNotFound()) {
+            log.info("Request data is already deleted. Then, return success response.");
+        }
+
+        // After delete
+        this.afterDelete();
     }
 
     /**
@@ -1100,6 +1129,22 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         }
     }
 
+    /**
+     * Create Entity without lock.
+     * @param entitySetName the entity-set name
+     * @param entity the request entity sent from the client
+     * @return the newly-created entity, fully populated with the key and default properties
+     */
+    protected EntityResponse createEntityWithoutLock(final String entitySetName, final OEntity entity) {
+        OEntityKey entityKey = entity.getEntityKey();
+        // convert OEntity to JSONObject in order to register to elasticsearch.
+        EntitySetAccessor esType = this.getAccessorForEntitySet(entitySetName);
+        OEntityWrapper oew = (OEntityWrapper) entity;
+
+        return createEntity(entitySetName, entity, entityKey, esType, oew);
+    }
+
+    /** Create Entity. */
     private EntityResponse createEntity(final String entitySetName,
             final OEntity entity,
             OEntityKey entityKey,
@@ -1543,7 +1588,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                         staticFields.put(ExtRole.EDM_TYPE_NAME,
                                 targetrEntity.getProperty(ExtRole.EDM_TYPE_NAME).getValue());
                     } else if (ReceivedMessage.EDM_TYPE_NAME.equals(toEntitySetName)
-                            || SentMessage.EDM_TYPE_NAME.equals(toEntitySetName)) {
+                            || SentMessage.EDM_TYPE_NAME.equals(toEntitySetName)
+                            || Rule.EDM_TYPE_NAME.equals(toEntitySetName)) {
                         staticFields.put("__id", targetrEntity.getProperty("__id").getValue());
                     } else {
                         staticFields.put("Name", targetrEntity.getProperty("Name").getValue());
@@ -2702,7 +2748,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
         // ユーザデータ更新の場合は__idは更新しない
         Map<String, Object> staticFields = oedhNew.getStaticFields();
-        if (staticFields.containsKey("__id")) {
+        if (staticFields.containsKey("__id") && KeyType.SINGLE.equals(originalKey.getKeyType())) {
             // ユーザデータは現在単一キーなので複合キーの対応はしない
             // TODO 今後、ユーザデータを複合キーにする場合、複合キーの対応が必要
             staticFields.put("__id", originalKey.asSingleValue());

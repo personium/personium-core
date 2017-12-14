@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,33 +18,25 @@ package io.personium.core.model.ctl;
 
 import org.core4j.Enumerable;
 import org.odata4j.edm.EdmEntityType;
-import org.odata4j.edm.EdmProperty;
-import org.odata4j.edm.EdmSimpleType;
 
 /**
- * Edm 定義体で共通的に使う定数群を定義.
+ * Edm definition of Role.
  */
 public class Role {
     private Role() {
     }
 
     /**
-     * Edm EntityType名.
+     * Edm Entity Type Name of Role.
      */
     public static final String EDM_TYPE_NAME = "Role";
 
     /**
-     * Nameプロパティの定義体.
-     */
-    public static final EdmProperty.Builder P_NAME = EdmProperty.newBuilder("Name").setType(EdmSimpleType.STRING)
-            .setNullable(false).setAnnotations(Common.P_FORMAT_NAME);
-
-    /**
      * EntityType Builder.
      */
-    public static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder()
+    static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder()
             .setNamespace(Common.EDM_NS_CELL_CTL).setName(EDM_TYPE_NAME)
-            .addProperties(Enumerable.create(P_NAME, Common.P_BOX_NAME.setAnnotations(Common.P_FORMAT_NAME),
+            .addProperties(Enumerable.create(Common.P_NAME, Common.P_BOX_NAME,
                     Common.P_PUBLISHED, Common.P_UPDATED).toList())
-            .addKeys(P_NAME.getName(), Common.P_BOX_NAME.getName());
+            .addKeys(Common.P_NAME.getName(), Common.P_BOX_NAME.getName());
 }

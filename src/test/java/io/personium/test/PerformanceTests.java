@@ -30,6 +30,7 @@ import junit.framework.TestSuite;
 @RunWith(Categories.class)
 @SuiteClasses({
         io.personium.core.AllTests.class,
+        io.personium.core.model.AllTests.class,
         io.personium.core.model.file.AllTests.class,
         io.personium.core.model.impl.es.AllTests.class,
         io.personium.core.model.impl.es.accessor.AllTests.class,
@@ -54,7 +55,6 @@ import junit.framework.TestSuite;
         io.personium.test.unit.core.auth.AllTests.class,
         io.personium.test.unit.core.bar.AllTests.class,
         io.personium.test.unit.core.jersey.filter.AllTests.class,
-        io.personium.test.unit.core.model.AllTests.class,
         io.personium.test.unit.core.model.impl.es.AllTests.class,
         io.personium.test.unit.core.model.impl.es.doc.AllTests.class,
         io.personium.test.unit.core.model.impl.es.odata.AllTests.class,

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.personium.core.event;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
 /**
- * イベントバス関連のクラス群.
+ * Test suite for perform all tests on this package.
  */
-package io.personium.core.eventbus;
+@RunWith(Suite.class)
+@SuiteClasses({
+    EventPublisherTest.class,
+    EventSenderTest.class
+})
+public class AllTests {
+}
