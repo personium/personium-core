@@ -18,6 +18,7 @@
  * for personium.io are applied by us.
  *  - Add support for query containing '_' in tokenize(), readWord().
  *  - Add support for $expand query in parseExpandQuery().
+ *  - If "datetime" or "datetimeoffset" are specified in the $filter query, default time zone is fixed to "UTC".
  * --------------------------------------------------
  * The copyright and the license text of the original code is as follows:
  */
@@ -39,6 +40,13 @@
 package io.personium.core.odata;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +55,7 @@ import org.core4j.Enumerable;
 import org.core4j.Func1;
 import org.core4j.Func2;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.odata4j.core.Guid;
@@ -746,13 +755,13 @@ public class PersoniumExpressionParser {
             String word = tokens.get(0).value;
             String value = unquote(tokens.get(1).value);
             if (word.equals("datetime")) {
-                DateTime dt = InternalUtil.parseDateTime(value);
+                DateTime dt = parseUTCDateTime(value);
                 return Expression.dateTime(new LocalDateTime(dt));
             } else if (word.equals("time")) {
                 LocalTime t = InternalUtil.parseTime(value);
                 return Expression.time(t);
             } else if (word.equals("datetimeoffset")) {
-                DateTime dt = InternalUtil.parseDateTime(value);
+                DateTime dt = parseDateTime(value);
                 return Expression.dateTimeOffset(dt);
             } else if (word.equals("guid")) {
                 // odata: dddddddd-dddd-dddd-dddddddddddd
@@ -857,6 +866,49 @@ public class PersoniumExpressionParser {
 
         return null;
 
+    }
+
+    /**
+     * Method that Personium added independently.
+     * <p>
+     * Parse "ISO-8601 format string without time zone offset" and convert it to DateTime type.
+     * Time zone is interpreted as UTC.
+     * @param value String to parse
+     * @return DateTime
+     */
+    private static DateTime parseUTCDateTime(String value) {
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+                .withZone(ZoneId.of("UTC"))
+                .withResolverStyle(ResolverStyle.STRICT);
+        java.time.LocalDateTime dateTime = java.time.LocalDateTime.parse(value, formatter);
+        long epochMilli = dateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+        return new DateTime(epochMilli, DateTimeZone.UTC);
+    }
+
+    /**
+     * Method that Personium added independently.
+     * <p>
+     * Parse "ISO-8601 format string" and convert it to DateTime type.
+     * If no time zone offset is specified in string, time zone is interpreted as UTC.
+     * @param value String to parse
+     * @return DateTime
+     */
+    private static DateTime parseDateTime(String value) {
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME
+                .withZone(ZoneId.of("UTC"))
+                .withResolverStyle(ResolverStyle.STRICT);
+        TemporalAccessor temporalAccessor = formatter.parse(value);
+
+        long epochMilli = 0L;
+        if (temporalAccessor.isSupported(ChronoField.OFFSET_SECONDS)) {
+            OffsetDateTime dateTime = OffsetDateTime.from(temporalAccessor);
+            epochMilli = dateTime.toInstant().toEpochMilli();
+        } else {
+            java.time.LocalDateTime dateTime = java.time.LocalDateTime.from(temporalAccessor);
+            epochMilli = dateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+        }
+
+        return new DateTime(epochMilli);
     }
 
     private static CommonExpression readExpressionPrecedenceOperator(List<Token> tokens) {

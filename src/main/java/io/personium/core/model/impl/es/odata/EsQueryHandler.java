@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.joda.time.DateTimeZone;
 import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmProperty;
 import org.odata4j.expression.AddExpression;
@@ -477,7 +478,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
         } else if (expr instanceof BooleanLiteral) {
             return ((BooleanLiteral) expr).getValue();
         } else if (expr instanceof DateTimeLiteral) {
-            return ((DateTimeLiteral) expr).getValue().toDateTime().getMillis();
+            return ((DateTimeLiteral) expr).getValue().toDateTime(DateTimeZone.UTC).getMillis();
         } else if (expr instanceof DateTimeOffsetLiteral) {
             return ((DateTimeOffsetLiteral) expr).getValue().getMillis();
         } else {

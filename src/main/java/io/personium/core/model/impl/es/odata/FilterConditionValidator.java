@@ -19,6 +19,7 @@ package io.personium.core.model.impl.es.odata;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.joda.time.DateTimeZone;
 import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 import org.odata4j.expression.BooleanLiteral;
@@ -255,7 +256,7 @@ public class FilterConditionValidator {
             } else if (searchValue instanceof Int64Literal) {
                 value = ((Int64Literal) searchValue).getValue();
             } else if (searchValue instanceof DateTimeLiteral) {
-                value = ((DateTimeLiteral) searchValue).getValue().toDateTime().getMillis();
+                value = ((DateTimeLiteral) searchValue).getValue().toDateTime(DateTimeZone.UTC).getMillis();
             } else if (searchValue instanceof DateTimeOffsetLiteral) {
                 value = ((DateTimeOffsetLiteral) searchValue).getValue().getMillis();
             } else if (searchValue instanceof NullLiteral) {
