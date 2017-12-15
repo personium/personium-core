@@ -226,11 +226,6 @@ public class DavCmpFsImpl implements DavCmp {
         throw PersoniumCoreException.Server.UNKNOWN_ERROR;
     }
 
-    @Override
-    public void makeEmpty() {
-        // TODO Impl
-    }
-
     /**
      * @return Acl
      */
@@ -967,7 +962,7 @@ public class DavCmpFsImpl implements DavCmp {
                 }
                 doDelete();
             } else {
-                doRecursiveDelete();
+                makeEmpty();
             }
         } finally {
             // Release lock
@@ -992,7 +987,7 @@ public class DavCmpFsImpl implements DavCmp {
      * {@inheritDoc}
      */
     @Override
-    public void doRecursiveDelete() {
+    public void makeEmpty() {
         if (TYPE_COL_ODATA.equals(getType())) {
             Lock lock = lockOData();
             try {
@@ -1004,7 +999,7 @@ public class DavCmpFsImpl implements DavCmp {
             }
         } else if (TYPE_COL_WEBDAV.equals(getType())) {
             for (DavCmp child : getChildren().values()) {
-                child.doRecursiveDelete();
+                child.makeEmpty();
             }
         }
         doDelete();

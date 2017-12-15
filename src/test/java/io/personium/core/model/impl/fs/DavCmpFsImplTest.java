@@ -1030,7 +1030,7 @@ public class DavCmpFsImplTest {
         doNothing().when(davCmpFsImpl).load();
         DavMetadataFile davMetaDataFile = DavMetadataFile.newInstance(new File(""));
         Whitebox.setInternalState(davCmpFsImpl, "metaFile", davMetaDataFile);
-        PowerMockito.doNothing().when(davCmpFsImpl, "doRecursiveDelete");
+        PowerMockito.doNothing().when(davCmpFsImpl, "makeEmpty");
 
         // Run method
         ResponseBuilder actual = davCmpFsImpl.delete(ifMatch, recursive);
@@ -1066,13 +1066,13 @@ public class DavCmpFsImplTest {
     }
 
     /**
-     * Test doRecursiveDelete().
+     * Test makeEmpty().
      * normal.
      * Type is OData collection.
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void doRecursiveDelete_Normal_Type_ODataCollection() throws Exception {
+    public void makeEmpty_Normal_Type_ODataCollection() throws Exception {
         // Mock settings
         davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
 
@@ -1101,17 +1101,17 @@ public class DavCmpFsImplTest {
         PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
 
         // Run method
-        davCmpFsImpl.doRecursiveDelete();
+        davCmpFsImpl.makeEmpty();
     }
 
     /**
-     * Test doRecursiveDelete().
+     * Test makeEmpty().
      * normal.
      * Type is WebDAV collection.
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void doRecursiveDelete_Normal_Type_WebDAVCollection() throws Exception {
+    public void makeEmpty_Normal_Type_WebDAVCollection() throws Exception {
         // Mock settings
         davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
 
@@ -1121,29 +1121,29 @@ public class DavCmpFsImplTest {
         doReturn(children).when(davCmpFsImpl).getChildren();
         DavCmp child01 = mock(DavCmp.class);
         DavCmp child02 = mock(DavCmp.class);
-        doNothing().when(child01).doRecursiveDelete();
-        doNothing().when(child02).doRecursiveDelete();
+        doNothing().when(child01).makeEmpty();
+        doNothing().when(child02).makeEmpty();
         children.put("child01", child01);
         children.put("child02", child02);
 
         PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
 
         // Run method
-        davCmpFsImpl.doRecursiveDelete();
+        davCmpFsImpl.makeEmpty();
 
         // Confirm result
-        verify(child01, times(1)).doRecursiveDelete();
-        verify(child02, times(1)).doRecursiveDelete();
+        verify(child01, times(1)).makeEmpty();
+        verify(child02, times(1)).makeEmpty();
     }
 
     /**
-     * Test doRecursiveDelete().
+     * Test makeEmpty().
      * normal.
      * Type is EngineSvc collection.
      * @throws Exception Unintended exception in test
      */
     @Test
-    public void doRecursiveDelete_Normal_Type_EngineSvcCollection() throws Exception {
+    public void makeEmpty_Normal_Type_EngineSvcCollection() throws Exception {
         // Mock settings
         davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
 
@@ -1152,7 +1152,7 @@ public class DavCmpFsImplTest {
         PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
 
         // Run method
-        davCmpFsImpl.doRecursiveDelete();
+        davCmpFsImpl.makeEmpty();
 
         // Confirm result
         PowerMockito.verifyPrivate(davCmpFsImpl, times(1)).invoke("doDelete");
