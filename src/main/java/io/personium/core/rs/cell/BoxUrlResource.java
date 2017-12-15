@@ -94,6 +94,8 @@ public class BoxUrlResource {
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
 
+        // TODO Should the order of box acquisition and check processing be reversed?
+        // Only when it is necessary to acquire ACL of box, obtain box and check.
         // 認証トークンの有効性チェック（有効期限の切れているトークンなど）
         DavCmp davCmp = ModelFactory.boxCmp(box);
         DavRsCmp boxUrlRsCmp = new BoxUrlRsCmp(this.cellRsCmp, davCmp, this.accessContext, box);
