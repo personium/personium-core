@@ -411,6 +411,10 @@ public class DavResourceUtils {
             String privilege,
             String level) {
         TResponse tresponseWebDav = null;
+        String schemaLevel = level;
+        if (schemaLevel == null || schemaLevel.isEmpty()) {
+            schemaLevel = OAuth2Helper.SchemaLevel.NONE;
+        }
         // ACLの設定
         tresponseWebDav = Http.request(settingFile).with("cellPath", cell).with("colname", path).with("token", token)
                 .with("role", role).with("privilege", privilege)
@@ -434,6 +438,10 @@ public class DavResourceUtils {
             String path,
             String requireSchemaAuthz) {
         TResponse tresponseWebDav = null;
+        String schemaLevel = requireSchemaAuthz;
+        if (schemaLevel == null || schemaLevel.isEmpty()) {
+            schemaLevel = OAuth2Helper.SchemaLevel.NONE;
+        }
         // ACLの設定
         tresponseWebDav = Http.request("box/acl-setting-all.txt")
                 .with("colname", path)
@@ -462,6 +470,10 @@ public class DavResourceUtils {
             String privilege,
             String requireSchemaAuthz) {
         TResponse tresponseWebDav = null;
+        String schemaLevel = requireSchemaAuthz;
+        if (schemaLevel == null || schemaLevel.isEmpty()) {
+            schemaLevel = OAuth2Helper.SchemaLevel.NONE;
+        }
         // ACLの設定
         tresponseWebDav = Http.request("box/acl-setting-all.txt")
                 .with("colname", path)
@@ -492,6 +504,10 @@ public class DavResourceUtils {
             String boxName,
             String level) {
         TResponse tresponseWebDav = null;
+        String schemaLevel = level;
+        if (schemaLevel == null || schemaLevel.isEmpty()) {
+            schemaLevel = OAuth2Helper.SchemaLevel.NONE;
+        }
         // ACLの設定
         tresponseWebDav = Http.request(settingFile).with("cellPath", cell).with("colname", path)
                 .with("roleBaseUrl", UrlUtils.roleResource(cell, null, "")).with("box", boxName).with("token", token)
@@ -523,6 +539,10 @@ public class DavResourceUtils {
             String privilege,
             String level) {
         TResponse tresponseWebDav = null;
+        String schemaLevel = level;
+        if (schemaLevel == null || schemaLevel.isEmpty()) {
+            schemaLevel = OAuth2Helper.SchemaLevel.NONE;
+        }
         // ACLの設定
         tresponseWebDav = Http.request(settingFile).with("cellPath", cell).with("box", box).with("colname", colname)
                 .with("token", token).with("privilege", privilege).with("roleBaseUrl", roleBaseUrl)
@@ -551,6 +571,10 @@ public class DavResourceUtils {
             String roleBaseUrl,
             String privilege,
             int code) {
+        String schemaLevel = requireSchemaAuthz;
+        if (schemaLevel == null || schemaLevel.isEmpty()) {
+            schemaLevel = OAuth2Helper.SchemaLevel.NONE;
+        }
         return Http.request("box/acl-setting-baseurl.txt")
                 .with("cellPath", cell)
                 .with("box", box)
@@ -589,6 +613,10 @@ public class DavResourceUtils {
             String privilege,
             String level) {
         TResponse tresponseWebDav = null;
+        String schemaLevel = level;
+        if (schemaLevel == null || schemaLevel.isEmpty()) {
+            schemaLevel = OAuth2Helper.SchemaLevel.NONE;
+        }
         // ACLの設定
         tresponseWebDav = Http.request(settingFile).with("cellPath", cell).with("box", box).with("colname", colname)
                 .with("role", role).with("token", token).with("privilege", privilege).with("roleBaseUrl", roleBaseUrl)
@@ -625,6 +653,10 @@ public class DavResourceUtils {
             String privilege2,
             String level) {
         TResponse tresponseWebDav = null;
+        String schemaLevel = level;
+        if (schemaLevel == null || schemaLevel.isEmpty()) {
+            schemaLevel = OAuth2Helper.SchemaLevel.NONE;
+        }
         // ACLの設定
         tresponseWebDav = Http.request(settingFile).with("cellPath", cell).with("box", box).with("colname", path)
                 .with("token", token).with("role1", role1).with("role2", role2).with("privilege1", privilege1)
@@ -659,6 +691,10 @@ public class DavResourceUtils {
             String level) {
 
         TResponse tresponseWebDav = null;
+        String schemaLevel = level;
+        if (schemaLevel == null || schemaLevel.isEmpty()) {
+            schemaLevel = OAuth2Helper.SchemaLevel.NONE;
+        }
         // ACLの設定
         tresponseWebDav = Http.request(settingFile).with("cellPath", cell).with("box", box).with("colname", path)
                 .with("token", token).with("role", role).with("privilege", privilege)

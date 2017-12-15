@@ -1767,7 +1767,7 @@ public class CollectionTest extends JerseyTest {
                     .with("colname", "")
                     .with("token", TOKEN)
                     .with("roleBaseUrl", UrlUtils.roleResource(testcell, null, ""))
-                    .with("level", "")
+                    .with("level", "none")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -1799,7 +1799,7 @@ public class CollectionTest extends JerseyTest {
             // ACLの設定を下に戻す
             DavResourceUtils.setACL(testcell, AbstractCase.MASTER_TOKEN_NAME,
                     HttpStatus.SC_OK, "", ACL_AUTH_TEST_SETTING_FILE, Setup.TEST_BOX1,
-                    "");
+                    "none");
         }
     }
 
@@ -1822,7 +1822,7 @@ public class CollectionTest extends JerseyTest {
 
                     // ACLの設定
                     DavResourceUtils.setACLwithBox(testcell, token, HttpStatus.SC_OK,
-                            path, "", "box/acl-setting.txt", role, path, "<D:write/>", "");
+                            path, "", "box/acl-setting.txt", role, path, "<D:write/>", "none");
 
                     // ACLの確認
                     TResponse tresponseWebDav = CellUtils.propfind(testcell + "/" + path,
@@ -1850,7 +1850,7 @@ public class CollectionTest extends JerseyTest {
             // ACL設定を元に戻す
             DavResourceUtils.setACL(testcell, AbstractCase.MASTER_TOKEN_NAME,
                     HttpStatus.SC_OK, "", ACL_AUTH_TEST_SETTING_FILE, Setup.TEST_BOX1,
-                    "");
+                    "none");
         }
     }
 
