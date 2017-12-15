@@ -418,7 +418,7 @@ public class DavResourceUtils {
         // ACLの設定
         tresponseWebDav = Http.request(settingFile).with("cellPath", cell).with("colname", path).with("token", token)
                 .with("role", role).with("privilege", privilege)
-                .with("roleBaseUrl", UrlUtils.roleResource(cell, null, "")).with("level", level).returns()
+                .with("roleBaseUrl", UrlUtils.roleResource(cell, null, "")).with("level", schemaLevel).returns()
                 .statusCode(code);
         return tresponseWebDav;
     }
@@ -448,7 +448,7 @@ public class DavResourceUtils {
                 .with("token", token)
                 .with("privilege", "<D:all/>")
                 .with("roleBaseUrl", UrlUtils.roleResource(cell, null, ""))
-                .with("level", requireSchemaAuthz).returns()
+                .with("level", schemaLevel).returns()
                 .statusCode(code);
         return tresponseWebDav;
     }
@@ -480,7 +480,7 @@ public class DavResourceUtils {
                 .with("token", token)
                 .with("privilege", privilege)
                 .with("roleBaseUrl", UrlUtils.roleResource(cell, null, ""))
-                .with("level", requireSchemaAuthz).returns()
+                .with("level", schemaLevel).returns()
                 .statusCode(code);
         return tresponseWebDav;
     }
@@ -511,7 +511,7 @@ public class DavResourceUtils {
         // ACLの設定
         tresponseWebDav = Http.request(settingFile).with("cellPath", cell).with("colname", path)
                 .with("roleBaseUrl", UrlUtils.roleResource(cell, null, "")).with("box", boxName).with("token", token)
-                .with("level", level).returns().statusCode(code);
+                .with("level", schemaLevel).returns().statusCode(code);
         return tresponseWebDav;
     }
 
@@ -546,7 +546,7 @@ public class DavResourceUtils {
         // ACLの設定
         tresponseWebDav = Http.request(settingFile).with("cellPath", cell).with("box", box).with("colname", colname)
                 .with("token", token).with("privilege", privilege).with("roleBaseUrl", roleBaseUrl)
-                .with("level", level).returns().statusCode(code);
+                .with("level", schemaLevel).returns().statusCode(code);
         return tresponseWebDav;
     }
 
@@ -580,7 +580,7 @@ public class DavResourceUtils {
                 .with("box", box)
                 .with("colname", colname)
                 .with("token", token)
-                .with("level", requireSchemaAuthz)
+                .with("level", schemaLevel)
                 .with("privilege", privilege)
                 .with("roleBaseUrl", roleBaseUrl)
                 .returns()
@@ -620,7 +620,7 @@ public class DavResourceUtils {
         // ACLの設定
         tresponseWebDav = Http.request(settingFile).with("cellPath", cell).with("box", box).with("colname", colname)
                 .with("role", role).with("token", token).with("privilege", privilege).with("roleBaseUrl", roleBaseUrl)
-                .with("level", level).returns().statusCode(code);
+                .with("level", schemaLevel).returns().statusCode(code);
         return tresponseWebDav;
     }
 
@@ -661,7 +661,7 @@ public class DavResourceUtils {
         tresponseWebDav = Http.request(settingFile).with("cellPath", cell).with("box", box).with("colname", path)
                 .with("token", token).with("role1", role1).with("role2", role2).with("privilege1", privilege1)
                 .with("privilege2", privilege2).with("roleBaseUrl", UrlUtils.roleResource(cell, roleLinkToBox, ""))
-                .with("level", level).returns().statusCode(code);
+                .with("level", schemaLevel).returns().statusCode(code);
         return tresponseWebDav;
     }
 
@@ -698,7 +698,8 @@ public class DavResourceUtils {
         // ACLの設定
         tresponseWebDav = Http.request(settingFile).with("cellPath", cell).with("box", box).with("colname", path)
                 .with("token", token).with("role", role).with("privilege", privilege)
-                .with("roleBaseUrl", UrlUtils.roleResource(cell, roleLinkToBox, "")).with("level", level).returns()
+                .with("roleBaseUrl", UrlUtils.roleResource(cell, roleLinkToBox, ""))
+                .with("level", schemaLevel).returns()
                 .statusCode(code);
         return tresponseWebDav;
     }
