@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.joda.time.DateTimeZone;
 import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmProperty;
 import org.odata4j.expression.AddExpression;
@@ -90,8 +91,8 @@ import org.odata4j.producer.QueryInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
@@ -476,6 +477,10 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
             return ((DoubleLiteral) expr).getValue();
         } else if (expr instanceof BooleanLiteral) {
             return ((BooleanLiteral) expr).getValue();
+        } else if (expr instanceof DateTimeLiteral) {
+            return ((DateTimeLiteral) expr).getValue().toDateTime(DateTimeZone.UTC).getMillis();
+        } else if (expr instanceof DateTimeOffsetLiteral) {
+            return ((DateTimeOffsetLiteral) expr).getValue().getMillis();
         } else {
             String value;
             try {
