@@ -177,8 +177,12 @@ public class SchemaAuthTest extends JerseyTest {
      * @param cellPath セル
      */
     private void setAclSchema(String box, String path, String level, String cellPath) {
+        String settingFile = ACL_AUTH_TEST_SETTING_FILE;
+        if (level.isEmpty()) {
+            settingFile = "box/acl-setscheme-none-schema-level.txt";
+        }
         DavResourceUtils.setACL(cellPath, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, path,
-                ACL_AUTH_TEST_SETTING_FILE, box, level);
+                settingFile, box, level);
     }
 
     /**
