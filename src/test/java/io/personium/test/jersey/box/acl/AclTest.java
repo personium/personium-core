@@ -103,7 +103,7 @@ public class AclTest extends JerseyTest {
             // Principal:all
             // Privilege:readのACLをbox1に設定
             DavResourceUtils.setACL(null, TOKEN, HttpStatus.SC_OK, TEST_CELL1 + "/" + BOX_NAME, ACL_ALL_TEST,
-                    null, "<D:read/>", "");
+                    null, "<D:read/>", "none");
 
             // PROPFINDでACLの確認
             TResponse tresponse = CellUtils.propfind(TEST_CELL1 + "/" + BOX_NAME,
@@ -155,7 +155,7 @@ public class AclTest extends JerseyTest {
                     .with("colname", "")
                     .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("level", "")
+                    .with("level", "none")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
         }
@@ -171,7 +171,7 @@ public class AclTest extends JerseyTest {
             // Principal:role1 Privilege:write
             // のACLをbox1に設定
             setAclAllandRole(TEST_CELL1, TOKEN, HttpStatus.SC_OK, TEST_CELL1 + "/" + BOX_NAME,
-                    "box/acl-setting-all-role.txt", "role1", "<D:read/>", "<D:write/>", "");
+                    "box/acl-setting-all-role.txt", "role1", "<D:read/>", "<D:write/>", "none");
 
             // PROPFINDでACLの確認
             CellUtils.propfind(TEST_CELL1 + "/" + BOX_NAME,
@@ -210,7 +210,7 @@ public class AclTest extends JerseyTest {
                     .with("colname", "")
                     .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("level", "")
+                    .with("level", "none")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
         }
@@ -227,7 +227,7 @@ public class AclTest extends JerseyTest {
             // Principal:all
             // Privilege:readのACLをbox1に設定
             DavResourceUtils.setACL(null, TOKEN, HttpStatus.SC_OK, TEST_CELL1 + "/" + BOX_NAME, ACL_ALL_TEST,
-                    null, "<D:read/>", "");
+                    null, "<D:read/>", "none");
 
             // PROPFINDでACLの確認
             TResponse tresponse = CellUtils.propfind(TEST_CELL1 + "/" + BOX_NAME,
@@ -239,7 +239,7 @@ public class AclTest extends JerseyTest {
 
             // ・空のACLを設定してACLが消えることを確認
             DavResourceUtils.setACL(TEST_CELL1, TOKEN, HttpStatus.SC_OK, "", ACL_NULL_TEST,
-                    null, null, "");
+                    null, null, "none");
 
             // PROPFINDでACLの確認
             TResponse tresponse2 = CellUtils.propfind(TEST_CELL1 + "/" + BOX_NAME,
@@ -254,7 +254,7 @@ public class AclTest extends JerseyTest {
                     .with("colname", "")
                     .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("level", "")
+                    .with("level", "none")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
         }
@@ -276,7 +276,7 @@ public class AclTest extends JerseyTest {
 
             // 上記Boxに上記RoleでACL設定
             DavResourceUtils.setACLwithBox(TEST_CELL1, TOKEN, HttpStatus.SC_OK, testBox, "",
-                    ACL_SETTING_TEST, testRole, testBox, "<D:read/>", "");
+                    ACL_SETTING_TEST, testRole, testBox, "<D:read/>", "none");
 
             // PROPFIND
             TResponse res = DavResourceUtils.propfind("box/propfind-box-allprop.txt",
@@ -324,7 +324,7 @@ public class AclTest extends JerseyTest {
 
             // 上記BoxにBoxに紐付かないRoleでACL設定
             DavResourceUtils.setACLwithBox(TEST_CELL1, TOKEN, HttpStatus.SC_OK, testBox, "", ACL_SETTING_TEST,
-                    testRole, null, "<D:read/>", "");
+                    testRole, null, "<D:read/>", "none");
 
             // PROPFIND
             TResponse res = DavResourceUtils.propfind("box/propfind-box-allprop.txt",
@@ -388,7 +388,7 @@ public class AclTest extends JerseyTest {
 
             // 上記Boxに上記RoleでACL設定
             DavResourceUtils.setACLwithBox(TEST_CELL1, TOKEN, HttpStatus.SC_OK, testBox1, "",
-                    ACL_SETTING_TEST, testRole, testBox1, "<D:read/>", "");
+                    ACL_SETTING_TEST, testRole, testBox1, "<D:read/>", "none");
 
             // PROPFIND
             TResponse res = DavResourceUtils.propfind("box/propfind-box-allprop.txt",
@@ -437,7 +437,7 @@ public class AclTest extends JerseyTest {
             // 上記Boxに上記RoleでACL設定
             DavResourceUtils.setACLwithRoleBaseUrl(TEST_CELL1, TOKEN, HttpStatus.SC_OK, testBox1, "",
                     "box/acl-setting-baseurl.txt", UrlUtils.roleResource(TEST_CELL1, testBox1, testRole),
-                    "<D:read/>", "");
+                    "<D:read/>", "none");
 
             // PROPFIND
             TResponse res = DavResourceUtils.propfind("box/propfind-box-allprop.txt",
@@ -505,7 +505,7 @@ public class AclTest extends JerseyTest {
                     .with("colname", "")
                     .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("level", "")
+                    .with("level", "none")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
         }
@@ -528,7 +528,7 @@ public class AclTest extends JerseyTest {
             // ACLをtestcell1/box2に設定
             DavResourceUtils.setACLwithBox(TEST_CELL1, AbstractCase.BEARER_MASTER_TOKEN, HttpStatus.SC_OK, box2, "",
                     "box/acl-2role-setting.txt", roleNotDelete, roleDelete, box2, "<D:read/>",
-                    "<D:write/>", "");
+                    "<D:write/>", "none");
 
             // roleを削除
             RoleUtils.delete(TEST_CELL1, TOKEN, roleDelete, box2, HttpStatus.SC_NO_CONTENT);
@@ -555,7 +555,7 @@ public class AclTest extends JerseyTest {
                     .with("colname", "")
                     .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("level", "")
+                    .with("level", "none")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
         }
@@ -575,7 +575,7 @@ public class AclTest extends JerseyTest {
 
             // ACLをtestcell1/box2に設定
             DavResourceUtils.setACLwithBox(TEST_CELL1, TOKEN, HttpStatus.SC_OK, box2, "",
-                    ACL_SETTING_TEST, roleDelete, null, "<D:read/>", "");
+                    ACL_SETTING_TEST, roleDelete, null, "<D:read/>", "none");
 
             // roleを削除
             RoleUtils.delete(TEST_CELL1, TOKEN, roleDelete, null, HttpStatus.SC_NO_CONTENT);
@@ -598,7 +598,7 @@ public class AclTest extends JerseyTest {
                     .with("colname", "")
                     .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("level", "")
+                    .with("level", "none")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
         }

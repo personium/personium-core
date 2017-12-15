@@ -205,7 +205,7 @@ public class AclTest extends AbstractCase {
             // Principal:all Privilege:read
             // Principal:role1 Privilege:write
             setAclAllandRole(TEST_CELL1, TOKEN, HttpStatus.SC_OK, TEST_CELL1 + "/" + testBox1,
-                "box/acl-setting-all-role.txt", "role1", "<D:read/>", "<D:write/>", "");
+                "box/acl-setting-all-role.txt", "role1", "<D:read/>", "<D:write/>", "none");
 
             // PROPFINDでACLの確認
             CellUtils.propfind(TEST_CELL1 + "/" + testBox1, TOKEN, "0", HttpStatus.SC_MULTI_STATUS);
@@ -236,7 +236,7 @@ public class AclTest extends AbstractCase {
                     .with("colname", "")
                     .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
                     .with("token", TOKEN)
-                    .with("level", "")
+                    .with("level", "none")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -247,7 +247,6 @@ public class AclTest extends AbstractCase {
                     .with("role2", TEST_ROLE2)
                     .with("box", testBox1)
                     .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
-                    .with("level", "")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
         }
