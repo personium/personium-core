@@ -1455,7 +1455,7 @@ public class CollectionTest extends JerseyTest {
                     .with("colname", path)
                     .with("token", TOKEN)
                     .with("roleBaseUrl", UrlUtils.roleResource(testcell, null, ""))
-                    .with("level", "")
+                    .with("level", "none")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -1556,7 +1556,7 @@ public class CollectionTest extends JerseyTest {
                     .with("colname", path)
                     .with("token", TOKEN)
                     .with("roleBaseUrl", UrlUtils.roleResource(testcell, null, ""))
-                    .with("level", "")
+                    .with("level", "none")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -1611,7 +1611,7 @@ public class CollectionTest extends JerseyTest {
                     .with("colname", path)
                     .with("token", TOKEN)
                     .with("roleBaseUrl", UrlUtils.roleResource(testcell, null, ""))
-                    .with("level", "")
+                    .with("level", "none")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
 
@@ -1662,7 +1662,7 @@ public class CollectionTest extends JerseyTest {
                 .with("colname", path)
                 .with("token", TOKEN)
                 .with("roleBaseUrl", UrlUtils.roleResource(testcell, null, ""))
-                .with("level", "")
+                .with("level", "none")
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
 
@@ -1696,7 +1696,7 @@ public class CollectionTest extends JerseyTest {
                 .with("col", Setup.TEST_ODATA)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("roleBaseUrl", UrlUtils.roleResource(Setup.TEST_CELL1, "notExistsBox", "role1"))
-                .with("level", "")
+                .with("level", "none")
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
@@ -1714,7 +1714,7 @@ public class CollectionTest extends JerseyTest {
                 .with("role", "notExistsCol/../__/role1")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("roleBaseUrl", UrlUtils.roleResource(Setup.TEST_CELL1, null, ""))
-                .with("level", "")
+                .with("level", "none")
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
@@ -1740,7 +1740,7 @@ public class CollectionTest extends JerseyTest {
                     .with("col", Setup.TEST_ODATA)
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
                     .with("roleBaseUrl", UrlUtils.roleResource(Setup.TEST_CELL1, testBox, testRole))
-                    .with("level", "")
+                    .with("level", "none")
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
