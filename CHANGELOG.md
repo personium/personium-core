@@ -1,3 +1,14 @@
+## 1.5.7
+BUG FIXES:
+* Add value check processing of RequireSchemaAuthz attribute.([#78](https://github.com/personium/personium-core/issues/78))
+* Change execution privilege of GetBoxURL API.([#82](https://github.com/personium/personium-core/issues/82))
+* DateTime literal format used in OData $filter is not implemented correctly.([#86](https://github.com/personium/personium-core/issues/86))
+
+IMPROVEMENTS:
+* When Unit URL is changed, cells' hidden parameter `Owner` in elasticsearch will be wrong URL.([#40](https://github.com/personium/personium-core/issues/40))
+* Unify the linefeed code of file to LF.([#77](https://github.com/personium/personium-core/issues/77))
+* Recursive delete of WebDAV collection without user OData.([#68](https://github.com/personium/personium-core/issues/68))
+
 ## 1.5.6
 IMPROVEMENTS:
 * OData with N:N relationship also deletes $links at the same time when deleting entities.([#65](https://github.com/personium/personium-core/issues/65))
