@@ -25,6 +25,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.test.framework.JerseyTest;
+
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
@@ -46,10 +48,9 @@ import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
-import io.personium.test.utils.UserDataUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
+import io.personium.test.utils.UserDataUtils;
 
 /**
  * スキーマ認証のテスト.
@@ -176,8 +177,12 @@ public class SchemaAuthTest extends JerseyTest {
      * @param cellPath セル
      */
     private void setAclSchema(String box, String path, String level, String cellPath) {
+        String settingFile = ACL_AUTH_TEST_SETTING_FILE;
+        if (level.isEmpty()) {
+            settingFile = "box/acl-setscheme-none-schema-level.txt";
+        }
         DavResourceUtils.setACL(cellPath, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, path,
-                ACL_AUTH_TEST_SETTING_FILE, box, level);
+                settingFile, box, level);
     }
 
     /**
@@ -678,7 +683,7 @@ public class SchemaAuthTest extends JerseyTest {
                     "hoge", Box.DEFAULT_BOX_NAME, DAV_RESOURCE, -1);
             // ACL設定
             DavResourceUtils.setACL(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, DAV_RESOURCE,
-                    "box/acl-all.txt", Box.DEFAULT_BOX_NAME, "");
+                    "box/acl-all-none-schema-level.txt", Box.DEFAULT_BOX_NAME, "");
 
             this.checkResourcesWithSchema("", DAV_RESOURCE, tokenStr, Box.DEFAULT_BOX_NAME, TEST_CELL1);
         } finally {
@@ -791,7 +796,7 @@ public class SchemaAuthTest extends JerseyTest {
                 .with("box", box)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
                 .with("roleBaseUrl", UrlUtils.roleResource(TEST_CELL1, null, ""))
-                .with("level", "")
+                .with("level", "none")
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
         return tresponseWebDav;

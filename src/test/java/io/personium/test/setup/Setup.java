@@ -409,7 +409,7 @@ public class Setup extends AbstractCase {
             if ("box1".equals(box.boxName)) {
                 // BoxレベルACLテスト用
                 DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, "",
-                        "box/acl-authtest.txt", Setup.TEST_BOX1, "");
+                        "box/acl-setscheme-none-schema-level.txt", Setup.TEST_BOX1, "");
             }
         }
 
@@ -419,14 +419,14 @@ public class Setup extends AbstractCase {
             createOdataCollection(conf.cellName, TEST_BOX1, SEARCH_ODATA);
 
             DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, TEST_ODATA,
-                    "box/acl-authtest.txt", Setup.TEST_BOX1, "");
+                    "box/acl-setscheme-none-schema-level.txt", Setup.TEST_BOX1, "");
             createWebdavCollection(conf.cellName, TEST_BOX1, "setdavcol");
             DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, "setdavcol",
-                    "box/acl-authtest.txt", Setup.TEST_BOX1, "");
+                    "box/acl-setscheme-none-schema-level.txt", Setup.TEST_BOX1, "");
             this.createPatch2("setservice", conf.cellName);
             createServiceCollection(conf.cellName, TEST_BOX1, "service_relay");
             DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, "service_relay",
-                    "box/acl-authtest.txt", Setup.TEST_BOX1, "");
+                    "box/acl-setscheme-none-schema-level.txt", Setup.TEST_BOX1, "");
 
             // テストコレクションのエンティティ作成
             createTestCollectionSchema(conf.cellName);
@@ -452,14 +452,14 @@ public class Setup extends AbstractCase {
             createOdataCollection(conf.cellName, TEST_BOX1, TEST_ODATA);
 
             DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, TEST_ODATA,
-                    "box/acl-authtest.txt", Setup.TEST_BOX1, "");
+                    "box/acl-setscheme-none-schema-level.txt", Setup.TEST_BOX1, "");
             createWebdavCollection(conf.cellName, TEST_BOX1, "setdavcol");
             DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, "setdavcol",
-                    "box/acl-authtest.txt", Setup.TEST_BOX1, "");
+                    "box/acl-setscheme-none-schema-level.txt", Setup.TEST_BOX1, "");
             this.createPatch2("setservice", conf.cellName);
             createServiceCollection(conf.cellName, TEST_BOX1, "service_relay");
             DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, "service_relay",
-                    "box/acl-authtest.txt", Setup.TEST_BOX1, "");
+                    "box/acl-setscheme-none-schema-level.txt", Setup.TEST_BOX1, "");
 
             // テストコレクションのエンティティ作成
             createTestCollectionSchema(conf.cellName);

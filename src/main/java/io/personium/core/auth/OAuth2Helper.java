@@ -328,7 +328,6 @@ public final class OAuth2Helper {
          */
         public static boolean isMatchPermittedValue(String value) {
             if (value == null
-                    || value.isEmpty()
                     || NONE.equals(value)
                     || PUBLIC.equals(value)
                     || CONFIDENTIAL.equals(value)) {

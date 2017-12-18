@@ -95,7 +95,7 @@ public class AclTest {
             fail("Not throws exception.");
         } catch (PersoniumCoreException e) {
             PersoniumCoreException expected = PersoniumCoreException.Dav.XML_VALIDATE_ERROR.params(
-                    "Value [test] of requireSchemaAuthz is invalid");
+                    "Value [test] for requireSchemaAuthz is invalid");
             assertThat(e.getCode(), is(expected.getCode()));
             assertThat(e.getMessage(), is(expected.getMessage()));
         }
