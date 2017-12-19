@@ -116,12 +116,11 @@ public class ExecAction extends EngineAction {
                 // collection
                 DavCmp nextCmp = davCmp.getChild(this.colName);
                 String type = nextCmp.getType();
-                if (DavCmp.TYPE_COL_SVC.equals(type)) {
-                    if (nextCmp instanceof DavCmpFsImpl) {
-                        DavCmpFsImpl dcmp = (DavCmpFsImpl) nextCmp;
-                        req.addHeader("X-Personium-Fs-Path", dcmp.getFsPath());
-                        req.addHeader("X-Personium-Fs-Routing-Id", dcmp.getCellId());
-                    }
+                if (DavCmp.TYPE_COL_SVC.equals(type)
+                        && nextCmp instanceof DavCmpFsImpl) {
+                    DavCmpFsImpl dcmp = (DavCmpFsImpl) nextCmp;
+                    req.addHeader("X-Personium-Fs-Path", dcmp.getFsPath());
+                    req.addHeader("X-Personium-Fs-Routing-Id", dcmp.getCellId());
                 }
                 req.addHeader("X-Personium-Box-Schema", box.getSchema());
             }

@@ -217,31 +217,29 @@ public final class CellCtlResource extends ODataResource {
             String object = null;
             String boxname = null;
             for (OProperty<?> property : props) {
-                if (Rule.P_ACTION.getName().equals(property.getName())) {
-                    if (property.getValue() == null) {
+                String name = property.getName();
+                String value = null;
+                if (property.getValue() != null) {
+                    value = property.getValue().toString();
+                }
+                if (Rule.P_ACTION.getName().equals(name)) {
+                    if (value == null) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_ACTION.getName());
+                    } else {
+                        action = value;
                     }
-                    action = property.getValue().toString();
-                } else if (Rule.P_SERVICE.getName().equals(property.getName())) {
-                    if (property.getValue() != null) {
-                        service = property.getValue().toString();
-                    }
-                } else if (Rule.P_OBJECT.getName().equals(property.getName())) {
-                    if (property.getValue() != null) {
-                        object = property.getValue().toString();
-                    }
-                } else if (Common.P_BOX_NAME.getName().equals(property.getName())) {
-                    if (property.getValue() != null) {
-                        boxname = property.getValue().toString();
-                    }
+                } else if (Rule.P_SERVICE.getName().equals(name) && value != null) {
+                    service = value;
+                } else if (Rule.P_OBJECT.getName().equals(name) && value != null) {
+                    object = value;
+                } else if (Common.P_BOX_NAME.getName().equals(name) && value != null) {
+                    boxname = value;
                 }
             }
 
             // action: callback or exec -> service: not null
-            if (Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action)) {
-                if (service == null) {
-                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
-                }
+            if ((Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action)) && service == null) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
             }
 
             // boxname: not null
@@ -251,10 +249,8 @@ public final class CellCtlResource extends ODataResource {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_OBJECT.getName());
                 }
                 // action: exec -> service: personium-localbox:/xxx
-                if (Rule.ACTION_EXEC.equals(action)) {
-                    if (!service.startsWith(UriUtils.SCHEME_LOCALBOX)) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
-                    }
+                if (Rule.ACTION_EXEC.equals(action) && !service.startsWith(UriUtils.SCHEME_LOCALBOX)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
                 }
             } else {
                 // object: personium-localcell:/xxx
@@ -262,20 +258,17 @@ public final class CellCtlResource extends ODataResource {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_OBJECT.getName());
                 }
                 // action: exec -> service: personium-localcell:/xxx
-                if (Rule.ACTION_EXEC.equals(action)) {
-                    if (!service.startsWith(UriUtils.SCHEME_LOCALCELL)) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
-                    }
+                if (Rule.ACTION_EXEC.equals(action) && !service.startsWith(UriUtils.SCHEME_LOCALCELL)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
                 }
             }
 
             // action: callback -> service: personium-localunit: or http: or https:
-            if (Rule.ACTION_CALLBACK.equals(action)) {
-                if (!service.startsWith(UriUtils.SCHEME_HTTP)
-                        && !service.startsWith(UriUtils.SCHEME_HTTPS)
-                        && !service.startsWith(UriUtils.SCHEME_LOCALUNIT)) {
-                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
-                }
+            if (Rule.ACTION_CALLBACK.equals(action)
+                    && !service.startsWith(UriUtils.SCHEME_HTTP)
+                    && !service.startsWith(UriUtils.SCHEME_HTTPS)
+                    && !service.startsWith(UriUtils.SCHEME_LOCALUNIT)) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
             }
         }
     }

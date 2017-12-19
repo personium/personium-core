@@ -741,11 +741,11 @@ public final class MessageODataResource extends AbstractODataResource {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_ACTION.getName()));
             }
-            if (Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action)) {
-                if (propMap.get(concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName())) == null) {
-                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                            concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
-                }
+            if ((Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action))
+                    && propMap.get(
+                            concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName())) == null) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
             }
             String object = propMap.get(concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName()));
             String service = propMap.get(concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
@@ -754,31 +754,28 @@ public final class MessageODataResource extends AbstractODataResource {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                             concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName()));
                 }
-                if (Rule.ACTION_EXEC.equals(action)) {
-                    if (!service.startsWith(UriUtils.SCHEME_LOCALBOX)) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
-                    }
+                if (Rule.ACTION_EXEC.equals(action)
+                        && !service.startsWith(UriUtils.SCHEME_LOCALBOX)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                            concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
                 }
             } else {
                 if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALCELL)) {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                             concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName()));
                 }
-                if (Rule.ACTION_EXEC.equals(action)) {
-                    if (!service.startsWith(UriUtils.SCHEME_LOCALCELL)) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
-                    }
-                }
-            }
-            if (Rule.ACTION_CALLBACK.equals(action)) {
-                if (!service.startsWith(UriUtils.SCHEME_LOCALUNIT)
-                        && !service.startsWith(UriUtils.SCHEME_HTTP)
-                        && !service.startsWith(UriUtils.SCHEME_HTTPS)) {
+                if (Rule.ACTION_EXEC.equals(action)
+                        && !service.startsWith(UriUtils.SCHEME_LOCALCELL)) {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                             concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
                 }
+            }
+            if (Rule.ACTION_CALLBACK.equals(action)
+                    && !service.startsWith(UriUtils.SCHEME_LOCALUNIT)
+                    && !service.startsWith(UriUtils.SCHEME_HTTP)
+                    && !service.startsWith(UriUtils.SCHEME_HTTPS)) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
             }
         } else if (ReceivedMessage.TYPE_REQ_RULE_UNREGISTER.equals(type)) {
             // Status
@@ -838,11 +835,10 @@ public final class MessageODataResource extends AbstractODataResource {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_ACTION.getName()));
             }
-            if (Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action)) {
-                if (propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName())) == null) {
-                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                            concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
-                }
+            if ((Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action))
+                    && propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName())) == null) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
             }
             String object = propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName()));
             String service = propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
@@ -852,11 +848,10 @@ public final class MessageODataResource extends AbstractODataResource {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                             concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName()));
                 }
-                if (Rule.ACTION_EXEC.equals(action)) {
-                    if (!service.startsWith(UriUtils.SCHEME_LOCALBOX)) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
-                    }
+                if (Rule.ACTION_EXEC.equals(action)
+                        && !service.startsWith(UriUtils.SCHEME_LOCALBOX)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                            concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
                 }
             } else {
                 log.debug("validate: boxBound is false");
@@ -864,20 +859,18 @@ public final class MessageODataResource extends AbstractODataResource {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                             concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName()));
                 }
-                if (Rule.ACTION_EXEC.equals(action)) {
-                    if (!service.startsWith(UriUtils.SCHEME_LOCALCELL)) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
-                    }
-                }
-            }
-            if (Rule.ACTION_CALLBACK.equals(action)) {
-                if (!service.startsWith(UriUtils.SCHEME_LOCALUNIT)
-                        && !service.startsWith(UriUtils.SCHEME_HTTP)
-                        && !service.startsWith(UriUtils.SCHEME_HTTPS)) {
+                if (Rule.ACTION_EXEC.equals(action)
+                        && !service.startsWith(UriUtils.SCHEME_LOCALCELL)) {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                             concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
                 }
+            }
+            if (Rule.ACTION_CALLBACK.equals(action)
+                    && !service.startsWith(UriUtils.SCHEME_LOCALUNIT)
+                    && !service.startsWith(UriUtils.SCHEME_HTTP)
+                    && !service.startsWith(UriUtils.SCHEME_HTTPS)) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
             }
         } else if (SentMessage.TYPE_REQ_RULE_UNREGISTER.equals(type)) {
             // RequestRule

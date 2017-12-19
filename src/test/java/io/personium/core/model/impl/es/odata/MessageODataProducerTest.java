@@ -523,7 +523,7 @@ public class MessageODataProducerTest {
         doReturn(true).when(messageODataProducer).isValidMessageStatus(status);
         doReturn(true).when(messageODataProducer).isValidCurrentStatus("dummyStatus");
 
-        PowerMockito.doNothing().when(messageODataProducer, "updateRelation", mockDocHandler, status);
+        PowerMockito.doNothing().when(messageODataProducer, "updateRelation", mockDocHandler);
         PowerMockito.doNothing().when(messageODataProducer, "updateStatusOfEntitySetDocHandler",
                 mockDocHandler, status);
 
@@ -802,7 +802,6 @@ public class MessageODataProducerTest {
         // Test method args
         // --------------------
         EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
-        String status = ReceivedMessage.STATUS_APPROVED;
 
         // --------------------
         // Mock settings
@@ -833,11 +832,10 @@ public class MessageODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = MessageODataProducer.class.getDeclaredMethod(
-                "updateRelation", EntitySetDocHandler.class, String.class);
+        Method method = MessageODataProducer.class.getDeclaredMethod("updateRelation", EntitySetDocHandler.class);
         method.setAccessible(true);
         // Run method
-        method.invoke(messageODataProducer, entitySetDocHandler, status);
+        method.invoke(messageODataProducer, entitySetDocHandler);
 
         // --------------------
         // Confirm result
@@ -869,7 +867,6 @@ public class MessageODataProducerTest {
         // Test method args
         // --------------------
         EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
-        String status = ReceivedMessage.STATUS_APPROVED;
 
         // --------------------
         // Mock settings
@@ -902,11 +899,10 @@ public class MessageODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = MessageODataProducer.class.getDeclaredMethod(
-                "updateRelation", EntitySetDocHandler.class, String.class);
+        Method method = MessageODataProducer.class.getDeclaredMethod("updateRelation", EntitySetDocHandler.class);
         method.setAccessible(true);
         // Run method
-        method.invoke(messageODataProducer, entitySetDocHandler, status);
+        method.invoke(messageODataProducer, entitySetDocHandler);
 
         // --------------------
         // Confirm result
@@ -945,7 +941,6 @@ public class MessageODataProducerTest {
         // Test method args
         // --------------------
         EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
-        String status = ReceivedMessage.STATUS_APPROVED;
 
         // --------------------
         // Mock settings
@@ -978,11 +973,10 @@ public class MessageODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = MessageODataProducer.class.getDeclaredMethod(
-                "updateRelation", EntitySetDocHandler.class, String.class);
+        Method method = MessageODataProducer.class.getDeclaredMethod("updateRelation", EntitySetDocHandler.class);
         method.setAccessible(true);
         // Run method
-        method.invoke(messageODataProducer, entitySetDocHandler, status);
+        method.invoke(messageODataProducer, entitySetDocHandler);
 
         // --------------------
         // Confirm result
@@ -1021,7 +1015,6 @@ public class MessageODataProducerTest {
         // Test method args
         // --------------------
         EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
-        String status = ReceivedMessage.STATUS_APPROVED;
 
         // --------------------
         // Mock settings
@@ -1054,11 +1047,10 @@ public class MessageODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = MessageODataProducer.class.getDeclaredMethod(
-                "updateRelation", EntitySetDocHandler.class, String.class);
+        Method method = MessageODataProducer.class.getDeclaredMethod("updateRelation", EntitySetDocHandler.class);
         method.setAccessible(true);
         // Run method
-        method.invoke(messageODataProducer, entitySetDocHandler, status);
+        method.invoke(messageODataProducer, entitySetDocHandler);
 
         // --------------------
         // Confirm result
@@ -1097,7 +1089,6 @@ public class MessageODataProducerTest {
         // Test method args
         // --------------------
         EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
-        String status = ReceivedMessage.STATUS_APPROVED;
 
         // --------------------
         // Mock settings
@@ -1130,11 +1121,10 @@ public class MessageODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = MessageODataProducer.class.getDeclaredMethod(
-                "updateRelation", EntitySetDocHandler.class, String.class);
+        Method method = MessageODataProducer.class.getDeclaredMethod("updateRelation", EntitySetDocHandler.class);
         method.setAccessible(true);
         // Run method
-        method.invoke(messageODataProducer, entitySetDocHandler, status);
+        method.invoke(messageODataProducer, entitySetDocHandler);
 
         // --------------------
         // Confirm result
@@ -1173,7 +1163,6 @@ public class MessageODataProducerTest {
         // Test method args
         // --------------------
         EntitySetDocHandler entitySetDocHandler = mock(EntitySetDocHandler.class);
-        String status = ReceivedMessage.STATUS_APPROVED;
 
         // --------------------
         // Mock settings
@@ -1206,11 +1195,10 @@ public class MessageODataProducerTest {
         // Run method
         // --------------------
         // Load methods for private
-        Method method = MessageODataProducer.class.getDeclaredMethod(
-                "updateRelation", EntitySetDocHandler.class, String.class);
+        Method method = MessageODataProducer.class.getDeclaredMethod("updateRelation", EntitySetDocHandler.class);
         method.setAccessible(true);
         // Run method
-        method.invoke(messageODataProducer, entitySetDocHandler, status);
+        method.invoke(messageODataProducer, entitySetDocHandler);
 
         // --------------------
         // Confirm result
@@ -1234,46 +1222,6 @@ public class MessageODataProducerTest {
         assertThat(edmTypeCaptor.getValue(), is(Role.EDM_TYPE_NAME));
         assertThat(entityKeyMapCaptor.getValue().get(Common.P_BOX_NAME.getName()), is("dummyBox"));
         assertThat(extCellKeyMapCaptor.getValue().get(ExtCell.P_URL.getName()), is("http://personium/dummyExtCell/"));
-    }
-
-    /**
-     * Test updateRelation().
-     * Status is not approved.
-     * @throws Exception Unexpected error
-     */
-    @Test
-    public void updateRelation_Normal_status_is_not_approved() throws Exception  {
-        messageODataProducer = PowerMockito.spy(new MessageODataProducer(new CellEsImpl(), null));
-        // --------------------
-        // Test method args
-        // --------------------
-        EntitySetDocHandler entitySetDocHandler = null;
-        String status = ReceivedMessage.STATUS_REJECTED;
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        // Nothing.
-
-        // --------------------
-        // Expected result
-        // --------------------
-        // Nothing.
-
-        // --------------------
-        // Run method
-        // --------------------
-        // Load methods for private
-        Method method = MessageODataProducer.class.getDeclaredMethod(
-                "updateRelation", EntitySetDocHandler.class, String.class);
-        method.setAccessible(true);
-        // Run method
-        method.invoke(messageODataProducer, entitySetDocHandler, status);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        // OK if Exception has not occurred.
     }
 
     /**

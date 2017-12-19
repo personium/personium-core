@@ -595,10 +595,8 @@ public class RuleManager {
         RuleInfo rule = createRuleInfo(oEntity);
 
         // Replace personium-localunit scheme to http scheme.
-        if (rule.service != null) {
-            if (rule.service.startsWith(LOCALUNIT)) {
-                rule.service = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), rule.service);
-            }
+        if (rule.service != null && rule.service.startsWith(LOCALUNIT)) {
+            rule.service = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), rule.service);
         }
 
         if (rule.action == null) {

@@ -1527,7 +1527,7 @@ public class BarFileReadRunner implements Runnable {
                 throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
             return accounts;
-        } else if (jsonName.equals((RULE_JSON))) {
+        } else if (jsonName.equals(RULE_JSON)) {
             JSONRules rules = mapper.readValue(jp, JSONRules.class);
             if (rules.getAction() == null) { //TODO 他には？
                 throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);

@@ -38,7 +38,6 @@ import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 import org.odata4j.edm.EdmType;
-import org.odata4j.format.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,7 +164,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                         // check social privilege
                         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.SOCIAL);
                         // 関係登録/削除
-                        updateRelation(entitySetDocHandler, status);
+                        updateRelation(entitySetDocHandler);
                     } else if (!ReceivedMessage.STATUS_REJECTED.equals(status)) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                 ReceivedMessage.MESSAGE_COMMAND);
@@ -182,7 +181,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                         // check social privilege
                         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.SOCIAL);
                         // 関係登録/削除
-                        updateRelation(entitySetDocHandler, status);
+                        updateRelation(entitySetDocHandler);
                     } else if (!ReceivedMessage.STATUS_REJECTED.equals(status)) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                 ReceivedMessage.MESSAGE_COMMAND);
@@ -199,7 +198,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                         // check rule privilege
                         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.RULE);
                         // register or unregister rule
-                        updateRule(entitySetDocHandler, status);
+                        updateRule(entitySetDocHandler);
                     } else if (!ReceivedMessage.STATUS_REJECTED.equals(status)) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                 ReceivedMessage.MESSAGE_COMMAND);
@@ -260,52 +259,47 @@ public class MessageODataProducer extends CellCtlODataProducer {
     /**
      * Perform relationship registration / deletion.
      * @param entitySetDocHandler Received message
-     * @param status Change Status
      */
-    private void updateRelation(EntitySetDocHandler entitySetDocHandler, String status) {
+    private void updateRelation(EntitySetDocHandler entitySetDocHandler) {
+        // Do register / delete Entity / ExtCell
+        String type = (String) entitySetDocHandler.getStaticFields().get(ReceivedMessage.P_TYPE.getName());
 
-        if (ReceivedMessage.STATUS_APPROVED.equals(status)) {
-            // Do register / delete Entity / ExtCell
-            String type = (String) entitySetDocHandler.getStaticFields().get(ReceivedMessage.P_TYPE.getName());
+        // Get name to be registered
+        String requestRelation = (String) entitySetDocHandler.getStaticFields().get(
+                ReceivedMessage.P_REQUEST_RELATION.getName());
+        String name = getNameFromRequestRelation(requestRelation, type);
+        // Get box name
+        String boxName = getBoxNameFromRequestRelation(requestRelation, type);
+        if (boxName == null) {
+            // If box can not be found from RequestRelation (RequestRelation is Name only),
+            // get BoxName from _ Box.Name
+            boxName = (String) entitySetDocHandler.getStaticFields().get(Common.P_BOX_NAME.getName());
+        }
+        // Get cell URL to link
+        String extCellUrl = (String) entitySetDocHandler.getStaticFields().get(
+                ReceivedMessage.P_REQUEST_RELATION_TARGET.getName());
+        if (!extCellUrl.endsWith("/")) {
+            extCellUrl += "/";
+        }
 
-            // Get name to be registered
-            String requestRelation = (String) entitySetDocHandler.getStaticFields().get(
-                    ReceivedMessage.P_REQUEST_RELATION.getName());
-            String name = getNameFromRequestRelation(requestRelation, type);
-            // Get box name
-            String boxName = getBoxNameFromRequestRelation(requestRelation, type);
-            if (boxName == null) {
-                // If box can not be found from RequestRelation (RequestRelation is Name only),
-                // get BoxName from _ Box.Name
-                boxName = (String) entitySetDocHandler.getStaticFields().get(Common.P_BOX_NAME.getName());
-            }
-            // Get cell URL to link
-            String extCellUrl = (String) entitySetDocHandler.getStaticFields().get(
-                    ReceivedMessage.P_REQUEST_RELATION_TARGET.getName());
-            if (!extCellUrl.endsWith("/")) {
-                extCellUrl += "/";
-            }
+        Map<String, Object> entityKeyMap = getEntityKeyMapFromType(name, boxName, type);
 
-            Map<String, Object> entityKeyMap = getEntityKeyMapFromType(name, boxName, type);
+        Map<String, Object> extCellKeyMap = new HashMap<>();
+        extCellKeyMap.put(ExtCell.P_URL.getName(), extCellUrl);
 
-            Map<String, Object> extCellKeyMap = new HashMap<>();
-            extCellKeyMap.put(ExtCell.P_URL.getName(), extCellUrl);
-
-            // registration / deletion
-            if (ReceivedMessage.TYPE_REQ_RELATION_BUILD.equals(type)) {
-                registerRelation(Relation.EDM_TYPE_NAME, entityKeyMap, extCellKeyMap);
-            } else if (ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type)) {
-                deleteRelation(Relation.EDM_TYPE_NAME, entityKeyMap, extCellKeyMap);
-            } else if (ReceivedMessage.TYPE_REQ_ROLE_GRANT.equals(type)) {
-                registerRelation(Role.EDM_TYPE_NAME, entityKeyMap, extCellKeyMap);
-            } else if (ReceivedMessage.TYPE_REQ_ROLE_REVOKE.equals(type)) {
-                deleteRelation(Role.EDM_TYPE_NAME, entityKeyMap, extCellKeyMap);
-            }
-
+        // registration / deletion
+        if (ReceivedMessage.TYPE_REQ_RELATION_BUILD.equals(type)) {
+            registerRelation(Relation.EDM_TYPE_NAME, entityKeyMap, extCellKeyMap);
+        } else if (ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type)) {
+            deleteRelation(Relation.EDM_TYPE_NAME, entityKeyMap, extCellKeyMap);
+        } else if (ReceivedMessage.TYPE_REQ_ROLE_GRANT.equals(type)) {
+            registerRelation(Role.EDM_TYPE_NAME, entityKeyMap, extCellKeyMap);
+        } else if (ReceivedMessage.TYPE_REQ_ROLE_REVOKE.equals(type)) {
+            deleteRelation(Role.EDM_TYPE_NAME, entityKeyMap, extCellKeyMap);
         }
     }
 
-    private void updateRule(EntitySetDocHandler entitySetDocHandler, String status) {
+    private void updateRule(EntitySetDocHandler entitySetDocHandler) {
         Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();
         String type = (String) staticFields.get(ReceivedMessage.P_TYPE.getName());
         Map<String, Object> requestRule =
