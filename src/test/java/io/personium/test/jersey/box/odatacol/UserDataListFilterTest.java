@@ -20,9 +20,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -694,7 +696,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataに完全一致検索クエリのキーにpublishedを指定して対象のデータのみ取得できること() {
+    public void UserDataに完全一致検索クエリのキーにpublishedを指定して対象のデータのみ取得できること() {
         String sdEntityTypeName = "SalesDetail";
         String userDataId = "newData001";
 
@@ -707,8 +709,11 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     sdEntityTypeName);
 
             // 作成日を取得
-            String date = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results"))
+            String dateStr = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results"))
                     .get("__published");
+            long date = parseDateStringToLong(dateStr);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            format.setTimeZone(TimeZone.getTimeZone("UTC"));
 
             // ユーザデータの一覧取得
             response = Http.request("box/odatacol/list.txt")
@@ -716,7 +721,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("entityType", sdEntityTypeName)
-                    .with("query", "?\\$filter=__published+eq+" + date.substring(6, 19))
+                    .with("query", "?\\$filter=__published+eq+datetime'" + format.format(date) + "'")
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
@@ -744,7 +749,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataに範囲検索クエリのキーにpublishedを指定して対象のデータのみ取得できること() {
+    public void UserDataに範囲検索クエリのキーにpublishedを指定して対象のデータのみ取得できること() {
         String sdEntityTypeName = "SalesDetail";
         String userDataId = "newData001";
 
@@ -760,10 +765,13 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
             String dateStr = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results"))
                     .get("__published");
             long date = parseDateStringToLong(dateStr);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            format.setTimeZone(TimeZone.getTimeZone("UTC"));
 
             // ユーザデータの一覧取得
             PersoniumResponse searchResponse = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
-                    "?$filter=__published+ge+" + date + "+and+__published+le+" + (date + 1000));
+                    "?$filter=__published+ge+datetime'" + format.format(date)
+                    + "'+and+__published+le+datetime'" + format.format(date + 1000) + "'");
 
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             // レスポンスボディーのチェック
@@ -773,7 +781,8 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
 
             // ユーザデータの一覧取得
             searchResponse = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
-                    "?$filter=__published+gt+" + (date - 1000) + "+and+__published+lt+" + (date + 1000));
+                    "?$filter=__published+gt+datetime'" + format.format(date - 1000)
+                    + "'+and+__published+lt+datetime'" + format.format(date + 1000) + "'");
 
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             ODataCommon.checkCommonResponseUri(searchResponse.bodyAsJson(), uri);
@@ -789,7 +798,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataに完全一致検索クエリのキーにupdatedを指定して対象のデータのみ取得できること() {
+    public void UserDataに完全一致検索クエリのキーにupdatedを指定して対象のデータのみ取得できること() {
         String sdEntityTypeName = "SalesDetail";
         String userDataId = "newData001";
 
@@ -802,8 +811,11 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     sdEntityTypeName);
 
             // 作成日を取得
-            String date = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results"))
+            String dateStr = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results"))
                     .get("__updated");
+            long date = parseDateStringToLong(dateStr);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'%2B09:00'");
+            format.setTimeZone(TimeZone.getTimeZone("JST"));
 
             // ユーザデータの一覧取得
             response = Http.request("box/odatacol/list.txt")
@@ -811,7 +823,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
                     .with("box", boxName)
                     .with("collection", colName)
                     .with("entityType", sdEntityTypeName)
-                    .with("query", "?\\$filter=__updated+eq+" + date.substring(6, 19))
+                    .with("query", "?\\$filter=__updated+eq+datetimeoffset'" + format.format(date) + "'")
                     .with("accept", MediaType.APPLICATION_JSON)
                     .with("token", PersoniumUnitConfig.getMasterToken())
                     .returns()
@@ -840,7 +852,7 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataに範囲検索クエリのキーにupdatedを指定して対象のデータのみ取得できること() {
+    public void UserDataに範囲検索クエリのキーにupdatedを指定して対象のデータのみ取得できること() {
         String sdEntityTypeName = "SalesDetail";
         String userDataId = "newData001";
 
@@ -856,10 +868,13 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
             String dateStr = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results"))
                     .get("__updated");
             long date = parseDateStringToLong(dateStr);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'%2B09:00'");
+            format.setTimeZone(TimeZone.getTimeZone("JST"));
 
             // ユーザデータの一覧取得
             PersoniumResponse searchResponse = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
-                    "?$filter=__updated+ge+" + date + "+and+__updated+le+" + (date + 1000));
+                    "?$filter=__updated+ge+datetimeoffset'" + format.format(date)
+                    + "'+and+__updated+le+datetimeoffset'" + format.format(date + 1000) + "'");
 
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             // レスポンスボディーのチェック
@@ -869,7 +884,8 @@ public class UserDataListFilterTest extends AbstractUserDataTest {
 
             // ユーザデータの一覧取得
             searchResponse = getUserDataWithDcClient(cellName, boxName, colName, sdEntityTypeName,
-                    "?$filter=__updated+gt+" + (date - 1000) + "+and+__updated+lt+" + (date + 1000));
+                    "?$filter=__updated+gt+datetimeoffset'" + format.format(date - 1000)
+                    + "'+and+__updated+lt+datetimeoffset'" + format.format(date + 1000) + "'");
 
             assertEquals(HttpStatus.SC_OK, searchResponse.getStatusCode());
             ODataCommon.checkCommonResponseUri(searchResponse.bodyAsJson(), uri);
