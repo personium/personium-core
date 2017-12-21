@@ -87,8 +87,6 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.auth.AuthUtils;
-import io.personium.core.bar.jackson.JSONAccounts;
 import io.personium.core.bar.jackson.JSONExtRoles;
 import io.personium.core.bar.jackson.JSONLinks;
 import io.personium.core.bar.jackson.JSONManifest;
@@ -106,7 +104,6 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavCommon;
 import io.personium.core.model.ModelFactory;
-import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.AssociationEnd;
 import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.ComplexTypeProperty;
@@ -175,7 +172,6 @@ public class BarFileReadRunner implements Runnable {
     static final String RELATION_JSON = "10_relations.json";
     static final String ROLE_JSON = "20_roles.json";
     static final String EXTROLE_JSON = "30_extroles.json";
-    static final String ACCOUNT_JSON = "40_accounts.json";
     static final String RULE_JSON = "50_rules.json";
     static final String LINKS_JSON = "70_$links.json";
     static final String ROOTPROPS_XML = "90_rootprops.xml";
@@ -1185,7 +1181,7 @@ public class BarFileReadRunner implements Runnable {
             if (token == JsonToken.START_OBJECT) {
                 if (jsonName.equals(RELATION_JSON) || jsonName.equals(ROLE_JSON)
                         || jsonName.equals(EXTROLE_JSON) || jsonName.equals(LINKS_JSON)
-                        || jsonName.equals(ACCOUNT_JSON) || jsonName.equals(RULE_JSON)) {
+                        || jsonName.equals(RULE_JSON)) {
                     registJsonEntityData(jp, mapper, jsonName);
                 } else if (jsonName.equals(MANIFEST_JSON)) {
                     manifestJsonValidate(jp, mapper); // Boxはインストールの最初に作成
@@ -1472,8 +1468,6 @@ public class BarFileReadRunner implements Runnable {
                 createExtRole(mappedObject.getJson());
             } else if (jsonName.equals(LINKS_JSON)) {
                 createLinks(mappedObject, odataProducer);
-            } else if (jsonName.equals(ACCOUNT_JSON)) {
-                createAccounts(mappedObject.getJson());
             } else if (jsonName.equals(RULE_JSON)) {
                 createRules(mappedObject.getJson());
             }
@@ -1521,13 +1515,7 @@ public class BarFileReadRunner implements Runnable {
             JSONUserDataLinks links = mapper.readValue(jp, JSONUserDataLinks.class);
             userDataLinksJsonValidate(jsonName, links);
             return links;
-        } else if (jsonName.equals(ACCOUNT_JSON)) {
-            JSONAccounts accounts = mapper.readValue(jp, JSONAccounts.class);
-            if (accounts.getName() == null || accounts.getPassword() == null) {
-                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
-            }
-            return accounts;
-        } else if (jsonName.equals(RULE_JSON)) {
+        } else if (jsonName.equals((RULE_JSON))) {
             JSONRules rules = mapper.readValue(jp, JSONRules.class);
             if (rules.getAction() == null) { //TODO 他には？
                 throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
@@ -1548,8 +1536,7 @@ public class BarFileReadRunner implements Runnable {
         } else {
             if (!links.getFromType().equals(Relation.EDM_TYPE_NAME)
                     && !links.getFromType().equals(Role.EDM_TYPE_NAME)
-                    && !links.getFromType().equals(ExtRole.EDM_TYPE_NAME)
-                    && !links.getFromType().equals(Account.EDM_TYPE_NAME)) {
+                    && !links.getFromType().equals(ExtRole.EDM_TYPE_NAME)) {
                 throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
         }
@@ -1568,8 +1555,7 @@ public class BarFileReadRunner implements Runnable {
         } else {
             if (!links.getToType().equals(Relation.EDM_TYPE_NAME)
                     && !links.getToType().equals(Role.EDM_TYPE_NAME)
-                    && !links.getToType().equals(ExtRole.EDM_TYPE_NAME)
-                    && !links.getToType().equals(Account.EDM_TYPE_NAME)) {
+                    && !links.getToType().equals(ExtRole.EDM_TYPE_NAME)) {
                 throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
         }
@@ -1660,7 +1646,6 @@ public class BarFileReadRunner implements Runnable {
                 && !(fieldName.equals("Roles") && jsonName.equals(ROLE_JSON))
                 && !(fieldName.equals("ExtRoles") && jsonName.equals(EXTROLE_JSON))
                 && !(fieldName.equals("Rules") && jsonName.equals(RULE_JSON))
-                && !(fieldName.equals("Accounts") && jsonName.equals(ACCOUNT_JSON))
                 && !(fieldName.equals("Links") && jsonName.equals(LINKS_JSON))
                 && !(fieldName.equals("Links") && jsonName.equals(USERDATA_LINKS_JSON))) {
             throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
@@ -1750,7 +1735,6 @@ public class BarFileReadRunner implements Runnable {
         barFileOrder.put("bar/00_meta/10_relations.json", false);
         barFileOrder.put("bar/00_meta/20_roles.json", false);
         barFileOrder.put("bar/00_meta/30_extroles.json", false);
-        barFileOrder.put("bar/00_meta/40_accounts.json", false);
         barFileOrder.put("bar/00_meta/50_rules.json", false);
         barFileOrder.put("bar/00_meta/70_$links.json", false);
         barFileOrder.put("bar/00_meta/90_rootprops.xml", true);
@@ -1864,24 +1848,6 @@ public class BarFileReadRunner implements Runnable {
         // ExtRoleの登録
         odataProducer.
                 createEntity(ExtRole.EDM_TYPE_NAME, oew);
-    }
-
-    private void createAccounts(JSONObject json) {
-        log.debug("createAccounts: " + json.toString());
-        String orgPass = (String) json.get("Password");
-        String hPassStr = AuthUtils.checkValidatePassword(orgPass, Account.EDM_TYPE_NAME);
-        json.remove("Password");
-        StringReader stringReader = new StringReader(json.toJSONString());
-        odataEntityResource.setEntitySetName(Account.EDM_TYPE_NAME);
-        OEntityWrapper oew = odataEntityResource.getOEntityWrapper(stringReader,
-                odataEntityResource.getOdataResource(),
-                CtlSchema.getEdmDataServicesForCellCtl().build());
-        if (hPassStr != null) {
-            oew.put("HashedCredential", hPassStr);
-        }
-        // Accountの登録
-        odataProducer.
-                createEntity(Account.EDM_TYPE_NAME, oew);
     }
 
     private void createRules(JSONObject json) {
