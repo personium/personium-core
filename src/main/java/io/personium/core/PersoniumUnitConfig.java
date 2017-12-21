@@ -28,6 +28,8 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.utils.PersoniumCoreUtils;
+
 /**
  * 設定情報を保持するクラス. このクラスからクラスパス上にある personium-unit-config.propertiesの内容にアクセスできます。
  */
@@ -59,9 +61,6 @@ public class PersoniumUnitConfig {
 
     /** プラグインのパス設定キー. */
     public static final String PLUGIN_PATH = KEY_ROOT + "plugin.path";
-
-    /** Base Url of this unit. */
-    public static final String BASE_URL = KEY_ROOT + "baseUrl";
 
     /**
      * OData廻りの設定.
@@ -602,7 +601,7 @@ public class PersoniumUnitConfig {
      * @return base url
      */
     public static String getBaseUrl() {
-        return get(BASE_URL);
+        return getUnitScheme() + "://" + PersoniumCoreUtils.getFQDN();
     }
 
     /**

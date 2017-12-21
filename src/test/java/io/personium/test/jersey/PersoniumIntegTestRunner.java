@@ -52,10 +52,12 @@ public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
      * @throws InvalidKeySpecException InvalidKeySpecException
      * @throws NoSuchAlgorithmException NoSuchAlgorithmException
      * @throws javax.security.cert.CertificateException CertificateException
+     * @throws javax.naming.InvalidNameException InvalidNameException
      */
     public PersoniumIntegTestRunner(Class<?> klass)
             throws InitializationError, NoSuchAlgorithmException,
-            InvalidKeySpecException, CertificateException, IOException, javax.security.cert.CertificateException {
+            InvalidKeySpecException, CertificateException, IOException, javax.security.cert.CertificateException,
+            javax.naming.InvalidNameException {
         super(klass);
         // トークン処理ライブラリの初期設定.
         TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
