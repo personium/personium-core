@@ -103,51 +103,7 @@ public class EventPublisher {
      * @return event converted from message
      */
     public static PersoniumEvent convertToEvent(Message msg) {
-        PersoniumEvent event = null;
-
-        if (msg instanceof MapMessage) {
-            MapMessage mm = (MapMessage) msg;
-            String requestKey = null;
-            Boolean external = null;
-            String schema = null;
-            String subject = null;
-            String type = null;
-            String object = null;
-            String info = null;
-            String cellId = null;
-
-            try {
-                if (mm.itemExists("RequestKey")) {
-                    requestKey = mm.getString("RequestKey");
-                }
-                if (mm.itemExists("External")) {
-                    external = mm.getBoolean("External");
-                }
-                if (mm.itemExists("Schema")) {
-                    schema = mm.getString("Schema");
-                }
-                if (mm.itemExists("Subject")) {
-                    subject = mm.getString("Subject");
-                }
-                if (mm.itemExists("Type")) {
-                    type = mm.getString("Type");
-                }
-                if (mm.itemExists("Object")) {
-                    object = mm.getString("Object");
-                }
-                if (mm.itemExists("Info")) {
-                    info = mm.getString("Info");
-                }
-                if (mm.itemExists("cellId")) {
-                    cellId = mm.getString("cellId");
-                }
-            } catch (JMSException e) {
-                return null;
-            }
-            event = new PersoniumEvent(external, schema, subject, type, object, info, requestKey);
-            event.setCellId(cellId);
-        }
-
-        return event;
+        // use EventSender.convertToEvent because of same processing.
+        return EventSender.convertToEvent(msg);
     }
 }
