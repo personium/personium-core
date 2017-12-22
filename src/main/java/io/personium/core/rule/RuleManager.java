@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
@@ -94,6 +97,12 @@ public class RuleManager {
 
     private Object lockObj;
 
+    private static final int EVENTRECEIVER_NUM = 2;
+    private static final int RULEEVENTSUBSCRIBER_NUM = 1;
+    private static final int THREAD_NUMBER = EVENTRECEIVER_NUM + RULEEVENTSUBSCRIBER_NUM;
+
+    private ExecutorService pool;
+
     /**
      * Constructor.
      */
@@ -111,8 +120,34 @@ public class RuleManager {
     public static RuleManager getInstance() {
         if (instance == null) {
             instance = new RuleManager();
+            instance.initialize();
         }
         return instance;
+    }
+
+    /**
+     * Initialize RuleManager and execute threads in order to receive event.
+     */
+    private void initialize() {
+        // Load rules from DB.
+        load();
+
+        // Create ThreadPool.
+        pool = Executors.newFixedThreadPool(THREAD_NUMBER);
+        // Execute receiver for processing rule.
+        for (int i = 0; i < EVENTRECEIVER_NUM; i++) {
+            pool.execute(new EventReceiver());
+        }
+        // Execute receiver for managing rule.
+        pool.execute(new RuleEventSubscriber());
+    }
+
+    /**
+     * Finalize RuleManager.
+     */
+    public void finalize() {
+        // Shutdown thread pool.
+        pool.shutdownNow();
     }
 
     /**
@@ -190,6 +225,9 @@ public class RuleManager {
     }
 
     private void publish(PersoniumEvent event) {
+        // publish all event
+        EventPublisher.send(event);
+
         // publish event about rule
         String type = event.getType();
         if ("cellctl.Rule.create".equals(type)
@@ -290,7 +328,7 @@ public class RuleManager {
     /**
      * Load all rules from DB.
      */
-    void load() {
+    private void load() {
         // accesscontext is set as null
         UnitCtlODataProducer odataProducer = new UnitCtlODataProducer(null);
         EdmEntitySet eSet = odataProducer.getMetadata().findEdmEntitySet(Cell.EDM_TYPE_NAME);
