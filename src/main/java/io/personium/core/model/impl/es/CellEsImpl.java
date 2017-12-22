@@ -246,7 +246,7 @@ public final class CellEsImpl implements Cell {
                 ret.url = getBaseUri(uriInfo, ret.name);
                 ret.owner = UriUtils.convertSchemeFromLocalUnitToHttp(ret.getUnitUrl(), ret.owner);
             } else {
-                ret.url = PersoniumUnitConfig.getBaseUrl() + "/" + ret.name + "/";
+                ret.url = PersoniumUnitConfig.getBaseUrl() + ret.name + "/";
             }
             return ret;
         } else {

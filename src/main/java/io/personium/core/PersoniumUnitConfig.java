@@ -601,7 +601,7 @@ public class PersoniumUnitConfig {
      * @return base url
      */
     public static String getBaseUrl() {
-        return getUnitScheme() + "://" + PersoniumCoreUtils.getFQDN();
+        return getUnitScheme() + "://" + PersoniumCoreUtils.getFQDN() + "/";
     }
 
     /**
