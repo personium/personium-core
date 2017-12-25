@@ -19,9 +19,10 @@ package io.personium.core.rule;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
-import javax.jms.Message;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
@@ -54,23 +55,35 @@ class EventReceiver implements Runnable {
             RuleManager rman = RuleManager.getInstance();
 
             while (!Thread.interrupted()) {
-                Message m = receiver.receive();
-                PersoniumEvent event = EventSender.convertToEvent(m);
-                if (event != null) {
-                    log.debug(String.format("Received MapMessage with '%s'.", event.getType()));
-                    log.debug("    External: " + event.getExternal());
-                    log.debug("    Schema: " + event.getSchema());
-                    log.debug("    Subject: " + event.getSubject());
-                    log.debug("    Type: " + event.getType());
-                    log.debug("    Object: " + event.getObject());
-                    log.debug("    Info: " + event.getInfo());
-                    log.debug("    RequestKey: " + event.getRequestKey());
-                    log.debug("    CellId: " + event.getCellId());
+                try {
+                    Message m = receiver.receive();
+                    PersoniumEvent event = EventSender.convertToEvent(m);
+                    if (event != null) {
+                        log.debug(String.format("Received MapMessage with '%s'.", event.getType()));
+                        log.debug("    External: " + event.getExternal());
+                        log.debug("    Schema: " + event.getSchema());
+                        log.debug("    Subject: " + event.getSubject());
+                        log.debug("    Type: " + event.getType());
+                        log.debug("    Object: " + event.getObject());
+                        log.debug("    Info: " + event.getInfo());
+                        log.debug("    RequestKey: " + event.getRequestKey());
+                        log.debug("    CellId: " + event.getCellId());
 
-                    // If the event matches with a rule, execute action of the rule.
-                    rman.judge(event);
-                } else {
-                    log.info("Received Message is null");
+                        // If the event matches with a rule, execute action of the rule.
+                        rman.judge(event);
+                    } else {
+                        log.info("Received Message is null");
+                    }
+                } catch (JMSException e) {
+                    Exception exp = e.getLinkedException();
+                    if (exp instanceof InterruptedException) {
+                        log.debug("Interrupted");
+                        break;
+                    } else {
+                        throw e;
+                    }
+                } catch (Exception e) {
+                    log.info("Exception occurred: " + e.getMessage(), e);
                 }
             }
             session.close();

@@ -147,7 +147,14 @@ public class RuleManager {
      */
     public void finalize() {
         // Shutdown thread pool.
-        pool.shutdownNow();
+        try {
+            pool.shutdown();
+            if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
+                pool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            pool.shutdownNow();
+        }
     }
 
     /**
