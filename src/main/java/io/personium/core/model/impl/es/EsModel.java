@@ -28,6 +28,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.impl.es.accessor.CellAccessor;
+import io.personium.core.model.impl.es.accessor.CellDataAccessor;
 import io.personium.core.model.impl.es.accessor.DataSourceAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.accessor.ODataEntityAccessor;
@@ -156,6 +157,16 @@ public class EsModel {
      */
     public static EntitySetAccessor cell() {
         return new CellAccessor(idxAdmin(), Cell.EDM_TYPE_NAME, EsIndex.CELL_ROUTING_KEY_NAME);
+    }
+
+    /**
+     * Return accessor that accesses Cell entire data without limiting Type.
+     * @param unitUserName Unit user name.
+     * @param cellId cell id.
+     * @return Cell data accessor
+     */
+    public static CellDataAccessor cellData(String unitUserName, String cellId) {
+        return new CellDataAccessor(idxUser(unitUserName), cellId);
     }
 
     /**

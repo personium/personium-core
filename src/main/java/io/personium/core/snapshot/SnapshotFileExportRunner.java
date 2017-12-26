@@ -46,6 +46,7 @@ import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.DataSourceAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
+import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.odata.EsQueryHandler;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.model.impl.fs.DavMetadataFile;
@@ -145,14 +146,13 @@ public class SnapshotFileExportRunner implements Runnable {
     private long countODataEntry() {
         // Specifying filter
         Map<String, Object> filter = new HashMap<String, Object>();
-        filter = QueryMapFactory.termQuery("c", targetCell.getId());
+        filter = QueryMapFactory.termQuery(OEntityDocHandler.KEY_CELL_ID, targetCell.getId());
         Map<String, Object> filtered = new HashMap<String, Object>();
         filtered = QueryMapFactory.filteredQuery(null, filter);
 
         // Generate query
-        Map<String, Object> query = new HashMap<String, Object>();
         long queryFrom = 0L;
-        query.put("query", filtered);
+        Map<String, Object> query = QueryMapFactory.query(filtered);
         query.put("from", queryFrom);
 
         // Get index accessor of Es
@@ -235,22 +235,21 @@ public class SnapshotFileExportRunner implements Runnable {
     private void addDataToZip(SnapshotFile snapshotFile) {
         // Specifying filter
         Map<String, Object> filter = new HashMap<String, Object>();
-        filter = QueryMapFactory.termQuery("c", targetCell.getId());
+        filter = QueryMapFactory.termQuery(OEntityDocHandler.KEY_CELL_ID, targetCell.getId());
         Map<String, Object> filtered = new HashMap<String, Object>();
         filtered = QueryMapFactory.filteredQuery(null, filter);
 
         // Specifying sort
         List<Map<String, Object>> sortList = new ArrayList<Map<String, Object>>();
         sortList.add(QueryMapFactory.sortQuery("_type", EsQueryHandler.SORT_ASC));
-        sortList.add(QueryMapFactory.sortQuery("b", EsQueryHandler.SORT_ASC));
-        sortList.add(QueryMapFactory.sortQuery("n", EsQueryHandler.SORT_ASC));
-        sortList.add(QueryMapFactory.sortQuery("t", EsQueryHandler.SORT_ASC));
+        sortList.add(QueryMapFactory.sortQuery(OEntityDocHandler.KEY_BOX_ID, EsQueryHandler.SORT_ASC));
+        sortList.add(QueryMapFactory.sortQuery(OEntityDocHandler.KEY_NODE_ID, EsQueryHandler.SORT_ASC));
+        sortList.add(QueryMapFactory.sortQuery(OEntityDocHandler.KEY_ENTITY_ID, EsQueryHandler.SORT_ASC));
         sortList.add(QueryMapFactory.sortQuery("_uid", EsQueryHandler.SORT_ASC));
 
         // Generate query
-        Map<String, Object> query = new HashMap<String, Object>();
         long queryFrom = 0L;
-        query.put("query", filtered);
+        Map<String, Object> query = QueryMapFactory.query(filtered);
         query.put("sort", sortList);
         query.put("from", queryFrom);
         query.put("size", SEARCH_LIMIT);

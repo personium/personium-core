@@ -30,8 +30,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.odata.PersoniumODataProducer;
-import io.personium.core.rs.box.ODataSvcCollectionResource;
-import io.personium.core.rs.box.ODataSvcSchemaResource;
 import io.personium.test.categories.Unit;
 
 /**
@@ -54,7 +52,7 @@ public class ODataSvcSchemaResourceTest {
         DavCmp davCmp = mock(DavCmp.class);
         PersoniumODataProducer producer = mock(PersoniumODataProducer.class);
         ODataSvcCollectionResource odataSvcCollectionResource = mock(ODataSvcCollectionResource.class);
- 
+
         // --------------------
         // Test method args
         // --------------------
@@ -76,7 +74,7 @@ public class ODataSvcSchemaResourceTest {
         // Expected result
         // --------------------
         String expected = url + "/" + name + "/";
-        
+
         // --------------------
         // Run method
         // --------------------

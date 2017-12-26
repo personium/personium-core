@@ -19,7 +19,6 @@ package io.personium.core.model.impl.es.accessor;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 import org.junit.Test;
@@ -36,15 +35,15 @@ import io.personium.core.model.impl.es.EsModel;
 import io.personium.test.categories.Unit;
 
 /**
- * Unit Test class for CellAccessor.
+ * Unit Test class for CellDataAccessor.
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({EsClient.class, EsModel.class})
 @Category({Unit.class })
-public class CellAccessorTest {
+public class CellDataAccessorTest {
 
     /** Test class. */
-    private CellAccessor cellAccessor;
+    private CellDataAccessor cellDataAccessor;
 
     /**
      * Test bulkDeleteODataCollection().
@@ -56,10 +55,8 @@ public class CellAccessorTest {
         // --------------------
         // Test method args
         // --------------------
-        String cellId = "cellId";
         String boxId = "boxId";
         String nodeId = "nodeId";
-        String unitUserName = "unitUserName";
 
         // --------------------
         // Mock settings
@@ -69,12 +66,10 @@ public class CellAccessorTest {
         PowerMockito.doReturn(null).when(EsModel.class, "type", "", "", "", 0, 0);
 
         EsIndex index = new EsIndexImpl("", "", 0, 0, null);
-        cellAccessor = spy(new CellAccessor(index, "", ""));
+        String cellId = "cellId";
+        cellDataAccessor = spy(new CellDataAccessor(index, cellId));
 
-        DataSourceAccessor accessor = mock(DataSourceAccessor.class);
-        PowerMockito.doReturn(accessor).when(EsModel.class, "dsa", unitUserName);
-
-        doNothing().when(accessor).deleteByQuery(anyString(), any());
+        doNothing().when(cellDataAccessor).deleteByQuery(anyString(), any());
 
         // --------------------
         // Expected result
@@ -84,7 +79,7 @@ public class CellAccessorTest {
         // --------------------
         // Run method
         // --------------------
-        cellAccessor.bulkDeleteODataCollection(cellId, boxId, nodeId, unitUserName);
+        cellDataAccessor.bulkDeleteODataCollection(boxId, nodeId);
 
         // --------------------
         // Confirm result

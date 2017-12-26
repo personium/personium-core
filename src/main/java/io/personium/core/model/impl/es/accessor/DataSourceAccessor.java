@@ -40,7 +40,6 @@ import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
-import io.personium.core.model.impl.es.doc.LinkDocHandler;
 
 /**
  * データストア層の基本処理を実装した基底クラス.
@@ -345,15 +344,10 @@ public class DataSourceAccessor {
      * バルクでデータを登録/更新する.<br />
      * 削除は未サポート.
      * @param esBulkRequest ES用バルク登録ドキュメントリスト
-     * @param adsBulkEntityRequest ADS用バルク更新ドキュメントリスト(Entity)
-     * @param adsBulkLinkRequest ADS用バルク登録ドキュメントリスト(Link)
      * @param routingId routingId
      * @return バルクレスポンス
      */
-    public PersoniumBulkResponse bulkUpdateLink(List<EsBulkRequest> esBulkRequest,
-            List<EntitySetDocHandler> adsBulkEntityRequest,
-            List<LinkDocHandler> adsBulkLinkRequest,
-            String routingId) {
+    public PersoniumBulkResponse bulkUpdate(List<EsBulkRequest> esBulkRequest, String routingId) {
 
         PersoniumBulkResponse response = null;
         try {

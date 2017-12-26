@@ -340,6 +340,38 @@ public class BoxUtils {
     }
 
     /**
+     * Recursive delete box.
+     * @param cellName Cell name
+     * @param boxName Box name
+     * @param token Token
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse deleteRecursive(String cellName, String boxName, String token, int statusCode) {
+        return deleteRecursive(cellName, boxName, Boolean.TRUE.toString(), token, statusCode);
+    }
+
+    /**
+     * Recursive delete box.
+     * @param cellName Cell name
+     * @param boxName Box name
+     * @param recursive Recursive header
+     * @param token Token
+     * @param statusCode Expected response code
+     * @return API response
+     */
+    public static TResponse deleteRecursive(String cellName, String boxName, String recursive,
+            String token, int statusCode) {
+        return Http.request("cell/box-bulk-delete.txt")
+                .with("cellName", cellName)
+                .with("boxName", boxName)
+                .with("recursive", recursive)
+                .with("token", token)
+                .returns()
+                .statusCode(statusCode);
+    }
+
+    /**
      * eventのPOSTを行うユーティリティ.
      * @param token 認証トークン
      * @param code レスポンスコード

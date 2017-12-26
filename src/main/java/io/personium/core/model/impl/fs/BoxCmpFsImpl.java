@@ -27,6 +27,11 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.DavCmp;
+import io.personium.core.model.impl.es.EsModel;
+import io.personium.core.model.impl.es.accessor.CellDataAccessor;
+import io.personium.core.model.impl.es.accessor.ODataEntityAccessor;
+import io.personium.core.model.impl.es.cache.BoxCache;
+import io.personium.core.model.lock.Lock;
 
 /**
  * A component class for DAV nature of a Box using FileSystem.
@@ -65,6 +70,31 @@ public class BoxCmpFsImpl extends DavCmpFsImpl implements BoxCmp {
 
         // load info from fs
         this.load();
+    }
+
+    /**
+     * Delete all data under the control, including itself.
+     */
+    @Override
+    public void makeEmpty() {
+        // Deal with OData for recursive deletion.
+        // In fact, OData's processing should not be done with DavCmp.
+        // Should be implemented in **ODataProducer class.
+        Lock lock = lockOData(getCellId(), getId(), null);
+        try {
+            CellDataAccessor cellDataAccessor = EsModel.cellData(cell.getDataBundleNameWithOutPrefix(), getCellId());
+            // Delete all data in box.
+            cellDataAccessor.bulkDeleteBox(getId());
+            // Delete data linked to Box.
+            cellDataAccessor.deleteBoxLinkData(getId());
+            ODataEntityAccessor boxAccessor = (ODataEntityAccessor) EsModel.box(cell);
+            // Delete box.
+            boxAccessor.delete(getId(), -1);
+        } finally {
+            lock.release();
+        }
+        doDelete();
+        BoxCache.clear(getBox().getName(), getCell());
     }
 
 
