@@ -1,3 +1,7 @@
+## 1.5.8
+IMPROVEMENTS:
+* Add Box recursive delete function.([#58](https://github.com/personium/personium-core/issues/58))
+
 ## 1.5.7
 BUG FIXES:
 * Add value check processing of RequireSchemaAuthz attribute.([#78](https://github.com/personium/personium-core/issues/78))
