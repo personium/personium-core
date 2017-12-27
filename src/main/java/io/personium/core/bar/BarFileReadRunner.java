@@ -325,11 +325,11 @@ public class BarFileReadRunner implements Runnable {
             writeOutputStream(true, "PL-BI-1005", "", message);
         } finally {
             if (isSuccess) {
-                writeOutputStream(false, CODE_BAR_INSTALL_COMPLETED, this.cell.getUrl() + boxName, "");
+                writeOutputStream(false, CODE_BAR_INSTALL_COMPLETED, UriUtils.SCHEME_LOCALCELL + ":/" + boxName, "");
                 this.progressInfo.setStatus(ProgressInfo.STATUS.COMPLETED);
             } else {
                 String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
-                writeOutputStream(false, CODE_BAR_INSTALL_FAILED, this.cell.getUrl() + boxName, message);
+                writeOutputStream(false, CODE_BAR_INSTALL_FAILED, UriUtils.SCHEME_LOCALCELL + ":/" + boxName, message);
                 this.progressInfo.setStatus(ProgressInfo.STATUS.FAILED);
             }
             this.progressInfo.setEndTime();
@@ -1515,7 +1515,7 @@ public class BarFileReadRunner implements Runnable {
             JSONUserDataLinks links = mapper.readValue(jp, JSONUserDataLinks.class);
             userDataLinksJsonValidate(jsonName, links);
             return links;
-        } else if (jsonName.equals((RULE_JSON))) {
+        } else if (jsonName.equals(RULE_JSON)) {
             JSONRules rules = mapper.readValue(jp, JSONRules.class);
             if (rules.getAction() == null) { //TODO 他には？
                 throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);

@@ -487,8 +487,15 @@ public class RuleManager {
     public boolean handleRuleEvent(PersoniumEvent event) {
         boolean ret = false;
 
-        Cell cell = ModelFactory.cell(event.getCellId(), null);
+        Cell cell = null;
+        try {
+            cell = ModelFactory.cell(event.getCellId(), null);
+        } catch (Exception e) {
+            cell = null;
+        }
+        // delete rules of cell because the cell does not exist
         if (cell == null) {
+            deleteRule(event.getCellId());
             return ret;
         }
 
@@ -590,7 +597,7 @@ public class RuleManager {
                 }
                 ret = true;
             } else if ("cell.import".equals(type)) {
-                deleteRule(cell);
+                deleteRule(cell.getId());
                 loadRule(cell);
                 ret = true;
             }
@@ -620,12 +627,12 @@ public class RuleManager {
 
     /**
      * Unregister rules that belongs to cell.
-     * @params cell target cell object
+     * @params cellId target cell id
      */
-    private void deleteRule(Cell cell) {
+    private void deleteRule(String cellId) {
         synchronized (lockObj) {
-            rules.remove(cell.getId());
-            boxes.remove(cell.getId());
+            rules.remove(cellId);
+            boxes.remove(cellId);
         }
     }
 

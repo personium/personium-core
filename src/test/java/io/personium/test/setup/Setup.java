@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.common.utils.PersoniumCoreUtils;
@@ -46,6 +47,7 @@ import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
@@ -63,12 +65,14 @@ import io.personium.test.utils.Http;
 import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.RoleUtils;
+import io.personium.test.utils.RuleUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
 
 /**
  * テスト環境の構築.
  */
+@RunWith(PersoniumIntegTestRunner.class)
 public class Setup extends AbstractCase {
 
     /** 作成するテスト環境情報を格納する。複数のセル環境を作ることを想定しているためListで用意. */
@@ -173,6 +177,7 @@ public class Setup extends AbstractCase {
         conf1.account = accounts;
         conf1.extRole = settingExtRole(TEST_CELL2);
         conf1.role = settingRole(conf1.account, conf1.extRole);
+        conf1.rule = settingRule();
         conf1.box.add(box1);
         conf1.box.add(box2);
         confs.add(conf1);
@@ -342,6 +347,16 @@ public class Setup extends AbstractCase {
         return extRoles;
     }
 
+    private List<RuleConfig> settingRule() {
+        List <RuleConfig> rules = new ArrayList<RuleConfig>();
+        RuleConfig rule = new RuleConfig();
+        rule.name = "rule1";
+        rule.external = true;
+        rule.action = "log";
+        rules.add(rule);
+        return rules;
+    }
+
     /**
      * テスト環境構築.
      * @param conf
@@ -411,6 +426,11 @@ public class Setup extends AbstractCase {
                 DavResourceUtils.setACL(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, "",
                         "box/acl-setscheme-none-schema-level.txt", Setup.TEST_BOX1, "");
             }
+        }
+
+        // Rule
+        for (RuleConfig rule : conf.rule) {
+            RuleUtils.create(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, rule.toJson(), HttpStatus.SC_CREATED);
         }
 
         if ("testcell1".equals(conf.cellName) || "testcell2".equals(conf.cellName)) {
@@ -1639,6 +1659,8 @@ public class Setup extends AbstractCase {
         private List<RelationConfig> relation = new ArrayList<RelationConfig>();
 
         private List<ExtRoleConfig> extRole = new ArrayList<ExtRoleConfig>();
+
+        private List<RuleConfig> rule = new ArrayList<RuleConfig>();
     }
 
     /**
@@ -1739,6 +1761,23 @@ public class Setup extends AbstractCase {
         }
     }
 
+    private class RuleConfig {
+        private String name = null;
+        private String boxName = null;
+        private Boolean external = false;
+        private String action = null;
+
+        @SuppressWarnings("unchecked")
+        public JSONObject toJson() {
+            JSONObject ruleJson = new JSONObject();
+            ruleJson.put("Name", name);
+            ruleJson.put("_Box.Name", boxName);
+            ruleJson.put("External", external);
+            ruleJson.put("Action", action);
+            return ruleJson;
+        }
+    }
+
     /**
      * ComplexTypeスキーマを作成する.
       * @param conf
@@ -1820,8 +1859,8 @@ public class Setup extends AbstractCase {
     public void createEventLog(Config conf) {
         final int itemCodeNum = 1024;
         final int loopCount = 36000;
-        String jsonBase = "{\\\"level\\\":\\\"INFO\\\","
-                + "\\\"action\\\":\\\"%1$s\\\",\\\"object\\\":\\\"%1$s\\\",\\\"result\\\":\\\"%1$s\\\"}";
+        String jsonBase = "{"
+                + "\\\"Type\\\":\\\"%1$s\\\",\\\"Object\\\":\\\"%1$s\\\",\\\"Info\\\":\\\"%1$s\\\"}";
         StringBuilder buf = new StringBuilder();
         for (int i = 0; i < itemCodeNum; i++) {
             buf.append("a");

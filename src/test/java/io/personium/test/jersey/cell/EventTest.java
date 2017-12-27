@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,12 +46,11 @@ import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 
 /**
- * Event APIのテスト.
+ * Tests for Event API.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 public class EventTest extends ODataCommon {
-
     /**
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
@@ -212,17 +211,18 @@ public class EventTest extends ODataCommon {
     }
 
     /**
-     * イベント受付時のactionとresultとobjectにダブルクォーテーションがある場合エスケープされること.
-     * @throws DaoException DAO例外
+     * Test Event API.
+     * Normal test.
+     * @throws DaoException DaoException
+     * @throws InterruptedException InterruptedException
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void イベント受付時のactionとresultとobjectにダブルクォーテーションがある場合エスケープされること() throws DaoException {
+    public final void event_Normal_escape_processing() throws DaoException, InterruptedException {
         JSONObject body = new JSONObject();
-        body.put("level", "INFO");
-        body.put("action", "\\\"POST,");
-        body.put("object", "Object\\\"\\\"Data");
-        body.put("result", "resultData\\\"");
+        body.put("Type", "\\\"POST,");
+        body.put("Object", "Object\\\"\\\"Data");
+        body.put("Info", "resultData\\\"");
 
         Http.request("cell/cell-event.txt")
                 .with("METHOD", HttpMethod.POST)
@@ -232,6 +232,9 @@ public class EventTest extends ODataCommon {
                 .with("json", body.toJSONString())
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
+
+        // wait a moment
+        Thread.sleep(1000);
 
         // リクエストパラメータ設定
         PersoniumRequest req = PersoniumRequest.get(UrlUtils.log(Setup.TEST_CELL1) + "/current/default.log");
@@ -245,7 +248,7 @@ public class EventTest extends ODataCommon {
         responseBody = response.bodyAsString();
         assertTrue(0 < responseBody.length());
         java.util.regex.Pattern pattern = java.util.regex.Pattern
-                .compile(".*\"testRequestKey\",\"client\",null,null,"
+                .compile(".*\"testRequestKey\",\"true\",null,null,"
                         + "\"\"\"POST,\",\"Object\"\"\"\"Data\",\"resultData\"\"\"$");
         Matcher matcher = pattern.matcher(responseBody);
         assertTrue(matcher.find());
@@ -256,10 +259,9 @@ public class EventTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     private JSONObject createEventBody() {
         JSONObject body = new JSONObject();
-        body.put("level", "INFO");
-        body.put("action", "POST");
-        body.put("object", "ObjectData");
-        body.put("result", "resultData");
+        body.put("Type", "TypeData");
+        body.put("Object", "ObjectData");
+        body.put("Info", "InfoData");
         return body;
     }
 }

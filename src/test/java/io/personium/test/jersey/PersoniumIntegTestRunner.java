@@ -33,6 +33,7 @@ import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.utils.PersoniumThread;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.file.DataCryptor;
+import io.personium.core.rule.RuleManager;
 
 /**
  * IT用テストランナークラス.
@@ -65,6 +66,7 @@ public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
         LocalToken.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
         DataCryptor.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
         PersoniumThread.createThreadPool(PersoniumUnitConfig.getThreadPoolNum());
+        RuleManager.getInstance();
     }
 
     @Override

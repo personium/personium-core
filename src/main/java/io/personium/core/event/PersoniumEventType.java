@@ -37,6 +37,8 @@ public class PersoniumEventType {
         public static final String MESSAGE = "message";
         /** Service category. */
         public static final String SERVICE = "service";
+        /** Box Install category. */
+        public static final String BI      = "boxinstall";
     }
 
     /** Operation. */

@@ -53,6 +53,7 @@ import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.bar.BarFileInstaller;
 import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.BoxRsCmp;
@@ -66,6 +67,7 @@ import io.personium.core.model.progress.ProgressManager;
 import io.personium.core.rs.cell.CellCtlResource;
 import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * JAX-RS Resource for Box root URL.
@@ -334,7 +336,7 @@ public final class BoxResource {
         String result = "";
         String schema = this.accessContext.getSchema();
         String subject = this.accessContext.getSubject();
-        String type = "boxinstall";
+        String object = String.format("%s:/%s", UriUtils.SCHEME_LOCALCELL, this.boxName);
         Response res = null;
         try {
             // ログファイル出力
@@ -357,7 +359,6 @@ public final class BoxResource {
             headers.put(HttpHeaders.CONTENT_TYPE, contentType);
             headers.put(HttpHeaders.CONTENT_LENGTH, contentLength);
 
-            // X-Personium-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
             BarFileInstaller installer =
                     new BarFileInstaller(this.cell, this.boxName, odataEntity, uriInfo);
 
@@ -367,20 +368,14 @@ public final class BoxResource {
             // TODO 内部イベントの正式対応が必要
             if (e instanceof PersoniumCoreException) {
                 result = Integer.toString(((PersoniumCoreException) e).getStatus());
-                if (((PersoniumCoreException) e).getStatus() < HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-                    type += ".info";
-                } else {
-                    type += ".error";
-                }
             } else {
                 result = Integer.toString(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-                type += ".error";
             }
             throw e;
         } finally {
             // post event to EventBus
             PersoniumEvent event = new PersoniumEvent(
-                    schema, subject, type, this.cell.getUrl() + boxName, result, requestKey);
+                    schema, subject, PersoniumEventType.Category.BI, object, result, requestKey);
             eventBus.post(event);
         }
         return res;

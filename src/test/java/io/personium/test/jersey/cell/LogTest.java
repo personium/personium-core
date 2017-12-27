@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,10 +69,9 @@ public class LogTest extends ODataCommon {
     @Test
     public final void ログファイルに対するGETで200が返却されること() {
         JSONObject body = new JSONObject();
-        body.put("level", "INFO");
-        body.put("action", "POST");
-        body.put("object", "ObjectData");
-        body.put("result", "resultData");
+        body.put("Type", "POST");
+        body.put("Object", "ObjectData");
+        body.put("Info", "resultData");
 
         CellUtils.event(MASTER_TOKEN_NAME, HttpStatus.SC_OK, Setup.TEST_CELL1, body.toJSONString());
 
@@ -101,10 +100,9 @@ public class LogTest extends ODataCommon {
         String cellName = "JPNEvntCell";
 
         JSONObject body = new JSONObject();
-        body.put("level", "INFO");
-        body.put("action", "POST");
-        body.put("object", "ObjectData");
-        body.put("result", "テスト用ログ");
+        body.put("Type", "POST");
+        body.put("Object", "ObjectData");
+        body.put("Info", "テスト用ログ");
 
         try {
             // 日本語ログ用セル作成
@@ -337,10 +335,9 @@ public class LogTest extends ODataCommon {
         String cellName = "logtest_cell";
 
         JSONObject body = new JSONObject();
-        body.put("level", "INFO");
-        body.put("action", "POST");
-        body.put("object", "ObjectData");
-        body.put("result", "resultData");
+        body.put("Type", "POST");
+        body.put("Object", "ObjectData");
+        body.put("Info", "resultData");
 
         try {
             // Cell作成
@@ -389,10 +386,9 @@ public class LogTest extends ODataCommon {
         String ownerName = "dd4b407a-5b39-4c97-9fd5-5e2be9de06cf";
 
         JSONObject body = new JSONObject();
-        body.put("level", "INFO");
-        body.put("action", "POST");
-        body.put("object", "ObjectData");
-        body.put("result", "resultData");
+        body.put("Type", "POST");
+        body.put("Object", "ObjectData");
+        body.put("Info", "resultData");
 
         try {
             // Cell作成
