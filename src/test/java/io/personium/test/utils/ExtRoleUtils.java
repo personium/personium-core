@@ -71,6 +71,26 @@ public class ExtRoleUtils {
     }
 
     /**
+     * Create ExtRole.
+     * @param cellName Cell name
+     * @param extRoleUrl ExtRole URL
+     * @param relationName Relation.Name
+     * @param relationBoxName Relation.Box.Name
+     * @param token Token
+     * @param code Expected code
+     * @return API response
+     */
+    @SuppressWarnings("unchecked")
+    public static TResponse create(String cellName, String extRoleUrl, String relationName, String relationBoxName,
+            String token, int code) {
+        JSONObject body = new JSONObject();
+        body.put("ExtRole", extRoleUrl);
+        body.put("_Relation.Name", relationName);
+        body.put("_Relation._Box.Name", relationBoxName);
+        return create(token, cellName, body, code);
+    }
+
+    /**
      * ExtRoleの作成.
      * @param token トークン
      * @param cellName セル名

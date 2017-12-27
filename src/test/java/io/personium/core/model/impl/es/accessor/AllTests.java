@@ -25,7 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    CellAccessorTest.class,
+    CellDataAccessorTest.class,
     DataSourceAccessorTest.class,
     ODataEntityAccessorTest.class
     })

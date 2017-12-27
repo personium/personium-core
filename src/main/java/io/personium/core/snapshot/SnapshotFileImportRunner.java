@@ -45,7 +45,9 @@ import io.personium.core.model.CellCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.accessor.CellAccessor;
+import io.personium.core.model.impl.es.accessor.CellDataAccessor;
 import io.personium.core.model.impl.es.accessor.DataSourceAccessor;
+import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.lock.CellLockManager;
 import io.personium.core.rs.odata.MapBulkRequest;
 import io.personium.core.utils.UriUtils;
@@ -162,8 +164,8 @@ public class SnapshotFileImportRunner implements Runnable {
      * Delete cell odata data.
      */
     private void deleteOData() {
-        CellAccessor cellAccessor = (CellAccessor) EsModel.cell();
-        cellAccessor.cellBulkDeletion(targetCell.getId(), targetCell.getDataBundleNameWithOutPrefix());
+        CellDataAccessor accessor = EsModel.cellData(targetCell.getDataBundleNameWithOutPrefix(), targetCell.getId());
+        accessor.bulkDeleteCell();
     }
 
     /**
@@ -199,12 +201,12 @@ public class SnapshotFileImportRunner implements Runnable {
         // When owner attribute is rewritten, since it is treated as data of another cell,
         // it is overwritten with information of target cell.
         Map<String, Object> map = jsonToMap((JSONObject) cellJson.get("_source"));
-        Map<String, Object> s = (Map<String, Object>) map.get("s");
+        Map<String, Object> s = (Map<String, Object>) map.get(OEntityDocHandler.KEY_STATIC_FIELDS);
         s.put("Name", targetCell.getName());
-        Map<String, Object> h = (Map<String, Object>) map.get("h");
+        Map<String, Object> h = (Map<String, Object>) map.get(OEntityDocHandler.KEY_HIDDEN_FIELDS);
         String owner = UriUtils.convertSchemeFromHttpToLocalUnit(targetCell.getUnitUrl(), targetCell.getOwner());
         h.put("Owner", owner);
-        map.put("u", System.currentTimeMillis());
+        map.put(OEntityDocHandler.KEY_UPDATED, System.currentTimeMillis());
 
         CellAccessor cellAccessor = (CellAccessor) EsModel.cell();
         cellAccessor.update(targetCell.getId(), map);

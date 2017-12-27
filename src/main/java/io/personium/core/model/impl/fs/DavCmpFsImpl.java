@@ -85,7 +85,7 @@ import io.personium.core.model.file.DataCryptor;
 import io.personium.core.model.file.StreamingOutputForDavFile;
 import io.personium.core.model.file.StreamingOutputForDavFileWithRange;
 import io.personium.core.model.impl.es.EsModel;
-import io.personium.core.model.impl.es.accessor.CellAccessor;
+import io.personium.core.model.impl.es.accessor.CellDataAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.odata.UserSchemaODataProducer;
 import io.personium.core.model.jaxb.Ace;
@@ -263,10 +263,13 @@ public class DavCmpFsImpl implements DavCmp {
 
     /**
      * Lock OData space.
+     * @param cellId CellID
+     * @param boxId BoxID
+     * @param nodeId NodeID
      * @return Lock object
      */
-    private Lock lockOData() {
-        return LockManager.getLock(Lock.CATEGORY_ODATA, getCellId(), getBox().getId(), getId());
+    protected Lock lockOData(String cellId, String boxId, String nodeId) {
+        return LockManager.getLock(Lock.CATEGORY_ODATA, cellId, boxId, nodeId);
     }
 
     /**
@@ -957,6 +960,7 @@ public class DavCmpFsImpl implements DavCmp {
             }
             if (!recursive) {
                 // If there is subordinate resource in WebDAV collection, it is regarded as error.
+                // In the case of TYPE_Box, it is confirmed that there is no lower resource in processing before this.
                 if (TYPE_COL_WEBDAV.equals(this.getType()) && this.getChildrenCount() > 0) {
                     throw PersoniumCoreException.Dav.HAS_CHILDREN;
                 }
@@ -975,7 +979,7 @@ public class DavCmpFsImpl implements DavCmp {
     /**
      * Exec delete.
      */
-    private void doDelete() {
+    protected void doDelete() {
         try {
             FileUtils.deleteDirectory(this.fsDir);
         } catch (IOException e) {
@@ -984,16 +988,18 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     * {@inheritDoc}
+     * Delete all data under the control, including itself.
      */
     @Override
     public void makeEmpty() {
         if (TYPE_COL_ODATA.equals(getType())) {
-            Lock lock = lockOData();
+            // Deal with OData for recursive deletion.
+            // In fact, OData's processing should not be done with DavCmp.
+            // Should be implemented in **ODataProducer class.
+            Lock lock = lockOData(getCellId(), getBox().getId(), getId());
             try {
-                CellAccessor cellAccessor = (CellAccessor) EsModel.cell();
-                cellAccessor.bulkDeleteODataCollection(getCellId(), getBox().getId(), getId(),
-                        cell.getDataBundleNameWithOutPrefix());
+                CellDataAccessor accessor = EsModel.cellData(cell.getDataBundleNameWithOutPrefix(), getCellId());
+                accessor.bulkDeleteODataCollection(getBox().getId(), getId());
             } finally {
                 lock.release();
             }

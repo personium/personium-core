@@ -24,7 +24,6 @@ import io.personium.core.auth.AccessContext;
  */
 public class BoxRsCmp extends DavRsCmp {
 
-    DavCmp davCmp;
     Cell cell;
     AccessContext accessContext;
     Box box;
@@ -41,7 +40,6 @@ public class BoxRsCmp extends DavRsCmp {
         this.cell = cellRsCmp.getCell();
         this.accessContext = accessContext;
         this.box = box;
-        this.davCmp = davCmp;
     }
     /**
      * このリソースのURLを返します.
@@ -68,13 +66,6 @@ public class BoxRsCmp extends DavRsCmp {
     public Box getBox() {
         // 再帰的に最上位のBoxResourceまでいって、そこからCellにたどりつくため、BoxResourceではここをオーバーライドしている。
         return this.box;
-    }
-    /**
-     * このリソースのdavCmpを返します.
-     * @return davCmp
-     */
-    public DavCmp getDavCmp() {
-        return this.davCmp;
     }
 
     /**

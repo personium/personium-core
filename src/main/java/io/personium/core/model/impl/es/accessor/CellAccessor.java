@@ -22,12 +22,12 @@ import java.util.List;
 import java.util.Map;
 
 import io.personium.common.es.EsIndex;
-import io.personium.common.es.response.EsClientException;
 import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.QueryMapFactory;
+import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 
 /**
  * Cellのアクセス処理を実装したクラス.
@@ -46,6 +46,7 @@ public class CellAccessor extends AbstractEntitySetAccessor {
 
     /**
      * セル配下のDavFile数を返却する.
+     * TODO It will be deleted in response to core issue #71.
      * @param cellId 削除対象のセルID
      * @param unitUserName ユニットユーザ名
      * @return セル配下のDavFile数
@@ -64,6 +65,7 @@ public class CellAccessor extends AbstractEntitySetAccessor {
 
     /**
      * セル配下のDavFileID一覧を返却する.
+     * TODO It will be deleted in response to core issue #71.
      * @param cellId 削除対象のセルID
      * @param unitUserName ユニットユーザ名
      * @param size 取得件数
@@ -86,14 +88,15 @@ public class CellAccessor extends AbstractEntitySetAccessor {
         return davFileIdList;
     }
 
+    // TODO It will be deleted in response to core issue #71.
     private Map<String, Object> getDavFileFilterQuery(String cellId) {
         Map<String, Object> cellQuery = new HashMap<String, Object>();
-        cellQuery.put("c", cellId);
+        cellQuery.put(OEntityDocHandler.KEY_CELL_ID, cellId);
         Map<String, Object> cellTermQuery = new HashMap<String, Object>();
         cellTermQuery.put("term", cellQuery);
 
         Map<String, Object> davTypeQuery = new HashMap<String, Object>();
-        davTypeQuery.put("t", DavCmp.TYPE_DAV_FILE);
+        davTypeQuery.put(OEntityDocHandler.KEY_ENTITY_ID, DavCmp.TYPE_DAV_FILE);
         Map<String, Object> davTypeTermQuery = new HashMap<String, Object>();
         davTypeTermQuery.put("term", davTypeQuery);
 
@@ -103,59 +106,7 @@ public class CellAccessor extends AbstractEntitySetAccessor {
 
         Map<String, Object> query = QueryMapFactory.filteredQuery(null, QueryMapFactory.mustQuery(andQueryList));
 
-        Map<String, Object> countQuery = new HashMap<String, Object>();
-        countQuery.put("query", query);
+        Map<String, Object> countQuery = QueryMapFactory.query(query);
         return countQuery;
-    }
-    /**
-     * Bulk delete of cell.
-     * @param cellId Target cell ID
-     * @param unitUserName Unit user name
-     */
-    public void cellBulkDeletion(String cellId, String unitUserName) {
-        DataSourceAccessor accessor = EsModel.dsa(unitUserName);
-
-        // Specify cell ID and delete all cell related entities in bulk.
-        Map<String, Object> filter = new HashMap<String, Object>();
-        filter = QueryMapFactory.termQuery("c", cellId);
-        Map<String, Object> filtered = new HashMap<String, Object>();
-        filtered = QueryMapFactory.filteredQuery(null, filter);
-        // Generate query
-        Map<String, Object> query = new HashMap<String, Object>();
-        query.put("query", filtered);
-
-        try {
-            accessor.deleteByQuery(cellId, query);
-            log.info("KVS Deletion Success.");
-        } catch (EsClientException e) {
-            // If the deletion fails, output a log and continue processing.
-            log.warn(String.format("Delete CellResource From KVS Failed. CellId:[%s], CellUnitUserName:[%s]",
-                    cellId, unitUserName), e);
-        }
-    }
-
-    /**
-     * Bulk delete of ODataServiceCollection.
-     * @param cellId Target cell id
-     * @param boxId Target box id
-     * @param nodeId Target collection id
-     * @param unitUserName Unit user name of target cell
-     */
-    public void bulkDeleteODataCollection(String cellId, String boxId, String nodeId, String unitUserName) {
-        DataSourceAccessor accessor = EsModel.dsa(unitUserName);
-
-        // Specifying filter
-        List<Map<String, Object>> filters = new ArrayList<>();
-        filters.add(QueryMapFactory.termQuery("c", cellId));
-        filters.add(QueryMapFactory.termQuery("b", boxId));
-        filters.add(QueryMapFactory.termQuery("n", nodeId));
-        Map<String, Object> filter = QueryMapFactory.andFilter(filters);
-        Map<String, Object> filtered = new HashMap<String, Object>();
-        filtered = QueryMapFactory.filteredQuery(null, filter);
-        // Generate query
-        Map<String, Object> query = new HashMap<String, Object>();
-        query.put("query", filtered);
-
-        accessor.deleteByQuery(cellId, query);
     }
 }

@@ -78,7 +78,7 @@ import io.personium.core.model.file.DataCryptor;
 import io.personium.core.model.file.StreamingOutputForDavFile;
 import io.personium.core.model.file.StreamingOutputForDavFileWithRange;
 import io.personium.core.model.impl.es.EsModel;
-import io.personium.core.model.impl.es.accessor.CellAccessor;
+import io.personium.core.model.impl.es.accessor.CellDataAccessor;
 import io.personium.core.model.lock.Lock;
 import io.personium.test.categories.Unit;
 
@@ -998,7 +998,7 @@ public class DavCmpFsImplTest {
         Whitebox.setInternalState(davCmpFsImpl, "metaFile", davMetaDataFile);
         doReturn("testType").when(davCmpFsImpl).getType();
         doReturn(1).when(davCmpFsImpl).getChildrenCount();
-        PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
+        doNothing().when(davCmpFsImpl).doDelete();
 
         // Run method
         ResponseBuilder actual = davCmpFsImpl.delete(ifMatch, recursive);
@@ -1078,27 +1078,28 @@ public class DavCmpFsImplTest {
 
         doReturn(DavCmpFsImpl.TYPE_COL_ODATA).when(davCmpFsImpl).getType();
 
+        doReturn("cellId").when(davCmpFsImpl).getCellId();
+        Box box = mock(Box.class);
+        doReturn(box).when(davCmpFsImpl).getBox();
+        doReturn("boxId").when(box).getId();
+        doReturn("nodeId").when(davCmpFsImpl).getId();
+
         Lock lock = mock(Lock.class);
         doNothing().when(lock).release();
-        PowerMockito.doReturn(lock).when(davCmpFsImpl, "lockOData");
+        doReturn(lock).when(davCmpFsImpl).lockOData("cellId", "boxId", "nodeId");
 
         PowerMockito.whenNew(EsClient.class).withAnyArguments().thenReturn(null);
         PowerMockito.mockStatic(EsModel.class);
         PowerMockito.doReturn(null).when(EsModel.class, "type", "", "", "", 0, 0);
 
-        CellAccessor cellAccessor = mock(CellAccessor.class);
-        PowerMockito.doReturn(cellAccessor).when(EsModel.class, "cell");
+        CellDataAccessor cellDataAccessor = mock(CellDataAccessor.class);
+        PowerMockito.doReturn(cellDataAccessor).when(EsModel.class, "cellData", "bundleName", "cellId");
 
-        Box box = mock(Box.class);
-        doReturn(box).when(davCmpFsImpl).getBox();
-        doReturn("cellId").when(davCmpFsImpl).getCellId();
-        doReturn("boxId").when(box).getId();
-        doReturn("nodeId").when(davCmpFsImpl).getId();
         Cell cell = mock(Cell.class);
         doReturn("bundleName").when(cell).getDataBundleNameWithOutPrefix();
         davCmpFsImpl.cell = cell;
-        doNothing().when(cellAccessor).bulkDeleteODataCollection("cellId", "boxId", "nodeId", "bundleName");
-        PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
+        doNothing().when(cellDataAccessor).bulkDeleteODataCollection("boxId", "nodeId");
+        doNothing().when(davCmpFsImpl).doDelete();
 
         // Run method
         davCmpFsImpl.makeEmpty();
@@ -1126,7 +1127,7 @@ public class DavCmpFsImplTest {
         children.put("child01", child01);
         children.put("child02", child02);
 
-        PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
+        doNothing().when(davCmpFsImpl).doDelete();
 
         // Run method
         davCmpFsImpl.makeEmpty();
@@ -1149,13 +1150,13 @@ public class DavCmpFsImplTest {
 
         doReturn(DavCmpFsImpl.TYPE_COL_SVC).when(davCmpFsImpl).getType();
 
-        PowerMockito.doNothing().when(davCmpFsImpl, "doDelete");
+        doNothing().when(davCmpFsImpl).doDelete();
 
         // Run method
         davCmpFsImpl.makeEmpty();
 
         // Confirm result
-        PowerMockito.verifyPrivate(davCmpFsImpl, times(1)).invoke("doDelete");
+        verify(davCmpFsImpl, times(1)).doDelete();
     }
 
     /**

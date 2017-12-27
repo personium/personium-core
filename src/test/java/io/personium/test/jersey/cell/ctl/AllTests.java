@@ -32,6 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
         AccountUpdateTest.class,
         AccountListTest.class,
         AccountViaNPTest.class,
+        BoxBulkDeletionTest.class,
         BoxCrudTest.class,
         BoxRelationLinkTest.class,
         BoxRoleLinkTest.class,
