@@ -54,7 +54,7 @@ public class RuleManagerTest {
         // --------------------
         // Test method args
         // --------------------
-        RuleManager rman = RuleManager.getInstance();
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = null;
         PersoniumEvent event = null;
 
@@ -90,7 +90,7 @@ public class RuleManagerTest {
         // --------------------
         // Test method args
         // --------------------
-        RuleManager rman = RuleManager.getInstance();
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         PersoniumEvent event = new PersoniumEvent();
 
@@ -127,7 +127,7 @@ public class RuleManagerTest {
         // --------------------
         // Test method args
         // --------------------
-        RuleManager rman = RuleManager.getInstance();
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.FALSE;
         PersoniumEvent event = new PersoniumEvent(null,
@@ -166,7 +166,7 @@ public class RuleManagerTest {
         // --------------------
         // Test method args
         // --------------------
-        RuleManager rman = RuleManager.getInstance();
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.FALSE;
         PersoniumEvent event = new PersoniumEvent(Boolean.FALSE,
@@ -205,7 +205,7 @@ public class RuleManagerTest {
         // --------------------
         // Test method args
         // --------------------
-        RuleManager rman = RuleManager.getInstance();
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
@@ -244,7 +244,7 @@ public class RuleManagerTest {
         // --------------------
         // Test method args
         // --------------------
-        RuleManager rman = RuleManager.getInstance();
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         RuleManager.BoxInfo bi = rman.new BoxInfo();
         bi.schema = "http://personium/dummyCell/";
@@ -286,7 +286,7 @@ public class RuleManagerTest {
         // --------------------
         // Test method args
         // --------------------
-        RuleManager rman = RuleManager.getInstance();
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         RuleManager.BoxInfo bi = rman.new BoxInfo();
         bi.schema = "http://personium/dummyCell/";
@@ -334,7 +334,7 @@ public class RuleManagerTest {
         // --------------------
         // Test method args
         // --------------------
-        RuleManager rman = RuleManager.getInstance();
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         ri.type = "cellctl.Rule.create";
@@ -374,7 +374,7 @@ public class RuleManagerTest {
         // --------------------
         // Test method args
         // --------------------
-        RuleManager rman = RuleManager.getInstance();
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         ri.type = "cellctl.Rule";
@@ -414,7 +414,7 @@ public class RuleManagerTest {
         // --------------------
         // Test method args
         // --------------------
-        RuleManager rman = RuleManager.getInstance();
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         ri.type = "cellctl.Rule.create.some";
