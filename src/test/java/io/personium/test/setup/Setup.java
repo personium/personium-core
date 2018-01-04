@@ -140,6 +140,9 @@ public class Setup extends AbstractCase {
 
     static final double DECIMAL = 0.1;
 
+    static final String TEST_RULE_NAME = "rule1";
+    static final long WAIT_TIME_FOR_EVENT = 3000; // msec
+
     /**
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
@@ -248,6 +251,7 @@ public class Setup extends AbstractCase {
         Config eventLogConf = new Config();
         eventLogConf.cellName = TEST_CELL_EVENTLOG;
         eventLogConf.owner = OWNER_EVT;
+        eventLogConf.rule = settingRule();
         eventLogConfs.add(eventLogConf);
 
         // Basic認証テスト用のセル
@@ -289,13 +293,19 @@ public class Setup extends AbstractCase {
 
     /**
      * EventLog用テスト環境を構築する.
+     * @throws InterruptedException InterruptedException
      */
     @Test
-    public void resetEventLog() {
+    public void resetEventLog() throws InterruptedException {
         for (Config conf : eventLogConfs) {
             this.delete(conf);
             this.createCell(conf);
+            for (RuleConfig rule : conf.rule) {
+                RuleUtils.create(conf.cellName, AbstractCase.MASTER_TOKEN_NAME, rule.toJson(), HttpStatus.SC_CREATED);
+            }
+            Thread.sleep(WAIT_TIME_FOR_EVENT);
             this.createEventLog(conf);
+            Thread.sleep(WAIT_TIME_FOR_EVENT);
         }
     }
 
@@ -348,9 +358,9 @@ public class Setup extends AbstractCase {
     }
 
     private List<RuleConfig> settingRule() {
-        List <RuleConfig> rules = new ArrayList<RuleConfig>();
+        List<RuleConfig> rules = new ArrayList<RuleConfig>();
         RuleConfig rule = new RuleConfig();
-        rule.name = "rule1";
+        rule.name = TEST_RULE_NAME;
         rule.external = true;
         rule.action = "log";
         rules.add(rule);
@@ -1761,6 +1771,9 @@ public class Setup extends AbstractCase {
         }
     }
 
+    /**
+     * Rule config.
+     */
     private class RuleConfig {
         private String name = null;
         private String boxName = null;
