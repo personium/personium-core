@@ -443,7 +443,7 @@ public class AccessContext {
             // TCATの場合はユニットユーザトークンである可能性をチェック
             // TCATがユニットユーザトークンである条件１：Targetが自分のユニットであること。
             // TCATがユニットユーザトークンである条件２：Issuerが設定に存在するUnitUserCellであること。
-            if (tca.getTarget().equals(baseUri) && PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer())) {
+            if (tca.getTarget().equals(baseUri) && PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), baseUri)) {
 
                 // ロール情報をとってきて、ユニットアドミンロールがついていた場合、ユニットアドミンに昇格させる。
                 List<Role> roles = tca.getRoles();
