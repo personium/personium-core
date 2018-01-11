@@ -28,14 +28,13 @@ import io.personium.test.categories.Unit;
 /**
  * Unit Test class for UriUtils.
  */
-@Category({Unit.class })
+@Category({ Unit.class })
 public class UriUtilsTest {
 
     /**
      * Test convertSchemeFromHttpToLocalUnit().
      * normal.
      * url starts with uniturl.
-     * @throws Exception Unintended exception in test
      */
     @Test
     public void convertSchemeFromHttpToLocalUnit_Normal_url_starts_with_uniturl() {
@@ -47,7 +46,6 @@ public class UriUtilsTest {
      * Test convertSchemeFromHttpToLocalUnit().
      * normal.
      * url not starts with uniturl.
-     * @throws Exception Unintended exception in test
      */
     @Test
     public void convertSchemeFromHttpToLocalUnit_Normal_url_not_starts_with_uniturl() {
@@ -59,7 +57,6 @@ public class UriUtilsTest {
      * Test convertSchemeFromHttpToLocalUnit().
      * normal.
      * url is null.
-     * @throws Exception Unintended exception in test
      */
     @Test
     public void convertSchemeFromHttpToLocalUnit_Normal_url_is_null() {

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.PersoniumCoreException;
-import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.rs.cell.MessageODataResource;
 import io.personium.core.rs.odata.AbstractODataResource;
@@ -348,7 +347,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     @Test
     public final void Bodyが0byteの場合にPersoniumCoreExceptionが発生しないこと() {
         String body = "";
-        MessageODataResource.validateBody(body, Common.MAX_MESSAGE_BODY_LENGTH);
+        MessageODataResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -362,7 +361,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
         }
         String body = String.valueOf(buff);
 
-        MessageODataResource.validateBody(body, Common.MAX_MESSAGE_BODY_LENGTH);
+        MessageODataResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -376,7 +375,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
         }
         String body = String.valueOf(buff);
 
-        MessageODataResource.validateBody(body, Common.MAX_MESSAGE_BODY_LENGTH);
+        MessageODataResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**

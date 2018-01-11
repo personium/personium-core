@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
@@ -41,6 +42,7 @@ import org.odata4j.core.OEntityId;
 import org.odata4j.core.OEntityIds;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.edm.EdmDataServices;
+import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.edm.EdmMultiplicity;
 import org.odata4j.format.FormatParser;
 import org.odata4j.format.FormatParserFactory;
@@ -60,6 +62,7 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
@@ -110,13 +113,15 @@ public final class ODataLinksResource {
      * as specified in [RFC2616], and contain an empty response body.
      * @param uriInfo UriInfo
      * @param reqBody リクエストボディ
+     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RS Response
      */
     @WriteAPI
     @POST
     public Response createLink(
             @Context UriInfo uriInfo,
-            final Reader reqBody) {
+            final Reader reqBody,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
 
         // アクセス制御
         this.checkWriteAccessContext();
@@ -151,6 +156,23 @@ public final class ODataLinksResource {
         }
 
         this.odataProducer.createLink(sourceEntity, targetNavProp, newTargetEntity);
+
+        // post event to EventBus
+        String srcKey = AbstractODataResource.replaceDummyKeyToNull(sourceEntity.getEntityKey().toKeyString());
+        String targetKey = AbstractODataResource.replaceDummyKeyToNull(newTargetEntity.getEntityKey().toKeyString());
+        String object = String.format("%s%s%s/$links/%s%s",
+                this.odataResource.getRootUrl(),
+                sourceEntity.getEntitySetName(),
+                srcKey,
+                this.targetNavProp,
+                targetKey);
+        String info = "204";
+        // links.Rule.create or links.Box.create
+        String op = PersoniumEventType.Operation.LINK
+                + PersoniumEventType.SEPALATOR + targetEntitySetName
+                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
+        this.odataResource.postEvent(sourceEntity.getEntitySetName(), object, info, requestKey, op);
+
         return noContent();
     }
 
@@ -214,6 +236,12 @@ public final class ODataLinksResource {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
         }
 
+        // normalize entitykey
+        EdmEntitySet edmEntitySet = metadata.findEdmEntitySet(oid.getEntitySetName());
+        OEntityKey entityKey = AbstractODataResource.normalizeOEntityKey(oid.getEntityKey(), edmEntitySet);
+        oid = OEntityIds.create(oid.getEntitySetName(), entityKey);
+        log.debug(oid.getEntityKey().toKeyString());
+
         // parse処理では後ろ括弧のチェックの対応を行っていないため、括弧の対応チェックを行う
         String entityId = linkUrl;
         if (entityId.toLowerCase().startsWith(serviceRootUri.toLowerCase())) {
@@ -248,11 +276,13 @@ public final class ODataLinksResource {
 
     /**
      * DELETEメソッドを受けて linkを削除する.
+     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RS Response
      */
     @WriteAPI
     @DELETE
-    public Response deleteLink() {
+    public Response deleteLink(
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
 
         // アクセス制御
         this.checkWriteAccessContext();
@@ -267,6 +297,22 @@ public final class ODataLinksResource {
             throw PersoniumCoreException.OData.KEY_FOR_NAVPROP_SHOULD_BE_SPECIFIED;
         }
         this.odataProducer.deleteLink(sourceEntity, targetNavProp, targetEntityKey);
+
+        // post event to EventBus
+        String srcKey = AbstractODataResource.replaceDummyKeyToNull(this.sourceEntity.getEntityKey().toKeyString());
+        String targetKey = AbstractODataResource.replaceDummyKeyToNull(targetEntityKey.toKeyString());
+        String object = String.format("%s%s%s/$links/%s%s",
+                this.odataResource.getRootUrl(),
+                sourceEntity.getEntitySetName(),
+                srcKey,
+                this.targetNavProp,
+                targetKey);
+        String info = "204";
+        String op = PersoniumEventType.Operation.LINK
+                + PersoniumEventType.SEPALATOR + this.targetNavProp.substring(1)
+                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
+        this.odataResource.postEvent(sourceEntity.getEntitySetName(), object, info, requestKey, op);
+
         return noContent();
     }
 
@@ -277,13 +323,15 @@ public final class ODataLinksResource {
      * @param uriInfo UriInfo
      * @param format $format
      * @param callback ??
+     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RS Response
      */
     @GET
     public Response getLinks(
             @Context final UriInfo uriInfo,
             @QueryParam("$format") final String format,
-            @QueryParam("$callback") final String callback) {
+            @QueryParam("$callback") final String callback,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
 
         // アクセス制御
         this.checkReadAccessContext();
@@ -327,9 +375,26 @@ public final class ODataLinksResource {
 
         String entity = sw.toString();
 
-        return Response.ok(entity, contentType)
+        Response res = Response.ok(entity, contentType)
                 .header(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataVersion.V2.asString)
                 .build();
+
+        // post event to EventBus
+        String srcKey = AbstractODataResource.replaceDummyKeyToNull(this.sourceEntity.getEntityKey().toKeyString());
+        String object = String.format("%s%s%s/$links/%s",
+                this.odataResource.getRootUrl(),
+                this.sourceEntity.getEntitySetName(),
+                srcKey,
+                this.targetNavProp);
+        String info = String.format("%s,%s",
+                Integer.toString(res.getStatus()),
+                uriInfo.getRequestUri());
+        String op = PersoniumEventType.Operation.LINK
+                + PersoniumEventType.SEPALATOR + this.targetNavProp.substring(1)
+                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LIST;
+        this.odataResource.postEvent(this.sourceEntity.getEntitySetName(), object, info, requestKey, op);
+
+        return res;
     }
 
     /**

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.utils;
+package io.personium.core.utils;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.utils.ResourceUtils;
+import io.personium.core.PersoniumCoreException;
 import io.personium.test.categories.Unit;
 
 /**
- * ResourceUtilユニットテストクラス.
+ * Unit Test class for ResourceUtils.
  */
-@Category({Unit.class })
-public class ResourceUtilTest {
+@Category({ Unit.class })
+public class ResourceUtilsTest {
 
     /**
      * ContentLength1バイト以上かつTransferEncodingありの場合にtrueとなること.
@@ -90,4 +92,70 @@ public class ResourceUtilTest {
         String transferEncodeing = null;
         assertFalse(ResourceUtils.hasApparentlyRequestBody(contentLength, transferEncodeing));
     }
+
+    /**
+     * ヘッダの指定が無い場合デフォルト値が入ること.
+     */
+    @Test
+    public void validateXPersoniumRequestKey_Normal_key_is_null() {
+        String result = ResourceUtils.validateXPersoniumRequestKey(null);
+        assertTrue(result.startsWith("PCS-"));
+        String timeStr = result.substring(4);
+        Long.parseLong(timeStr);
+    }
+
+    /**
+     * ヘッダに空文字を指定した場合空文字が入ること.
+     */
+    @Test
+    public void validateXPersoniumRequestKey_Normal_key_is_empty_string() {
+        String result = ResourceUtils.validateXPersoniumRequestKey("");
+        assertNotNull(result);
+        assertEquals(0, result.length());
+    }
+
+    /**
+     * ヘッダに1文字の文字列を指定した場合正しく扱われること.
+     */
+    @Test
+    public void validateXPersoniumRequestKey_Normal_key_is_a_char() {
+        String result = ResourceUtils.validateXPersoniumRequestKey("a");
+        assertEquals("a", result);
+    }
+
+    /**
+     * ヘッダに最大長の文字列を指定した場合正しく扱われること.
+     */
+    @Test
+    public void validateXPersoniumRequestKey_Normal_key_is_max_length() {
+        String maxHeaderStr128 = "abcdefghij" + "ABCDEFGHIJ" + "1234567890" + "-_-_-_-_-_" + // 40char
+                "abcdefghij" + "ABCDEFGHIJ" + "1234567890" + "-_-_-_-_-_" + // 80char
+                "abcdefghij" + "ABCDEFGHIJ" + "1234567890" + "-_-_-_-_-_" + // 120char
+                "12345678";
+
+        String result = ResourceUtils.validateXPersoniumRequestKey(maxHeaderStr128);
+        assertEquals(maxHeaderStr128, result);
+    }
+
+    /**
+     * ヘッダに最大長を超えた文字列を指定した場合エラーとなること.
+     */
+    @Test(expected = PersoniumCoreException.class)
+    public void validateXPersoniumRequestKey_Error_key_is_too_long() {
+        String maxHeaderStr128 = "abcdefghij" + "ABCDEFGHIJ" + "1234567890" + "-_-_-_-_-_" + // 40char
+                "abcdefghij" + "ABCDEFGHIJ" + "1234567890" + "-_-_-_-_-_" + // 80char
+                "abcdefghij" + "ABCDEFGHIJ" + "1234567890" + "-_-_-_-_-_" + // 120char
+                "12345678";
+
+        ResourceUtils.validateXPersoniumRequestKey(maxHeaderStr128 + "X");
+    }
+
+    /**
+     * ヘッダに不正な文字種を指定した場合エラーとなること.
+     */
+    @Test(expected = PersoniumCoreException.class)
+    public void validateXPersoniumRequestKey_Error_key_has_invalid_char() {
+        ResourceUtils.validateXPersoniumRequestKey("abc-012#");
+    }
+
 }

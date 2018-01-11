@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -285,5 +285,13 @@ public class UnitCtlResource extends ODataResource {
     @Override
     public boolean hasPrivilegeForBatch(AccessContext ac) {
         throw new NotImplementedException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void postEvent(String entitySet, String object, String info, String reqKey, String op) {
+        // nothing to do because event belongs to cell
     }
 }

@@ -21,6 +21,7 @@ import javax.ws.rs.core.UriInfo;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.impl.es.CellEsImpl;
 import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
+import io.personium.core.model.impl.es.odata.MessageODataProducer;
 import io.personium.core.model.impl.es.odata.UnitCtlODataProducer;
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 import io.personium.core.model.impl.es.odata.UserSchemaODataProducer;
@@ -118,6 +119,16 @@ public final class ModelFactory {
          */
         public static PersoniumODataProducer cellCtl(final Cell cell) {
             return new CellCtlODataProducer(cell);
+        }
+
+        /**
+         * Return ODataProducer for producing OData about message.
+         * @param cell target cell object
+         * @param davRsCmp DavRsCmp
+         * @return PersoniumODataProducer MessageODataProducer
+         */
+        public static PersoniumODataProducer message(final Cell cell, final DavRsCmp davRsCmp) {
+            return new MessageODataProducer(cell, davRsCmp);
         }
 
         /**

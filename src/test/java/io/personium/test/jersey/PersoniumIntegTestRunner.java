@@ -33,6 +33,7 @@ import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.utils.PersoniumThread;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.file.DataCryptor;
+import io.personium.core.rule.RuleManager;
 
 /**
  * IT用テストランナークラス.
@@ -52,10 +53,12 @@ public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
      * @throws InvalidKeySpecException InvalidKeySpecException
      * @throws NoSuchAlgorithmException NoSuchAlgorithmException
      * @throws javax.security.cert.CertificateException CertificateException
+     * @throws javax.naming.InvalidNameException InvalidNameException
      */
     public PersoniumIntegTestRunner(Class<?> klass)
             throws InitializationError, NoSuchAlgorithmException,
-            InvalidKeySpecException, CertificateException, IOException, javax.security.cert.CertificateException {
+            InvalidKeySpecException, CertificateException, IOException, javax.security.cert.CertificateException,
+            javax.naming.InvalidNameException {
         super(klass);
         // トークン処理ライブラリの初期設定.
         TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
@@ -63,6 +66,7 @@ public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
         LocalToken.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
         DataCryptor.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
         PersoniumThread.createThreadPool(PersoniumUnitConfig.getThreadPoolNum());
+        RuleManager.getInstance();
     }
 
     @Override

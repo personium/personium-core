@@ -23,6 +23,7 @@ import org.core4j.Enumerable;
 import org.joda.time.LocalDateTime;
 import org.odata4j.core.OEntity;
 import org.odata4j.edm.EdmAnnotation;
+import org.odata4j.edm.EdmAnnotationAttribute;
 import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
@@ -63,7 +64,7 @@ public class Box {
             this.id = cell.getId();
             return;
         }
-        this.name = (String) entity.getProperty("Name").getValue();
+        this.name = (String) entity.getProperty(Common.P_NAME.getName()).getValue();
         this.schema = (String) entity.getProperty(P_SCHEMA.getName()).getValue();
         if (entity instanceof OEntityWrapper) {
             OEntityWrapper oew = (OEntityWrapper) entity;
@@ -74,7 +75,7 @@ public class Box {
     }
 
     /**
-     * constructor.
+     * Constructor.
      * @param cell Cell object
      * @param name Box name
      * @param schema Box schema
@@ -98,7 +99,6 @@ public class Box {
         return this.cell;
     }
 
-
     /**
      * It returns the path name of this Box.
      * @return Path name
@@ -114,6 +114,7 @@ public class Box {
     public String getSchema() {
         return this.schema;
     }
+
     /**
      * It returns the internal ID for the management of this Box.
      * @return ID String
@@ -123,6 +124,7 @@ public class Box {
     }
 
     /**
+     * Set the cell object.
      * @param cell the cell to set
      */
     public void setCell(Cell cell) {
@@ -130,6 +132,7 @@ public class Box {
     }
 
     /**
+     * Set the schema.
      * @param schema the schema to set
      */
     public void setSchema(String schema) {
@@ -137,6 +140,7 @@ public class Box {
     }
 
     /**
+     * Set the name.
      * @param name the name to set
      */
     public void setName(String name) {
@@ -144,6 +148,7 @@ public class Box {
     }
 
     /**
+     * Set the id.
      * @param id the id to set
      */
     public void setId(String id) {
@@ -151,6 +156,7 @@ public class Box {
     }
 
     /**
+     * Get value of the published.
      * @return the published
      */
     public long getPublished() {
@@ -164,14 +170,27 @@ public class Box {
      */
     public static final String EDM_TYPE_NAME = "Box";
 
+    /** Extended schema Format schema-uri. */
+    public static final String P_FORMAT_PATTERN_SCHEMA_URI = "schema-uri";
+
+    /**
+     * Create the Annotation for Schema URI.
+     * @return EdmAnnotation
+     */
+    private static EdmAnnotation<?> createFormatSchemaUriAnnotation() {
+        return new EdmAnnotationAttribute(
+                Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
+                Common.P_FORMAT, P_FORMAT_PATTERN_SCHEMA_URI);
+    }
+
     /**
      * To get the Annotation for Schema.
      * @param name UK Name
      * @return Annotation List
      */
-    public static List<EdmAnnotation<?>> createSchemaAnnotation(final String name) {
+    private static List<EdmAnnotation<?>> createSchemaAnnotation(final String name) {
         List<EdmAnnotation<?>> schemaAnnotation = CtlSchema.createNamedUkAnnotation(name);
-        schemaAnnotation.add(Common.createFormatSchemaUriAnnotation());
+        schemaAnnotation.add(createFormatSchemaUriAnnotation());
         return schemaAnnotation;
     }
 
@@ -181,19 +200,13 @@ public class Box {
     public static final EdmProperty.Builder P_SCHEMA = EdmProperty.newBuilder("Schema").setType(EdmSimpleType.STRING)
             .setAnnotations(createSchemaAnnotation("uk_box_schema"))
             .setNullable(true).setDefaultValue("null");
-    /**
-     * Name Definition of property.
-     */
-    public static final EdmProperty.Builder P_PATH_NAME = EdmProperty.newBuilder("Name")
-            .setAnnotations(Common.P_FORMAT_NAME)
-            .setNullable(false)
-            .setType(EdmSimpleType.STRING);
+
     /**
      * EntityType Builder.
      */
     public static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder()
             .setNamespace(Common.EDM_NS_CELL_CTL).setName(EDM_TYPE_NAME)
-            .addProperties(Enumerable.create(P_PATH_NAME, P_SCHEMA,
+            .addProperties(Enumerable.create(Common.P_NAME, P_SCHEMA,
                     Common.P_PUBLISHED, Common.P_UPDATED).toList())
-            .addKeys(P_PATH_NAME.getName());
+            .addKeys(Common.P_NAME.getName());
 }

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumFormatWriterFactory;
 
@@ -101,6 +102,7 @@ public class ODataPropertyResource extends AbstractODataResource {
      * POST メソッドへの処理.
      * @param uriInfo UriInfo
      * @param accept アクセプトヘッダ
+     * @param requestKey X-Personium-RequestKey Header
      * @param format $formatクエリ
      * @param reader リクエストボディ
      * @return JAX-RS Response
@@ -110,6 +112,7 @@ public class ODataPropertyResource extends AbstractODataResource {
     public final Response postEntity(
             @Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @DefaultValue(FORMAT_JSON) @QueryParam("$format") final String format,
             final Reader reader) {
         // アクセス制御
@@ -143,7 +146,24 @@ public class ODataPropertyResource extends AbstractODataResource {
         // 制御コードのエスケープ処理
         responseStr = escapeResponsebody(responseStr);
         ResponseBuilder rb = getPostResponseBuilder(ent, outputFormat, responseStr, resUriInfo, key);
-        return rb.build();
+        Response ret = rb.build();
+
+        // post event to EventBus
+        String srcKey = AbstractODataResource.replaceDummyKeyToNull(this.sourceEntityId.getEntityKey().toKeyString());
+        String object = String.format("%s%s%s/%s%s",
+                this.odataResource.getRootUrl(),
+                this.sourceEntityId.getEntitySetName(),
+                srcKey,
+                this.targetNavProp,
+                key);
+        String info = String.format("%s,%s",
+                Integer.toString(ret.getStatus()), uriInfo.getRequestUri());
+        String op = PersoniumEventType.Operation.NAVPROP
+                + PersoniumEventType.SEPALATOR + this.targetNavProp.substring(1)
+                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
+        this.odataResource.postEvent(this.sourceEntityId.getEntitySetName(), object, info, requestKey, op);
+
+        return ret;
     }
 
     /**
@@ -202,6 +222,7 @@ public class ODataPropertyResource extends AbstractODataResource {
      * NavPropに対するGETメソッドによる検索処理.
      * @param uriInfo UriInfo
      * @param accept Acceptヘッダ
+     * @param requestKey X-Personium-RequestKey Header
      * @param callback ?? なんだこれは？JSONP?
      * @param skipToken ?? なんだこれは？
      * @param q 全文検索パラメタ
@@ -213,6 +234,7 @@ public class ODataPropertyResource extends AbstractODataResource {
     public final Response getNavProperty(
             @Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @QueryParam("$callback") final String callback,
             @QueryParam("$skiptoken") final String skipToken,
             @QueryParam("q") final String q) {
@@ -246,8 +268,24 @@ public class ODataPropertyResource extends AbstractODataResource {
 
         ODataVersion version = ODataVersion.V2;
 
-        return Response.ok(entity, fw.getContentType())
+        Response ret = Response.ok(entity, fw.getContentType())
                 .header(ODataConstants.Headers.DATA_SERVICE_VERSION, version.asString).build();
+
+        // post event to EventBus
+        String srcKey = AbstractODataResource.replaceDummyKeyToNull(this.sourceEntityId.getEntityKey().toKeyString());
+        String object = String.format("%s%s%s/%s",
+                this.odataResource.getRootUrl(),
+                this.sourceEntityId.getEntitySetName(),
+                srcKey,
+                this.targetNavProp);
+        String info = String.format("%s,%s",
+                Integer.toString(ret.getStatus()), uriInfo.getRequestUri());
+        String op = PersoniumEventType.Operation.NAVPROP
+                + PersoniumEventType.SEPALATOR + this.targetNavProp.substring(1)
+                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LIST;
+        this.odataResource.postEvent(this.sourceEntityId.getEntitySetName(), object, info, requestKey, op);
+
+        return ret;
     }
 
     /**

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import javax.ws.rs.HttpMethod;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
-import org.apache.wink.webdav.WebDAVMethod;
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -48,6 +48,7 @@ import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.CellUtils;
+import io.personium.test.utils.RuleUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 
@@ -173,12 +174,21 @@ public class BarInstallEventLogTest extends JerseyTest {
 
     /**
      * barファイルインストール後イベントログを取得して正常終了すること.
+     * @throws InterruptedException InterruptedException
      */
     @Test
-    public final void barファイルインストール後イベントログを取得して正常終了すること() {
+    public final void barファイルインストール後イベントログを取得して正常終了すること() throws InterruptedException {
         try {
             // CELL作成
             CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+
+            // Create Rule.
+            JSONObject rule = new JSONObject();
+            rule.put("Name", "box");
+            rule.put("Action", "log");
+            RuleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, rule, HttpStatus.SC_CREATED);
+            // wait for rule register
+            Thread.sleep(3000);
 
             // Barインストール実施
             String reqCell = UNIT_USER_CELL;
@@ -199,6 +209,9 @@ public class BarInstallEventLogTest extends JerseyTest {
 
             BarInstallTestUtils.assertBarInstallStatus(location, DEFAULT_SCHEMA_URL, ProgressInfo.STATUS.COMPLETED);
 
+            // Wait for log output
+            Thread.sleep(3000);
+
             // イベント取得
             TResponse response = Http.request("cell/log-get.txt")
                     .with("METHOD", HttpMethod.GET)
@@ -214,7 +227,7 @@ public class BarInstallEventLogTest extends JerseyTest {
             List<String[]> lines = BarInstallTestUtils.getListedBody(response.getBody());
             int count = 0;
             for (String[] line : lines) {
-                if (line[6].equals(WebDAVMethod.MKCOL.toString())) {
+                if (line[6].equals("boxinstall")) {
                     assertEquals("202", line[8].trim());
                     break;
                 }
@@ -224,34 +237,47 @@ public class BarInstallEventLogTest extends JerseyTest {
             lines.remove(count);
 
             int index = 0;
-            checkResponseLog(lines, "[INFO ]", "server", "PL-BI-1000",
-                    UrlUtils.getBaseUrl() + "/UnitUserCell/installBox", "Bar installation started.", index++);
-            checkResponseLog(lines, "[INFO ]", "server", "PL-BI-1001",
+            checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1000",
+                    "http://localhost/UnitUserCell/installBox", "Bar installation started.", index++);
+            checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1001",
                     "bar/00_meta/00_manifest.json", "Installation started.", index++);
-            checkResponseLog(lines, "[INFO ]", "server", "PL-BI-1003",
+            checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1003",
                     "bar/00_meta/00_manifest.json", "Installation completed.", index++);
-            checkResponseLog(lines, "[INFO ]", "server", "PL-BI-1001",
+            checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1001",
                     "bar/00_meta/90_rootprops.xml", "Installation started.", index++);
-            checkResponseLog(lines, "[INFO ]", "server", "PL-BI-1003",
+            checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1003",
                     "bar/00_meta/90_rootprops.xml", "Installation completed.", index++);
-            checkResponseLog(lines, "[INFO ]", "server", "PL-BI-0000",
-                    UrlUtils.getBaseUrl() + "/UnitUserCell/installBox", "Bar installation completed.", index++);
+            checkResponseLog(lines, "[INFO ]", "false", "PL-BI-0000",
+                    "http://localhost/UnitUserCell/installBox", "Bar installation completed.", index++);
             response.statusCode(HttpStatus.SC_OK);
         } finally {
             cleanup();
+            // Delete Rule.
+            RuleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, "box", null);
             // CELL削除
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL);
+            // wait for event processing
+            Thread.sleep(3000);
         }
     }
 
     /**
      * barファイルインストール受付時に400エラーとなったイベントログが取得できること.
+     * @throws InterruptedException InterruptedException
      */
     @Test
-    public final void barファイルインストール受付時に400エラーとなったイベントログが取得できること() {
+    public final void barファイルインストール受付時に400エラーとなったイベントログが取得できること()
+            throws InterruptedException {
         try {
             // CELL作成
             CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+
+            // Create Rule.
+            JSONObject rule = new JSONObject();
+            rule.put("Name", "box");
+            rule.put("Action", "log");
+            RuleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, rule, HttpStatus.SC_CREATED);
+            Thread.sleep(3000);
 
             // Barインストール実施
             String reqCell = UNIT_USER_CELL;
@@ -266,6 +292,9 @@ public class BarInstallEventLogTest extends JerseyTest {
             res = BarInstallTestUtils.request(REQUEST_NOTYPE_FILE, reqCell, reqPath, headers, body);
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
 
+            // wait for log output
+            Thread.sleep(3000);
+
             // イベント取得
             TResponse response = Http.request("cell/log-get.txt")
                     .with("METHOD", HttpMethod.GET)
@@ -281,7 +310,7 @@ public class BarInstallEventLogTest extends JerseyTest {
             List<String[]> lines = BarInstallTestUtils.getListedBody(response.getBody());
             int count = 0;
             for (String[] line : lines) {
-                if (line[6].equals(WebDAVMethod.MKCOL.toString())) {
+                if (line[6].equals("boxinstall")) {
                     assertEquals("400", line[8].trim());
                     break;
                 }
@@ -289,18 +318,22 @@ public class BarInstallEventLogTest extends JerseyTest {
             }
             assertTrue(count < lines.size());
         } finally {
+            // Delete Rule.
+            RuleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, "box", null);
             // CELL削除
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL);
+            // wait for event processing
+            Thread.sleep(3000);
         }
     }
 
     private void checkResponseLog(List<String[]> lines, String logLevel,
-            String name, String action, String message, String result, int index) {
+            String external, String type, String object, String info, int index) {
         String[] line = lines.get(index);
         assertEquals(logLevel, line[1]);
-        assertEquals(name, line[3]);
-        assertEquals(action, line[6]);
-        assertEquals(message, line[7]);
-        assertEquals(result, line[8].trim());
+        assertEquals(external, line[3]);
+        assertEquals(type, line[6]);
+        assertEquals(object, line[7]);
+        assertEquals(info, line[8].trim());
     }
 }

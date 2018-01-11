@@ -1781,29 +1781,15 @@ public class AclTest extends AbstractCase {
     }
 
     private void eventAclTest(List<String> account) {
-        String jsonBody = "{\"level\": \"error\", \"action\": \"action\","
-                + " \"object\": \"object\", \"result\": \"result\"}";
-        // Eventの作成 EVENT必要
-        BoxUtils.event(account.get(0), HttpStatus.SC_FORBIDDEN, TEST_CELL1,
-                Setup.TEST_BOX1, jsonBody);
-        BoxUtils.event(account.get(1), HttpStatus.SC_FORBIDDEN, TEST_CELL1,
-                Setup.TEST_BOX1, jsonBody);
-        BoxUtils.event(account.get(3), HttpStatus.SC_OK, TEST_CELL1,
-                Setup.TEST_BOX1, jsonBody);
-        BoxUtils.event(account.get(10), HttpStatus.SC_OK, TEST_CELL1,
-                Setup.TEST_BOX1, jsonBody);
-        BoxUtils.event(account.get(13), HttpStatus.SC_FORBIDDEN, TEST_CELL1,
-                Setup.TEST_BOX1, jsonBody);
-        // EventのPROPPACTH EVENT必要
+        // PROPPACTH Event
         CellUtils.proppatch(TEST_CELL1, account.get(0), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
         CellUtils.proppatch(TEST_CELL1, account.get(1), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
         CellUtils.proppatch(TEST_CELL1, account.get(3), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
         CellUtils.proppatch(TEST_CELL1, account.get(10), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
         CellUtils.proppatch(TEST_CELL1, account.get(13), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
 
-        // CellレベルEventのPOST EVENT必要
-        jsonBody = "{\"level\": \"INFO\", \"action\": \"action\","
-                + " \"object\": \"object\", \"result\": \"result\"}";
+        // POST Event
+        String jsonBody = "{\"Type\": \"TYPE\", \"Object\": \"OBJECT\", \"Info\": \"INFO\"}";
         CellUtils.event(account.get(0), HttpStatus.SC_FORBIDDEN, TEST_CELL1, jsonBody);
         CellUtils.event(account.get(1), HttpStatus.SC_FORBIDDEN, TEST_CELL1, jsonBody);
         CellUtils.event(account.get(3), HttpStatus.SC_OK, TEST_CELL1, jsonBody);

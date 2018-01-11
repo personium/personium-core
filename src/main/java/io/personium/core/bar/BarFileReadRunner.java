@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,9 +93,11 @@ import io.personium.core.bar.jackson.JSONManifest;
 import io.personium.core.bar.jackson.JSONMappedObject;
 import io.personium.core.bar.jackson.JSONRelations;
 import io.personium.core.bar.jackson.JSONRoles;
+import io.personium.core.bar.jackson.JSONRules;
 import io.personium.core.bar.jackson.JSONUserDataLinks;
-import io.personium.core.eventbus.JSONEvent;
-import io.personium.core.eventbus.PersoniumEventBus;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.Cell;
@@ -107,12 +109,11 @@ import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.ComplexTypeProperty;
 import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.ctl.EntityType;
-import io.personium.core.model.ctl.Event;
-import io.personium.core.model.ctl.Event.LEVEL;
 import io.personium.core.model.ctl.ExtRole;
 import io.personium.core.model.ctl.Property;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 import io.personium.core.model.impl.es.odata.UserSchemaODataProducer;
@@ -122,11 +123,12 @@ import io.personium.core.model.progress.ProgressManager;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumEdmxFormatParser;
 import io.personium.core.odata.PersoniumODataProducer;
-import io.personium.core.rs.cell.EventResource;
+import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.core.rs.odata.BulkRequest;
 import io.personium.core.rs.odata.ODataEntitiesResource;
 import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.core.rs.odata.ODataResource;
+import io.personium.core.utils.UriUtils;
 
 /**
  * Httpリクエストボディからbarファイルを読み込むためのクラス.
@@ -170,6 +172,7 @@ public class BarFileReadRunner implements Runnable {
     static final String RELATION_JSON = "10_relations.json";
     static final String ROLE_JSON = "20_roles.json";
     static final String EXTROLE_JSON = "30_extroles.json";
+    static final String RULE_JSON = "50_rules.json";
     static final String LINKS_JSON = "70_$links.json";
     static final String ROOTPROPS_XML = "90_rootprops.xml";
     static final String METADATA_XML = "00_$metadata.xml";
@@ -189,8 +192,8 @@ public class BarFileReadRunner implements Runnable {
             .get(PersoniumUnitConfig.BAR.BAR_USERDATA_LINKS_OUTPUT_STREAM_SIZE));
     private long bulkSize = Long.parseLong(PersoniumUnitConfig
             .get(PersoniumUnitConfig.BAR.BAR_USERDATA_BULK_SIZE));
-    private Event event;
-    private PersoniumEventBus eventBus;
+    private EventBus eventBus;
+    private PersoniumEvent event;
     private BarInstallProgressInfo progressInfo;
 
     /**
@@ -322,11 +325,11 @@ public class BarFileReadRunner implements Runnable {
             writeOutputStream(true, "PL-BI-1005", "", message);
         } finally {
             if (isSuccess) {
-                writeOutputStream(false, CODE_BAR_INSTALL_COMPLETED, this.cell.getUrl() + boxName, "");
+                writeOutputStream(false, CODE_BAR_INSTALL_COMPLETED, UriUtils.SCHEME_LOCALCELL + ":/" + boxName, "");
                 this.progressInfo.setStatus(ProgressInfo.STATUS.COMPLETED);
             } else {
                 String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2001");
-                writeOutputStream(false, CODE_BAR_INSTALL_FAILED, this.cell.getUrl() + boxName, message);
+                writeOutputStream(false, CODE_BAR_INSTALL_FAILED, UriUtils.SCHEME_LOCALCELL + ":/" + boxName, message);
                 this.progressInfo.setStatus(ProgressInfo.STATUS.FAILED);
             }
             this.progressInfo.setEndTime();
@@ -342,15 +345,15 @@ public class BarFileReadRunner implements Runnable {
      * barインストール処理状況の内部イベント出力用の設定を行う.
      */
     private void setEventBus() {
-        eventBus = new PersoniumEventBus(this.cell);
-        JSONEvent reqBody = new JSONEvent();
-        reqBody.setAction(WebDAVMethod.MKCOL.toString());
-        reqBody.setLevel(LEVEL.INFO);
-        reqBody.setObject(cell.getUrl() + boxName);
-        reqBody.setResult("");
-
         // TODO Boxのスキーマとサブジェクトのログは内部イベントの正式対応時に実装する
-        this.event = EventResource.createEvent(reqBody, this.requestKey, odataEntityResource.getAccessContext());
+
+        String schema = odataEntityResource.getAccessContext().getSchema();
+        String subject = odataEntityResource.getAccessContext().getSubject();
+        String type = WebDAVMethod.MKCOL.toString();
+        String object = cell.getUrl() + boxName;
+        String result = "";
+        this.event = new PersoniumEvent(schema, subject, type, object, result, this.requestKey);
+        this.eventBus = this.cell.getEventBus();
     }
 
     /**
@@ -1177,7 +1180,8 @@ public class BarFileReadRunner implements Runnable {
 
             if (token == JsonToken.START_OBJECT) {
                 if (jsonName.equals(RELATION_JSON) || jsonName.equals(ROLE_JSON)
-                        || jsonName.equals(EXTROLE_JSON) || jsonName.equals(LINKS_JSON)) {
+                        || jsonName.equals(EXTROLE_JSON) || jsonName.equals(LINKS_JSON)
+                        || jsonName.equals(RULE_JSON)) {
                     registJsonEntityData(jp, mapper, jsonName);
                 } else if (jsonName.equals(MANIFEST_JSON)) {
                     manifestJsonValidate(jp, mapper); // Boxはインストールの最初に作成
@@ -1464,6 +1468,8 @@ public class BarFileReadRunner implements Runnable {
                 createExtRole(mappedObject.getJson());
             } else if (jsonName.equals(LINKS_JSON)) {
                 createLinks(mappedObject, odataProducer);
+            } else if (jsonName.equals(RULE_JSON)) {
+                createRules(mappedObject.getJson());
             }
 
             token = jp.nextToken();
@@ -1509,6 +1515,12 @@ public class BarFileReadRunner implements Runnable {
             JSONUserDataLinks links = mapper.readValue(jp, JSONUserDataLinks.class);
             userDataLinksJsonValidate(jsonName, links);
             return links;
+        } else if (jsonName.equals(RULE_JSON)) {
+            JSONRules rules = mapper.readValue(jp, JSONRules.class);
+            if (rules.getAction() == null) { //TODO 他には？
+                throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
+            }
+            return rules;
         }
         return null;
     }
@@ -1522,7 +1534,8 @@ public class BarFileReadRunner implements Runnable {
         if (links.getFromType() == null) {
             throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         } else {
-            if (!links.getFromType().equals(Relation.EDM_TYPE_NAME) && !links.getFromType().equals(Role.EDM_TYPE_NAME)
+            if (!links.getFromType().equals(Relation.EDM_TYPE_NAME)
+                    && !links.getFromType().equals(Role.EDM_TYPE_NAME)
                     && !links.getFromType().equals(ExtRole.EDM_TYPE_NAME)) {
                 throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
@@ -1632,6 +1645,7 @@ public class BarFileReadRunner implements Runnable {
         if (!(fieldName.equals("Relations") && jsonName.equals(RELATION_JSON))
                 && !(fieldName.equals("Roles") && jsonName.equals(ROLE_JSON))
                 && !(fieldName.equals("ExtRoles") && jsonName.equals(EXTROLE_JSON))
+                && !(fieldName.equals("Rules") && jsonName.equals(RULE_JSON))
                 && !(fieldName.equals("Links") && jsonName.equals(LINKS_JSON))
                 && !(fieldName.equals("Links") && jsonName.equals(USERDATA_LINKS_JSON))) {
             throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
@@ -1683,10 +1697,10 @@ public class BarFileReadRunner implements Runnable {
     @SuppressWarnings("unchecked")
     private void outputEventBus(boolean isError, String code, String path, String message) {
         if (event != null) {
-            event.setAction(code);
+            event.setType(code);
             event.setObject(path);
-            event.setResult(message);
-            eventBus.outputEventLog(event);
+            event.setInfo(message);
+            eventBus.post(event);
         }
         if (this.progressInfo != null && isError) {
             JSONObject messageJson = new JSONObject();
@@ -1721,6 +1735,7 @@ public class BarFileReadRunner implements Runnable {
         barFileOrder.put("bar/00_meta/10_relations.json", false);
         barFileOrder.put("bar/00_meta/20_roles.json", false);
         barFileOrder.put("bar/00_meta/30_extroles.json", false);
+        barFileOrder.put("bar/00_meta/50_rules.json", false);
         barFileOrder.put("bar/00_meta/70_$links.json", false);
         barFileOrder.put("bar/00_meta/90_rootprops.xml", true);
         barFileOrder.put("bar/90_contents/", false); // dummy
@@ -1833,6 +1848,30 @@ public class BarFileReadRunner implements Runnable {
         // ExtRoleの登録
         odataProducer.
                 createEntity(ExtRole.EDM_TYPE_NAME, oew);
+    }
+
+    private void createRules(JSONObject json) {
+        log.debug("createRules: " + json.toString());
+        json.put("_Box.Name", createdBoxName);
+        StringReader stringReader = new StringReader(json.toJSONString());
+        //EntityにRuleを登録して, afterCreateでRuleManagerにも登録
+        odataEntityResource.setEntitySetName(Rule.EDM_TYPE_NAME);
+        OEntityWrapper oew = odataEntityResource.getOEntityWrapper(stringReader,
+                odataEntityResource.getOdataResource(),
+                CtlSchema.getEdmDataServicesForCellCtl().build());
+        // Ruleの登録
+        EntityResponse res = odataProducer.
+                createEntity(Rule.EDM_TYPE_NAME, oew);
+
+        // post rule event to EventBus
+        String keyString = AbstractODataResource.replaceDummyKeyToNull(res.getEntity().getEntityKey().toKeyString());
+        String object = String.format("%s:/__ctl/%s%s", UriUtils.SCHEME_LOCALCELL, Rule.EDM_TYPE_NAME, keyString);
+        String info = "box install";
+        String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
+                + Rule.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
+        PersoniumEvent ev = new PersoniumEvent(null, null, type, object, info, null);
+        EventBus bus = this.cell.getEventBus();
+        bus.post(ev);
     }
 
     /**

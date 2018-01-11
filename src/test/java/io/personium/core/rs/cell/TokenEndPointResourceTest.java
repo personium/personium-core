@@ -51,8 +51,8 @@ import io.personium.test.categories.Unit;
  * TokenEndPointResource unit test classs.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({TokenEndPointResource.class, CellLocalRefreshToken.class, TransCellRefreshToken.class,
-    AbstractOAuth2Token.class})
+@PrepareForTest({ TokenEndPointResource.class, CellLocalRefreshToken.class, TransCellRefreshToken.class,
+    AbstractOAuth2Token.class })
 @Category({ Unit.class })
 public class TokenEndPointResourceTest {
 

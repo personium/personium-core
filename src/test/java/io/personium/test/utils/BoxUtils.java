@@ -340,24 +340,6 @@ public class BoxUtils {
     }
 
     /**
-     * eventのPOSTを行うユーティリティ.
-     * @param token 認証トークン
-     * @param code レスポンスコード
-     * @param cellName セル名
-     * @param boxName ボックス名
-     * @param jsonBody リクエストボディ
-     */
-    public static void event(String token, int code, String cellName, String boxName, String jsonBody) {
-        Http.request("cell/event-post.txt")
-                .with("token", token)
-                .with("cellPath", cellName)
-                .with("boxName", boxName)
-                .with("json", jsonBody)
-                .returns()
-                .statusCode(code);
-    }
-
-    /**
      * boxレベルのpropfind(allprop指定有)を行うユーティリティ.
      * @param cellName セル名
      * @param path Box名

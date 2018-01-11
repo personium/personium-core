@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,7 +123,8 @@ public final class CtlSchema {
                 ExtRole.EDM_TYPE_BUILDER,
                 Relation.EDM_TYPE_BUILDER,
                 ReceivedMessage.EDM_TYPE_BUILDER,
-                SentMessage.EDM_TYPE_BUILDER};
+                SentMessage.EDM_TYPE_BUILDER,
+                Rule.EDM_TYPE_BUILDER};
 
         // Associationの定義
         EdmAssociation.Builder[] assocs = new EdmAssociation.Builder[] {
@@ -177,10 +178,18 @@ public final class CtlSchema {
                         EdmMultiplicity.MANY, EdmMultiplicity.MANY,
                         null, null, ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT, Account.EDM_NPNAME_FOR_RECEIVED_MESSAGE),
 
+                // Box : Rule = 0-1 : many
+                associate(Common.EDM_NS_CELL_CTL,
+                        Box.EDM_TYPE_BUILDER, Rule.EDM_TYPE_BUILDER,
+                        EdmMultiplicity.ZERO_TO_ONE, EdmMultiplicity.MANY),
+
         };
         EdmComplexType.Builder[] complexList = new EdmComplexType.Builder[]{
-                SentMessage.COMPLEXTYPE_BUILDER
+                SentMessage.COMPLEXTYPE_BUILDER,
+                SentMessage.REQUESTRULE_BUILDER,
+                ReceivedMessage.REQUESTRULE_BUILDER
         };
+
         return createDataServices(Common.EDM_NS_CELL_CTL, typeList, assocs, complexList);
     }
 
@@ -242,10 +251,16 @@ public final class CtlSchema {
         // Entity Type のリスト
         EdmEntityType.Builder[] typeList = new EdmEntityType.Builder[] {
                 ReceivedMessagePort.EDM_TYPE_BUILDER,
-                SentMessagePort.EDM_TYPE_BUILDER};
+                SentMessagePort.EDM_TYPE_BUILDER,
+                Role.EDM_TYPE_BUILDER,
+                Relation.EDM_TYPE_BUILDER,
+                ExtCell.EDM_TYPE_BUILDER,
+                Rule.EDM_TYPE_BUILDER};
         EdmAssociation.Builder[] assocs = new EdmAssociation.Builder[] {};
         EdmComplexType.Builder[] complexList = new EdmComplexType.Builder[]{
-                SentMessage.COMPLEXTYPE_BUILDER
+                SentMessage.COMPLEXTYPE_BUILDER,
+                SentMessage.REQUESTRULE_BUILDER,
+                ReceivedMessage.REQUESTRULE_BUILDER
         };
         return createDataServices(Common.EDM_NS_CELL_CTL, typeList, assocs, complexList);
     }
@@ -254,7 +269,7 @@ public final class CtlSchema {
      * id プロパティの定義体.
      */
     public static final EdmProperty.Builder P_ID = EdmProperty.newBuilder("__id")
-            .setType(EdmSimpleType.STRING).setDefaultValue("UUID()")
+            .setType(EdmSimpleType.STRING).setDefaultValue(Common.UUID)
             .setNullable(false)
             .setAnnotations(Common.P_FORMAT_ID);
 

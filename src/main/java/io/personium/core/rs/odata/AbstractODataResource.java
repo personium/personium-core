@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,8 +70,11 @@ import org.odata4j.producer.EntityResponse;
 
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Common;
+import io.personium.core.model.ctl.Message;
 import io.personium.core.model.ctl.Property;
+import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker.CheckError;
 import io.personium.core.odata.OEntityWrapper;
@@ -183,7 +186,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Acceptヘッダの指定から出力フォーマットを決定する.
-     * @param format Acceptヘッダの指定値
+     * @param acceptHeaderValue Acceptヘッダの指定値
      * @return 出力フォーマット("application/json" or "application/atom+xml")
      */
     private MediaType decideOutputFormatFromHeaderValues(String acceptHeaderValue) {
@@ -360,7 +363,11 @@ public abstract class AbstractODataResource {
 
             // 入力があったので値のチェック処理に進む。
             if (op != null && op.getValue() != null) {
-                validateProperty(ep, propName, op);
+                if (ep.getType().isSimple()) {
+                    validateProperty(ep, propName, op);
+                } else {
+                    validateProperty(ep, propName, op, metadata);
+                }
             }
 
             if (op != null) {
@@ -682,17 +689,54 @@ public abstract class AbstractODataResource {
                     validatePropertyRegEx(propName, op, pFormat);
                 } else if (pFormat.equals(Common.P_FORMAT_PATTERN_URI)) {
                     validatePropertyUri(propName, op);
-                } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_SCHEMA_URI)) {
+                } else if (pFormat.startsWith(Box.P_FORMAT_PATTERN_SCHEMA_URI)) {
                     validatePropertySchemaUri(propName, op);
                 } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_CELL_URL)) {
                     validatePropertyCellUrl(propName, op);
                 } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_USUSST)) {
                     validatePropertyUsusst(propName, op, pFormat);
-                } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION)) {
+                } else if (pFormat.startsWith(Message.P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION)) {
                     validatePropertyMessageRequestRelation(propName, op);
+                } else if (pFormat.startsWith(Rule.P_FORMAT_PATTERN_RULE_OBJECT)) {
+                    validatePropertyRuleObject(propName, op);
+                } else if (pFormat.startsWith(Rule.P_FORMAT_PATTERN_RULE_SERVICE)) {
+                    validatePropertyRuleService(propName, op);
                 }
             }
         }
+    }
+
+    /**
+     * プロパティ項目の値をチェックする.
+     * @param ep EdmProperty
+     * @param propName プロパティ名
+     * @param op OProperty
+     * @param metadata schema information
+     */
+    @SuppressWarnings("unchecked")
+    protected void validateProperty(EdmProperty ep, String propName, OProperty<?> op, EdmDataServices metadata) {
+        EdmComplexType edmComplexType =
+                metadata.findEdmComplexType(ep.getType().getFullyQualifiedTypeName());
+        if (!ep.getCollectionKind().equals(CollectionKind.List)) {
+            List<OProperty<?>> list = (List<OProperty<?>>) op.getValue();
+            Map<String, OProperty<?>> complexProperties = new HashMap<>();
+            for (OProperty<?> cp : list) {
+                complexProperties.put(cp.getName(), cp);
+            }
+            for (EdmProperty ctp : edmComplexType.getProperties()) {
+                String compPropName = ctp.getName();
+                OProperty<?> complexProperty = complexProperties.get(compPropName);
+                if (complexProperty == null || complexProperty.getValue() == null) {
+                    continue;
+                }
+                if (ctp.getType().isSimple()) {
+                    validateProperty(ctp, compPropName, complexProperty);
+                } else {
+                    validateProperty(ctp, compPropName, complexProperty, metadata);
+                }
+            }
+        }
+        // TODO CollectionKind
     }
 
     /**
@@ -847,10 +891,37 @@ public abstract class AbstractODataResource {
      * @param op OProperty
      */
     protected void validatePropertyMessageRequestRelation(String propName, OProperty<?> op) {
-        if (!ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_RELATION_CLASS_URL)
+        if (!ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_RELATION_CLASS_PATH)
                 && !ODataUtils.validateRegEx(op.getValue().toString(), Common.PATTERN_RELATION_NAME)
-                && !ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_ROLE_CLASS_URL)
+                && !ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_ROLE_CLASS_PATH)
                 && !ODataUtils.validateRegEx(op.getValue().toString(), Common.PATTERN_NAME)) {
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+        }
+    }
+
+    /**
+     * Rule Object Format Check.
+     * @param propName Property name
+     * @param op OProperty
+     */
+    protected void validatePropertyRuleObject(String propName, OProperty<?> op) {
+        // personium-localcell:/xxx or personium-localbox:/xxx
+        if (!ODataUtils.isValidLocalCellOrBoxUrl(op.getValue().toString())) {
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
+        }
+    }
+
+    /**
+     * Rule Service Format Check.
+     * @param propName Property name
+     * @param op OProperty
+     */
+    protected void validatePropertyRuleService(String propName, OProperty<?> op) {
+        // http://xxx/cell/box/col/srv or https://xxx/cell/box/col/srv or personium-localunit:/cel/box/col/srv
+        // personium-localcell:/box/col/srv or presonium-localbox:/col/srv
+        if (!ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_SERVICE_PATH)
+                && !ODataUtils.validateLocalCellUrl(op.getValue().toString(), Common.PATTERN_SERVICE_LOCALCELL_PATH)
+                && !ODataUtils.validateLocalBoxUrl(op.getValue().toString(), Common.PATTERN_SERVICE_LOCALBOX_PATH)) {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
         }
     }
@@ -898,7 +969,7 @@ public abstract class AbstractODataResource {
                 for (String keyName : keysDefined) {
                     EdmProperty eProp = edmEntityType.findProperty(keyName);
                     Object value = null;
-                    if (eProp.isNullable()) {
+                    if (eProp.isNullable() && eProp.getDefaultValue() == null) {
                         // Nullableな項目がnullだったはず
                         // キー値がnullの場合、OEntityKeyの作成に失敗するため、ダミーキーを設定する
                         value = DUMMY_KEY;
@@ -1017,7 +1088,7 @@ public abstract class AbstractODataResource {
         // Default値が特定の関数である場合は、値を生成する。
         if (EdmSimpleType.STRING.equals(edmType)) {
             // Typeが文字列でDefault値がCELLID()のとき。
-            if (defaultValue.equals("UUID()")) {
+            if (defaultValue.equals(Common.UUID)) {
                 // Typeが文字列でDefault値がUUID()のとき。
                 String newUuid = UUID.randomUUID().toString().replaceAll("-", "");
                 op = OProperties.string(propName, newUuid);

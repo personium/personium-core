@@ -16,6 +16,7 @@
  */
 package io.personium.core.utils;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,6 +101,82 @@ public class UriUtils {
             return localUnitSchemeUrl.replace(SCHEME_UNIT_URI, unitUrl);
         }
         return localUnitSchemeUrl;
+    }
+
+    /**
+     * Convert scheme from LocalCell to http.
+     * @param cellUrl String
+     * @param localCellUrl String
+     * @return Url with http scheme
+     */
+    public static String convertSchemeFromLocalCellToHttp(String cellUrl, String localCellUrl) {
+        // cellUrl: http://host/cell/
+
+        if (localCellUrl == null || !localCellUrl.startsWith(SCHEME_LOCALCELL)) {
+            return null;
+        }
+
+        String[] parts = localCellUrl.split(":/", 2);
+        if (parts.length != 2) {
+            return null;
+        }
+
+        String retUrl = String.format("%s%s", cellUrl, parts[1]);
+
+        return retUrl;
+    }
+
+    private static final int BOX_SPLIT_NUMBER = 3;
+
+    /**
+     * Convert scheme from http to LocalCell.
+     * @param uri URI
+     * @return url with personium-localcell scheme
+     */
+    public static String convertSchemeFromHttpToLocalCell(URI uri) {
+        if (uri == null) {
+            return null;
+        }
+
+        String path = uri.getPath();
+        if (path != null) {
+            // path: /cell/box/...
+            String[] paths = path.split("/", BOX_SPLIT_NUMBER);
+            if (paths.length == BOX_SPLIT_NUMBER) {
+                path = paths[BOX_SPLIT_NUMBER - 1];
+            } else {
+                path = "";
+            }
+        } else {
+            path = "";
+        }
+        String retUrl = String.format("%s:/%s", SCHEME_LOCALCELL, path);
+        if (uri.getQuery() != null) {
+            retUrl += "?" + uri.getQuery();
+        }
+
+        return retUrl;
+    }
+
+    /**
+     * Convert scheme from LocalBox to LocalCell.
+     * @param boxUrl String
+     * @param boxName String
+     * @return url with personim-localcell scheme
+     */
+    public static String convertSchemeFromLocalBoxToLocalCell(String boxUrl, String boxName) {
+        if (boxUrl == null || boxName == null || !boxUrl.startsWith(SCHEME_LOCALBOX)) {
+            return null;
+        }
+
+        String[] parts = boxUrl.split(":/", 2);
+        if (parts.length != 2) {
+            return null;
+        }
+
+        String retUrl = String.format("%s:/%s/%s", SCHEME_LOCALCELL, boxName, parts[1]);
+
+        return retUrl;
     }
 
     /**

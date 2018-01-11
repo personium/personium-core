@@ -74,21 +74,23 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Common;
-import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.ctl.ExtCell;
+import io.personium.core.model.ctl.Message;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.ReceivedMessagePort;
 import io.personium.core.model.ctl.Relation;
+import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.ctl.SentMessagePort;
-import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
-import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.model.impl.es.odata.MessageODataProducer;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.core.rs.odata.ODataResource;
 import io.personium.core.utils.HttpClientFactory;
 import io.personium.core.utils.ODataUtils;
 import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
+import io.personium.core.event.PersoniumEventType;
 
 /**
  * __messageのOData操作クラス.
@@ -100,6 +102,8 @@ public final class MessageODataResource extends AbstractODataResource {
     private MessageResource odataResource;
     private Map<String, String> propMap = new HashMap<String, String>();
     private String version;
+
+    private String requestKey;
 
     /** 最大送信許可数. */
     private static final int MAX_SENT_NUM = 1000;
@@ -125,6 +129,14 @@ public final class MessageODataResource extends AbstractODataResource {
     }
 
     /**
+     * Set the requestKey.
+     * @param requestKey X-Personium-RequestKey header
+     */
+    public void setRequestKey(String requestKey) {
+        this.requestKey = requestKey;
+    }
+
+    /**
      * 受信／送信メッセージEntityを作成する.
      * @param uriInfo URL情報
      * @param reader リクエストボディ
@@ -136,9 +148,7 @@ public final class MessageODataResource extends AbstractODataResource {
         // response用URLに__ctlを追加する
         UriInfo resUriInfo = PersoniumCoreUtils.createUriInfo(uriInfo, 2, "__ctl");
 
-        // Entityの作成を Producerに依頼
-        OEntityWrapper oew = getOEntityWrapper(reader, odataResource, CtlSchema.getEdmDataServicesForMessage().build());
-        EntityResponse res = getOdataProducer().createEntity(getEntitySetName(), oew);
+        EntityResponse res = createEntity(reader, odataResource);
 
         // レスポンスボディを生成する
         OEntity ent = res.getEntity();
@@ -152,7 +162,22 @@ public final class MessageODataResource extends AbstractODataResource {
         responseStr = escapeResponsebody(responseStr);
 
         ResponseBuilder rb = getPostResponseBuilder(ent, outputFormat, responseStr, resUriInfo, key);
-        return rb.build();
+        Response response = rb.build();
+
+        String op;
+        if (SentMessagePort.EDM_TYPE_NAME.equals(getEntitySetName())) {
+            op = PersoniumEventType.Operation.SEND;
+        } else if (ReceivedMessagePort.EDM_TYPE_NAME.equals(getEntitySetName())) {
+            op = PersoniumEventType.Operation.RECEIVE;
+        } else {
+            return response;
+        }
+        // personium-localcell:/__ctl/SentMessage('key')
+        String object = String.format("%s:/__ctl/%s%s", UriUtils.SCHEME_LOCALCELL, getEntitySetName(), key);
+        String info = Integer.toString(response.getStatus());
+        this.odataResource.postEvent(getEntitySetName(), object, info, requestKey, op);
+
+        return response;
     }
 
     /**
@@ -188,13 +213,31 @@ public final class MessageODataResource extends AbstractODataResource {
         }
 
         // ステータス更新、及び関係登録/削除をProducerに依頼
-        String etag = ((CellCtlODataProducer) getOdataProducer()).changeStatusAndUpdateRelation(
+        String etag = ((MessageODataProducer) getOdataProducer()).changeStatusAndUpdateRelation(
                 edmEntitySet, oEntityKey, status);
 
-        return Response.noContent()
+        Response response = Response.noContent()
                 .header(HttpHeaders.ETAG, ODataResource.renderEtagHeader(etag))
                 .header(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataVersion.V2.asString)
                 .build();
+
+        // sned event to EventBus
+        String op = null;
+        if (ReceivedMessage.STATUS_UNREAD.equals(status)) {
+            op = PersoniumEventType.Operation.UNREAD;
+        } else if (ReceivedMessage.STATUS_READ.equals(status)) {
+            op = PersoniumEventType.Operation.READ;
+        } else if (ReceivedMessage.STATUS_APPROVED.equals(status)) {
+            op = PersoniumEventType.Operation.APPROVE;
+        } else if (ReceivedMessage.STATUS_REJECTED.equals(status)) {
+            op = PersoniumEventType.Operation.REJECT;
+        }
+        String object = String.format("%s:/__ctl/%s%s",
+                UriUtils.SCHEME_LOCALCELL, getEntitySetName(), oEntityKey.toKeyString());
+        String info = Integer.toString(response.getStatus());
+        this.odataResource.postEvent(getEntitySetName(), object, info, requestKey, op);
+
+        return response;
     }
 
     /**
@@ -214,9 +257,9 @@ public final class MessageODataResource extends AbstractODataResource {
                     // メッセージ受信でSchemaはデータとして保持しないため、削除する
                     props.remove(i);
                     for (int j = 0; j < props.size(); j++) {
-                        if (ReceivedMessagePort.P_BOX_NAME.getName().equals(props.get(j).getName())) {
+                        if (Common.P_BOX_NAME.getName().equals(props.get(j).getName())) {
                             // Replace with BoxName obtained from schema
-                            props.set(j, OProperties.string(ReceivedMessagePort.P_BOX_NAME.getName(), boxName));
+                            props.set(j, OProperties.string(Common.P_BOX_NAME.getName(), boxName));
                             break;
                         }
                     }
@@ -238,12 +281,12 @@ public final class MessageODataResource extends AbstractODataResource {
                 if (SentMessagePort.P_BOX_BOUND.getName().equals(props.get(i).getName())) {
                     // メッセージ送信でBoxBoundはデータとして保持しないため、削除する
                     props.remove(i);
-                } else if (SentMessagePort.P_BOX_NAME.getName().equals(props.get(i).getName())) {
+                } else if (Common.P_BOX_NAME.getName().equals(props.get(i).getName())) {
                     String schema = this.odataResource.getAccessContext().getSchema();
                     Box box = this.odataResource.getAccessContext().getCell().getBoxForSchema(schema);
                     String boxName = box != null ? box.getName() : null; // CHECKSTYLE IGNORE - To eliminate useless code
                     // Replace with BoxName obtained from schema
-                    props.set(i, OProperties.string(SentMessagePort.P_BOX_NAME.getName(), boxName));
+                    props.set(i, OProperties.string(Common.P_BOX_NAME.getName(), boxName));
                 } else if (SentMessagePort.P_RESULT.getName().equals(props.get(i).getName())) {
                     // メッセージ受信でResultはデータとして保持しているため置き換える
                     props.set(i, OProperties.collection(SentMessage.P_RESULT.getName(),
@@ -451,6 +494,32 @@ public final class MessageODataResource extends AbstractODataResource {
         requestBody.put(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
                 this.propMap.get(SentMessage.P_REQUEST_RELATION_TARGET.getName()));
 
+        if (ReceivedMessage.TYPE_REQ_RULE_REGISTER.equals(type)
+                || ReceivedMessage.TYPE_REQ_RULE_UNREGISTER.equals(type)) {
+            JSONObject ruleObj = new JSONObject();
+            if (this.propMap.get(
+                    concat(SentMessage.P_REQUEST_RULE.getName(), SentMessage.P_REQUESTRULE_NAME.getName())) != null) {
+                ruleObj.put(ReceivedMessage.P_REQUESTRULE_NAME.getName(), this.propMap.get(
+                        concat(SentMessage.P_REQUEST_RULE.getName(), SentMessage.P_REQUESTRULE_NAME.getName())));
+            } else {
+                ruleObj.put(ReceivedMessage.P_REQUESTRULE_NAME.getName(), id);
+            }
+            ruleObj.put(Rule.P_SUBJECT.getName(),
+                    this.propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SUBJECT.getName())));
+            ruleObj.put(Rule.P_TYPE.getName(),
+                    this.propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_TYPE.getName())));
+            ruleObj.put(Rule.P_OBJECT.getName(),
+                    this.propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName())));
+            ruleObj.put(Rule.P_INFO.getName(),
+                    this.propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_INFO.getName())));
+            ruleObj.put(Rule.P_ACTION.getName(),
+                    this.propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_ACTION.getName())));
+            ruleObj.put(Rule.P_SERVICE.getName(),
+                    this.propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName())));
+
+            requestBody.put(ReceivedMessage.P_REQUEST_RULE.getName(), ruleObj);
+        }
+
         return requestBody;
     }
 
@@ -600,34 +669,224 @@ public final class MessageODataResource extends AbstractODataResource {
     @Override
     public void validate(List<OProperty<?>> props) {
         if (ReceivedMessage.EDM_TYPE_NAME.equals(this.getEntitySetName())) {
-            // メッセージ受信のときのチェック
-            validateReceivedBoxBoundSchema(this.odataResource, propMap.get(ReceivedMessagePort.P_SCHEMA.getName()));
-            validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
-                    propMap.get(ReceivedMessage.P_MULTICAST_TO.getName()));
-            validateBody(propMap.get(ReceivedMessage.P_BODY.getName()),
-                    Common.MAX_MESSAGE_BODY_LENGTH);
-            validateStatus(propMap.get(ReceivedMessage.P_TYPE.getName()),
-                    propMap.get(ReceivedMessage.P_STATUS.getName()));
-            validateReqRelation(propMap.get(ReceivedMessage.P_TYPE.getName()),
+            validateReceivedMessage();
+        } else if (SentMessage.EDM_TYPE_NAME.equals(this.getEntitySetName())) {
+            validateSentMessage();
+        }
+        // InReplyTo: no check
+        // Type: message
+        // Title: no check
+        // Body
+        validateBody(propMap.get(Message.P_BODY.getName()), Message.MAX_MESSAGE_BODY_LENGTH);
+        // Prority: no check
+    }
+
+    private void validateReceivedMessage() {
+        String type = propMap.get(Message.P_TYPE.getName());
+
+        // From
+        // Schema
+        String schema = propMap.get(ReceivedMessagePort.P_SCHEMA.getName());
+        validateReceivedBoxBoundSchema(this.odataResource, schema);
+        // MulticastTo
+        validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
+                propMap.get(ReceivedMessage.P_MULTICAST_TO.getName()));
+
+        if (ReceivedMessage.TYPE_MESSAGE.equals(type)) {
+            // Status
+            if (!ReceivedMessage.STATUS_UNREAD.equals(propMap.get(ReceivedMessage.P_STATUS.getName()))) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        ReceivedMessage.P_STATUS.getName());
+            }
+        } else if (ReceivedMessage.TYPE_REQ_RELATION_BUILD.equals(type)
+                || ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type)) {
+            // Status
+            if (!ReceivedMessage.STATUS_NONE.equals(propMap.get(ReceivedMessage.P_STATUS.getName()))) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        ReceivedMessage.P_STATUS.getName());
+            }
+            // RequestRelation
+            // RequestRelationTarget
+            validateReqRelationOnRelation(
                     propMap.get(ReceivedMessage.P_REQUEST_RELATION.getName()),
                     propMap.get(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName()));
-        } else if (SentMessage.EDM_TYPE_NAME.equals(this.getEntitySetName())) {
-            // メッセージ送信のときのチェック
-            validateSentBoxBoundSchema(this.odataResource,
-                    Boolean.valueOf(propMap.get(SentMessagePort.P_BOX_BOUND.getName())));
-            validateUriCsv(SentMessage.P_TO.getName(), propMap.get(SentMessage.P_TO.getName()));
-            validateBody(propMap.get(SentMessage.P_BODY.getName()),
-                    Common.MAX_MESSAGE_BODY_LENGTH);
-            validateToAndToRelation(
-                    propMap.get(SentMessage.P_TO.getName()),
-                    propMap.get(SentMessage.P_TO_RELATION.getName()));
-            validateToValue(
-                    propMap.get(SentMessage.P_TO.getName()),
-                    this.odataResource.getAccessContext().getBaseUri());
-            validateReqRelation(propMap.get(SentMessage.P_TYPE.getName()),
+        } else if (ReceivedMessage.TYPE_REQ_ROLE_GRANT.equals(type)
+                || ReceivedMessage.TYPE_REQ_ROLE_REVOKE.equals(type)) {
+            // Status
+            if (!ReceivedMessage.STATUS_NONE.equals(propMap.get(ReceivedMessage.P_STATUS.getName()))) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        ReceivedMessage.P_STATUS.getName());
+            }
+            // RequestRelation
+            // RequestRelationTarget
+            validateReqRelationOnRole(
+                    propMap.get(ReceivedMessage.P_REQUEST_RELATION.getName()),
+                    propMap.get(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName()));
+        } else if (ReceivedMessage.TYPE_REQ_RULE_REGISTER.equals(type)) {
+            // Status
+            if (!ReceivedMessage.STATUS_NONE.equals(propMap.get(ReceivedMessage.P_STATUS.getName()))) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        ReceivedMessage.P_STATUS.getName());
+            }
+            // RequestRule
+            //   Name, Action required
+            //   Action: callback or exec -> Service required
+            //   Schema: exists -> Object: personium-localbox:/xxx
+            //                  -> Action: exec -> Service: personium-localbox:/xxx
+            //   Schema: null   -> Object: personium-localcell:/xxx
+            //                  -> Action: exec -> Service: personium-localcell:/xxx
+            //   Action: callback -> Service: personium-localunit: or http: or https:
+            String action = propMap.get(concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_ACTION.getName()));
+            if (action == null) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_ACTION.getName()));
+            }
+            if ((Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action))
+                    && propMap.get(
+                            concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName())) == null) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
+            }
+            String object = propMap.get(concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName()));
+            String service = propMap.get(concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
+            if (schema != null) {
+                if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALBOX)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                            concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName()));
+                }
+                if (Rule.ACTION_EXEC.equals(action)
+                        && !service.startsWith(UriUtils.SCHEME_LOCALBOX)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                            concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
+                }
+            } else {
+                if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALCELL)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                            concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName()));
+                }
+                if (Rule.ACTION_EXEC.equals(action)
+                        && !service.startsWith(UriUtils.SCHEME_LOCALCELL)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                            concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
+                }
+            }
+            if (Rule.ACTION_CALLBACK.equals(action)
+                    && !service.startsWith(UriUtils.SCHEME_LOCALUNIT)
+                    && !service.startsWith(UriUtils.SCHEME_HTTP)
+                    && !service.startsWith(UriUtils.SCHEME_HTTPS)) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
+            }
+        } else if (ReceivedMessage.TYPE_REQ_RULE_UNREGISTER.equals(type)) {
+            // Status
+            if (!ReceivedMessage.STATUS_NONE.equals(propMap.get(ReceivedMessage.P_STATUS.getName()))) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        ReceivedMessage.P_STATUS.getName());
+            }
+            // RequestRule
+            // Name required
+        } else {
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Message.P_TYPE.getName());
+        }
+    }
+
+    private void validateSentMessage() {
+        String type = propMap.get(Message.P_TYPE.getName());
+
+        // BoxBound
+        Boolean boxBound = Boolean.valueOf(propMap.get(SentMessagePort.P_BOX_BOUND.getName()));
+        validateSentBoxBoundSchema(this.odataResource,
+                Boolean.valueOf(propMap.get(SentMessagePort.P_BOX_BOUND.getName())));
+        // To
+        // ToRelation
+        validateUriCsv(SentMessage.P_TO.getName(), propMap.get(SentMessage.P_TO.getName()));
+        validateToAndToRelation(
+                propMap.get(SentMessage.P_TO.getName()),
+                propMap.get(SentMessage.P_TO_RELATION.getName()));
+        validateToValue(
+                propMap.get(SentMessage.P_TO.getName()),
+                this.odataResource.getAccessContext().getBaseUri());
+
+        // validate properties per Type
+        //   type 'message' is nothing to do
+        if (SentMessage.TYPE_REQ_RELATION_BUILD.equals(type) || SentMessage.TYPE_REQ_RELATION_BREAK.equals(type)) {
+            // RequestRelation
+            // RequestRelationTarget
+            validateReqRelationOnRelation(
                     propMap.get(SentMessage.P_REQUEST_RELATION.getName()),
                     propMap.get(SentMessage.P_REQUEST_RELATION_TARGET.getName()));
+        } else if (SentMessage.TYPE_REQ_ROLE_GRANT.equals(type) || SentMessage.TYPE_REQ_ROLE_REVOKE.equals(type)) {
+            // RequestRelation
+            // RequestRelationTarget
+            validateReqRelationOnRole(
+                    propMap.get(SentMessage.P_REQUEST_RELATION.getName()),
+                    propMap.get(SentMessage.P_REQUEST_RELATION_TARGET.getName()));
+        } else if (SentMessage.TYPE_REQ_RULE_REGISTER.equals(type)) {
+            // RequestRule
+            //   Action required
+            //   Action: callback or exec -> Service required
+            //   BoxBound: true  -> Object: personium-localbox:/xxx
+            //                   -> Action: exec -> Service: personium-localbox:/xxx
+            //   BoxBound: false -> Object: personium-localcell:/xxx
+            //                   -> Action: exec -> Service: personium-localcell:/xxx
+            //   Action: callback -> Service: personium-localunit: or http: or https:
+            String action = propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_ACTION.getName()));
+            if (action == null) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_ACTION.getName()));
+            }
+            if ((Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action))
+                    && propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName())) == null) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
+            }
+            String object = propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName()));
+            String service = propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
+            if (boxBound.booleanValue()) {
+                log.debug("validate: boxBound is true");
+                if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALBOX)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                            concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName()));
+                }
+                if (Rule.ACTION_EXEC.equals(action)
+                        && !service.startsWith(UriUtils.SCHEME_LOCALBOX)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                            concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
+                }
+            } else {
+                log.debug("validate: boxBound is false");
+                if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALCELL)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                            concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_OBJECT.getName()));
+                }
+                if (Rule.ACTION_EXEC.equals(action)
+                        && !service.startsWith(UriUtils.SCHEME_LOCALCELL)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                            concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
+                }
+            }
+            if (Rule.ACTION_CALLBACK.equals(action)
+                    && !service.startsWith(UriUtils.SCHEME_LOCALUNIT)
+                    && !service.startsWith(UriUtils.SCHEME_HTTP)
+                    && !service.startsWith(UriUtils.SCHEME_HTTPS)) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
+            }
+        } else if (SentMessage.TYPE_REQ_RULE_UNREGISTER.equals(type)) {
+            // RequestRule
+            //   Name required
+            if (propMap.get(
+                    concat(SentMessage.P_REQUEST_RULE.getName(), SentMessage.P_REQUESTRULE_NAME.getName())) == null) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                        concat(SentMessage.P_REQUEST_RULE.getName(), SentMessage.P_REQUESTRULE_NAME.getName()));
+            }
+        } else if (!SentMessage.TYPE_MESSAGE.equals(type)) {
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Message.P_TYPE.getName());
         }
+    }
+
+    private String concat(String parent, String child) {
+        return parent + "." + child;
     }
 
     /**
@@ -640,8 +899,15 @@ public final class MessageODataResource extends AbstractODataResource {
         for (OProperty<?> property : props) {
             if (property.getValue() == null) {
                 propMap.put(property.getName(), null);
-            } else {
+            } else if (property.getType().isSimple()) {
                 propMap.put(property.getName(), property.getValue().toString());
+            } else {
+                List<OProperty<?>> list = (List<OProperty<?>>) property.getValue();
+                for (OProperty<?> p : list) {
+                    if (p.getValue() != null) {
+                        propMap.put(concat(property.getName(), p.getName()), p.getValue().toString());
+                    }
+                }
             }
         }
     }
@@ -749,50 +1015,39 @@ public final class MessageODataResource extends AbstractODataResource {
     }
 
     /**
-     * Statusのバリデート.
-     * @param type タイプ
-     * @param status ステータス
+     * RequestRelationOnRelationのバリデート.
+     * @param requestRelation 関係登録依頼リレーションクラスURL
+     * @param requestRelationTarget 関係登録依頼CellURL
      */
-    public static void validateStatus(String type, String status) {
-        // Unread if Type is message
-        // None if Type is req.relation.build/req.relation.break/req.role.grant/req.role.revoke
-        if (!(ReceivedMessage.TYPE_MESSAGE.equals(type) && ReceivedMessage.STATUS_UNREAD.equals(status))
-                && !((ReceivedMessage.TYPE_REQ_RELATION_BUILD.equals(type)
-                || ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type)
-                || ReceivedMessage.TYPE_REQ_ROLE_GRANT.equals(type)
-                || ReceivedMessage.TYPE_REQ_ROLE_REVOKE.equals(type))
-                && ReceivedMessage.STATUS_NONE.equals(status))) {
-            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ReceivedMessage.P_STATUS.getName());
+    public static void validateReqRelationOnRelation(String requestRelation, String requestRelationTarget) {
+        // Conditional required check
+        if (requestRelation == null || requestRelationTarget == null) {
+            String detail = Message.P_REQUEST_RELATION.getName()
+                    + "," + Message.P_REQUEST_RELATION_TARGET.getName();
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(detail);
+        }
+        // Correlation format check
+        if (!ODataUtils.validateClassUrl(requestRelation, Common.PATTERN_RELATION_CLASS_PATH)
+                && !ODataUtils.validateRegEx(requestRelation, Common.PATTERN_RELATION_NAME)) {
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                    Message.P_REQUEST_RELATION.getName());
         }
     }
 
     /**
-     * RequestRelationのバリデート.
-     * @param type タイプ
+     * RequestRelationOnRoleのバリデート.
      * @param requestRelation 関係登録依頼リレーションクラスURL
      * @param requestRelationTarget 関係登録依頼CellURL
      */
-    public static void validateReqRelation(String type, String requestRelation, String requestRelationTarget) {
+    public static void validateReqRelationOnRole(String requestRelation, String requestRelationTarget) {
         // Conditional required check
-        if ((ReceivedMessage.TYPE_REQ_RELATION_BUILD.equals(type)
-                || ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type)
-                || ReceivedMessage.TYPE_REQ_ROLE_GRANT.equals(type)
-                || ReceivedMessage.TYPE_REQ_ROLE_REVOKE.equals(type))
-                && (requestRelation == null || requestRelationTarget == null)) {
-            String detail = ReceivedMessage.P_REQUEST_RELATION.getName()
-                    + "," + ReceivedMessage.P_REQUEST_RELATION_TARGET.getName();
+        if (requestRelation == null || requestRelationTarget == null) {
+            String detail = Message.P_REQUEST_RELATION.getName()
+                    + "," + Message.P_REQUEST_RELATION_TARGET.getName();
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(detail);
         }
         // Correlation format check
-        if ((ReceivedMessage.TYPE_REQ_RELATION_BUILD.equals(type)
-                || ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type))
-                && !ODataUtils.validateClassUrl(requestRelation, Common.PATTERN_RELATION_CLASS_URL)
-                && !ODataUtils.validateRegEx(requestRelation, Common.PATTERN_RELATION_NAME)) {
-            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                    ReceivedMessage.P_REQUEST_RELATION.getName());
-        } else if ((ReceivedMessage.TYPE_REQ_ROLE_GRANT.equals(type)
-                || ReceivedMessage.TYPE_REQ_ROLE_REVOKE.equals(type))
-                && !ODataUtils.validateClassUrl(requestRelation, Common.PATTERN_ROLE_CLASS_URL)
+        if (!ODataUtils.validateClassUrl(requestRelation, Common.PATTERN_ROLE_CLASS_PATH)
                 && !ODataUtils.validateRegEx(requestRelation, Common.PATTERN_NAME)) {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                     ReceivedMessage.P_REQUEST_RELATION.getName());

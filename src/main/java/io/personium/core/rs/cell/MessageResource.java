@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,12 +33,16 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.ReceivedMessagePort;
 import io.personium.core.model.ctl.SentMessagePort;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.odata.ODataCtlResource;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * JAX-RS Resource handling DC Message Level Api. /__messageというパスにきたときの処理.
@@ -69,6 +73,7 @@ public final class MessageResource extends ODataCtlResource {
     /**
      * メッセージ送信API.
      * @param version PCSバージョン
+     * @param requestKey X-Personium-RequestKey Header
      * @param uriInfo UriInfo
      * @param reader リクエストボディ
      * @return レスポンス
@@ -78,21 +83,24 @@ public final class MessageResource extends ODataCtlResource {
     @Path("send")
     public Response messages(
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VERSION) final String version,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @Context final UriInfo uriInfo,
             final Reader reader) {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.accessContext, CellPrivilege.MESSAGE);
 
         // データ登録
-        PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(this.accessContext.getCell());
+        PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
         MessageODataResource moResource = new MessageODataResource(this, producer, SentMessagePort.EDM_TYPE_NAME);
         moResource.setVersion(version);
+        moResource.setRequestKey(requestKey);
         Response respose = moResource.createMessage(uriInfo, reader);
         return respose;
     }
 
     /**
      * メッセージ受信API.
+     * @param requestKey X-Personium-RequestKey Header
      * @param uriInfo UriInfo
      * @param reader リクエストボディ
      * @return レスポンス
@@ -101,14 +109,16 @@ public final class MessageResource extends ODataCtlResource {
     @POST
     @Path("port")
     public Response messagesPort(
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @Context final UriInfo uriInfo,
             final Reader reader) {
         // アクセス制御
         this.accessContext.checkCellIssueToken(this.davRsCmp.getAcceptableAuthScheme());
 
         // 受信メッセージの登録
-        PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(this.accessContext.getCell());
+        PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
         MessageODataResource moResource = new MessageODataResource(this, producer, ReceivedMessagePort.EDM_TYPE_NAME);
+        moResource.setRequestKey(requestKey);
         Response respose = moResource.createMessage(uriInfo, reader);
         return respose;
     }
@@ -116,6 +126,7 @@ public final class MessageResource extends ODataCtlResource {
     /**
      * メッセージ承認API.
      * @param key メッセージId
+     * @param requestKey X-Personium-RequestKey Header
      * @param reader リクエストボディ
      * @return レスポンス
      */
@@ -123,14 +134,30 @@ public final class MessageResource extends ODataCtlResource {
     @POST
     @Path("received/{key}")
     public Response messagesApprove(@PathParam("key") final String key,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             final Reader reader) {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.accessContext, CellPrivilege.MESSAGE);
 
         // 受信メッセージの承認
-        PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(this.accessContext.getCell());
+        PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
         MessageODataResource moResource = new MessageODataResource(this, producer, ReceivedMessagePort.EDM_TYPE_NAME);
+        moResource.setRequestKey(requestKey);
         Response respose = moResource.changeMessageStatus(reader, key);
         return respose;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void postEvent(String entitySetName, String object, String info, String reqKey, String op) {
+        String schema = this.accessContext.getSchema();
+        String subject = this.accessContext.getSubject();
+        String type = PersoniumEventType.Category.MESSAGE + PersoniumEventType.SEPALATOR + op;
+        String requestKey = ResourceUtils.validateXPersoniumRequestKey(reqKey);
+        PersoniumEvent ev = new PersoniumEvent(schema, subject, type, object, info, requestKey);
+        EventBus eventBus = this.accessContext.getCell().getEventBus();
+        eventBus.post(ev);
     }
 }

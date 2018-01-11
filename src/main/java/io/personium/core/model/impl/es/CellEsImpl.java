@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +69,7 @@ import io.personium.core.model.ctl.ExtRole;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.SentMessage;
+import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.file.BinaryDataAccessException;
 import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.model.impl.es.accessor.CellAccessor;
@@ -142,7 +143,8 @@ public final class CellEsImpl implements Cell {
                 || producer.getEntitiesCount(ExtRole.EDM_TYPE_NAME, queryInfo).getCount() > 0
                 || producer.getEntitiesCount(Relation.EDM_TYPE_NAME, queryInfo).getCount() > 0
                 || producer.getEntitiesCount(SentMessage.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(ReceivedMessage.EDM_TYPE_NAME, queryInfo).getCount() > 0) {
+                || producer.getEntitiesCount(ReceivedMessage.EDM_TYPE_NAME, queryInfo).getCount() > 0
+                || producer.getEntitiesCount(Rule.EDM_TYPE_NAME, queryInfo).getCount() > 0) {
             return false;
         }
         // TODO check EventLog
@@ -244,7 +246,7 @@ public final class CellEsImpl implements Cell {
                 ret.url = getBaseUri(uriInfo, ret.name);
                 ret.owner = UriUtils.convertSchemeFromLocalUnitToHttp(ret.getUnitUrl(), ret.owner);
             } else {
-                ret.url = "/" + ret.name + "/";
+                ret.url = PersoniumUnitConfig.getBaseUrl() + ret.name + "/";
             }
             return ret;
         } else {

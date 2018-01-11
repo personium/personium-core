@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -196,13 +196,17 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Typeがnullの場合にPersoniumCoreExceptionが発生すること.
+     * Test setDefaultValue().
+     * Normal test.
+     * Type is null.
      */
-    @Test(expected = PersoniumCoreException.class)
-    public final void Typeがnullの場合にPersoniumCoreExceptionが発生すること() {
-        this.setDefaultValue(ReceivedMessage.P_TYPE.build(),
+    @Test
+    public final void setDefaultValue_Normal_Type_is_null() {
+        OProperty<?> expected = OProperties.string(ReceivedMessage.P_TYPE.getName(), "message");
+        OProperty<?> result = this.setDefaultValue(ReceivedMessage.P_TYPE.build(),
                 ReceivedMessage.P_TYPE.getName(),
-                OProperties.string(ReceivedMessage.P_TYPE.getName(), ""));
+                OProperties.string(ReceivedMessage.P_TYPE.getName(), null));
+        assertEquals(expected.getValue(), result.getValue());
     }
 
     /**
@@ -241,13 +245,17 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Titleがnullの場合にPersoniumCoreExceptionが発生すること.
+     * Test setDefaultValue().
+     * Normal test.
+     * Title is null.
      */
-    @Test(expected = PersoniumCoreException.class)
-    public final void Titleがnullの場合にPersoniumCoreExceptionが発生すること() {
-        this.setDefaultValue(ReceivedMessage.P_TITLE.build(),
+    @Test
+    public final void setDefaultValue_Normal_Title_is_null() {
+        OProperty<?> expected = OProperties.string(ReceivedMessage.P_TITLE.getName(), "");
+        OProperty<?> result = this.setDefaultValue(ReceivedMessage.P_TITLE.build(),
                 ReceivedMessage.P_TITLE.getName(),
-                OProperties.string(ReceivedMessage.P_TITLE.getName(), ""));
+                OProperties.string(ReceivedMessage.P_TITLE.getName(), null));
+        assertEquals(expected.getValue(), result.getValue());
     }
 
     /**
@@ -323,13 +331,17 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Priorityがnullの場合にPersoniumCoreExceptionが発生すること.
+     * Test setDefaultValue().
+     * Normal test.
+     * Priority is null.
      */
-    @Test(expected = PersoniumCoreException.class)
-    public final void Priorityがnullの場合にPersoniumCoreExceptionが発生すること() {
-        this.setDefaultValue(ReceivedMessage.P_PRIORITY.build(),
+    @Test
+    public final void setDefaultValue_Normal_Priority_is_null() {
+        OProperty<?> expected = OProperties.int32(ReceivedMessage.P_PRIORITY.getName(), 3);
+        OProperty<?> result = this.setDefaultValue(ReceivedMessage.P_PRIORITY.build(),
                 ReceivedMessage.P_PRIORITY.getName(),
-                OProperties.string(ReceivedMessage.P_PRIORITY.getName(), ""));
+                OProperties.string(ReceivedMessage.P_PRIORITY.getName(), null));
+        assertEquals(expected.getValue(), result.getValue());
     }
 
     /**

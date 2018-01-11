@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
  */
 package io.personium.core.rs.cell;
 
-import java.io.IOException;
 import java.io.Reader;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +25,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
@@ -35,9 +33,6 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.apache.wink.webdav.WebDAVMethod;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +45,6 @@ import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
-import io.personium.core.event.EventBus;
-import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
@@ -280,56 +273,6 @@ public final class CellResource {
     }
 
     /**
-     * イベント受付のエンドポイント .
-     * @param boxName Box名
-     * @param reader 入力
-     * @return JAXRS応答
-     */
-    @WriteAPI
-    @POST
-    @Path("__event/{boxName}")
-    public Response postEvent(
-            @PathParam("boxName") final String boxName,
-            final Reader reader) {
-        // アクセス制御
-        this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.EVENT);
-        // Subjectを取得する
-        String subject = this.accessContext.getSubject();
-        // BoxNameからSchemaをとる
-        Box box = this.cell.getBoxForName(boxName);
-        String schema = null;
-        if (box != null) {
-            schema = box.getSchema();
-        }
-        // Bodyを解釈してPersoniumEventオブジェクトをつくる。
-        JSONParser parser = new JSONParser();
-        try {
-            JSONObject evJson = (JSONObject) parser.parse(reader);
-            String levelStr = (String) evJson.get("level");
-            String action = (String) evJson.get("action");
-            String object = (String) evJson.get("object");
-            String result = (String) evJson.get("result");
-            int level = PersoniumEvent.Level.INFO;
-            if ("warn".equalsIgnoreCase(levelStr)) {
-                level = PersoniumEvent.Level.WARN;
-            } else if ("error".equalsIgnoreCase(levelStr)) {
-                level = PersoniumEvent.Level.ERROR;
-            }
-            PersoniumEvent ev = new PersoniumEvent("client", schema, level, subject, action, object, result);
-
-            // PersoniumEventオブジェクトをEventBusオブジェクトに流す.
-            EventBus eventBus = this.cell.getEventBus();
-            eventBus.post(ev);
-            return Response.ok().build();
-        } catch (IOException e) {
-            throw PersoniumCoreException.Server.UNKNOWN_ERROR.reason(e);
-        } catch (ParseException e) {
-            throw PersoniumCoreException.Event.JSON_PARSE_ERROR.reason(e);
-        }
-
-    }
-
-    /**
      * イベントAPIのエンドポイント.
      * @return EventResourceオブジェクト
      */
@@ -348,10 +291,19 @@ public final class CellResource {
     }
 
     /**
+     * Endpoint of Rule.
+     * @return RuleResource object
+     */
+    @Path("__rule")
+    public RuleResource rule() {
+        return new RuleResource(this.cell, this.cellRsCmp);
+    }
+
+    /**
      * デフォルトボックスへのアクセス.
      * @param request HTPPサーブレットリクエスト
      * @param jaxRsRequest JAX-RS用HTTPリクエスト
-     * @return BoxResource BoxResource Object
+     * @return BoxResource Object
      */
     @Path("__")
     public BoxResource box(@Context final HttpServletRequest request,
@@ -404,7 +356,7 @@ public final class CellResource {
      * @param request HTPPサーブレットリクエスト
      * @param boxName Boxパス名
      * @param jaxRsRequest JAX-RS用HTTPリクエスト
-     * @return BoxResource BoxResource Object
+     * @return BoxResource Object
      */
     @Path("{box: [^\\/]+}")
     public BoxResource box(

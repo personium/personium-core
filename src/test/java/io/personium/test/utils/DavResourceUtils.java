@@ -943,7 +943,8 @@ public class DavResourceUtils {
      * @return API response
      */
     public static TResponse createServiceCollectionSource(
-            String cellName, String boxName, String path, String sourceName, String contentType, String token, String fileBody, int code) {
+            String cellName, String boxName, String path, String sourceName,
+            String contentType, String token, String fileBody, int code) {
         String sourcePath = path + "/__src/" + sourceName;
         return Http.request("box/dav-put.txt")
                 .with("cellPath", cellName)

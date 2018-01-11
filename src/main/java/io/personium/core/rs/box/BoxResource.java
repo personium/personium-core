@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,8 +51,9 @@ import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.bar.BarFileInstaller;
-import io.personium.core.eventbus.JSONEvent;
-import io.personium.core.eventbus.PersoniumEventBus;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.BoxRsCmp;
@@ -60,14 +61,13 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ModelFactory;
-import io.personium.core.model.ctl.Event;
-import io.personium.core.model.ctl.Event.LEVEL;
 import io.personium.core.model.progress.Progress;
 import io.personium.core.model.progress.ProgressInfo;
 import io.personium.core.model.progress.ProgressManager;
 import io.personium.core.rs.cell.CellCtlResource;
-import io.personium.core.rs.cell.EventResource;
 import io.personium.core.rs.odata.ODataEntityResource;
+import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * JAX-RS Resource for Box root URL.
@@ -332,23 +332,18 @@ public final class BoxResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             final InputStream inStream) {
 
-        PersoniumEventBus eventBus = new PersoniumEventBus(this.cell);
-        Event event = null;
+        EventBus eventBus = this.cell.getEventBus();
+        String result = "";
+        String schema = this.accessContext.getSchema();
+        String subject = this.accessContext.getSubject();
+        String object = String.format("%s:/%s", UriUtils.SCHEME_LOCALCELL, this.boxName);
         Response res = null;
         try {
             // ログファイル出力
-            JSONEvent reqBody = new JSONEvent();
-            reqBody.setAction(WebDAVMethod.MKCOL.toString());
-            reqBody.setLevel(LEVEL.INFO);
-            reqBody.setObject(this.cell.getUrl() + boxName);
-            reqBody.setResult("");
             // X-Personium-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
-            requestKey = EventResource.validateXPersoniumRequestKey(requestKey);
+            requestKey = ResourceUtils.validateXPersoniumRequestKey(requestKey);
             // TODO findBugs対策↓
             log.debug(requestKey);
-
-            event = EventResource.createEvent(reqBody, requestKey, this.accessContext);
-            // eventBus.outputEventLog(event);
 
             if (Box.DEFAULT_BOX_NAME.equals(this.boxName)) {
                 throw PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
@@ -364,29 +359,24 @@ public final class BoxResource {
             headers.put(HttpHeaders.CONTENT_TYPE, contentType);
             headers.put(HttpHeaders.CONTENT_LENGTH, contentLength);
 
-            // X-Personium-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
             BarFileInstaller installer =
                     new BarFileInstaller(this.cell, this.boxName, odataEntity, uriInfo);
 
-            res = installer.barFileInstall(headers, inStream, event.getRequestKey());
-            event.setResult(Integer.toString(res.getStatus()));
+            res = installer.barFileInstall(headers, inStream, requestKey);
+            result = Integer.toString(res.getStatus());
         } catch (RuntimeException e) {
             // TODO 内部イベントの正式対応が必要
             if (e instanceof PersoniumCoreException) {
-                event.setResult(Integer.toString(((PersoniumCoreException) e).getStatus()));
-                if (((PersoniumCoreException) e).getStatus() < HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-                    event.setLevel(LEVEL.INFO);
-                } else {
-                    event.setLevel(LEVEL.ERROR);
-                }
+                result = Integer.toString(((PersoniumCoreException) e).getStatus());
             } else {
-                event.setResult(Integer.toString(HttpStatus.SC_INTERNAL_SERVER_ERROR));
-                event.setLevel(LEVEL.ERROR);
+                result = Integer.toString(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             }
             throw e;
         } finally {
-            // 終了ログファイル出力
-            eventBus.outputEventLog(event);
+            // post event to EventBus
+            PersoniumEvent event = new PersoniumEvent(
+                    schema, subject, PersoniumEventType.Category.BI, object, result, requestKey);
+            eventBus.post(event);
         }
         return res;
     }

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -395,6 +395,103 @@ public final class ODataUtils {
     }
 
     /**
+     * Check if string is valid Local Cell or Box URL.
+     * @param str Input string
+     * @return true if valid
+     */
+    public static boolean isValidLocalCellOrBoxUrl(String str) {
+        boolean isValidLength = str.length() <= URI_MAX_LENGTH;
+        URI uri;
+        try {
+            uri = new URI(str);
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        String scheme = uri.getScheme();
+        boolean isValidScheme = scheme != null
+                && (UriUtils.SCHEME_LOCALCELL.equals(scheme)
+                 || UriUtils.SCHEME_LOCALBOX.equals(scheme));
+        boolean isNormalized = uri.normalize().toString().equals(str);
+        return isValidLength && isValidScheme && isNormalized;
+    }
+
+    private static String getPath(URI uri) {
+        String path = null;
+        if (uri.getPath() != null) {
+            path = uri.getPath();
+        }
+        if (uri.getQuery() != null) {
+            path += "?" + uri.getQuery();
+        }
+
+        return path;
+    }
+
+    /**
+     * Check the value of property item with LocalBox URL.
+     * @param str Input string
+     * @param pFormat regular expression format
+     * @return true:OK false:NG
+     */
+    public static boolean validateLocalBoxUrl(String str, String pFormat) {
+        URI uri;
+        try {
+            uri = new URI(str);
+            String scheme = uri.getScheme();
+            // Scheme check
+            if (scheme == null
+                     || !scheme.equals(UriUtils.SCHEME_LOCALBOX)) {
+                return false;
+            }
+            // String length check
+            if (uri.toString().length() > URI_MAX_LENGTH) {
+                return false;
+            }
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        String path = getPath(uri);
+        if (path == null) {
+            return false;
+        }
+        log.debug("path is " + path);
+        // Regular expression check
+        return ODataUtils.validateRegEx(path, pFormat);
+    }
+
+    /**
+     * Check the value of property item with LocalCell URL.
+     * @param str Input string
+     * @param pFormat regular expression format
+     * @return true:OK false:NG
+     */
+    public static boolean validateLocalCellUrl(String str, String pFormat) {
+        URI uri;
+        try {
+            uri = new URI(str);
+            String scheme = uri.getScheme();
+            // Scheme check
+            if (scheme == null
+                     || !scheme.equals(UriUtils.SCHEME_LOCALCELL)) {
+                return false;
+            }
+            // String length check
+            if (uri.toString().length() > URI_MAX_LENGTH) {
+                return false;
+            }
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        String path = getPath(uri);
+        if (path == null) {
+            return false;
+        }
+        log.debug("path is " + path);
+        // Regular expression check
+        return ODataUtils.validateRegEx(path, pFormat);
+    }
+
+    /**
      * Check the value of property item with Class URL.
      * @param str Input string
      * @param pFormat regular expression format
@@ -406,7 +503,7 @@ public final class ODataUtils {
             uri = new URI(str);
             String scheme = uri.getScheme();
             // Scheme check
-            if (uri.getScheme() == null
+            if (scheme == null
                     || (!scheme.equals(UriUtils.SCHEME_HTTP) //NOPMD -To maintain readability
                      && !scheme.equals(UriUtils.SCHEME_HTTPS)
                      && !scheme.equals(UriUtils.SCHEME_LOCALUNIT))) {
@@ -419,8 +516,12 @@ public final class ODataUtils {
         } catch (URISyntaxException e) {
             return false;
         }
+        String path = getPath(uri);
+        if (path == null) {
+            return false;
+        }
         // Regular expression check
-        return ODataUtils.validateRegEx(str, pFormat);
+        return ODataUtils.validateRegEx(path, pFormat);
     }
 
     /**
