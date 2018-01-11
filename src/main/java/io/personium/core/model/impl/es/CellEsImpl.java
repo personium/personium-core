@@ -73,6 +73,7 @@ import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.file.BinaryDataAccessException;
 import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.model.impl.es.accessor.CellAccessor;
+import io.personium.core.model.impl.es.accessor.CellDataAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.accessor.ODataLinkAccessor;
 import io.personium.core.model.impl.es.cache.BoxCache;
@@ -1023,7 +1024,8 @@ public final class CellEsImpl implements Cell {
         }
 
         // Cell配下のエンティティを削除する
-        cellAccessor.cellBulkDeletion(this.getId(), unitUserNameWithOutPrefix);
+        CellDataAccessor cellDataAccessor = EsModel.cellData(unitUserNameWithOutPrefix, this.getId());
+        cellDataAccessor.bulkDeleteCell();
         log.info("Cell Entity Resource Deletion End.");
     }
 }

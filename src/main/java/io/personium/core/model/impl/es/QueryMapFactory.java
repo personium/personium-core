@@ -35,6 +35,17 @@ public final class QueryMapFactory {
     }
 
     /**
+     * Register the specified value in "query" and return it.
+     * @param value Value to be registered in query
+     * @return query
+     */
+    public static Map<String, Object> query(Map<String, Object> value) {
+        Map<String, Object> query = new HashMap<String, Object>();
+        query.put("query", value);
+        return query;
+    }
+
+    /**
      * termクエリの情報を格納したMapのインスタンスを生成して返却する.
      * @param key 検索キー
      * @param value 検索キーワード

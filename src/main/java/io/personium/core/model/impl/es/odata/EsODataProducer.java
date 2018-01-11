@@ -3407,8 +3407,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         DataSourceAccessor accessor = getAccessorForBatch();
         try {
             int responseIndex = 0;
-            PersoniumBulkResponse bulkResponse = accessor.bulkUpdateLink(esBulkRequest, adsBulkEntityRequest,
-                    adsBulkLinkRequest, cellId);
+            PersoniumBulkResponse bulkResponse = accessor.bulkUpdate(esBulkRequest, cellId);
             PersoniumBulkItemResponse[] responseItems = bulkResponse.items();
             for (NavigationPropertyBulkContext context : bulkContexts) {
                 if (context.isError()) {

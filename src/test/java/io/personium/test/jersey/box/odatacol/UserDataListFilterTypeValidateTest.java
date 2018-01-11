@@ -16,18 +16,22 @@
  */
 package io.personium.test.jersey.box.odatacol;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
@@ -662,7 +666,7 @@ public class UserDataListFilterTypeValidateTest extends AbstractUserDataTest {
      * Edm_DateTime型の$filter_eq検索の検証.
      */
     @Test
-    public final void Edm_DateTime型の$filter_eq検索の検証() {
+    public void Edm_DateTime型の$filter_eq検索の検証() {
         // Edm.DateTimeの検索条件：整数： 1111
         String query = "?\\$filter=datetime+eq+1111&\\$inlinecount=allpages";
         TResponse res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
@@ -675,6 +679,82 @@ public class UserDataListFilterTypeValidateTest extends AbstractUserDataTest {
         query = "?\\$filter=datetime+eq+null&\\$inlinecount=allpages";
         res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
         ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+
+        Date date = new Date(1420589956172L);
+        // datetime:yyyy-MM-dd'T'HH:mm:ss.SSS
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String dateStr = format.format(date);
+        query = "?\\$filter=datetime+eq+datetime'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 1);
+        // datetime:yyyy-MM-dd'T'HH:mm:ss
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+eq+datetime'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+        // datetime:yyyy-MM-dd'T'HH:mm
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+eq+datetime'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+        // datetime:yyyy-MM-dd'T'HH:mm:ss.SSS'%2B09:00'
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'%2B09:00'");
+        format.setTimeZone(TimeZone.getTimeZone("JST"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+eq+datetime'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.FILTER_PARSE_ERROR.getCode(),
+                PersoniumCoreException.OData.FILTER_PARSE_ERROR.getMessage());
+        // datetime:yyyyMMdd'T'HHmmssSSS
+        format = new SimpleDateFormat("yyyyMMdd'T'HHmmssSSS");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+eq+datetime'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.FILTER_PARSE_ERROR.getCode(),
+                PersoniumCoreException.OData.FILTER_PARSE_ERROR.getMessage());
+
+        // datetimeoffset:yyyy-MM-dd'T'HH:mm:ss.SSS
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+eq+datetimeoffset'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 1);
+        // datetimeoffset:yyyy-MM-dd'T'HH:mm:ss
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+eq+datetimeoffset'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+        // datetimeoffset:yyyy-MM-dd'T'HH:mm
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+eq+datetimeoffset'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+        // datetimeoffset:yyyy-MM-dd'T'HH:mm:ss.SSS'%2B09:00'
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'%2B09:00'");
+        format.setTimeZone(TimeZone.getTimeZone("JST"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+eq+datetimeoffset'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 1);
+        // datetimeoffset:yyyyMMdd'T'HHmmssSSS
+        format = new SimpleDateFormat("yyyyMMdd'T'HHmmssSSS");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+eq+datetimeoffset'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.FILTER_PARSE_ERROR.getCode(),
+                PersoniumCoreException.OData.FILTER_PARSE_ERROR.getMessage());
 
         // Edm.DateTimeの検索条件：文字列： "1420589956172"
         query = "?\\$filter=datetime+eq+%271420589956172%27&\\$inlinecount=allpages";
@@ -731,13 +811,46 @@ public class UserDataListFilterTypeValidateTest extends AbstractUserDataTest {
         res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
         res.checkErrorResponse(PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.getCode(),
                 PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params("datetime").getMessage());
+
+        // datetime：MAX：9999-12-31T23:59:59.999
+        query = "?\\$filter=datetime+eq+datetime'9999-12-31T23:59:59.999'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+        // datetime：MIN：1753-01-01T00:00:00.000
+        query = "?\\$filter=datetime+eq+datetime'1753-01-01T00:00:00.000'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+        // datetime：MIN - 1：1752-12-31T23:59:59.999
+        query = "?\\$filter=datetime+eq+datetime'1752-12-31T23:59:59.999'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.getCode(),
+                PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params("datetime").getMessage());
+
+        // datetimeoffset：MAX：9999-12-31T23:59:59.999
+        query = "?\\$filter=datetime+eq+datetimeoffset'9999-12-31T23:59:59.999'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+        // datetimeoffset：MAX + 1m：9999-12-31T23:59:59.999-00:01
+        query = "?\\$filter=datetime+eq+datetimeoffset'9999-12-31T23:59:59.999-00:01'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.getCode(),
+                PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params("datetime").getMessage());
+        // datetime：MIN：1753-01-01T00:00:00.000
+        query = "?\\$filter=datetime+eq+datetimeoffset'1753-01-01T00:00:00.000'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 0);
+        // datetime：MIN - 1m：1753-01-01T00:00:00.000+00:01
+        query = "?\\$filter=datetime+eq+datetimeoffset'1753-01-01T00:00:00.000%2B00:01'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.getCode(),
+                PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params("datetime").getMessage());
     }
 
     /**
      * Edm_DateTime型の$filter_ne検索の検証.
      */
     @Test
-    public final void Edm_DateTime型の$filter_ne検索の検証() {
+    public void Edm_DateTime型の$filter_ne検索の検証() {
         // Edm.DateTimeの検索条件：整数： 1111
         String query = "?\\$filter=datetime+ne+1111&\\$inlinecount=allpages";
         TResponse res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
@@ -750,6 +863,82 @@ public class UserDataListFilterTypeValidateTest extends AbstractUserDataTest {
         query = "?\\$filter=datetime+ne+null&\\$inlinecount=allpages";
         res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
         ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 2);
+
+        Date date = new Date(1420589956172L);
+        // datetime:yyyy-MM-dd'T'HH:mm:ss.SSS
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String dateStr = format.format(date);
+        query = "?\\$filter=datetime+ne+datetime'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 1);
+        // datetime:yyyy-MM-dd'T'HH:mm:ss
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+ne+datetime'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 2);
+        // datetime:yyyy-MM-dd'T'HH:mm
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+ne+datetime'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 2);
+        // datetime:yyyy-MM-dd'T'HH:mm:ss.SSS'%2B09:00'
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'%2B09:00'");
+        format.setTimeZone(TimeZone.getTimeZone("JST"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+ne+datetime'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.FILTER_PARSE_ERROR.getCode(),
+                PersoniumCoreException.OData.FILTER_PARSE_ERROR.getMessage());
+        // datetime:yyyyMMdd'T'HHmmssSSS
+        format = new SimpleDateFormat("yyyyMMdd'T'HHmmssSSS");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+ne+datetime'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.FILTER_PARSE_ERROR.getCode(),
+                PersoniumCoreException.OData.FILTER_PARSE_ERROR.getMessage());
+
+        // datetimeoffset:yyyy-MM-dd'T'HH:mm:ss.SSS'%2B09:00'
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'%2B09:00'");
+        format.setTimeZone(TimeZone.getTimeZone("JST"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+ne+datetimeoffset'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 1);
+        // datetimeoffset:yyyy-MM-dd'T'HH:mm:ss
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+ne+datetimeoffset'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 2);
+        // datetimeoffset:yyyy-MM-dd'T'HH:mm
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+ne+datetimeoffset'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 2);
+        // datetimeoffset:yyyy-MM-dd'T'HH:mm:ss.SSS'%2B09:00'
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'%2B09:00'");
+        format.setTimeZone(TimeZone.getTimeZone("JST"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+ne+datetimeoffset'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 1);
+        // datetimeoffset:yyyyMMdd'T'HHmmssSSS
+        format = new SimpleDateFormat("yyyyMMdd'T'HHmmssSSS");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        dateStr = format.format(date);
+        query = "?\\$filter=datetime+ne+datetimeoffset'" + dateStr + "'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.FILTER_PARSE_ERROR.getCode(),
+                PersoniumCoreException.OData.FILTER_PARSE_ERROR.getMessage());
 
         // Edm.DateTimeの検索条件：文字列： "1420589956172"
         query = "?\\$filter=datetime+ne+%271420589956172%27&\\$inlinecount=allpages";
@@ -803,6 +992,39 @@ public class UserDataListFilterTypeValidateTest extends AbstractUserDataTest {
                 PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params("datetime").getMessage());
         // Edm.DateTimeの検索条件：最小値(-6847804800000) + 1： -6847804800001
         query = "?\\$filter=datetime+ne+-6847804800001&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.getCode(),
+                PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params("datetime").getMessage());
+
+        // datetime：MAX：9999-12-31T23:59:59.999
+        query = "?\\$filter=datetime+ne+datetime'9999-12-31T23:59:59.999'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 2);
+        // datetime：MIN：1753-01-01T00:00:00.000
+        query = "?\\$filter=datetime+ne+datetime'1753-01-01T00:00:00.000'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 2);
+        // datetime：MIN - 1：1752-12-31T23:59:59.999
+        query = "?\\$filter=datetime+ne+datetime'1752-12-31T23:59:59.999'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.getCode(),
+                PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params("datetime").getMessage());
+
+        // datetimeoffset：MAX：9999-12-31T23:59:59.999
+        query = "?\\$filter=datetime+ne+datetimeoffset'9999-12-31T23:59:59.999'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 2);
+        // datetimeoffset：MAX + 1m：9999-12-31T23:59:59.999-00:01
+        query = "?\\$filter=datetime+ne+datetimeoffset'9999-12-31T23:59:59.999-00:01'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
+        res.checkErrorResponse(PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.getCode(),
+                PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params("datetime").getMessage());
+        // datetime：MIN：1753-01-01T00:00:00.000
+        query = "?\\$filter=datetime+ne+datetimeoffset'1753-01-01T00:00:00.000'&\\$inlinecount=allpages";
+        res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_OK);
+        ODataCommon.checkResponseBodyList(res.bodyAsJson(), null, NAMESPACE, null, 2);
+        // datetime：MIN - 1m：1753-01-01T00:00:00.000+00:01
+        query = "?\\$filter=datetime+ne+datetimeoffset'1753-01-01T00:00:00.000%2B00:01'&\\$inlinecount=allpages";
         res = UserDataUtils.list(CELL, BOX, COL, ENTITY, query, TOKEN, HttpStatus.SC_BAD_REQUEST);
         res.checkErrorResponse(PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.getCode(),
                 PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params("datetime").getMessage());

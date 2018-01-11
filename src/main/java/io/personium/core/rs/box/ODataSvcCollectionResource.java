@@ -119,8 +119,8 @@ public final class ODataSvcCollectionResource extends ODataResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
         // X-Personium-Recursive Header
         if (recursiveHeader != null
-                && !"true".equalsIgnoreCase(recursiveHeader)
-                && !"false".equalsIgnoreCase(recursiveHeader)) {
+                && !Boolean.TRUE.toString().equalsIgnoreCase(recursiveHeader)
+                && !Boolean.FALSE.toString().equalsIgnoreCase(recursiveHeader)) {
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE, recursiveHeader);
         }

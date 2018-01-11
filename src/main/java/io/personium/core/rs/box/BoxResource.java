@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
@@ -50,6 +51,7 @@ import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
+import io.personium.core.auth.CellPrivilege;
 import io.personium.core.bar.BarFileInstaller;
 import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
@@ -72,14 +74,14 @@ import io.personium.core.utils.UriUtils;
 /**
  * JAX-RS Resource for Box root URL.
  */
-public final class BoxResource {
+public class BoxResource {
     static Logger log = LoggerFactory.getLogger(BoxResource.class);
     String boxName;
 
     Cell cell;
     Box box;
     AccessContext accessContext;
-    DavRsCmp davRsCmp;
+    BoxRsCmp boxRsCmp;
     DavRsCmp cellRsCmp; // for box Install
 
     /**
@@ -111,7 +113,7 @@ public final class BoxResource {
         if (this.box != null) {
             //BoxCmp is necessary only if this Box exists
             BoxCmp davCmp = ModelFactory.boxCmp(this.box);
-            this.davRsCmp = new BoxRsCmp(cellRsCmp, davCmp, this.accessContext, this.box);
+            this.boxRsCmp = new BoxRsCmp(cellRsCmp, davCmp, this.accessContext, this.box);
         } else {
             //This box does not exist.
             String reqPathInfo = request.getPathInfo();
@@ -140,22 +142,7 @@ public final class BoxResource {
     @Path("{nextPath}")
     public Object nextPath(@PathParam("nextPath") final String nextPath,
             @Context HttpServletRequest request) {
-        return this.davRsCmp.nextPath(nextPath, request);
-    }
-
-    /**
-     * @return DavRsCmp
-     */
-    public DavRsCmp getDavRsCmp() {
-        return this.davRsCmp;
-    }
-
-    /**
-     * Boxのパス名を返します.
-     * @return path component name for the Box
-     */
-    public String getName() {
-        return this.boxName;
+        return this.boxRsCmp.nextPath(nextPath, request);
     }
 
     /**
@@ -163,13 +150,6 @@ public final class BoxResource {
      */
     public Box getBox() {
         return this.box;
-    }
-
-    /**
-     * @return BoxCmp Object
-     */
-    public BoxCmp getCmp() {
-        return (BoxCmp) this.davRsCmp.getDavCmp();
     }
 
     /**
@@ -187,7 +167,7 @@ public final class BoxResource {
     public Response get() {
 
         // アクセス制御
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
+        this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.READ);
 
         // キャッシュからboxインストールの非同期処理状況を取得する。
         // この際、nullが返ってきた場合は、boxインストールが実行されていないか、
@@ -259,6 +239,29 @@ public final class BoxResource {
     }
 
     /**
+     * DELETE method.
+     * This endpoint is dedicated for recursive deletion.
+     * @param recursiveHeader recursive header
+     * @return JAX-RS response
+     */
+    @WriteAPI
+    @DELETE
+    public Response recursiveDelete(
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
+        // If the X-Personium-Recursive header is not true, it is an error
+        if (!Boolean.TRUE.toString().equalsIgnoreCase(recursiveHeader)) {
+            throw PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
+                    PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
+        }
+        boolean recursive = Boolean.valueOf(recursiveHeader);
+
+        // Check acl.
+        boxRsCmp.checkAccessContext(boxRsCmp.getAccessContext(), CellPrivilege.BOX);
+
+        return boxRsCmp.getDavCmp().delete(null, recursive).build();
+    }
+
+    /**
      * PROPFINDメソッドの処理.
      * @param requestBodyXml Request Body
      * @param depth Depth Header
@@ -272,8 +275,8 @@ public final class BoxResource {
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
-        this.davRsCmp.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
-        return this.davRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
+        this.boxRsCmp.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
+        return this.boxRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
                 BoxPrivilege.READ_ACL);
     }
 
@@ -286,8 +289,8 @@ public final class BoxResource {
     @WebDAVMethod.PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         // アクセス制御
-        this.davRsCmp.checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
-        return this.davRsCmp.doProppatch(requestBodyXml);
+        this.boxRsCmp.checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
+        return this.boxRsCmp.doProppatch(requestBodyXml);
     }
 
     /**
@@ -296,7 +299,7 @@ public final class BoxResource {
      */
     @OPTIONS
     public Response options() {
-        return this.davRsCmp.options();
+        return this.boxRsCmp.options();
     }
 
     /**
@@ -308,8 +311,8 @@ public final class BoxResource {
     @ACL
     public Response acl(final Reader reader) {
         // アクセス制御
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
-        return this.davRsCmp.doAcl(reader);
+        this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
+        return this.boxRsCmp.doAcl(reader);
     }
 
     /**
@@ -391,7 +394,7 @@ public final class BoxResource {
             @Context HttpHeaders headers) {
 
         // Boxリソースに対するMOVEメソッドは使用禁止
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
+        this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.WRITE);
         throw PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_BOX;
     }
 }

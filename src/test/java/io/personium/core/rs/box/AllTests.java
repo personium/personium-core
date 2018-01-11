@@ -25,6 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
+    BoxResourceTest.class,
     ODataSvcCollectionResourceTest.class,
     ODataSvcSchemaResourceTest.class,
     DavCollectionResourceTest.class,
