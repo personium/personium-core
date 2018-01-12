@@ -317,23 +317,20 @@ public final class ODataUtils {
 
     // scheme check
     private static boolean isValidUriScheme(String scheme) {
-        return scheme != null
-                && (scheme.equals(UriUtils.SCHEME_HTTP)
-                        || scheme.equals(UriUtils.SCHEME_HTTPS)
-                        || scheme.equals(UriUtils.SCHEME_URN)
-                        || scheme.equals(UriUtils.SCHEME_LOCALUNIT));
+        return UriUtils.SCHEME_HTTP.equals(scheme)
+                || UriUtils.SCHEME_HTTPS.equals(scheme)
+                || UriUtils.SCHEME_URN.equals(scheme)
+                || UriUtils.SCHEME_LOCALUNIT.equals(scheme);
     }
 
     private static boolean isValidUrnScheme(String scheme) {
-        return scheme != null
-                && scheme.equals(UriUtils.SCHEME_URN);
+        return UriUtils.SCHEME_URN.equals(scheme);
     }
 
     private static boolean isValidCellUrlScheme(String scheme) {
-        return scheme != null
-                && (scheme.equals(UriUtils.SCHEME_HTTP)
-                        || scheme.equals(UriUtils.SCHEME_HTTPS)
-                        || scheme.equals(UriUtils.SCHEME_LOCALUNIT));
+        return UriUtils.SCHEME_HTTP.equals(scheme)
+                || UriUtils.SCHEME_HTTPS.equals(scheme)
+                || UriUtils.SCHEME_LOCALUNIT.equals(scheme);
     }
 
     private static boolean isValidSchemaUrlScheme(String scheme) {
@@ -341,18 +338,15 @@ public final class ODataUtils {
     }
 
     private static boolean isValidLocalUnitUrlScheme(String scheme) {
-        return scheme != null
-                && UriUtils.SCHEME_LOCALUNIT.equals(scheme);
+        return UriUtils.SCHEME_LOCALUNIT.equals(scheme);
     }
 
     private static boolean isValidLocalCellUrlScheme(String scheme) {
-        return scheme != null
-                && UriUtils.SCHEME_LOCALCELL.equals(scheme);
+        return UriUtils.SCHEME_LOCALCELL.equals(scheme);
     }
 
     private static boolean isValidLocalBoxUrlScheme(String scheme) {
-        return scheme != null
-                && UriUtils.SCHEME_LOCALBOX.equals(scheme);
+        return UriUtils.SCHEME_LOCALBOX.equals(scheme);
     }
 
     /**
