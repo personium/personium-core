@@ -1642,10 +1642,12 @@ public class AclTest extends AbstractCase {
             rcvRes2 = ReceivedMessageUtils.receive(null, TEST_CELL1, body, HttpStatus.SC_CREATED);
             results = (JSONObject) ((JSONObject) rcvRes2.bodyAsJson().get("d")).get("results");
             uuid = (String) results.get("__id");
+            // Create Relation
+            RelationUtils.create(TEST_CELL1, "user", null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
             // NG: アクセス権無し
             ReceivedMessageUtils.approve(account.get(0), TEST_CELL1, uuid, HttpStatus.SC_FORBIDDEN);
             // NG: message
-            // ResourceUtils.postApprovedMessage(account.get(2), TEST_CELL1, uuid, HttpStatus.SC_FORBIDDEN);
+            ReceivedMessageUtils.approve(account.get(2), TEST_CELL1, uuid, HttpStatus.SC_FORBIDDEN);
             // NG: social
             ReceivedMessageUtils.approve(account.get(4), TEST_CELL1, uuid, HttpStatus.SC_FORBIDDEN);
             // NG: message-read
@@ -1658,8 +1660,6 @@ public class AclTest extends AbstractCase {
             // Relation-ExtCell $links削除
             LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
                     Relation.EDM_TYPE_NAME, "user", null, AbstractCase.MASTER_TOKEN_NAME, -1);
-            // Relation削除
-            RelationUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "user", null, -1);
             // ExtCell削除
             ExtCellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1, UrlUtils.cellRoot("targetCell"));
             if (rcvRes2 != null) {

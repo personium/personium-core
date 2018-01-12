@@ -762,18 +762,18 @@ public class RuleManager {
                 for (RuleInfo ri : mapRule.values()) {
                     logger.info("rule");
                     JSONObject json = new JSONObject();
-                    json.put("External", ri.external);
-                    json.put("Subject", ri.subject);
-                    json.put("Type", ri.type);
-                    json.put("Object", ri.object);
-                    json.put("Info", ri.info);
-                    json.put("Action", ri.action);
-                    json.put("Service", ri.service);
+                    json.put(Rule.P_EXTERNAL.getName(), ri.external);
+                    json.put(Rule.P_SUBJECT.getName(), ri.subject);
+                    json.put(Rule.P_TYPE.getName(), ri.type);
+                    json.put(Rule.P_OBJECT.getName(), ri.object);
+                    json.put(Rule.P_INFO.getName(), ri.info);
+                    json.put(Rule.P_ACTION.getName(), ri.action);
+                    json.put(Rule.P_SERVICE.getName(), ri.service);
                     if (ri.box != null) {
-                        json.put("Schema", ri.box.schema);
-                        json.put("_Box.Name", ri.box.name);
+                        json.put(Box.P_SCHEMA.getName(), ri.box.schema);
+                        json.put(Common.P_BOX_NAME.getName(), ri.box.name);
                     }
-                    json.put("Name", ri.name);
+                    json.put(Rule.P_NAME.getName(), ri.name);
                     jsonRuleArray.add(json);
                 }
             }
@@ -781,8 +781,8 @@ public class RuleManager {
             if (mapBox != null) {
                 for (BoxInfo bi : mapBox.values()) {
                     JSONObject json = new JSONObject();
-                    json.put("Name", bi.name);
-                    json.put("Schema", bi.schema);
+                    json.put(Common.P_NAME.getName(), bi.name);
+                    json.put(Box.P_SCHEMA.getName(), bi.schema);
                     json.put("id", bi.id);
                     jsonBoxArray.add(json);
                 }

@@ -114,37 +114,37 @@ public class Rule {
             .setDefaultValue(Common.UUID)
             .setAnnotations(Common.P_FORMAT_ID);
     /**
-     * External property.
+     * EventExternal property.
      */
-    public static final EdmProperty.Builder P_EXTERNAL = EdmProperty.newBuilder("External")
+    public static final EdmProperty.Builder P_EXTERNAL = EdmProperty.newBuilder("EventExternal")
             .setType(EdmSimpleType.BOOLEAN)
             .setNullable(true)
             .setDefaultValue("false");
     /**
-     * Subjcet property.
+     * EventSubjcet property.
      */
-    public static final EdmProperty.Builder P_SUBJECT = EdmProperty.newBuilder("Subject")
+    public static final EdmProperty.Builder P_SUBJECT = EdmProperty.newBuilder("EventSubject")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
             .setAnnotations(Common.P_FORMAT_URI);
     /**
-     * Type property.
+     * EventType property.
      */
-    public static final EdmProperty.Builder P_TYPE = EdmProperty.newBuilder("Type")
+    public static final EdmProperty.Builder P_TYPE = EdmProperty.newBuilder("EventType")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
             .setAnnotations(Common.P_FORMAT_NAME_WITH_SIGN);
     /**
-     * Object property.
+     * EventObject property.
      */
-    public static final EdmProperty.Builder P_OBJECT = EdmProperty.newBuilder("Object")
+    public static final EdmProperty.Builder P_OBJECT = EdmProperty.newBuilder("EventObject")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
             .setAnnotations(P_FORMAT_OBJECT);
     /**
-     * Info property.
+     * EventInfo property.
      */
-    public static final EdmProperty.Builder P_INFO = EdmProperty.newBuilder("Info")
+    public static final EdmProperty.Builder P_INFO = EdmProperty.newBuilder("EventInfo")
             .setType(EdmSimpleType.STRING)
             .setNullable(true);
     /**
@@ -155,9 +155,9 @@ public class Rule {
             .setNullable(true)
             .setAnnotations(P_FORMAT_ACTION);
     /**
-     * Service property.
+     * TargetUrl property.
      */
-    public static final EdmProperty.Builder P_SERVICE = EdmProperty.newBuilder("Service")
+    public static final EdmProperty.Builder P_SERVICE = EdmProperty.newBuilder("TargetUrl")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
             .setAnnotations(P_FORMAT_SERVICE);

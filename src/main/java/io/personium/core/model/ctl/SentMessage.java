@@ -81,7 +81,7 @@ public class SentMessage extends Message {
     public static final EdmProperty.Builder P_RESULT_TO = EdmProperty.newBuilder("To")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.P_FORMAT_URI);
+            .setAnnotations(Common.P_FORMAT_CELL_URL);
     /**
     * Result/Code property.
     */

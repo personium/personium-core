@@ -327,8 +327,8 @@ public class MessageEscapeTest extends ODataCommon {
 
             // レスポンスボディのチェック
             ODataCommon.checkErrorResponseBody(response,
-                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
+                    PersoniumCoreException.OData.CELL_URL_FORMAT_ERROR.getCode(),
+                    PersoniumCoreException.OData.CELL_URL_FORMAT_ERROR
                             .params("RequestRelationTarget").getMessage());
 
         } finally {

@@ -83,36 +83,18 @@ public class Common {
     public static final String PATTERN_NAME_WITH_SIGN = "^" + REGEX_NAME_WITH_SIGN + "$";
     /** Pattern relation name. */
     public static final String PATTERN_RELATION_NAME = "^" + REGEX_RELATION_NAME + "$";
-    /**
-     * Pattern relation class path "/$1/__relation/__/$2".<br>
+    /** String containing "__relation/__/".<br>
      * Explanation of applicable group.<br>
-     * $1:CellName
+     * $1:SchemaURL
      * $2:RelationName
      */
-    public static final String PATTERN_RELATION_CLASS_PATH = "/(" + REGEX_NAME + ")/__relation/__/(" + REGEX_RELATION_NAME + ")/?$"; // CHECKSTYLE IGNORE - To maintain readability
-    /**
-     * Pattern relation class url "$1/$2/__relation/__/$3".<br>
+    public static final String PATTERN_RELATION_CLASS_URL = "(^.+)__relation/__/(" + REGEX_RELATION_NAME + ")/?$"; // CHECKSTYLE IGNORE - To maintain readability
+    /** String containing "__role/__/".<br>
      * Explanation of applicable group.<br>
-     * $1:BaseURL
-     * $2:CellName
-     * $3:RelationName
-     */
-    public static final String PATTERN_RELATION_CLASS_URL = "(^.+)" + PATTERN_RELATION_CLASS_PATH;
-    /**
-     * Pattern role class path "/$1/__role/__/$2".<br>
-     * Explanation of applicable group.<br>
-     * $1:CellName
+     * $1:SchemaURL
      * $2:RoleName
      */
-    public static final String PATTERN_ROLE_CLASS_PATH = "/(" + REGEX_NAME + ")/__role/__/(" + REGEX_NAME + ")/?$";
-    /**
-     * Pattern role class url "$1/$2/__role/__/$3".<br>
-     * Explanation of applicable group.<br>
-     * $1:BaseURL
-     * $2:CellName
-     * $3:RoleName
-     */
-    public static final String PATTERN_ROLE_CLASS_URL = "(^.+)" + PATTERN_ROLE_CLASS_PATH;
+    public static final String PATTERN_ROLE_CLASS_URL = "(^.+)__role/__/(" + REGEX_NAME + ")/?$";
     /**
      * Pattern service path using personium-localbox "/$1/$2".<br>
      * Explanation of applicable group.<br>
@@ -129,14 +111,14 @@ public class Common {
      */
     public static final String PATTERN_SERVICE_LOCALCELL_PATH = "/(" + REGEX_NAME + "|__)" + PATTERN_SERVICE_LOCALBOX_PATH; // CHECKSTYLE IGNORE - To maintain readability
     /**
-     * Pattern service path "/$1/$2/$3/$4".<br>
+     * Pattern service path using personium-localunit "/$1/$2/$3/$4".<br>
      * Explanation of applicable group.<br>
      * $1:CellName
      * $2:BoxName
      * $3:CollectionName
      * $4:ServiceName
      */
-    public static final String PATTERN_SERVICE_PATH = "/(" + REGEX_NAME + ")" + PATTERN_SERVICE_LOCALCELL_PATH;
+    public static final String PATTERN_SERVICE_LOCALUNIT_PATH = "/(" + REGEX_NAME + ")" + PATTERN_SERVICE_LOCALCELL_PATH; // CHECKSTYLE IGNORE - To maintain readability
     /** Pattern multiplicity. */
     public static final String PATTERN_MULTIPLICITY = "0\\.\\.1|1|\\*";
     /** Pattern id. */

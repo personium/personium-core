@@ -315,49 +315,52 @@ public final class ODataUtils {
         return true;
     }
 
-    /**
-     * プロパティ項目の値をURIかチェックする.
-     * @param propValue チェック値
-     * @return true:バリデートOK、falseバリデートNG
-     */
-    public static boolean isValidUri(String propValue) {
-        URI uri;
-        try {
-            uri = new URI(propValue);
-            String scheme = uri.getScheme();
-            // Scheme check
-            if (uri.getScheme() == null
-                    || (!(scheme.equals(UriUtils.SCHEME_HTTP))
-                     && !(scheme.equals(UriUtils.SCHEME_HTTPS))
-                     && !(scheme.equals(UriUtils.SCHEME_URN)))
-                     && !(scheme.equals(UriUtils.SCHEME_LOCALUNIT))) {
-                return false;
-            }
-            // 文字列長チェック
-            if (uri.toString().length() > URI_MAX_LENGTH) {
-                return false;
-            }
-        } catch (URISyntaxException e) {
-            return false;
-        }
-        return true;
+    // scheme check
+    private static boolean isValidUriScheme(String scheme) {
+        return scheme != null
+                && (scheme.equals(UriUtils.SCHEME_HTTP)
+                        || scheme.equals(UriUtils.SCHEME_HTTPS)
+                        || scheme.equals(UriUtils.SCHEME_URN)
+                        || scheme.equals(UriUtils.SCHEME_LOCALUNIT));
+    }
+
+    private static boolean isValidUrnScheme(String scheme) {
+        return scheme != null
+                && scheme.equals(UriUtils.SCHEME_URN);
+    }
+
+    private static boolean isValidCellUrlScheme(String scheme) {
+        return scheme != null
+                && (scheme.equals(UriUtils.SCHEME_HTTP)
+                        || scheme.equals(UriUtils.SCHEME_HTTPS)
+                        || scheme.equals(UriUtils.SCHEME_LOCALUNIT));
+    }
+
+    private static boolean isValidSchemaUrlScheme(String scheme) {
+        return isValidUrnScheme(scheme) || isValidCellUrlScheme(scheme);
+    }
+
+    private static boolean isValidLocalUnitUrlScheme(String scheme) {
+        return scheme != null
+                && UriUtils.SCHEME_LOCALUNIT.equals(scheme);
+    }
+
+    private static boolean isValidLocalCellUrlScheme(String scheme) {
+        return scheme != null
+                && UriUtils.SCHEME_LOCALCELL.equals(scheme);
+    }
+
+    private static boolean isValidLocalBoxUrlScheme(String scheme) {
+        return scheme != null
+                && UriUtils.SCHEME_LOCALBOX.equals(scheme);
     }
 
     /**
-     * Check if string is valid Schema URI.
+     * Check if string is valid Uri.
      * @param str Input string
      * @return true if valid
      */
-    public static boolean isValidSchemaUri(String str) {
-        return isValidUrn(str) || isValidCellUrl(str);
-    }
-
-    /**
-     * Check if string is valid Schema Urn.
-     * @param str Input string
-     * @return true if valid
-     */
-    private static boolean isValidUrn(String str) {
+    public static boolean isValidUri(String str) {
         boolean isValidLength = str.length() <= URI_MAX_LENGTH;
         URI uri;
         try {
@@ -366,9 +369,26 @@ public final class ODataUtils {
             return false;
         }
         String scheme = uri.getScheme();
-        boolean isUrn = scheme != null
-                && scheme.equals(UriUtils.SCHEME_URN);
-        return isValidLength && isUrn;
+        boolean isValidScheme = isValidUriScheme(scheme);
+        return isValidLength && isValidScheme;
+    }
+
+    /**
+     * Check if string is valid Urn.
+     * @param str Input string
+     * @return true if valid
+     */
+    public static boolean isValidUrn(String str) {
+        boolean isValidLength = str.length() <= URI_MAX_LENGTH;
+        URI uri;
+        try {
+            uri = new URI(str);
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        String scheme = uri.getScheme();
+        boolean isValidScheme = isValidUrnScheme(scheme);
+        return isValidLength && isValidScheme;
     }
 
     /**
@@ -385,13 +405,19 @@ public final class ODataUtils {
             return false;
         }
         String scheme = uri.getScheme();
-        boolean isValidScheme = scheme != null
-                && (scheme.equals(UriUtils.SCHEME_HTTP)
-                || scheme.equals(UriUtils.SCHEME_HTTPS)
-                || scheme.equals(UriUtils.SCHEME_LOCALUNIT));
+        boolean isValidScheme = isValidCellUrlScheme(scheme);
         boolean isNormalized = uri.normalize().toString().equals(str);
         boolean hasTrailingSlash = str.endsWith("/");
         return isValidLength && isValidScheme && isNormalized && hasTrailingSlash;
+    }
+
+    /**
+     * Check if string is valid Schema URI.
+     * @param str Input string
+     * @return true if valid
+     */
+    public static boolean isValidSchemaUri(String str) {
+        return isValidUrn(str) || isValidCellUrl(str);
     }
 
     /**
@@ -408,9 +434,7 @@ public final class ODataUtils {
             return false;
         }
         String scheme = uri.getScheme();
-        boolean isValidScheme = scheme != null
-                && (UriUtils.SCHEME_LOCALCELL.equals(scheme)
-                 || UriUtils.SCHEME_LOCALBOX.equals(scheme));
+        boolean isValidScheme = isValidLocalCellUrlScheme(scheme) || isValidLocalBoxUrlScheme(scheme);
         boolean isNormalized = uri.normalize().toString().equals(str);
         return isValidLength && isValidScheme && isNormalized;
     }
@@ -439,8 +463,7 @@ public final class ODataUtils {
             uri = new URI(str);
             String scheme = uri.getScheme();
             // Scheme check
-            if (scheme == null
-                     || !scheme.equals(UriUtils.SCHEME_LOCALBOX)) {
+            if (!isValidLocalBoxUrlScheme(scheme)) {
                 return false;
             }
             // String length check
@@ -471,8 +494,38 @@ public final class ODataUtils {
             uri = new URI(str);
             String scheme = uri.getScheme();
             // Scheme check
-            if (scheme == null
-                     || !scheme.equals(UriUtils.SCHEME_LOCALCELL)) {
+            if (!isValidLocalCellUrlScheme(scheme)) {
+                return false;
+            }
+            // String length check
+            if (uri.toString().length() > URI_MAX_LENGTH) {
+                return false;
+            }
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        String path = getPath(uri);
+        if (path == null) {
+            return false;
+        }
+        log.debug("path is " + path);
+        // Regular expression check
+        return ODataUtils.validateRegEx(path, pFormat);
+    }
+
+    /**
+     * Check the value of property item with LocalUnit URL.
+     * @param str Input string
+     * @param pFormat regular expression format
+     * @return true:OK false:NG
+     */
+    public static boolean validateLocalUnitUrl(String str, String pFormat) {
+        URI uri;
+        try {
+            uri = new URI(str);
+            String scheme = uri.getScheme();
+            // Scheme check
+            if (!isValidLocalUnitUrlScheme(scheme)) {
                 return false;
             }
             // String length check
@@ -503,10 +556,7 @@ public final class ODataUtils {
             uri = new URI(str);
             String scheme = uri.getScheme();
             // Scheme check
-            if (scheme == null
-                    || (!scheme.equals(UriUtils.SCHEME_HTTP) //NOPMD -To maintain readability
-                     && !scheme.equals(UriUtils.SCHEME_HTTPS)
-                     && !scheme.equals(UriUtils.SCHEME_LOCALUNIT))) {
+            if (!isValidSchemaUrlScheme(scheme)) {
                 return false;
             }
             // String length check
@@ -516,12 +566,8 @@ public final class ODataUtils {
         } catch (URISyntaxException e) {
             return false;
         }
-        String path = getPath(uri);
-        if (path == null) {
-            return false;
-        }
         // Regular expression check
-        return ODataUtils.validateRegEx(path, pFormat);
+        return ODataUtils.validateRegEx(str, pFormat);
     }
 
     /**

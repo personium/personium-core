@@ -110,6 +110,20 @@ public final class CtlSchema {
     }
 
     /**
+     * UnitCtlデータサービスののEdmDataServices オブジェクトを返します.
+     * @return EdmDataServices.Builder Object
+     */
+    public static EdmDataServices.Builder getEdmDataServicesForUnitCtl() {
+        // Entity Type のリスト
+        EdmEntityType.Builder[] typeList = new EdmEntityType.Builder[] {Cell.EDM_TYPE_BUILDER };
+
+        // Associationの定義
+        EdmAssociation.Builder[] assocs = new EdmAssociation.Builder[] {};
+
+        return createDataServices(Common.EDM_NS_UNIT_CTL, typeList, assocs);
+    }
+
+    /**
      * CellCtlデータサービスのEdmDataServices オブジェクトを返します.
      * @return EdmDataServices Object
      */
@@ -137,13 +151,15 @@ public final class CtlSchema {
                 associate(Common.EDM_NS_CELL_CTL,
                         Box.EDM_TYPE_BUILDER, Relation.EDM_TYPE_BUILDER,
                         EdmMultiplicity.ZERO_TO_ONE, EdmMultiplicity.MANY),
+
                 // Account : Role = many : many
                 associateManyMany(Common.EDM_NS_CELL_CTL,
                         Account.EDM_TYPE_BUILDER, Role.EDM_TYPE_BUILDER),
 
-                // ExtCell : Relation = many : many
+                // ExtCell : Role = many : many
                 associateManyMany(Common.EDM_NS_CELL_CTL,
                         ExtCell.EDM_TYPE_BUILDER, Role.EDM_TYPE_BUILDER),
+
                 // ExtCell : Relation = many : many
                 associateManyMany(Common.EDM_NS_CELL_CTL,
                         ExtCell.EDM_TYPE_BUILDER, Relation.EDM_TYPE_BUILDER),
@@ -194,16 +210,37 @@ public final class CtlSchema {
     }
 
     /**
-     * UnitCtlデータサービスののEdmDataServices オブジェクトを返します.
-     * @return EdmDataServices.Builder Object
+     * Get EdmDataServices for Message.
+     * @return EdmDataServicesBuilder Object
      */
-    public static EdmDataServices.Builder getEdmDataServicesForUnitCtl() {
-        // Entity Type のリスト
-        EdmEntityType.Builder[] typeList = new EdmEntityType.Builder[] {Cell.EDM_TYPE_BUILDER };
+    public static EdmDataServices.Builder getEdmDataServicesForMessage() {
+        // List of Entity Type
+        EdmEntityType.Builder[] typeList = new EdmEntityType.Builder[] {
+                ReceivedMessagePort.EDM_TYPE_BUILDER,
+                SentMessagePort.EDM_TYPE_BUILDER,
+                Role.EDM_TYPE_BUILDER,
+                Relation.EDM_TYPE_BUILDER,
+                ExtCell.EDM_TYPE_BUILDER,
+                Rule.EDM_TYPE_BUILDER
+        };
+        // List of Association
+        EdmAssociation.Builder[] assocs = new EdmAssociation.Builder[] {
+                // ExtCell : Role = many : many
+                associateManyMany(Common.EDM_NS_CELL_CTL,
+                        ExtCell.EDM_TYPE_BUILDER, Role.EDM_TYPE_BUILDER),
 
-        // Associationの定義
-        EdmAssociation.Builder[] assocs = new EdmAssociation.Builder[] {};
-        return createDataServices(Common.EDM_NS_UNIT_CTL, typeList, assocs);
+                // ExtCell : Relation = many : many
+                associateManyMany(Common.EDM_NS_CELL_CTL,
+                        ExtCell.EDM_TYPE_BUILDER, Relation.EDM_TYPE_BUILDER)
+        };
+        // List of ComplexType
+        EdmComplexType.Builder[] complexList = new EdmComplexType.Builder[]{
+                SentMessage.COMPLEXTYPE_BUILDER,
+                SentMessage.REQUESTRULE_BUILDER,
+                ReceivedMessage.REQUESTRULE_BUILDER
+        };
+
+        return createDataServices(Common.EDM_NS_CELL_CTL, typeList, assocs, complexList);
     }
 
     /** Associationの定義. */
@@ -241,28 +278,6 @@ public final class CtlSchema {
      */
     public static EdmDataServices.Builder getEdmDataServicesForODataSvcSchema() {
         return createDataServices(Common.EDM_NS_ODATA_SVC_SCHEMA, SCHEMA_TYPELIST, SCHEMA_ASSOCS);
-    }
-
-    /**
-     * MessageデータのEdmDataServices オブジェクトを返します.
-     * @return EdmDataServices Object
-     */
-    public static EdmDataServices.Builder getEdmDataServicesForMessage() {
-        // Entity Type のリスト
-        EdmEntityType.Builder[] typeList = new EdmEntityType.Builder[] {
-                ReceivedMessagePort.EDM_TYPE_BUILDER,
-                SentMessagePort.EDM_TYPE_BUILDER,
-                Role.EDM_TYPE_BUILDER,
-                Relation.EDM_TYPE_BUILDER,
-                ExtCell.EDM_TYPE_BUILDER,
-                Rule.EDM_TYPE_BUILDER};
-        EdmAssociation.Builder[] assocs = new EdmAssociation.Builder[] {};
-        EdmComplexType.Builder[] complexList = new EdmComplexType.Builder[]{
-                SentMessage.COMPLEXTYPE_BUILDER,
-                SentMessage.REQUESTRULE_BUILDER,
-                ReceivedMessage.REQUESTRULE_BUILDER
-        };
-        return createDataServices(Common.EDM_NS_CELL_CTL, typeList, assocs, complexList);
     }
 
     /**

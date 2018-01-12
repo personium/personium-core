@@ -56,7 +56,7 @@ public class ReceivedMessage extends Message {
     public static final EdmProperty.Builder P_FROM = EdmProperty.newBuilder("From")
             .setType(EdmSimpleType.STRING)
             .setNullable(false)
-            .setAnnotations(Common.P_FORMAT_URI);
+            .setAnnotations(Common.P_FORMAT_CELL_URL);
     /**
      * MulticastTo property.
      */
