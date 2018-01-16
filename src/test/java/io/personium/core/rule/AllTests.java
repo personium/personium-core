@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.model;
+package io.personium.core.rule;
 
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import io.personium.core.model.ModelFactory;
-import io.personium.test.categories.Unit;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * ModelFactory ユニットテストクラス.
+ * Test suite for executing all the test cases under package.
  */
-@Category({ Unit.class })
-public class ModelFactoryTest {
-
-
-
-    /**
-     * ModelFactoryコンストラクタの呼び出しテスト.
-     */
-    @Test
-    public void testODataCtl_unitCtl() {
-        assertNotNull(ModelFactory.ODataCtl.unitCtl(null));
-    }
+@RunWith(Suite.class)
+@SuiteClasses({
+    RuleManagerTest.class
+})
+public class AllTests {
 }

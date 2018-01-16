@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.PersoniumCoreException;
-import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.rs.cell.MessageODataResource;
 import io.personium.core.rs.odata.AbstractODataResource;
@@ -91,7 +90,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void ToがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(), "http://example.com/test");
+        MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(), "http://example.com/test/");
     }
 
     /**
@@ -100,7 +99,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     @Test
     public final void ToがCSV複数URL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(),
-                "http://example.com/test,http://example.com/test");
+                "http://example.com/test/,http://example.com/test/");
     }
 
     /**
@@ -127,7 +126,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     @Test(expected = PersoniumCoreException.class)
     public final void Toが不正なCSV形式の場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(),
-                "http://example.com/test,,http://example.com/test");
+                "http://example.com/test/,,http://example.com/test");
     }
 
     /**
@@ -348,7 +347,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     @Test
     public final void Bodyが0byteの場合にPersoniumCoreExceptionが発生しないこと() {
         String body = "";
-        MessageODataResource.validateBody(body, Common.MAX_MESSAGE_BODY_LENGTH);
+        MessageODataResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -362,7 +361,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
         }
         String body = String.valueOf(buff);
 
-        MessageODataResource.validateBody(body, Common.MAX_MESSAGE_BODY_LENGTH);
+        MessageODataResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -376,7 +375,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
         }
         String body = String.valueOf(buff);
 
-        MessageODataResource.validateBody(body, Common.MAX_MESSAGE_BODY_LENGTH);
+        MessageODataResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -504,7 +503,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     public final void RequestRelationTargetがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(SentMessage.P_REQUEST_RELATION_TARGET.build(),
                 SentMessage.P_REQUEST_RELATION_TARGET.getName(),
-                OProperties.string(SentMessage.P_REQUEST_RELATION_TARGET.getName(), "http://example.com/test"));
+                OProperties.string(SentMessage.P_REQUEST_RELATION_TARGET.getName(), "http://example.com/test/"));
     }
 
     /**
@@ -547,7 +546,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void ToがあってToRelationがない場合にPersoniumCoreExceptionが発生しないこと() {
-        String to = "http://example.com/toAddress";
+        String to = "http://example.com/toAddress/";
         String toRelation = (String) OProperties.null_(SentMessage.P_TO_RELATION.getName(),
                 EdmSimpleType.STRING).getValue();
         MessageODataResource.validateToAndToRelation(to, toRelation);
@@ -569,7 +568,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void ToとToRelationが両方ある場合にPersoniumCoreExceptionが発生しないこと() {
-        String to = "http://example.com/toAddress";
+        String to = "http://example.com/toAddress/";
         String toRelation = "http://example.com/toRelation";
         MessageODataResource.validateToAndToRelation(to, toRelation);
     }

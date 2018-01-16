@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -378,14 +378,15 @@ public class MessageApproveTest extends ODataCommon {
     }
 
     /**
-     * 関係登録で存在しないRelationを使用したメッセージ承認ができること.
+     * Normal test.
+     * Approve build message for not exsiting relation.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 関係登録で存在しないRelationを使用したメッセージ承認ができること() {
+    public final void normal_approve_build_message_for_not_exist_relation() {
         String relationName = "messageTestRelation";
 
-        // 受信メッセージのリクエストボディ
+        // Request body of message
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
@@ -401,52 +402,48 @@ public class MessageApproveTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            // メッセージ受信を登録
+            // ---------------
+            // Preparation
+            // ---------------
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
             PersoniumResponse res = createReceivedMessage(requestUrl, body);
             locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
-
-            // __idの取得
             String messageId = getMessageId(res);
 
-            // メッセージ承認にする
+            // ---------------
+            // Execution
+            // ---------------
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
-
-            // リクエストヘッダをセット
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
             res = rest.post(requestUrl, "{\"Command\":\"" + STATUS_APPROVED + "\" }",
                     requestheaders);
-            assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
-            // Relationが存在することの確認
-            RelationUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, null, HttpStatus.SC_OK);
-
-            // ExtCellが存在することの確認
+            // ---------------
+            // Verification
+            // ---------------
+            assertEquals(HttpStatus.SC_CONFLICT, res.getStatusCode());
+            // Check Relation
+            RelationUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, null, HttpStatus.SC_NOT_FOUND);
+            // Check ExtCell
             ExtCellUtils.get(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"),
-                    HttpStatus.SC_OK);
-
-            // Relation-ExtCellの$links一覧取得
-            ArrayList<String> expectedUriList = new ArrayList<String>();
-            expectedUriList.add(UrlUtils.extCellResource(Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell")));
-            checkRelationExtCellLinks(relationName, expectedUriList);
-
-            // Statusが変更されていることを確認
-            checkMessageStatus(messageId, STATUS_APPROVED);
+                    HttpStatus.SC_NOT_FOUND);
+            // Check Status
+            checkMessageStatus(messageId, STATUS_NONE);
 
         } catch (PersoniumException e) {
             e.printStackTrace();
         } finally {
-            // Relation-ExtCell $links削除
+            // Delete Relation-ExtCell $links
             LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
                     PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
                     Relation.EDM_TYPE_NAME, relationName, null, MASTER_TOKEN_NAME, -1);
-            // Relation削除
+            // Delete Relation
             RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, null, -1);
-            // ExtCell削除
+            // Delete ExtCell
             ExtCellUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"));
-            // 受信メッセージ削除
+            // Delete Received message
             if (locationHeader != null) {
                 deleteOdataResource(locationHeader);
             }
@@ -586,17 +583,14 @@ public class MessageApproveTest extends ODataCommon {
             // ---------------
             // Verification
             // ---------------
-            assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
-            // Check relation exists
-            RelationUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, HttpStatus.SC_OK);
-            // Check extcell exists
-            ExtCellUtils.get(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"), HttpStatus.SC_OK);
-            // Check $links exists
-            ArrayList<String> expectedUriList = new ArrayList<String>();
-            expectedUriList.add(UrlUtils.extCellResource(Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell")));
-            checkRelationExtCellLinks(relationName, boxName, expectedUriList);
-            // Check status changed
-            checkMessageStatus(messageId, STATUS_APPROVED);
+            assertEquals(HttpStatus.SC_CONFLICT, res.getStatusCode());
+            // Check relation not exists
+            RelationUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, HttpStatus.SC_NOT_FOUND);
+            // Check extcell not exists
+            ExtCellUtils.get(MASTER_TOKEN_NAME,
+                    Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"), HttpStatus.SC_NOT_FOUND);
+            // Check status not changed
+            checkMessageStatus(messageId, STATUS_NONE);
         } catch (PersoniumException e) {
             fail(e.getStackTrace().toString());
         } finally {
@@ -650,6 +644,8 @@ public class MessageApproveTest extends ODataCommon {
             buildResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_CREATED);
             String messageId = (String) body.get("__id");
+            // Create Relation
+            RelationUtils.create(Setup.TEST_CELL1, relationName, boxName, MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
 
             // Approved message
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
@@ -998,17 +994,14 @@ public class MessageApproveTest extends ODataCommon {
             // ---------------
             // Verification
             // ---------------
-            assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
+            assertEquals(HttpStatus.SC_CONFLICT, res.getStatusCode());
             // Check relation exists
-            RelationUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, HttpStatus.SC_OK);
+            RelationUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, HttpStatus.SC_NOT_FOUND);
             // Check extcell exists
-            ExtCellUtils.get(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"), HttpStatus.SC_OK);
-            // Check $links exists
-            ArrayList<String> expectedUriList = new ArrayList<String>();
-            expectedUriList.add(UrlUtils.extCellResource(Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell")));
-            checkRelationExtCellLinks(relationName, boxName, expectedUriList);
+            ExtCellUtils.get(MASTER_TOKEN_NAME,
+                    Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"), HttpStatus.SC_NOT_FOUND);
             // Check status changed
-            checkMessageStatus(messageId, STATUS_APPROVED);
+            checkMessageStatus(messageId, STATUS_NONE);
         } catch (PersoniumException e) {
             fail(e.getStackTrace().toString());
         } finally {
@@ -1063,6 +1056,9 @@ public class MessageApproveTest extends ODataCommon {
             buildResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_CREATED);
             String messageId = (String) body.get("__id");
+
+            // Create Relation
+            RelationUtils.create(Setup.TEST_CELL1, relationName, boxName, MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
 
             // Approved message
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
@@ -1324,6 +1320,9 @@ public class MessageApproveTest extends ODataCommon {
                     body.toJSONString(), HttpStatus.SC_CREATED);
             String messageId = (String) body.get("__id");
 
+            // Relation
+            RelationUtils.create(Setup.TEST_CELL1, relationName, boxName, MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+
             // Approved message
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
             HashMap<String, String> requestheaders = new HashMap<String, String>();
@@ -1399,7 +1398,7 @@ public class MessageApproveTest extends ODataCommon {
 
         // Request body of relation
         JSONObject roleBody = new JSONObject();
-        roleBody.put(Role.P_NAME.getName(), roleName);
+        roleBody.put(Common.P_NAME.getName(), roleName);
         roleBody.put(Common.P_BOX_NAME.getName(), boxName);
 
         // Request body of message
@@ -1520,17 +1519,14 @@ public class MessageApproveTest extends ODataCommon {
             // ---------------
             // Verification
             // ---------------
-            assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
+            assertEquals(HttpStatus.SC_CONFLICT, res.getStatusCode());
             // Check relation exists
-            RoleUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, HttpStatus.SC_OK);
+            RoleUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, HttpStatus.SC_NOT_FOUND);
             // Check extcell exists
-            ExtCellUtils.get(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"), HttpStatus.SC_OK);
-            // Check $links exists
-            ArrayList<String> expectedUriList = new ArrayList<String>();
-            expectedUriList.add(UrlUtils.extCellResource(Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell")));
-            checkRoleExtCellLinks(roleName, boxName, expectedUriList);
+            ExtCellUtils.get(MASTER_TOKEN_NAME,
+                    Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"), HttpStatus.SC_NOT_FOUND);
             // Check status changed
-            checkMessageStatus(messageId, STATUS_APPROVED);
+            checkMessageStatus(messageId, STATUS_NONE);
         } catch (PersoniumException e) {
             fail(e.getStackTrace().toString());
         } finally {
@@ -1584,6 +1580,9 @@ public class MessageApproveTest extends ODataCommon {
             buildResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_CREATED);
             String messageId = (String) body.get("__id");
+
+            // Role
+            RoleUtils.create(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, HttpStatus.SC_CREATED);
 
             // Approved message
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
@@ -1723,7 +1722,7 @@ public class MessageApproveTest extends ODataCommon {
 
         // Request body of role
         JSONObject roleBody = new JSONObject();
-        roleBody.put(Role.P_NAME.getName(), roleName);
+        roleBody.put(Common.P_NAME.getName(), roleName);
         roleBody.put(Common.P_BOX_NAME.getName(), boxName);
 
         // Request body of message
@@ -1809,7 +1808,7 @@ public class MessageApproveTest extends ODataCommon {
 
         // Request body of role
         JSONObject roleBody = new JSONObject();
-        roleBody.put(Role.P_NAME.getName(), roleName);
+        roleBody.put(Common.P_NAME.getName(), roleName);
         roleBody.put(Common.P_BOX_NAME.getName(), boxName);
 
         // Request body of message
@@ -1932,17 +1931,14 @@ public class MessageApproveTest extends ODataCommon {
             // ---------------
             // Verification
             // ---------------
-            assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
-            // Check role exists
-            RoleUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, HttpStatus.SC_OK);
-            // Check extcell exists
-            ExtCellUtils.get(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"), HttpStatus.SC_OK);
-            // Check $links exists
-            ArrayList<String> expectedUriList = new ArrayList<String>();
-            expectedUriList.add(UrlUtils.extCellResource(Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell")));
-            checkRoleExtCellLinks(roleName, boxName, expectedUriList);
-            // Check status changed
-            checkMessageStatus(messageId, STATUS_APPROVED);
+            assertEquals(HttpStatus.SC_CONFLICT, res.getStatusCode());
+            // Check role not exists
+            RoleUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, HttpStatus.SC_NOT_FOUND);
+            // Check extcell not exists
+            ExtCellUtils.get(MASTER_TOKEN_NAME,
+                    Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"), HttpStatus.SC_NOT_FOUND);
+            // Check status not changed
+            checkMessageStatus(messageId, STATUS_NONE);
         } catch (PersoniumException e) {
             fail(e.getStackTrace().toString());
         } finally {
@@ -1997,6 +1993,9 @@ public class MessageApproveTest extends ODataCommon {
             buildResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_CREATED);
             String messageId = (String) body.get("__id");
+
+            // Create Role
+            RoleUtils.create(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, HttpStatus.SC_CREATED);
 
             // Approved message
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
@@ -2137,7 +2136,7 @@ public class MessageApproveTest extends ODataCommon {
 
         // Request body of relation
         JSONObject roleBody = new JSONObject();
-        roleBody.put(Role.P_NAME.getName(), roleName);
+        roleBody.put(Common.P_NAME.getName(), roleName);
         roleBody.put(Common.P_BOX_NAME.getName(), boxName);
 
         // Request body of message
@@ -2257,6 +2256,9 @@ public class MessageApproveTest extends ODataCommon {
             buildResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_CREATED);
             String messageId = (String) body.get("__id");
+
+            // Create Role
+            RoleUtils.create(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, HttpStatus.SC_CREATED);
 
             // Approved message
             PersoniumRestAdapter rest = new PersoniumRestAdapter();
@@ -2770,6 +2772,8 @@ public class MessageApproveTest extends ODataCommon {
         String locationHeader = null;
 
         try {
+            RelationUtils.create(Setup.TEST_CELL1, relationName, null, MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
             PersoniumResponse res = createReceivedMessage(requestUrl, body);
@@ -2935,6 +2939,8 @@ public class MessageApproveTest extends ODataCommon {
         String breakLocationHeader = null;
 
         try {
+            RelationUtils.create(Setup.TEST_CELL1, relationName, null, MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+
             // メッセージ受信を登録
             String requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
             PersoniumResponse res = createReceivedMessage(requestUrl, body);

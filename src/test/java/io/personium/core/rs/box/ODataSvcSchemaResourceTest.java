@@ -36,7 +36,7 @@ import io.personium.test.categories.Unit;
  * ODataSvcSchemaResource unit test classs.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ODataSvcCollectionResource.class})
+@PrepareForTest({ ODataSvcCollectionResource.class })
 @Category({ Unit.class })
 public class ODataSvcSchemaResourceTest {
 
@@ -57,7 +57,7 @@ public class ODataSvcSchemaResourceTest {
         // Test method args
         // --------------------
         String url = "https://personium/cell/box/col";
-        String name = "col";
+        String name = "$metadata";
 
         // --------------------
         // Mock settings
@@ -66,7 +66,6 @@ public class ODataSvcSchemaResourceTest {
         doReturn(url).when(davRsCmp).getUrl();
         doReturn(davCmp).when(davRsCmp).getDavCmp();
         doReturn(null).when(davRsCmp).getCell();
-        doReturn(name).when(davCmp).getName();
         doReturn(producer).when(davCmp).getSchemaODataProducer(null);
         doReturn(null).when(producer).getMetadata();
 

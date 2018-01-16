@@ -324,46 +324,16 @@ public class BasicAuthCellLevelTest extends JerseyTest {
     @Test
     public final void Basic認証ー__eventの操作() throws PersoniumException {
         // 401エラーとなること
-        TResponse res = CellUtils.eventWithAnyAuthSchema(authorization, HttpStatus.SC_UNAUTHORIZED, cellName, "INFO",
+        TResponse res = CellUtils.eventWithAnyAuthSchema(authorization, HttpStatus.SC_UNAUTHORIZED, cellName,
                 "authSchema", "/cell/app", "success");
         AuthTestCommon.checkAuthenticateHeader(res, OAuth2Helper.Scheme.BEARER, cellName);
 
         // ACL all-all の場合正常終了すること
         setAclPriviriegeAllPrincipalAll(cellName);
 
-        res = CellUtils.eventWithAnyAuthSchema(authorization, HttpStatus.SC_OK, cellName, "INFO",
+        res = CellUtils.eventWithAnyAuthSchema(authorization, HttpStatus.SC_OK, cellName,
                 "authSchema", "/cell/app", "success");
         AuthTestCommon.checkAuthenticateHeaderNotExists(res);
-    }
-
-    /**
-     * Basic認証ーボックスの__eventの操作.
-     * @throws PersoniumException リクエスト失敗
-     */
-    @Test
-    public final void Basic認証ーボックスの__eventの操作() throws PersoniumException {
-        String boxName = "boxName";
-
-        try {
-            // 事前準備
-            BoxUtils.create(cellName, boxName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
-
-            // 401エラーとなること
-            PersoniumResponse dcRes = CellUtils.eventUnderBox(authorization, cellName, boxName,
-                    "info", "Action", null, null);
-            assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_UNAUTHORIZED);
-            AuthTestCommon.checkAuthenticateHeader(dcRes, OAuth2Helper.Scheme.BEARER, cellName);
-
-            // ACL all-all の場合正常終了すること
-            setAclPriviriegeAllPrincipalAll(cellName);
-
-            dcRes = CellUtils.eventUnderBox(authorization, cellName, boxName,
-                    "info", "Action", null, null);
-            assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-            AuthTestCommon.checkAuthenticateHeaderNotExists(dcRes);
-        } finally {
-            BoxUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, boxName, -1);
-        }
     }
 
     /**

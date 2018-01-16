@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
@@ -36,8 +35,7 @@ import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmProperty;
 
-import io.personium.core.PersoniumCoreException;
-import io.personium.core.auth.AccessContext;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.odata.OEntityWrapper;
 
@@ -46,32 +44,16 @@ import io.personium.core.odata.OEntityWrapper;
  */
 public class ODataMergeResource extends ODataEntityResource {
 
-    private final String keyString;
-    private final ODataResource odataResource;
-    private final AccessContext accessContext;
-    private OEntityKey oEntityKey;
-
     /**
      * コンストラクタ.
      * @param odataResource 親リソースであるODataResource
      * @param entitySetName EntitySet Name
-     * @param key キー文字列
+     * @param keyString キー文字列
+     * @param oEntityKey OEntityKey object
      */
-    public ODataMergeResource(ODataResource odataResource, String entitySetName, String key) {
-        super();
-
-        this.odataResource = odataResource;
-        this.accessContext = this.odataResource.accessContext;
-        setOdataProducer(this.odataResource.getODataProducer());
-        setEntitySetName(entitySetName);
-
-        this.keyString = key;
-
-        try {
-            this.oEntityKey = OEntityKey.parse(this.keyString);
-        } catch (IllegalArgumentException e) {
-            throw PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.reason(e);
-        }
+    public ODataMergeResource(ODataResource odataResource,
+            String entitySetName, String keyString, OEntityKey oEntityKey) {
+        super(odataResource, entitySetName, keyString, oEntityKey);
     }
 
     /**
@@ -79,24 +61,26 @@ public class ODataMergeResource extends ODataEntityResource {
      * @param reader リクエストボディ
      * @param accept Accept ヘッダ
      * @param ifMatch If-Match ヘッダ
+     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RSResponse
      */
     public Response merge(Reader reader,
-            @HeaderParam(HttpHeaders.ACCEPT) final String accept,
-            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
+            final String accept,
+            final String ifMatch,
+            String requestKey) {
         // メソッド実行可否チェック
         checkNotAllowedMethod();
 
         // アクセス制御
-        this.odataResource.checkAccessContext(this.accessContext,
-                this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
+        getOdataResource().checkAccessContext(getAccessContext(),
+                getOdataResource().getNecessaryWritePrivilege(getEntitySetName()));
 
         // リクエストからOEntityWrapperを作成する.
-        OEntity oe = this.createRequestEntity(reader, this.oEntityKey);
+        OEntity oe = this.createRequestEntity(reader, getOEntityKey());
         OEntityWrapper oew = new OEntityWrapper(null, oe, null);
 
         // 必要ならばメタ情報をつける処理
-        this.odataResource.beforeMerge(oew, this.oEntityKey);
+        getOdataResource().beforeMerge(oew, getOEntityKey());
 
         // If-Matchヘッダで入力されたETagをMVCC用での衝突検知用にOEntityWrapperに設定する。
         String etag = ODataResource.parseEtagHeader(ifMatch);
@@ -104,7 +88,14 @@ public class ODataMergeResource extends ODataEntityResource {
 
         // MERGE処理をODataProducerに依頼。
         // こちらでリソースの存在確認もしてもらう。
-        getOdataProducer().mergeEntity(getEntitySetName(), this.oEntityKey, oew);
+        getOdataProducer().mergeEntity(getEntitySetName(), getOEntityKey(), oew);
+
+        // post event to eventBus
+        String key = AbstractODataResource.replaceDummyKeyToNull(getOEntityKey().toKeyString());
+        String object = getOdataResource().getRootUrl() + getEntitySetName() + key;
+        String newKey = AbstractODataResource.replaceDummyKeyToNull(oew.getEntityKey().toKeyString());
+        String info = "204," + newKey;
+        getOdataResource().postEvent(getEntitySetName(), object, info, requestKey, PersoniumEventType.Operation.MERGE);
 
         // 特に例外があがらなければ、レスポンスを返す。
         // oewに新たに登録されたETagを返す

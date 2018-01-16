@@ -468,29 +468,26 @@ public class CellUtils {
     }
 
     /**
-     * eventのPOSTを行うユーティリティ.
-     * @param authorization Authorizationヘッダの値(auth-shemaを含む文字列)
-     * @param code レスポンスコード
-     * @param cellName セル名
-     * @param level ログ出力レベル
-     * @param action イベントのアクション
-     * @param object イベントの対象オブジェクト
-     * @param result イベントの結果
-     * @return レスポンス
+     * Post event.
+     * @param authorization Authorization Header(including auth-shema)
+     * @param code response code
+     * @param cellName cell name
+     * @param type event type
+     * @param object event object
+     * @param info event info
+     * @return response
      */
     @SuppressWarnings("unchecked")
     public static TResponse eventWithAnyAuthSchema(String authorization,
             int code,
             String cellName,
-            String level,
-            String action,
+            String type,
             String object,
-            String result) {
+            String info) {
         JSONObject body = new JSONObject();
-        body.put("level", level);
-        body.put("action", action);
-        body.put("object", object);
-        body.put("result", result);
+        body.put("Type", type);
+        body.put("Object", object);
+        body.put("Info", info);
         return Http.request("cell/cell-event-anyAuthSchema.txt")
                 .with("METHOD", HttpMethod.POST)
                 .with("authorization", authorization)
@@ -499,39 +496,6 @@ public class CellUtils {
                 .with("json", body.toJSONString())
                 .returns()
                 .statusCode(code);
-    }
-
-    /**
-     * __event/{boxName}のPOSTを行うユーティリティ.
-     * @param authorization Authorizationヘッダの値(auth-shemaを含む文字列)
-     * @param cellName セル名
-     * @param boxName ボックス名
-     * @param level ログ出力レベル
-     * @param action イベントのアクション
-     * @param object イベントの対象オブジェクト
-     * @param result イベントの結果
-     * @return レスポンス
-     * @throws PersoniumException リクエスト失敗
-     */
-    @SuppressWarnings("unchecked")
-    public static PersoniumResponse eventUnderBox(String authorization,
-            String cellName,
-            String boxName,
-            String level,
-            String action,
-            String object,
-            String result) throws PersoniumException {
-        JSONObject body = new JSONObject();
-        body.put("level", level);
-        body.put("action", action);
-        body.put("object", object);
-        body.put("result", result);
-
-        PersoniumRestAdapter adaper = new PersoniumRestAdapter();
-        HashMap<String, String> header = new HashMap<String, String>();
-        header.put(HttpHeaders.AUTHORIZATION, authorization);
-        return adaper.post(UrlUtils.cellRoot(cellName) + "__event/" + boxName,
-                body.toJSONString(), header);
     }
 
     /**

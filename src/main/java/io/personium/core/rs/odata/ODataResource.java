@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,8 +50,12 @@ import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * OData のサービスを提供する JAX-RS Resource リソースのルート. Unit制御 ・ Cell制御 ・ User OData Schema・ User ODataの４種の用途で使う.
@@ -350,4 +354,19 @@ public abstract class ODataResource extends ODataCtlResource {
      * @return true: アクセスコンテキストが$batchしてよい権限を持っている
      */
     public abstract boolean hasPrivilegeForBatch(AccessContext ac);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void postEvent(String entitySet, String object, String info, String reqKey, String op) {
+        String schema = this.accessContext.getSchema();
+        String subject = this.accessContext.getSubject();
+        String type = PersoniumEventType.Category.ODATA + PersoniumEventType.SEPALATOR + op;
+        reqKey = ResourceUtils.validateXPersoniumRequestKey(reqKey);
+        PersoniumEvent ev = new PersoniumEvent(schema, subject, type, object, info, reqKey);
+        EventBus eventBus = this.accessContext.getCell().getEventBus();
+        eventBus.post(ev);
+    }
+
 }

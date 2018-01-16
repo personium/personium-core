@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,6 +132,18 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     public final void FromがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_FROM.build(),
                 ReceivedMessage.P_FROM.getName(),
+                OProperties.string(ReceivedMessage.P_FROM.getName(), "http://example.com/test/"));
+    }
+
+    /**
+     * Test validateProperty().
+     * Error test.
+     * From is not Cell URL.
+     */
+    @Test(expected = PersoniumCoreException.class)
+    public final void validateProperty_Error_From_is_not_CellURL() {
+        this.validateProperty(ReceivedMessage.P_FROM.build(),
+                ReceivedMessage.P_FROM.getName(),
                 OProperties.string(ReceivedMessage.P_FROM.getName(), "http://example.com/test"));
     }
 
@@ -196,13 +208,17 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Typeがnullの場合にPersoniumCoreExceptionが発生すること.
+     * Test setDefaultValue().
+     * Normal test.
+     * Type is null.
      */
-    @Test(expected = PersoniumCoreException.class)
-    public final void Typeがnullの場合にPersoniumCoreExceptionが発生すること() {
-        this.setDefaultValue(ReceivedMessage.P_TYPE.build(),
+    @Test
+    public final void setDefaultValue_Normal_Type_is_null() {
+        OProperty<?> expected = OProperties.string(ReceivedMessage.P_TYPE.getName(), "message");
+        OProperty<?> result = this.setDefaultValue(ReceivedMessage.P_TYPE.build(),
                 ReceivedMessage.P_TYPE.getName(),
-                OProperties.string(ReceivedMessage.P_TYPE.getName(), ""));
+                OProperties.string(ReceivedMessage.P_TYPE.getName(), null));
+        assertEquals(expected.getValue(), result.getValue());
     }
 
     /**
@@ -241,13 +257,17 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Titleがnullの場合にPersoniumCoreExceptionが発生すること.
+     * Test setDefaultValue().
+     * Normal test.
+     * Title is null.
      */
-    @Test(expected = PersoniumCoreException.class)
-    public final void Titleがnullの場合にPersoniumCoreExceptionが発生すること() {
-        this.setDefaultValue(ReceivedMessage.P_TITLE.build(),
+    @Test
+    public final void setDefaultValue_Normal_Title_is_null() {
+        OProperty<?> expected = OProperties.string(ReceivedMessage.P_TITLE.getName(), "");
+        OProperty<?> result = this.setDefaultValue(ReceivedMessage.P_TITLE.build(),
                 ReceivedMessage.P_TITLE.getName(),
-                OProperties.string(ReceivedMessage.P_TITLE.getName(), ""));
+                OProperties.string(ReceivedMessage.P_TITLE.getName(), null));
+        assertEquals(expected.getValue(), result.getValue());
     }
 
     /**
@@ -323,13 +343,17 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Priorityがnullの場合にPersoniumCoreExceptionが発生すること.
+     * Test setDefaultValue().
+     * Normal test.
+     * Priority is null.
      */
-    @Test(expected = PersoniumCoreException.class)
-    public final void Priorityがnullの場合にPersoniumCoreExceptionが発生すること() {
-        this.setDefaultValue(ReceivedMessage.P_PRIORITY.build(),
+    @Test
+    public final void setDefaultValue_Normal_Priority_is_null() {
+        OProperty<?> expected = OProperties.int32(ReceivedMessage.P_PRIORITY.getName(), 3);
+        OProperty<?> result = this.setDefaultValue(ReceivedMessage.P_PRIORITY.build(),
                 ReceivedMessage.P_PRIORITY.getName(),
-                OProperties.string(ReceivedMessage.P_PRIORITY.getName(), ""));
+                OProperties.string(ReceivedMessage.P_PRIORITY.getName(), null));
+        assertEquals(expected.getValue(), result.getValue());
     }
 
     /**
@@ -373,6 +397,18 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     public final void RequestRelationTargetがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_REQUEST_RELATION_TARGET.build(),
                 ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
+                OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://example.com/test/"));
+    }
+
+    /**
+     * Test validateProperty().
+     * Error test.
+     * RequestRelationTarget is not Cell URL.
+     */
+    @Test(expected = PersoniumCoreException.class)
+    public final void validateProperty_Error_RequestRelationTarget_is_not_CellUrl() {
+        this.validateProperty(ReceivedMessage.P_REQUEST_RELATION_TARGET.build(),
+                ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
                 OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://example.com/test"));
     }
 
@@ -404,7 +440,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void MulticastToがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "http://example.com/test");
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "http://example.com/test/");
     }
 
     /**
@@ -413,7 +449,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     @Test
     public final void MulticastToがCSV複数URL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
-                "http://example.com/test,http://example.com/test");
+                "http://example.com/test/,http://example.com/test/");
     }
 
     /**
@@ -426,12 +462,23 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
+     * Test validateUriCsv().
+     * Error test.
+     * MulticastTo is invalid.
+     */
+    @Test(expected = PersoniumCoreException.class)
+    public final void validateUriCsv_Error_MulticastTo_is_invalid() {
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
+                "http://example.com/test,http://example.com/test/");
+    }
+
+    /**
      * MulticastToがCSV複数URL形式とURL形式でない場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
     public final void MulticastToがCSV複数URL形式とURL形式でない場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
-                "http://example.com/test,ftp://example.com/test");
+                "http://example.com/test/,ftp://example.com/test");
     }
 
     /**
@@ -440,7 +487,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     @Test(expected = PersoniumCoreException.class)
     public final void MulticastToが不正なCSV形式の場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
-                "http://example.com/test,,http://example.com/test");
+                "http://example.com/test/,,http://example.com/test");
     }
 
     /**

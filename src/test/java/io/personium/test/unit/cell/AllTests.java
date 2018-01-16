@@ -25,8 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-        LogTest.class,
-        EventResourceTest.class
+        LogTest.class
 })
 public class AllTests {
 }

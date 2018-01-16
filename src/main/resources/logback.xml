@@ -107,7 +107,7 @@
        <appender-ref ref="file" />
        <appender-ref ref="stdout" />
     </logger>
-    <logger name="io.personium.core.eventbus" additivity="false">
+    <logger name="io.personium.core.rule.action" additivity="false">
         <level value="INFO" />
         <appender-ref ref="SIFT" />
         <appender-ref ref="stdout" />

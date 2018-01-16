@@ -18,6 +18,7 @@ package io.personium.core.utils;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.regex.Pattern;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -74,4 +75,27 @@ public class ResourceUtils {
                 || null != transferEncoding);
     }
 
+    static final int MAXREQUEST_KEY_LENGTH = 128;
+    static final String REQEUST_KEY_DEFAULT_FORMAT = "PCS-%d";
+    static final Pattern REQUEST_KEY_PATTERN = Pattern.compile("[\\p{Alpha}\\p{Digit}_-]*");
+
+    /**
+     * Validate X-Personium-RequestKey Header.<br/>
+     * Throw exception in case of invalid requestKey. <br/>
+     * Set the default value if requestKey is null.
+     * @param requestKey X-Personium-RequestKey header's string
+     * @return valid requestKey
+     */
+    public static String validateXPersoniumRequestKey(String requestKey) {
+        if (null == requestKey) {
+            requestKey = String.format(REQEUST_KEY_DEFAULT_FORMAT, System.currentTimeMillis());
+        }
+        if (MAXREQUEST_KEY_LENGTH < requestKey.length()) {
+            throw PersoniumCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID;
+        }
+        if (!REQUEST_KEY_PATTERN.matcher(requestKey).matches()) {
+            throw PersoniumCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID;
+        }
+        return requestKey;
+    }
 }

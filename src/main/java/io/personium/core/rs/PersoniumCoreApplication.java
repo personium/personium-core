@@ -28,6 +28,7 @@ import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.file.DataCryptor;
 import io.personium.core.plugin.PluginManager;
+import io.personium.core.rule.RuleManager;
 
 /**
  * Personium-coreの/_cell_/* 以下URLを担当するJAX-RSのApplication.
@@ -43,6 +44,7 @@ public class PersoniumCoreApplication extends Application {
             DataCryptor.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
             PersoniumThread.createThreadPool(PersoniumUnitConfig.getThreadPoolNum());
             pm = new PluginManager();
+            RuleManager.getInstance();
         } catch (Exception e) {
             PersoniumCoreLog.Server.FAILED_TO_START_SERVER.reason(e).writeLog();
             throw new RuntimeException(e);

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
  */
 package io.personium.core.rs.cell;
 
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
@@ -23,24 +25,33 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.odata4j.core.OEntityKey;
+import org.odata4j.core.OProperty;
 
+import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.Box;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
+import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ExtRole;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.ODataResource;
+import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * JAX-RS Resource handling DC Cell Level Api.
@@ -143,6 +154,8 @@ public final class CellCtlResource extends ODataResource {
             return CellPrivilege.MESSAGE_READ;
         } else if (SentMessage.EDM_TYPE_NAME.equals(entitySetNameStr)) {
             return CellPrivilege.MESSAGE_READ;
+        } else if (Rule.EDM_TYPE_NAME.equals(entitySetNameStr)) {
+            return CellPrivilege.RULE_READ;
         }
         return null;
 
@@ -167,6 +180,8 @@ public final class CellCtlResource extends ODataResource {
             return CellPrivilege.MESSAGE;
         } else if (SentMessage.EDM_TYPE_NAME.equals(entitySetNameStr)) {
             return CellPrivilege.MESSAGE;
+        } else if (Rule.EDM_TYPE_NAME.equals(entitySetNameStr)) {
+            return CellPrivilege.RULE;
         }
         return null;
     }
@@ -191,5 +206,82 @@ public final class CellCtlResource extends ODataResource {
     @Override
     public boolean hasPrivilegeForBatch(AccessContext ac) {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public void validate(String entitySetName, List<OProperty<?>> props) {
+        if (Rule.EDM_TYPE_NAME.equals(entitySetName)) {
+            // get properties
+            String action = null;
+            String service = null;
+            String object = null;
+            String boxname = null;
+            for (OProperty<?> property : props) {
+                String name = property.getName();
+                String value = null;
+                if (property.getValue() != null) {
+                    value = property.getValue().toString();
+                }
+                if (Rule.P_ACTION.getName().equals(name)) {
+                    if (value == null) {
+                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_ACTION.getName());
+                    } else {
+                        action = value;
+                    }
+                } else if (Rule.P_SERVICE.getName().equals(name) && value != null) {
+                    service = value;
+                } else if (Rule.P_OBJECT.getName().equals(name) && value != null) {
+                    object = value;
+                } else if (Common.P_BOX_NAME.getName().equals(name) && value != null) {
+                    boxname = value;
+                }
+            }
+
+            // action: callback or exec -> service: not null
+            if ((Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action)) && service == null) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
+            }
+
+            // boxname: not null
+            if (boxname != null) {
+                // object: personium-localbox:/xxx
+                if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALBOX)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_OBJECT.getName());
+                }
+                // action: exec -> service: personium-localbox:/xxx
+                if (Rule.ACTION_EXEC.equals(action) && !service.startsWith(UriUtils.SCHEME_LOCALBOX)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
+                }
+            } else {
+                // object: personium-localcell:/xxx
+                if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALCELL)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_OBJECT.getName());
+                }
+                // action: exec -> service: personium-localcell:/xxx
+                if (Rule.ACTION_EXEC.equals(action) && !service.startsWith(UriUtils.SCHEME_LOCALCELL)) {
+                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
+                }
+            }
+
+            // action: callback -> service: personium-localunit: or http: or https:
+            if (Rule.ACTION_CALLBACK.equals(action)
+                    && !service.startsWith(UriUtils.SCHEME_HTTP)
+                    && !service.startsWith(UriUtils.SCHEME_HTTPS)
+                    && !service.startsWith(UriUtils.SCHEME_LOCALUNIT)) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
+            }
+        }
+    }
+
+    @Override
+    public void postEvent(String entitySetName, String object, String info, String reqKey, String op) {
+        String schema = this.getAccessContext().getSchema();
+        String subject = this.getAccessContext().getSubject();
+        reqKey = ResourceUtils.validateXPersoniumRequestKey(reqKey);
+        String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
+                + entitySetName + PersoniumEventType.SEPALATOR + op;
+        PersoniumEvent ev = new PersoniumEvent(schema, subject, type, object, info, reqKey);
+        EventBus eventBus = this.getAccessContext().getCell().getEventBus();
+        eventBus.post(ev);
     }
 }

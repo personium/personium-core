@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class InProcessLockManager extends LockManager {
     Map<String, AccountLock> inProcessAccountLock = new HashMap<String, AccountLock>();
 
     @Override
-    Lock doGetLock(String fullKey) {
+    synchronized Lock doGetLock(String fullKey) {
         return (Lock) inProcessLock.get(fullKey);
     }
 
@@ -42,22 +42,22 @@ class InProcessLockManager extends LockManager {
     }
 
     @Override
-    void doReleaseLock(String fullKey) {
+    synchronized void doReleaseLock(String fullKey) {
         inProcessLock.remove(fullKey);
     }
 
     @Override
-    void doDeleteAllLocks() {
+    synchronized void doDeleteAllLocks() {
         inProcessLock.clear();
     }
 
     @Override
-    String doGetReferenceOnlyLock(String fullKey) {
+    synchronized String doGetReferenceOnlyLock(String fullKey) {
         return (String) inProcessLock.get(fullKey);
     }
 
     @Override
-    Boolean doPutReferenceOnlyLock(String fullKey, String value) {
+    synchronized Boolean doPutReferenceOnlyLock(String fullKey, String value) {
         if (inProcessLock.get(fullKey) == null) {
             inProcessLock.put(fullKey, value);
             return Boolean.TRUE;
@@ -67,7 +67,7 @@ class InProcessLockManager extends LockManager {
     }
 
     @Override
-    String doGetAccountLock(String fullKey) {
+    synchronized String doGetAccountLock(String fullKey) {
         AccountLock lock = inProcessAccountLock.get(fullKey);
         if (lock == null) {
             return null;
@@ -76,18 +76,18 @@ class InProcessLockManager extends LockManager {
     }
 
     @Override
-    Boolean doPutAccountLock(String fullKey, String value, int expired) {
+    synchronized Boolean doPutAccountLock(String fullKey, String value, int expired) {
         inProcessAccountLock.put(fullKey, new AccountLock(value, expired));
         return Boolean.TRUE;
     }
 
     @Override
-    String doGetUnituserLock(String fullKey) {
+    synchronized String doGetUnituserLock(String fullKey) {
         return (String) inProcessLock.get(fullKey);
     }
 
     @Override
-    Boolean doPutUnituserLock(String fullKey, String value, int expired) {
+    synchronized Boolean doPutUnituserLock(String fullKey, String value, int expired) {
         if (inProcessLock.get(fullKey) == null) {
             inProcessLock.put(fullKey, value);
             return Boolean.TRUE;
@@ -97,7 +97,7 @@ class InProcessLockManager extends LockManager {
     }
 
     @Override
-    long doGetReferenceCount(String fullKey) {
+    synchronized long doGetReferenceCount(String fullKey) {
         Long value = -1L;
         if (inProcessLock.containsKey(fullKey)) {
             value = (Long) inProcessLock.get(fullKey);
@@ -106,7 +106,7 @@ class InProcessLockManager extends LockManager {
     }
 
     @Override
-    long doIncrementReferenceCount(String fullKey) {
+    synchronized long doIncrementReferenceCount(String fullKey) {
         Long value = 1L;
         if (inProcessLock.containsKey(fullKey)) {
             value = (Long) inProcessLock.get(fullKey);
@@ -117,7 +117,7 @@ class InProcessLockManager extends LockManager {
     }
 
     @Override
-    long doDecrementReferenceCount(String fullKey) {
+    synchronized long doDecrementReferenceCount(String fullKey) {
         Long value = 0L;
         if (inProcessLock.containsKey(fullKey)) {
             value = (Long) inProcessLock.get(fullKey);
@@ -131,7 +131,7 @@ class InProcessLockManager extends LockManager {
     }
 
     @Override
-    long doGetCellStatus(String fullKey) {
+    synchronized long doGetCellStatus(String fullKey) {
         Long value = -1L;
         if (inProcessLock.containsKey(fullKey)) {
             value = (Long) inProcessLock.get(fullKey);
@@ -140,18 +140,18 @@ class InProcessLockManager extends LockManager {
     }
 
     @Override
-    Boolean doSetCellStatus(String fullKey, long status) {
+    synchronized Boolean doSetCellStatus(String fullKey, long status) {
         inProcessLock.put(fullKey, status);
         return true;
     }
 
     @Override
-    void doDeleteCellStatus(String fullKey) {
+    synchronized void doDeleteCellStatus(String fullKey) {
         inProcessLock.remove(fullKey);
     }
 
     @Override
-    String doGetReadDeleteOnlyMode(String fullKey) {
+    synchronized String doGetReadDeleteOnlyMode(String fullKey) {
         String value = null;
         if (inProcessLock.containsKey(fullKey)) {
             value = (String) inProcessLock.get(fullKey);

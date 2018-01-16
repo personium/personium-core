@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
@@ -336,6 +337,23 @@ public class PersoniumUnitConfig {
         public static final String ROOT = KEY_ROOT + "cellSnapshot.root";
     }
 
+    /**
+     * EventBus configurations.
+     */
+    public static final class EventBus {
+        /** ActiveMQ broker url. */
+        public static final String BROKER_URL = KEY_ROOT + "eventbus.activemq.brokerUrl";
+
+        /** queue name of EventBus. */
+        public static final String QUEUE = KEY_ROOT + "eventbus.queue";
+
+        /** topic name for all event. */
+        public static final String TOPIC_ALL = KEY_ROOT + "eventbus.topic.all";
+
+        /** topic name for rule event. */
+        public static final String TOPIC_RULE = KEY_ROOT + "eventbus.topic.rule";
+    }
+
     static {
         // 各種メッセージ出力クラスを強制的にロードする
         PersoniumCoreLog.loadConfig();
@@ -579,6 +597,14 @@ public class PersoniumUnitConfig {
      */
     public static String getPluginPath() {
         return get(PLUGIN_PATH);
+    }
+
+    /**
+     * Get base url of this unit.
+     * @return base url
+     */
+    public static String getBaseUrl() {
+        return getUnitScheme() + "://" + PersoniumCoreUtils.getFQDN() + "/";
     }
 
     /**
@@ -1011,6 +1037,38 @@ public class PersoniumUnitConfig {
      */
     public static boolean isDavEncryptEnabled() {
         return Boolean.parseBoolean(get(Security.DAV_ENCRYPT_ENABLED));
+    }
+
+    /**
+     * Get broker url of EventBus.
+     * @return broker url
+     */
+    public static String getEventBusBrokerUrl() {
+        return get(EventBus.BROKER_URL);
+    }
+
+    /**
+     * Get queue name of EventBus.
+     * @return queue name
+     */
+    public static String getEventBusQueueName() {
+        return get(EventBus.QUEUE);
+    }
+
+    /**
+     * Get topic name for all event.
+     * @return topic name
+     */
+    public static String getEventBusTopicName() {
+        return get(EventBus.TOPIC_ALL);
+    }
+
+    /**
+     * Get topic name for rule event.
+     * @return topic name
+     */
+    public static String getEventBusRuleTopicName() {
+        return get(EventBus.TOPIC_RULE);
     }
 
     /**
