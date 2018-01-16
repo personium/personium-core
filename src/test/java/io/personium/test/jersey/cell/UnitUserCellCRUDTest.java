@@ -24,8 +24,7 @@ import java.util.ArrayList;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,8 +37,10 @@ import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Account;
+import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -70,6 +71,9 @@ public class UnitUserCellCRUDTest extends JerseyTest {
     private static final String UNIT_USER_ACCOUNT_PASS = "password";
     private static final String CREATE_CELL = "createCell";
 
+    /** unitUser.issuers in properties. */
+    private static String issuersBackup = "";
+
     /**
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
@@ -78,26 +82,24 @@ public class UnitUserCellCRUDTest extends JerseyTest {
     }
 
     /**
-     * すべてのテストで必ず１度実行される処理.
+     * Befor class.
      */
     @BeforeClass
     public static void beforeClass() {
+        // Override issuers in unitconfig.
+        issuersBackup = PersoniumUnitConfig.get("io.personium.core.unitUser.issuers");
+        PersoniumUnitConfig.set("io.personium.core.unitUser.issuers",
+                UriUtils.SCHEME_UNIT_URI + UNIT_USER_CELL + "/");
     }
 
     /**
-     * すべてのテスト毎に１度実行される処理.
-     * @throws InterruptedException InterruptedException
+     * After class.
      */
-    @Before
-    public void before() throws InterruptedException {
-
-    }
-
-    /**
-     * すべてのテスト毎に１度実行される処理.
-     */
-    @After
-    public void after() {
+    @AfterClass
+    public static void afterClass() {
+        // Restore issuers in unitconfig.
+        PersoniumUnitConfig.set("io.personium.core.unitUser.issuers",
+                issuersBackup != null ? issuersBackup : ""); // CHECKSTYLE IGNORE
     }
 
     /**
@@ -658,9 +660,6 @@ public class UnitUserCellCRUDTest extends JerseyTest {
             CellUtils.propfind(CREATE_CELL + "/" + boxName + "/", unitUserToken,
                     "0", HttpStatus.SC_MULTI_STATUS);
         } finally {
-            // アカウント削除
-            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME,
-                    UNIT_USER_ACCOUNT, -1);
             // 本テスト用ボックスの削除
             BoxUtils.delete(CREATE_CELL, AbstractCase.MASTER_TOKEN_NAME, boxName, -1);
             // 本テスト用セルの削除

@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * 設定情報を保持するクラス. このクラスからクラスパス上にある personium-unit-config.propertiesの内容にアクセスできます。
@@ -415,13 +416,15 @@ public class PersoniumUnitConfig {
         }
     }
 
-    private static boolean isSpaceSeparatedValueIncluded(String spaceSeparatedValue, String testValue) {
+    private static boolean isSpaceSeparatedValueIncluded(String spaceSeparatedValue, String testValue, String unitUrl) {
         if (testValue == null || spaceSeparatedValue == null) {
             return false;
         }
         String[] values = spaceSeparatedValue.split(" ");
         for (String val : values) {
-            if (testValue.equals(val)) {
+            // Correspondence when "localunit" is set for issuers.
+            String convertedValue = UriUtils.convertSchemeFromLocalUnitToHttp(unitUrl, val);
+            if (testValue.equals(convertedValue)) {
                 return true;
             }
         }
@@ -1084,12 +1087,13 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * 引数URLがユニットユーザトークン発行者として認定するホスト名に含まれるか判定する.
-     * @param url URL
-     * @return boolean 含まれる場合：True
+     * Check whether the specified URL is included in the host name certified as UnitUserToken Issuer.
+     * @param url Target URL
+     * @param unitUrl Unit URL
+     * @return Included:true
      */
-    public static boolean checkUnitUserIssuers(String url) {
-        return isSpaceSeparatedValueIncluded(getUnitUserIssuers(), url);
+    public static boolean checkUnitUserIssuers(String url, String unitUrl) {
+        return isSpaceSeparatedValueIncluded(getUnitUserIssuers(), url, unitUrl);
     }
 
     /**
