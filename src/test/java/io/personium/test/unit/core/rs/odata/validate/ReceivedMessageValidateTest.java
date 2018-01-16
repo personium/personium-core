@@ -132,6 +132,18 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     public final void FromがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_FROM.build(),
                 ReceivedMessage.P_FROM.getName(),
+                OProperties.string(ReceivedMessage.P_FROM.getName(), "http://example.com/test/"));
+    }
+
+    /**
+     * Test validateProperty().
+     * Error test.
+     * From is not Cell URL.
+     */
+    @Test(expected = PersoniumCoreException.class)
+    public final void validateProperty_Error_From_is_not_CellURL() {
+        this.validateProperty(ReceivedMessage.P_FROM.build(),
+                ReceivedMessage.P_FROM.getName(),
                 OProperties.string(ReceivedMessage.P_FROM.getName(), "http://example.com/test"));
     }
 
@@ -385,6 +397,18 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     public final void RequestRelationTargetがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_REQUEST_RELATION_TARGET.build(),
                 ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
+                OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://example.com/test/"));
+    }
+
+    /**
+     * Test validateProperty().
+     * Error test.
+     * RequestRelationTarget is not Cell URL.
+     */
+    @Test(expected = PersoniumCoreException.class)
+    public final void validateProperty_Error_RequestRelationTarget_is_not_CellUrl() {
+        this.validateProperty(ReceivedMessage.P_REQUEST_RELATION_TARGET.build(),
+                ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
                 OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://example.com/test"));
     }
 
@@ -416,7 +440,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void MulticastToがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "http://example.com/test");
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "http://example.com/test/");
     }
 
     /**
@@ -425,7 +449,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     @Test
     public final void MulticastToがCSV複数URL形式の場合にPersoniumCoreExceptionが発生しないこと() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
-                "http://example.com/test,http://example.com/test");
+                "http://example.com/test/,http://example.com/test/");
     }
 
     /**
@@ -438,12 +462,23 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
+     * Test validateUriCsv().
+     * Error test.
+     * MulticastTo is invalid.
+     */
+    @Test(expected = PersoniumCoreException.class)
+    public final void validateUriCsv_Error_MulticastTo_is_invalid() {
+        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
+                "http://example.com/test,http://example.com/test/");
+    }
+
+    /**
      * MulticastToがCSV複数URL形式とURL形式でない場合にPersoniumCoreExceptionが発生すること.
      */
     @Test(expected = PersoniumCoreException.class)
     public final void MulticastToがCSV複数URL形式とURL形式でない場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
-                "http://example.com/test,ftp://example.com/test");
+                "http://example.com/test/,ftp://example.com/test");
     }
 
     /**
@@ -452,7 +487,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     @Test(expected = PersoniumCoreException.class)
     public final void MulticastToが不正なCSV形式の場合にPersoniumCoreExceptionが発生すること() {
         MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
-                "http://example.com/test,,http://example.com/test");
+                "http://example.com/test/,,http://example.com/test");
     }
 
     /**

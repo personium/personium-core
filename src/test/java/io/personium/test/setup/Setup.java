@@ -1785,7 +1785,7 @@ public class Setup extends AbstractCase {
             JSONObject ruleJson = new JSONObject();
             ruleJson.put("Name", name);
             ruleJson.put("_Box.Name", boxName);
-            ruleJson.put("External", external);
+            ruleJson.put("EventExternal", external);
             ruleJson.put("Action", action);
             return ruleJson;
         }

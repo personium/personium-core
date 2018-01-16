@@ -218,11 +218,11 @@ public class AbstractODataResourceTest {
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
         PowerMockito.doReturn(true).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_RELATION_CLASS_PATH);
+                requestRelation, Common.PATTERN_RELATION_CLASS_URL);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_ROLE_CLASS_PATH);
+                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_NAME);
 
@@ -266,11 +266,11 @@ public class AbstractODataResourceTest {
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_RELATION_CLASS_PATH);
+                requestRelation, Common.PATTERN_RELATION_CLASS_URL);
         PowerMockito.doReturn(true).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_ROLE_CLASS_PATH);
+                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_NAME);
 
@@ -314,11 +314,11 @@ public class AbstractODataResourceTest {
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_RELATION_CLASS_PATH);
+                requestRelation, Common.PATTERN_RELATION_CLASS_URL);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
         PowerMockito.doReturn(true).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_ROLE_CLASS_PATH);
+                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_NAME);
 
@@ -362,11 +362,11 @@ public class AbstractODataResourceTest {
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_RELATION_CLASS_PATH);
+                requestRelation, Common.PATTERN_RELATION_CLASS_URL);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_ROLE_CLASS_PATH);
+                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
         PowerMockito.doReturn(true).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_NAME);
 
@@ -410,11 +410,11 @@ public class AbstractODataResourceTest {
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_RELATION_CLASS_PATH);
+                requestRelation, Common.PATTERN_RELATION_CLASS_URL);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_RELATION_NAME);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                requestRelation, Common.PATTERN_ROLE_CLASS_PATH);
+                requestRelation, Common.PATTERN_ROLE_CLASS_URL);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateRegEx",
                 requestRelation, Common.PATTERN_NAME);
 
@@ -516,7 +516,7 @@ public class AbstractODataResourceTest {
      * @throws Exception Unexpected error.
      */
     @Test
-    public void validatePropertyRuleService_Normal_validateClassUrl_is_true() throws Exception {
+    public void validatePropertyRuleService_Normal_isValidUri_is_true() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -528,8 +528,8 @@ public class AbstractODataResourceTest {
         // Mock settings
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
-        PowerMockito.doReturn(true).when(ODataUtils.class, "validateClassUrl",
-                service, Common.PATTERN_SERVICE_PATH);
+        PowerMockito.doReturn(true).when(ODataUtils.class, "isValidUri",
+                service);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateLocalCellUrl",
                 service, Common.PATTERN_SERVICE_LOCALCELL_PATH);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateLocalBoxUrl",
@@ -560,8 +560,8 @@ public class AbstractODataResourceTest {
         // Mock settings
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
-        PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                service, Common.PATTERN_SERVICE_PATH);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "isValidUri",
+                service);
         PowerMockito.doReturn(true).when(ODataUtils.class, "validateLocalCellUrl",
                 service, Common.PATTERN_SERVICE_LOCALCELL_PATH);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateLocalBoxUrl",
@@ -592,8 +592,8 @@ public class AbstractODataResourceTest {
         // Mock settings
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
-        PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                service, Common.PATTERN_SERVICE_PATH);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "isValidUri",
+                service);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateLocalCellUrl",
                 service, Common.PATTERN_SERVICE_LOCALCELL_PATH);
         PowerMockito.doReturn(true).when(ODataUtils.class, "validateLocalBoxUrl",
@@ -624,8 +624,8 @@ public class AbstractODataResourceTest {
         // Mock settings
         // --------------------
         PowerMockito.mockStatic(ODataUtils.class);
-        PowerMockito.doReturn(false).when(ODataUtils.class, "validateClassUrl",
-                service, Common.PATTERN_SERVICE_PATH);
+        PowerMockito.doReturn(false).when(ODataUtils.class, "isValidUri",
+                service);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateLocalCellUrl",
                 service, Common.PATTERN_SERVICE_LOCALCELL_PATH);
         PowerMockito.doReturn(false).when(ODataUtils.class, "validateLocalBoxUrl",

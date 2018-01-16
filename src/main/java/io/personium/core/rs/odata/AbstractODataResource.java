@@ -891,9 +891,9 @@ public abstract class AbstractODataResource {
      * @param op OProperty
      */
     protected void validatePropertyMessageRequestRelation(String propName, OProperty<?> op) {
-        if (!ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_RELATION_CLASS_PATH)
+        if (!ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_RELATION_CLASS_URL)
                 && !ODataUtils.validateRegEx(op.getValue().toString(), Common.PATTERN_RELATION_NAME)
-                && !ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_ROLE_CLASS_PATH)
+                && !ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_ROLE_CLASS_URL)
                 && !ODataUtils.validateRegEx(op.getValue().toString(), Common.PATTERN_NAME)) {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
         }
@@ -917,9 +917,11 @@ public abstract class AbstractODataResource {
      * @param op OProperty
      */
     protected void validatePropertyRuleService(String propName, OProperty<?> op) {
-        // http://xxx/cell/box/col/srv or https://xxx/cell/box/col/srv or personium-localunit:/cel/box/col/srv
+        // http://xxx/cell/box/col/srv or https://xxx/cell/box/col/srv
+        // personium-localunit:/cel/box/col/srv
         // personium-localcell:/box/col/srv or presonium-localbox:/col/srv
-        if (!ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_SERVICE_PATH)
+        if (!ODataUtils.isValidUri(op.getValue().toString())
+                && !ODataUtils.validateLocalUnitUrl(op.getValue().toString(), Common.PATTERN_SERVICE_LOCALUNIT_PATH)
                 && !ODataUtils.validateLocalCellUrl(op.getValue().toString(), Common.PATTERN_SERVICE_LOCALCELL_PATH)
                 && !ODataUtils.validateLocalBoxUrl(op.getValue().toString(), Common.PATTERN_SERVICE_LOCALBOX_PATH)) {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);

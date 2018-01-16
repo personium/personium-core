@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -942,20 +942,19 @@ public final class MessageODataResource extends AbstractODataResource {
     }
 
     /**
-     * MulticastToのバリデート.
-     * @param propKey プロパティキー
-     * @param propValue プロパティ値
+     * Validate list of Cell URL in csv format.
+     * @param propKey property key
+     * @param propValue property value
      */
     public static void validateUriCsv(String propKey, String propValue) {
         if (propValue == null) {
             return;
         }
         if (propValue.contains(",")) {
-            // CSV形式で複数指定されていた場合
             String[] uriList = propValue.split(",");
             for (String uri : uriList) {
                 if (uri.length() != 0) {
-                    if (!ODataUtils.isValidUri(uri)) {
+                    if (!ODataUtils.isValidCellUrl(uri)) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propKey);
                     }
                 } else {
@@ -963,8 +962,7 @@ public final class MessageODataResource extends AbstractODataResource {
                 }
             }
         } else {
-            // CSV形式で複数指定されていた場合
-            if (!ODataUtils.isValidUri(propValue)) {
+            if (!ODataUtils.isValidCellUrl(propValue)) {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propValue);
             }
         }
@@ -1027,7 +1025,7 @@ public final class MessageODataResource extends AbstractODataResource {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(detail);
         }
         // Correlation format check
-        if (!ODataUtils.validateClassUrl(requestRelation, Common.PATTERN_RELATION_CLASS_PATH)
+        if (!ODataUtils.validateClassUrl(requestRelation, Common.PATTERN_RELATION_CLASS_URL)
                 && !ODataUtils.validateRegEx(requestRelation, Common.PATTERN_RELATION_NAME)) {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                     Message.P_REQUEST_RELATION.getName());
@@ -1047,7 +1045,7 @@ public final class MessageODataResource extends AbstractODataResource {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(detail);
         }
         // Correlation format check
-        if (!ODataUtils.validateClassUrl(requestRelation, Common.PATTERN_ROLE_CLASS_PATH)
+        if (!ODataUtils.validateClassUrl(requestRelation, Common.PATTERN_ROLE_CLASS_URL)
                 && !ODataUtils.validateRegEx(requestRelation, Common.PATTERN_NAME)) {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                     ReceivedMessage.P_REQUEST_RELATION.getName());

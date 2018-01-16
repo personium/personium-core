@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1303,21 +1303,48 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         // OData 空間全体をlockする(将来的に必要があればentitySetNameでロック)
         Lock lock = this.lock();
         try {
-            EntitySetDocHandler src = this.retrieveWithKey(sourceEntity);
-            // データが存在しない場合は404
-            if (src == null) {
-                throw PersoniumCoreException.OData.NOT_FOUND;
-            }
-            EntitySetDocHandler tgt = this.retrieveWithKey(targetEntity);
-            // ターゲットが存在しない場合は400
-            if (tgt == null) {
-                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
-            }
-            createLinks(sourceEntity, srcNavProp, assoc, src, tgt);
+            createLink(sourceEntity, targetEntity, srcNavProp, assoc);
         } finally {
             log.debug("unlock");
             lock.release();
         }
+    }
+
+    /**
+     * Create a link between two entities without lock.
+     * @param sourceEntity an entity with at least one navigation property
+     * @param targetNavProp the navigation property
+     * @param targetEntity the link target entity
+     * @see <a href="http://www.odata.org/developers/protocols/operations#CreatingLinksbetweenEntries">[odata.org]
+     *      Creating Links between Entries</a>
+     */
+    protected void createLinkWithoutLock(OEntityId sourceEntity, String targetNavProp, OEntityId targetEntity) {
+        String srcSetName = sourceEntity.getEntitySetName();
+
+        EdmNavigationProperty srcNavProp = getEdmNavigationProperty(srcSetName, targetNavProp);
+        if (srcNavProp == null) {
+            throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
+        }
+        // n:1かn:nの切り分けを行う
+        EdmAssociation assoc = srcNavProp.getRelationship();
+
+        createLink(sourceEntity, targetEntity, srcNavProp, assoc);
+    }
+
+    // internnal method of createLink
+    private void createLink(OEntityId sourceEntity, OEntityId targetEntity,
+            EdmNavigationProperty srcNavProp, EdmAssociation assoc) {
+        EntitySetDocHandler src = this.retrieveWithKey(sourceEntity);
+        // データが存在しない場合は404
+        if (src == null) {
+            throw PersoniumCoreException.OData.NOT_FOUND;
+        }
+        EntitySetDocHandler tgt = this.retrieveWithKey(targetEntity);
+        // ターゲットが存在しない場合は400
+        if (tgt == null) {
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
+        }
+        createLinks(sourceEntity, srcNavProp, assoc, src, tgt);
     }
 
     /**
@@ -1719,42 +1746,6 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         return res;
     }
 
-    /**
-     * N:NのLinksを生成.
-     * @param sourceEntity リクエストURLにて指定されたEntity
-     * @param targetEntity リクエストBODYにて指定されたEntity
-     */
-    protected void createLinks(OEntityId sourceEntity, OEntityId targetEntity) {
-        EntitySetDocHandler src = this.retrieveWithKey(sourceEntity);
-        // データが存在しない場合は404
-        if (src == null) {
-            throw PersoniumCoreException.OData.NOT_FOUND;
-        }
-        EntitySetDocHandler tgt = this.retrieveWithKey(targetEntity);
-        // ターゲットが存在しない場合は400
-        if (tgt == null) {
-            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
-        }
-        // NNLink情報の ES保存時の一意キー作成
-        LinkDocHandler docHandler = this.getLinkDocHandler(src, tgt);
-        // LINKを扱うアクセサを取る
-        ODataLinkAccessor linkAccessor = this.getAccessorForLink();
-
-        // $linksの登録
-        checkExistsLinkForNtoN(linkAccessor, docHandler);
-
-        String sourceEntitySetName = sourceEntity.getEntitySetName();
-        String targetEntitySetName = targetEntity.getEntitySetName();
-        EdmNavigationProperty srcNavProp = getEdmNavigationProperty(sourceEntitySetName, "_" + targetEntitySetName);
-        // $links上限値チェック
-        // リンク元
-        checkUpperLimitRecord(srcNavProp, src, targetEntitySetName);
-        // リンク先
-        checkUpperLimitRecord(srcNavProp, tgt, sourceEntitySetName);
-
-        createLinkForNtoN(linkAccessor, docHandler);
-    }
-
     private long createLinks(OEntityId sourceOEntity,
             EdmNavigationProperty srcNavProp,
             EdmAssociation assoc,
@@ -2034,44 +2025,79 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         // OData 空間全体をlockする
         Lock lock = this.lock();
         try {
-
-            if (assoc.getEnd1().getMultiplicity() == EdmMultiplicity.MANY
-                    && assoc.getEnd2().getMultiplicity() == EdmMultiplicity.MANY) {
-                // n:nの場合
-                deleteLinks(sourceEntityId, targetEntityKey, tgtSet);
-            } else if (assoc.getEnd1().getMultiplicity() != EdmMultiplicity.MANY
-                    && assoc.getEnd2().getMultiplicity() != EdmMultiplicity.MANY) {
-                // [0..1:0..1] or [0..1:1] or [1:0..1] or [1:1]の場合は相互リンクのため、両方のデータからリンク情報を削除する
-                // リンク先・リンク元のデータを取得する
-                EntitySetDocHandler source = this.retrieveWithKey(sourceEntityId);
-                EntitySetDocHandler target = this.retrieveWithKey(tgtSet, targetEntityKey);
-                // 該当データが存在しない場合は404
-                if (source == null || target == null) {
-                    throw PersoniumCoreException.OData.NOT_FOUND;
-                }
-
-                // 取得したデータ同士の関連付けをチェックし、関連付いていないリンクを削除しようとした場合は400を返却する
-                isExistsLinks(source, target, tgtSet);
-                isExistsLinks(target, source, srcSet);
-
-                // Aliasをプロパティ名に変換する
-                source.convertAliasToName(getMetadata());
-                target.convertAliasToName(getMetadata());
-
-                // 両方のリンクを削除
-                String sourceEntitySetName = srcSet.getName();
-                String targetEntitySetName = tgtSet.getName();
-                linkUpdate(source, sourceEntitySetName, targetEntitySetName);
-                linkUpdate(target, targetEntitySetName, sourceEntitySetName);
-            } else {
-                // n:1の1のEdmAssociationEndを取得する
-                EdmAssociationEnd oneAssoc = getOneAssociationEnd(assoc);
-                // n:1の場合、1のデータのリンク情報から該当する項目を削除する
-                deleteLinks(sourceEntityId, targetEntityKey, tgtSet, oneAssoc);
-            }
+            deleteLink(sourceEntityId, targetEntityKey, srcSet, tgtSet, assoc);
         } finally {
             log.debug("unlock");
             lock.release();
+        }
+    }
+
+    /**
+     * Delete an existing link between two entities without lock.
+     * @param sourceEntityId an entity with at least one navigation property
+     * @param targetNavProp the navigation property
+     * @param targetEntityKey if the navigation property represents a set, the key identifying the target entity within
+     *        the set, else n/a
+     */
+    protected void deleteLinkWithoutLock(final OEntityId sourceEntityId,
+            final String targetNavProp,
+            final OEntityKey targetEntityKey) {
+        String srcSetName = sourceEntityId.getEntitySetName();
+
+        // スキーマチェック
+        // srcTypeからtgtTypeへN:N Assocが定義されているか調べる
+        EdmEntitySet srcSet = this.getMetadata().findEdmEntitySet(srcSetName);
+        EdmEntityType srcType = srcSet.getType();
+
+        EdmNavigationProperty navProp = srcType.findNavigationProperty(targetNavProp);
+        if (navProp == null) {
+            // TODO 本来はリクエストされたリソースが存在しないことになるため404エラーを返却すべき
+            throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
+        }
+        EdmEntitySet tgtSet = this.getMetadata().findEdmEntitySet(navProp.getToRole().getType().getName());
+
+        // n:1かn:nの切り分けを行う
+        EdmAssociation assoc = navProp.getRelationship();
+
+        deleteLink(sourceEntityId, targetEntityKey, srcSet, tgtSet, assoc);
+    }
+
+    private void deleteLink(final OEntityId sourceEntityId,
+            final OEntityKey targetEntityKey, EdmEntitySet srcSet, EdmEntitySet tgtSet, EdmAssociation assoc) {
+
+        if (assoc.getEnd1().getMultiplicity() == EdmMultiplicity.MANY
+                && assoc.getEnd2().getMultiplicity() == EdmMultiplicity.MANY) {
+            // n:nの場合
+            deleteLinks(sourceEntityId, targetEntityKey, tgtSet);
+        } else if (assoc.getEnd1().getMultiplicity() != EdmMultiplicity.MANY
+                && assoc.getEnd2().getMultiplicity() != EdmMultiplicity.MANY) {
+            // [0..1:0..1] or [0..1:1] or [1:0..1] or [1:1]の場合は相互リンクのため、両方のデータからリンク情報を削除する
+            // リンク先・リンク元のデータを取得する
+            EntitySetDocHandler source = this.retrieveWithKey(sourceEntityId);
+            EntitySetDocHandler target = this.retrieveWithKey(tgtSet, targetEntityKey);
+            // 該当データが存在しない場合は404
+            if (source == null || target == null) {
+                throw PersoniumCoreException.OData.NOT_FOUND;
+            }
+
+            // 取得したデータ同士の関連付けをチェックし、関連付いていないリンクを削除しようとした場合は400を返却する
+            isExistsLinks(source, target, tgtSet);
+            isExistsLinks(target, source, srcSet);
+
+            // Aliasをプロパティ名に変換する
+            source.convertAliasToName(getMetadata());
+            target.convertAliasToName(getMetadata());
+
+            // 両方のリンクを削除
+            String sourceEntitySetName = srcSet.getName();
+            String targetEntitySetName = tgtSet.getName();
+            linkUpdate(source, sourceEntitySetName, targetEntitySetName);
+            linkUpdate(target, targetEntitySetName, sourceEntitySetName);
+        } else {
+            // n:1の1のEdmAssociationEndを取得する
+            EdmAssociationEnd oneAssoc = getOneAssociationEnd(assoc);
+            // n:1の場合、1のデータのリンク情報から該当する項目を削除する
+            deleteLinks(sourceEntityId, targetEntityKey, tgtSet, oneAssoc);
         }
     }
 
@@ -2153,7 +2179,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
      * @param target リンク先エンティティ
      * @return 削除正常時はtrue データが存在しない場合はfalseを返却
      */
-    protected boolean deleteLinkEntity(EntitySetDocHandler source, EntitySetDocHandler target) {
+    private boolean deleteLinkEntity(EntitySetDocHandler source, EntitySetDocHandler target) {
         // 削除すべきEsドキュメントを特定
         ODataLinkAccessor esType = this.getAccessorForLink();
         LinkDocHandler elh = this.getLinkDocHandler(source, target);

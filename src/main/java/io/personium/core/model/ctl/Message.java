@@ -214,5 +214,5 @@ public class Message {
     public static final EdmProperty.Builder P_REQUEST_RELATION_TARGET = EdmProperty.newBuilder("RequestRelationTarget")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.P_FORMAT_URI);
+            .setAnnotations(Common.P_FORMAT_CELL_URL);
 }

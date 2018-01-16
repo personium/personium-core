@@ -163,7 +163,7 @@ public class ODataUtilsTest {
     @Test
     public void validateClassUrl_Normal_scheme_is_null() {
         String str = "./dummyBox/dummyRelation";
-        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
+        String pFormat = Common.PATTERN_RELATION_CLASS_URL;
         assertThat(ODataUtils.validateClassUrl(str, pFormat), is(false));
     }
 
@@ -175,7 +175,7 @@ public class ODataUtilsTest {
     @Test
     public void validateClassUrl_Normal_scheme_is_not_allowed_format() {
         String str = "file://dummyFile";
-        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
+        String pFormat = Common.PATTERN_RELATION_CLASS_URL;
         assertThat(ODataUtils.validateClassUrl(str, pFormat), is(false));
     }
 
@@ -192,7 +192,7 @@ public class ODataUtilsTest {
             builder.append("a");
         }
         String str = new String(builder);
-        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
+        String pFormat = Common.PATTERN_RELATION_CLASS_URL;
         assertThat(ODataUtils.validateClassUrl(str, pFormat), is(false));
     }
 
@@ -204,19 +204,19 @@ public class ODataUtilsTest {
     @Test
     public void validateClassUrl_Normal_not_in_uri_format() {
         String str = "\\ %";
-        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
+        String pFormat = Common.PATTERN_RELATION_CLASS_URL;
         assertThat(ODataUtils.validateClassUrl(str, pFormat), is(false));
     }
 
     /**
      * Test validateClassUrl().
      * Normal test.
-     * Not match regular expression in box.
+     * Not match regular expression.
      */
     @Test
-    public void validateClassUrl_Normal_not_match_regular_expression_in_box() {
+    public void validateClassUrl_Normal_not_match_regular_expression() {
         String str = "http://personium/dummyCell/__relation/dummyBox/dummyRelation";
-        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
+        String pFormat = Common.PATTERN_RELATION_CLASS_URL;
         assertThat(ODataUtils.validateClassUrl(str, pFormat), is(false));
     }
 
@@ -228,20 +228,8 @@ public class ODataUtilsTest {
     @Test
     public void validateClassUrl_Normal_match_regular_expression() {
         String str = "http://personium/appCell/__relation/__/dummyRelation";
-        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
+        String pFormat = Common.PATTERN_RELATION_CLASS_URL;
         assertThat(ODataUtils.validateClassUrl(str, pFormat), is(true));
-    }
-
-    /**
-     * Test validateClassUrl().
-     * Normal test.
-     * Not match regular expression.
-     */
-    @Test
-    public void validateClassUrl_Normal_not_match_regular_expression() {
-        String str = "http://personium/otherpath/appCell/__relation/__/dummyRelation";
-        String pFormat = Common.PATTERN_RELATION_CLASS_PATH;
-        assertThat(ODataUtils.validateClassUrl(str, pFormat), is(false));
     }
 
     /**
