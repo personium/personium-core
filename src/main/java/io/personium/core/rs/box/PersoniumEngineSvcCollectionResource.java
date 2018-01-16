@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,12 @@ import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavMoveResource;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
+
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
+import io.personium.core.event.EventBus;
+import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * PersoniumEngineSvcCollectionResourceを担当するJAX-RSリソース.
@@ -271,6 +277,28 @@ public class PersoniumEngineSvcCollectionResource {
     }
 
     /**
+     * Create event from request.
+     * @param uriInfo URI
+     * @param headers HTTP Header
+     * @return PersoniumEvent created event
+     */
+    private PersoniumEvent createEvent(UriInfo uriInfo, HttpHeaders headers) {
+        String schema = this.davRsCmp.getAccessContext().getSchema();
+        String subject = this.davRsCmp.getAccessContext().getSubject();
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(uriInfo.getRequestUri());
+        List<String> keys = headers.getRequestHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY);
+        String requestKey = null;
+        if (keys != null) {
+            requestKey = keys.get(0);
+        }
+        requestKey = ResourceUtils.validateXPersoniumRequestKey(requestKey);
+        String type = PersoniumEventType.Category.SERVICE
+                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.EXEC;
+
+        return new PersoniumEvent(schema, subject, type, object, null, requestKey);
+    }
+
+    /**
      * relay共通処理のメソッド.
      * @param method メソッド
      * @param uriInfo URI
@@ -349,13 +377,27 @@ public class PersoniumEngineSvcCollectionResource {
             }
         }
 
+        // prepare event
+        PersoniumEvent event = createEvent(uriInfo, headers);
+        EventBus eventBus = this.davRsCmp.getAccessContext().getCell().getEventBus();
+
         // Engineにリクエストを投げる
         HttpResponse objResponse = null;
         try {
             objResponse = client.execute(req);
+            // post event to EventBus
+            String info = Integer.toString(objResponse.getStatusLine().getStatusCode());
+            event.setInfo(info);
+            eventBus.post(event);
         } catch (ClientProtocolException e) {
+            // post event to EventBus
+            event.setInfo("500");
+            eventBus.post(event);
             throw PersoniumCoreException.ServiceCollection.SC_INVALID_HTTP_RESPONSE_ERROR;
         } catch (Exception ioe) {
+            // post event to EventBus
+            event.setInfo("500");
+            eventBus.post(event);
             throw PersoniumCoreException.ServiceCollection.SC_ENGINE_CONNECTION_ERROR.reason(ioe);
         }
 

@@ -1145,27 +1145,27 @@ public class DavCmpFsImpl implements DavCmp {
      * xml:baseに従ってRoleResorceUrlの整形.
      * @param baseUrlStr
      *            xml:baseの値
-     * @param roloResourceUrl
+     * @param roleResourceUrlStr
      *            ロールリソースURL
      * @return
      */
-    private String baseUrlToRoleResourceUrl(String baseUrlStr, String roloResourceUrlStr) {
+    private String baseUrlToRoleResourceUrl(String baseUrlStr, String roleResourceUrlStr) {
         String result = null;
         Role baseUrl = null;
-        Role roloResourceUrl = null;
+        Role roleResourceUrl = null;
         try {
             // base:xmlはロールリソースURLではないため、ダミーで「__」を追加
             baseUrl = new Role(new URL(baseUrlStr + "__"));
-            roloResourceUrl = new Role(new URL(roloResourceUrlStr));
+            roleResourceUrl = new Role(new URL(roleResourceUrlStr));
         } catch (MalformedURLException e) {
             throw PersoniumCoreException.Dav.ROLE_NOT_FOUND.reason(e);
         }
-        if (baseUrl.getBoxName().equals(roloResourceUrl.getBoxName())) {
+        if (baseUrl.getBoxName().equals(roleResourceUrl.getBoxName())) {
             // base:xmlのBOXとロールリソースURLのBOXが同じ場合
-            result = roloResourceUrl.getName();
+            result = roleResourceUrl.getName();
         } else {
             // base:xmlのBOXとロールリソースURLのBOXが異なる場合
-            result = String.format(ACL_RELATIVE_PATH_FORMAT, roloResourceUrl.getBoxName(), roloResourceUrl.getName());
+            result = String.format(ACL_RELATIVE_PATH_FORMAT, roleResourceUrl.getBoxName(), roleResourceUrl.getName());
         }
         return result;
     }

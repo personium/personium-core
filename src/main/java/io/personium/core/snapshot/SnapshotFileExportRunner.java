@@ -39,6 +39,9 @@ import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.file.DataCryptor;
@@ -51,6 +54,7 @@ import io.personium.core.model.impl.es.odata.EsQueryHandler;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.model.impl.fs.DavMetadataFile;
 import io.personium.core.model.lock.CellLockManager;
+import io.personium.core.utils.UriUtils;
 
 /**
  * Runner that performs cell export processing.
@@ -123,6 +127,14 @@ public class SnapshotFileExportRunner implements Runnable {
             progressInfo.writeToCache(true);
             // Create new metadata file
             createMetaFile();
+            // Post event to EventBus.
+            String object = UriUtils.SCHEME_LOCALCELL + ":/";
+            String info = "";
+            String type = PersoniumEventType.Category.CELL
+                    + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.EXPORT;
+            PersoniumEvent event = new PersoniumEvent(null, null, type, object, info, null);
+            EventBus eventBus = targetCell.getEventBus();
+            eventBus.post(event);
         } catch (Throwable e) {
             // When processing fails, delete snapshot file and output error file.
             // Delete snapshot file.

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,10 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    MessageODataResourceTest.class
+    CellCtlResourceTest.class,
+    EventResourceTest.class,
+    MessageODataResourceTest.class,
+    TokenEndPointResourceTest.class
 })
 public class AllTests {
 }

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,9 +101,21 @@ public class ODataCtlResource {
 
     /**
      * p:Format以外のチェック処理.
+     * @param entitySetName target entityset name
      * @param props プロパティ一覧
      */
-    public void validate(List<OProperty<?>> props) {
+    public void validate(String entitySetName, List<OProperty<?>> props) {
+    }
+
+    /**
+     * Post event to EventBus.
+     * @param entitySetName the name of the entityset of processing object
+     * @param object string of processing object
+     * @param info string of the information about processing
+     * @param reqKey request key
+     * @param op kind of operation
+     */
+    public void postEvent(String entitySetName, String object, String info, String reqKey, String op) {
     }
 
     private void checkNonSupportLinks(String sourceEntity, String targetNavProp) {

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,19 +68,20 @@ import io.personium.core.utils.ODataUtils;
 public final class ODataSvcSchemaResource extends ODataResource {
     private static final MediaType APPLICATION_ATOMSVC_XML_MEDIATYPE =
             MediaType.valueOf(ODataConstants.APPLICATION_ATOMSVC_XML);
-    ODataSvcCollectionResource odataSvcCollectionReource;
+    ODataSvcCollectionResource odataSvcCollectionResource;
     DavRsCmp davRsCmp;
 
     /**
      * constructor.
      * @param davRsCmp このスキーマが担当するユーザデータのResource
+     * @param odataSvcCollectionResource ODataSvcCollectionResource object
      */
     ODataSvcSchemaResource(
-            final DavRsCmp davRsCmp, final ODataSvcCollectionResource odataSvcCollectionReource) {
+            final DavRsCmp davRsCmp, final ODataSvcCollectionResource odataSvcCollectionResource) {
         super(davRsCmp.getAccessContext(),
-                davRsCmp.getUrl() + "/" + davRsCmp.getDavCmp().getName() + "/",
+                davRsCmp.getUrl() + "/$metadata/",
                 davRsCmp.getDavCmp().getSchemaODataProducer(davRsCmp.getCell()));
-        this.odataSvcCollectionReource = odataSvcCollectionReource;
+        this.odataSvcCollectionResource = odataSvcCollectionResource;
         this.davRsCmp = davRsCmp;
     }
 
@@ -139,7 +140,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
         }
 
         // データのEDMXを返す
-        ODataProducer userDataODataProducer = this.odataSvcCollectionReource.getODataProducer();
+        ODataProducer userDataODataProducer = this.odataSvcCollectionResource.getODataProducer();
         EdmDataServices dataEdmDataSearvices = userDataODataProducer.getMetadata();
         StringWriter w = new StringWriter();
         EdmxFormatWriter.write(dataEdmDataSearvices, w);
@@ -244,10 +245,11 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     /**
      * p:Format以外のチェック処理.
+     * @param entitySetName entityset name
      * @param props プロパティ一覧
      */
     @Override
-    public void validate(List<OProperty<?>> props) {
+    public void validate(String entitySetName, List<OProperty<?>> props) {
         String type = null;
         for (OProperty<?> property : props) {
             if (property.getValue() == null) {

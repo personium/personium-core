@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,8 @@ public class LogTest extends ODataCommon {
     private static final String DEFAULT_LOG = "default.log";
     private static final String CURRENT_COLLECTION = "current";
 
+    private static final long WAIT_TIME_FOR_EVENT = 3000; // msec
+
     /**
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
@@ -64,17 +66,21 @@ public class LogTest extends ODataCommon {
 
     /**
      * ログファイルに対するGETで200が返却されること.
+     * @throws InterruptedException InterruptedException
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void ログファイルに対するGETで200が返却されること() {
+    public final void ログファイルに対するGETで200が返却されること()
+            throws InterruptedException {
         JSONObject body = new JSONObject();
-        body.put("level", "INFO");
-        body.put("action", "POST");
-        body.put("object", "ObjectData");
-        body.put("result", "resultData");
+        body.put("Type", "POST");
+        body.put("Object", "ObjectData");
+        body.put("Info", "resultData");
 
         CellUtils.event(MASTER_TOKEN_NAME, HttpStatus.SC_OK, Setup.TEST_CELL1, body.toJSONString());
+
+        // wait for log output
+        Thread.sleep(WAIT_TIME_FOR_EVENT);
 
         TResponse response = Http.request("cell/log-get.txt")
                 .with("METHOD", HttpMethod.GET)
@@ -101,10 +107,9 @@ public class LogTest extends ODataCommon {
         String cellName = "JPNEvntCell";
 
         JSONObject body = new JSONObject();
-        body.put("level", "INFO");
-        body.put("action", "POST");
-        body.put("object", "ObjectData");
-        body.put("result", "テスト用ログ");
+        body.put("Type", "POST");
+        body.put("Object", "ObjectData");
+        body.put("Info", "テスト用ログ");
 
         try {
             // 日本語ログ用セル作成
@@ -330,17 +335,17 @@ public class LogTest extends ODataCommon {
 
     /**
      * Cellを削除しcurrentのログが削除されること.
+     * @throws InterruptedException InterruptedException
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void Cellを削除しcurrentのログが削除されること() {
+    public final void Cellを削除しcurrentのログが削除されること() throws InterruptedException {
         String cellName = "logtest_cell";
 
         JSONObject body = new JSONObject();
-        body.put("level", "INFO");
-        body.put("action", "POST");
-        body.put("object", "ObjectData");
-        body.put("result", "resultData");
+        body.put("Type", "POST");
+        body.put("Object", "ObjectData");
+        body.put("Info", "resultData");
 
         try {
             // Cell作成
@@ -348,6 +353,9 @@ public class LogTest extends ODataCommon {
 
             // イベント受付
             CellUtils.event(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, body.toJSONString());
+
+            // wait for log output
+            Thread.sleep(WAIT_TIME_FOR_EVENT);
 
             // ログ取得できること
             Http.request("cell/log-get.txt")
@@ -381,18 +389,19 @@ public class LogTest extends ODataCommon {
 
     /**
      * Owner情報がURL形式ではない場合にログに対する操作がひととおり行えること.
+     * @throws InterruptedException InterruptedException
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void Owner情報がURL形式ではない場合にログに対する操作がひととおり行えること() {
+    public final void Owner情報がURL形式ではない場合にログに対する操作がひととおり行えること()
+            throws InterruptedException {
         String cellName = "logtest_ownercell";
         String ownerName = "dd4b407a-5b39-4c97-9fd5-5e2be9de06cf";
 
         JSONObject body = new JSONObject();
-        body.put("level", "INFO");
-        body.put("action", "POST");
-        body.put("object", "ObjectData");
-        body.put("result", "resultData");
+        body.put("Type", "POST");
+        body.put("Object", "ObjectData");
+        body.put("Info", "resultData");
 
         try {
             // Cell作成
@@ -400,6 +409,9 @@ public class LogTest extends ODataCommon {
 
             // イベント受付
             CellUtils.event(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, body.toJSONString());
+
+            // wait for log output
+            Thread.sleep(WAIT_TIME_FOR_EVENT);
 
             // ログ取得できること
             Http.request("cell/log-get.txt")
@@ -414,6 +426,9 @@ public class LogTest extends ODataCommon {
 
             // イベント受付(2回目)
             CellUtils.event(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, body.toJSONString());
+
+            // wait for log output
+            Thread.sleep(WAIT_TIME_FOR_EVENT);
 
             // ログ取得できること
             Http.request("cell/log-get.txt")

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 /**
- * SentMessagePort のEdm 定義体.
+ * Edm definition of SentMessagePort.
  */
 public class SentMessagePort extends SentMessage {
     private SentMessagePort() {
@@ -30,7 +30,7 @@ public class SentMessagePort extends SentMessage {
     }
 
     /**
-     * BoxBoundプロパティの定義体.
+     * BoxBound property.
      */
     public static final EdmProperty.Builder P_BOX_BOUND = EdmProperty.newBuilder("BoxBound")
             .setType(EdmSimpleType.BOOLEAN)
@@ -39,13 +39,14 @@ public class SentMessagePort extends SentMessage {
     /**
      * EntityType Builder.
      */
-    public static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType
+    static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType
             .newBuilder()
             .setNamespace(Common.EDM_NS_CELL_CTL)
             .setName(EDM_TYPE_NAME)
             .addProperties(
                     Enumerable.create(Common.P_ID, P_BOX_BOUND, P_IN_REPLY_TO, P_TO, P_TO_RELATION,
                             P_TYPE, P_TITLE, P_BODY, P_PRIORITY, P_REQUEST_RELATION, P_REQUEST_RELATION_TARGET,
-                            P_BOX_NAME, P_RESULT,
-                            Common.P_PUBLISHED, Common.P_UPDATED).toList()).addKeys(Common.P_ID.getName());
+                            P_REQUEST_RULE, Common.P_BOX_NAME, P_RESULT,
+                            Common.P_PUBLISHED, Common.P_UPDATED).toList())
+            .addKeys(Common.P_ID.getName());
 }

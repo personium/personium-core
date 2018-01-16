@@ -24,6 +24,8 @@ import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 
+import javax.naming.InvalidNameException;
+
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,10 +62,11 @@ public class X509AuthTest extends JerseyTest {
      * @throws CertificateException CertificateException
      * @throws InvalidKeySpecException InvalidKeySpecException
      * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     * @throws InvalidNameException InvalidNameException
      */
     @Test
     public final void ルートCA証明局に署名されていない証明書でのトランスセルアクセストークン認証の確認() throws
-            NoSuchAlgorithmException, InvalidKeySpecException, CertificateException, IOException {
+            NoSuchAlgorithmException, InvalidKeySpecException, CertificateException, IOException, InvalidNameException {
 
         String folder = folderPath + "ca_different/";
 
@@ -133,10 +136,11 @@ public class X509AuthTest extends JerseyTest {
      * @throws CertificateException CertificateException
      * @throws InvalidKeySpecException InvalidKeySpecException
      * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     * @throws InvalidNameException InvalidNameException
      */
     @Test
     public final void トークンの証明書の有効期限が切れている場合のトランスセルアクセストークン認証の確認() throws
-            NoSuchAlgorithmException, InvalidKeySpecException, CertificateException, IOException {
+            NoSuchAlgorithmException, InvalidKeySpecException, CertificateException, IOException, InvalidNameException {
 
         String folder = folderPath + "server_expiration/";
         try {
@@ -184,10 +188,11 @@ public class X509AuthTest extends JerseyTest {
      * @throws CertificateException CertificateException
      * @throws InvalidKeySpecException InvalidKeySpecException
      * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     * @throws InvalidNameException InvalidNameException
      */
     @Test
     public final void ルートCA証明書が重複設定されている場合のトランスセルアクセストークン認証の確認() throws
-            NoSuchAlgorithmException, InvalidKeySpecException, CertificateException, IOException {
+            NoSuchAlgorithmException, InvalidKeySpecException, CertificateException, IOException, InvalidNameException {
 
         String folder = folderPath + "server_expiration/";
 

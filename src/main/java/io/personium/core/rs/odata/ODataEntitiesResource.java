@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
@@ -85,6 +86,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     /**
      * @param uriInfo UriInfo
      * @param accept Acceptヘッダ
+     * @param requestKey X-Personium-RequestKey Header
      * @param format $format パラメタ
      * @param callback コールバック
      * @param skipToken スキップトークン
@@ -95,6 +97,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     public Response listEntities(
             @Context UriInfo uriInfo,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @QueryParam("$format") String format,
             @QueryParam("$callback") final String callback,
             @QueryParam("$skiptoken") final String skipToken,
@@ -128,8 +131,19 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         ODataVersion version = null;
         version = ODataVersion.V2;
 
-        return Response.ok(entity, fw.getContentType())
+        Response response = Response.ok(entity, fw.getContentType())
                 .header(ODataConstants.Headers.DATA_SERVICE_VERSION, version.asString).build();
+
+        // post event to EventBus
+        String object = String.format("%s%s",
+                this.odataResource.getRootUrl(),
+                getEntitySetName());
+        String info = String.format("%s,%s",
+                Integer.toString(response.getStatus()),
+                uriInfo.getRequestUri());
+        this.odataResource.postEvent(getEntitySetName(), object, info, requestKey, PersoniumEventType.Operation.LIST);
+
+        return response;
     }
 
     /**
@@ -160,6 +174,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     /**
      * @param uriInfo UriInfo
      * @param accept Acceptヘッダ
+     * @param requestKey X-Personium-RequestKey Header
      * @param format $format パラメタ
      * @param reader リクエストボディ
      * @return JAX-RS Response
@@ -169,6 +184,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     public Response post(
             @Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @DefaultValue(FORMAT_JSON) @QueryParam("$format") final String format,
             final Reader reader) {
 
@@ -200,7 +216,19 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         responseStr = escapeResponsebody(responseStr);
 
         ResponseBuilder rb = getPostResponseBuilder(ent, outputFormat, responseStr, resUriInfo, key);
-        return rb.build();
+        Response response = rb.build();
+
+        // post event to EventBus
+        String object = String.format("%s%s%s",
+                this.odataResource.getRootUrl(),
+                getEntitySetName(),
+                key);
+        String info = String.format("%s,%s",
+                Integer.toString(response.getStatus()),
+                uriInfo.getRequestUri());
+        this.odataResource.postEvent(getEntitySetName(), object, info, requestKey, PersoniumEventType.Operation.CREATE);
+
+        return response;
     }
 
     static QueryInfo queryInfo(UriInfo uriInfo) {
@@ -266,7 +294,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
      */
     @Override
     public void validate(List<OProperty<?>> props) {
-        this.odataResource.validate(props);
+        this.odataResource.validate(getEntitySetName(), props);
     }
 
     /**

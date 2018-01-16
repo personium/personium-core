@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +22,16 @@ import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 /**
- * ReceivedMessageのPort用Edm 定義体.
+ * Edm definition of ReceivedMessagePort.
  */
 public class ReceivedMessagePort extends ReceivedMessage {
+    /** Constructor. */
     private ReceivedMessagePort() {
         super();
     }
 
     /**
-     * Schema プロパティの定義体.
+     * Schema property.
      */
     public static final EdmProperty.Builder P_SCHEMA = EdmProperty.newBuilder("Schema")
             .setType(EdmSimpleType.STRING)
@@ -39,12 +40,13 @@ public class ReceivedMessagePort extends ReceivedMessage {
     /**
      * EntityType Builder.
      */
-    public static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType
+    static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType
             .newBuilder()
             .setNamespace(Common.EDM_NS_CELL_CTL)
             .setName(EDM_TYPE_NAME)
             .addProperties(
                     Enumerable.create(P_ID, P_SCHEMA, P_IN_REPLY_TO, P_FROM, P_MULTICAST_TO, P_TYPE, P_TITLE, P_BODY,
-                            P_PRIORITY, P_STATUS, P_REQUEST_RELATION, P_REQUEST_RELATION_TARGET, P_BOX_NAME,
-                            Common.P_PUBLISHED, Common.P_UPDATED).toList()).addKeys(P_ID.getName());
+                            P_PRIORITY, P_STATUS, P_REQUEST_RELATION, P_REQUEST_RELATION_TARGET, P_REQUEST_RULE,
+                            Common.P_BOX_NAME, Common.P_PUBLISHED, Common.P_UPDATED).toList())
+            .addKeys(P_ID.getName());
 }

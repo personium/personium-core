@@ -51,7 +51,7 @@ import io.personium.test.categories.Unit;
  * Unit Test class for UnitCtlResource.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({OEntityWrapper.class, AccessContext.class, UriUtils.class})
+@PrepareForTest({ OEntityWrapper.class, AccessContext.class, UriUtils.class })
 @Category({ Unit.class })
 public class UnitCtlResourceTest {
 

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2017 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.unit.core.utils;
+package io.personium.core.model;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -25,7 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-        ResourceUtilTest.class
+        ModelFactoryTest.class
 })
 public class AllTests {
 }

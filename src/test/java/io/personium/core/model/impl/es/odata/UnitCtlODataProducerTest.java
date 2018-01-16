@@ -47,7 +47,7 @@ import io.personium.test.categories.Unit;
  * UnitCtlODataProducerユニットテストクラス.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({AccessContext.class, UriUtils.class, QueryMapFactory.class})
+@PrepareForTest({ AccessContext.class, UriUtils.class, QueryMapFactory.class })
 @Category({ Unit.class })
 public class UnitCtlODataProducerTest {
 
