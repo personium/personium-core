@@ -1760,6 +1760,19 @@ public class BarFileReadRunner implements Runnable {
         return createdBoxEtag;
     }
 
+    // Post event to EventBus
+    private void postCellCtlCreateEvent(EntityResponse res) {
+        String name = res.getEntity().getEntitySetName();
+        String keyString = AbstractODataResource.replaceDummyKeyToNull(res.getEntity().getEntityKey().toKeyString());
+        String object = String.format("%s:/__ctl/%s%s", UriUtils.SCHEME_LOCALCELL, name, keyString);
+        String info = "box install";
+        String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
+                + name + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
+        PersoniumEvent ev = new PersoniumEvent(null, null, type, object, info, null);
+        EventBus bus = this.cell.getEventBus();
+        bus.post(ev);
+    }
+
     /**
      * Box情報をESへ登録する.
      * @param json JSONファイルから読み込んだJSONオブジェクト
@@ -1779,7 +1792,7 @@ public class BarFileReadRunner implements Runnable {
                 CtlSchema.getEdmDataServicesForCellCtl().build());
 
         // Boxの登録
-        odataProducer.
+        EntityResponse res = odataProducer.
                 createEntity(entitySetName, oew);
         this.createdBoxEtag = oew.getEtag();
 
@@ -1789,6 +1802,9 @@ public class BarFileReadRunner implements Runnable {
 
         this.box = newBox;
         this.schemaUrl = (String) json.get("Schema");
+
+        // post event
+        postCellCtlCreateEvent(res);
     }
 
     /**
@@ -1806,8 +1822,11 @@ public class BarFileReadRunner implements Runnable {
                 CtlSchema.getEdmDataServicesForCellCtl().build());
 
         // Relationの登録
-        odataProducer.
+        EntityResponse res = odataProducer.
                 createEntity(Relation.EDM_TYPE_NAME, oew);
+
+        // post event
+        postCellCtlCreateEvent(res);
     }
 
     /**
@@ -1825,8 +1844,11 @@ public class BarFileReadRunner implements Runnable {
                 CtlSchema.getEdmDataServicesForCellCtl().build());
 
         // Roleの登録
-        odataProducer.
+        EntityResponse res = odataProducer.
                 createEntity(Role.EDM_TYPE_NAME, oew);
+
+        // post event
+        postCellCtlCreateEvent(res);
     }
 
     /**
@@ -1846,8 +1868,11 @@ public class BarFileReadRunner implements Runnable {
                 CtlSchema.getEdmDataServicesForCellCtl().build());
 
         // ExtRoleの登録
-        odataProducer.
+        EntityResponse res = odataProducer.
                 createEntity(ExtRole.EDM_TYPE_NAME, oew);
+
+        // post event
+        postCellCtlCreateEvent(res);
     }
 
     private void createRules(JSONObject json) {
@@ -1863,15 +1888,8 @@ public class BarFileReadRunner implements Runnable {
         EntityResponse res = odataProducer.
                 createEntity(Rule.EDM_TYPE_NAME, oew);
 
-        // post rule event to EventBus
-        String keyString = AbstractODataResource.replaceDummyKeyToNull(res.getEntity().getEntityKey().toKeyString());
-        String object = String.format("%s:/__ctl/%s%s", UriUtils.SCHEME_LOCALCELL, Rule.EDM_TYPE_NAME, keyString);
-        String info = "box install";
-        String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                + Rule.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-        PersoniumEvent ev = new PersoniumEvent(null, null, type, object, info, null);
-        EventBus bus = this.cell.getEventBus();
-        bus.post(ev);
+        // post event
+        postCellCtlCreateEvent(res);
     }
 
     /**
@@ -1896,6 +1914,20 @@ public class BarFileReadRunner implements Runnable {
         OEntityId newTargetEntity = OEntityIds.create(((JSONLinks) mappedObject).getToType(), toOEKey);
         // $linksの登録
         producer.createLink(sourceEntity, targetNavProp, newTargetEntity);
+
+        // post event
+        String keyString = AbstractODataResource.replaceDummyKeyToNull(fromOEKey.toString());
+        String targetKeyString = AbstractODataResource.replaceDummyKeyToNull(toOEKey.toString());
+        String object = String.format("%s:/__ctl/%s%s/$links/%s%s",
+                UriUtils.SCHEME_LOCALCELL, sourceEntity.getEntitySetName(), keyString, targetNavProp, targetKeyString);
+        String info = "box install";
+        String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
+                + sourceEntity.getEntitySetName() + PersoniumEventType.SEPALATOR
+                + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
+                + newTargetEntity.getEntitySetName() + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
+        PersoniumEvent ev = new PersoniumEvent(null, null, type, object, info, null);
+        EventBus bus = this.cell.getEventBus();
+        bus.post(ev);
     }
 
     private boolean createUserdataLinks(PersoniumODataProducer producer, List<JSONMappedObject> userDataLinks) {
