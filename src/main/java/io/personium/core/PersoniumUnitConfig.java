@@ -60,6 +60,12 @@ public class PersoniumUnitConfig {
     /** ユニットのスキーム設定キー. */
     public static final String UNIT_SCHEME = KEY_ROOT + "unitScheme";
 
+    /** Port number key for UnitUrl. */
+    public static final String UNIT_PORT = KEY_ROOT + "unitPort";
+
+    /** Path key for UnitUrl. */
+    public static final String UNIT_PATH = KEY_ROOT + "unitPath";
+
     /** プラグインのパス設定キー. */
     public static final String PLUGIN_PATH = KEY_ROOT + "plugin.path";
 
@@ -593,6 +599,22 @@ public class PersoniumUnitConfig {
     }
 
     /**
+     * Get port number for Unit.
+     * @return port
+     */
+    public static String getUnitPort() {
+        return get(UNIT_PORT);
+    }
+
+    /**
+     * Get path for Unit.
+     * @return path
+     */
+    public static String getUnitPath() {
+        return get(UNIT_PATH);
+    }
+
+    /**
      * @return プラグインのパス設定キー.
      */
     public static String getPluginPath() {
@@ -604,7 +626,17 @@ public class PersoniumUnitConfig {
      * @return base url
      */
     public static String getBaseUrl() {
-        return getUnitScheme() + "://" + PersoniumCoreUtils.getFQDN() + "/";
+        String ret = getUnitScheme() + "://" + PersoniumCoreUtils.getFQDN();
+        String port = getUnitPort();
+        String path = getUnitPath();
+        if (port != null) {
+            ret += ":" + port;
+        }
+        if (path != null) {
+            ret += path;
+        }
+        ret += "/";
+        return ret;
     }
 
     /**

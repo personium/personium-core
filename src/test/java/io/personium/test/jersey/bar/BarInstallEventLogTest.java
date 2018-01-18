@@ -242,7 +242,7 @@ public class BarInstallEventLogTest extends JerseyTest {
 
             int index = 0;
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1000",
-                    "http://localhost/UnitUserCell/installBox", "Bar installation started.", index++);
+                    UrlUtils.getBaseUrl() + "/UnitUserCell/installBox", "Bar installation started.", index++);
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1001",
                     "bar/00_meta/00_manifest.json", "Installation started.", index++);
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1003",
@@ -252,7 +252,7 @@ public class BarInstallEventLogTest extends JerseyTest {
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1003",
                     "bar/00_meta/90_rootprops.xml", "Installation completed.", index++);
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-0000",
-                    "http://localhost/UnitUserCell/installBox", "Bar installation completed.", index++);
+                    UrlUtils.getBaseUrl() + "/UnitUserCell/installBox", "Bar installation completed.", index++);
             response.statusCode(HttpStatus.SC_OK);
         } finally {
             cleanup();
