@@ -184,8 +184,12 @@ public class BarInstallEventLogTest extends JerseyTest {
 
             // Create Rule.
             JSONObject rule = new JSONObject();
-            rule.put("Name", "box");
+            rule.put("Name", "boxinstall");
             rule.put("Action", "log");
+            rule.put("EventType", "boxinstall");
+            RuleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, rule, HttpStatus.SC_CREATED);
+            rule.put("Name", "pl-bi");
+            rule.put("EventType", "PL-BI-");
             RuleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, rule, HttpStatus.SC_CREATED);
             // wait for rule register
             Thread.sleep(3000);
@@ -253,7 +257,8 @@ public class BarInstallEventLogTest extends JerseyTest {
         } finally {
             cleanup();
             // Delete Rule.
-            RuleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, "box", null);
+            RuleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, "pl-bi", null);
+            RuleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, "boxinstall", null);
             // CELL削除
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL);
             // wait for event processing
