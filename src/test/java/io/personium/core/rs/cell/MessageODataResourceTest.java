@@ -1855,13 +1855,13 @@ public class MessageODataResourceTest {
      * Schema exists.
      * Type is req.rule.register.
      * Status is none.
-     * RequestRule.Action is callback.
+     * RequestRule.Action is relay.
      * RequestRule.Object is localbox.
      * RequestRule.Service is localunit.
      * @throws Exception Unexpected error.
      */
     @Test
-    public void validate_Normal_ReceivedMessage_rule_register_action_callback_object_localbox_service_localunit()
+    public void validate_Normal_ReceivedMessage_rule_register_action_relay_object_localbox_service_localunit()
             throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
         messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
@@ -1878,7 +1878,7 @@ public class MessageODataResourceTest {
         props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
         props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
         List<OProperty<?>> req = new ArrayList<OProperty<?>>();
-        req.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
         req.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localunit:/cell/box/col/service"));
         props.add(OProperties.complex(
@@ -1920,13 +1920,13 @@ public class MessageODataResourceTest {
      * Schema exists.
      * Type is req.rule.register.
      * Status is none.
-     * RequestRule.Action is callback.
+     * RequestRule.Action is relay.
      * RequestRule.Object is localbox.
      * RequestRule.Service is http.
      * @throws Exception Unexpected error.
      */
     @Test
-    public void validate_Normal_ReceivedMessage_rule_register_action_callback_object_localbox_service_http()
+    public void validate_Normal_ReceivedMessage_rule_register_action_relay_object_localbox_service_http()
             throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
         messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
@@ -1943,7 +1943,7 @@ public class MessageODataResourceTest {
         props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
         props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
         List<OProperty<?>> req = new ArrayList<OProperty<?>>();
-        req.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
         req.add(OProperties.string(Rule.P_SERVICE.getName(), "http://personium/cell/box/col/service"));
         props.add(OProperties.complex(
@@ -1985,13 +1985,13 @@ public class MessageODataResourceTest {
      * Schema exists.
      * Type is req.rule.register.
      * Status is none.
-     * RequestRule.Action is callback.
+     * RequestRule.Action is relay.
      * RequestRule.Object is localbox.
      * RequestRule.Service is https.
      * @throws Exception Unexpected error.
      */
     @Test
-    public void validate_Normal_ReceivedMessage_rule_register_action_callback_object_localbox_service_https()
+    public void validate_Normal_ReceivedMessage_rule_register_action_relay_object_localbox_service_https()
             throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
         messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
@@ -2008,7 +2008,7 @@ public class MessageODataResourceTest {
         props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
         props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
         List<OProperty<?>> req = new ArrayList<OProperty<?>>();
-        req.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
         req.add(OProperties.string(Rule.P_SERVICE.getName(), "https://personium/cell/box/col/service"));
         props.add(OProperties.complex(
@@ -2050,13 +2050,13 @@ public class MessageODataResourceTest {
      * Schema exists.
      * Type is req.rule.register.
      * Status is none.
-     * RequestRule.Action is callback.
+     * RequestRule.Action is relay.
      * RequestRule.Object is localbox.
      * RequestRule.Service is invalid.
      * @throws Exception Unexpected error.
      */
     @Test
-    public void validate_Normal_ReceivedMessage_rule_register_action_callback_object_localbox_service_invalid()
+    public void validate_Normal_ReceivedMessage_rule_register_action_relay_object_localbox_service_invalid()
             throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
         messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
@@ -2073,7 +2073,7 @@ public class MessageODataResourceTest {
         props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), null));
         props.add(OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), null));
         List<OProperty<?>> req = new ArrayList<OProperty<?>>();
-        req.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        req.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         req.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
         req.add(OProperties.string(Rule.P_SERVICE.getName(), "/personium/cell/box/col/service"));
         props.add(OProperties.complex(

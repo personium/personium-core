@@ -43,8 +43,8 @@ public class Rule {
 
     /** action exec. */
     public static final String ACTION_EXEC = "exec";
-    /** action callback. */
-    public static final String ACTION_CALLBACK = "callback";
+    /** action relay. */
+    public static final String ACTION_RELAY = "relay";
     /** action log. */
     public static final String ACTION_LOG = "log";
     /** action log.info. */
@@ -60,7 +60,7 @@ public class Rule {
     public static final String P_FORMAT_PATTERN_RULE_SERVICE = "rule-service";
 
     /** Pattern action. */
-    private static final String PATTERN_ACTION = "^(exec)|(callback)|(log)|(log\\.info)|(log\\.warn)|(log\\.error)$"; // CHECKSTYLE IGNORE - To maintein readability
+    private static final String PATTERN_ACTION = "^(exec)|(relay)|(log)|(log\\.info)|(log\\.warn)|(log\\.error)$"; // CHECKSTYLE IGNORE - To maintein readability
 
     /** Annotations for Object. */
     private static final List<EdmAnnotation<?>> P_FORMAT_OBJECT = new ArrayList<EdmAnnotation<?>>();

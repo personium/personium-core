@@ -38,12 +38,12 @@ import io.personium.core.model.Cell;
 import io.personium.test.categories.Unit;
 
 /**
- * Unit Test class for CallbackAction.
+ * Unit Test class for RelayAction.
  */
 @Category({ Unit.class })
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ PersoniumUnitConfig.class })
-public class CallbackActionTest {
+public class RelayActionTest {
 
     /**
      * Test getRequestUrl().
@@ -80,7 +80,7 @@ public class CallbackActionTest {
         // --------------------
         // Run method
         // --------------------
-        CallbackAction action = new CallbackAction(cell, service);
+        RelayAction action = new RelayAction(cell, service);
         String result = action.getRequestUrl();
 
         // --------------------
@@ -116,7 +116,7 @@ public class CallbackActionTest {
         // --------------------
         // Run method
         // --------------------
-        CallbackAction action = new CallbackAction(null, service);
+        RelayAction action = new RelayAction(null, service);
         String result = action.getRequestUrl();
 
         // --------------------
@@ -157,7 +157,7 @@ public class CallbackActionTest {
         // --------------------
         // Run method
         // --------------------
-        CallbackAction action = new CallbackAction(cell, service);
+        RelayAction action = new RelayAction(cell, service);
         HttpPost req = new HttpPost(requestUrl);
         action.setHeaders(req);
 
@@ -193,7 +193,7 @@ public class CallbackActionTest {
         // --------------------
         // Run method
         // --------------------
-        CallbackAction action = new CallbackAction(null, service);
+        RelayAction action = new RelayAction(null, service);
         HttpPost req = new HttpPost(requestUrl);
         action.setHeaders(req);
 
@@ -235,7 +235,7 @@ public class CallbackActionTest {
         // --------------------
         // Run method
         // --------------------
-        CallbackAction action = new CallbackAction(cell, service);
+        RelayAction action = new RelayAction(cell, service);
         HttpPost req = null;
         action.setHeaders(req);
 
@@ -269,7 +269,7 @@ public class CallbackActionTest {
         // --------------------
         // Run method
         // --------------------
-        CallbackAction action = new CallbackAction(null, service);
+        RelayAction action = new RelayAction(null, service);
         JSONObject json = new JSONObject();
         action.addEvents(json);
 
@@ -304,7 +304,7 @@ public class CallbackActionTest {
         // --------------------
         // Run method
         // --------------------
-        CallbackAction action = new CallbackAction(null, service);
+        RelayAction action = new RelayAction(null, service);
         JSONObject json = null;
         action.addEvents(json);
 

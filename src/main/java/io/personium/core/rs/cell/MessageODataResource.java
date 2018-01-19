@@ -730,18 +730,18 @@ public final class MessageODataResource extends AbstractODataResource {
             }
             // RequestRule
             //   Name, Action required
-            //   Action: callback or exec -> Service required
+            //   Action: relay or exec -> Service required
             //   Schema: exists -> Object: personium-localbox:/xxx
             //                  -> Action: exec -> Service: personium-localbox:/xxx
             //   Schema: null   -> Object: personium-localcell:/xxx
             //                  -> Action: exec -> Service: personium-localcell:/xxx
-            //   Action: callback -> Service: personium-localunit: or http: or https:
+            //   Action: relay -> Service: personium-localunit: or http: or https:
             String action = propMap.get(concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_ACTION.getName()));
             if (action == null) {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_ACTION.getName()));
             }
-            if ((Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action))
+            if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_EXEC.equals(action))
                     && propMap.get(
                             concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName())) == null) {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
@@ -770,7 +770,7 @@ public final class MessageODataResource extends AbstractODataResource {
                             concat(ReceivedMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
                 }
             }
-            if (Rule.ACTION_CALLBACK.equals(action)
+            if (Rule.ACTION_RELAY.equals(action)
                     && !service.startsWith(UriUtils.SCHEME_LOCALUNIT)
                     && !service.startsWith(UriUtils.SCHEME_HTTP)
                     && !service.startsWith(UriUtils.SCHEME_HTTPS)) {
@@ -824,18 +824,18 @@ public final class MessageODataResource extends AbstractODataResource {
         } else if (SentMessage.TYPE_REQ_RULE_REGISTER.equals(type)) {
             // RequestRule
             //   Action required
-            //   Action: callback or exec -> Service required
+            //   Action: relay or exec -> Service required
             //   BoxBound: true  -> Object: personium-localbox:/xxx
             //                   -> Action: exec -> Service: personium-localbox:/xxx
             //   BoxBound: false -> Object: personium-localcell:/xxx
             //                   -> Action: exec -> Service: personium-localcell:/xxx
-            //   Action: callback -> Service: personium-localunit: or http: or https:
+            //   Action: relay -> Service: personium-localunit: or http: or https:
             String action = propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_ACTION.getName()));
             if (action == null) {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_ACTION.getName()));
             }
-            if ((Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action))
+            if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_EXEC.equals(action))
                     && propMap.get(concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName())) == null) {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
@@ -865,7 +865,7 @@ public final class MessageODataResource extends AbstractODataResource {
                             concat(SentMessage.P_REQUEST_RULE.getName(), Rule.P_SERVICE.getName()));
                 }
             }
-            if (Rule.ACTION_CALLBACK.equals(action)
+            if (Rule.ACTION_RELAY.equals(action)
                     && !service.startsWith(UriUtils.SCHEME_LOCALUNIT)
                     && !service.startsWith(UriUtils.SCHEME_HTTP)
                     && !service.startsWith(UriUtils.SCHEME_HTTPS)) {

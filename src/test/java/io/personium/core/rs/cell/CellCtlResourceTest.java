@@ -1583,18 +1583,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, action is callback and service is null.
+     * EntitySet is Rule, action is relay and service is null.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_action_callback() throws Exception {
+    public void validate_Error_action_relay() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), null));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), null));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -1637,18 +1637,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Normal test.
-     * EntitySet is Rule, action is callback, object is localcell and service is valid.
+     * EntitySet is Rule, action is relay, object is localcell and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Normal_action_callback_object_localcell_service_valid() throws Exception {
+    public void validate_Normal_action_relay_object_localcell_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localcell:/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "http://personium/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -1675,18 +1675,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Normal test.
-     * EntitySet is Rule, action is callback, object is null and service is valid.
+     * EntitySet is Rule, action is relay, object is null and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Normal_action_callback_service_valid() throws Exception {
+    public void validate_Normal_action_relay_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), null));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "http://personium/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -1713,18 +1713,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, action is callback, object is localbox and service is valid.
+     * EntitySet is Rule, action is relay, object is localbox and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_action_callback_object_localbox_service_valid() throws Exception {
+    public void validate_Error_action_relay_object_localbox_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "http://personium/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -1767,18 +1767,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, action is callback, object is localunit and service is valid.
+     * EntitySet is Rule, action is relay, object is localunit and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_action_callback_object_localunit_service_valid() throws Exception {
+    public void validate_Error_action_relay_object_localunit_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localunit:/cell/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "http://personium/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -1821,18 +1821,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, action is callback, object is http and service is valid.
+     * EntitySet is Rule, action is relay, object is http and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_action_callback_object_http_service_valid() throws Exception {
+    public void validate_Error_action_relay_object_http_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "http://personium/cell/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "http://personium/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -1875,18 +1875,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, action is callback, object is https and service is valid.
+     * EntitySet is Rule, action is relay, object is https and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_action_callback_object_https_service_valid() throws Exception {
+    public void validate_Error_action_relay_object_https_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "https://personium/cell/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "http://personium/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -1929,18 +1929,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, action is callback, object is invalid and service is valid.
+     * EntitySet is Rule, action is relay, object is invalid and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_action_callback_object_invalid_service_valid() throws Exception {
+    public void validate_Error_action_relay_object_invalid_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "/personium/cell/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "http://personium/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -1983,18 +1983,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Normal test.
-     * EntitySet is Rule, action is callback, object is localcell and service is https.
+     * EntitySet is Rule, action is relay, object is localcell and service is https.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Normal_action_callback_object_localcell_service_https() throws Exception {
+    public void validate_Normal_action_relay_object_localcell_service_https() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localcell:/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "https://personium/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -2021,18 +2021,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Normal test.
-     * EntitySet is Rule, action is callback, object is localcell and service is localunit.
+     * EntitySet is Rule, action is relay, object is localcell and service is localunit.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Normal_action_callback_object_localcell_service_localunit() throws Exception {
+    public void validate_Normal_action_relay_object_localcell_service_localunit() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localcell:/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localunit:/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -2059,18 +2059,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, action is callback, object is localcell and service is localcell.
+     * EntitySet is Rule, action is relay, object is localcell and service is localcell.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_action_callback_object_localcell_service_localcell() throws Exception {
+    public void validate_Error_action_relay_object_localcell_service_localcell() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localcell:/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localcell:/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -2113,18 +2113,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, action is callback, object is localcell and service is localbox.
+     * EntitySet is Rule, action is relay, object is localcell and service is localbox.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_action_callback_object_localcell_service_localbox() throws Exception {
+    public void validate_Error_action_relay_object_localcell_service_localbox() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localcell:/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localbox:/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -2167,18 +2167,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, action is callback, object is localcell and service is invalid.
+     * EntitySet is Rule, action is relay, object is localcell and service is invalid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_action_callback_object_localcell_service_invalid() throws Exception {
+    public void validate_Error_action_relay_object_localcell_service_invalid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localcell:/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "/personium/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), null));
@@ -2221,18 +2221,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Normal test.
-     * EntitySet is Rule, boxname exists, action is callback, object is localbox and service is valid.
+     * EntitySet is Rule, boxname exists, action is relay, object is localbox and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Normal_boxname_action_callback_object_localbox_service_valid() throws Exception {
+    public void validate_Normal_boxname_action_relay_object_localbox_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localunit:/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), "box"));
@@ -2259,18 +2259,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Normal test.
-     * EntitySet is Rule, boxname exists, action is callback, object is null and service is valid.
+     * EntitySet is Rule, boxname exists, action is relay, object is null and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Normal_boxname_action_callback_service_valid() throws Exception {
+    public void validate_Normal_boxname_action_relay_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), null));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localunit:/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), "box"));
@@ -2297,18 +2297,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, boxname exists, action is callback, object is localcell and service is valid.
+     * EntitySet is Rule, boxname exists, action is relay, object is localcell and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_boxname_action_callback_object_localcell_service_valid() throws Exception {
+    public void validate_Error_boxname_action_relay_object_localcell_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localcell:/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localunit:/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), "box"));
@@ -2351,18 +2351,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, boxname exists, action is callback, object is localunit and service is valid.
+     * EntitySet is Rule, boxname exists, action is relay, object is localunit and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_boxname_action_callback_object_localunit_service_valid() throws Exception {
+    public void validate_Error_boxname_action_relay_object_localunit_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localunit:/cell/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localunit:/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), "box"));
@@ -2405,18 +2405,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, boxname exists, action is callback, object is http and service is valid.
+     * EntitySet is Rule, boxname exists, action is relay, object is http and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_boxname_action_callback_object_http_service_valid() throws Exception {
+    public void validate_Error_boxname_action_relay_object_http_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "http://personium/cell/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localunit:/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), "box"));
@@ -2459,18 +2459,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, boxname exists, action is callback, object is https and service is valid.
+     * EntitySet is Rule, boxname exists, action is relay, object is https and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_boxname_action_callback_object_https_service_valid() throws Exception {
+    public void validate_Error_boxname_action_relay_object_https_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "https://personium/cell/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localunit:/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), "box"));
@@ -2513,18 +2513,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, boxname exists, action is callback, object is invalid and service is valid.
+     * EntitySet is Rule, boxname exists, action is relay, object is invalid and service is valid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_boxname_action_callback_object_invalid_service_valid() throws Exception {
+    public void validate_Error_boxname_action_relay_object_invalid_service_valid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "/personium/cell/box/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "personium-localunit:/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), "box"));
@@ -2567,18 +2567,18 @@ public class CellCtlResourceTest {
     /**
      * Test validate().
      * Error test.
-     * EntitySet is Rule, boxname exists, action is callback, object is localbox and service is invalid.
+     * EntitySet is Rule, boxname exists, action is relay, object is localbox and service is invalid.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_boxname_action_callback_object_localbox_service_invalid() throws Exception {
+    public void validate_Error_boxname_action_relay_object_localbox_service_invalid() throws Exception {
         // --------------------
         // Test method args
         // --------------------
         String rootUrl = "https://personium/cell/";
         String entitySetName = "Rule";
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
-        props.add(OProperties.string(Rule.P_ACTION.getName(), "callback"));
+        props.add(OProperties.string(Rule.P_ACTION.getName(), "relay"));
         props.add(OProperties.string(Rule.P_OBJECT.getName(), "personium-localbox:/col/entity"));
         props.add(OProperties.string(Rule.P_SERVICE.getName(), "/personium/cell/box/col/service"));
         props.add(OProperties.string(Common.P_BOX_NAME.getName(), "box"));

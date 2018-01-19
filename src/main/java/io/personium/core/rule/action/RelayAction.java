@@ -23,9 +23,9 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
 
 /**
- * Action for callback action.
+ * Action for relay action.
  */
-public class CallbackAction extends EngineAction {
+public class RelayAction extends EngineAction {
     private static String boxName = "__";
     private static String svcName = "proxy";
 
@@ -34,8 +34,8 @@ public class CallbackAction extends EngineAction {
      * @param cell target cell object
      * @param extservice the url that HTTP POST will be sent
      */
-    public CallbackAction(Cell cell, String extservice) {
-        super(cell, extservice, "callback");
+    public RelayAction(Cell cell, String extservice) {
+        super(cell, extservice, "relay");
     }
 
     @Override
