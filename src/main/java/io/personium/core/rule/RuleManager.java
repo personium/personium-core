@@ -588,10 +588,12 @@ public class RuleManager {
                 if (box != null) {
                     synchronized (lockObj) {
                         Map<String, BoxInfo> bmap = boxes.get(cell.getId());
-                        BoxInfo bi = bmap.get(box.getId());
-                        if (bi != null) {
-                            bi.name = box.getName();
-                            bi.schema = box.getSchema();
+                        if (bmap != null) {
+                            BoxInfo bi = bmap.get(box.getId());
+                            if (bi != null) {
+                                bi.name = box.getName();
+                                bi.schema = box.getSchema();
+                            }
                         }
                     }
                 }

@@ -232,12 +232,12 @@ public class ActionFactoryTest {
     /**
      * Test createAction().
      * Normal test.
-     * action is callback.
+     * action is relay.
      */
     @Test
-    public void createAction_Normal_action_is_callback() {
-        ActionInfo ai = new ActionInfo("callback", "http://personium/cell/box/col/service");
-        assertThat(ActionFactory.createAction(null, ai), instanceOf(CallbackAction.class));
+    public void createAction_Normal_action_is_relay() {
+        ActionInfo ai = new ActionInfo("relay", "http://personium/cell/box/col/service");
+        assertThat(ActionFactory.createAction(null, ai), instanceOf(RelayAction.class));
     }
 
     /**

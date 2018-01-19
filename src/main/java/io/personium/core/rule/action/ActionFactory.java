@@ -45,8 +45,8 @@ public class ActionFactory {
             return new LogAction(cell, LogAction.LEVEL.ERROR);
         } else if (Rule.ACTION_EXEC.equals(action)) {
             return new ExecAction(cell, service);
-        } else if (Rule.ACTION_CALLBACK.equals(action)) {
-            return new CallbackAction(cell, service);
+        } else if (Rule.ACTION_RELAY.equals(action)) {
+            return new RelayAction(cell, service);
         }
         return null;
     }

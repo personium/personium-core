@@ -48,7 +48,7 @@ public abstract class EngineAction extends Action {
      * Constructor.
      * @param cell target cell object
      * @param service the url that HTTP POST will be sent
-     * @param action 'callback' or 'exec'
+     * @param action 'relay' or 'exec'
      */
     public EngineAction(Cell cell, String service, String action) {
         this.cell = cell;

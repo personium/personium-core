@@ -26,8 +26,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
     ActionFactoryTest.class,
-    CallbackActionTest.class,
-    ExecActionTest.class
+    ExecActionTest.class,
+    RelayActionTest.class
 })
 public class AllTests {
 }
