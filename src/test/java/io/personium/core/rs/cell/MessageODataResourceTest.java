@@ -50,25 +50,26 @@ import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.ctl.SentMessagePort;
 import io.personium.core.model.impl.es.CellEsImpl;
+import io.personium.core.rs.odata.ODataMessageResource;
 import io.personium.test.categories.Unit;
 
 /**
  * MessageODataResource unit test classs.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ MessageODataResource.class, MessageResource.class, AccessContext.class, CellEsImpl.class })
+@PrepareForTest({ ODataMessageResource.class, MessageResource.class, AccessContext.class, CellEsImpl.class })
 @Category({ Unit.class })
 public class MessageODataResourceTest {
 
     /** Target class of unit test. */
-    private MessageODataResource messageODataResource;
+    private ODataMessageResource messageODataResource;
 
     /**
      * Before.
      */
     @Before
     public void befor() {
-        messageODataResource = spy(new MessageODataResource(null, null, null));
+        messageODataResource = spy(new ODataMessageResource(null, null, null));
     }
 
     /**
@@ -79,7 +80,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Normal_entitySetName_is_ReceivedMessage() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -98,10 +99,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, "http://personium/schema001");
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -121,9 +122,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 "http://personium/schema001");
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -139,7 +140,7 @@ public class MessageODataResourceTest {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
         doReturn(accessContext).when(messageResource).getAccessContext();
 
-        messageODataResource = spy(new MessageODataResource(messageResource, null, SentMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, SentMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -157,14 +158,14 @@ public class MessageODataResourceTest {
         // Mock settings
         // --------------------
         doNothing().when(messageODataResource).validateSentBoxBoundSchema(messageResource, false);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 SentMessage.P_TO.getName(), "http://personium/user001");
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 SentMessage.MAX_MESSAGE_BODY_LENGTH);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateToAndToRelation",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateToAndToRelation",
                 "http://personium/user001", null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateToValue",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateToValue",
                 "http://personium/user001", baseUri);
 
         // --------------------
@@ -183,13 +184,13 @@ public class MessageODataResourceTest {
         // Confirm function call
         verify(messageODataResource, times(1)).validateSentBoxBoundSchema(messageResource, false);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(), "http://personium/user001");
+        ODataMessageResource.validateUriCsv(SentMessage.P_TO.getName(), "http://personium/user001");
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", SentMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", SentMessage.MAX_MESSAGE_BODY_LENGTH);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateToAndToRelation("http://personium/user001", null);
+        ODataMessageResource.validateToAndToRelation("http://personium/user001", null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateToValue("http://personium/user001", baseUri);
+        ODataMessageResource.validateToValue("http://personium/user001", baseUri);
     }
 
     /**
@@ -447,7 +448,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Normal_type_is_message() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -466,10 +467,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, "http://personium/schema001");
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -489,9 +490,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 "http://personium/schema001");
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -503,7 +504,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Normal_type_is_relation_build() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -525,12 +526,12 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, "http://personium/schema001");
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateReqRelationOnRelation",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateReqRelationOnRelation",
                 requestRelation, requestRelationTarget);
 
         // --------------------
@@ -550,11 +551,11 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 "http://personium/schema001");
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
+        ODataMessageResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
     }
 
     /**
@@ -566,7 +567,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Normal_type_is_role_grant() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -588,12 +589,12 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, "http://personium/schema001");
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateReqRelationOnRole",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateReqRelationOnRole",
                 requestRelation, requestRelationTarget);
 
         // --------------------
@@ -613,11 +614,11 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 "http://personium/schema001");
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
+        ODataMessageResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
     }
 
     /**
@@ -628,7 +629,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Error_type_is_message() {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -679,7 +680,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Error_type_is_relation_build() {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -733,7 +734,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Error_type_is_relation_break() {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -787,7 +788,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Error_type_is_role_grant() {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -841,7 +842,7 @@ public class MessageODataResourceTest {
     @Test
     public void validateStatus_Error_type_is_role_revoke() {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -914,7 +915,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
+            ODataMessageResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
         } catch (PersoniumCoreException e) {
             fail("Exception occurred.");
         }
@@ -947,7 +948,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
+            ODataMessageResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
         } catch (PersoniumCoreException e) {
             fail("Exception occurred.");
         }
@@ -980,7 +981,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
+            ODataMessageResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1022,7 +1023,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
+            ODataMessageResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1064,7 +1065,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
+            ODataMessageResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1106,7 +1107,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
+            ODataMessageResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1148,7 +1149,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
+            ODataMessageResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1189,7 +1190,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
+            ODataMessageResource.validateReqRelationOnRelation(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1230,7 +1231,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
+            ODataMessageResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1271,7 +1272,7 @@ public class MessageODataResourceTest {
         // Run method
         // --------------------
         try {
-            MessageODataResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
+            ODataMessageResource.validateReqRelationOnRole(requestRelation, requestRelationTarget);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------
@@ -1296,7 +1297,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Normal_ReceivedMessage_rule_register() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -1320,10 +1321,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -1343,9 +1344,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -1359,7 +1360,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Error_ReceivedMessage_rule_register_status_not_none() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -1383,10 +1384,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -1414,9 +1415,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(0));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -1431,7 +1432,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Error_ReceivedMessage_rule_register_action_null() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -1455,10 +1456,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -1486,9 +1487,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(0));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -1505,7 +1506,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Normal_ReceivedMessage_rule_register_object_localbox() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -1530,10 +1531,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -1548,9 +1549,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -1568,7 +1569,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Normal_ReceivedMessage_rule_register_object_localbox_service_localbox() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -1594,10 +1595,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -1612,9 +1613,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -1632,7 +1633,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Error_ReceivedMessage_rule_register_object_localcell() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -1658,10 +1659,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -1689,9 +1690,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(0));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -1709,7 +1710,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Error_ReceivedMessage_rule_register_object_localbox_service_localcell() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -1735,10 +1736,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -1766,9 +1767,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(0));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -1786,7 +1787,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Error_ReceivedMessage_rule_register_object_localbox_service_null() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -1812,10 +1813,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -1843,9 +1844,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(0));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -1864,7 +1865,7 @@ public class MessageODataResourceTest {
     public void validate_Normal_ReceivedMessage_rule_register_action_callback_object_localbox_service_localunit()
             throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -1890,10 +1891,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -1908,9 +1909,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -1929,7 +1930,7 @@ public class MessageODataResourceTest {
     public void validate_Normal_ReceivedMessage_rule_register_action_callback_object_localbox_service_http()
             throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -1955,10 +1956,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -1973,9 +1974,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -1994,7 +1995,7 @@ public class MessageODataResourceTest {
     public void validate_Normal_ReceivedMessage_rule_register_action_callback_object_localbox_service_https()
             throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -2020,10 +2021,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -2038,9 +2039,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -2059,7 +2060,7 @@ public class MessageODataResourceTest {
     public void validate_Normal_ReceivedMessage_rule_register_action_callback_object_localbox_service_invalid()
             throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -2085,10 +2086,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -2116,9 +2117,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(0));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -2133,7 +2134,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Normal_ReceivedMessage_rule_unregister() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -2157,10 +2158,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -2175,9 +2176,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -2192,7 +2193,7 @@ public class MessageODataResourceTest {
     @Test
     public void validate_Error_ReceivedMessage_rule_unregister_status_not_none() throws Exception {
         MessageResource messageResource = PowerMockito.mock(MessageResource.class);
-        messageODataResource = spy(new MessageODataResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
+        messageODataResource = spy(new ODataMessageResource(messageResource, null, ReceivedMessage.EDM_TYPE_NAME));
         // --------------------
         // Test method args
         // --------------------
@@ -2216,10 +2217,10 @@ public class MessageODataResourceTest {
         // --------------------
         doNothing().when(messageODataResource).validateReceivedBoxBoundSchema(
                 messageResource, schema);
-        PowerMockito.mockStatic(MessageODataResource.class);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateUriCsv",
+        PowerMockito.mockStatic(ODataMessageResource.class);
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateUriCsv",
                 ReceivedMessage.P_MULTICAST_TO.getName(), null);
-        PowerMockito.doNothing().when(MessageODataResource.class, "validateBody", "body",
+        PowerMockito.doNothing().when(ODataMessageResource.class, "validateBody", "body",
                 ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
 
         // --------------------
@@ -2247,9 +2248,9 @@ public class MessageODataResourceTest {
         verify(messageODataResource, times(1)).validateReceivedBoxBoundSchema(messageResource,
                 schema);
         PowerMockito.verifyStatic(times(1));
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), null);
         PowerMockito.verifyStatic(times(0));
-        MessageODataResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody("body", ReceivedMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     // ToDo add tests with RequestRule property on SentMessage

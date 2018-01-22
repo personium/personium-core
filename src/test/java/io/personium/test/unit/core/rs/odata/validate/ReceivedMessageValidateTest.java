@@ -26,8 +26,8 @@ import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.ReceivedMessage;
-import io.personium.core.rs.cell.MessageODataResource;
 import io.personium.core.rs.odata.AbstractODataResource;
+import io.personium.core.rs.odata.ODataMessageResource;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 
@@ -440,7 +440,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void MulticastToがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "http://example.com/test/");
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "http://example.com/test/");
     }
 
     /**
@@ -448,7 +448,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void MulticastToがCSV複数URL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
                 "http://example.com/test/,http://example.com/test/");
     }
 
@@ -457,7 +457,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test(expected = PersoniumCoreException.class)
     public final void MulticastToがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "ftp://example.com/test");
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "ftp://example.com/test");
 
     }
 
@@ -468,7 +468,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test(expected = PersoniumCoreException.class)
     public final void validateUriCsv_Error_MulticastTo_is_invalid() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
                 "http://example.com/test,http://example.com/test/");
     }
 
@@ -477,7 +477,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test(expected = PersoniumCoreException.class)
     public final void MulticastToがCSV複数URL形式とURL形式でない場合にPersoniumCoreExceptionが発生すること() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
                 "http://example.com/test/,ftp://example.com/test");
     }
 
@@ -486,7 +486,7 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
      */
     @Test(expected = PersoniumCoreException.class)
     public final void MulticastToが不正なCSV形式の場合にPersoniumCoreExceptionが発生すること() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
+        ODataMessageResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
                 "http://example.com/test/,,http://example.com/test");
     }
 

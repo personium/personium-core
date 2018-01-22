@@ -29,8 +29,8 @@ import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityId;
 import org.odata4j.core.OEntityIds;
 import org.odata4j.core.OEntityKey;
-import org.odata4j.core.OProperty;
 import org.odata4j.core.OProperties;
+import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmDataServices;
 import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.edm.EdmProperty;
@@ -54,6 +54,7 @@ import io.personium.core.model.ctl.CtlSchema;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.Relation;
+import io.personium.core.model.ctl.RequestObject;
 import io.personium.core.model.ctl.Role;
 import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.ctl.SentMessage;
@@ -125,6 +126,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
      * @param status メッセージステータス
      * @return ETag
      */
+    @SuppressWarnings("unchecked")
     public String changeStatusAndUpdateRelation(final EdmEntitySet entitySet,
             final OEntityKey originalKey, final String status) {
         Lock lock = lock();
@@ -152,61 +154,74 @@ public class MessageODataProducer extends CellCtlODataProducer {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                             ReceivedMessage.MESSAGE_COMMAND);
                 }
-            } else if (ReceivedMessage.TYPE_REQ_RELATION_BUILD.equals(type)
-                    || ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type)) {
-                // relation
-                if (isValidCurrentStatus(currentStatus)) {
-                    if (ReceivedMessage.STATUS_APPROVED.equals(status)) {
-                        // check social privilege
-                        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.SOCIAL);
-                        // create or delete Relation
-                        updateRelation(entitySetDocHandler);
-                    } else if (!ReceivedMessage.STATUS_REJECTED.equals(status)) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                ReceivedMessage.MESSAGE_COMMAND);
+            } else if (ReceivedMessage.TYPE_REQUEST.equals(type)) {
+                List<Map<String, String>> requestObjects = (List<Map<String, String>>) entitySetDocHandler
+                        .getStaticFields().get(ReceivedMessage.P_REQUEST_OBJECTS.getName());
+                for (Map<String, String> requestObject : requestObjects) {
+                    String requestType = requestObject.get(RequestObject.P_REQUEST_TYPE.getName());
+                    if (RequestObject.REQUEST_TYPE_RELATION_ADD.equals(requestType)
+                            || RequestObject.REQUEST_TYPE_RELATION_REMOVE.equals(requestType)) {
+                        // relation
+                        if (isValidCurrentStatus(currentStatus)) {
+                            if (ReceivedMessage.STATUS_APPROVED.equals(status)) {
+                                // check social privilege
+                                davRsCmp.checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.SOCIAL);
+                                // create or delete Relation
+                                String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
+                                String boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());
+                                updateRelation(messageId, boxName, requestObject);
+                            } else if (!ReceivedMessage.STATUS_REJECTED.equals(status)) {
+                                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                                        ReceivedMessage.MESSAGE_COMMAND);
+                            }
+                        } else {
+                            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                                    ReceivedMessage.MESSAGE_COMMAND);
+                        }
+                    } else if (RequestObject.REQUEST_TYPE_ROLE_ADD.equals(requestType)
+                            || RequestObject.REQUEST_TYPE_ROLE_REMOVE.equals(requestType)) {
+                        // role
+                        if (isValidCurrentStatus(currentStatus)) {
+                            if (ReceivedMessage.STATUS_APPROVED.equals(status)) {
+                                // check social privilege
+                                davRsCmp.checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.SOCIAL);
+                                // create or delete Role
+                                String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
+                                String boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());
+                                updateRole(messageId, boxName, requestObject);
+                            } else if (!ReceivedMessage.STATUS_REJECTED.equals(status)) {
+                                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                                        ReceivedMessage.MESSAGE_COMMAND);
+                            }
+                        } else {
+                            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                                    ReceivedMessage.MESSAGE_COMMAND);
+                        }
+                    } else if (RequestObject.REQUEST_TYPE_RULE_ADD.equals(requestType)
+                            || RequestObject.REQUEST_TYPE_RULE_REMOVE.equals(requestType)) {
+                        // rule
+                        if (isValidCurrentStatus(currentStatus)) {
+                            if (ReceivedMessage.STATUS_APPROVED.equals(status)) {
+                                // check rule privilege
+                                this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.RULE);
+                                // register or unregister rule
+                                String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
+                                String boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());
+                                updateRule(messageId, boxName, requestObject);
+                            } else if (!ReceivedMessage.STATUS_REJECTED.equals(status)) {
+                                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                                        ReceivedMessage.MESSAGE_COMMAND);
+                            }
+                        } else {
+                            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                                    ReceivedMessage.MESSAGE_COMMAND);
+                        }
+                    } else {
+                        // never reach here
+                        String detail = ReceivedMessage.P_TYPE.getName() + ":" + type;
+                        throw PersoniumCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT.params(detail);
                     }
-                } else {
-                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                            ReceivedMessage.MESSAGE_COMMAND);
                 }
-            } else if (ReceivedMessage.TYPE_REQ_ROLE_GRANT.equals(type)
-                    || ReceivedMessage.TYPE_REQ_ROLE_REVOKE.equals(type)) {
-                // role
-                if (isValidCurrentStatus(currentStatus)) {
-                    if (ReceivedMessage.STATUS_APPROVED.equals(status)) {
-                        // check social privilege
-                        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.SOCIAL);
-                        // create or delete Role
-                        updateRole(entitySetDocHandler);
-                    } else if (!ReceivedMessage.STATUS_REJECTED.equals(status)) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                ReceivedMessage.MESSAGE_COMMAND);
-                    }
-                } else {
-                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                            ReceivedMessage.MESSAGE_COMMAND);
-                }
-            } else if (ReceivedMessage.TYPE_REQ_RULE_REGISTER.equals(type)
-                    || ReceivedMessage.TYPE_REQ_RULE_UNREGISTER.equals(type)) {
-                // rule
-                if (isValidCurrentStatus(currentStatus)) {
-                    if (ReceivedMessage.STATUS_APPROVED.equals(status)) {
-                        // check rule privilege
-                        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.RULE);
-                        // register or unregister rule
-                        updateRule(entitySetDocHandler);
-                    } else if (!ReceivedMessage.STATUS_REJECTED.equals(status)) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                ReceivedMessage.MESSAGE_COMMAND);
-                    }
-                } else {
-                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                            ReceivedMessage.MESSAGE_COMMAND);
-                }
-            } else {
-                // never reach here
-                String detail = ReceivedMessage.P_TYPE.getName() + ":" + type;
-                throw PersoniumCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT.params(detail);
             }
 
             // 取得した受信メッセージのステータスと更新日を上書きする
@@ -254,28 +269,45 @@ public class MessageODataProducer extends CellCtlODataProducer {
 
     /**
      * Perform relationship registration / deletion.
-     * @param entitySetDocHandler Received message
+     * @param messageId MessageID
+     * @param linkedBoxName _Box.Name
+     * @param requestObject RequestObject
      */
-    private void updateRelation(EntitySetDocHandler entitySetDocHandler) {
-        Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();
-        String type = (String) staticFields.get(ReceivedMessage.P_TYPE.getName());
-        String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
+    private void updateRelation(String messageId, String linkedBoxName, Map<String, String> requestObject) {
+//        Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();
+//        String type = (String) staticFields.get(ReceivedMessage.P_TYPE.getName());
+//        String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
+        String requestType = requestObject.get(RequestObject.P_REQUEST_TYPE.getName());
+        String name = requestObject.get(RequestObject.P_NAME.getName());
+        String classUrl = requestObject.get(RequestObject.P_CLASS_URL.getName());
+        String targetUrl = requestObject.get(RequestObject.P_TARGET_URL.getName());
 
-        // Get name to be registered
-        String requestRelation = (String) staticFields.get(ReceivedMessage.P_REQUEST_RELATION.getName());
-        String name = getNameFromRequestRelation(requestRelation, Common.PATTERN_RELATION_CLASS_URL);
-        // Get box name
-        String boxName = getBoxNameFromRequestRelation(requestRelation, Common.PATTERN_RELATION_CLASS_URL);
-        if (boxName == null) {
-            // If box can not be found from RequestRelation (RequestRelation is Name only),
-            // get BoxName from _ Box.Name
-            boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());
+        String relationName = "";
+        String boxName = "";
+        // Validation has confirmed that it contains values only in name or classUrl.
+        if (name != null) {
+            relationName = name;
+            boxName = linkedBoxName;
+        } else if (classUrl != null) {
+            relationName = getNameFromClassUrl(classUrl, Common.PATTERN_RELATION_CLASS_URL);
+            boxName = getBoxNameFromClassUrl(classUrl, Common.PATTERN_RELATION_CLASS_URL);
         }
-        // Get cell URL to link
-        String extCellUrl = (String) staticFields.get(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName());
+
+//        // Get name to be registered
+//        String requestRelation = (String) staticFields.get(ReceivedMessage.P_REQUEST_RELATION.getName());
+//        String name = getNameFromRequestRelation(requestRelation, Common.PATTERN_RELATION_CLASS_URL);
+//        // Get box name
+//        String boxName = getBoxNameFromRequestRelation(requestRelation, Common.PATTERN_RELATION_CLASS_URL);
+//        if (boxName == null) {
+//            // If box can not be found from RequestRelation (RequestRelation is Name only),
+//            // get BoxName from _ Box.Name
+//            boxName = linkedBoxName;
+//        }
+//        // Get cell URL to link
+//        String extCellUrl = (String) staticFields.get(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName());
 
         Map<String, Object> entityKeyMap = new HashMap<>();
-        entityKeyMap.put(Relation.P_NAME.getName(), name);
+        entityKeyMap.put(Relation.P_NAME.getName(), relationName);
         if (boxName != null) {
             entityKeyMap.put(Common.P_BOX_NAME.getName(), boxName);
         }
@@ -289,7 +321,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
         }
 
         Map<String, Object> extCellKeyMap = new HashMap<>();
-        extCellKeyMap.put(ExtCell.P_URL.getName(), extCellUrl);
+        extCellKeyMap.put(ExtCell.P_URL.getName(), targetUrl);
         OEntityKey extCellKey = OEntityKey.create(extCellKeyMap);
         EdmEntitySet extCellEdmEntitySet = getMetadata().findEdmEntitySet(ExtCell.EDM_TYPE_NAME);
         EntitySetDocHandler extCellDocHandler = retrieveWithKey(extCellEdmEntitySet, extCellKey);
@@ -306,7 +338,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
         EventBus eventBus = this.cell.getEventBus();
 
         // registration / deletion
-        if (ReceivedMessage.TYPE_REQ_RELATION_BUILD.equals(type)) {
+        if (RequestObject.REQUEST_TYPE_RELATION_ADD.equals(requestType)) {
             if (extCellDocHandler == null) {
                 extCellKeyMap.put(Common.P_PUBLISHED.getName(), new Date(getCurrentTimeMillis()));
                 extCellKeyMap.put(Common.P_UPDATED.getName(), new Date(getCurrentTimeMillis()));
@@ -339,7 +371,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                 }
                 throw e;
             }
-        } else if (ReceivedMessage.TYPE_REQ_RELATION_BREAK.equals(type)) {
+        } else if (RequestObject.REQUEST_TYPE_RELATION_REMOVE.equals(requestType)) {
             if (extCellDocHandler == null) {
                 throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params(
                         ExtCell.EDM_TYPE_NAME, extCellKeyMap.toString());
@@ -358,26 +390,47 @@ public class MessageODataProducer extends CellCtlODataProducer {
         }
     }
 
-    private void updateRole(EntitySetDocHandler entitySetDocHandler) {
-        Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();
-        String type = (String) staticFields.get(ReceivedMessage.P_TYPE.getName());
-        String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
+    /**
+     * Perform role grant / revoke.
+     * @param messageId MessageID
+     * @param linkedBoxName _Box.Name
+     * @param requestObject RequestObject
+     */
+    private void updateRole(String messageId, String linkedBoxName, Map<String, String> requestObject) {
+//        Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();
+//        String type = (String) staticFields.get(ReceivedMessage.P_TYPE.getName());
+//        String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
+        String requestType = requestObject.get(RequestObject.P_REQUEST_TYPE.getName());
+        String name = requestObject.get(RequestObject.P_NAME.getName());
+        String classUrl = requestObject.get(RequestObject.P_CLASS_URL.getName());
+        String targetUrl = requestObject.get(RequestObject.P_TARGET_URL.getName());
 
-        // Get name to be registered
-        String requestRelation = (String) staticFields.get(ReceivedMessage.P_REQUEST_RELATION.getName());
-        String name = getNameFromRequestRelation(requestRelation, Common.PATTERN_ROLE_CLASS_URL);
-        // Get box name
-        String boxName = getBoxNameFromRequestRelation(requestRelation, Common.PATTERN_ROLE_CLASS_URL);
-        if (boxName == null) {
-            // If box can not be found from RequestRelation (RequestRelation is Name only),
-            // get BoxName from _ Box.Name
-            boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());
+        String roleName = "";
+        String boxName = "";
+        // Validation has confirmed that it contains values only in name or classUrl.
+        if (name != null) {
+            roleName = name;
+            boxName = linkedBoxName;
+        } else if (classUrl != null) {
+            roleName = getNameFromClassUrl(classUrl, Common.PATTERN_ROLE_CLASS_URL);
+            boxName = getBoxNameFromClassUrl(classUrl, Common.PATTERN_ROLE_CLASS_URL);
         }
-        // Get cell URL to link
-        String extCellUrl = (String) staticFields.get(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName());
+
+//        // Get name to be registered
+//        String requestRelation = (String) staticFields.get(ReceivedMessage.P_REQUEST_RELATION.getName());
+//        String roleName = getNameFromRequestRelation(requestRelation, Common.PATTERN_ROLE_CLASS_URL);
+//        // Get box name
+//        String boxName = getBoxNameFromRequestRelation(requestRelation, Common.PATTERN_ROLE_CLASS_URL);
+//        if (boxName == null) {
+//            // If box can not be found from RequestRelation (RequestRelation is Name only),
+//            // get BoxName from _ Box.Name
+//            boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());
+//        }
+//        // Get cell URL to link
+//        String extCellUrl = (String) staticFields.get(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName());
 
         Map<String, Object> entityKeyMap = new HashMap<>();
-        entityKeyMap.put(Common.P_NAME.getName(), name);
+        entityKeyMap.put(Common.P_NAME.getName(), roleName);
         if (boxName != null) {
             entityKeyMap.put(Common.P_BOX_NAME.getName(), boxName);
         }
@@ -391,7 +444,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
         }
 
         Map<String, Object> extCellKeyMap = new HashMap<>();
-        extCellKeyMap.put(ExtCell.P_URL.getName(), extCellUrl);
+        extCellKeyMap.put(ExtCell.P_URL.getName(), targetUrl);
         OEntityKey extCellKey = OEntityKey.create(extCellKeyMap);
         EdmEntitySet extCellEdmEntitySet = getMetadata().findEdmEntitySet(ExtCell.EDM_TYPE_NAME);
         EntitySetDocHandler extCellDocHandler = retrieveWithKey(extCellEdmEntitySet, extCellKey);
@@ -408,7 +461,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
         EventBus eventBus = this.cell.getEventBus();
 
         // registration / deletion
-        if (ReceivedMessage.TYPE_REQ_ROLE_GRANT.equals(type)) {
+        if (RequestObject.REQUEST_TYPE_ROLE_ADD.equals(requestType)) {
             if (extCellDocHandler == null) {
                 extCellKeyMap.put(Common.P_PUBLISHED.getName(), new Date(getCurrentTimeMillis()));
                 extCellKeyMap.put(Common.P_UPDATED.getName(), new Date(getCurrentTimeMillis()));
@@ -441,7 +494,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                 }
                 throw e;
             }
-        } else if (ReceivedMessage.TYPE_REQ_ROLE_REVOKE.equals(type)) {
+        } else if (RequestObject.REQUEST_TYPE_ROLE_REMOVE.equals(requestType)) {
             if (extCellDocHandler == null) {
                 throw PersoniumCoreException.ReceivedMessage.REQUEST_RELATION_DOES_NOT_EXISTS.params(
                         ExtCell.EDM_TYPE_NAME, extCellKeyMap.toString());
@@ -460,42 +513,49 @@ public class MessageODataProducer extends CellCtlODataProducer {
         }
     }
 
-    private void updateRule(EntitySetDocHandler entitySetDocHandler) {
-        Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();
-        String type = (String) staticFields.get(ReceivedMessage.P_TYPE.getName());
-        Map<String, Object> requestRule =
-                (Map<String, Object>) staticFields.get(ReceivedMessage.P_REQUEST_RULE.getName());
-        String boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());
-        String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
+    /**
+     * Perform rule regist / unregist.
+     * @param messageId MessageID
+     * @param linkedBoxName _Box.Name
+     * @param requestObject RequestObject
+     */
+    private void updateRule(String messageId, String linkedBoxName, Map<String, String> requestObject) {
+//        Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();
+//        String type = (String) staticFields.get(ReceivedMessage.P_TYPE.getName());
+//        Map<String, Object> requestRule =
+//                (Map<String, Object>) staticFields.get(ReceivedMessage.P_REQUEST_RULE.getName());
+//        String boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());
+//        String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
+        String requestType = requestObject.get(RequestObject.P_REQUEST_TYPE.getName());
 
-        log.info("requestRule: " + requestRule);
+        log.info("requestRule: " + requestObject);
 
         Map<String, Object> entityKeyMap = new HashMap<>();
-        entityKeyMap.put(Rule.P_NAME.getName(), requestRule.get(ReceivedMessage.P_REQUESTRULE_NAME.getName()));
-        if (boxName != null) {
-            entityKeyMap.put(Common.P_BOX_NAME.getName(), boxName);
+        entityKeyMap.put(Rule.P_NAME.getName(), requestObject.get(RequestObject.P_NAME.getName()));
+        if (linkedBoxName != null) {
+            entityKeyMap.put(Common.P_BOX_NAME.getName(), linkedBoxName);
         }
         OEntityKey entityKey = OEntityKey.create(entityKeyMap);
         EdmEntitySet edmEntitySet = getMetadata().findEdmEntitySet(Rule.EDM_TYPE_NAME);
         entityKey = AbstractODataResource.normalizeOEntityKey(entityKey, edmEntitySet);
 
-        if (ReceivedMessage.TYPE_REQ_RULE_REGISTER.equals(type)) {
+        if (RequestObject.REQUEST_TYPE_RULE_ADD.equals(requestType)) {
             // copy rule
             Map<String, Object> rule = new HashMap<>();
-            rule.put(Rule.P_NAME.getName(), requestRule.get(ReceivedMessage.P_REQUESTRULE_NAME.getName()));
-            rule.put(Rule.P_SUBJECT.getName(), requestRule.get(Rule.P_SUBJECT.getName()));
-            rule.put(Rule.P_TYPE.getName(), requestRule.get(Rule.P_TYPE.getName()));
-            rule.put(Rule.P_OBJECT.getName(), requestRule.get(Rule.P_OBJECT.getName()));
-            rule.put(Rule.P_INFO.getName(), requestRule.get(Rule.P_INFO.getName()));
-            rule.put(Rule.P_ACTION.getName(), requestRule.get(Rule.P_ACTION.getName()));
-            rule.put(Rule.P_SERVICE.getName(), requestRule.get(Rule.P_SERVICE.getName()));
+            rule.put(Rule.P_NAME.getName(), requestObject.get(RequestObject.P_NAME.getName()));
+            rule.put(Rule.P_SUBJECT.getName(), requestObject.get(Rule.P_SUBJECT.getName()));
+            rule.put(Rule.P_TYPE.getName(), requestObject.get(Rule.P_TYPE.getName()));
+            rule.put(Rule.P_OBJECT.getName(), requestObject.get(Rule.P_OBJECT.getName()));
+            rule.put(Rule.P_INFO.getName(), requestObject.get(Rule.P_INFO.getName()));
+            rule.put(Rule.P_ACTION.getName(), requestObject.get(Rule.P_ACTION.getName()));
+            rule.put(Rule.P_SERVICE.getName(), requestObject.get(RequestObject.P_TARGET_URL.getName()));
 
             // Rule settings
             //   External: false
             //   _Box.Name: null or ReceivedMessage._Box.Name
             //   __published, __updated: current time
             rule.put(Rule.P_EXTERNAL.getName(), PersoniumEvent.INTERNAL_EVENT);
-            rule.put(Common.P_BOX_NAME.getName(), boxName);
+            rule.put(Common.P_BOX_NAME.getName(), linkedBoxName);
             rule.put(Common.P_PUBLISHED.getName(), new Date(getCurrentTimeMillis()));
             rule.put(Common.P_UPDATED.getName(), new Date(getCurrentTimeMillis()));
 
@@ -511,7 +571,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
             PersoniumEvent ev = new PersoniumEvent(null, null, ruleType, object, info, null);
             EventBus eventBus = this.cell.getEventBus();
             eventBus.post(ev);
-        } else if (ReceivedMessage.TYPE_REQ_RULE_UNREGISTER.equals(type)) {
+        } else if (RequestObject.REQUEST_TYPE_RULE_REMOVE.equals(requestType)) {
             // deletion
             deleteEntityWithoutLock(Rule.EDM_TYPE_NAME, entityKey);
 
@@ -550,17 +610,17 @@ public class MessageODataProducer extends CellCtlODataProducer {
     }
 
     /**
-     * Get Name from RequestRelation.
-     * @param requestRelation RequestRelation
+     * Get Name from ClassUrl.
+     * @param classUrl ClassUrl
      * @param regex pattern of class url
      * @return RelationName
      */
-    protected String getNameFromRequestRelation(String requestRelation, String regex) {
+    protected String getNameFromClassUrl(String classUrl, String regex) {
         String name = null;
-        log.debug(String.format("RequestRelation = [%s]", requestRelation));
+        log.debug(String.format("ClassUrl = [%s]", classUrl));
 
         // convert localunitUrl to unitUrl
-        String convertedRequestRelation = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), requestRelation);
+        String convertedRequestRelation = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), classUrl);
         Pattern pattern = Pattern.compile(regex);
         Matcher m = pattern.matcher(convertedRequestRelation);
         if (m.matches()) {
@@ -572,20 +632,19 @@ public class MessageODataProducer extends CellCtlODataProducer {
     }
 
     /**
-     * Get BoxName from RequestRelation.
-     * If RequestRelation is only Name, return null.
-     * @param requestRelation RequestRelation
+     * Get BoxName from ClassUrl.
+     * @param classUrl ClassUrl
      * @param regex pattern of class url
      * @return BoxName
      * @throws PersoniumCoreException Box corresponding to the ClassURL can not be found
      */
-    protected String getBoxNameFromRequestRelation(String requestRelation, String regex)
+    protected String getBoxNameFromClassUrl(String classUrl, String regex)
             throws PersoniumCoreException {
         String boxName = null;
-        log.debug(String.format("RequestRelation = [%s]", requestRelation));
+        log.debug(String.format("RequestRelation = [%s]", classUrl));
 
         // convert localunitUrl to unitUrl
-        String convertedRequestRelation = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), requestRelation);
+        String convertedRequestRelation = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), classUrl);
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(convertedRequestRelation);
         if (matcher.matches()) {

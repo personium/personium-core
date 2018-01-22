@@ -53,27 +53,27 @@ public class SentMessage extends Message {
             .setNullable(true)
             .setAnnotations(Common.P_FORMAT_RELATION_NAME);
 
-    /**
-     * RequestRule/Name property.
-     */
-    public static final EdmProperty.Builder P_REQUESTRULE_NAME = EdmProperty.newBuilder("Name")
-            .setType(EdmSimpleType.STRING)
-            .setNullable(true)
-            .setAnnotations(Common.P_FORMAT_ID);
-    /**
-     * RequestRule ComplexType Builder.
-     */
-    public static final EdmComplexType.Builder REQUESTRULE_BUILDER = EdmComplexType.newBuilder()
-            .setNamespace(Common.EDM_NS_CELL_CTL)
-            .setName("Sent_Message_RequestRule")
-            .addProperties(Enumerable.create(P_REQUESTRULE_NAME, Rule.P_SUBJECT, Rule.P_TYPE,
-                    Rule.P_OBJECT, Rule.P_INFO, Rule.P_ACTION, Rule.P_SERVICE).toList());
-    /**
-     * RequestRule property.
-     */
-    public static final EdmProperty.Builder P_REQUEST_RULE = EdmProperty.newBuilder("RequestRule")
-            .setType(REQUESTRULE_BUILDER.build())
-            .setNullable(true);
+//    /**
+//     * RequestRule/Name property.
+//     */
+//    public static final EdmProperty.Builder P_REQUESTRULE_NAME = EdmProperty.newBuilder("Name")
+//            .setType(EdmSimpleType.STRING)
+//            .setNullable(true)
+//            .setAnnotations(Common.P_FORMAT_ID);
+//    /**
+//     * RequestRule ComplexType Builder.
+//     */
+//    public static final EdmComplexType.Builder REQUESTRULE_BUILDER = EdmComplexType.newBuilder()
+//            .setNamespace(Common.EDM_NS_CELL_CTL)
+//            .setName("Sent_Message_RequestRule")
+//            .addProperties(Enumerable.create(P_REQUESTRULE_NAME, Rule.P_SUBJECT, Rule.P_TYPE,
+//                    Rule.P_OBJECT, Rule.P_INFO, Rule.P_ACTION, Rule.P_SERVICE).toList());
+//    /**
+//     * RequestRule property.
+//     */
+//    public static final EdmProperty.Builder P_REQUEST_RULE = EdmProperty.newBuilder("RequestRule")
+//            .setType(REQUESTRULE_BUILDER.build())
+//            .setNullable(true);
 
     /**
      * Result/To property.
@@ -98,7 +98,7 @@ public class SentMessage extends Message {
    /**
     * Result ComplexType Builder.
     */
-   public static final EdmComplexType.Builder COMPLEXTYPE_BUILDER = EdmComplexType.newBuilder()
+   public static final EdmComplexType.Builder COMPLEX_TYPE_RESULT = EdmComplexType.newBuilder()
            .setNamespace(Common.EDM_NS_CELL_CTL)
            .setName("Sent_Message_Result")
            .addProperties(Enumerable.create(P_RESULT_TO, P_RESULT_CODE, P_RESULT_REASON).toList());
@@ -106,7 +106,7 @@ public class SentMessage extends Message {
      * Result property.
      */
     public static final EdmProperty.Builder P_RESULT = EdmProperty.newBuilder("Result")
-            .setType(COMPLEXTYPE_BUILDER.build())
+            .setType(COMPLEX_TYPE_RESULT.build())
             .setCollectionKind(CollectionKind.List)
             .setNullable(true);
 
@@ -119,8 +119,8 @@ public class SentMessage extends Message {
             .setName(EDM_TYPE_NAME)
             .addProperties(
                     Enumerable.create(Common.P_ID, Common.P_BOX_NAME, P_IN_REPLY_TO, P_TO, P_TO_RELATION,
-                            P_TYPE, P_TITLE, P_BODY, P_PRIORITY, P_REQUEST_RELATION, P_REQUEST_RELATION_TARGET,
-                            P_REQUEST_RULE, P_RESULT, Common.P_PUBLISHED, Common.P_UPDATED).toList())
+                            P_TYPE, P_TITLE, P_BODY, P_PRIORITY, P_REQUEST_OBJECTS,
+                            P_RESULT, Common.P_PUBLISHED, Common.P_UPDATED).toList())
             .addKeys(Common.P_ID.getName());
 
 }

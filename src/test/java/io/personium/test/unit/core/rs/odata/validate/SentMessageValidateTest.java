@@ -26,8 +26,8 @@ import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.SentMessage;
-import io.personium.core.rs.cell.MessageODataResource;
 import io.personium.core.rs.odata.AbstractODataResource;
+import io.personium.core.rs.odata.ODataMessageResource;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 
@@ -90,7 +90,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void ToがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(), "http://example.com/test/");
+        ODataMessageResource.validateUriCsv(SentMessage.P_TO.getName(), "http://example.com/test/");
     }
 
     /**
@@ -98,7 +98,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void ToがCSV複数URL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(),
+        ODataMessageResource.validateUriCsv(SentMessage.P_TO.getName(),
                 "http://example.com/test/,http://example.com/test/");
     }
 
@@ -107,7 +107,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
      */
     @Test(expected = PersoniumCoreException.class)
     public final void ToがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
-        MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(), "ftp://example.com/test");
+        ODataMessageResource.validateUriCsv(SentMessage.P_TO.getName(), "ftp://example.com/test");
 
     }
 
@@ -116,7 +116,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
      */
     @Test(expected = PersoniumCoreException.class)
     public final void ToがCSV複数URL形式とURL形式でない場合にPersoniumCoreExceptionが発生すること() {
-        MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(),
+        ODataMessageResource.validateUriCsv(SentMessage.P_TO.getName(),
                 "http://example.com/test,ftp://example.com/test");
     }
 
@@ -125,7 +125,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
      */
     @Test(expected = PersoniumCoreException.class)
     public final void Toが不正なCSV形式の場合にPersoniumCoreExceptionが発生すること() {
-        MessageODataResource.validateUriCsv(SentMessage.P_TO.getName(),
+        ODataMessageResource.validateUriCsv(SentMessage.P_TO.getName(),
                 "http://example.com/test/,,http://example.com/test");
     }
 
@@ -347,7 +347,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     @Test
     public final void Bodyが0byteの場合にPersoniumCoreExceptionが発生しないこと() {
         String body = "";
-        MessageODataResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -361,7 +361,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
         }
         String body = String.valueOf(buff);
 
-        MessageODataResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -375,7 +375,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
         }
         String body = String.valueOf(buff);
 
-        MessageODataResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
+        ODataMessageResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -538,7 +538,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
                 EdmSimpleType.STRING).getValue();
         String toRelation = (String) OProperties.null_(SentMessage.P_TO_RELATION.getName(),
                 EdmSimpleType.STRING).getValue();
-        MessageODataResource.validateToAndToRelation(to, toRelation);
+        ODataMessageResource.validateToAndToRelation(to, toRelation);
     }
 
     /**
@@ -549,7 +549,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
         String to = "http://example.com/toAddress/";
         String toRelation = (String) OProperties.null_(SentMessage.P_TO_RELATION.getName(),
                 EdmSimpleType.STRING).getValue();
-        MessageODataResource.validateToAndToRelation(to, toRelation);
+        ODataMessageResource.validateToAndToRelation(to, toRelation);
     }
 
     /**
@@ -560,7 +560,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
         String to = (String) OProperties.null_(SentMessage.P_TO.getName(),
                 EdmSimpleType.STRING).getValue();
         String toRelation = "http://example.com/toRelation";
-        MessageODataResource.validateToAndToRelation(to, toRelation);
+        ODataMessageResource.validateToAndToRelation(to, toRelation);
     }
 
     /**
@@ -570,7 +570,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
     public final void ToとToRelationが両方ある場合にPersoniumCoreExceptionが発生しないこと() {
         String to = "http://example.com/toAddress/";
         String toRelation = "http://example.com/toRelation";
-        MessageODataResource.validateToAndToRelation(to, toRelation);
+        ODataMessageResource.validateToAndToRelation(to, toRelation);
     }
 
     /**
@@ -578,7 +578,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
      */
     @Test(expected = PersoniumCoreException.class)
     public final void 送信先URLが最大送信許可数を超えている場合にPersoniumCoreExceptionが発生すること() {
-        MessageODataResource mor = new MessageODataResource(null, null, null);
+        ODataMessageResource mor = new ODataMessageResource(null, null, null);
         mor.checkMaxDestinationsSize(1001);
     }
 
@@ -587,7 +587,7 @@ public class SentMessageValidateTest extends AbstractODataResource {
      */
     @Test
     public final void 送信先URLが最大送信許可数を超えていない場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource mor = new MessageODataResource(null, null, null);
+        ODataMessageResource mor = new ODataMessageResource(null, null, null);
         mor.checkMaxDestinationsSize(1000);
     }
 }

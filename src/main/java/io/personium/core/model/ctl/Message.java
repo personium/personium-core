@@ -22,6 +22,7 @@ import java.util.List;
 import org.odata4j.edm.EdmAnnotation;
 import org.odata4j.edm.EdmAnnotationAttribute;
 import org.odata4j.edm.EdmProperty;
+import org.odata4j.edm.EdmProperty.CollectionKind;
 import org.odata4j.edm.EdmSimpleType;
 
 /**
@@ -36,18 +37,20 @@ public class Message {
 
     /** Type message. */
     public static final String TYPE_MESSAGE = "message";
-    /** Type register relation. */
-    public static final String TYPE_REQ_RELATION_BUILD = "req.relation.build";
-    /** Type delete relation. */
-    public static final String TYPE_REQ_RELATION_BREAK = "req.relation.break";
-    /** Type register relation role. */
-    public static final String TYPE_REQ_ROLE_GRANT = "req.role.grant";
-    /** Type delete relation role. */
-    public static final String TYPE_REQ_ROLE_REVOKE = "req.role.revoke";
-    /** Type register rule. */
-    public static final String TYPE_REQ_RULE_REGISTER = "req.rule.register";
-    /** Type unregister rule. */
-    public static final String TYPE_REQ_RULE_UNREGISTER = "req.rule.unregister";
+    /** Type request. */
+    public static final String TYPE_REQUEST = "request";
+//    /** Type register relation. */
+//    public static final String TYPE_REQ_RELATION_BUILD = "req.relation.build";
+//    /** Type delete relation. */
+//    public static final String TYPE_REQ_RELATION_BREAK = "req.relation.break";
+//    /** Type register relation role. */
+//    public static final String TYPE_REQ_ROLE_GRANT = "req.role.grant";
+//    /** Type delete relation role. */
+//    public static final String TYPE_REQ_ROLE_REVOKE = "req.role.revoke";
+//    /** Type register rule. */
+//    public static final String TYPE_REQ_RULE_REGISTER = "req.rule.register";
+//    /** Type unregister rule. */
+//    public static final String TYPE_REQ_RULE_UNREGISTER = "req.rule.unregister";
 
     /** Status unread. */
     public static final String STATUS_UNREAD = "unread";
@@ -63,19 +66,17 @@ public class Message {
     /** Command key string. */
     public static final String MESSAGE_COMMAND = "Command";
 
-    /** Extended schema Format definition(Message RequestRelation). */
-    public static final String P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION = "message-request-relation";
+//    /** Extended schema Format definition(Message RequestRelation). */
+//    public static final String P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION = "message-request-relation";
 
     /** Pattern InReplyTo. */
     public static final String PATTERN_IN_REPLY_TO = "^.{32}$";
     /**
      * Pattern message type.
      *    message
-     *    req.relation.build / req.relation.break
-     *    req.role.grant / req.role.revoke
-     *    req.rule.register / req.rule.unregister
+     *    request
      */
-    public static final String PATTERN_MESSAGE_TYPE = "^(message)|(req\\.relation\\.build)|(req\\.relation\\.break)|(req\\.role\\.grant)|(req\\.role\\.revoke)|(req\\.rule\\.register)|(req\\.rule\\.unregister)$"; // CHECKSTYLE IGNORE - To maintain readability
+    public static final String PATTERN_MESSAGE_TYPE = "^(message)|(request)$";
     /** Pattern message title. */
     public static final String PATTERN_MESSAGE_TITLE = "^.{0,256}$";
     /** Pattern message priority. */
@@ -84,33 +85,25 @@ public class Message {
     /** Max length of message body. */
     public static final int MAX_MESSAGE_BODY_LENGTH = 1024 * 64;
 
-    /**
-     * Annotations for InReplyTo.
-     */
+    /** Annotations for InReplyTo. */
     protected static final List<EdmAnnotation<?>> P_FORMAT_IN_REPLY_TO = new ArrayList<EdmAnnotation<?>>();
-    /**
-     * Annotations for MessageType.
-     */
+    /** Annotations for MessageType. */
     private static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_TYPE = new ArrayList<EdmAnnotation<?>>();
-    /**
-     * Annotations for MessageTitle.
-     */
+    /** Annotations for MessageTitle. */
     private static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_TITLE = new ArrayList<EdmAnnotation<?>>();
-    /**
-     * Annotations for MessagePriority.
-     */
+    /** Annotations for MessagePriority. */
     private static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_PRIORITY = new ArrayList<EdmAnnotation<?>>();
-    /**
-     * Definition of p: Format for MessageRequestRelation item.
-     */
-    private static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_REQUEST_RELATION = new ArrayList<EdmAnnotation<?>>();
+//    /**
+//     * Definition of p: Format for MessageRequestRelation item.
+//     */
+//    private static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_REQUEST_RELATION = new ArrayList<EdmAnnotation<?>>();
 
     static {
         P_FORMAT_IN_REPLY_TO.add(createFormatInReplyToAnnotation());
         P_FORMAT_MESSAGE_TYPE.add(createFormatMessageTypeAnnotation());
         P_FORMAT_MESSAGE_TITLE.add(createFormatMessageTitleAnnotation());
         P_FORMAT_MESSAGE_PRIORITY.add(createFormatMessagePriorityAnnotation());
-        P_FORMAT_MESSAGE_REQUEST_RELATION.add(createFormatMessageRequestRelation());
+//        P_FORMAT_MESSAGE_REQUEST_RELATION.add(createFormatMessageRequestRelation());
     }
 
     /**
@@ -153,15 +146,15 @@ public class Message {
                 Common.P_FORMAT, Common.P_FORMAT_PATTERN_REGEX + "('" + PATTERN_MESSAGE_PRIORITY + "')");
     }
 
-    /**
-     * Return p: Format Annotation for MessageRequestRelation item.
-     * @return annotation for MessageRequestRelation
-     */
-    private static EdmAnnotation<?> createFormatMessageRequestRelation() {
-        return new EdmAnnotationAttribute(
-                Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
-                Common.P_FORMAT, P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION);
-    }
+//    /**
+//     * Return p: Format Annotation for MessageRequestRelation item.
+//     * @return annotation for MessageRequestRelation
+//     */
+//    private static EdmAnnotation<?> createFormatMessageRequestRelation() {
+//        return new EdmAnnotationAttribute(
+//                Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
+//                Common.P_FORMAT, P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION);
+//    }
 
     /**
      * InReplyTo property.
@@ -202,17 +195,24 @@ public class Message {
             .setDefaultValue("3")
             .setAnnotations(P_FORMAT_MESSAGE_PRIORITY);
     /**
-     * RequestRelation property.
+     * RequestObjects property.
      */
-    public static final EdmProperty.Builder P_REQUEST_RELATION = EdmProperty.newBuilder("RequestRelation")
-            .setType(EdmSimpleType.STRING)
+    public static final EdmProperty.Builder P_REQUEST_OBJECTS = EdmProperty.newBuilder("RequestObjects")
+            .setType(RequestObject.COMPLEX_TYPE_REQUEST_OBJECT)
             .setNullable(true)
-            .setAnnotations(P_FORMAT_MESSAGE_REQUEST_RELATION);
-    /**
-     * RequestRelationTarget property.
-     */
-    public static final EdmProperty.Builder P_REQUEST_RELATION_TARGET = EdmProperty.newBuilder("RequestRelationTarget")
-            .setType(EdmSimpleType.STRING)
-            .setNullable(true)
-            .setAnnotations(Common.P_FORMAT_CELL_URL);
+            .setCollectionKind(CollectionKind.List);
+//    /**
+//     * RequestRelation property.
+//     */
+//    public static final EdmProperty.Builder P_REQUEST_RELATION = EdmProperty.newBuilder("RequestRelation")
+//            .setType(EdmSimpleType.STRING)
+//            .setNullable(true)
+//            .setAnnotations(P_FORMAT_MESSAGE_REQUEST_RELATION);
+//    /**
+//     * RequestRelationTarget property.
+//     */
+//    public static final EdmProperty.Builder P_REQUEST_RELATION_TARGET = EdmProperty.newBuilder("RequestRelationTarget")
+//            .setType(EdmSimpleType.STRING)
+//            .setNullable(true)
+//            .setAnnotations(Common.P_FORMAT_CELL_URL);
 }

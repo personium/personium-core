@@ -46,7 +46,7 @@ public class ReceivedMessagePort extends ReceivedMessage {
             .setName(EDM_TYPE_NAME)
             .addProperties(
                     Enumerable.create(P_ID, P_SCHEMA, P_IN_REPLY_TO, P_FROM, P_MULTICAST_TO, P_TYPE, P_TITLE, P_BODY,
-                            P_PRIORITY, P_STATUS, P_REQUEST_RELATION, P_REQUEST_RELATION_TARGET, P_REQUEST_RULE,
+                            P_PRIORITY, P_STATUS, P_REQUEST_OBJECTS,
                             Common.P_BOX_NAME, Common.P_PUBLISHED, Common.P_UPDATED).toList())
             .addKeys(P_ID.getName());
 }
