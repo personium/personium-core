@@ -916,11 +916,10 @@ public abstract class AbstractODataResource {
      * @param op OProperty
      */
     protected void validatePropertyRuleService(String propName, OProperty<?> op) {
-        // http://xxx/cell/box/col/srv or https://xxx/cell/box/col/srv
-        // personium-localunit:/cel/box/col/srv
+        // http://xxx or https://xxx
+        // personium-localunit:/xxx
         // personium-localcell:/box/col/srv or presonium-localbox:/col/srv
         if (!ODataUtils.isValidUri(op.getValue().toString())
-                && !ODataUtils.validateLocalUnitUrl(op.getValue().toString(), Common.PATTERN_SERVICE_LOCALUNIT_PATH)
                 && !ODataUtils.validateLocalCellUrl(op.getValue().toString(), Common.PATTERN_SERVICE_LOCALCELL_PATH)
                 && !ODataUtils.validateLocalBoxUrl(op.getValue().toString(), Common.PATTERN_SERVICE_LOCALBOX_PATH)) {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);

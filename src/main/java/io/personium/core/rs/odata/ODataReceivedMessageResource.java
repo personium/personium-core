@@ -209,12 +209,12 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
                 } else if (RequestObject.REQUEST_TYPE_RULE_ADD.equals(requestType)) {
                     // rule.add
                     //   Name, Action required
-                    //   Action: callback or exec -> TargetUrl required
+                    //   Action: relay or exec -> TargetUrl required
                     //   Schema: exists -> EventObject: personium-localbox:/xxx
                     //                  -> Action: exec -> TargetUrl: personium-localbox:/xxx
                     //   Schema: null   -> EventObject: personium-localcell:/xxx
                     //                  -> Action: exec -> TargetUrl: personium-localcell:/xxx
-                    //   Action: callback -> TargetUrl: personium-localunit: or http: or https:
+                    //   Action: relay -> TargetUrl: personium-localunit: or http: or https:
                     if (requestObjectMap.get(RequestObject.P_NAME.getName()) == null) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                 concatRequestObjectPropertyName(RequestObject.P_NAME.getName()));
@@ -224,7 +224,7 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                 concatRequestObjectPropertyName(Rule.P_ACTION.getName()));
                     }
-                    if ((Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action))
+                    if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_EXEC.equals(action))
                             && requestObjectMap.get(RequestObject.P_TARGET_URL.getName()) == null) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                 concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
@@ -252,7 +252,7 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
                                     concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
                         }
                     }
-                    if (Rule.ACTION_CALLBACK.equals(action)
+                    if (Rule.ACTION_RELAY.equals(action)
                             && !targetUrl.startsWith(UriUtils.SCHEME_LOCALUNIT)
                             && !targetUrl.startsWith(UriUtils.SCHEME_HTTP)
                             && !targetUrl.startsWith(UriUtils.SCHEME_HTTPS)) {

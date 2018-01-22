@@ -237,8 +237,8 @@ public final class CellCtlResource extends ODataResource {
                 }
             }
 
-            // action: callback or exec -> service: not null
-            if ((Rule.ACTION_CALLBACK.equals(action) || Rule.ACTION_EXEC.equals(action)) && service == null) {
+            // action: relay or exec -> service: not null
+            if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_EXEC.equals(action)) && service == null) {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
             }
 
@@ -263,8 +263,8 @@ public final class CellCtlResource extends ODataResource {
                 }
             }
 
-            // action: callback -> service: personium-localunit: or http: or https:
-            if (Rule.ACTION_CALLBACK.equals(action)
+            // action: relay -> service: personium-localunit: or http: or https:
+            if (Rule.ACTION_RELAY.equals(action)
                     && !service.startsWith(UriUtils.SCHEME_HTTP)
                     && !service.startsWith(UriUtils.SCHEME_HTTPS)
                     && !service.startsWith(UriUtils.SCHEME_LOCALUNIT)) {
