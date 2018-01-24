@@ -1,3 +1,10 @@
+## 1.6.0
+IMPROVEMENTS:
+* Update httpclient lib version.([#41](https://github.com/personium/personium-core/issues/41))
+* Event-driven service execution.([#89](https://github.com/personium/personium-core/issues/89))
+* Make "unitUser.issuers" correspond to personium-localunit.([#99](https://github.com/personium/personium-core/issues/99))
+* Change RequestRelation specification of message api.([#103](https://github.com/personium/personium-core/issues/103))
+
 ## 1.5.8
 IMPROVEMENTS:
 * Add Box recursive delete function.([#58](https://github.com/personium/personium-core/issues/58))
