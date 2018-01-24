@@ -72,7 +72,6 @@ import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Common;
-import io.personium.core.model.ctl.Message;
 import io.personium.core.model.ctl.Property;
 import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker;
@@ -695,8 +694,6 @@ public abstract class AbstractODataResource {
                     validatePropertyCellUrl(propName, op);
                 } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_USUSST)) {
                     validatePropertyUsusst(propName, op, pFormat);
-                } else if (pFormat.startsWith(Message.P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION)) {
-                    validatePropertyMessageRequestRelation(propName, op);
                 } else if (pFormat.startsWith(Rule.P_FORMAT_PATTERN_RULE_OBJECT)) {
                     validatePropertyRuleObject(propName, op);
                 } else if (pFormat.startsWith(Rule.P_FORMAT_PATTERN_RULE_SERVICE)) {
@@ -882,20 +879,6 @@ public abstract class AbstractODataResource {
                } else {
                    overlapChk.add(token);
                }
-        }
-    }
-
-    /**
-     * Message RequestRelation Format Check.
-     * @param propName Property name
-     * @param op OProperty
-     */
-    protected void validatePropertyMessageRequestRelation(String propName, OProperty<?> op) {
-        if (!ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_RELATION_CLASS_URL)
-                && !ODataUtils.validateRegEx(op.getValue().toString(), Common.PATTERN_RELATION_NAME)
-                && !ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_ROLE_CLASS_URL)
-                && !ODataUtils.validateRegEx(op.getValue().toString(), Common.PATTERN_NAME)) {
-            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
         }
     }
 

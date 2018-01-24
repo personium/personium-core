@@ -22,13 +22,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -36,8 +33,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +44,6 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.odata4j.core.OEntity;
-import org.odata4j.core.OEntityId;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.edm.EdmEntitySet;
 import org.powermock.api.mockito.PowerMockito;
@@ -60,17 +55,15 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.ctl.Common;
-import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.ReceivedMessagePort;
 import io.personium.core.model.ctl.Relation;
-import io.personium.core.model.ctl.Role;
+import io.personium.core.model.ctl.RequestObject;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.impl.es.CellEsImpl;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
-import io.personium.core.model.impl.es.odata.EsNavigationTargetKeyProperty.NTKPNotFoundException;
 import io.personium.core.model.lock.Lock;
 import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Unit;
@@ -510,9 +503,16 @@ public class MessageODataProducerTest {
         doReturn(mockDocHandler).when(messageODataProducer).retrieveWithKey(entitySet, originalKey);
 
         Map<String, Object> mockConvertedStaticFields = new HashMap<String, Object>();
+        List<Map<String, String>> mockRequestObjects = new ArrayList<Map<String, String>>();
+        Map<String, String> mockRequestObject = new HashMap<String, String>();
         mockConvertedStaticFields.put(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_MESSAGE);
         mockConvertedStaticFields.put(ReceivedMessage.P_STATUS.getName(), "dummyStatus");
         mockConvertedStaticFields.put(Common.P_BOX_NAME.getName(), "dummyBoxName");
+        mockConvertedStaticFields.put(ReceivedMessage.P_ID.getName(), "dummyId");
+        mockConvertedStaticFields.put(ReceivedMessage.P_REQUEST_OBJECTS.getName(), mockRequestObjects);
+        mockRequestObjects.add(mockRequestObject);
+        mockRequestObject.put(RequestObject.P_REQUEST_TYPE.getName(), RequestObject.REQUEST_TYPE_RELATION_ADD);
+
         // Change the return value according to the number of calls to getStaticFields
         when(mockDocHandler.getStaticFields()).thenReturn(
                 mockStaticFields, mockConvertedStaticFields, mockConvertedStaticFields);
@@ -523,7 +523,8 @@ public class MessageODataProducerTest {
         doReturn(true).when(messageODataProducer).isValidMessageStatus(status);
         doReturn(true).when(messageODataProducer).isValidCurrentStatus("dummyStatus");
 
-        PowerMockito.doNothing().when(messageODataProducer, "updateRelation", mockDocHandler);
+        PowerMockito.doNothing().when(messageODataProducer,
+                "updateRelation", "dummyId", "dummyBoxName", mockRequestObject);
         PowerMockito.doNothing().when(messageODataProducer, "updateStatusOfEntitySetDocHandler",
                 mockDocHandler, status);
 
@@ -701,9 +702,15 @@ public class MessageODataProducerTest {
         doReturn(mockDocHandler).when(messageODataProducer).retrieveWithKey(entitySet, originalKey);
 
         Map<String, Object> mockConvertedStaticFields = new HashMap<String, Object>();
-        mockConvertedStaticFields.put(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQ_RELATION_BUILD);
+        List<Map<String, String>> mockRequestObjects = new ArrayList<Map<String, String>>();
+        Map<String, String> mockRequestObject = new HashMap<String, String>();
+        mockConvertedStaticFields.put(ReceivedMessage.P_TYPE.getName(), ReceivedMessage.TYPE_REQUEST);
         mockConvertedStaticFields.put(ReceivedMessage.P_STATUS.getName(), "dummyStatus");
         mockConvertedStaticFields.put(Common.P_BOX_NAME.getName(), "dummyBoxName");
+        mockConvertedStaticFields.put(ReceivedMessage.P_REQUEST_OBJECTS.getName(), mockRequestObjects);
+        mockRequestObjects.add(mockRequestObject);
+        mockRequestObject.put(RequestObject.P_REQUEST_TYPE.getName(), RequestObject.REQUEST_TYPE_RELATION_ADD);
+
         // Change the return value according to the number of calls to getStaticFields
         when(mockDocHandler.getStaticFields()).thenReturn(
                 mockStaticFields, mockConvertedStaticFields, mockConvertedStaticFields);
@@ -823,7 +830,7 @@ public class MessageODataProducerTest {
         // --------------------
         // Run method
         // --------------------
-        String actualRelationName = messageODataProducer.getNameFromRequestRelation(requestRelation, regex);
+        String actualRelationName = messageODataProducer.getNameFromClassUrl(requestRelation, regex);
 
         // --------------------
         // Confirm result
@@ -865,7 +872,7 @@ public class MessageODataProducerTest {
         // --------------------
         // Run method
         // --------------------
-        String actualRelationName = messageODataProducer.getNameFromRequestRelation(requestRelation, regex);
+        String actualRelationName = messageODataProducer.getNameFromClassUrl(requestRelation, regex);
 
         // --------------------
         // Confirm result
@@ -911,7 +918,7 @@ public class MessageODataProducerTest {
         // --------------------
         // Run method
         // --------------------
-        String actualBoxName = messageODataProducer.getBoxNameFromRequestRelation(requestRelation, regex);
+        String actualBoxName = messageODataProducer.getBoxNameFromClassUrl(requestRelation, regex);
 
         // --------------------
         // Confirm result
@@ -953,7 +960,7 @@ public class MessageODataProducerTest {
         // --------------------
         // Run method
         // --------------------
-        String actualBoxName = messageODataProducer.getBoxNameFromRequestRelation(requestRelation, regex);
+        String actualBoxName = messageODataProducer.getBoxNameFromClassUrl(requestRelation, regex);
 
         // --------------------
         // Confirm result
@@ -998,7 +1005,7 @@ public class MessageODataProducerTest {
         // Run method
         // --------------------
         try {
-            messageODataProducer.getBoxNameFromRequestRelation(requestRelation, regex);
+            messageODataProducer.getBoxNameFromClassUrl(requestRelation, regex);
             fail("Not exception.");
         } catch (PersoniumCoreException e) {
             // --------------------

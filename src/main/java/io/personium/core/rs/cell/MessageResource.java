@@ -42,12 +42,14 @@ import io.personium.core.model.ctl.ReceivedMessagePort;
 import io.personium.core.model.ctl.SentMessagePort;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.odata.ODataCtlResource;
+import io.personium.core.rs.odata.ODataReceivedMessageResource;
+import io.personium.core.rs.odata.ODataSentMessageResource;
 import io.personium.core.utils.ResourceUtils;
 
 /**
  * JAX-RS Resource handling DC Message Level Api. /__messageというパスにきたときの処理.
  */
-public final class MessageResource extends ODataCtlResource {
+public class MessageResource extends ODataCtlResource {
     static Logger log = LoggerFactory.getLogger(MessageResource.class);
 
     DavRsCmp davRsCmp;
@@ -91,10 +93,9 @@ public final class MessageResource extends ODataCtlResource {
 
         // データ登録
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
-        MessageODataResource moResource = new MessageODataResource(this, producer, SentMessagePort.EDM_TYPE_NAME);
-        moResource.setVersion(version);
-        moResource.setRequestKey(requestKey);
-        Response respose = moResource.createMessage(uriInfo, reader);
+        ODataSentMessageResource resource = new ODataSentMessageResource(
+                this, requestKey, producer, SentMessagePort.EDM_TYPE_NAME, version);
+        Response respose = resource.createMessage(uriInfo, reader);
         return respose;
     }
 
@@ -117,9 +118,9 @@ public final class MessageResource extends ODataCtlResource {
 
         // 受信メッセージの登録
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
-        MessageODataResource moResource = new MessageODataResource(this, producer, ReceivedMessagePort.EDM_TYPE_NAME);
-        moResource.setRequestKey(requestKey);
-        Response respose = moResource.createMessage(uriInfo, reader);
+        ODataReceivedMessageResource resource = new ODataReceivedMessageResource(
+                this, requestKey, producer, ReceivedMessagePort.EDM_TYPE_NAME);
+        Response respose = resource.createMessage(uriInfo, reader);
         return respose;
     }
 
@@ -141,9 +142,9 @@ public final class MessageResource extends ODataCtlResource {
 
         // 受信メッセージの承認
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
-        MessageODataResource moResource = new MessageODataResource(this, producer, ReceivedMessagePort.EDM_TYPE_NAME);
-        moResource.setRequestKey(requestKey);
-        Response respose = moResource.changeMessageStatus(reader, key);
+        ODataReceivedMessageResource resource = new ODataReceivedMessageResource(
+                this, requestKey, producer, ReceivedMessagePort.EDM_TYPE_NAME);
+        Response respose = resource.changeMessageStatus(reader, key);
         return respose;
     }
 

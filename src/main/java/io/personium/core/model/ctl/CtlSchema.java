@@ -201,9 +201,8 @@ public final class CtlSchema {
 
         };
         EdmComplexType.Builder[] complexList = new EdmComplexType.Builder[]{
-                SentMessage.COMPLEXTYPE_BUILDER,
-                SentMessage.REQUESTRULE_BUILDER,
-                ReceivedMessage.REQUESTRULE_BUILDER
+                SentMessage.COMPLEX_TYPE_RESULT,
+                RequestObject.COMPLEX_TYPE_REQUEST_OBJECT
         };
 
         return createDataServices(Common.EDM_NS_CELL_CTL, typeList, assocs, complexList);
@@ -235,9 +234,8 @@ public final class CtlSchema {
         };
         // List of ComplexType
         EdmComplexType.Builder[] complexList = new EdmComplexType.Builder[]{
-                SentMessage.COMPLEXTYPE_BUILDER,
-                SentMessage.REQUESTRULE_BUILDER,
-                ReceivedMessage.REQUESTRULE_BUILDER
+                SentMessage.COMPLEX_TYPE_RESULT,
+                RequestObject.COMPLEX_TYPE_REQUEST_OBJECT
         };
 
         return createDataServices(Common.EDM_NS_CELL_CTL, typeList, assocs, complexList);

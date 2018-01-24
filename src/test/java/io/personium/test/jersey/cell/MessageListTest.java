@@ -29,8 +29,8 @@ import org.junit.runner.RunWith;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.ReceivedMessageUtils;
@@ -82,8 +82,6 @@ public class MessageListTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", messageBody);
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -139,8 +137,6 @@ public class MessageListTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", messageBody);
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -191,8 +187,6 @@ public class MessageListTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", messageBody);
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -283,8 +277,6 @@ public class MessageListTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", messageBody);
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -372,8 +364,6 @@ public class MessageListTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", messageBody);
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -429,8 +419,6 @@ public class MessageListTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", messageBody);
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {

@@ -26,7 +26,6 @@ import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.ReceivedMessage;
-import io.personium.core.rs.cell.MessageODataResource;
 import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
@@ -178,23 +177,13 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Typeがreq.relation.buildの場合にPersoniumCoreExceptionが発生しないこと.
+     * Typeがrequestの場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Typeがreq_relation_buildeの場合にPersoniumCoreExceptionが発生しないこと() {
+    public final void Typeがrequestの場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(ReceivedMessage.P_TYPE.build(),
                 ReceivedMessage.P_TYPE.getName(),
-                OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.relation.build"));
-    }
-
-    /**
-     * Typeがreq.relation.breakの場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void Typeがreq_relation_breakの場合にPersoniumCoreExceptionが発生しないこと() {
-        this.validateProperty(ReceivedMessage.P_TYPE.build(),
-                ReceivedMessage.P_TYPE.getName(),
-                OProperties.string(ReceivedMessage.P_TYPE.getName(), "req.relation.break"));
+                OProperties.string(ReceivedMessage.P_TYPE.getName(), "request"));
     }
 
     /**
@@ -354,140 +343,6 @@ public class ReceivedMessageValidateTest extends AbstractODataResource {
                 ReceivedMessage.P_PRIORITY.getName(),
                 OProperties.string(ReceivedMessage.P_PRIORITY.getName(), null));
         assertEquals(expected.getValue(), result.getValue());
-    }
-
-    /**
-     * RequestRelationがURL形式の場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void RequestRelationがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        this.validateProperty(ReceivedMessage.P_REQUEST_RELATION.build(),
-                ReceivedMessage.P_REQUEST_RELATION.getName(),
-                OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(),
-                        "http://example.com/test/__relation/__/testRelation"));
-    }
-
-    /**
-     * RequestRelationがURL形式でない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void RequestRelationがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
-        this.validateProperty(ReceivedMessage.P_REQUEST_RELATION.build(),
-                ReceivedMessage.P_REQUEST_RELATION.getName(),
-                OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(),
-                        "ftp://example.com/test/__relation/__/testRelation"));
-    }
-
-    /**
-     * RequestRelationがNullの場合にNullOPropertyが返却されること.
-     */
-    @Test
-    public final void RequestRelationがNullの場合にNullOPropertyが返却されること() {
-        OProperty<?> expected = OProperties.null_(ReceivedMessage.P_REQUEST_RELATION.getName(), EdmSimpleType.STRING);
-        OProperty<?> result = this.setDefaultValue(ReceivedMessage.P_REQUEST_RELATION.build(),
-                ReceivedMessage.P_REQUEST_RELATION.getName(),
-                OProperties.string(ReceivedMessage.P_REQUEST_RELATION.getName(), AbstractCase.STRING_LENGTH_129));
-        assertEquals(expected.getValue(), result.getValue());
-    }
-
-    /**
-     * RequestRelationTargetがURL形式の場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void RequestRelationTargetがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        this.validateProperty(ReceivedMessage.P_REQUEST_RELATION_TARGET.build(),
-                ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
-                OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://example.com/test/"));
-    }
-
-    /**
-     * Test validateProperty().
-     * Error test.
-     * RequestRelationTarget is not Cell URL.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void validateProperty_Error_RequestRelationTarget_is_not_CellUrl() {
-        this.validateProperty(ReceivedMessage.P_REQUEST_RELATION_TARGET.build(),
-                ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
-                OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "http://example.com/test"));
-    }
-
-    /**
-     * RequestRelationTargetがURL形式でない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void RequestRelationTargetがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
-        this.validateProperty(ReceivedMessage.P_REQUEST_RELATION_TARGET.build(),
-                ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
-                OProperties.string(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(), "ftp://example.com/test"));
-    }
-
-    /**
-     * RequestRelationTargetがNullの場合にNullOPropertyが返却されること.
-     */
-    @Test
-    public final void RequestRelationTargetがNullの場合にNullOPropertyが返却されること() {
-        OProperty<?> expected = OProperties.null_(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
-                EdmSimpleType.STRING);
-        OProperty<?> result = this.setDefaultValue(ReceivedMessage.P_REQUEST_RELATION_TARGET.build(),
-                ReceivedMessage.P_REQUEST_RELATION_TARGET.getName(),
-                OProperties.string(ReceivedMessage.P_MULTICAST_TO.getName(), AbstractCase.STRING_LENGTH_129));
-        assertEquals(expected.getValue(), result.getValue());
-    }
-
-    /**
-     * MulticastToがURL形式の場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void MulticastToがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "http://example.com/test/");
-    }
-
-    /**
-     * MulticastToがCSV複数URL形式の場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void MulticastToがCSV複数URL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
-                "http://example.com/test/,http://example.com/test/");
-    }
-
-    /**
-     * MulticastToがURL形式でない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void MulticastToがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(), "ftp://example.com/test");
-
-    }
-
-    /**
-     * Test validateUriCsv().
-     * Error test.
-     * MulticastTo is invalid.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void validateUriCsv_Error_MulticastTo_is_invalid() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
-                "http://example.com/test,http://example.com/test/");
-    }
-
-    /**
-     * MulticastToがCSV複数URL形式とURL形式でない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void MulticastToがCSV複数URL形式とURL形式でない場合にPersoniumCoreExceptionが発生すること() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
-                "http://example.com/test/,ftp://example.com/test");
-    }
-
-    /**
-     * MulticastToが不正なCSV形式の場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void MulticastToが不正なCSV形式の場合にPersoniumCoreExceptionが発生すること() {
-        MessageODataResource.validateUriCsv(ReceivedMessage.P_MULTICAST_TO.getName(),
-                "http://example.com/test/,,http://example.com/test");
     }
 
     /**

@@ -45,8 +45,7 @@ public class SentMessagePort extends SentMessage {
             .setName(EDM_TYPE_NAME)
             .addProperties(
                     Enumerable.create(Common.P_ID, P_BOX_BOUND, P_IN_REPLY_TO, P_TO, P_TO_RELATION,
-                            P_TYPE, P_TITLE, P_BODY, P_PRIORITY, P_REQUEST_RELATION, P_REQUEST_RELATION_TARGET,
-                            P_REQUEST_RULE, Common.P_BOX_NAME, P_RESULT,
-                            Common.P_PUBLISHED, Common.P_UPDATED).toList())
+                            P_TYPE, P_TITLE, P_BODY, P_PRIORITY, P_REQUEST_OBJECTS,
+                            Common.P_BOX_NAME, P_RESULT, Common.P_PUBLISHED, Common.P_UPDATED).toList())
             .addKeys(Common.P_ID.getName());
 }

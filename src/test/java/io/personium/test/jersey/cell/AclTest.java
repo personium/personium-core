@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -1618,7 +1619,7 @@ public class AclTest extends AbstractCase {
 
         try {
             // 受信メッセージ(Type:message)
-            String body = getReceivedMessageBody("message", "12345678901234567890123456789012");
+            String body = getReceivedMessageBody("message", null, "12345678901234567890123456789012");
             rcvRes1 = ReceivedMessageUtils.receive(null, TEST_CELL1, body, HttpStatus.SC_CREATED);
             JSONObject results = (JSONObject) ((JSONObject) rcvRes1.bodyAsJson().get("d")).get("results");
             String uuid = (String) results.get("__id");
@@ -1638,7 +1639,7 @@ public class AclTest extends AbstractCase {
             apvRes3 = ReceivedMessageUtils.read(account.get(18), TEST_CELL1, uuid, HttpStatus.SC_NO_CONTENT);
 
             // 受信メッセージ(req.relation.build)
-            body = getReceivedMessageBody("req.relation.build", "12345678901234567890123456789013");
+            body = getReceivedMessageBody("request", "relation.add", "12345678901234567890123456789013");
             rcvRes2 = ReceivedMessageUtils.receive(null, TEST_CELL1, body, HttpStatus.SC_CREATED);
             results = (JSONObject) ((JSONObject) rcvRes2.bodyAsJson().get("d")).get("results");
             uuid = (String) results.get("__id");
@@ -1681,7 +1682,7 @@ public class AclTest extends AbstractCase {
                     UrlUtils.cellRoot("targetCell"));
 
             // 受信メッセージ(req.relation.break)
-            body = getReceivedMessageBody("req.relation.break", "12345678901234567890123456789014");
+            body = getReceivedMessageBody("request", "relation.remove", "12345678901234567890123456789014");
             rcvRes3 = ReceivedMessageUtils.receive(null, TEST_CELL1, body, HttpStatus.SC_CREATED);
             results = (JSONObject) ((JSONObject) rcvRes3.bodyAsJson().get("d")).get("results");
             uuid = (String) results.get("__id");
@@ -1754,19 +1755,12 @@ public class AclTest extends AbstractCase {
     /**
      * メッセージ受信用Bodyの取得.
      * @param type メッセージ種別
+     * @param requestType リクエストタイプ
      * @param id 受信メッセージのID
      * @return メッセージボディ
      */
     @SuppressWarnings("unchecked")
-    protected String getReceivedMessageBody(final String type, final String id) {
-        String status = null;
-        if ("message".equals(type)) {
-            status = "unread";
-        } else if ("req.relation.build".equals(type) || "req.relation.break".equals(type)) {
-            status = "none";
-        } else {
-            status = "unread";
-        }
+    protected String getReceivedMessageBody(String type, String requestType, String id) {
         JSONObject body = new JSONObject();
         body.put("__id", id);
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
@@ -1774,9 +1768,23 @@ public class AclTest extends AbstractCase {
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("Priority", 3);
-        body.put("Status", status);
-        body.put("RequestRelation", "user");
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        if ("message".equals(type)) {
+            body.put("Status", "unread");
+        } else if ("request".equals(type)) {
+            body.put("Status", "none");
+
+            JSONObject requestObject = new JSONObject();
+            requestObject.put("RequestType", requestType);
+            requestObject.put("Name", "user");
+            requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+            JSONArray requestObjects = new JSONArray();
+            requestObjects.add(requestObject);
+            body.put("RequestObjects", requestObjects);
+        } else {
+            body.put("Status", "unread");
+        }
+
         return body.toJSONString();
     }
 
