@@ -27,31 +27,31 @@ public class JSONRules implements JSONMappedObject {
     /**
      * External.
      */
-    @JsonProperty("External")
+    @JsonProperty("EventExternal")
     private boolean external;
 
     /**
      * Subject.
      */
-    @JsonProperty("Subject")
+    @JsonProperty("EventSubject")
     private String subject;
 
     /**
      * Type.
      */
-    @JsonProperty("Type")
+    @JsonProperty("EventType")
     private String type;
 
     /**
      * Object.
      */
-    @JsonProperty("Object")
+    @JsonProperty("EventObject")
     private String object;
 
     /**
      * Info.
      */
-    @JsonProperty("Info")
+    @JsonProperty("EventInfo")
     private String info;
 
     /**
@@ -63,7 +63,7 @@ public class JSONRules implements JSONMappedObject {
     /**
      * Service.
      */
-    @JsonProperty("Service")
+    @JsonProperty("TargetUrl")
     private String service;
 
     /**
@@ -154,13 +154,13 @@ public class JSONRules implements JSONMappedObject {
     @SuppressWarnings("unchecked")
     public JSONObject getJson() {
         JSONObject json = new JSONObject();
-        json.put("External", this.external);
-        json.put("Subject", this.subject);
-        json.put("Type", this.type);
-        json.put("Object", this.object);
-        json.put("Info", this.info);
+        json.put("EventExternal", this.external);
+        json.put("EventSubject", this.subject);
+        json.put("EventType", this.type);
+        json.put("EventObject", this.object);
+        json.put("EventInfo", this.info);
         json.put("Action", this.action);
-        json.put("Service", this.service);
+        json.put("TargetUrl", this.service);
         return json;
     }
 }
