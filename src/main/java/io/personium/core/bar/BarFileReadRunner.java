@@ -1924,7 +1924,8 @@ public class BarFileReadRunner implements Runnable {
         String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
                 + sourceEntity.getEntitySetName() + PersoniumEventType.SEPALATOR
                 + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
-                + newTargetEntity.getEntitySetName() + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
+                + newTargetEntity.getEntitySetName() + PersoniumEventType.SEPALATOR
+                + PersoniumEventType.Operation.CREATE;
         PersoniumEvent ev = new PersoniumEvent(null, null, type, object, info, null);
         EventBus bus = this.cell.getEventBus();
         bus.post(ev);

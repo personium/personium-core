@@ -1775,8 +1775,7 @@ public class AclTest extends AbstractCase {
         body.put("Body", "Body");
         body.put("Priority", 3);
         body.put("Status", status);
-        body.put("RequestRelation", "user");
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
         return body.toJSONString();
     }
 

@@ -366,8 +366,6 @@ public class DeleteTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
         TResponse response = null;
 
         try {

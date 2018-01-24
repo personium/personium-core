@@ -76,8 +76,6 @@ public class MessageEscapeTest extends ODataCommon {
         body.put("Title", "ti\\u0000tle");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse responseSentMessage = null;
         try {
@@ -152,8 +150,6 @@ public class MessageEscapeTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "bo\\u0000dy");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse responseSentMessage = null;
         try {
@@ -227,8 +223,6 @@ public class MessageEscapeTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -248,96 +242,6 @@ public class MessageEscapeTest extends ODataCommon {
             }
             // 自動生成された受信メッセージの削除
             SentMessageUtils.deleteReceivedMessage(targetCell, UrlUtils.cellRoot(Setup.TEST_CELL1), MESSAGE, "title",
-                    "body");
-        }
-    }
-
-    /**
-     * RequestRelationに制御コードが含まれるメッセージを送信した場合400となること.
-     */
-    @SuppressWarnings("unchecked")
-    @Test
-    public final void RequestRelationに制御コードが含まれるメッセージを送信した場合400となること() {
-        // 送信先CellUrl
-        String targetCell = Setup.TEST_CELL2;
-
-        // リクエストボディ作成
-        JSONObject body = new JSONObject();
-        body.put("BoxBound", false);
-        body.put("InReplyTo", null);
-        body.put("To", UrlUtils.cellRoot(targetCell));
-        body.put("ToRelation", null);
-        body.put("Type", REQ_RELATION_BUILD);
-        body.put("Title", "title");
-        body.put("Body", "body");
-        body.put("Priority", 3);
-        body.put("RequestRelation", "re\\u0000lation");
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(targetCell));
-
-        TResponse response = null;
-        try {
-            // メッセージ送信
-            response = SentMessageUtils.sent(MASTER_TOKEN_NAME, TEST_CELL1,
-                    body.toJSONString(), HttpStatus.SC_BAD_REQUEST);
-
-            // レスポンスボディのチェック
-            ODataCommon.checkErrorResponseBody(response,
-                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
-                            .params("RequestRelation").getMessage());
-
-        } finally {
-            if (response != null) {
-                deleteOdataResource(response.getLocationHeader());
-            }
-            // 自動生成された受信メッセージの削除
-            SentMessageUtils.deleteReceivedMessage(targetCell, UrlUtils.cellRoot(Setup.TEST_CELL1), REQ_RELATION_BUILD,
-                    "title",
-                    "body");
-        }
-    }
-
-    /**
-     * RequestRelationTargetに制御コードが含まれるメッセージを送信した場合400となること.
-     */
-    @SuppressWarnings("unchecked")
-    @Test
-    public final void RequestRelationTargetに制御コードが含まれるメッセージを送信した場合400となること() {
-        // 送信先CellUrl
-        String targetCell = Setup.TEST_CELL2;
-
-        // リクエストボディ作成
-        JSONObject body = new JSONObject();
-        body.put("BoxBound", false);
-        body.put("InReplyTo", null);
-        body.put("To", UrlUtils.cellRoot(targetCell));
-        body.put("ToRelation", null);
-        body.put("Type", REQ_RELATION_BUILD);
-        body.put("Title", "title");
-        body.put("Body", "body");
-        body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.relationClassUrl("appCell", "relationName"));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("re\\u0000lation"));
-
-        TResponse response = null;
-        try {
-            // メッセージ送信
-            response = SentMessageUtils.sent(MASTER_TOKEN_NAME, TEST_CELL1,
-                    body.toJSONString(), HttpStatus.SC_BAD_REQUEST);
-
-            // レスポンスボディのチェック
-            ODataCommon.checkErrorResponseBody(response,
-                    PersoniumCoreException.OData.CELL_URL_FORMAT_ERROR.getCode(),
-                    PersoniumCoreException.OData.CELL_URL_FORMAT_ERROR
-                            .params("RequestRelationTarget").getMessage());
-
-        } finally {
-            if (response != null) {
-                deleteOdataResource(response.getLocationHeader());
-            }
-            // 自動生成された受信メッセージの削除
-            SentMessageUtils.deleteReceivedMessage(targetCell, UrlUtils.cellRoot(Setup.TEST_CELL1), REQ_RELATION_BUILD,
-                    "title",
                     "body");
         }
     }
