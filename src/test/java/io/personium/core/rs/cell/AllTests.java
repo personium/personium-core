@@ -20,6 +20,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import io.personium.core.rs.odata.ODataMessageResourceTest;
+
 /**
  * Test suite for executing all the test cases under package.
  */
@@ -27,7 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
     CellCtlResourceTest.class,
     EventResourceTest.class,
-    MessageODataResourceTest.class,
+    ODataMessageResourceTest.class,
     TokenEndPointResourceTest.class
 })
 public class AllTests {

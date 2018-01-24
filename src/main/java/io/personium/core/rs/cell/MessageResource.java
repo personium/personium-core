@@ -49,7 +49,7 @@ import io.personium.core.utils.ResourceUtils;
 /**
  * JAX-RS Resource handling DC Message Level Api. /__messageというパスにきたときの処理.
  */
-public final class MessageResource extends ODataCtlResource {
+public class MessageResource extends ODataCtlResource {
     static Logger log = LoggerFactory.getLogger(MessageResource.class);
 
     DavRsCmp davRsCmp;

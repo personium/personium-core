@@ -39,18 +39,6 @@ public class Message {
     public static final String TYPE_MESSAGE = "message";
     /** Type request. */
     public static final String TYPE_REQUEST = "request";
-//    /** Type register relation. */
-//    public static final String TYPE_REQ_RELATION_BUILD = "req.relation.build";
-//    /** Type delete relation. */
-//    public static final String TYPE_REQ_RELATION_BREAK = "req.relation.break";
-//    /** Type register relation role. */
-//    public static final String TYPE_REQ_ROLE_GRANT = "req.role.grant";
-//    /** Type delete relation role. */
-//    public static final String TYPE_REQ_ROLE_REVOKE = "req.role.revoke";
-//    /** Type register rule. */
-//    public static final String TYPE_REQ_RULE_REGISTER = "req.rule.register";
-//    /** Type unregister rule. */
-//    public static final String TYPE_REQ_RULE_UNREGISTER = "req.rule.unregister";
 
     /** Status unread. */
     public static final String STATUS_UNREAD = "unread";
@@ -65,9 +53,6 @@ public class Message {
 
     /** Command key string. */
     public static final String MESSAGE_COMMAND = "Command";
-
-//    /** Extended schema Format definition(Message RequestRelation). */
-//    public static final String P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION = "message-request-relation";
 
     /** Pattern InReplyTo. */
     public static final String PATTERN_IN_REPLY_TO = "^.{32}$";
@@ -93,17 +78,12 @@ public class Message {
     private static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_TITLE = new ArrayList<EdmAnnotation<?>>();
     /** Annotations for MessagePriority. */
     private static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_PRIORITY = new ArrayList<EdmAnnotation<?>>();
-//    /**
-//     * Definition of p: Format for MessageRequestRelation item.
-//     */
-//    private static final List<EdmAnnotation<?>> P_FORMAT_MESSAGE_REQUEST_RELATION = new ArrayList<EdmAnnotation<?>>();
 
     static {
         P_FORMAT_IN_REPLY_TO.add(createFormatInReplyToAnnotation());
         P_FORMAT_MESSAGE_TYPE.add(createFormatMessageTypeAnnotation());
         P_FORMAT_MESSAGE_TITLE.add(createFormatMessageTitleAnnotation());
         P_FORMAT_MESSAGE_PRIORITY.add(createFormatMessagePriorityAnnotation());
-//        P_FORMAT_MESSAGE_REQUEST_RELATION.add(createFormatMessageRequestRelation());
     }
 
     /**
@@ -145,16 +125,6 @@ public class Message {
                 Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
                 Common.P_FORMAT, Common.P_FORMAT_PATTERN_REGEX + "('" + PATTERN_MESSAGE_PRIORITY + "')");
     }
-
-//    /**
-//     * Return p: Format Annotation for MessageRequestRelation item.
-//     * @return annotation for MessageRequestRelation
-//     */
-//    private static EdmAnnotation<?> createFormatMessageRequestRelation() {
-//        return new EdmAnnotationAttribute(
-//                Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
-//                Common.P_FORMAT, P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION);
-//    }
 
     /**
      * InReplyTo property.
@@ -201,18 +171,4 @@ public class Message {
             .setType(RequestObject.COMPLEX_TYPE_REQUEST_OBJECT)
             .setNullable(true)
             .setCollectionKind(CollectionKind.List);
-//    /**
-//     * RequestRelation property.
-//     */
-//    public static final EdmProperty.Builder P_REQUEST_RELATION = EdmProperty.newBuilder("RequestRelation")
-//            .setType(EdmSimpleType.STRING)
-//            .setNullable(true)
-//            .setAnnotations(P_FORMAT_MESSAGE_REQUEST_RELATION);
-//    /**
-//     * RequestRelationTarget property.
-//     */
-//    public static final EdmProperty.Builder P_REQUEST_RELATION_TARGET = EdmProperty.newBuilder("RequestRelationTarget")
-//            .setType(EdmSimpleType.STRING)
-//            .setNullable(true)
-//            .setAnnotations(Common.P_FORMAT_CELL_URL);
 }

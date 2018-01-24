@@ -138,7 +138,6 @@ public class RequestObject {
     public static final EdmProperty.Builder P_NAME = EdmProperty.newBuilder("Name")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-//            .setDefaultValue(Common.UUID)
             .setAnnotations(P_FORMAT_NAME);
 
     /** TargetUrl property. */

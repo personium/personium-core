@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.odata4j.core.OCollection;
+import org.odata4j.core.OComplexObject;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OProperty;
 import org.odata4j.producer.EntityResponse;
@@ -43,43 +45,47 @@ import io.personium.core.utils.ODataUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * __messageのOData操作クラス.
+ * OData operation class of message.
  */
 public class ODataMessageResource extends AbstractODataResource {
 
-    protected MessageResource odataResource;
-    protected String requestKey;
-    protected Map<String, String> propMap = new HashMap<String, String>();
-    protected List<Map<String, String>> requestObjectPropMapList = new ArrayList<Map<String, String>>();
+    /** MessageResource. */
+    private MessageResource messageResource;
+    /** X-Personium-RequestKey. */
+    private String requestKey;
+    /** Property map. */
+    private Map<String, String> propMap = new HashMap<String, String>();
+    /** Property map.(RequestObjects). */
+    private List<Map<String, String>> requestObjectPropMapList = new ArrayList<Map<String, String>>();
 
     /**
-     * constructor.
-     * @param odataResource ODataリソース
+     * Constructor.
+     * @param messageResource Message resource
      * @param requestKey X-Personium-RequestKey header
-     * @param producer ODataプロデューサ
-     * @param entityTypeName エンティティタイプ名
+     * @param producer OData producer
+     * @param entityTypeName Entity type name
      */
-    protected ODataMessageResource(MessageResource odataResource, String requestKey,
+    protected ODataMessageResource(MessageResource messageResource, String requestKey,
             PersoniumODataProducer producer, String entityTypeName) {
-        this.odataResource = odataResource;
+        this.messageResource = messageResource;
         this.requestKey = requestKey;
         setOdataProducer(producer);
         setEntitySetName(entityTypeName);
     }
 
     /**
-     * 受信／送信メッセージEntityを作成する.
-     * @param uriInfo URL情報
-     * @param reader リクエストボディ
+     * Create receive / send message entity.
+     * @param uriInfo URL information
+     * @param reader Request body
      * @param operation Event operation
-     * @return response情報
+     * @return Jax-RS response
      */
     protected Response createMessage(UriInfo uriInfo, Reader reader, String operation) {
 
         // response用URLに__ctlを追加する
         UriInfo resUriInfo = PersoniumCoreUtils.createUriInfo(uriInfo, 2, "__ctl");
 
-        EntityResponse res = createEntity(reader, odataResource);
+        EntityResponse res = createEntity(reader, messageResource);
 
         // レスポンスボディを生成する
         OEntity ent = res.getEntity();
@@ -98,15 +104,13 @@ public class ODataMessageResource extends AbstractODataResource {
         // personium-localcell:/__ctl/SentMessage('key')
         String object = String.format("%s:/__ctl/%s%s", UriUtils.SCHEME_LOCALCELL, getEntitySetName(), key);
         String info = Integer.toString(response.getStatus());
-        this.odataResource.postEvent(getEntitySetName(), object, info, requestKey, operation);
+        this.messageResource.postEvent(getEntitySetName(), object, info, requestKey, operation);
 
         return response;
     }
 
     /**
-     * プロパティの一覧取得.
-     * @param props プロパティ一覧
-     * @param
+     * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -119,18 +123,22 @@ public class ODataMessageResource extends AbstractODataResource {
             } else {
                 // Should it be general-purpose processing according to property.getType()?
                 // Since did not feel the necessity in particular, made it exclusive to RequestObjects.
-                List<OProperty<?>> propertyList = (List<OProperty<?>>) property.getValue();
-                for (OProperty<?> p : propertyList) {
-                    requestObjectPropMapList.add(getComplexTypeProperty(p));
+                OCollection<OComplexObject> oCollection = (OCollection<OComplexObject>) property.getValue();
+                for (OComplexObject object : oCollection) {
+                    requestObjectPropMapList.add(getComplexTypeProperty(object));
                 }
             }
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Map<String, String> getComplexTypeProperty(OProperty<?> property) {
+    /**
+     * Retrieve the property from ComplexTypeProperty and return it to map.
+     * @param property complex type object
+     * @return property map
+     */
+    private Map<String, String> getComplexTypeProperty(OComplexObject property) {
         Map<String, String> complexMap = new HashMap<String, String>();
-        List<OProperty<?>> propertyList = (List<OProperty<?>>) property.getValue();
+        List<OProperty<?>> propertyList = (List<OProperty<?>>) property.getProperties();
         for (OProperty<?> p : propertyList) {
             if (p.getValue() != null) {
                 complexMap.put(p.getName(), p.getValue().toString());
@@ -166,11 +174,10 @@ public class ODataMessageResource extends AbstractODataResource {
         }
     }
 
-
     /**
-     * Bodyのバリデート.
-     * @param value チェック対象値
-     * @param maxLength 最大長
+     * Validate bocy.
+     * @param value body
+     * @param maxLength max length
      */
     protected void validateBody(String value, int maxLength) {
         if (value.getBytes().length > maxLength) {
@@ -179,10 +186,10 @@ public class ODataMessageResource extends AbstractODataResource {
     }
 
     /**
-     * RequestRelationOnRelationのバリデート.
-     * @param name
-     * @param classUrl 関係登録依頼リレーションクラスURL
-     * @param targetUrl 関係登録依頼CellURL
+     * Validate RequestRelation.
+     * @param name Relation name
+     * @param classUrl Relation class URL
+     * @param targetUrl Target URL
      */
     protected void validateRequestRelation(String name, String classUrl, String targetUrl) {
         // Conditional required check
@@ -209,10 +216,10 @@ public class ODataMessageResource extends AbstractODataResource {
     }
 
     /**
-     * RequestRelationOnRoleのバリデート.
-     * @param name
-     * @param classUrl 関係登録依頼リレーションクラスURL
-     * @param targetUrl 関係登録依頼CellURL
+     * Validate RequestRole.
+     * @param name Role name
+     * @param classUrl Role class URL
+     * @param targetUrl Target URL
      */
     protected void validateRequestRole(String name, String classUrl, String targetUrl) {
         // Conditional required check
@@ -245,5 +252,37 @@ public class ODataMessageResource extends AbstractODataResource {
      */
     protected String concatRequestObjectPropertyName(String child) {
         return Message.P_REQUEST_OBJECTS.getName() + "." + child;
+    }
+
+    /**
+     * Get messageResource.
+     * @return messageResource
+     */
+    protected MessageResource getMessageResource() {
+        return messageResource;
+    }
+
+    /**
+     * Get requestKey.
+     * @return requestKey
+     */
+    protected String getRequestKey() {
+        return requestKey;
+    }
+
+    /**
+     * Get propMap.
+     * @return propMap
+     */
+    protected Map<String, String> getPropMap() {
+        return propMap;
+    }
+
+    /**
+     * Get requestObjectPropMapList.
+     * @return requestObjectPropMapList
+     */
+    protected List<Map<String, String>> getRequestObjectPropMapList() {
+        return requestObjectPropMapList;
     }
 }

@@ -68,8 +68,8 @@ import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ExtRole;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.Relation;
-import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.ctl.Rule;
+import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.file.BinaryDataAccessException;
 import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.model.impl.es.accessor.CellAccessor;
@@ -90,7 +90,7 @@ import net.spy.memcached.internal.CheckedOperationTimeoutException;
 /**
  * Cell object implemented using ElasticSearch.
  */
-public final class CellEsImpl implements Cell {
+public class CellEsImpl implements Cell {
     private String id;
     private String name;
     private String url;

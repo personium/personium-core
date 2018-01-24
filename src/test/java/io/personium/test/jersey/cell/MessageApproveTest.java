@@ -16,16 +16,17 @@
  */
 package io.personium.test.jersey.cell;
 
-import static io.personium.core.model.ctl.ReceivedMessage.STATUS_APPROVED;
-import static io.personium.core.model.ctl.ReceivedMessage.STATUS_NONE;
-import static io.personium.core.model.ctl.ReceivedMessage.STATUS_READ;
-import static io.personium.core.model.ctl.ReceivedMessage.STATUS_REJECTED;
-import static io.personium.core.model.ctl.ReceivedMessage.STATUS_UNREAD;
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_MESSAGE;
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_REQ_RELATION_BREAK;
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_REQ_RELATION_BUILD;
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_REQ_ROLE_GRANT;
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_REQ_ROLE_REVOKE;
+import static io.personium.core.model.ctl.Message.STATUS_APPROVED;
+import static io.personium.core.model.ctl.Message.STATUS_NONE;
+import static io.personium.core.model.ctl.Message.STATUS_READ;
+import static io.personium.core.model.ctl.Message.STATUS_REJECTED;
+import static io.personium.core.model.ctl.Message.STATUS_UNREAD;
+import static io.personium.core.model.ctl.Message.TYPE_MESSAGE;
+import static io.personium.core.model.ctl.Message.TYPE_REQUEST;
+import static io.personium.core.model.ctl.RequestObject.REQUEST_TYPE_RELATION_ADD;
+import static io.personium.core.model.ctl.RequestObject.REQUEST_TYPE_RELATION_REMOVE;
+import static io.personium.core.model.ctl.RequestObject.REQUEST_TYPE_ROLE_ADD;
+import static io.personium.core.model.ctl.RequestObject.REQUEST_TYPE_ROLE_REMOVE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -85,7 +86,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void タイプがMessageのデータのメッセージ承認できること() {
+    public void タイプがMessageのデータのメッセージ承認できること() {
 
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
@@ -143,7 +144,7 @@ public class MessageApproveTest extends ODataCommon {
      * タイプがMessageの場合不正なIDでのメッセージ承認が404エラーになること.
      */
     @Test
-    public final void タイプがMessageの場合不正なIDでのメッセージ承認が404エラーになること() {
+    public void タイプがMessageの場合不正なIDでのメッセージ承認が404エラーになること() {
 
         try {
             String messageId = "notfoundid123456789";
@@ -172,7 +173,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void タイプがMessageのデータのメッセージ承認でボディが不正な場合400エラーになること() {
+    public void タイプがMessageのデータのメッセージ承認でボディが不正な場合400エラーになること() {
 
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
@@ -238,7 +239,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void タイプがMessageのデータのメッセージ承認でボディにapprovedやrejectedを指定した場合400エラーになること() {
+    public void タイプがMessageのデータのメッセージ承認でボディにapprovedやrejectedを指定した場合400エラーになること() {
 
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
@@ -297,7 +298,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 関係登録で既に存在するRelationを使用したメッセージ承認ができること() {
+    public void 関係登録で既に存在するRelationを使用したメッセージ承認ができること() {
         String relationName = "messageTestRelation";
 
         // Relationのリクエストボディ
@@ -308,14 +309,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", relationName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("Name", relationName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         String locationHeader = null;
 
@@ -383,21 +390,27 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_build_message_for_not_exist_relation() {
+    public void normal_approve_build_message_for_not_exist_relation() {
         String relationName = "messageTestRelation";
 
         // Request body of message
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", relationName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("Name", relationName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         String locationHeader = null;
 
@@ -456,7 +469,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_build_message_with_relationClassURL_for_allready_exist_relation() {
+    public void normal_approve_build_message_with_relationClassURL_for_allready_exist_relation() {
         String relationName = "messageTestRelation";
         String boxName = Setup.TEST_BOX1;
 
@@ -469,14 +482,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -542,7 +561,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_build_message_with_relationClassURL_for_not_exist_relation() {
+    public void normal_approve_build_message_with_relationClassURL_for_not_exist_relation() {
         String relationName = "messageTestRelation";
         String boxName = Setup.TEST_BOX1;
 
@@ -550,14 +569,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -615,7 +640,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_break_message_with_relationClassURL() {
+    public void normal_approve_break_message_with_relationClassURL() {
         String relationName = "messageTestRelation";
         String boxName = Setup.TEST_BOX1;
 
@@ -623,14 +648,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse buildResponse = null;
         TResponse breakResponse = null;
@@ -656,8 +687,8 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
             // BreakReceivedMessage
-            body.put("Type", TYPE_REQ_RELATION_BREAK);
             body.put("__id", "12345678901234567890123456789013");
+            requestObject.put("RequestType", REQUEST_TYPE_RELATION_REMOVE);
             requestUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
             breakResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_CREATED);
@@ -714,7 +745,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_reject_build_message_with_relationClassURL() {
+    public void normal_reject_build_message_with_relationClassURL() {
         String relationName = "messageTestRelation";
         String boxName = Setup.TEST_BOX1;
 
@@ -722,14 +753,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
 
@@ -779,7 +816,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_build_message_with_unit_local_relationClassURL() {
+    public void normal_approve_build_message_with_unit_local_relationClassURL() {
         String relationName = "messageTestRelation";
         String boxName = Setup.TEST_BOX1;
 
@@ -792,14 +829,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.unitLocalRelationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("ClassUrl", UrlUtils.unitLocalRelationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -865,7 +908,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_boxbound_build_message_for_allready_exist_relation() {
+    public void normal_approve_boxbound_build_message_for_allready_exist_relation() {
         String relationName = "messageTestRelation";
         String boxName = Setup.TEST_BOX1;
 
@@ -878,15 +921,21 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", relationName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("Name", relationName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -952,7 +1001,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_boxbound_build_message_for_not_exist_relation() {
+    public void normal_approve_boxbound_build_message_for_not_exist_relation() {
         String relationName = "messageTestRelation";
         String boxName = Setup.TEST_BOX1;
 
@@ -960,15 +1009,21 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", relationName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("Name", relationName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1026,7 +1081,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_boxbound_break_message() {
+    public void normal_approve_boxbound_break_message() {
         String relationName = "messageTestRelation";
         String boxName = Setup.TEST_BOX1;
 
@@ -1034,15 +1089,21 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", relationName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("Name", relationName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse buildResponse = null;
         TResponse breakResponse = null;
@@ -1069,8 +1130,8 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
             // BreakReceivedMessage
-            body.put("Type", TYPE_REQ_RELATION_BREAK);
             body.put("__id", "12345678901234567890123456789013");
+            requestObject.put("RequestType", REQUEST_TYPE_RELATION_REMOVE);
             requestUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
             breakResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_CREATED);
@@ -1127,7 +1188,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_reject_boxbound_build_message() {
+    public void normal_reject_boxbound_build_message() {
         String relationName = "messageTestRelation";
         String boxName = Setup.TEST_BOX1;
 
@@ -1135,15 +1196,21 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", relationName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("Name", relationName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
 
@@ -1193,7 +1260,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_boxbound_build_message_with_relationClassURL() {
+    public void normal_approve_boxbound_build_message_with_relationClassURL() {
         String relationName = "messageTestRelation";
         String boxName = Setup.TEST_BOX1;
 
@@ -1206,15 +1273,21 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA2));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1285,7 +1358,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_boxbound_break_message_with_relationClassURL() {
+    public void normal_approve_boxbound_break_message_with_relationClassURL() {
         String relationName = "messageTestRelation";
         String boxName = Setup.TEST_BOX1;
 
@@ -1293,15 +1366,21 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA2));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse buildResponse = null;
         TResponse breakResponse = null;
@@ -1332,8 +1411,8 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
             // BreakReceivedMessage
-            body.put("Type", TYPE_REQ_RELATION_BREAK);
             body.put("__id", "12345678901234567890123456789013");
+            requestObject.put("RequestType", REQUEST_TYPE_RELATION_REMOVE);
             requestUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
             breakResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_CREATED);
@@ -1392,7 +1471,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_grant_message_with_roleClassURL_for_allready_exist_role() {
+    public void normal_approve_grant_message_with_roleClassURL_for_allready_exist_role() {
         String roleName = "messageTestRole";
         String boxName = Setup.TEST_BOX1;
 
@@ -1405,14 +1484,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_ROLE_GRANT);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject.put("ClassUrl", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1478,7 +1563,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_grant_message_with_roleClassURL_for_not_exist_role() {
+    public void normal_approve_grant_message_with_roleClassURL_for_not_exist_role() {
         String roleName = "messageTestRole";
         String boxName = Setup.TEST_BOX1;
 
@@ -1486,14 +1571,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_ROLE_GRANT);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject.put("ClassUrl", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1551,7 +1642,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_revoke_message_with_roleClassURL() {
+    public void normal_approve_revoke_message_with_roleClassURL() {
         String roleName = "messageTestRole";
         String boxName = Setup.TEST_BOX1;
 
@@ -1559,14 +1650,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_ROLE_GRANT);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject.put("ClassUrl", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse buildResponse = null;
         TResponse breakResponse = null;
@@ -1593,8 +1690,8 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
             // BreakReceivedMessage
-            body.put("Type", TYPE_REQ_ROLE_REVOKE);
             body.put("__id", "12345678901234567890123456789013");
+            requestObject.put("RequestType", REQUEST_TYPE_ROLE_REMOVE);
             requestUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
             breakResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_CREATED);
@@ -1651,7 +1748,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_reject_grant_message_with_roleClassURL() {
+    public void normal_reject_grant_message_with_roleClassURL() {
         String roleName = "messageTestRole";
         String boxName = Setup.TEST_BOX1;
 
@@ -1659,14 +1756,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_ROLE_GRANT);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject.put("ClassUrl", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
 
@@ -1716,7 +1819,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_grant_message_with_unit_local_roleClassURL() {
+    public void normal_approve_grant_message_with_unit_local_roleClassURL() {
         String roleName = "messageTestRole";
         String boxName = Setup.TEST_BOX1;
 
@@ -1729,14 +1832,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_ROLE_GRANT);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.unitLocalRoleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject.put("ClassUrl", UrlUtils.unitLocalRoleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1798,11 +1907,124 @@ public class MessageApproveTest extends ODataCommon {
 
     /**
      * Normal test.
+     * Approve multiple RequestObject message.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void normal_approve_multiple_request_object_message() {
+        String relationName = "messageTestRelation";
+        String roleName = "messageTestRole";
+        String boxName = Setup.TEST_BOX1;
+
+        // Request body of relation
+        JSONObject relationBody = new JSONObject();
+        relationBody.put(Relation.P_NAME.getName(), relationName);
+        relationBody.put(Common.P_BOX_NAME.getName(), boxName);
+        // Request body of role
+        JSONObject roleBody = new JSONObject();
+        roleBody.put(Common.P_NAME.getName(), roleName);
+        roleBody.put(Common.P_BOX_NAME.getName(), boxName);
+
+        // Request body of message
+        JSONObject body = new JSONObject();
+        body.put("__id", "12345678901234567890123456789012");
+        body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
+        body.put("Type", TYPE_REQUEST);
+        body.put("Title", "Title");
+        body.put("Body", "Body");
+        body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
+        body.put("Priority", 3);
+        body.put("Status", STATUS_NONE);
+
+        JSONObject requestObject1 = new JSONObject();
+        requestObject1.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject1.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject1.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONObject requestObject2 = new JSONObject();
+        requestObject2.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject2.put("ClassUrl", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
+        requestObject2.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject1);
+        requestObjects.add(requestObject2);
+        body.put("RequestObjects", requestObjects);
+
+        TResponse response = null;
+        try {
+            // ---------------
+            // Preparation
+            // ---------------
+            // Relation
+            RelationUtils.create(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationBody, HttpStatus.SC_CREATED);
+            // Role
+            RoleUtils.create(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleBody, HttpStatus.SC_CREATED);
+            // ExtCell
+            ExtCellUtils.create(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"),
+                    HttpStatus.SC_CREATED);
+            // ReceivedMessage
+            String requestUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
+            response = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
+                    body.toJSONString(), HttpStatus.SC_CREATED);
+            String messageId = (String) body.get("__id");
+
+            // ---------------
+            // Execution
+            // ---------------
+            // execute approved message
+            PersoniumRestAdapter rest = new PersoniumRestAdapter();
+            HashMap<String, String> requestheaders = new HashMap<String, String>();
+            requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
+            requestUrl = UrlUtils.approvedMessage(Setup.TEST_CELL1, messageId);
+            PersoniumResponse res = rest.post(requestUrl, "{\"Command\":\"" + STATUS_APPROVED + "\" }", requestheaders);
+
+            // ---------------
+            // Verification
+            // ---------------
+            assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
+            // Check relation exists
+            RelationUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, HttpStatus.SC_OK);
+            // Check role exists
+            RoleUtils.get(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, HttpStatus.SC_OK);
+            // Check extcell exists
+            ExtCellUtils.get(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"), HttpStatus.SC_OK);
+            // Check $links exists
+            ArrayList<String> expectedUriList = new ArrayList<String>();
+            expectedUriList.add(UrlUtils.extCellResource(Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell")));
+            checkRelationExtCellLinks(relationName, boxName, expectedUriList);
+            checkRoleExtCellLinks(roleName, boxName, expectedUriList);
+            // Check status changed
+            checkMessageStatus(messageId, STATUS_APPROVED);
+        } catch (PersoniumException e) {
+            fail(e.getStackTrace().toString());
+        } finally {
+            // Delete Received message
+            if (response != null) {
+                deleteOdataResource(response.getLocationHeader());
+            }
+            // Delete Relation-ExtCell $links
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Relation.EDM_TYPE_NAME, relationName, boxName, MASTER_TOKEN_NAME, -1);
+            // Delete Role-ExtCell $links
+            LinksUtils.deleteLinksExtCell(Setup.TEST_CELL1,
+                    PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+                    Role.EDM_TYPE_NAME, roleName, boxName, MASTER_TOKEN_NAME, -1);
+            // Delete Relation
+            RelationUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, relationName, boxName, -1);
+            // Delete Role
+            RoleUtils.delete(Setup.TEST_CELL1, MASTER_TOKEN_NAME, roleName, boxName, -1);
+            // Delete ExtCell
+            ExtCellUtils.delete(MASTER_TOKEN_NAME, Setup.TEST_CELL1, UrlUtils.cellRoot("targetCell"));
+        }
+    }
+
+    /**
+     * Normal test.
      * Approve boxbound grant message for already existing role.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_boxbound_grant_message_for_allready_exist_role() {
+    public void normal_approve_boxbound_grant_message_for_allready_exist_role() {
         String roleName = "messageTestRole";
         String boxName = Setup.TEST_BOX1;
 
@@ -1815,15 +2037,21 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_ROLE_GRANT);
+        body.put("Type", TYPE_REQUEST);
         body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", roleName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject.put("Name", roleName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1889,7 +2117,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_boxbound_grant_message_for_not_exist_role() {
+    public void normal_approve_boxbound_grant_message_for_not_exist_role() {
         String roleName = "messageTestRole";
         String boxName = Setup.TEST_BOX1;
 
@@ -1897,15 +2125,21 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_ROLE_GRANT);
+        body.put("Type", TYPE_REQUEST);
         body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", roleName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject.put("Name", roleName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1963,7 +2197,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_boxbound_revoke_message() {
+    public void normal_approve_boxbound_revoke_message() {
         String roleName = "messageTestRole";
         String boxName = Setup.TEST_BOX1;
 
@@ -1971,15 +2205,21 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_ROLE_GRANT);
+        body.put("Type", TYPE_REQUEST);
         body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", roleName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject.put("Name", roleName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse buildResponse = null;
         TResponse breakResponse = null;
@@ -2006,8 +2246,8 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
             // BreakReceivedMessage
-            body.put("Type", TYPE_REQ_ROLE_REVOKE);
             body.put("__id", "12345678901234567890123456789013");
+            requestObject.put("RequestType", REQUEST_TYPE_ROLE_REMOVE);
             requestUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
             breakResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_CREATED);
@@ -2064,7 +2304,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_reject_boxbound_grant_message() {
+    public void normal_reject_boxbound_grant_message() {
         String roleName = "messageTestRole";
         String boxName = Setup.TEST_BOX1;
 
@@ -2072,15 +2312,21 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_ROLE_GRANT);
+        body.put("Type", TYPE_REQUEST);
         body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", roleName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject.put("Name", roleName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
 
@@ -2130,7 +2376,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_boxbound_grant_message_with_roleClassURL() {
+    public void normal_approve_boxbound_grant_message_with_roleClassURL() {
         String roleName = "messageTestRole";
         String boxName = Setup.TEST_BOX1;
 
@@ -2143,15 +2389,21 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_ROLE_GRANT);
+        body.put("Type", TYPE_REQUEST);
         body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA2));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject.put("ClassUrl", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -2222,7 +2474,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_approve_boxbound_revoke_message_with_roleClassURL() {
+    public void normal_approve_boxbound_revoke_message_with_roleClassURL() {
         String roleName = "messageTestRole";
         String boxName = Setup.TEST_BOX1;
 
@@ -2230,15 +2482,21 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_ROLE_GRANT);
+        body.put("Type", TYPE_REQUEST);
         body.put("Schema", UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA2));
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject.put("ClassUrl", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA1, roleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse buildResponse = null;
         TResponse breakResponse = null;
@@ -2269,8 +2527,8 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
             // BreakReceivedMessage
-            body.put("Type", TYPE_REQ_ROLE_REVOKE);
             body.put("__id", "12345678901234567890123456789013");
+            requestObject.put("RequestType", REQUEST_TYPE_ROLE_REMOVE);
             requestUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
             breakResponse = ReceivedMessageUtils.receive(getCellIssueToken(requestUrl), Setup.TEST_CELL1,
                     body.toJSONString(), HttpStatus.SC_CREATED);
@@ -2330,7 +2588,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void error_approve_build_message_not_found_box_corresponding_to_RelationClassURL() {
+    public void error_approve_build_message_not_found_box_corresponding_to_RelationClassURL() {
         String relationName = "messageTestRelation";
         String boxName = Setup.TEST_BOX2;
 
@@ -2338,14 +2596,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA2, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA2, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -2372,7 +2636,7 @@ public class MessageApproveTest extends ODataCommon {
             // Verification
             // ---------------
             PersoniumCoreException exception = PersoniumCoreException.ReceivedMessage
-                    .BOX_THAT_MATCHES_RELATION_CLASS_URL_NOT_EXISTS.params(body.get("RequestRelation"));
+                    .BOX_THAT_MATCHES_RELATION_CLASS_URL_NOT_EXISTS.params(requestObject.get("ClassUrl"));
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(), exception.getCode(), exception.getMessage());
             // Check relation not exists
@@ -2407,7 +2671,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void error_approve_grant_message_not_found_box_corresponding_to_RoleClassURL() {
+    public void error_approve_grant_message_not_found_box_corresponding_to_RoleClassURL() {
         String roleName = "messageTestRole";
         String boxName = Setup.TEST_BOX2;
 
@@ -2415,14 +2679,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_ROLE_GRANT);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA2, roleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_ROLE_ADD);
+        requestObject.put("ClassUrl", UrlUtils.roleClassUrl(Setup.TEST_CELL_SCHEMA2, roleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -2449,7 +2719,7 @@ public class MessageApproveTest extends ODataCommon {
             // Verification
             // ---------------
             PersoniumCoreException exception = PersoniumCoreException.ReceivedMessage
-                    .BOX_THAT_MATCHES_RELATION_CLASS_URL_NOT_EXISTS.params(body.get("RequestRelation"));
+                    .BOX_THAT_MATCHES_RELATION_CLASS_URL_NOT_EXISTS.params(requestObject.get("ClassUrl"));
             assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
             checkErrorResponse(res.bodyAsJson(), exception.getCode(), exception.getMessage());
             // Check role not exists
@@ -2482,7 +2752,7 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 関係登録で関係登録済みのRelationを指定した場合400エラーとなること() {
+    public void 関係登録で関係登録済みのRelationを指定した場合400エラーとなること() {
         String relationName = "messageTestRelation";
 
         // Relationのリクエストボディ
@@ -2493,14 +2763,20 @@ public class MessageApproveTest extends ODataCommon {
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", relationName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("Name", relationName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         String locationHeader = null;
 
@@ -2558,21 +2834,27 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 関係登録でrejectedを指定した場合Relationが作成されないこと() {
+    public void 関係登録でrejectedを指定した場合Relationが作成されないこと() {
         String relationName = "messageTestRelation";
 
         // 受信メッセージのリクエストボディ
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         String locationHeader = null;
 
@@ -2618,21 +2900,27 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 関係登録でCommandに不正な値を指定した場合400エラーとなること() {
+    public void 関係登録でCommandに不正な値を指定した場合400エラーとなること() {
         String relationName = "messageTestRelation";
 
         // 受信メッセージのリクエストボディ
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         String locationHeader = null;
 
@@ -2689,21 +2977,27 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 関係登録でCommandにreadやunreadを指定した場合400エラーとなること() {
+    public void 関係登録でCommandにreadやunreadを指定した場合400エラーとなること() {
         String relationName = "messageTestRelation";
 
         // 受信メッセージのリクエストボディ
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         String locationHeader = null;
 
@@ -2753,21 +3047,27 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 関係登録でStatusがapprovedのメッセージを承認して400エラーとなること() {
+    public void 関係登録でStatusがapprovedのメッセージを承認して400エラーとなること() {
         String relationName = "messageTestRelation";
 
         // 受信メッセージのリクエストボディ
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", relationName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("Name", relationName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         String locationHeader = null;
 
@@ -2822,21 +3122,27 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 関係登録でStatusがrejectedのメッセージを拒否して400エラーとなること() {
+    public void 関係登録でStatusがrejectedのメッセージを拒否して400エラーとなること() {
         String relationName = "messageTestRelation";
 
         // 受信メッセージのリクエストボディ
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         String locationHeader = null;
 
@@ -2882,7 +3188,7 @@ public class MessageApproveTest extends ODataCommon {
      * 関係登録で存在しないメッセージIDを指定した場合404エラーとなること.
      */
     @Test
-    public final void 関係登録で存在しないメッセージIDを指定した場合404エラーとなること() {
+    public void 関係登録で存在しないメッセージIDを指定した場合404エラーとなること() {
 
         try {
             // 存在しない__idを設定
@@ -2919,21 +3225,27 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 関係削除のメッセージを承認できること() {
+    public void 関係削除のメッセージを承認できること() {
         String relationName = "messageTestRelation";
 
         // 受信メッセージのリクエストボディ
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BUILD);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", relationName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_ADD);
+        requestObject.put("Name", relationName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         String locationHeader = null;
         String breakLocationHeader = null;
@@ -2961,8 +3273,8 @@ public class MessageApproveTest extends ODataCommon {
             assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
 
             // 関係削除用リクエストボディに変更する
-            body.put("Type", TYPE_REQ_RELATION_BREAK);
             body.put("__id", "12345678901234567890123456789013");
+            requestObject.put("RequestType", REQUEST_TYPE_RELATION_REMOVE);
 
             // 関係削除メッセージ受信
             requestUrl = UrlUtils.receivedMessage(Setup.TEST_CELL1);
@@ -3021,21 +3333,27 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 存在しないRequestRelationの関係削除のメッセージを承認した場合に４０９が返却されること() {
+    public void 存在しないRequestRelationの関係削除のメッセージを承認した場合に４０９が返却されること() {
         String relationName = "messageTestRelation";
 
         // 受信メッセージのリクエストボディ
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BREAK);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", relationName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_REMOVE);
+        requestObject.put("Name", relationName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         String breakLocationHeader = null;
 
@@ -3074,21 +3392,27 @@ public class MessageApproveTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 関係削除のメッセージを拒否できること() {
+    public void 関係削除のメッセージを拒否できること() {
         String relationName = "messageTestRelation";
 
         // 受信メッセージのリクエストボディ
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
-        body.put("Type", TYPE_REQ_RELATION_BREAK);
+        body.put("Type", TYPE_REQUEST);
         body.put("Title", "Title");
         body.put("Body", "Body");
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", STATUS_NONE);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot("targetCell"));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", REQUEST_TYPE_RELATION_REMOVE);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(Setup.TEST_CELL_SCHEMA1, relationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         String locationHeader = null;
 

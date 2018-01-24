@@ -274,9 +274,6 @@ public class MessageODataProducer extends CellCtlODataProducer {
      * @param requestObject RequestObject
      */
     private void updateRelation(String messageId, String linkedBoxName, Map<String, String> requestObject) {
-//        Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();
-//        String type = (String) staticFields.get(ReceivedMessage.P_TYPE.getName());
-//        String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
         String requestType = requestObject.get(RequestObject.P_REQUEST_TYPE.getName());
         String name = requestObject.get(RequestObject.P_NAME.getName());
         String classUrl = requestObject.get(RequestObject.P_CLASS_URL.getName());
@@ -292,19 +289,6 @@ public class MessageODataProducer extends CellCtlODataProducer {
             relationName = getNameFromClassUrl(classUrl, Common.PATTERN_RELATION_CLASS_URL);
             boxName = getBoxNameFromClassUrl(classUrl, Common.PATTERN_RELATION_CLASS_URL);
         }
-
-//        // Get name to be registered
-//        String requestRelation = (String) staticFields.get(ReceivedMessage.P_REQUEST_RELATION.getName());
-//        String name = getNameFromRequestRelation(requestRelation, Common.PATTERN_RELATION_CLASS_URL);
-//        // Get box name
-//        String boxName = getBoxNameFromRequestRelation(requestRelation, Common.PATTERN_RELATION_CLASS_URL);
-//        if (boxName == null) {
-//            // If box can not be found from RequestRelation (RequestRelation is Name only),
-//            // get BoxName from _ Box.Name
-//            boxName = linkedBoxName;
-//        }
-//        // Get cell URL to link
-//        String extCellUrl = (String) staticFields.get(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName());
 
         Map<String, Object> entityKeyMap = new HashMap<>();
         entityKeyMap.put(Relation.P_NAME.getName(), relationName);
@@ -397,9 +381,6 @@ public class MessageODataProducer extends CellCtlODataProducer {
      * @param requestObject RequestObject
      */
     private void updateRole(String messageId, String linkedBoxName, Map<String, String> requestObject) {
-//        Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();
-//        String type = (String) staticFields.get(ReceivedMessage.P_TYPE.getName());
-//        String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
         String requestType = requestObject.get(RequestObject.P_REQUEST_TYPE.getName());
         String name = requestObject.get(RequestObject.P_NAME.getName());
         String classUrl = requestObject.get(RequestObject.P_CLASS_URL.getName());
@@ -415,19 +396,6 @@ public class MessageODataProducer extends CellCtlODataProducer {
             roleName = getNameFromClassUrl(classUrl, Common.PATTERN_ROLE_CLASS_URL);
             boxName = getBoxNameFromClassUrl(classUrl, Common.PATTERN_ROLE_CLASS_URL);
         }
-
-//        // Get name to be registered
-//        String requestRelation = (String) staticFields.get(ReceivedMessage.P_REQUEST_RELATION.getName());
-//        String roleName = getNameFromRequestRelation(requestRelation, Common.PATTERN_ROLE_CLASS_URL);
-//        // Get box name
-//        String boxName = getBoxNameFromRequestRelation(requestRelation, Common.PATTERN_ROLE_CLASS_URL);
-//        if (boxName == null) {
-//            // If box can not be found from RequestRelation (RequestRelation is Name only),
-//            // get BoxName from _ Box.Name
-//            boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());
-//        }
-//        // Get cell URL to link
-//        String extCellUrl = (String) staticFields.get(ReceivedMessage.P_REQUEST_RELATION_TARGET.getName());
 
         Map<String, Object> entityKeyMap = new HashMap<>();
         entityKeyMap.put(Common.P_NAME.getName(), roleName);
@@ -520,12 +488,6 @@ public class MessageODataProducer extends CellCtlODataProducer {
      * @param requestObject RequestObject
      */
     private void updateRule(String messageId, String linkedBoxName, Map<String, String> requestObject) {
-//        Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();
-//        String type = (String) staticFields.get(ReceivedMessage.P_TYPE.getName());
-//        Map<String, Object> requestRule =
-//                (Map<String, Object>) staticFields.get(ReceivedMessage.P_REQUEST_RULE.getName());
-//        String boxName = (String) staticFields.get(Common.P_BOX_NAME.getName());
-//        String messageId = (String) staticFields.get(ReceivedMessage.P_ID.getName());
         String requestType = requestObject.get(RequestObject.P_REQUEST_TYPE.getName());
 
         log.info("requestRule: " + requestObject);

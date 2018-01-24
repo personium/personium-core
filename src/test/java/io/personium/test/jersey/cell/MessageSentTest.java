@@ -16,11 +16,12 @@
  */
 package io.personium.test.jersey.cell;
 
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_MESSAGE;
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_REQ_RELATION_BREAK;
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_REQ_RELATION_BUILD;
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_REQ_ROLE_GRANT;
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_REQ_ROLE_REVOKE;
+import static io.personium.core.model.ctl.Message.TYPE_MESSAGE;
+import static io.personium.core.model.ctl.Message.TYPE_REQUEST;
+import static io.personium.core.model.ctl.RequestObject.REQUEST_TYPE_RELATION_ADD;
+import static io.personium.core.model.ctl.RequestObject.REQUEST_TYPE_RELATION_REMOVE;
+import static io.personium.core.model.ctl.RequestObject.REQUEST_TYPE_ROLE_ADD;
+import static io.personium.core.model.ctl.RequestObject.REQUEST_TYPE_ROLE_REMOVE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -81,7 +82,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void Message送信できること() {
+    public void Message送信できること() {
         // 送信先CellUrl
         String targetCell = Setup.TEST_CELL2;
 
@@ -95,8 +96,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -120,8 +119,6 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", null);
-            expected.put("RequestRelationTarget", null);
             expected.put("Result", expectedResults);
 
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -148,7 +145,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void Message送信で存在しないCellを指定した場合レスポンスボディにエラー情報が設定されること() {
+    public void Message送信で存在しないCellを指定した場合レスポンスボディにエラー情報が設定されること() {
         // 送信先CellUrl
         String targetCell = "dummyCell";
 
@@ -162,8 +159,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -188,8 +183,6 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", null);
-            expected.put("RequestRelationTarget", null);
             expected.put("Result", expectedResults);
 
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -208,7 +201,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void Message送信でToに複数のURLを指定した場合に送信できること() {
+    public void Message送信でToに複数のURLを指定した場合に送信できること() {
         // 送信先CellUrl
         String targetCell1 = Setup.TEST_CELL_SCHEMA1;
         String targetCell2 = Setup.TEST_CELL2;
@@ -223,8 +216,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -256,7 +247,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void Message送信でToで指定したCellが存在しない場合() {
+    public void Message送信でToで指定したCellが存在しない場合() {
         // 送信先CellUrl
         String targetCell = "dummyCell";
 
@@ -270,8 +261,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -293,7 +282,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void ToもToRelationも指定がなくてMessage送信が失敗すること() {
+    public void ToもToRelationも指定がなくてMessage送信が失敗すること() {
 
         // リクエストボディ作成
         JSONObject body = new JSONObject();
@@ -303,8 +292,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -329,7 +316,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 送信メッセージの一覧取得ができること() {
+    public void 送信メッセージの一覧取得ができること() {
         // 送信先CellUrl
         String targetCell = Setup.TEST_CELL2;
 
@@ -343,8 +330,6 @@ public class MessageSentTest extends ODataCommon {
         body1.put("Title", "title1");
         body1.put("Body", "Hello");
         body1.put("Priority", 3);
-        body1.put("RequestRelation", null);
-        body1.put("RequestRelationTarget", null);
 
         // リクエストボディ1作成
         JSONObject body2 = new JSONObject();
@@ -356,8 +341,6 @@ public class MessageSentTest extends ODataCommon {
         body2.put("Title", "title2");
         body2.put("Body", "Good Bye");
         body2.put("Priority", 2);
-        body2.put("RequestRelation", null);
-        body2.put("RequestRelationTarget", null);
 
         TResponse response1 = null;
         TResponse response2 = null;
@@ -396,7 +379,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 送信メッセージの一件取得ができること() {
+    public void 送信メッセージの一件取得ができること() {
         // 送信先CellUrl
         String targetCell = Setup.TEST_CELL2;
 
@@ -410,8 +393,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -438,7 +419,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 送信メッセージの削除ができること() {
+    public void 送信メッセージの削除ができること() {
         // 送信先CellUrl
         String targetCell = Setup.TEST_CELL2;
 
@@ -452,8 +433,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         String id = null;
@@ -481,7 +460,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void toRelationを使用してMessage送信できること() {
+    public void toRelationを使用してMessage送信できること() {
         // 送信先CellUrl
         String targetCell = Setup.TEST_CELL2;
 
@@ -494,8 +473,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -519,8 +496,6 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", null);
-            expected.put("RequestRelationTarget", null);
             expected.put("Result", expectedResults);
 
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -572,7 +547,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void ToとtoRelationに同じCellの値を使用して1件だけMessage送信されること() {
+    public void ToとtoRelationに同じCellの値を使用して1件だけMessage送信されること() {
         // 送信先CellUrl
         String targetCell = Setup.TEST_CELL2;
 
@@ -586,8 +561,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -611,8 +584,6 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", null);
-            expected.put("RequestRelationTarget", null);
             expected.put("Result", expectedResults);
 
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -642,7 +613,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void ToとtoRelationに異なるCellの値を使用して複数件Message送信されること() {
+    public void ToとtoRelationに異なるCellの値を使用して複数件Message送信されること() {
         // 送信先CellUrl
         String targetCell = Setup.TEST_CELL2;
 
@@ -656,8 +627,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -686,8 +655,6 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", null);
-            expected.put("RequestRelationTarget", null);
             expected.put("Result", expectedResults);
 
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -719,8 +686,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_message_of_type_relation_build_relationClassURL() {
-        String messageType = TYPE_REQ_RELATION_BUILD;
+    public void normal_send_message_of_type_relation_build_relationClassURL() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_RELATION_ADD;
         String targetCellName = Setup.TEST_CELL2;
         String targetRelationName = "testRelation001";
         String srcCellName = TEST_CELL1;
@@ -736,8 +704,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(appCellName, targetRelationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -763,6 +737,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.relationClassUrl(appCellName, targetRelationName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", null);
             expected.put("InReplyTo", null);
@@ -772,8 +758,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -803,8 +788,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_message_of_type_relation_build_unit_local_relationClassURL() {
-        String messageType = TYPE_REQ_RELATION_BUILD;
+    public void normal_send_message_of_type_relation_build_unit_local_relationClassURL() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_RELATION_ADD;
         String targetCellName = Setup.TEST_CELL2;
         String targetRelationName = "testRelation001";
         String srcCellName = TEST_CELL1;
@@ -820,8 +806,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.unitLocalRelationClassUrl(appCellName, targetRelationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.unitLocalRelationClassUrl(appCellName, targetRelationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -847,6 +839,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.unitLocalRelationClassUrl(appCellName, targetRelationName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", null);
             expected.put("InReplyTo", null);
@@ -856,8 +860,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.unitLocalRelationClassUrl(appCellName, targetRelationName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -887,8 +890,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_message_of_type_relation_build_relationName() {
-        String messageType = TYPE_REQ_RELATION_BUILD;
+    public void normal_send_message_of_type_relation_build_relationName() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_RELATION_ADD;
         String targetCellName = Setup.TEST_CELL2;
         String targetRelationName = "testRelation001";
         String srcCellName = TEST_CELL1;
@@ -903,8 +907,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", targetRelationName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("Name", targetRelationName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -930,6 +940,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", targetRelationName);
+            expectedRequestObject.put("ClassUrl", null);
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", null);
             expected.put("InReplyTo", null);
@@ -939,8 +961,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", targetRelationName);
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -970,8 +991,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void error_send_message_of_type_relation_build_requestRelation_invalid_format() {
-        String messageType = TYPE_REQ_RELATION_BUILD;
+    public void error_send_message_of_type_relation_build_requestRelation_invalid_format() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_RELATION_ADD;
         String targetCellName = Setup.TEST_CELL2;
         String targetRelationName = "testRelation001";
         String srcCellName = TEST_CELL1;
@@ -987,8 +1009,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.relationUrl(appCellName, "box1", targetRelationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.relationUrl(appCellName, "box1", targetRelationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1009,7 +1037,7 @@ public class MessageSentTest extends ODataCommon {
             // ---------------
             // Check response body
             PersoniumCoreException exception = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
-                    .params("RequestRelation");
+                    .params("RequestObjects.ClassUrl");
             String message = (String) ((JSONObject) response.bodyAsJson().get("message")).get("value");
             assertThat(message, is(exception.getMessage()));
         } finally {
@@ -1029,8 +1057,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_message_of_type_relation_break_relationClassURL() {
-        String messageType = TYPE_REQ_RELATION_BREAK;
+    public void normal_send_message_of_type_relation_break_relationClassURL() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_RELATION_REMOVE;
         String targetCellName = Setup.TEST_CELL2;
         String targetRelationName = "testRelation001";
         String srcCellName = TEST_CELL1;
@@ -1046,8 +1075,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(appCellName, targetRelationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1073,6 +1108,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.relationClassUrl(appCellName, targetRelationName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", null);
             expected.put("InReplyTo", null);
@@ -1082,8 +1129,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -1113,8 +1159,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_message_of_type_relation_break_unit_local_relationClassURL() {
-        String messageType = TYPE_REQ_RELATION_BREAK;
+    public void normal_send_message_of_type_relation_break_unit_local_relationClassURL() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_RELATION_REMOVE;
         String targetCellName = Setup.TEST_CELL2;
         String targetRelationName = "testRelation001";
         String srcCellName = TEST_CELL1;
@@ -1130,8 +1177,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.unitLocalRelationClassUrl(appCellName, targetRelationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.unitLocalRelationClassUrl(appCellName, targetRelationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1157,6 +1210,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.unitLocalRelationClassUrl(appCellName, targetRelationName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", null);
             expected.put("InReplyTo", null);
@@ -1166,8 +1231,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.unitLocalRelationClassUrl(appCellName, targetRelationName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -1197,8 +1261,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_message_of_type_relation_break_relationName() {
-        String messageType = TYPE_REQ_RELATION_BREAK;
+    public void normal_send_message_of_type_relation_break_relationName() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_RELATION_REMOVE;
         String targetCellName = Setup.TEST_CELL2;
         String targetRelationName = "testRelation001";
         String srcCellName = TEST_CELL1;
@@ -1213,8 +1278,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", targetRelationName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("Name", targetRelationName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1240,6 +1311,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", targetRelationName);
+            expectedRequestObject.put("ClassUrl", null);
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", null);
             expected.put("InReplyTo", null);
@@ -1249,8 +1332,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", targetRelationName);
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -1280,8 +1362,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void error_send_message_of_type_relation_break_requestRelation_invalid_format() {
-        String messageType = TYPE_REQ_RELATION_BREAK;
+    public void error_send_message_of_type_relation_break_requestRelation_invalid_format() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_RELATION_REMOVE;
         String targetCellName = Setup.TEST_CELL2;
         String targetRelationName = "testRelation001";
         String srcCellName = TEST_CELL1;
@@ -1296,8 +1379,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.relationUrl(targetCellName, "box1", targetRelationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.relationUrl(targetCellName, "box1", targetRelationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1318,7 +1407,7 @@ public class MessageSentTest extends ODataCommon {
             // ---------------
             // Check response body
             PersoniumCoreException exception = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
-                    .params("RequestRelation");
+                    .params("RequestObjects.ClassUrl");
             String message = (String) ((JSONObject) response.bodyAsJson().get("message")).get("value");
             assertThat(message, is(exception.getMessage()));
         } finally {
@@ -1338,8 +1427,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_message_of_type_role_grant_roleClassURL() {
-        String messageType = TYPE_REQ_ROLE_GRANT;
+    public void normal_send_message_of_type_role_grant_roleClassURL() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_ROLE_ADD;
         String targetCellName = Setup.TEST_CELL2;
         String targetRoleName = "testRole001";
         String srcCellName = TEST_CELL1;
@@ -1355,8 +1445,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.roleClassUrl(appCellName, targetRoleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.roleClassUrl(appCellName, targetRoleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1382,6 +1478,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.roleClassUrl(appCellName, targetRoleName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", null);
             expected.put("InReplyTo", null);
@@ -1391,8 +1499,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.roleClassUrl(appCellName, targetRoleName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -1422,8 +1529,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_message_of_type_role_grant_unit_local_roleClassURL() {
-        String messageType = TYPE_REQ_ROLE_GRANT;
+    public void normal_send_message_of_type_role_grant_unit_local_roleClassURL() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_ROLE_ADD;
         String targetCellName = Setup.TEST_CELL2;
         String targetRoleName = "testRole001";
         String srcCellName = TEST_CELL1;
@@ -1439,8 +1547,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.unitLocalRoleClassUrl(appCellName, targetRoleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.unitLocalRoleClassUrl(appCellName, targetRoleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1466,6 +1580,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.unitLocalRoleClassUrl(appCellName, targetRoleName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", null);
             expected.put("InReplyTo", null);
@@ -1475,8 +1601,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.unitLocalRoleClassUrl(appCellName, targetRoleName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -1506,8 +1631,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_message_of_type_role_grant_roleName() {
-        String messageType = TYPE_REQ_ROLE_GRANT;
+    public void normal_send_message_of_type_role_grant_roleName() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_ROLE_ADD;
         String targetCellName = Setup.TEST_CELL2;
         String targetRoleName = "testRole001";
         String srcCellName = TEST_CELL1;
@@ -1522,8 +1648,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", targetRoleName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("Name", targetRoleName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1549,6 +1681,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", targetRoleName);
+            expectedRequestObject.put("ClassUrl", null);
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", null);
             expected.put("InReplyTo", null);
@@ -1558,8 +1702,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", targetRoleName);
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -1589,8 +1732,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void error_send_message_of_type_role_grant_requestRelation_invalid_format() {
-        String messageType = TYPE_REQ_ROLE_GRANT;
+    public void error_send_message_of_type_role_grant_requestRelation_invalid_format() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_ROLE_ADD;
         String targetCellName = Setup.TEST_CELL2;
         String targetRoleName = "testRole001";
         String srcCellName = TEST_CELL1;
@@ -1606,8 +1750,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.roleUrl(appCellName, "box1", targetRoleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.roleUrl(appCellName, "box1", targetRoleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1628,7 +1778,7 @@ public class MessageSentTest extends ODataCommon {
             // ---------------
             // Check response body
             PersoniumCoreException exception = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
-                    .params("RequestRelation");
+                    .params("RequestObjects.ClassUrl");
             String message = (String) ((JSONObject) response.bodyAsJson().get("message")).get("value");
             assertThat(message, is(exception.getMessage()));
         } finally {
@@ -1648,8 +1798,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_message_of_type_role_revoke_roleClassURL() {
-        String messageType = TYPE_REQ_ROLE_REVOKE;
+    public void normal_send_message_of_type_role_revoke_roleClassURL() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_ROLE_REMOVE;
         String targetCellName = Setup.TEST_CELL2;
         String targetRoleName = "testRole001";
         String srcCellName = TEST_CELL1;
@@ -1665,8 +1816,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.roleClassUrl(appCellName, targetRoleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.roleClassUrl(appCellName, targetRoleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1692,6 +1849,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.roleClassUrl(appCellName, targetRoleName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", null);
             expected.put("InReplyTo", null);
@@ -1701,8 +1870,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.roleClassUrl(appCellName, targetRoleName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -1732,8 +1900,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_message_of_type_role_revoke_unit_local_roleClassURL() {
-        String messageType = TYPE_REQ_ROLE_REVOKE;
+    public void normal_send_message_of_type_role_revoke_unit_local_roleClassURL() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_ROLE_REMOVE;
         String targetCellName = Setup.TEST_CELL2;
         String targetRoleName = "testRole001";
         String srcCellName = TEST_CELL1;
@@ -1749,8 +1918,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.unitLocalRoleClassUrl(appCellName, targetRoleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.unitLocalRoleClassUrl(appCellName, targetRoleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1776,6 +1951,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.unitLocalRoleClassUrl(appCellName, targetRoleName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", null);
             expected.put("InReplyTo", null);
@@ -1785,8 +1972,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.unitLocalRoleClassUrl(appCellName, targetRoleName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -1816,8 +2002,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_message_of_type_role_revoke_roleName() {
-        String messageType = TYPE_REQ_ROLE_REVOKE;
+    public void normal_send_message_of_type_role_revoke_roleName() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_ROLE_REMOVE;
         String targetCellName = Setup.TEST_CELL2;
         String targetRoleName = "testRole001";
         String srcCellName = TEST_CELL1;
@@ -1832,8 +2019,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", targetRoleName);
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("Name", targetRoleName);
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1859,6 +2052,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", targetRoleName);
+            expectedRequestObject.put("ClassUrl", null);
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", null);
             expected.put("InReplyTo", null);
@@ -1868,8 +2073,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", targetRoleName);
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -1899,8 +2103,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void error_send_message_of_type_role_revoke_requestRelation_invalid_format() {
-        String messageType = TYPE_REQ_ROLE_REVOKE;
+    public void error_send_message_of_type_role_revoke_requestRelation_invalid_format() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_ROLE_REMOVE;
         String targetCellName = Setup.TEST_CELL2;
         String targetRoleName = "testRole001";
         String srcCellName = TEST_CELL1;
@@ -1915,8 +2120,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.roleUrl(targetCellName, "box1", targetRoleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.roleUrl(targetCellName, "box1", targetRoleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -1937,9 +2148,128 @@ public class MessageSentTest extends ODataCommon {
             // ---------------
             // Check response body
             PersoniumCoreException exception = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
-                    .params("RequestRelation");
+                    .params("RequestObjects.ClassUrl");
             String message = (String) ((JSONObject) response.bodyAsJson().get("message")).get("value");
             assertThat(message, is(exception.getMessage()));
+        } finally {
+            // Delete sent message
+            if (response != null) {
+                deleteOdataResource(response.getLocationHeader());
+            }
+            // Delete received message
+            deleteReceivedMessage(targetCellName, UrlUtils.cellRoot(srcCellName), messageType, "title", "body");
+        }
+    }
+
+    /**
+     * Normal test.
+     * Send message multiple RequestObject.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void normal_send_message_multiple_request_object() {
+        String messageType = TYPE_REQUEST;
+        String requestType1 = REQUEST_TYPE_RELATION_ADD;
+        String requestType2 = REQUEST_TYPE_ROLE_ADD;
+        String targetCellName = Setup.TEST_CELL2;
+        String targetRelationName = "testRelation001";
+        String targetRoleName = "testRole001";
+        String srcCellName = TEST_CELL1;
+        String appCellName = Setup.TEST_CELL_SCHEMA1;
+
+        // Set request body
+        JSONObject body = new JSONObject();
+        body.put("BoxBound", false);
+        body.put("InReplyTo", null);
+        body.put("To", UrlUtils.cellRoot(targetCellName));
+        body.put("ToRelation", null);
+        body.put("Type", messageType);
+        body.put("Title", "title");
+        body.put("Body", "body");
+        body.put("Priority", 3);
+
+        JSONObject requestObject1 = new JSONObject();
+        requestObject1.put("RequestType", requestType1);
+        requestObject1.put("ClassUrl", UrlUtils.relationClassUrl(appCellName, targetRelationName));
+        requestObject1.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONObject requestObject2 = new JSONObject();
+        requestObject2.put("RequestType", requestType2);
+        requestObject2.put("ClassUrl", UrlUtils.roleClassUrl(appCellName, targetRoleName));
+        requestObject2.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject1);
+        requestObjects.add(requestObject2);
+        body.put("RequestObjects", requestObjects);
+
+        TResponse response = null;
+        try {
+            // ---------------
+            // Preparation
+            // ---------------
+            String token = MASTER_TOKEN_NAME;
+
+            // ---------------
+            // Execution
+            // ---------------
+            // Send message
+            response = SentMessageUtils.sent(token, srcCellName,
+                    body.toJSONString(), HttpStatus.SC_CREATED);
+
+            // ---------------
+            // Verification
+            // ---------------
+            // Set expected response body
+            JSONObject expectedResult = new JSONObject();
+            expectedResult.put("To", UrlUtils.cellRoot(targetCellName));
+            expectedResult.put("Code", Integer.toString(HttpStatus.SC_CREATED));
+            expectedResult.put("Reason", "Created.");
+            JSONArray expectedResults = new JSONArray();
+            expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject1 = new JSONObject();
+            expectedRequestObject1.put("RequestType", requestType1);
+            expectedRequestObject1.put("Name", null);
+            expectedRequestObject1.put("ClassUrl", UrlUtils.relationClassUrl(appCellName, targetRelationName));
+            expectedRequestObject1.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject1.put("EventSubject", null);
+            expectedRequestObject1.put("EventType", null);
+            expectedRequestObject1.put("EventObject", null);
+            expectedRequestObject1.put("EventInfo", null);
+            expectedRequestObject1.put("Action", null);
+            JSONObject expectedRequestObject2 = new JSONObject();
+            expectedRequestObject2.put("RequestType", requestType2);
+            expectedRequestObject2.put("Name", null);
+            expectedRequestObject2.put("ClassUrl", UrlUtils.roleClassUrl(appCellName, targetRoleName));
+            expectedRequestObject2.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject2.put("EventSubject", null);
+            expectedRequestObject2.put("EventType", null);
+            expectedRequestObject2.put("EventObject", null);
+            expectedRequestObject2.put("EventInfo", null);
+            expectedRequestObject2.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject1);
+            expectedRequestObjects.add(expectedRequestObject2);
+            JSONObject expected = new JSONObject();
+            expected.put("_Box.Name", null);
+            expected.put("InReplyTo", null);
+            expected.put("To", UrlUtils.cellRoot(targetCellName));
+            expected.put("ToRelation", null);
+            expected.put("Type", messageType);
+            expected.put("Title", "title");
+            expected.put("Body", "body");
+            expected.put("Priority", 3);
+            expected.put("RequestObjects", expectedRequestObjects);
+            expected.put("Result", expectedResults);
+            // Check response body
+            ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
+                    SENT_MESSAGE_TYPE, expected);
+
+            // Get message id
+            JSONObject results = (JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results");
+            String id = (String) results.get("__id");
+            // Verify that the sent message is saved
+            SentMessageUtils.get(MASTER_TOKEN_NAME, srcCellName, HttpStatus.SC_OK, id);
+            // Verify that the received message is saved
+            ReceivedMessageUtils.get(MASTER_TOKEN_NAME, targetCellName, HttpStatus.SC_OK, id);
         } finally {
             // Delete sent message
             if (response != null) {
@@ -1956,7 +2286,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_boxbound_message_of_type_message() {
+    public void normal_send_boxbound_message_of_type_message() {
         String messageType = TYPE_MESSAGE;
         String targetCellName = Setup.TEST_CELL2;
         String srcCellName = TEST_CELL1;
@@ -1972,8 +2302,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -2034,8 +2362,6 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", null);
-            expected.put("RequestRelationTarget", null);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -2073,8 +2399,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_boxbound_message_of_type_relation_build() {
-        String messageType = TYPE_REQ_RELATION_BUILD;
+    public void normal_send_boxbound_message_of_type_relation_build() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_RELATION_ADD;
         String targetCellName = Setup.TEST_CELL2;
         String targetRelationName = "testRelation001";
         String srcCellName = TEST_CELL1;
@@ -2090,8 +2417,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(appCellName, targetRelationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -2143,6 +2476,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.relationClassUrl(appCellName, targetRelationName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", Setup.TEST_BOX1);
             expected.put("InReplyTo", null);
@@ -2152,8 +2497,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -2191,8 +2535,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_boxbound_message_of_type_relation_break() {
-        String messageType = TYPE_REQ_RELATION_BREAK;
+    public void normal_send_boxbound_message_of_type_relation_break() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_RELATION_REMOVE;
         String targetCellName = Setup.TEST_CELL2;
         String targetRelationName = "testRelation001";
         String srcCellName = TEST_CELL1;
@@ -2208,8 +2553,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(appCellName, targetRelationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -2261,6 +2612,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.relationClassUrl(appCellName, targetRelationName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", Setup.TEST_BOX1);
             expected.put("InReplyTo", null);
@@ -2270,8 +2633,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -2309,8 +2671,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_boxbound_message_of_type_role_grant() {
-        String messageType = TYPE_REQ_ROLE_GRANT;
+    public void normal_send_boxbound_message_of_type_role_grant() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_ROLE_ADD;
         String targetCellName = Setup.TEST_CELL2;
         String targetRoleName = "testRole002";
         String srcCellName = TEST_CELL1;
@@ -2326,8 +2689,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.roleClassUrl(appCellName, targetRoleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.roleClassUrl(appCellName, targetRoleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -2379,6 +2748,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.roleClassUrl(appCellName, targetRoleName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", Setup.TEST_BOX1);
             expected.put("InReplyTo", null);
@@ -2388,8 +2769,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.roleClassUrl(appCellName, targetRoleName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -2427,8 +2807,9 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_send_boxbound_message_of_type_role_revoke() {
-        String messageType = TYPE_REQ_ROLE_REVOKE;
+    public void normal_send_boxbound_message_of_type_role_revoke() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_ROLE_REMOVE;
         String targetCellName = Setup.TEST_CELL2;
         String targetRoleName = "testRole002";
         String srcCellName = TEST_CELL1;
@@ -2444,8 +2825,14 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.roleClassUrl(appCellName, targetRoleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.roleClassUrl(appCellName, targetRoleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -2497,6 +2884,18 @@ public class MessageSentTest extends ODataCommon {
             expectedResult.put("Reason", "Created.");
             JSONArray expectedResults = new JSONArray();
             expectedResults.add(expectedResult);
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.roleClassUrl(appCellName, targetRoleName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             JSONObject expected = new JSONObject();
             expected.put("_Box.Name", Setup.TEST_BOX1);
             expected.put("InReplyTo", null);
@@ -2506,8 +2905,7 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.roleClassUrl(appCellName, targetRoleName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -2546,9 +2944,8 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void error_send_boxbound_message_box_not_exists_on_sender() {
+    public void error_send_boxbound_message_box_not_exists_on_sender() {
         String targetCellName = Setup.TEST_CELL2;
-        String targetRelationName = "testRelation001";
         String srcCellName = TEST_CELL1;
         String appCellName = "testSchema001";
 
@@ -2562,8 +2959,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
 
         TResponse response = null;
         try {
@@ -2644,9 +3039,8 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void error_send_boxbound_message_box_not_exists_on_receiver() {
+    public void error_send_boxbound_message_box_not_exists_on_receiver() {
         String targetCellName = Setup.TEST_CELL2;
-        String targetRelationName = "testRelation001";
         String srcCellName = TEST_CELL1;
         String appCellName = "testSchema001";
 
@@ -2660,8 +3054,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", UrlUtils.relationClassUrl(targetCellName, targetRelationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
 
         TResponse response = null;
         try {
@@ -2732,8 +3124,6 @@ public class MessageSentTest extends ODataCommon {
             expected.put("Title", "title");
             expected.put("Body", "body");
             expected.put("Priority", 3);
-            expected.put("RequestRelation", UrlUtils.relationClassUrl(targetCellName, targetRelationName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
             expected.put("Result", expectedResults);
             // Check response body
             ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
@@ -2772,7 +3162,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 存在しないToRelationを指定した場合Message送信が失敗すること() {
+    public void 存在しないToRelationを指定した場合Message送信が失敗すること() {
 
         // リクエストボディ作成
         JSONObject body = new JSONObject();
@@ -2783,8 +3173,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -2809,7 +3197,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void ExtCellに紐付いていないToRelationを指定した場合Message送信が失敗すること() {
+    public void ExtCellに紐付いていないToRelationを指定した場合Message送信が失敗すること() {
 
         // Relation作成のリクエストボディ
         JSONObject relation = new JSONObject();
@@ -2825,8 +3213,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -2856,7 +3242,7 @@ public class MessageSentTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void Boxに紐づいた送信Messageを作成できること() {
+    public void Boxに紐づいた送信Messageを作成できること() {
         String targetCell = Setup.TEST_CELL2;
         String id = "MessageSendViaNPTest11111111111111111111111111";
 
@@ -2870,8 +3256,6 @@ public class MessageSentTest extends ODataCommon {
         body.put("Title", "title");
         body.put("Body", "body");
         body.put("Priority", 3);
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         try {
             // メッセージ送信

@@ -27,7 +27,6 @@ import org.odata4j.edm.EdmSimpleType;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.rs.odata.AbstractODataResource;
-import io.personium.core.rs.odata.ODataMessageResource;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 
@@ -83,50 +82,6 @@ public class SentMessageValidateTest extends AbstractODataResource {
                 OProperties.string(SentMessage.P_IN_REPLY_TO.getName(), ""));
         assertEquals(expected.getValue(), result.getValue());
 
-    }
-
-    /**
-     * ToがURL形式の場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void ToがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        ODataMessageResource.validateUriCsv(SentMessage.P_TO.getName(), "http://example.com/test/");
-    }
-
-    /**
-     * ToがCSV複数URL形式の場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void ToがCSV複数URL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        ODataMessageResource.validateUriCsv(SentMessage.P_TO.getName(),
-                "http://example.com/test/,http://example.com/test/");
-    }
-
-    /**
-     * ToがURL形式でない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void ToがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
-        ODataMessageResource.validateUriCsv(SentMessage.P_TO.getName(), "ftp://example.com/test");
-
-    }
-
-    /**
-     * ToがCSV複数URL形式とURL形式でない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void ToがCSV複数URL形式とURL形式でない場合にPersoniumCoreExceptionが発生すること() {
-        ODataMessageResource.validateUriCsv(SentMessage.P_TO.getName(),
-                "http://example.com/test,ftp://example.com/test");
-    }
-
-    /**
-     * Toが不正なCSV形式の場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void Toが不正なCSV形式の場合にPersoniumCoreExceptionが発生すること() {
-        ODataMessageResource.validateUriCsv(SentMessage.P_TO.getName(),
-                "http://example.com/test/,,http://example.com/test");
     }
 
     /**
@@ -241,24 +196,15 @@ public class SentMessageValidateTest extends AbstractODataResource {
     }
 
     /**
-     * Typeがreq.relation.buildの場合にPersoniumCoreExceptionが発生しないこと.
+     * Typeがrequestの場合にPersoniumCoreExceptionが発生しないこと.
      */
     @Test
-    public final void Typeがreq_relation_buildの場合にPersoniumCoreExceptionが発生しないこと() {
+    public final void Typeがrequestの場合にPersoniumCoreExceptionが発生しないこと() {
         this.validateProperty(SentMessage.P_TYPE.build(),
                 SentMessage.P_TYPE.getName(),
-                OProperties.string(SentMessage.P_TYPE.getName(), "req.relation.build"));
+                OProperties.string(SentMessage.P_TYPE.getName(), "request"));
     }
 
-    /**
-     * Typeがreq.relation.breakの場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void Typeがreq_relation_breakの場合にPersoniumCoreExceptionが発生しないこと() {
-        this.validateProperty(SentMessage.P_TYPE.build(),
-                SentMessage.P_TYPE.getName(),
-                OProperties.string(SentMessage.P_TYPE.getName(), "req.relation.break"));
-    }
 
     /**
      * Typeがsocial_messageの場合にPersoniumCoreExceptionが発生すること.
@@ -339,43 +285,6 @@ public class SentMessageValidateTest extends AbstractODataResource {
                 SentMessage.P_BODY.getName(),
                 OProperties.string(SentMessage.P_BODY.getName(), ""));
         assertEquals(expected.getValue(), result.getValue());
-    }
-
-    /**
-     * Bodyが0byteの場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void Bodyが0byteの場合にPersoniumCoreExceptionが発生しないこと() {
-        String body = "";
-        ODataMessageResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
-    }
-
-    /**
-     * Bodyが64Kbyteの場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void Bodyが64Kbyteの場合にPersoniumCoreExceptionが発生しないこと() {
-        char[] buff = new char[65536];
-        for (int i = 0; i < buff.length; i++) {
-            buff[i] = 0x41;
-        }
-        String body = String.valueOf(buff);
-
-        ODataMessageResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
-    }
-
-    /**
-     * Bodyが64Kbyteを超える場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void Bodyが64Kbyteを超える場合にPersoniumCoreExceptionが発生すること() {
-        char[] buff = new char[65537];
-        for (int i = 0; i < buff.length; i++) {
-            buff[i] = 0x41;
-        }
-        String body = String.valueOf(buff);
-
-        ODataMessageResource.validateBody(body, SentMessage.MAX_MESSAGE_BODY_LENGTH);
     }
 
     /**
@@ -460,134 +369,5 @@ public class SentMessageValidateTest extends AbstractODataResource {
                 SentMessage.P_PRIORITY.getName(),
                 OProperties.string(SentMessage.P_PRIORITY.getName(), ""));
         assertEquals(expected.getValue(), result.getValue());
-    }
-
-    /**
-     * RequestRelationがURL形式の場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void RequestRelationがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        this.validateProperty(SentMessage.P_REQUEST_RELATION.build(),
-                SentMessage.P_REQUEST_RELATION.getName(),
-                OProperties.string(SentMessage.P_REQUEST_RELATION.getName(),
-                        "http://example.com/test/__relation/__/testRelation"));
-    }
-
-    /**
-     * RequestRelationがURL形式でない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void RequestRelationがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
-        this.validateProperty(SentMessage.P_REQUEST_RELATION.build(),
-                SentMessage.P_REQUEST_RELATION.getName(),
-                OProperties.string(SentMessage.P_REQUEST_RELATION.getName(),
-                        "ftp://example.com/test/__relation/__/testRelation"));
-    }
-
-    /**
-     * RequestRelationがNullの場合にNullOPropertyが返却されること.
-     */
-    @Test
-    public final void RequestRelationがNullの場合にNullOPropertyが返却されること() {
-        OProperty<?> expected = OProperties.null_(SentMessage.P_REQUEST_RELATION.getName(), EdmSimpleType.STRING);
-        OProperty<?> result = this.setDefaultValue(SentMessage.P_REQUEST_RELATION.build(),
-                SentMessage.P_REQUEST_RELATION.getName(),
-                OProperties.string(SentMessage.P_REQUEST_RELATION.getName(), AbstractCase.STRING_LENGTH_129));
-        assertEquals(expected.getValue(), result.getValue());
-    }
-
-    /**
-     * RequestRelationTargetがURL形式の場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void RequestRelationTargetがURL形式の場合にPersoniumCoreExceptionが発生しないこと() {
-        this.validateProperty(SentMessage.P_REQUEST_RELATION_TARGET.build(),
-                SentMessage.P_REQUEST_RELATION_TARGET.getName(),
-                OProperties.string(SentMessage.P_REQUEST_RELATION_TARGET.getName(), "http://example.com/test/"));
-    }
-
-    /**
-     * RequestRelationTargetがURL形式でない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void RequestRelationTargetがURL形式でない場合にPersoniumCoreExceptionが発生すること() {
-        this.validateProperty(SentMessage.P_REQUEST_RELATION_TARGET.build(),
-                SentMessage.P_REQUEST_RELATION_TARGET.getName(),
-                OProperties.string(SentMessage.P_REQUEST_RELATION_TARGET.getName(), "ftp://example.com/test"));
-    }
-
-    /**
-     * RequestRelationTargetがNullの場合にNullOPropertyが返却されること.
-     */
-    @Test
-    public final void RequestRelationTargetがNullの場合にNullOPropertyが返却されること() {
-        OProperty<?> expected = OProperties.null_(SentMessage.P_REQUEST_RELATION_TARGET.getName(),
-                EdmSimpleType.STRING);
-        OProperty<?> result = this.setDefaultValue(SentMessage.P_REQUEST_RELATION_TARGET.build(),
-                SentMessage.P_REQUEST_RELATION_TARGET.getName(),
-                OProperties.string(SentMessage.P_REQUEST_RELATION_TARGET.getName(), AbstractCase.STRING_LENGTH_129));
-        assertEquals(expected.getValue(), result.getValue());
-    }
-
-    /**
-     * ToもToRelationも存在しない場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void ToもToRelationも存在しない場合にPersoniumCoreExceptionが発生すること() {
-        String to = (String) OProperties.null_(SentMessage.P_TO.getName(),
-                EdmSimpleType.STRING).getValue();
-        String toRelation = (String) OProperties.null_(SentMessage.P_TO_RELATION.getName(),
-                EdmSimpleType.STRING).getValue();
-        ODataMessageResource.validateToAndToRelation(to, toRelation);
-    }
-
-    /**
-     * ToがあってToRelationがない場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void ToがあってToRelationがない場合にPersoniumCoreExceptionが発生しないこと() {
-        String to = "http://example.com/toAddress/";
-        String toRelation = (String) OProperties.null_(SentMessage.P_TO_RELATION.getName(),
-                EdmSimpleType.STRING).getValue();
-        ODataMessageResource.validateToAndToRelation(to, toRelation);
-    }
-
-    /**
-     * ToがなくてToRelationがある場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void ToがなくてToRelationがある場合にPersoniumCoreExceptionが発生しないこと() {
-        String to = (String) OProperties.null_(SentMessage.P_TO.getName(),
-                EdmSimpleType.STRING).getValue();
-        String toRelation = "http://example.com/toRelation";
-        ODataMessageResource.validateToAndToRelation(to, toRelation);
-    }
-
-    /**
-     * ToとToRelationが両方ある場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void ToとToRelationが両方ある場合にPersoniumCoreExceptionが発生しないこと() {
-        String to = "http://example.com/toAddress/";
-        String toRelation = "http://example.com/toRelation";
-        ODataMessageResource.validateToAndToRelation(to, toRelation);
-    }
-
-    /**
-     * 送信先URLが最大送信許可数を超えている場合にPersoniumCoreExceptionが発生すること.
-     */
-    @Test(expected = PersoniumCoreException.class)
-    public final void 送信先URLが最大送信許可数を超えている場合にPersoniumCoreExceptionが発生すること() {
-        ODataMessageResource mor = new ODataMessageResource(null, null, null);
-        mor.checkMaxDestinationsSize(1001);
-    }
-
-    /**
-     * 送信先URLが最大送信許可数を超えていない場合にPersoniumCoreExceptionが発生しないこと.
-     */
-    @Test
-    public final void 送信先URLが最大送信許可数を超えていない場合にPersoniumCoreExceptionが発生しないこと() {
-        ODataMessageResource mor = new ODataMessageResource(null, null, null);
-        mor.checkMaxDestinationsSize(1000);
     }
 }

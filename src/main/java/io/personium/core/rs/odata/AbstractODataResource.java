@@ -694,8 +694,6 @@ public abstract class AbstractODataResource {
                     validatePropertyCellUrl(propName, op);
                 } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_USUSST)) {
                     validatePropertyUsusst(propName, op, pFormat);
-//                } else if (pFormat.startsWith(Message.P_FORMAT_PATTERN_MESSAGE_REQUEST_RELATION)) {
-//                    validatePropertyMessageRequestRelation(propName, op);
                 } else if (pFormat.startsWith(Rule.P_FORMAT_PATTERN_RULE_OBJECT)) {
                     validatePropertyRuleObject(propName, op);
                 } else if (pFormat.startsWith(Rule.P_FORMAT_PATTERN_RULE_SERVICE)) {
@@ -883,20 +881,6 @@ public abstract class AbstractODataResource {
                }
         }
     }
-
-//    /**
-//     * Message RequestRelation Format Check.
-//     * @param propName Property name
-//     * @param op OProperty
-//     */
-//    protected void validatePropertyMessageRequestRelation(String propName, OProperty<?> op) {
-//        if (!ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_RELATION_CLASS_URL)
-//                && !ODataUtils.validateRegEx(op.getValue().toString(), Common.PATTERN_RELATION_NAME)
-//                && !ODataUtils.validateClassUrl(op.getValue().toString(), Common.PATTERN_ROLE_CLASS_URL)
-//                && !ODataUtils.validateRegEx(op.getValue().toString(), Common.PATTERN_NAME)) {
-//            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
-//        }
-//    }
 
     /**
      * Rule Object Format Check.

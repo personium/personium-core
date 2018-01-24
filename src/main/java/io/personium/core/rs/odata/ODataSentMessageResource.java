@@ -1,3 +1,19 @@
+/**
+ * personium.io
+ * Copyright 2018 FUJITSU LIMITED
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.personium.core.rs.odata;
 
 import java.io.BufferedReader;
@@ -65,45 +81,50 @@ import io.personium.core.model.ctl.SentMessagePort;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.cell.MessageResource;
 import io.personium.core.utils.HttpClientFactory;
+import io.personium.core.utils.ODataUtils;
 import io.personium.core.utils.UriUtils;
 
+/**
+ * OData operation class of sent message.
+ */
 public class ODataSentMessageResource extends ODataMessageResource {
 
+    /** Logger. */
     private static Logger log = LoggerFactory.getLogger(ODataSentMessageResource.class);
 
-    /** 最大送信許可数. */
+    /** Maximum allowed number of transmissions. */
     private static final int MAX_SENT_NUM = 1000;
 
+    /** X-Personium-Version. */
     private String version;
 
     /**
-     *
-     * @param odataResource
-     * @param requestKey
-     * @param producer
-     * @param entityTypeName
-     * @param version
+     * Constructor.
+     * @param messageResource Message resource
+     * @param requestKey X-Personium-RequestKey header
+     * @param producer OData producer
+     * @param entityTypeName Entity type name
+     * @param version X-Personium-Version
      */
-    public ODataSentMessageResource(MessageResource odataResource, String requestKey, PersoniumODataProducer producer,
+    public ODataSentMessageResource(MessageResource messageResource, String requestKey, PersoniumODataProducer producer,
             String entityTypeName, String version) {
-        super(odataResource, requestKey, producer, entityTypeName);
+        super(messageResource, requestKey, producer, entityTypeName);
         this.version = version;
     }
 
     /**
-     * 送信メッセージEntityを作成する.
-     * @param uriInfo URL情報
-     * @param reader リクエストボディ
-     * @return response情報
+     * Create sent message entity.
+     * @param uriInfo URL info
+     * @param reader Request body
+     * @return Response
      */
     public Response createMessage(UriInfo uriInfo, Reader reader) {
         return createMessage(uriInfo, reader, PersoniumEventType.Operation.SEND);
     }
 
     /**
-     * プロパティ操作.
-     * @param props プロパティ一覧
-     * @param id メッセージのID
+     * {@inheritDoc}
+     * @param id Message id
      */
     @Override
     protected void editProperty(List<OProperty<?>> props, String id) {
@@ -121,8 +142,8 @@ public class ODataSentMessageResource extends ODataMessageResource {
                 // メッセージ送信でBoxBoundはデータとして保持しないため、削除する
                 props.remove(i);
             } else if (Common.P_BOX_NAME.getName().equals(props.get(i).getName())) {
-                String schema = this.odataResource.getAccessContext().getSchema();
-                Box box = this.odataResource.getAccessContext().getCell().getBoxForSchema(schema);
+                String schema = getMessageResource().getAccessContext().getSchema();
+                Box box = getMessageResource().getAccessContext().getCell().getBoxForSchema(schema);
                 String boxName = box != null ? box.getName() : null; // CHECKSTYLE IGNORE - To eliminate useless code
                 // Replace with BoxName obtained from schema
                 props.set(i, OProperties.string(Common.P_BOX_NAME.getName(), boxName));
@@ -135,8 +156,8 @@ public class ODataSentMessageResource extends ODataMessageResource {
     }
 
     /**
-     * 個別バリデート処理.
-     * @param props OProperty一覧
+     * Individual validation processing.
+     * @param props OProperty list
      */
     @Override
     public void validate(List<OProperty<?>> props) {
@@ -145,15 +166,15 @@ public class ODataSentMessageResource extends ODataMessageResource {
         // Type: message
         // Title: no check
         // Body
-        validateBody(propMap.get(Message.P_BODY.getName()), Message.MAX_MESSAGE_BODY_LENGTH);
+        validateBody(getPropMap().get(Message.P_BODY.getName()), Message.MAX_MESSAGE_BODY_LENGTH);
         // Prority: no check
     }
 
     /**
-     * メッセージ受信APIを呼出す.
+     * Call message received API.
      * @param collectionType EdmCollectionType
-     * @param idKey 送信メッセージのIDキー
-     * @return メッセージ受信の結果
+     * @param idKey Sent message id
+     * @return Message received API response
      */
     private OCollection.Builder<OObject> requestReceivedMessage(
             final EdmCollectionType collectionType,
@@ -163,7 +184,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
         // ComplexTypeの型情報を取得する
         EdmComplexType ct = SentMessage.COMPLEX_TYPE_RESULT.build();
 
-        String fromCellUrl = this.odataResource.getAccessContext().getCell().getUrl();
+        String fromCellUrl = getMessageResource().getAccessContext().getCell().getUrl();
 
         // 宛先リスト作成
         List<String> toList = createRequestUrl();
@@ -196,16 +217,16 @@ public class ODataSentMessageResource extends ODataMessageResource {
     }
 
     /**
-     * 宛先リスト作成.
-     * @return 送信先のCellURLのリスト
+     * Create destination list.
+     * @return List of destination cell URLs
      */
     private List<String> createRequestUrl() {
         List<String> toList = new ArrayList<String>();
         String requestToStr = null;
         String requestToRelationStr = null;
 
-        requestToStr = this.propMap.get(SentMessage.P_TO.getName());
-        requestToRelationStr = this.propMap.get(SentMessage.P_TO_RELATION.getName());
+        requestToStr = getPropMap().get(SentMessage.P_TO.getName());
+        requestToRelationStr = getPropMap().get(SentMessage.P_TO_RELATION.getName());
 
         // リクエストボディのTo項目からCellURLを取得
         if (requestToStr != null) {
@@ -238,9 +259,9 @@ public class ODataSentMessageResource extends ODataMessageResource {
     }
 
     /**
-     * CellURLの書式を整形する.
-     * @param cellUrl cellのUrl
-     * @return 整形後の値
+     * Format CellURL.
+     * @param cellUrl cellUrl
+     * @return Formulation result
      */
     private String formatCellUrl(String cellUrl) {
         String formatCellUrl = cellUrl;
@@ -251,9 +272,9 @@ public class ODataSentMessageResource extends ODataMessageResource {
     }
 
     /**
-     * ToRelationで指定されたRelationにも付くExtCellのURL一覧を取得する.
-     * @param toRelation ToRelationのプロパティ値
-     * @return extCellUrlList ExtCellのURL一覧
+     * Get URL list of ExtCell linked with Relation specified by ToRelation.
+     * @param toRelation ToRelation
+     * @return URL list of ExtCell
      */
     private List<String> getExtCellListFromToRelation(String toRelation) {
         List<String> extCellUrlList = new ArrayList<String>();
@@ -291,8 +312,8 @@ public class ODataSentMessageResource extends ODataMessageResource {
     }
 
     /**
-     * 送信先URLが最大送信許可数を超えているかチェック.
-     * @param destinationsSize 送信先URLの件数
+     * Check if the destination exceeds the maximum transmission permitted number.
+     * @param destinationsSize Number of destinations
      */
     private void checkMaxDestinationsSize(int destinationsSize) {
         if (destinationsSize > MAX_SENT_NUM) {
@@ -301,18 +322,19 @@ public class ODataSentMessageResource extends ODataMessageResource {
     }
 
     /**
-     * メッセージ受信API呼出しのリクエストボディ作成.
-     * @param fromCellUrl 送信元CellURL
-     * @param targetCellUrl 送信先CellURL
-     * @param toList 宛先リスト
-     * @param id 受信メッセージのID
-     * @return リクエストボディ
+     * Create request body of message reception API call.
+     * @param fromCellUrl From cell URL
+     * @param targetCellUrl To cell URL
+     * @param toList To list
+     * @param id Received message id
+     * @return Request body
      */
     @SuppressWarnings("unchecked")
     private JSONObject createRequestJsonBody(String fromCellUrl, String targetCellUrl, List<String> toList, String id) {
         JSONObject requestBody = new JSONObject();
-        String type = this.propMap.get(SentMessage.P_TYPE.getName());
-        boolean boxBound = Boolean.parseBoolean(this.propMap.get(SentMessagePort.P_BOX_BOUND.getName()));
+        Map<String, String> propMap = getPropMap();
+        String type = propMap.get(SentMessage.P_TYPE.getName());
+        boolean boxBound = Boolean.parseBoolean(propMap.get(SentMessagePort.P_BOX_BOUND.getName()));
 
         // Statusの設定
         String status = null;
@@ -342,20 +364,21 @@ public class ODataSentMessageResource extends ODataMessageResource {
 
         requestBody.put(ReceivedMessage.P_ID.getName(), id);
         if (boxBound) {
-            requestBody.put(ReceivedMessagePort.P_SCHEMA.getName(), this.odataResource.getAccessContext().getSchema());
+            requestBody.put(ReceivedMessagePort.P_SCHEMA.getName(),
+                    getMessageResource().getAccessContext().getSchema());
         }
-        requestBody.put(ReceivedMessage.P_IN_REPLY_TO.getName(), this.propMap.get(SentMessage.P_IN_REPLY_TO.getName()));
+        requestBody.put(ReceivedMessage.P_IN_REPLY_TO.getName(), propMap.get(SentMessage.P_IN_REPLY_TO.getName()));
         requestBody.put(ReceivedMessage.P_FROM.getName(), fromCellUrl);
         requestBody.put(ReceivedMessage.P_MULTICAST_TO.getName(), multicastTo);
         requestBody.put(ReceivedMessage.P_TYPE.getName(), type);
-        requestBody.put(ReceivedMessage.P_TITLE.getName(), this.propMap.get(SentMessage.P_TITLE.getName()));
-        requestBody.put(ReceivedMessage.P_BODY.getName(), this.propMap.get(SentMessage.P_BODY.getName()));
+        requestBody.put(ReceivedMessage.P_TITLE.getName(), propMap.get(SentMessage.P_TITLE.getName()));
+        requestBody.put(ReceivedMessage.P_BODY.getName(), propMap.get(SentMessage.P_BODY.getName()));
         requestBody.put(ReceivedMessage.P_PRIORITY.getName(),
-                Integer.valueOf(this.propMap.get(SentMessage.P_PRIORITY.getName())));
+                Integer.valueOf(propMap.get(SentMessage.P_PRIORITY.getName())));
         requestBody.put(ReceivedMessage.P_STATUS.getName(), status);
         if (ReceivedMessage.TYPE_REQUEST.equals(type)) {
             JSONArray requestObjects = new JSONArray();
-            for (Map<String, String> requestObjectMap : requestObjectPropMapList) {
+            for (Map<String, String> requestObjectMap : getRequestObjectPropMapList()) {
                 JSONObject requestObject = new JSONObject();
                 String requestType = requestObjectMap.get(RequestObject.P_REQUEST_TYPE.getName());
                 requestObject.put(RequestObject.P_REQUEST_TYPE.getName(), requestType);
@@ -394,11 +417,11 @@ public class ODataSentMessageResource extends ODataMessageResource {
     }
 
     /**
-     * メッセージ受信API呼出し.
-     * @param token トークン
-     * @param requestCellUrl リクエスト先CellURL
-     * @param jsonBody リクエストボディ
-     * @return リクエスト結果
+     * Call message received API.
+     * @param token Token
+     * @param requestCellUrl Request CellURL
+     * @param jsonBody Request body
+     * @return Request results
      */
     private List<OProperty<?>> requestHttpReceivedMessage(
             TransCellAccessToken token,
@@ -448,9 +471,9 @@ public class ODataSentMessageResource extends ODataMessageResource {
     }
 
     /**
-     * HttpResponseからメッセージ取得.
+     * Get messages from HttpResponse.
      * @param objResponse HttpResponse
-     * @return メッセージ
+     * @return Message
      */
     private String getErrorMessage(HttpResponse objResponse) {
         JSONObject resBody = bodyAsJson(objResponse);
@@ -466,9 +489,9 @@ public class ODataSentMessageResource extends ODataMessageResource {
     }
 
     /**
-     * HttpResponseからJSON型のボディ取得.
+     * Get body of JSON type from HttpResponse.
      * @param objResponse HttpResponse
-     * @return ボディ
+     * @return Body
      */
     private JSONObject bodyAsJson(HttpResponse objResponse) {
         JSONObject body = null;
@@ -519,12 +542,16 @@ public class ODataSentMessageResource extends ODataMessageResource {
         return body;
     }
 
+    /**
+     * Validate sent message.
+     */
     private void validateSentMessage() {
+        Map<String, String> propMap = getPropMap();
         String type = propMap.get(Message.P_TYPE.getName());
 
         // BoxBound
         Boolean boxBound = Boolean.valueOf(propMap.get(SentMessagePort.P_BOX_BOUND.getName()));
-        validateSentBoxBoundSchema(this.odataResource,
+        validateSentBoxBoundSchema(getMessageResource(),
                 Boolean.valueOf(propMap.get(SentMessagePort.P_BOX_BOUND.getName())));
         // To
         // ToRelation
@@ -534,7 +561,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
                 propMap.get(SentMessage.P_TO_RELATION.getName()));
         validateToValue(
                 propMap.get(SentMessage.P_TO.getName()),
-                this.odataResource.getAccessContext().getBaseUri());
+                getMessageResource().getAccessContext().getBaseUri());
 
         // validate properties per Type
         //   type 'message' is nothing to do
@@ -542,11 +569,11 @@ public class ODataSentMessageResource extends ODataMessageResource {
             // --------------------
             // RequestObjects
             // --------------------
-            if (requestObjectPropMapList.isEmpty()) {
+            if (getRequestObjectPropMapList().isEmpty()) {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                         Message.P_REQUEST_OBJECTS.getName());
             }
-            for (Map<String, String> requestObjectMap : requestObjectPropMapList) {
+            for (Map<String, String> requestObjectMap : getRequestObjectPropMapList()) {
                 // RequestType
                 String requestType = requestObjectMap.get(RequestObject.P_REQUEST_TYPE.getName());
                 if (RequestObject.REQUEST_TYPE_RELATION_ADD.equals(requestType)
@@ -567,6 +594,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
                             requestObjectMap.get(RequestObject.P_TARGET_URL.getName()));
                 } else if (RequestObject.REQUEST_TYPE_RULE_ADD.equals(requestType)) {
                     // rule.add
+                    //   Name pattern id
                     //   Action required
                     //   Action: relay or exec -> TargetUrl required
                     //   BoxBound: true  -> EventObject: personium-localbox:/xxx
@@ -574,6 +602,11 @@ public class ODataSentMessageResource extends ODataMessageResource {
                     //   BoxBound: false -> EventObject: personium-localcell:/xxx
                     //                   -> Action: exec -> TargetUrl: personium-localcell:/xxx
                     //   Action: relay -> TargetUrl: personium-localunit: or http: or https:
+                    String name = requestObjectMap.get(RequestObject.P_NAME.getName());
+                    if (name != null && !ODataUtils.validateRegEx(name, Common.PATTERN_ID)) {
+                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                                concatRequestObjectPropertyName(RequestObject.P_NAME.getName()));
+                    }
                     String action = requestObjectMap.get(Rule.P_ACTION.getName());
                     if (action == null) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
@@ -619,7 +652,8 @@ public class ODataSentMessageResource extends ODataMessageResource {
                 } else if (RequestObject.REQUEST_TYPE_RULE_REMOVE.equals(requestType)) {
                     // rule.remove
                     //   Name required
-                    if (requestObjectMap.get(RequestObject.P_NAME.getName()) == null) {
+                    String name = requestObjectMap.get(RequestObject.P_NAME.getName());
+                    if (name == null || !ODataUtils.validateRegEx(name, Common.PATTERN_ID)) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                 concatRequestObjectPropertyName(RequestObject.P_NAME.getName()));
                     }
@@ -650,7 +684,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
      * @param toValue toで指定された値
      * @param baseUrl baseUrl
      */
-    private static void validateToValue(String toValue, String baseUrl) {
+    private void validateToValue(String toValue, String baseUrl) {
         if (toValue == null) {
             return;
         }
@@ -683,7 +717,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
      * @param to 送信先セルURL
      * @param toRelation 送信対象の関係名
      */
-    private static void validateToAndToRelation(String to, String toRelation) {
+    private void validateToAndToRelation(String to, String toRelation) {
         if (to == null && toRelation == null) {
             String detail = SentMessage.P_TO.getName() + "," + SentMessage.P_TO_RELATION.getName();
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(detail);

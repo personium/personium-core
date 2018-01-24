@@ -16,9 +16,10 @@
  */
 package io.personium.test.jersey.cell;
 
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_MESSAGE;
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_REQ_RELATION_BUILD;
-import static io.personium.core.model.ctl.ReceivedMessage.TYPE_REQ_ROLE_GRANT;
+import static io.personium.core.model.ctl.Message.TYPE_MESSAGE;
+import static io.personium.core.model.ctl.Message.TYPE_REQUEST;
+import static io.personium.core.model.ctl.RequestObject.REQUEST_TYPE_RELATION_ADD;
+import static io.personium.core.model.ctl.RequestObject.REQUEST_TYPE_ROLE_ADD;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -82,7 +83,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void Messageを受信できること() {
+    public void Messageを受信できること() {
 
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
@@ -118,7 +119,6 @@ public class MessageReceivedTest extends ODataCommon {
                 expected.put("Title", "Title");
                 expected.put("Priority", 3);
                 expected.put("Status", "unread");
-                expected.put("RequestRelationTarget", null);
                 expected.put("InReplyTo", null);
                 expected.put("MulticastTo", null);
                 expected.put("From", UrlUtils.getBaseUrl() + "/testcell2/");
@@ -143,7 +143,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void idなしのMessageを受信できないこと() {
+    public void idなしのMessageを受信できないこと() {
 
         JSONObject body = new JSONObject();
         body.put("From", UrlUtils.cellRoot(Setup.TEST_CELL2));
@@ -181,7 +181,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void マスタートークンでMessage受信が４０３になること() {
+    public void マスタートークンでMessage受信が４０３になること() {
 
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
@@ -219,7 +219,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void Authorizationヘッダ無しでMessage受信が４０１になること() {
+    public void Authorizationヘッダ無しでMessage受信が４０１になること() {
 
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
@@ -254,7 +254,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void Authorizationヘッダに不正文字でMessage受信が４０１になること() {
+    public void Authorizationヘッダに不正文字でMessage受信が４０１になること() {
 
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
@@ -291,7 +291,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void SubjectがAccountのトークンでMessage受信が４０３になること() {
+    public void SubjectがAccountのトークンでMessage受信が４０３になること() {
 
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
@@ -335,7 +335,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void メッセージタイプがmessageでStatusがnoneを指定して４００が返却されること() {
+    public void メッセージタイプがmessageでStatusがnoneを指定して４００が返却されること() {
 
         JSONObject body = new JSONObject();
         body.put("__id", "12345678901234567890123456789012");
@@ -374,8 +374,9 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_received_message_of_type_relation() {
-        String messageType = TYPE_REQ_RELATION_BUILD;
+    public void normal_received_message_of_type_relation() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_RELATION_ADD;
         String targetCellName = Setup.TEST_CELL1;
         String targetRelationName = "testRelation001";
         String srcCellName = Setup.TEST_CELL2;
@@ -391,8 +392,14 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", "none");
-        body.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.relationClassUrl(appCellName, targetRelationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -411,6 +418,18 @@ public class MessageReceivedTest extends ODataCommon {
             // ---------------
             // Verification
             // ---------------
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.relationClassUrl(appCellName, targetRelationName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             Map<String, Object> expected = new HashMap<String, Object>();
             expected.put("Body", "Body");
             expected.put("_Box.Name", null);
@@ -418,8 +437,7 @@ public class MessageReceivedTest extends ODataCommon {
             expected.put("Title", "Title");
             expected.put("Priority", 3);
             expected.put("Status", "none");
-            expected.put("RequestRelation", UrlUtils.relationClassUrl(appCellName, targetRelationName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
             expected.put("MulticastTo", null);
             expected.put("From", UrlUtils.getBaseUrl() + "/testcell2/");
@@ -443,8 +461,9 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void error_received_message_of_type_relation_requestRelation_invalid_format() {
-        String messageType = TYPE_REQ_RELATION_BUILD;
+    public void error_received_message_of_type_relation_requestRelation_invalid_format() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_RELATION_ADD;
         String targetCellName = Setup.TEST_CELL1;
         String targetRelationName = "testRelation001";
         String srcCellName = Setup.TEST_CELL2;
@@ -460,8 +479,14 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", "none");
-        body.put("RequestRelation", UrlUtils.relationUrl(appCellName, "box1", targetRelationName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.relationUrl(appCellName, "box1", targetRelationName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -482,7 +507,7 @@ public class MessageReceivedTest extends ODataCommon {
             // ---------------
             // Check response body
             PersoniumCoreException exception = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
-                    .params("RequestRelation");
+                    .params("RequestObjects.ClassUrl");
             String message = (String) ((JSONObject) response.bodyAsJson().get("message")).get("value");
             assertThat(message, is(exception.getMessage()));
         } finally {
@@ -498,8 +523,9 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_received_message_of_type_role() {
-        String messageType = TYPE_REQ_ROLE_GRANT;
+    public void normal_received_message_of_type_role() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_ROLE_ADD;
         String targetCellName = Setup.TEST_CELL1;
         String targetRoleName = "testRole001";
         String srcCellName = Setup.TEST_CELL2;
@@ -515,8 +541,14 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", "none");
-        body.put("RequestRelation", UrlUtils.roleClassUrl(appCellName, targetRoleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.roleClassUrl(appCellName, targetRoleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -535,6 +567,18 @@ public class MessageReceivedTest extends ODataCommon {
             // ---------------
             // Verification
             // ---------------
+            JSONObject expectedRequestObject = new JSONObject();
+            expectedRequestObject.put("RequestType", requestType);
+            expectedRequestObject.put("Name", null);
+            expectedRequestObject.put("ClassUrl", UrlUtils.roleClassUrl(appCellName, targetRoleName));
+            expectedRequestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+            expectedRequestObject.put("EventSubject", null);
+            expectedRequestObject.put("EventType", null);
+            expectedRequestObject.put("EventObject", null);
+            expectedRequestObject.put("EventInfo", null);
+            expectedRequestObject.put("Action", null);
+            JSONArray expectedRequestObjects = new JSONArray();
+            expectedRequestObjects.add(expectedRequestObject);
             Map<String, Object> expected = new HashMap<String, Object>();
             expected.put("Body", "Body");
             expected.put("_Box.Name", null);
@@ -542,8 +586,7 @@ public class MessageReceivedTest extends ODataCommon {
             expected.put("Title", "Title");
             expected.put("Priority", 3);
             expected.put("Status", "none");
-            expected.put("RequestRelation", UrlUtils.roleClassUrl(appCellName, targetRoleName));
-            expected.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+            expected.put("RequestObjects", expectedRequestObjects);
             expected.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
             expected.put("MulticastTo", null);
             expected.put("From", UrlUtils.getBaseUrl() + "/testcell2/");
@@ -567,8 +610,9 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void error_received_message_of_type_role_requestRelation_invalid_format() {
-        String messageType = TYPE_REQ_ROLE_GRANT;
+    public void error_received_message_of_type_role_requestRelation_invalid_format() {
+        String messageType = TYPE_REQUEST;
+        String requestType = REQUEST_TYPE_ROLE_ADD;
         String targetCellName = Setup.TEST_CELL1;
         String targetRoleName = "testRole001";
         String srcCellName = Setup.TEST_CELL2;
@@ -584,8 +628,14 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", "none");
-        body.put("RequestRelation", UrlUtils.roleUrl(appCellName, "box1", targetRoleName));
-        body.put("RequestRelationTarget", UrlUtils.cellRoot(srcCellName));
+
+        JSONObject requestObject = new JSONObject();
+        requestObject.put("RequestType", requestType);
+        requestObject.put("ClassUrl", UrlUtils.roleUrl(appCellName, "box1", targetRoleName));
+        requestObject.put("TargetUrl", UrlUtils.cellRoot(srcCellName));
+        JSONArray requestObjects = new JSONArray();
+        requestObjects.add(requestObject);
+        body.put("RequestObjects", requestObjects);
 
         TResponse response = null;
         try {
@@ -606,7 +656,7 @@ public class MessageReceivedTest extends ODataCommon {
             // ---------------
             // Check response body
             PersoniumCoreException exception = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
-                    .params("RequestRelation");
+                    .params("RequestObjects.ClassUrl");
             String message = (String) ((JSONObject) response.bodyAsJson().get("message")).get("value");
             assertThat(message, is(exception.getMessage()));
         } finally {
@@ -622,7 +672,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void normal_received_schema_message() {
+    public void normal_received_schema_message() {
         String messageType = TYPE_MESSAGE;
         String targetCellName = Setup.TEST_CELL1;
         String srcCellName = Setup.TEST_CELL2;
@@ -638,8 +688,6 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", "unread");
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -665,8 +713,6 @@ public class MessageReceivedTest extends ODataCommon {
             expected.put("Title", "Title");
             expected.put("Priority", 3);
             expected.put("Status", "unread");
-            expected.put("RequestRelation", null);
-            expected.put("RequestRelationTarget", null);
             expected.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
             expected.put("MulticastTo", null);
             expected.put("From", UrlUtils.getBaseUrl() + "/testcell2/");
@@ -690,7 +736,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void error_received_schema_message_box_not_exists() {
+    public void error_received_schema_message_box_not_exists() {
         String messageType = TYPE_MESSAGE;
         String targetCellName = Setup.TEST_CELL1;
         String srcCellName = Setup.TEST_CELL2;
@@ -706,8 +752,6 @@ public class MessageReceivedTest extends ODataCommon {
         body.put("InReplyTo", "d3330643f57a42fd854558fb0a96a96a");
         body.put("Priority", 3);
         body.put("Status", "none");
-        body.put("RequestRelation", null);
-        body.put("RequestRelationTarget", null);
 
         TResponse response = null;
         try {
@@ -743,7 +787,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 受信メッセージの一覧取得ができること() {
+    public void 受信メッセージの一覧取得ができること() {
 
         PersoniumRestAdapter rest1 = new PersoniumRestAdapter();
         PersoniumRestAdapter rest2 = new PersoniumRestAdapter();
@@ -812,7 +856,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 受信メッセージの一件取得ができること() {
+    public void 受信メッセージの一件取得ができること() {
 
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
         PersoniumResponse res = null;
@@ -859,7 +903,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 受信メッセージの削除ができること() {
+    public void 受信メッセージの削除ができること() {
 
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
         PersoniumResponse res = null;
@@ -906,7 +950,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 受信メッセージとアカウントがリンクできること() {
+    public void 受信メッセージとアカウントがリンクできること() {
         String locationHeader = null;
         String messageId = null;
         String accountName = "account1";
@@ -964,7 +1008,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 受信メッセージのlink作成時URLのNP名が_Accountの場合に400となること() {
+    public void 受信メッセージのlink作成時URLのNP名が_Accountの場合に400となること() {
         String locationHeader = null;
         String messageId = null;
         String accountName = "account1";
@@ -1001,7 +1045,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void アカウントと受信メッセージがリンクできること() {
+    public void アカウントと受信メッセージがリンクできること() {
         String locationHeader = null;
         String messageId = null;
         String accountName = "account1";
@@ -1059,7 +1103,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @Test
     @SuppressWarnings("unchecked")
-    public final void ReadMessageに対するアクセス権があるアカウントで受信メッセージとアカウントのリンクが作成できる() {
+    public void ReadMessageに対するアクセス権があるアカウントで受信メッセージとアカウントのリンクが作成できる() {
         TResponse response1 = null;
         String messageSentCell = Setup.TEST_CELL2;
         String messageReceivedCell = Setup.TEST_CELL1;
@@ -1151,7 +1195,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @Test
     @SuppressWarnings("unchecked")
-    public final void 権限ALLのアカウントで受信メッセージとアカウントのリンクが作成できる() {
+    public void 権限ALLのアカウントで受信メッセージとアカウントのリンクが作成できる() {
         TResponse response1 = null;
         String messageSentCell = Setup.TEST_CELL2;
         String messageReceivedCell = Setup.TEST_CELL1;
@@ -1243,7 +1287,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @Test
     @SuppressWarnings("unchecked")
-    public final void ReadMessageに対するアクセス権がないアカウントで受信メッセージとアカウントのリンク作成がエラー403になる() {
+    public void ReadMessageに対するアクセス権がないアカウントで受信メッセージとアカウントのリンク作成がエラー403になる() {
         TResponse response1 = null;
         String messageSentCell = Setup.TEST_CELL2;
         String messageReceivedCell = Setup.TEST_CELL1;
@@ -1310,7 +1354,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @Test
     @SuppressWarnings("unchecked")
-    public final void ReadMessageに対するアクセス権があるアカウントでアカウントと受信メッセージのリンクが作成できる() {
+    public void ReadMessageに対するアクセス権があるアカウントでアカウントと受信メッセージのリンクが作成できる() {
         TResponse response1 = null;
         String messageSentCell = Setup.TEST_CELL2;
         String messageReceivedCell = Setup.TEST_CELL1;
@@ -1403,7 +1447,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @Test
     @SuppressWarnings("unchecked")
-    public final void 権限ALLのアカウントでアカウントと受信メッセージのリンクが作成できる() {
+    public void 権限ALLのアカウントでアカウントと受信メッセージのリンクが作成できる() {
         TResponse response1 = null;
         String messageSentCell = Setup.TEST_CELL2;
         String messageReceivedCell = Setup.TEST_CELL1;
@@ -1496,7 +1540,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @Test
     @SuppressWarnings("unchecked")
-    public final void ReadMessageに対するアクセス権がないアカウントでアカウントと受信メッセージのリンク作成がエラー403になる() {
+    public void ReadMessageに対するアクセス権がないアカウントでアカウントと受信メッセージのリンク作成がエラー403になる() {
         TResponse response1 = null;
         String messageSentCell = Setup.TEST_CELL2;
         String messageReceivedCell = Setup.TEST_CELL1;
@@ -1564,7 +1608,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void NavigationProperty経由で受信メッセージとアカウント情報が取得できること() {
+    public void NavigationProperty経由で受信メッセージとアカウント情報が取得できること() {
         String locationHeader = null;
         String messageId = null;
         String accountName = "account1";
@@ -1632,7 +1676,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void 受信メッセージとアカウント情報の一覧取得で$expandを使用してデータが取得できること() {
+    public void 受信メッセージとアカウント情報の一覧取得で$expandを使用してデータが取得できること() {
         String locationHeader = null;
         String messageId = null;
         String accountName = "account1";
@@ -1710,7 +1754,7 @@ public class MessageReceivedTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void Boxに紐づいた受信Messageを作成できること() {
+    public void Boxに紐づいた受信Messageを作成できること() {
 
         String id = "12345678901234567890123456789012";
         JSONObject body = new JSONObject();

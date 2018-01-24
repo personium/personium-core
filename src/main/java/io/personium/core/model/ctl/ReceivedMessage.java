@@ -68,29 +68,6 @@ public class ReceivedMessage extends Message {
     public static final EdmProperty.Builder P_STATUS = EdmProperty.newBuilder("Status")
             .setType(EdmSimpleType.STRING)
             .setNullable(false);
-
-//    /**
-//     * RequestRule/Name property.
-//     */
-//    public static final EdmProperty.Builder P_REQUESTRULE_NAME = EdmProperty.newBuilder("Name")
-//            .setType(EdmSimpleType.STRING)
-//            .setNullable(false)
-//            .setAnnotations(Common.P_FORMAT_ID);
-//    /**
-//     * RequestRule ComplexType Builder.
-//     */
-//    static final EdmComplexType.Builder REQUESTRULE_BUILDER = EdmComplexType.newBuilder()
-//            .setNamespace(Common.EDM_NS_CELL_CTL)
-//            .setName("Received_Message_RequestRule")
-//            .addProperties(Enumerable.create(P_REQUESTRULE_NAME, Rule.P_SUBJECT, Rule.P_TYPE,
-//                    Rule.P_OBJECT, Rule.P_INFO, Rule.P_ACTION, Rule.P_SERVICE).toList());
-//    /**
-//     * RequestRule property.
-//     */
-//    public static final EdmProperty.Builder P_REQUEST_RULE = EdmProperty.newBuilder("RequestRule")
-//            .setType(REQUESTRULE_BUILDER.build())
-//            .setNullable(true);
-
     /**
      * EntityType Builder.
      */
