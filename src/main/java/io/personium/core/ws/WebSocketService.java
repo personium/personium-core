@@ -1,4 +1,3 @@
-
 /**
  * personium.io
  * Copyright 2018 FUJITSU LIMITED
@@ -154,13 +153,12 @@ public class WebSocketService {
             String receivedAccessToken = (String) json.get("access_token");
             if (receivedAccessToken != null && checkPrivilege(receivedAccessToken, cellId)) {
                 log.debug("ws: set access_token");
-                accessToken = receivedAccessToken;
                 userProperties.put(ACCESS_TOKEN, receivedAccessToken);
             }
 
             // subscribe type is used for filtering of events
             JSONObject subscribeInfo = (JSONObject) json.get("subscribe");
-            if (subscribeInfo != null && checkPrivilege(accessToken, cellId)) {
+            if (subscribeInfo != null && accessToken != null) {
                 log.debug("ws: set subscribe: " + subscribeInfo);
 
                 // want to register multi rules using Array ...
@@ -179,7 +177,7 @@ public class WebSocketService {
 
             // delete subscribe rule in ruleList
             JSONObject unsubscribeInfo = (JSONObject) json.get("unsubscribe");
-            if (unsubscribeInfo != null && checkPrivilege(accessToken, cellId)) {
+            if (unsubscribeInfo != null && accessToken != null) {
                 log.debug("ws: unsubscribe: " + unsubscribeInfo);
 
                 String eventType = (String) unsubscribeInfo.get("Type");

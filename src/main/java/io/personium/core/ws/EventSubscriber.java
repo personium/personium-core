@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.core.rule;
+package io.personium.core.ws;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -24,7 +24,6 @@ import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 
-import io.personium.core.ws.WebSocketService;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import org.slf4j.Logger;
