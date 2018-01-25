@@ -36,7 +36,7 @@ import io.personium.core.event.EventPublisher;
 /**
  * Runnable class for receiving broadcasted event.
  */
-class EventSubscriber implements Runnable {
+public class EventSubscriber implements Runnable {
     static Logger log = LoggerFactory.getLogger(EventSubscriber.class);
 
     @Override
