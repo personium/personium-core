@@ -17,6 +17,7 @@
 
 package io.personium.core.ws;
 
+import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
@@ -42,6 +43,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Date;
 
 /**
  * WebSocket Endpoint.
@@ -63,6 +67,7 @@ public class WebSocketService {
     private static final String CELL_ID = "cellId";
     private static final String ACCESS_TOKEN = "access_token";
     private static final String RULES = "rules";
+    private static final String EXPIRE_TIME = "expire_time";
 
     // session and cell id map for send event
     private static Map<String, List<Session>> cellSessionMap = new HashMap<>(); // CellId: Session[]
@@ -92,12 +97,14 @@ public class WebSocketService {
                 if (!sessionList.contains(session)) {
                     sessionList.add(session);
                 }
-                cellSessionMap.put(cellId, sessionList);
-
                 Map<String, Object> userProperties = session.getUserProperties();
                 userProperties.put(CELL_ID, cellId);
-                userProperties.put(ACCESS_TOKEN, "");
                 userProperties.put(RULES, new ArrayList<RuleInfo>());
+                Calendar expireDate = new GregorianCalendar();
+                expireDate.add(Calendar.HOUR, UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR);
+                userProperties.put(EXPIRE_TIME, expireDate);
+
+                cellSessionMap.put(cellId, sessionList);
             } else {
                 log.warn("Connect cell name is not exist. : " + cellName);
             }
@@ -141,9 +148,7 @@ public class WebSocketService {
         Map<String, Object> userProperties = session.getUserProperties();
         String cellId = (String) userProperties.get(CELL_ID);
         String accessToken = (String) userProperties.get(ACCESS_TOKEN);
-
         log.debug("ws: onMessage[" + cellId + "]" + "[" + session.getId() + "] " + text);
-
 
         JSONParser parser = new JSONParser();
         try {
@@ -151,9 +156,18 @@ public class WebSocketService {
 
             // token must be sent by client before communication
             String receivedAccessToken = (String) json.get("access_token");
-            if (receivedAccessToken != null && checkPrivilege(receivedAccessToken, cellId)) {
-                log.debug("ws: set access_token");
-                userProperties.put(ACCESS_TOKEN, receivedAccessToken);
+            if (receivedAccessToken != null) {
+                if (checkPrivilege(receivedAccessToken, cellId)) {
+                    log.debug("ws: set access_token");
+                    userProperties.put(ACCESS_TOKEN, receivedAccessToken);
+                } else {
+                    log.debug("ws: invalid access_token");
+                    synchronized (lockObj) {
+                        List<Session> sessionList = cellSessionMap.get(cellId);
+                        sessionList.remove(session);
+                        session.close();
+                    }
+                }
             }
 
             // subscribe type is used for filtering of events
@@ -220,7 +234,9 @@ public class WebSocketService {
      * @param message sent text
      */
     private static void sendText(Session session, String message) {
-        session.getAsyncRemote().sendText(message);
+        if (session.isOpen()) {
+            session.getAsyncRemote().sendText(message);
+        }
     }
 
     /**
@@ -238,15 +254,43 @@ public class WebSocketService {
 
         synchronized (lockObj) { // TODO better?
             // send event data to all connecting session
-            List<Session> sessionList = cellSessionMap.get(cellId);
-            if (sessionList != null) {
-                for (Session session : sessionList) {
-                    if (isExistMatchedRule(session, event)) {
+            try {
+                List<Session> sessionList = cellSessionMap.get(cellId);
+                List<Session> expiredSessionList = new ArrayList<>();
+                if (sessionList != null) {
+                    for (Session session : sessionList) {
+                        if (!session.isOpen()) {
+                            expiredSessionList.add(session);
+                            continue;
+                        }
+                        Map<String, Object> userProperties = session.getUserProperties();
+                        String accessToken = (String) userProperties.get(ACCESS_TOKEN);
+                        if (accessToken == null) {
+                            continue;
+                        }
+                        Calendar expireDateCalendar = (Calendar) userProperties.get(EXPIRE_TIME);
+                        Date expireDate = expireDateCalendar.getTime();
+                        Date now = new Date();
+                        if (now.compareTo(expireDate) >= 0) {
+                            log.debug("ws: session expired.");
+                            expiredSessionList.add(session);
+                            continue;
+                        }
+                        if (!isExistMatchedRule(session, event)) {
+                            continue;
+                        }
                         String sendMessage = toJSON(event).toJSONString();
                         sendText(session, sendMessage);
                         log.debug("ws: sent!: [" + cellId + "][" + session.getId() + "] " + sendMessage);
                     }
+                    for (Session disconSession : expiredSessionList) {
+                        log.debug("ws: session close : ", disconSession.getId());
+                        sessionList.remove(disconSession);
+                        disconSession.close();
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -283,10 +327,10 @@ public class WebSocketService {
             for (RuleInfo rule : ruleList) {
                 if (rule.type != null
                         && event.getType() != null
-                        && (rule.type.equals(event.getType()) || rule.type.equals("*"))
+                        && (event.getType().startsWith(rule.type) || rule.type.equals("*"))
                         && rule.object != null
                         && event.getObject() != null
-                        && (rule.object.equals(event.getObject()) || rule.object.equals("*"))) {
+                        && (event.getObject().startsWith(rule.object) || rule.object.equals("*"))) {
                     result = true;
                 }
             }
