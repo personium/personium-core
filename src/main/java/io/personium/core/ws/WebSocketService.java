@@ -32,20 +32,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.websocket.OnOpen;
-import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnError;
+import javax.websocket.OnClose;
 import javax.websocket.Session;
+import javax.websocket.PongMessage;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 /**
  * WebSocket Endpoint.
@@ -68,6 +74,11 @@ public class WebSocketService {
     private static final String ACCESS_TOKEN = "access_token";
     private static final String RULES = "rules";
     private static final String EXPIRE_TIME = "expire_time";
+    private static final String HEART_BEAT = "heart_beat";
+    private static final int HEART_BEAT_TIME = 60000;
+    private static final byte[] PING_DATA = new byte[]{1, 2, 3};
+    private static final String PING_COUNT = "ping_count";
+    private static final int PING_MAX = 10;
 
     // session and cell id map for send event
     private static Map<String, List<Session>> cellSessionMap = new HashMap<>(); // CellId: Session[]
@@ -103,6 +114,7 @@ public class WebSocketService {
                 Calendar expireDate = new GregorianCalendar();
                 expireDate.add(Calendar.HOUR, UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR);
                 userProperties.put(EXPIRE_TIME, expireDate);
+                userProperties.put(PING_COUNT, 0);
 
                 cellSessionMap.put(cellId, sessionList);
             } else {
@@ -118,18 +130,26 @@ public class WebSocketService {
      */
     @OnClose
     public void onClose(Session session) {
+        log.debug("ws: onClose: " + session.getId());
         synchronized (lockObj) {
             Map<String, Object> userProperties = session.getUserProperties();
             String cellId = (String) userProperties.get(CELL_ID);
 
-            log.debug("ws: onClose[" + cellId + "]: " + session.getId());
+            if (cellId != null) {
 
-            userProperties.remove(CELL_ID);
-            userProperties.remove(ACCESS_TOKEN);
-            userProperties.remove(RULES);
+                Timer heartBeatInterval = (Timer) userProperties.get(HEART_BEAT);
+                if (heartBeatInterval != null) {
+                    heartBeatInterval.cancel();
+                }
 
-            List<Session> sessionList = cellSessionMap.get(cellId);
-            sessionList.remove(session);
+                userProperties.remove(CELL_ID);
+                userProperties.remove(ACCESS_TOKEN);
+                userProperties.remove(RULES);
+                userProperties.remove(HEART_BEAT);
+
+                List<Session> sessionList = cellSessionMap.get(cellId);
+                sessionList.remove(session);
+            }
         }
 
     }
@@ -160,13 +180,32 @@ public class WebSocketService {
                 if (checkPrivilege(receivedAccessToken, cellId)) {
                     log.debug("ws: set access_token");
                     userProperties.put(ACCESS_TOKEN, receivedAccessToken);
+
+                    Timer heartBeatInterval = new Timer();
+                    heartBeatInterval.scheduleAtFixedRate(new TimerTask() {
+                        @Override
+                        public void run() {
+                            try {
+                                synchronized (lockObj) {
+                                    int sendPingCount = (int) userProperties.get(PING_COUNT);
+                                    if (sendPingCount > PING_MAX) {
+                                        closeSession(session);
+                                    } else {
+                                        sendPingCount++;
+                                        userProperties.put(PING_COUNT, sendPingCount);
+                                        session.getBasicRemote().sendPing(ByteBuffer.wrap(PING_DATA));
+                                    }
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    },  0, HEART_BEAT_TIME);
+                    userProperties.put(HEART_BEAT, heartBeatInterval);
+
                 } else {
                     log.debug("ws: invalid access_token");
-                    synchronized (lockObj) {
-                        List<Session> sessionList = cellSessionMap.get(cellId);
-                        sessionList.remove(session);
-                        session.close();
-                    }
+                    closeSession(session);
                 }
             }
 
@@ -219,14 +258,69 @@ public class WebSocketService {
     }
 
     /**
+     * On returning pong message.
+     * @param pongMessage pong
+     * @param session session
+     */
+    @OnMessage
+    public void onMessage(PongMessage pongMessage, Session session) {
+        synchronized (lockObj) {
+            int sendPingCount = (int) session.getUserProperties().get(PING_COUNT);
+            // log.debug("ws: receive pong message: " + session.getId() + ":" + sendPingCount);
+            sendPingCount--;
+            session.getUserProperties().put(PING_COUNT, sendPingCount);
+        }
+    }
+
+    /**
      * Error occurred.
+     * @param session session info
      * @param e Throwable Error Information
      */
     @OnError
-    public void onError(Throwable e) {
+    public void onError(Session session, Throwable e) {
         log.error("ws: onError: " + e.getMessage());
         // e.printStackTrace();
+        closeSession(session);
     }
+
+    /**
+     * Session close.
+     * @param session disconnected session
+     */
+    private static void closeSession(Session session) {
+        synchronized (lockObj) {
+            Map<String, Object> userProperties = session.getUserProperties();
+            String cellId = (String) userProperties.get(CELL_ID);
+
+            log.debug("ws: closeSession: " + cellId);
+
+            if (cellId != null) {
+                Timer heartBeatInterval = (Timer) userProperties.get(HEART_BEAT);
+                heartBeatInterval.cancel();
+
+                userProperties.remove(CELL_ID);
+                userProperties.remove(ACCESS_TOKEN);
+                userProperties.remove(RULES);
+                userProperties.remove(HEART_BEAT);
+                userProperties.remove(PING_COUNT);
+
+                List<Session> sessionList = cellSessionMap.get(cellId);
+                sessionList.remove(session);
+
+                if (sessionList.size() == 0) {
+                    cellSessionMap.remove(cellId);
+                }
+
+                try {
+                    session.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
     /**
      * send text message to client with session.
@@ -235,7 +329,13 @@ public class WebSocketService {
      */
     private static void sendText(Session session, String message) {
         if (session.isOpen()) {
-            session.getAsyncRemote().sendText(message);
+            try {
+                if (session.isOpen()) {
+                    session.getBasicRemote().sendText(message);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -285,8 +385,7 @@ public class WebSocketService {
                     }
                     for (Session disconSession : expiredSessionList) {
                         log.debug("ws: session close : ", disconSession.getId());
-                        sessionList.remove(disconSession);
-                        disconSession.close();
+                        closeSession(disconSession);
                     }
                 }
             } catch (Exception e) {
