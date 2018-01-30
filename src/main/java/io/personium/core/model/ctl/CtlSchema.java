@@ -71,7 +71,7 @@ public final class CtlSchema {
     }
 
     /** Pattern id. */
-    private static final String PATTERN_ID = "^.{0,400}$";
+    private static final String PATTERN_ID = "^.{1,400}$";
     /** AnnotationFormat id. */
     private static final List<EdmAnnotation<?>> P_FORMAT_ID = createFormatId();
     /** __id property. */

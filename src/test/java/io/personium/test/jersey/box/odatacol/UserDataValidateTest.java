@@ -36,11 +36,11 @@ import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.EntityTypeUtils;
@@ -82,7 +82,6 @@ public class UserDataValidateTest extends ODataCommon {
             TResponse res = createUserData(body);
             locationHeader = res.getLocationHeader();
             res.statusCode(HttpStatus.SC_BAD_REQUEST);
-
         } finally {
             if (locationHeader != null) {
                 deleteOdataResource(locationHeader);
@@ -91,11 +90,11 @@ public class UserDataValidateTest extends ODataCommon {
     }
 
     /**
-     * UserDataの新規作成時IDにアンダーバー始まりの文字列を指定した場合400になること.
+     * UserDataの新規作成時IDにアンダーバー始まりの文字列を指定した場合201になること.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時IDにアンダーバー始まりの文字列を指定した場合400になること() {
+    public final void UserDataの新規作成時IDにアンダーバー始まりの文字列を指定した場合201になること() {
         String userDataId = "_userdata001";
 
         JSONObject body = new JSONObject();
@@ -107,8 +106,7 @@ public class UserDataValidateTest extends ODataCommon {
         try {
             TResponse res = createUserData(body);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
-
+            res.statusCode(HttpStatus.SC_CREATED);
         } finally {
             if (locationHeader != null) {
                 deleteOdataResource(locationHeader);
@@ -117,11 +115,11 @@ public class UserDataValidateTest extends ODataCommon {
     }
 
     /**
-     * UserDataの新規作成時IDにハイフン始まりの文字列を指定した場合400になること.
+     * UserDataの新規作成時IDにハイフン始まりの文字列を指定した場合201になること.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時IDにハイフン始まりの文字列を指定した場合400になること() {
+    public final void UserDataの新規作成時IDにハイフン始まりの文字列を指定した場合201になること() {
         String userDataId = "-userdata001";
 
         JSONObject body = new JSONObject();
@@ -133,8 +131,7 @@ public class UserDataValidateTest extends ODataCommon {
         try {
             TResponse res = createUserData(body);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
-
+            res.statusCode(HttpStatus.SC_CREATED);
         } finally {
             if (locationHeader != null) {
                 deleteOdataResource(locationHeader);
@@ -143,11 +140,11 @@ public class UserDataValidateTest extends ODataCommon {
     }
 
     /**
-     * UserDataの新規作成時IDにスラッシュを含むの文字列を指定した場合400になること.
+     * UserDataの新規作成時IDにスラッシュを含むの文字列を指定した場合201になること.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時IDにスラッシュを含む文字列を指定した場合400になること() {
+    public final void UserDataの新規作成時IDにスラッシュを含む文字列を指定した場合201になること() {
         String userDataId = "user/data001";
 
         JSONObject body = new JSONObject();
@@ -159,8 +156,7 @@ public class UserDataValidateTest extends ODataCommon {
         try {
             TResponse res = createUserData(body);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
-
+            res.statusCode(HttpStatus.SC_CREATED);
         } finally {
             if (locationHeader != null) {
                 deleteOdataResource(locationHeader);
