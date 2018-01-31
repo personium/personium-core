@@ -331,6 +331,11 @@ public class CellEsImpl implements Cell {
             ret.setJson(cache);
             ret.id = (String) cache.get("_id");
         }
+
+        if(ret.url == null) {
+            ret.url = PersoniumUnitConfig.getBaseUrl() + ret.name + "/";
+        }
+
         return ret;
     }
 
