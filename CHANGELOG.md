@@ -1,9 +1,26 @@
-## 1.6.0
+## 1.6.1
+BUG FIXES:
+* Modify API execution privilege of NullResource.([#95](https://github.com/personium/personium-core/issues/95))
+
 IMPROVEMENTS:
-* Update httpclient lib version.([#41](https://github.com/personium/personium-core/issues/41))
-* Event-driven service execution.([#89](https://github.com/personium/personium-core/issues/89))
-* Make "unitUser.issuers" correspond to personium-localunit.([#99](https://github.com/personium/personium-core/issues/99))
-* Change RequestRelation specification of message api.([#103](https://github.com/personium/personium-core/issues/103))
+* Enable to receive events with WebSocket.([#116](https://github.com/personium/personium-core/issues/116))
+
+## 1.6.0
+NEW FEATURES:
+* Event Processing Functions
+  * New Cell control objects "Rule" is introduced for managing event processing rules.
+  see ([#89](https://github.com/personium/personium-core/issues/89))    
+
+BREAKING CHANGES:
+* Interfaces of Messaging and external event acceptance API's are changed: 
+  * RequestRelation is now replaced with RequestObjects.
+  see ([#103](https://github.com/personium/personium-core/issues/103))
+  * External event JSON structure has changed.
+  * External events are no longer logged by default without any Rules settings.
+
+IMPROVEMENTS:
+* httpclient lib version updated. ([#41](https://github.com/personium/personium-core/issues/41))
+* "unitUser.issuers" item in the unit config file now supports URL's with personium-localunit scheme. ([#99](https://github.com/personium/personium-core/issues/99))
 
 ## 1.5.8
 IMPROVEMENTS:
