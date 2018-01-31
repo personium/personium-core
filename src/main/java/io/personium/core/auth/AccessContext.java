@@ -820,14 +820,15 @@ public class AccessContext {
     }
 
     /**
-     * return an access context for WebSocket connection
+     * return an access context for WebSocket connection.
      * @param accessToken Authorization-token
      * @param cell Accessing cell
      * @param baseUri Accessing baseUri
      * @param host Accessing host
      * @return Created AccessContext Object
      */
-    public static AccessContext createForWebSocket(final String accessToken, final Cell cell, final String baseUri, final String host) {
+    public static AccessContext createForWebSocket(
+            final String accessToken, final Cell cell, final String baseUri, final String host) {
         String bearerAccessToken = OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + accessToken;
         return createBearerAuthz(bearerAccessToken, cell, baseUri, host, null);
     }
