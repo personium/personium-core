@@ -155,27 +155,7 @@ public class WebSocketService {
     @OnClose
     public void onClose(Session session) {
         log.debug("ws: onClose: " + session.getId());
-        synchronized (lockObj) {
-            Map<String, Object> userProperties = session.getUserProperties();
-            String cellId = (String) userProperties.get(CELL_ID);
-
-            if (cellId != null) {
-
-                Timer heartBeatInterval = (Timer) userProperties.get(HEART_BEAT);
-                if (heartBeatInterval != null) {
-                    heartBeatInterval.cancel();
-                }
-
-                userProperties.remove(CELL_ID);
-                userProperties.remove(ACCESS_TOKEN);
-                userProperties.remove(RULES);
-                userProperties.remove(HEART_BEAT);
-
-                List<Session> sessionList = cellSessionMap.get(cellId);
-                sessionList.remove(session);
-            }
-        }
-
+        removeSessionInfo(session);
     }
 
     /**
@@ -290,29 +270,10 @@ public class WebSocketService {
      * @param session disconnected session
      */
     private static void closeSession(Session session) {
-        synchronized (lockObj) {
-            Map<String, Object> userProperties = session.getUserProperties();
-            String cellId = (String) userProperties.get(CELL_ID);
-
-            log.debug("ws: closeSession: " + cellId);
-
-            if (cellId != null) {
-                Timer heartBeatInterval = (Timer) userProperties.get(HEART_BEAT);
-                heartBeatInterval.cancel();
-
-                userProperties.remove(CELL_ID);
-                userProperties.remove(ACCESS_TOKEN);
-                userProperties.remove(RULES);
-                userProperties.remove(HEART_BEAT);
-                userProperties.remove(PING_COUNT);
-
-                List<Session> sessionList = cellSessionMap.get(cellId);
-                sessionList.remove(session);
-
-                if (sessionList.size() == 0) {
-                    cellSessionMap.remove(cellId);
-                }
-
+        if (session != null && session.isOpen()) {
+            synchronized (lockObj) {
+                log.debug("ws: closeSession: " + session.getId());
+                removeSessionInfo(session);
                 try {
                     session.close();
                 } catch (Exception e) {
@@ -322,6 +283,40 @@ public class WebSocketService {
         }
     }
 
+    /**
+     * Remove session info.
+     * @param session disconnected session
+     */
+    private static void removeSessionInfo(Session session) {
+        synchronized (lockObj) {
+            Map<String, Object> userProperties = session.getUserProperties();
+            String cellId = (String) userProperties.get(CELL_ID);
+
+            log.debug("ws: removeSessionInfo: " + cellId);
+
+            if (cellId != null) {
+                Timer heartBeatInterval = (Timer) userProperties.get(HEART_BEAT);
+                if (heartBeatInterval != null) {
+                    heartBeatInterval.cancel();
+                }
+
+                userProperties.remove(CELL_ID);
+                userProperties.remove(ACCESS_TOKEN);
+                userProperties.remove(RULES);
+                userProperties.remove(HEART_BEAT);
+                userProperties.remove(EXPIRE_TIME);
+                userProperties.remove(PING_COUNT);
+
+                List<Session> sessionList = cellSessionMap.get(cellId);
+                sessionList.remove(session);
+
+                if (sessionList.size() == 0) {
+                    cellSessionMap.remove(cellId);
+                }
+
+            }
+        }
+    }
 
     /**
      * send text message to client with session.
