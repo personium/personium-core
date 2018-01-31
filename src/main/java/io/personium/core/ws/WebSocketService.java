@@ -75,10 +75,10 @@ public class WebSocketService {
     private static final String RULES = "rules";
     private static final String EXPIRE_TIME = "expire_time";
     private static final String HEART_BEAT = "heart_beat";
-    private static final int HEART_BEAT_TIME = 60000;
-    private static final byte[] PING_DATA = new byte[]{1, 2, 3};
     private static final String PING_COUNT = "ping_count";
+    private static final byte[] PING_DATA = new byte[]{1, 2, 3};
     private static final int PING_MAX = 10;
+    private static final int HEART_BEAT_TIME = 60000;
 
     // session and cell id map for send event
     private static Map<String, List<Session>> cellSessionMap = new HashMap<>(); // CellId: Session[]
@@ -95,6 +95,7 @@ public class WebSocketService {
     @OnOpen
     public void onOpen(@PathParam("cell") String cellName, Session session) {
         log.debug("ws: onOpen[" + cellName + "]: " + session.getId());
+        Map<String, Object> userProperties = session.getUserProperties();
 
         synchronized (lockObj) {
             Cell cell = ModelFactory.cell(cellName);
@@ -108,7 +109,6 @@ public class WebSocketService {
                 if (!sessionList.contains(session)) {
                     sessionList.add(session);
                 }
-                Map<String, Object> userProperties = session.getUserProperties();
                 userProperties.put(CELL_ID, cellId);
                 userProperties.put(RULES, new ArrayList<RuleInfo>());
                 Calendar expireDate = new GregorianCalendar();
@@ -120,6 +120,30 @@ public class WebSocketService {
             } else {
                 log.warn("Connect cell name is not exist. : " + cellName);
             }
+
+            // heartbeat (send ping).
+            Timer heartBeatInterval = new Timer();
+            heartBeatInterval.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        synchronized (lockObj) {
+                            int sendPingCount = (int) userProperties.get(PING_COUNT);
+                            // session closes if it is not received pong message PING_MAX times from the client.
+                            if (sendPingCount > PING_MAX) {
+                                closeSession(session);
+                            } else {
+                                sendPingCount++;
+                                userProperties.put(PING_COUNT, sendPingCount);
+                                session.getBasicRemote().sendPing(ByteBuffer.wrap(PING_DATA));
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            },  0, HEART_BEAT_TIME);
+            userProperties.put(HEART_BEAT, heartBeatInterval);
         }
     }
 
@@ -131,27 +155,7 @@ public class WebSocketService {
     @OnClose
     public void onClose(Session session) {
         log.debug("ws: onClose: " + session.getId());
-        synchronized (lockObj) {
-            Map<String, Object> userProperties = session.getUserProperties();
-            String cellId = (String) userProperties.get(CELL_ID);
-
-            if (cellId != null) {
-
-                Timer heartBeatInterval = (Timer) userProperties.get(HEART_BEAT);
-                if (heartBeatInterval != null) {
-                    heartBeatInterval.cancel();
-                }
-
-                userProperties.remove(CELL_ID);
-                userProperties.remove(ACCESS_TOKEN);
-                userProperties.remove(RULES);
-                userProperties.remove(HEART_BEAT);
-
-                List<Session> sessionList = cellSessionMap.get(cellId);
-                sessionList.remove(session);
-            }
-        }
-
+        removeSessionInfo(session);
     }
 
     /**
@@ -180,29 +184,6 @@ public class WebSocketService {
                 if (checkPrivilege(receivedAccessToken, cellId)) {
                     log.debug("ws: set access_token");
                     userProperties.put(ACCESS_TOKEN, receivedAccessToken);
-
-                    Timer heartBeatInterval = new Timer();
-                    heartBeatInterval.scheduleAtFixedRate(new TimerTask() {
-                        @Override
-                        public void run() {
-                            try {
-                                synchronized (lockObj) {
-                                    int sendPingCount = (int) userProperties.get(PING_COUNT);
-                                    if (sendPingCount > PING_MAX) {
-                                        closeSession(session);
-                                    } else {
-                                        sendPingCount++;
-                                        userProperties.put(PING_COUNT, sendPingCount);
-                                        session.getBasicRemote().sendPing(ByteBuffer.wrap(PING_DATA));
-                                    }
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    },  0, HEART_BEAT_TIME);
-                    userProperties.put(HEART_BEAT, heartBeatInterval);
-
                 } else {
                     log.debug("ws: invalid access_token");
                     closeSession(session);
@@ -289,29 +270,10 @@ public class WebSocketService {
      * @param session disconnected session
      */
     private static void closeSession(Session session) {
-        synchronized (lockObj) {
-            Map<String, Object> userProperties = session.getUserProperties();
-            String cellId = (String) userProperties.get(CELL_ID);
-
-            log.debug("ws: closeSession: " + cellId);
-
-            if (cellId != null) {
-                Timer heartBeatInterval = (Timer) userProperties.get(HEART_BEAT);
-                heartBeatInterval.cancel();
-
-                userProperties.remove(CELL_ID);
-                userProperties.remove(ACCESS_TOKEN);
-                userProperties.remove(RULES);
-                userProperties.remove(HEART_BEAT);
-                userProperties.remove(PING_COUNT);
-
-                List<Session> sessionList = cellSessionMap.get(cellId);
-                sessionList.remove(session);
-
-                if (sessionList.size() == 0) {
-                    cellSessionMap.remove(cellId);
-                }
-
+        if (session != null && session.isOpen()) {
+            synchronized (lockObj) {
+                log.debug("ws: closeSession: " + session.getId());
+                removeSessionInfo(session);
                 try {
                     session.close();
                 } catch (Exception e) {
@@ -321,6 +283,40 @@ public class WebSocketService {
         }
     }
 
+    /**
+     * Remove session info.
+     * @param session disconnected session
+     */
+    private static void removeSessionInfo(Session session) {
+        synchronized (lockObj) {
+            Map<String, Object> userProperties = session.getUserProperties();
+            String cellId = (String) userProperties.get(CELL_ID);
+
+            log.debug("ws: removeSessionInfo: " + cellId);
+
+            if (cellId != null) {
+                Timer heartBeatInterval = (Timer) userProperties.get(HEART_BEAT);
+                if (heartBeatInterval != null) {
+                    heartBeatInterval.cancel();
+                }
+
+                userProperties.remove(CELL_ID);
+                userProperties.remove(ACCESS_TOKEN);
+                userProperties.remove(RULES);
+                userProperties.remove(HEART_BEAT);
+                userProperties.remove(EXPIRE_TIME);
+                userProperties.remove(PING_COUNT);
+
+                List<Session> sessionList = cellSessionMap.get(cellId);
+                sessionList.remove(session);
+
+                if (sessionList.size() == 0) {
+                    cellSessionMap.remove(cellId);
+                }
+
+            }
+        }
+    }
 
     /**
      * send text message to client with session.
