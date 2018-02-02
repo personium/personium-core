@@ -16,15 +16,9 @@
  */
 package io.personium.test.jersey.box.odatacol;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-
-import javax.ws.rs.core.MediaType;
-
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 import org.junit.Test;
@@ -37,14 +31,10 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
-import io.personium.test.jersey.PersoniumException;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.EntityTypeUtils;
-import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
 
@@ -69,7 +59,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時IDに空文字を指定した場合400になること() {
+    public void UserDataの新規作成時IDに空文字を指定した場合400になること() {
         String userDataId = "";
 
         JSONObject body = new JSONObject();
@@ -79,12 +69,11 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -94,7 +83,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時IDにアンダーバー始まりの文字列を指定した場合201になること() {
+    public void UserDataの新規作成時IDにアンダーバー始まりの文字列を指定した場合201になること() {
         String userDataId = "_userdata001";
 
         JSONObject body = new JSONObject();
@@ -104,12 +93,11 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -119,7 +107,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時IDにハイフン始まりの文字列を指定した場合201になること() {
+    public void UserDataの新規作成時IDにハイフン始まりの文字列を指定した場合201になること() {
         String userDataId = "-userdata001";
 
         JSONObject body = new JSONObject();
@@ -129,12 +117,11 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -144,7 +131,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時IDにスラッシュを含む文字列を指定した場合201になること() {
+    public void UserDataの新規作成時IDにスラッシュを含む文字列を指定した場合201になること() {
         String userDataId = "user/data001";
 
         JSONObject body = new JSONObject();
@@ -154,12 +141,11 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -169,7 +155,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時IDに有効桁長の最小値を指定した場合201になること() {
+    public void UserDataの新規作成時IDに有効桁長の最小値を指定した場合201になること() {
         String userDataId = "1";
 
         JSONObject body = new JSONObject();
@@ -179,13 +165,12 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -195,10 +180,13 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時IDに有効桁長の最大値を指定した場合201になること() {
+    public void UserDataの新規作成時IDに有効桁長の最大値を指定した場合201になること() {
         String userDataId = "123456789012345678901234567890123456789012345678901234567890"
                 + "1234567890123456789012345678901234567890123456789012345678901234567890"
-                + "123456789012345678901234567890123456789012345678901234567890123456789x";
+                + "1234567890123456789012345678901234567890123456789012345678901234567890"
+                + "1234567890123456789012345678901234567890123456789012345678901234567890"
+                + "1234567890123456789012345678901234567890123456789012345678901234567890"
+                + "123456789012345678901234567890123456789012345678901234567890";
 
         JSONObject body = new JSONObject();
         body.put("__id", userDataId);
@@ -207,13 +195,12 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -223,10 +210,13 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時IDに有効桁長の最大値をオーバーした文字列を指定した場合400になること() {
+    public void UserDataの新規作成時IDに有効桁長の最大値をオーバーした文字列を指定した場合400になること() {
         String userDataId = "123456789012345678901234567890123456789012345678901234567890"
                 + "1234567890123456789012345678901234567890123456789012345678901234567890"
-                + "1234567890123456789012345678901234567890123456789012345678901234567890x";
+                + "1234567890123456789012345678901234567890123456789012345678901234567890"
+                + "1234567890123456789012345678901234567890123456789012345678901234567890"
+                + "1234567890123456789012345678901234567890123456789012345678901234567890"
+                + "123456789012345678901234567890123456789012345678901234567890x";
 
         JSONObject body = new JSONObject();
         body.put("__id", userDataId);
@@ -235,23 +225,22 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
 
     /**
-     * UserDataの新規作成時IDに日本語を指定した場合400になること.
+     * UserDataの新規作成時IDに日本語を指定した場合201になること.
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時IDに日本語を指定した場合400になること() {
+    public void UserDataの新規作成時IDに日本語を指定した場合201になること() {
         String userDataId = "日本語";
 
         JSONObject body = new JSONObject();
@@ -261,13 +250,11 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            PersoniumResponse res = createUserDataWithDcClient(body);
-            locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
-            assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-
+            TResponse res = createUserData(body, HttpStatus.SC_CREATED);
+            locationHeader = res.getLocationHeader();
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -277,7 +264,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時keyに空文字を指定した場合400になること() {
+    public void UserDataの新規作成時keyに空文字を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -287,13 +274,12 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -303,7 +289,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時keyにアンダーバー始まりの文字列を指定した場合400になること() {
+    public void UserDataの新規作成時keyにアンダーバー始まりの文字列を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -313,13 +299,12 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -329,7 +314,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時keyにハイフン始まりの文字列を指定した場合400になること() {
+    public void UserDataの新規作成時keyにハイフン始まりの文字列を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -339,13 +324,12 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -355,7 +339,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時keyにスラッシュを含む文字列を指定した場合400になること() {
+    public void UserDataの新規作成時keyにスラッシュを含む文字列を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -365,13 +349,12 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -381,7 +364,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時keyに有効桁長の最小値を指定した場合201になること() {
+    public void UserDataの新規作成時keyに有効桁長の最小値を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -391,13 +374,12 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -407,7 +389,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時keyに有効桁長の最大値を指定した場合201になること() {
+    public void UserDataの新規作成時keyに有効桁長の最大値を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -418,13 +400,12 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -434,7 +415,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時keyに有効桁長の最大値をオーバーした文字列を指定した場合400になること() {
+    public void UserDataの新規作成時keyに有効桁長の最大値をオーバーした文字列を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -445,13 +426,12 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -461,7 +441,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時keyに日本語を指定した場合400になること() {
+    public void UserDataの新規作成時keyに日本語を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -471,13 +451,11 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            PersoniumResponse res = createUserDataWithDcClient(body);
-            locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
-            assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-
+            TResponse res = createUserData(body, HttpStatus.SC_BAD_REQUEST);
+            locationHeader = res.getLocationHeader();
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -487,7 +465,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに空文字を指定した場合201になること() {
+    public void UserDataの新規作成時valueに空文字を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -497,13 +475,11 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
-
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -513,7 +489,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに制御コードを含む文字列を指定した場合201になること() {
+    public void UserDataの新規作成時valueに制御コードを含む文字列を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -523,16 +499,15 @@ public class UserDataValidateTest extends ODataCommon {
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_CREATED);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
             String resBody = res.getBody();
             assertTrue(resBody.contains("\\u0003"));
             assertFalse(resBody.contains("\u0003"));
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -542,25 +517,19 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに有効桁長の最大値の文字列を指定した場合201になること() {
+    public void UserDataの新規作成時valueに有効桁長の最大値の文字列を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
         body.put("__id", userDataId);
-        String value = createString();
+        String value = UserDataUtils.createString(MAX_LEN_STRING_VALUE);
         body.put("dynamicProperty", value);
 
-        String locationHeader = null;
-
         try {
-            TResponse res = createUserData(body);
-            locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_CREATED);
-
+            TResponse res = createUserData(body, HttpStatus.SC_CREATED);
+            res.getLocationHeader();
         } finally {
-            if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
-            }
+            deleteUserData(userDataId, -1);
         }
 
         body = new JSONObject();
@@ -568,17 +537,11 @@ public class UserDataValidateTest extends ODataCommon {
         value = UserDataUtils.createString(MAX_LEN_STRING_VALUE - 3);
         body.put("dynamicProperty", value + "ｘ");
 
-        locationHeader = null;
-
         try {
-            PersoniumResponse res = createUserDataWithDcClient(body);
-            locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
-            assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
-
+            TResponse res = createUserData(body, HttpStatus.SC_CREATED);
+            res.getLocationHeader();
         } finally {
-            if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
-            }
+            deleteUserData(userDataId, -1);
         }
     }
 
@@ -587,24 +550,23 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに有効桁長の最大値をオーバーした文字列を指定した場合400になること() {
+    public void UserDataの新規作成時valueに有効桁長の最大値をオーバーした文字列を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
         body.put("__id", userDataId);
-        String maxLengthValue = createString();
+        String maxLengthValue = UserDataUtils.createString(MAX_LEN_STRING_VALUE);
         body.put("dynamicProperty", maxLengthValue + "x");
 
         String locationHeader = null;
 
         try {
-            TResponse res = createUserData(body);
+            TResponse res = createUserData(body, HttpStatus.SC_BAD_REQUEST);
             locationHeader = res.getLocationHeader();
-            res.statusCode(HttpStatus.SC_BAD_REQUEST);
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
 
@@ -615,13 +577,11 @@ public class UserDataValidateTest extends ODataCommon {
         locationHeader = null;
 
         try {
-            PersoniumResponse res = createUserDataWithDcClient(body);
-            locationHeader = res.getFirstHeader(HttpHeaders.LOCATION);
-            assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-
+            TResponse res = createUserData(body, HttpStatus.SC_BAD_REQUEST);
+            locationHeader = res.getLocationHeader();
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                deleteUserData(userDataId, -1);
             }
         }
     }
@@ -631,7 +591,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに整数型の有効値より小さい値を指定した場合400になること() {
+    public void UserDataの新規作成時valueに整数型の有効値より小さい値を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -656,7 +616,8 @@ public class UserDataValidateTest extends ODataCommon {
 
         } finally {
             if (locationHeader != null) {
-                deleteOdataResource(locationHeader);
+                UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                        cellName, boxName, colName, entityTypeName, userDataId);
             }
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "intProperty", entityTypeName));
@@ -671,7 +632,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに整数型の有効値の最小値を指定した場合201になること() {
+    public void UserDataの新規作成時valueに整数型の有効値の最小値を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -693,7 +654,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "intProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -707,7 +669,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに整数型の0を指定した場合201になること() {
+    public void UserDataの新規作成時valueに整数型の0を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -729,7 +691,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "intProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -744,7 +707,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに整数型の有効値の最大値を指定した場合201になること() {
+    public void UserDataの新規作成時valueに整数型の有効値の最大値を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -766,7 +729,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "intProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -780,7 +744,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに整数型の有効値より大きい値を指定した場合400になること() {
+    public void UserDataの新規作成時valueに整数型の有効値より大きい値を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -802,7 +766,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "intProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -816,7 +781,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに整数部分が有効桁数より大きい正の小数値を指定した場合400になること() {
+    public void UserDataの新規作成時valueに整数部分が有効桁数より大きい正の小数値を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -839,7 +804,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -853,7 +819,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに整数部分が最大桁数の正の小数値を指定した場合201になること() {
+    public void UserDataの新規作成時valueに整数部分が最大桁数の正の小数値を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -876,7 +842,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -890,7 +857,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに整数部分が最小桁数の正の小数値を指定した場合201になること() {
+    public void UserDataの新規作成時valueに整数部分が最小桁数の正の小数値を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -913,7 +880,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -927,7 +895,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに小数型で0を指定した場合201になること() {
+    public void UserDataの新規作成時valueに小数型で0を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -950,7 +918,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -964,7 +933,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに整数部分が有効桁数より大きい負の小数値を指定した場合400になること() {
+    public void UserDataの新規作成時valueに整数部分が有効桁数より大きい負の小数値を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -987,7 +956,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -1001,7 +971,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに整数部分が最大桁数の負の小数値を指定した場合201になること() {
+    public void UserDataの新規作成時valueに整数部分が最大桁数の負の小数値を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -1024,7 +994,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -1038,7 +1009,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに整数部分が最小桁数の負の小数値を指定した場合201になること() {
+    public void UserDataの新規作成時valueに整数部分が最小桁数の負の小数値を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -1061,7 +1032,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -1075,7 +1047,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに小数部分が有効桁数より大きい正の小数値を指定した場合400になること() {
+    public void UserDataの新規作成時valueに小数部分が有効桁数より大きい正の小数値を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -1098,7 +1070,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -1112,7 +1085,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに小数部分が最大桁数の正の小数値を指定した場合201になること() {
+    public void UserDataの新規作成時valueに小数部分が最大桁数の正の小数値を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -1135,7 +1108,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -1149,7 +1123,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに小数部分が最小桁数の正の小数値を指定した場合201になること() {
+    public void UserDataの新規作成時valueに小数部分が最小桁数の正の小数値を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -1172,7 +1146,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -1186,7 +1161,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに小数部分が有効桁数より大きい負の小数値を指定した場合400になること() {
+    public void UserDataの新規作成時valueに小数部分が有効桁数より大きい負の小数値を指定した場合400になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -1209,7 +1184,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -1223,7 +1199,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに小数部分が最大桁数の負の小数値を指定した場合201になること() {
+    public void UserDataの新規作成時valueに小数部分が最大桁数の負の小数値を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -1246,7 +1222,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -1260,7 +1237,7 @@ public class UserDataValidateTest extends ODataCommon {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void UserDataの新規作成時valueに小数部分が最小桁数の負の小数値を指定した場合201になること() {
+    public void UserDataの新規作成時valueに小数部分が最小桁数の負の小数値を指定した場合201になること() {
         String userDataId = "userdata001";
 
         JSONObject body = new JSONObject();
@@ -1283,7 +1260,8 @@ public class UserDataValidateTest extends ODataCommon {
                     body, cellName, boxName, colName, entityTypeName);
 
         } finally {
-            deleteOdataResource(UrlUtils.userdata(cellName, boxName, colName, entityTypeName, userDataId));
+            UserDataUtils.delete(AbstractCase.MASTER_TOKEN_NAME, -1,
+                    cellName, boxName, colName, entityTypeName, userDataId);
             ODataCommon.deleteOdataResource(UrlUtils
                     .property(cellName, boxName, colName, "singleProperty", entityTypeName));
             EntityTypeUtils.delete(colName, MASTER_TOKEN_NAME,
@@ -1293,50 +1271,25 @@ public class UserDataValidateTest extends ODataCommon {
     }
 
     /**
-     * ユーザーデータを作成する.
-     * @param body リクエストボディ
-     * @return レスポンス
+     * Create user data.
+     * @param body request body
+     * @param code expected response code
+     * @return TResponse
      */
-    private TResponse createUserData(JSONObject body) {
-        return Http.request("box/odatacol/create.txt")
-                .with("cell", Setup.TEST_CELL1)
-                .with("box", Setup.TEST_BOX1)
-                .with("collection", Setup.TEST_ODATA)
-                .with("entityType", "Category")
-                .with("accept", MediaType.APPLICATION_JSON)
-                .with("contentType", MediaType.APPLICATION_JSON)
-                .with("token", "Bearer " + PersoniumUnitConfig.getMasterToken())
-                .with("body", body.toJSONString())
-                .returns()
-                .debug();
+    private TResponse createUserData(JSONObject body, int code) {
+        return UserDataUtils.create(PersoniumUnitConfig.getMasterToken(), code, body, Setup.TEST_CELL1,
+                Setup.TEST_BOX1, Setup.TEST_ODATA, "Category");
     }
 
     /**
-     * ユーザーデータを作成する.
-     * @param body リクエストボディ
-     * @return レスポンス
+     * Delete user data.
+     * @param id user data id
+     * @param code expected response code
+     * @return TResponse
      */
-    private PersoniumResponse createUserDataWithDcClient(JSONObject body) {
-        PersoniumRestAdapter rest = new PersoniumRestAdapter();
-        PersoniumResponse res = null;
-
-        // リクエストヘッダをセット
-        HashMap<String, String> requestheaders = new HashMap<String, String>();
-        requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + PersoniumUnitConfig.getMasterToken());
-        requestheaders.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
-
-        try {
-            res = rest.post(UrlUtils.userData("testcell1", "box1", "setodata", "Category"), body.toJSONString(),
-                    requestheaders);
-        } catch (PersoniumException e) {
-            e.printStackTrace();
-        }
-
-        return res;
-    }
-
-    private String createString() {
-        return UserDataUtils.createString(MAX_LEN_STRING_VALUE);
+    private TResponse deleteUserData(String id, int code) {
+        return UserDataUtils.delete(PersoniumUnitConfig.getMasterToken(), code, Setup.TEST_CELL1, Setup.TEST_BOX1,
+                Setup.TEST_ODATA, "Category", id);
     }
 
 }
