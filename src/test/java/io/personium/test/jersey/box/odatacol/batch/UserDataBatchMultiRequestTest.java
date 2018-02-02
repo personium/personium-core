@@ -171,6 +171,8 @@ public class UserDataBatchMultiRequestTest extends AbstractUserDataBatchTest {
             UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
                     "Sales", "srcKey", HttpStatus.SC_OK);
         } finally {
+            deleteUserData(cellName, boxName, colName, "SalesDetail", "__npTest1", PersoniumUnitConfig.getMasterToken(),
+                    HttpStatus.SC_NO_CONTENT);
             deleteUserData(cellName, boxName, colName, "Sales", "srcKey", PersoniumUnitConfig.getMasterToken(),
                     HttpStatus.SC_NO_CONTENT);
         }

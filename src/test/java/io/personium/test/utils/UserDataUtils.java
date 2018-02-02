@@ -204,7 +204,7 @@ public class UserDataUtils {
                 .with("box", boxName)
                 .with("collection", colName)
                 .with("entityType", entTypeName)
-                .with("id", id)
+                .with("id", PersoniumCoreUtils.encodeUrlComp(id))
                 .with("accept", MediaType.APPLICATION_JSON)
                 .with("token", token)
                 .with("query", query)

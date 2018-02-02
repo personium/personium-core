@@ -25,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
+import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
@@ -128,8 +129,9 @@ public class ResourceUtils {
             int code) {
         // リクエスト実行
         TResponse res = Http.request("box/odatacol/delete-link.txt").with("cell", cell).with("box", box)
-                .with("collection", col).with("entityType", entity).with("id", userDataId)
-                .with("navProp", "_" + navProp).with("navKey", navPropId)
+                .with("collection", col).with("entityType", entity)
+                .with("id", PersoniumCoreUtils.encodeUrlComp(userDataId))
+                .with("navProp", "_" + navProp).with("navKey", PersoniumCoreUtils.encodeUrlComp(navPropId))
                 .with("contentType", MediaType.APPLICATION_JSON).with("token", PersoniumUnitConfig.getMasterToken())
                 .with("ifMatch", "*").returns().statusCode(code);
         return res;

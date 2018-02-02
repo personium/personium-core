@@ -32,18 +32,20 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.odata4j.edm.EdmSimpleType;
 
+import com.sun.jersey.test.framework.WebAppDescriptor;
+
+import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * UserDataテスト用の抽象クラス.
@@ -474,7 +476,7 @@ public abstract class AbstractUserDataTest extends AbstractCase {
                 .with("box", box)
                 .with("collection", col)
                 .with("entityType", entityType)
-                .with("id", userDataId)
+                .with("id", PersoniumCoreUtils.encodeUrlComp(userDataId))
                 .with("token", token)
                 .with("ifMatch", ifMatch)
                 .returns()
