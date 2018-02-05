@@ -257,6 +257,9 @@ public final class TResponse {
         StringBuilder body = new StringBuilder();
         String line;
         while ((line = br.readLine()) != null) {
+            if (line.isEmpty()) {
+                continue;
+            }
             int hex = 2 * 2 * 2 * 2;
             int chunk = Integer.parseInt(line, hex);
             if (chunk == 0) {
@@ -268,13 +271,7 @@ public final class TResponse {
                 body.append((char) chr);
             }
             chr = br.read();
-            if (chr != '\r') {
-                fail("Chunk終了後のCRが無い");
-            }
             chr = br.read();
-            if (chr != '\n') {
-                fail("Chunk終了後のLFが無い");
-            }
         }
         return body.toString();
     }

@@ -35,6 +35,8 @@ import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 
+import javax.ws.rs.core.MediaType;
+
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONArray;
@@ -779,10 +781,10 @@ public class UserDataBatchWithNPTest extends AbstractUserDataBatchTest {
     }
 
     /**
-     * $batchのNavPro経由ユーザデータ登録で登録データの__idが不正文字で指定された場合登録できないこと.
+     * $batchのNavPro経由ユーザデータ登録で登録データの__idに記号があっても登録できること.
      */
     @Test
-    public final void $batchのNavPro経由ユーザデータ登録で登録データの__idが不正文字で指定された場合登録できないこと() {
+    public final void $batchのNavPro経由ユーザデータ登録で登録データの__idに記号があっても登録できること() {
         try {
             String path = "Product('srcKey')/_Sales";
             String body = START_BOUNDARY + retrievePostBody("Product", "srcKey")
@@ -803,29 +805,36 @@ public class UserDataBatchWithNPTest extends AbstractUserDataBatchTest {
 
             // レスポンスボディのチェック
             String expectedBody = START_BOUNDARY + retrievePostResBodyToSetODataCol("Product", "srcKey", true)
-                    + START_BOUNDARY + retrieveChangeSetResErrorBody(HttpStatus.SC_BAD_REQUEST)
-                    + START_BOUNDARY + retrieveChangeSetResErrorBody(HttpStatus.SC_BAD_REQUEST)
-                    + START_BOUNDARY + retrieveChangeSetResErrorBody(HttpStatus.SC_BAD_REQUEST)
+                    + START_BOUNDARY + retrievePostResBodyToSetODataCol("Sales", "src/Key", true)
+                    + START_BOUNDARY + retrievePostResBodyToSetODataCol("Sales", "src@Key", true)
+                    + START_BOUNDARY + retrievePostResBodyToSetODataCol("Sales", "_srcKey", true)
                     + END_BOUNDARY;
             checkBatchResponseBody(response, expectedBody);
 
             // ユーザデータ取得
-            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    "Sales", "src/Key", HttpStatus.SC_NOT_FOUND);
-            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    "Sales", "src@Key", HttpStatus.SC_NOT_FOUND);
-            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    "Sales", "_srcKey", HttpStatus.SC_NOT_FOUND);
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, "Sales", "src/Key",
+                    HttpStatus.SC_OK);
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, "Sales", "src@Key",
+                    HttpStatus.SC_OK);
+            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, "Sales", "_srcKey",
+                    HttpStatus.SC_OK);
+
         } finally {
+            ResourceUtils.deleteUserDataLinks("srcKey", "src/Key", "Sales", cellName, boxName, colName, "Product", -1);
+            ResourceUtils.deleteUserDataLinks("srcKey", "src@Key", "Sales", cellName, boxName, colName, "Product", -1);
+            ResourceUtils.deleteUserDataLinks("srcKey", "_srcKey", "Sales", cellName, boxName, colName, "Product", -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "src/Key", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "src@Key", PersoniumUnitConfig.getMasterToken(), -1);
+            deleteUserData(cellName, boxName, colName, "Sales", "_srcKey", PersoniumUnitConfig.getMasterToken(), -1);
             deleteUserData(cellName, boxName, colName, "Product", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
 
     /**
-     * $batchのNavPro経由ユーザデータ登録で登録データに空白文字を含む__idを指定された場合登録できないこと.
+     * $batchのNavPro経由ユーザデータ登録で登録データに空白文字を含む__idを指定された場合登録できること.
      */
     @Test
-    public final void $batchのNavPro経由ユーザデータ登録で登録データに空白文字を含む__idを指定された場合登録できないこと() {
+    public final void $batchのNavPro経由ユーザデータ登録で登録データに空白文字を含む__idを指定された場合登録できること() {
         try {
             String path = "Product('srcKey')/_Sales";
             String body = START_BOUNDARY + retrievePostBody("Product", "srcKey")
@@ -844,14 +853,43 @@ public class UserDataBatchWithNPTest extends AbstractUserDataBatchTest {
 
             // レスポンスボディのチェック
             String expectedBody = START_BOUNDARY + retrievePostResBodyToSetODataCol("Product", "srcKey", true)
-                    + START_BOUNDARY + retrieveChangeSetResErrorBody(HttpStatus.SC_BAD_REQUEST)
+                    + START_BOUNDARY + retrievePostResBodyToSetODataCol("Sales", "src Key", true)
                     + END_BOUNDARY;
             checkBatchResponseBody(response, expectedBody);
 
             // ユーザデータ取得
-            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName,
-                    "Sales", "src%20Key", HttpStatus.SC_NOT_FOUND);
+//            UserDataUtils.get(cellName, PersoniumUnitConfig.getMasterToken(), boxName, colName, "Sales", "src%20Key",
+//                    HttpStatus.SC_OK);
+            // Utilsを使用すると半角スペースが"+"でエンコードされ検索が上手くいかないので自力で%20を指定している
+            Http.request("box/odatacol/get.txt")
+                    .with("cell", cellName)
+                    .with("box", boxName)
+                    .with("collection", colName)
+                    .with("entityType", "Sales")
+                    .with("id", "src%20Key")
+                    .with("accept", MediaType.APPLICATION_JSON)
+                    .with("token", PersoniumUnitConfig.getMasterToken())
+                    .with("query", "")
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK).debug();
+
         } finally {
+            Http.request("box/odatacol/delete-link.txt").with("cell", cellName).with("box", boxName)
+                    .with("collection", colName).with("entityType", "Product")
+                    .with("id", "srcKey")
+                    .with("navProp", "_" + "Sales").with("navKey", "src%20Key")
+                    .with("contentType", MediaType.APPLICATION_JSON).with("token", PersoniumUnitConfig.getMasterToken())
+                    .with("ifMatch", "*").returns().statusCode(-1);
+            Http.request("box/odatacol/delete.txt")
+                    .with("cell", cellName)
+                    .with("box", boxName)
+                    .with("collection", colName)
+                    .with("entityType", "Sales")
+                    .with("id", "src%20Key")
+                    .with("token", PersoniumUnitConfig.getMasterToken())
+                    .with("ifMatch", "*")
+                    .returns()
+                    .statusCode(-1);
             deleteUserData(cellName, boxName, colName, "Product", "srcKey", PersoniumUnitConfig.getMasterToken(), -1);
         }
     }
@@ -892,11 +930,15 @@ public class UserDataBatchWithNPTest extends AbstractUserDataBatchTest {
     }
 
     /**
-     * $batchのNavPro経由ユーザデータ登録で登録データの__idが200文字指定された場合登録できること.
+     * $batchのNavPro経由ユーザデータ登録で登録データの__idが400文字指定された場合登録できること.
      */
     @Test
-    public final void $batchのNavPro経由ユーザデータ登録で登録データの__idが200文字指定された場合登録できること() {
+    public final void $batchのNavPro経由ユーザデータ登録で登録データの__idが400文字指定された場合登録できること() {
         String id = "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
                 + "12345678901234567890123456789012345678901234567890"
                 + "12345678901234567890123456789012345678901234567890"
                 + "12345678901234567890123456789012345678901234567890";
@@ -947,11 +989,15 @@ public class UserDataBatchWithNPTest extends AbstractUserDataBatchTest {
     }
 
     /**
-     * $batchのNavPro経由ユーザデータ登録で登録データの__idが201文字指定された場合登録できないこと.
+     * $batchのNavPro経由ユーザデータ登録で登録データの__idが401文字指定された場合登録できないこと.
      */
     @Test
-    public final void $batchのNavPro経由ユーザデータ登録で登録データの__idが201文字指定された場合登録できないこと() {
+    public final void $batchのNavPro経由ユーザデータ登録で登録データの__idが401文字指定された場合登録できないこと() {
         String id = "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
+                + "12345678901234567890123456789012345678901234567890"
                 + "12345678901234567890123456789012345678901234567890"
                 + "12345678901234567890123456789012345678901234567890"
                 + "12345678901234567890123456789012345678901234567890a";

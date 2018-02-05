@@ -70,6 +70,29 @@ public final class CtlSchema {
                 "true"));
     }
 
+    /** Pattern id. */
+    private static final String PATTERN_ID = "^.{1,400}$";
+    /** AnnotationFormat id. */
+    private static final List<EdmAnnotation<?>> P_FORMAT_ID = createFormatId();
+    /** __id property. */
+    public static final EdmProperty.Builder P_ID = EdmProperty.newBuilder("__id")
+            .setType(EdmSimpleType.STRING).setDefaultValue(Common.UUID)
+            .setNullable(false)
+            .setAnnotations(P_FORMAT_ID);
+
+    /**
+     * Create id annotation format.
+     * @return id annotation format.
+     */
+    private static List<EdmAnnotation<?>> createFormatId() {
+        List<EdmAnnotation<?>> list = new ArrayList<EdmAnnotation<?>>();
+        EdmAnnotation<?> annotation = new EdmAnnotationAttribute(
+                Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
+                Common.P_FORMAT, Common.P_FORMAT_PATTERN_REGEX + "('" + PATTERN_ID + "')");
+        list.add(annotation);
+        return list;
+    }
+
     /**
      * 複合Uniqueキー制約（PersoniumによるCSDL拡張）のためのCSDL拡張アノテーションを作成して返します.
      * @param name UK名
@@ -277,14 +300,6 @@ public final class CtlSchema {
     public static EdmDataServices.Builder getEdmDataServicesForODataSvcSchema() {
         return createDataServices(Common.EDM_NS_ODATA_SVC_SCHEMA, SCHEMA_TYPELIST, SCHEMA_ASSOCS);
     }
-
-    /**
-     * id プロパティの定義体.
-     */
-    public static final EdmProperty.Builder P_ID = EdmProperty.newBuilder("__id")
-            .setType(EdmSimpleType.STRING).setDefaultValue(Common.UUID)
-            .setNullable(false)
-            .setAnnotations(Common.P_FORMAT_ID);
 
     /**
      * UserCtlデータサービスのEdmDataServices オブジェクトを返します.
