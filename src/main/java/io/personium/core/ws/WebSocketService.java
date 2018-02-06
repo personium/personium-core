@@ -17,7 +17,6 @@
 
 package io.personium.core.ws;
 
-import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
@@ -43,14 +42,15 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_A_SEC;
+import static io.personium.core.auth.OAuth2Helper.Key.EXPIRES_IN;
 
 
 /**
@@ -73,12 +73,24 @@ public class WebSocketService {
     private static final String CELL_ID = "cellId";
     private static final String ACCESS_TOKEN = "access_token";
     private static final String RULES = "rules";
-    private static final String EXPIRE_TIME = "expire_time";
+    private static final String AUTHORIZED_TIME = "authorized_time";
     private static final String HEART_BEAT = "heart_beat";
     private static final String PING_COUNT = "ping_count";
     private static final byte[] PING_DATA = new byte[]{1, 2, 3};
     private static final int PING_MAX = 10;
     private static final int HEART_BEAT_TIME = 60000;
+    private static final String RESPONSE = "response";
+    private static final String RESPONSE_SUCCESS = "success";
+    private static final String RESPONSE_ERROR = "error";
+    private static final String REASON = "reason";
+    private static final String REASON_FORMAT_ERROR = "format error";
+    private static final String REASON_UNAUTHORIZED = "unauthorized";
+    private static final String REASON_SUBSCRIBE_NOT_FOUND = "subscriptions not found";
+    private static final String REASON_INVALID_STATE_TYPE =
+            "invalid state type. allowed status type: [all, subscriptions]";
+    private static final String STATE_TYPE_ALL = "all";
+    private static final String STATE_TYPE_SUBSCRIBE = "subscriptions";
+    private static final int EXPIRES_IN_SECONDS = 3600;
 
     // session and cell id map for send event
     private static Map<String, List<Session>> cellSessionMap = new HashMap<>(); // CellId: Session[]
@@ -111,9 +123,6 @@ public class WebSocketService {
                 }
                 userProperties.put(CELL_ID, cellId);
                 userProperties.put(RULES, new ArrayList<RuleInfo>());
-                Calendar expireDate = new GregorianCalendar();
-                expireDate.add(Calendar.HOUR, UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR);
-                userProperties.put(EXPIRE_TIME, expireDate);
                 userProperties.put(PING_COUNT, 0);
 
                 cellSessionMap.put(cellId, sessionList);
@@ -171,8 +180,10 @@ public class WebSocketService {
     public void onMessage(String text, Session session) {
         Map<String, Object> userProperties = session.getUserProperties();
         String cellId = (String) userProperties.get(CELL_ID);
-        String accessToken = (String) userProperties.get(ACCESS_TOKEN);
         log.debug("ws: onMessage[" + cellId + "]" + "[" + session.getId() + "] " + text);
+        JSONObject result = new JSONObject();
+        long currentTime = System.currentTimeMillis() / MILLISECS_IN_A_SEC;
+        result.put("timestamp", currentTime);
 
         JSONParser parser = new JSONParser();
         try {
@@ -184,15 +195,36 @@ public class WebSocketService {
                 if (checkPrivilege(receivedAccessToken, cellId)) {
                     log.debug("ws: set access_token");
                     userProperties.put(ACCESS_TOKEN, receivedAccessToken);
+                    userProperties.put(AUTHORIZED_TIME, new Date());
+                    // ack
+                    result.put(RESPONSE, RESPONSE_SUCCESS);
+                    result.put(EXPIRES_IN, EXPIRES_IN_SECONDS);
+                    sendText(session, result.toJSONString());
                 } else {
                     log.debug("ws: invalid access_token");
                     closeSession(session);
                 }
+                return;
+            }
+
+            String accessToken = (String) userProperties.get(ACCESS_TOKEN);
+            if (accessToken == null) {
+                result.put(RESPONSE, RESPONSE_ERROR);
+                result.put(REASON, REASON_UNAUTHORIZED);
+                sendText(session, result.toJSONString());
+                return;
+            }
+
+            Date authorizedDate = (Date) userProperties.get(AUTHORIZED_TIME);
+            if (isExpired(authorizedDate)) {
+                log.debug("ws: token expired. session close.: " + cellId);
+                closeSession(session);
+                return;
             }
 
             // subscribe type is used for filtering of events
             JSONObject subscribeInfo = (JSONObject) json.get("subscribe");
-            if (subscribeInfo != null && accessToken != null) {
+            if (subscribeInfo != null) {
                 log.debug("ws: set subscribe: " + subscribeInfo);
 
                 // want to register multi rules using Array ...
@@ -205,13 +237,20 @@ public class WebSocketService {
                         rule.type = eventType;
                         rule.object = eventObject;
                         ruleList.add(rule); // able to register same rule
+                        // ack
+                        result.put(RESPONSE, RESPONSE_SUCCESS);
                     }
+                } else {
+                    result.put(RESPONSE, RESPONSE_ERROR);
+                    result.put(REASON, REASON_FORMAT_ERROR);
                 }
+                sendText(session, result.toJSONString());
+                return;
             }
 
             // delete subscribe rule in ruleList
             JSONObject unsubscribeInfo = (JSONObject) json.get("unsubscribe");
-            if (unsubscribeInfo != null && accessToken != null) {
+            if (unsubscribeInfo != null) {
                 log.debug("ws: unsubscribe: " + unsubscribeInfo);
 
                 String eventType = (String) unsubscribeInfo.get("Type");
@@ -228,12 +267,62 @@ public class WebSocketService {
                         }
                         if (targetRule != null) {
                             ruleList.remove(targetRule);
+                            // ack
+                            result.put(RESPONSE, RESPONSE_SUCCESS);
+                        } else {
+                            result.put(RESPONSE, RESPONSE_ERROR);
+                            result.put(REASON, REASON_SUBSCRIBE_NOT_FOUND);
                         }
                     }
+                } else {
+                    result.put(RESPONSE, RESPONSE_ERROR);
+                    result.put(REASON, REASON_FORMAT_ERROR);
                 }
+                sendText(session, result.toJSONString());
+                return;
+            }
+
+            // websocket state.
+            String state = (String) json.get("state");
+            if (state != null) {
+                log.debug("ws: state: " + state);
+                if (state.equals(STATE_TYPE_ALL)
+                        ||  state.equals(STATE_TYPE_SUBSCRIBE)) {
+                    List<JSONObject> ruleJsonList = new ArrayList<>();
+                    synchronized (lockObj) {
+                        List<RuleInfo> ruleList = (List<RuleInfo>) userProperties.get(RULES);
+                        for (RuleInfo rule : ruleList) {
+                            JSONObject ruleJson = new JSONObject();
+                            ruleJson.put("type", rule.type);
+                            ruleJson.put("object", rule.object);
+                            ruleJsonList.add(ruleJson);
+                        }
+                    }
+                    if (state.equals(STATE_TYPE_SUBSCRIBE)) {
+                        result.put(RESPONSE, RESPONSE_SUCCESS);
+                        result.put("subscriptions", ruleJsonList);
+                    } else if (state.equals(STATE_TYPE_ALL)) {
+                        result.put(RESPONSE, RESPONSE_SUCCESS);
+                        result.put("subscriptions", ruleJsonList);
+                        Date now = new Date();
+                        long expireTime = authorizedDate.getTime() + EXPIRES_IN_SECONDS * MILLISECS_IN_A_SEC;
+                        long expireLimit = (expireTime - now.getTime()) / MILLISECS_IN_A_SEC;
+                        result.put("expires_in", expireLimit);
+                        String cellName = null;
+                        Cell cell = ModelFactory.cell(cellId, null);
+                        if (cell != null) {
+                            cellName = cell.getName();
+                        }
+                        result.put("cell", cellName);
+                    }
+                } else {
+                    result.put(RESPONSE, RESPONSE_ERROR);
+                    result.put(REASON, REASON_INVALID_STATE_TYPE);
+                }
+                sendText(session, result.toJSONString());
             }
         } catch (Exception e) {
-            log.debug("Message is not JSON: " + text);
+            log.debug("Invalid message: " + text);
             // e.printStackTrace();
         }
     }
@@ -304,7 +393,7 @@ public class WebSocketService {
                 userProperties.remove(ACCESS_TOKEN);
                 userProperties.remove(RULES);
                 userProperties.remove(HEART_BEAT);
-                userProperties.remove(EXPIRE_TIME);
+                userProperties.remove(AUTHORIZED_TIME);
                 userProperties.remove(PING_COUNT);
 
                 List<Session> sessionList = cellSessionMap.get(cellId);
@@ -364,11 +453,9 @@ public class WebSocketService {
                         if (accessToken == null) {
                             continue;
                         }
-                        Calendar expireDateCalendar = (Calendar) userProperties.get(EXPIRE_TIME);
-                        Date expireDate = expireDateCalendar.getTime();
-                        Date now = new Date();
-                        if (now.compareTo(expireDate) >= 0) {
-                            log.debug("ws: session expired.");
+                        Date authorizedDate = (Date) userProperties.get(AUTHORIZED_TIME);
+                        if (isExpired(authorizedDate)) {
+                            log.debug("ws: token expired. " + cellId);
                             expiredSessionList.add(session);
                             continue;
                         }
@@ -491,6 +578,21 @@ public class WebSocketService {
 
         log.debug("ws: checkPrivilege result = : " + result);
         return result;
+    }
+
+
+    /**
+     * check if session access_token is expired.
+     * @param authorizedDate authorized date
+     * @return boolean
+     */
+    private static boolean isExpired(Date authorizedDate) {
+        long now = new Date().getTime();
+        long expiresLimit = authorizedDate.getTime() + EXPIRES_IN_SECONDS * MILLISECS_IN_A_SEC;
+        if (now > expiresLimit) {
+            return true;
+        }
+        return false;
     }
 
 }
