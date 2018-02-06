@@ -118,7 +118,7 @@ public class SnapshotFileImportRunner implements Runnable {
             String info = "";
             String type = PersoniumEventType.Category.CELL
                     + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.IMPORT;
-            PersoniumEvent event = new PersoniumEvent(null, null, type, object, info, null);
+            PersoniumEvent event = new PersoniumEvent(type, object, info, null);
             EventBus eventBus = targetCell.getEventBus();
             eventBus.post(event);
         } catch (Throwable e) {

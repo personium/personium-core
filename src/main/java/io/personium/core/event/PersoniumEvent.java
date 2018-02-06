@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package io.personium.core.event;
+
+import io.personium.core.model.DavRsCmp;
 
 /**
  * Event.
@@ -35,12 +37,33 @@ public class PersoniumEvent {
     String object = null;
     String info = null;
     String requestKey = null;
+    String eventId = null;
+    String ruleChain = null;
     String cellId = null;
 
     /** Constructor. */
     public PersoniumEvent() {
         // default is internal event.
         this.external = INTERNAL_EVENT;
+    }
+
+    /**
+     * Constructor.
+     * @param type event type
+     * @param object object of event
+     * @param info information on event
+     * @param requestKey key string for request
+     */
+    public PersoniumEvent(
+            final String type,
+            final String object,
+            final String info,
+            final String requestKey) {
+        this.external = INTERNAL_EVENT;
+        this.type = type;
+        this.object = object;
+        this.info = info;
+        this.requestKey = requestKey;
     }
 
     /**
@@ -52,6 +75,8 @@ public class PersoniumEvent {
      * @param object object of event
      * @param info information on event
      * @param requestKey key string for request
+     * @param eventId event id
+     * @param ruleChain string to check chain of rule
      */
     public PersoniumEvent(Boolean external,
             final String schema,
@@ -59,7 +84,9 @@ public class PersoniumEvent {
             final String type,
             final String object,
             final String info,
-            final String requestKey) {
+            final String requestKey,
+            final String eventId,
+            final String ruleChain) {
         this.external = external;
         this.schema = schema;
         this.subject = subject;
@@ -67,31 +94,58 @@ public class PersoniumEvent {
         this.object = object;
         this.info = info;
         this.requestKey = requestKey;
+        this.eventId = eventId;
+        this.ruleChain = ruleChain;
     }
 
     /**
      * Constructor.
-     * @param schema box schema uri
-     * @param subject subject
+     * @param external flag for event kind
      * @param type event type
      * @param object object of event
      * @param info information on event
-     * @param requestKey key string for request
+     * @param davRsCmp DavRsCmp object
      */
-    public PersoniumEvent(
-            final String schema,
-            final String subject,
+    public PersoniumEvent(Boolean external,
             final String type,
             final String object,
             final String info,
-            final String requestKey) {
-        this.external = INTERNAL_EVENT;
-        this.schema = schema;
-        this.subject = subject;
+            final DavRsCmp davRsCmp) {
+        this.external = external;
         this.type = type;
         this.object = object;
         this.info = info;
+        this.schema = davRsCmp.getAccessContext().getSchema();
+        this.subject = davRsCmp.getAccessContext().getSubject();
+        this.requestKey = davRsCmp.getRequestKey();
+        this.eventId = davRsCmp.getEventId();
+        this.ruleChain = davRsCmp.getRuleChain();
+    }
+
+    /**
+     * Constructor.
+     * @param external flag for event kind
+     * @param type event type
+     * @param object object of event
+     * @param info information on event
+     * @param davRsCmp DavRsCmp object
+     * @param requestKey key string for request
+     */
+    public PersoniumEvent(Boolean external,
+            final String type,
+            final String object,
+            final String info,
+            final DavRsCmp davRsCmp,
+            final String requestKey) {
+        this.external = external;
+        this.type = type;
+        this.object = object;
+        this.info = info;
+        this.schema = davRsCmp.getAccessContext().getSchema();
+        this.subject = davRsCmp.getAccessContext().getSubject();
         this.requestKey = requestKey;
+        this.eventId = davRsCmp.getEventId();
+        this.ruleChain = davRsCmp.getRuleChain();
     }
 
     /**
@@ -180,6 +234,22 @@ public class PersoniumEvent {
      */
     public final String getRequestKey() {
         return requestKey;
+    }
+
+    /**
+     * Get value of EventId.
+     * @return value of EventId
+     */
+    public final String getEventId() {
+        return eventId;
+    }
+
+    /**
+     * Get value of RuleChain.
+     * @return value of RuleChain
+     */
+    public final String getRuleChain() {
+        return ruleChain;
     }
 
     /**

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.odata.PersoniumODataProducer;
@@ -46,18 +47,22 @@ public class ODataSvcCollectionResourceTest {
         DavRsCmp davRsCmp = mock(DavRsCmp.class);
         DavCmp davCmp = mock(DavCmp.class);
         PersoniumODataProducer producer = mock(PersoniumODataProducer.class);
+        Cell cell = mock(Cell.class);
 
         // --------------------
         // Test method args
         // --------------------
         String url = "https://personium/cell/box";
         String name = "col";
+        String cellUrl = "https://personium/cell/";
 
         // --------------------
         // Mock settings
         // --------------------
         doReturn(null).when(davRsCmp).getAccessContext();
         doReturn(url).when(davRsCmp).getUrl();
+        doReturn(cell).when(davRsCmp).getCell();
+        doReturn(cellUrl).when(cell).getUrl();
         doReturn(name).when(davCmp).getName();
         doReturn(producer).when(davCmp).getODataProducer();
         doReturn(null).when(producer).getMetadata();
@@ -65,7 +70,7 @@ public class ODataSvcCollectionResourceTest {
         // --------------------
         // Expected result
         // --------------------
-        String expected = url + "/" + name + "/";
+        String expected = "personium-localcell:/box/" + name + "/";
 
         // --------------------
         // Run method

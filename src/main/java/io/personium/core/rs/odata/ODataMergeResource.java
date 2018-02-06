@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,13 +61,11 @@ public class ODataMergeResource extends ODataEntityResource {
      * @param reader リクエストボディ
      * @param accept Accept ヘッダ
      * @param ifMatch If-Match ヘッダ
-     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RSResponse
      */
     public Response merge(Reader reader,
             final String accept,
-            final String ifMatch,
-            String requestKey) {
+            final String ifMatch) {
         // メソッド実行可否チェック
         checkNotAllowedMethod();
 
@@ -95,7 +93,7 @@ public class ODataMergeResource extends ODataEntityResource {
         String object = getOdataResource().getRootUrl() + getEntitySetName() + key;
         String newKey = AbstractODataResource.replaceDummyKeyToNull(oew.getEntityKey().toKeyString());
         String info = "204," + newKey;
-        getOdataResource().postEvent(getEntitySetName(), object, info, requestKey, PersoniumEventType.Operation.MERGE);
+        getOdataResource().postEvent(getEntitySetName(), object, info, PersoniumEventType.Operation.MERGE);
 
         // 特に例外があがらなければ、レスポンスを返す。
         // oewに新たに登録されたETagを返す

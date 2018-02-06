@@ -53,7 +53,7 @@ import io.personium.test.categories.Unit;
  * Unit Test class for DavMetadataFile.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DavMetadataFile.class})
+@PrepareForTest({ DavMetadataFile.class })
 @Category({ Unit.class })
 public class DavMetadataFileTest {
 

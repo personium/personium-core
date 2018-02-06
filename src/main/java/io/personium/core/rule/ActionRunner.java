@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ class ActionRunner implements Runnable {
                 PersoniumEvent[] events = {
                         event, evt
                 };
-                ActionInfo ai = new ActionInfo(Rule.ACTION_LOG_INFO, null);
+                ActionInfo ai = new ActionInfo(Rule.ACTION_LOG_INFO);
                 Action log = ActionFactory.createAction(cell, ai);
                 log.execute(events);
             }

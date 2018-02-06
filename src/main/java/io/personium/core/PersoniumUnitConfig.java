@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -252,6 +252,8 @@ public class PersoniumUnitConfig {
     public static final class Event {
         /** 最新のイベントログファイルの格納ディレクトリ. */
         public static final String EVENT_LOG_CURRENT_DIR = KEY_ROOT + "event.log.current.dir";
+        /** Maximum event hop count. */
+        public static final String EVENT_HOP_MAXNUM = KEY_ROOT + "event.hop.maxnum";
     }
 
     /**
@@ -842,6 +844,14 @@ public class PersoniumUnitConfig {
      */
     public static String getEventLogCurrentDir() {
         return get(Event.EVENT_LOG_CURRENT_DIR);
+    }
+
+    /**
+     * Get event hop maximum number.
+     * @return event hop maximum number
+     */
+    public static int getMaxEventHop() {
+        return Integer.parseInt(get(Event.EVENT_HOP_MAXNUM));
     }
 
     /**

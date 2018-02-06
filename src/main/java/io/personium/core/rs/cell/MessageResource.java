@@ -44,7 +44,6 @@ import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.odata.ODataCtlResource;
 import io.personium.core.rs.odata.ODataReceivedMessageResource;
 import io.personium.core.rs.odata.ODataSentMessageResource;
-import io.personium.core.utils.ResourceUtils;
 
 /**
  * JAX-RS Resource handling DC Message Level Api. /__messageというパスにきたときの処理.
@@ -75,7 +74,6 @@ public class MessageResource extends ODataCtlResource {
     /**
      * メッセージ送信API.
      * @param version PCSバージョン
-     * @param requestKey X-Personium-RequestKey Header
      * @param uriInfo UriInfo
      * @param reader リクエストボディ
      * @return レスポンス
@@ -85,7 +83,6 @@ public class MessageResource extends ODataCtlResource {
     @Path("send")
     public Response messages(
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VERSION) final String version,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @Context final UriInfo uriInfo,
             final Reader reader) {
         // アクセス制御
@@ -94,14 +91,13 @@ public class MessageResource extends ODataCtlResource {
         // データ登録
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
         ODataSentMessageResource resource = new ODataSentMessageResource(
-                this, requestKey, producer, SentMessagePort.EDM_TYPE_NAME, version);
+                this, producer, SentMessagePort.EDM_TYPE_NAME, version);
         Response respose = resource.createMessage(uriInfo, reader);
         return respose;
     }
 
     /**
      * メッセージ受信API.
-     * @param requestKey X-Personium-RequestKey Header
      * @param uriInfo UriInfo
      * @param reader リクエストボディ
      * @return レスポンス
@@ -110,7 +106,6 @@ public class MessageResource extends ODataCtlResource {
     @POST
     @Path("port")
     public Response messagesPort(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @Context final UriInfo uriInfo,
             final Reader reader) {
         // アクセス制御
@@ -119,7 +114,7 @@ public class MessageResource extends ODataCtlResource {
         // 受信メッセージの登録
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
         ODataReceivedMessageResource resource = new ODataReceivedMessageResource(
-                this, requestKey, producer, ReceivedMessagePort.EDM_TYPE_NAME);
+                this, producer, ReceivedMessagePort.EDM_TYPE_NAME);
         Response respose = resource.createMessage(uriInfo, reader);
         return respose;
     }
@@ -127,7 +122,6 @@ public class MessageResource extends ODataCtlResource {
     /**
      * メッセージ承認API.
      * @param key メッセージId
-     * @param requestKey X-Personium-RequestKey Header
      * @param reader リクエストボディ
      * @return レスポンス
      */
@@ -135,7 +129,6 @@ public class MessageResource extends ODataCtlResource {
     @POST
     @Path("received/{key}")
     public Response messagesApprove(@PathParam("key") final String key,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             final Reader reader) {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.accessContext, CellPrivilege.MESSAGE);
@@ -143,7 +136,7 @@ public class MessageResource extends ODataCtlResource {
         // 受信メッセージの承認
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
         ODataReceivedMessageResource resource = new ODataReceivedMessageResource(
-                this, requestKey, producer, ReceivedMessagePort.EDM_TYPE_NAME);
+                this, producer, ReceivedMessagePort.EDM_TYPE_NAME);
         Response respose = resource.changeMessageStatus(reader, key);
         return respose;
     }
@@ -152,12 +145,9 @@ public class MessageResource extends ODataCtlResource {
      * {@inheritDoc}
      */
     @Override
-    public void postEvent(String entitySetName, String object, String info, String reqKey, String op) {
-        String schema = this.accessContext.getSchema();
-        String subject = this.accessContext.getSubject();
+    public void postEvent(String entitySetName, String object, String info, String op) {
         String type = PersoniumEventType.Category.MESSAGE + PersoniumEventType.SEPALATOR + op;
-        String requestKey = ResourceUtils.validateXPersoniumRequestKey(reqKey);
-        PersoniumEvent ev = new PersoniumEvent(schema, subject, type, object, info, requestKey);
+        PersoniumEvent ev = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
         EventBus eventBus = this.accessContext.getCell().getEventBus();
         eventBus.post(ev);
     }

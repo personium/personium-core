@@ -321,7 +321,6 @@ public class BoxResource {
      * @param pCredHeader dcCredHeader
      * @param contentType Content-Typeヘッダの値
      * @param contentLength Content-Lengthヘッダの値
-     * @param requestKey イベントログに出力するRequestKeyフィールドの値
      * @param inStream HttpリクエストのInputStream
      * @return JAX-RS Response
      */
@@ -332,14 +331,12 @@ public class BoxResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader,
             @HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final String contentLength,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             final InputStream inStream) {
 
         EventBus eventBus = this.cell.getEventBus();
         String result = "";
-        String schema = this.accessContext.getSchema();
-        String subject = this.accessContext.getSubject();
         String object = String.format("%s:/%s", UriUtils.SCHEME_LOCALCELL, this.boxName);
+        String requestKey = this.cellRsCmp.getRequestKey();
         Response res = null;
         try {
             // ログファイル出力
@@ -377,8 +374,8 @@ public class BoxResource {
             throw e;
         } finally {
             // post event to EventBus
-            PersoniumEvent event = new PersoniumEvent(
-                    schema, subject, PersoniumEventType.Category.BI, object, result, requestKey);
+            PersoniumEvent event = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT,
+                    PersoniumEventType.Category.BI, object, result, this.cellRsCmp, requestKey);
             eventBus.post(event);
         }
         return res;

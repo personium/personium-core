@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.ODataResource;
-import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.ODataUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
@@ -68,7 +68,7 @@ public final class CellCtlResource extends ODataResource {
      * @param davRsCmp davRsCmp
      */
     public CellCtlResource(final AccessContext accessContext, final String pCredHeader, DavRsCmp davRsCmp) {
-        super(accessContext, accessContext.getCell().getUrl() + "__ctl/", ModelFactory.ODataCtl.cellCtl(accessContext
+        super(accessContext, UriUtils.SCHEME_LOCALCELL + ":/__ctl/", ModelFactory.ODataCtl.cellCtl(accessContext
                 .getCell()));
         this.pCredHeader = pCredHeader;
         this.davRsCmp = davRsCmp;
@@ -237,7 +237,7 @@ public final class CellCtlResource extends ODataResource {
                 }
             }
 
-            // action: relay or exec -> service: not null
+            // action: relay or relay.event or exec -> service: not null
             if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_EXEC.equals(action)) && service == null) {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
             }
@@ -274,13 +274,10 @@ public final class CellCtlResource extends ODataResource {
     }
 
     @Override
-    public void postEvent(String entitySetName, String object, String info, String reqKey, String op) {
-        String schema = this.getAccessContext().getSchema();
-        String subject = this.getAccessContext().getSubject();
-        reqKey = ResourceUtils.validateXPersoniumRequestKey(reqKey);
+    public void postEvent(String entitySetName, String object, String info, String op) {
         String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
                 + entitySetName + PersoniumEventType.SEPALATOR + op;
-        PersoniumEvent ev = new PersoniumEvent(schema, subject, type, object, info, reqKey);
+        PersoniumEvent ev = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
         EventBus eventBus = this.getAccessContext().getCell().getEventBus();
         eventBus.post(ev);
     }

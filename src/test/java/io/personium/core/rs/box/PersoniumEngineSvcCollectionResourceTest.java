@@ -47,7 +47,7 @@ import io.personium.test.categories.Unit;
  * PersoniumEngineSvcCollectionResource unit test classs.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({AccessContext.class})
+@PrepareForTest({ AccessContext.class })
 @Category({ Unit.class })
 public class PersoniumEngineSvcCollectionResourceTest {
 

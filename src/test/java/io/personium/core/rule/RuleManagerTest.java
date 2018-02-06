@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,7 +131,7 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.FALSE;
         PersoniumEvent event = new PersoniumEvent(null,
-            null, null, null, null, null, null);
+            null, null, null, null, null, null, null, null);
 
         // --------------------
         // Mock settings
@@ -170,7 +170,7 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.FALSE;
         PersoniumEvent event = new PersoniumEvent(Boolean.FALSE,
-                "schema string", "subject", "type", "object", "info", "requestKey");
+                "schema string", "subject", "type", "object", "info", "requestKey", "eventid", "rulechain");
 
         // --------------------
         // Mock settings
@@ -209,7 +209,7 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "schema", "subject", "type", "object", "info", "requestKey");
+                "schema", "subject", "type", "object", "info", "requestKey", "eventid", "rulechain");
 
         // --------------------
         // Mock settings
@@ -251,7 +251,8 @@ public class RuleManagerTest {
         ri.external = Boolean.TRUE;
         ri.box = bi;
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/", "subject", "type", "object", "info", "requestKey");
+                "http://personium/dummyCell/", "subject", "type", "object", "info",
+                "requestKey", "eventid", "rulechain");
 
         // --------------------
         // Mock settings
@@ -293,7 +294,8 @@ public class RuleManagerTest {
         ri.external = Boolean.TRUE;
         ri.box = bi;
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/invalid/", "subject", "type", "object", "info", "requestKey");
+                "http://personium/dummyCell/invalid/", "subject", "type", "object", "info",
+                "requestKey", "eventid", "rulechain");
 
         // --------------------
         // Mock settings
@@ -339,7 +341,8 @@ public class RuleManagerTest {
         ri.external = Boolean.TRUE;
         ri.type = "cellctl.Rule.create";
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info", "requestKey");
+                "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info",
+                "requestKey", "eventid", "rulechain");
 
         // --------------------
         // Mock settings
@@ -379,7 +382,8 @@ public class RuleManagerTest {
         ri.external = Boolean.TRUE;
         ri.type = "cellctl.Rule";
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info", "requestKey");
+                "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info",
+                "requestKey", "eventid", "rulechain");
 
         // --------------------
         // Mock settings
@@ -419,7 +423,8 @@ public class RuleManagerTest {
         ri.external = Boolean.TRUE;
         ri.type = "cellctl.Rule.create.some";
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info", "requestKey");
+                "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info",
+                "requestKey", "eventid", "rulechain");
 
         // --------------------
         // Mock settings
