@@ -18,42 +18,62 @@ package io.personium.core.auth;
 
 
 /**
- * WebDAVACLのPrivilege.
+ * Privilege of WebDAV ACL.
  */
 public abstract class Privilege {
+
+    // Access type is provisional.
+    // Only READ is used in the current(core-1.6.2) process.
+    /** Access type : READ. */
+    public static final String ACCESS_TYPE_READ = "read";
+    /** Access type : WRITE. */
+    public static final String ACCESS_TYPE_WRITE = "write";
+    /** Access type : EXEC. */
+    public static final String ACCESS_TYPE_EXEC = "exec";
+    /** Access type : ALL. */
+    public static final String ACCESS_TYPE_ALL = "all";
+
+    /** Name. */
     private String name;
+    /** Access type. */
+    private String accessType;
+    /** Parent privilege. */
+    private Privilege parent;
+
     /**
-     * @return 権限名
+     * Constructor.
+     * @param name Name
+     * @param accessType Access type
+     * @param parent Parent privilege
+     */
+    Privilege(String name, String accessType, Privilege parent) {
+        this.name = name;
+        this.accessType = accessType;
+        this.parent = parent;
+    }
+
+    /**
+     * Get name.
+     * @return Name
      */
     public String getName() {
         return name;
     }
 
     /**
-     * @return 親権限
+     * Get access type.
+     * @return Access type
+     */
+    public String getAccessType() {
+        return accessType;
+    }
+
+    /**
+     * Get parent.
+     * @return Parent privilege
      */
     public Privilege getParent() {
         return parent;
-    }
-
-    private Privilege parent;
-
-    /**
-     * コンストラクタ.
-     * @param name Privilege名
-     */
-    Privilege(final String name) {
-        this.name = name;
-    }
-
-    /**
-     * コンストラクタ.
-     * @param name Privilege名
-     * @param parent 親Privilege
-     */
-    Privilege(final String name, final Privilege parent) {
-        this.name = name;
-        this.parent = parent;
     }
 
     /**

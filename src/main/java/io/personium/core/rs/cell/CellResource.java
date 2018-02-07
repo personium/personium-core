@@ -171,31 +171,33 @@ public final class CellResource {
         return Response.noContent().build();
     }
 
-
-
+    /**
+     * Perform authority check at the time of CellBulkDeletion execution.
+     * @param cellOwner cell owner
+     */
     private void checkAccessContextForCellBulkDeletion(String cellOwner) {
-
-        // Basic認証できるかチェック
+        // Check if basic authentication is possible.
         this.accessContext.updateBasicAuthenticationStateForResource(null);
 
         String accessType = this.accessContext.getType();
-        // ユニットマスター、ユニットユーザ、ユニットローカルユニットユーザ以外は権限エラーとする
-        if (AccessContext.TYPE_INVALID.equals(accessType)) {
-            this.accessContext.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
-        } else if (AccessContext.TYPE_ANONYMOUS.equals(accessType)) {
-            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(accessContext.getRealm(),
-                    this.cellRsCmp.getAcceptableAuthScheme());
-        } else if (!AccessContext.TYPE_UNIT_MASTER.equals(accessType)
-                && !AccessContext.TYPE_UNIT_USER.equals(accessType)
-                && !AccessContext.TYPE_UNIT_LOCAL.equals(accessType)) {
-            throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
+        // Accept if UnitMaster, UnitAdmin, UnitUser, UnitLocal.
+        if (AccessContext.TYPE_UNIT_MASTER.equals(accessType)
+                || AccessContext.TYPE_UNIT_ADMIN.equals(accessType)) {
+            return;
         } else if (AccessContext.TYPE_UNIT_USER.equals(accessType)
                 || AccessContext.TYPE_UNIT_LOCAL.equals(accessType)) {
-            // ユニットユーザ、ユニットローカルユニットユーザの場合はセルオーナとアクセス主体が一致するかチェック
+            // For UnitUser or UnitLocal, check if the cell owner and the access subject match.
             String subject = this.accessContext.getSubject();
             if (cellOwner == null || !cellOwner.equals(subject)) {
                 throw PersoniumCoreException.Auth.NOT_YOURS;
             }
+        } else if (AccessContext.TYPE_INVALID.equals(accessType)) {
+            this.accessContext.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
+        } else if (AccessContext.TYPE_ANONYMOUS.equals(accessType)) {
+            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(accessContext.getRealm(),
+                    this.cellRsCmp.getAcceptableAuthScheme());
+        } else {
+            throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
         }
     }
 

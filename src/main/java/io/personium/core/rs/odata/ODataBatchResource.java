@@ -1374,13 +1374,13 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * $batchリクエスト内の各MIMEパートに対して行うアクセス制御.
-     * @param ac アクセスコンテキスト
-     * @param privilege 許可する権限
+     * Access control to be performed on each MIME part in the $batch request.
+     * @param ac AccessContext
+     * @param privilege Required privilege
      */
     private void checkAccessContextForMimePart(AccessContext ac, Privilege privilege) {
-        // ユニットユーザトークンチェック
-        if (ac.isUnitUserToken()) {
+        // Check UnitUser token.
+        if (ac.isUnitUserToken(privilege)) {
             return;
         }
 

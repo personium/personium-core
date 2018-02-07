@@ -230,7 +230,7 @@ public class DavRsCmp {
 
         // ACL config output is allowed by Unit User or when ACL Privilege is configured.
         boolean canAclRead = false;
-        if (this.getAccessContext().isUnitUserToken()
+        if (this.getAccessContext().isUnitUserToken(requiredForReadAcl)
                 || this.hasPrivilege(this.getAccessContext(), requiredForReadAcl)) {
             canAclRead = true;
         }
@@ -420,7 +420,7 @@ public class DavRsCmp {
      */
     public void checkAccessContext(final AccessContext ac, Privilege privilege) {
         // if accessed with valid UnitUserToken then fine.
-        if (ac.isUnitUserToken()) {
+        if (ac.isUnitUserToken(privilege)) {
             return;
         }
 

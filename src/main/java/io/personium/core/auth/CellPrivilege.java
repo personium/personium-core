@@ -20,102 +20,58 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * WebDAVACLのPrivilege.
+ * Privilege of cell.
  */
-public final class CellPrivilege extends Privilege {
-    /**
-     * コンストラクタ.
-     * @param name Privilege名
-     */
-    CellPrivilege(final String name) {
-        super(name);
-    }
+public class CellPrivilege extends Privilege {
 
     /**
-     * コンストラクタ.
-     * @param name Privilege名
-     * @param parent 親Privilege
+     * Constructor.
+     * @param name Name
+     * @param accessType Access type
+     * @param parent Parent privilege
      */
-    CellPrivilege(final String name, final CellPrivilege parent) {
-        super(name, parent);
+    CellPrivilege(String name, String accessType, Privilege parent) {
+        super(name, accessType, parent);
     }
 
-    /**
-     * すべての権限.
-     */
-    public static final CellPrivilege ROOT = new CellPrivilege("root");
-    /**
-     * Account, Role, extRole グループ操作権限.
-     */
-    public static final CellPrivilege AUTH = new CellPrivilege("auth", ROOT);
-    /**
-     * AUTHグループ read権限.
-     */
-    public static final CellPrivilege AUTH_READ = new CellPrivilege("auth-read", AUTH);
-    /**
-     * ReceivedMessage, SentMessage グループ操作権限.
-     */
-    public static final CellPrivilege MESSAGE = new CellPrivilege("message", ROOT);
-    /**
-     * MESSAGEグループ read権限.
-     */
-    public static final CellPrivilege MESSAGE_READ = new CellPrivilege("message-read", MESSAGE);
-    /**
-     * event, log グループ操作権限.
-     */
-    public static final CellPrivilege EVENT = new CellPrivilege("event", ROOT);
-    /**
-     * EVENTグループ read権限.
-     */
-    public static final CellPrivilege EVENT_READ = new CellPrivilege("event-read", EVENT);
-    /**
-     * log 操作権限.
-     */
-    public static final CellPrivilege LOG = new CellPrivilege("log", ROOT);
-    /**
-     * log read権限.
-     */
-    public static final CellPrivilege LOG_READ = new CellPrivilege("log-read", LOG);
-    /**
-     * relation, extCell グループ操作権限.
-     */
-    public static final CellPrivilege SOCIAL = new CellPrivilege("social", ROOT);
-    /**
-     * SOCIALグループ read権限.
-     */
-    public static final CellPrivilege SOCIAL_READ = new CellPrivilege("social-read", SOCIAL);
-    /**
-     * Box グループ操作権限.
-     */
-    public static final CellPrivilege BOX = new CellPrivilege("box", ROOT);
-    /**
-     * BOXグループ read権限.
-     */
-    public static final CellPrivilege BOX_READ = new CellPrivilege("box-read", BOX);
-    /**
-     * BOXグループ bar-install権限.
-     */
-    public static final CellPrivilege BOX_BAR_INSTALL = new CellPrivilege("box-install", BOX);
-    /**
-     * ACL グループ操作権限.
-     */
-    public static final CellPrivilege ACL = new CellPrivilege("acl", ROOT);
-    /**
-     * ACLグループ read権限.
-     */
-    public static final CellPrivilege ACL_READ = new CellPrivilege("acl-read", ACL);
-    /**
-     * PROPFIND権限.
-     */
-    public static final CellPrivilege PROPFIND = new CellPrivilege("propfind", ROOT);
-    /**
-     * Rule operation privilege.
-     */
-    public static final CellPrivilege RULE = new CellPrivilege("rule", ROOT);
-    /**
-     * Rule read privilege.
-     */
-    public static final CellPrivilege RULE_READ = new CellPrivilege("rule-read", RULE);
+    /** すべての権限. */
+    public static final CellPrivilege ROOT = new CellPrivilege("root", ACCESS_TYPE_ALL, null);
+    /** Account, Role, extRole グループ操作権限. */
+    public static final CellPrivilege AUTH = new CellPrivilege("auth", ACCESS_TYPE_WRITE, ROOT);
+    /** AUTHグループ read権限. */
+    public static final CellPrivilege AUTH_READ = new CellPrivilege("auth-read", ACCESS_TYPE_READ, AUTH);
+    /** ReceivedMessage, SentMessage グループ操作権限. */
+    public static final CellPrivilege MESSAGE = new CellPrivilege("message", ACCESS_TYPE_WRITE, ROOT);
+    /** MESSAGEグループ read権限. */
+    public static final CellPrivilege MESSAGE_READ = new CellPrivilege("message-read", ACCESS_TYPE_READ, MESSAGE);
+    /** event, log グループ操作権限. */
+    public static final CellPrivilege EVENT = new CellPrivilege("event", ACCESS_TYPE_WRITE, ROOT);
+    /** EVENTグループ read権限. */
+    public static final CellPrivilege EVENT_READ = new CellPrivilege("event-read", ACCESS_TYPE_READ, EVENT);
+    /** log 操作権限. */
+    public static final CellPrivilege LOG = new CellPrivilege("log", ACCESS_TYPE_WRITE, ROOT);
+    /** log read権限. */
+    public static final CellPrivilege LOG_READ = new CellPrivilege("log-read", ACCESS_TYPE_READ, LOG);
+    /** relation, extCell グループ操作権限. */
+    public static final CellPrivilege SOCIAL = new CellPrivilege("social", ACCESS_TYPE_WRITE, ROOT);
+    /** SOCIALグループ read権限. */
+    public static final CellPrivilege SOCIAL_READ = new CellPrivilege("social-read", ACCESS_TYPE_READ, SOCIAL);
+    /** Box グループ操作権限. */
+    public static final CellPrivilege BOX = new CellPrivilege("box", ACCESS_TYPE_WRITE, ROOT);
+    /** BOXグループ read権限. */
+    public static final CellPrivilege BOX_READ = new CellPrivilege("box-read", ACCESS_TYPE_READ, BOX);
+    /** BOXグループ bar-install権限. */
+    public static final CellPrivilege BOX_BAR_INSTALL = new CellPrivilege("box-install", ACCESS_TYPE_WRITE, BOX);
+    /** ACL グループ操作権限. */
+    public static final CellPrivilege ACL = new CellPrivilege("acl", ACCESS_TYPE_WRITE, ROOT);
+    /** ACLグループ read権限. */
+    public static final CellPrivilege ACL_READ = new CellPrivilege("acl-read", ACCESS_TYPE_READ, ACL);
+    /** PROPFIND権限. */
+    public static final CellPrivilege PROPFIND = new CellPrivilege("propfind", ACCESS_TYPE_READ, ROOT);
+    /** Rule operation privilege. */
+    public static final CellPrivilege RULE = new CellPrivilege("rule", ACCESS_TYPE_WRITE, ROOT);
+    /** Rule read privilege. */
+    public static final CellPrivilege RULE_READ = new CellPrivilege("rule-read", ACCESS_TYPE_READ, RULE);
 
     static Map<String, CellPrivilege> map = new HashMap<String, CellPrivilege>();
 
