@@ -30,6 +30,7 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
+import io.personium.core.utils.UriUtils;
 
 /**
  * Action for exec action.
@@ -122,7 +123,8 @@ public class ExecAction extends EngineAction {
                     req.addHeader("X-Personium-Fs-Path", dcmp.getFsPath());
                     req.addHeader("X-Personium-Fs-Routing-Id", dcmp.getCellId());
                 }
-                req.addHeader("X-Personium-Box-Schema", box.getSchema());
+                req.addHeader("X-Personium-Box-Schema",
+                        UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), box.getSchema()));
             }
         } catch (Exception e) {
             logger.error("error: " + e.getMessage(), e);
