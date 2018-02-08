@@ -57,13 +57,12 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
     /**
      * Constructor.
      * @param messageResource Message resource
-     * @param requestKey X-Personium-RequestKey header
      * @param producer OData producer
      * @param entityTypeName Entity type name
      */
-    public ODataReceivedMessageResource(MessageResource messageResource, String requestKey,
+    public ODataReceivedMessageResource(MessageResource messageResource,
             PersoniumODataProducer producer, String entityTypeName) {
-        super(messageResource, requestKey, producer, entityTypeName);
+        super(messageResource, producer, entityTypeName);
     }
 
     /**
@@ -131,7 +130,7 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
         String object = String.format("%s:/__ctl/%s%s",
                 UriUtils.SCHEME_LOCALCELL, getEntitySetName(), oEntityKey.toKeyString());
         String info = Integer.toString(response.getStatus());
-        getMessageResource().postEvent(getEntitySetName(), object, info, getRequestKey(), op);
+        getMessageResource().postEvent(getEntitySetName(), object, info, op);
 
         return response;
     }

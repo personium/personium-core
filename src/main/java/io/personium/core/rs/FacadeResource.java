@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,10 @@ public class FacadeResource {
      * @param authzHeaderValue Authorization ヘッダ
      * @param host Host ヘッダ
      * @param uriInfo UriInfo
-     * @param xPersoniumUnitUser X-Personium-UnitUserヘッダ
+     * @param xPersoniumUnitUser X-Personium-UnitUser header
+     * @param xPersoniumRequestKey X-Personium-RequestKey header
+     * @param xPersoniumEventId X-Personium-EventId header
+     * @param xPersoniumRuleChain X-Personium-RuleChain header
      * @param httpServletRequest HttpServletRequest
      * @return CellResourceオブジェクトまたはResponseオブジェクト
      */
@@ -73,6 +76,9 @@ public class FacadeResource {
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeaderValue,
             @HeaderParam(HttpHeaders.HOST) final String host,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_UNIT_USER) final String xPersoniumUnitUser,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) final String xPersoniumRequestKey,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_EVENTID) final String xPersoniumEventId,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RULECHAIN) final String xPersoniumRuleChain,
             @Context final UriInfo uriInfo,
             @Context HttpServletRequest httpServletRequest) {
         Cell cell = ModelFactory.cell(uriInfo);
@@ -90,7 +96,7 @@ public class FacadeResource {
 
         CellLockManager.incrementReferenceCount(cell.getId());
         httpServletRequest.setAttribute("cellId", cell.getId());
-        return new CellResource(ac, httpServletRequest);
+        return new CellResource(ac, xPersoniumRequestKey, xPersoniumEventId, xPersoniumRuleChain, httpServletRequest);
     }
 
     /**

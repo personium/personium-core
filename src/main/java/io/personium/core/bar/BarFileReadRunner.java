@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -347,12 +347,10 @@ public class BarFileReadRunner implements Runnable {
     private void setEventBus() {
         // TODO Boxのスキーマとサブジェクトのログは内部イベントの正式対応時に実装する
 
-        String schema = odataEntityResource.getAccessContext().getSchema();
-        String subject = odataEntityResource.getAccessContext().getSubject();
         String type = WebDAVMethod.MKCOL.toString();
         String object = cell.getUrl() + boxName;
         String result = "";
-        this.event = new PersoniumEvent(schema, subject, type, object, result, this.requestKey);
+        this.event = new PersoniumEvent(type, object, result, this.requestKey);
         this.eventBus = this.cell.getEventBus();
     }
 
@@ -1769,7 +1767,7 @@ public class BarFileReadRunner implements Runnable {
         String info = "box install";
         String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
                 + name + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-        PersoniumEvent ev = new PersoniumEvent(null, null, type, object, info, null);
+        PersoniumEvent ev = new PersoniumEvent(type, object, info, this.requestKey);
         EventBus bus = this.cell.getEventBus();
         bus.post(ev);
     }
@@ -1876,6 +1874,7 @@ public class BarFileReadRunner implements Runnable {
         postCellCtlCreateEvent(res);
     }
 
+    @SuppressWarnings("unchecked")
     private void createRules(JSONObject json) {
         log.debug("createRules: " + json.toString());
         json.put("_Box.Name", createdBoxName);
@@ -1927,7 +1926,7 @@ public class BarFileReadRunner implements Runnable {
                 + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
                 + newTargetEntity.getEntitySetName() + PersoniumEventType.SEPALATOR
                 + PersoniumEventType.Operation.CREATE;
-        PersoniumEvent ev = new PersoniumEvent(null, null, type, object, info, null);
+        PersoniumEvent ev = new PersoniumEvent(type, object, info, this.requestKey);
         EventBus bus = this.cell.getEventBus();
         bus.post(ev);
     }

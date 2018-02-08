@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -161,7 +161,7 @@ public class ODataPropertyResource extends AbstractODataResource {
         String op = PersoniumEventType.Operation.NAVPROP
                 + PersoniumEventType.SEPALATOR + this.targetNavProp.substring(1)
                 + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-        this.odataResource.postEvent(this.sourceEntityId.getEntitySetName(), object, info, requestKey, op);
+        this.odataResource.postEvent(this.sourceEntityId.getEntitySetName(), object, info, op);
 
         return ret;
     }
@@ -283,7 +283,7 @@ public class ODataPropertyResource extends AbstractODataResource {
         String op = PersoniumEventType.Operation.NAVPROP
                 + PersoniumEventType.SEPALATOR + this.targetNavProp.substring(1)
                 + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LIST;
-        this.odataResource.postEvent(this.sourceEntityId.getEntitySetName(), object, info, requestKey, op);
+        this.odataResource.postEvent(this.sourceEntityId.getEntitySetName(), object, info, op);
 
         return ret;
     }

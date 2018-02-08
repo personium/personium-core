@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package io.personium.core.rs.cell;
 
 import java.io.Reader;
 
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.Response;
 
@@ -28,7 +27,6 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
@@ -64,39 +62,19 @@ public class EventResource {
     /**
      * イベントの受付.
      * @param reader リクエストボディ
-     * @param version X-Personium-Versionヘッダー値
-     * @param requestKey X-Personium-RequestKeyヘッダー値
      * @return JAXRS Response
      */
     @WriteAPI
     @POST
-    public final Response receiveEvent(final Reader reader,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VERSION) final String version,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
-
-        // TODO findBugs対策↓
-        log.debug(this.cell.getName());
-        log.debug(this.accessContext.getBaseUri());
-        log.debug(this.davRsCmp.getUrl());
-
+    public final Response receiveEvent(final Reader reader) {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.EVENT);
 
-        // X-Personium-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
-        requestKey = ResourceUtils.validateXPersoniumRequestKey(requestKey);
-        // TODO findBugs対策↓
-        log.debug(requestKey);
-
         // リクエストボディを解析してEventオブジェクトを取得する
-        PersoniumEvent event = getRequestBody(reader, requestKey);
+        PersoniumEvent event = getRequestBody(reader);
         validateEventProperties(event);
 
-        // TODO イベントバス系のデータロック
-        // TODO 新規のイベント受付かどうかをESへ検索（current/default.logのデータ検索)
-        // TODO ESへCollectionとLogDavFileを登録/更新（新規：CREATE、更新：uのみPUT）
-        // TODO ログ出力用のデフォルト設定情報を取得
-
-        // ログファイル出力
+        // post event
         EventBus eventBus = this.cell.getEventBus();
         eventBus.post(event);
 
@@ -133,7 +111,7 @@ public class EventResource {
      * @param requestKey
      * @return 解析したEventオブジェクト
      */
-    private PersoniumEvent getRequestBody(final Reader reader, final String requestKey) {
+    private PersoniumEvent getRequestBody(final Reader reader) {
         JSONObject body;
         body = ResourceUtils.parseBodyAsJSON(reader);
 
@@ -160,10 +138,8 @@ public class EventResource {
         }
         String info = (String) body.get("Info");
 
-        String schema = this.accessContext.getSchema();
-        String subject = this.accessContext.getSubject();
         PersoniumEvent ev = new PersoniumEvent(PersoniumEvent.EXTERNAL_EVENT,
-                schema, subject, type, object, info, requestKey);
+                type, object, info, this.davRsCmp);
 
         return ev;
     }

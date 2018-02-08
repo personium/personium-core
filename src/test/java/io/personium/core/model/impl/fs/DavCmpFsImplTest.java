@@ -86,9 +86,9 @@ import io.personium.test.categories.Unit;
  * Unit Test class for DavCmpFsImpl.
  */
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.crypto.*" })
-@PrepareForTest({DavCmpFsImpl.class, AccessContext.class, PersoniumUnitConfig.class, DavMetadataFile.class,
-    EsClient.class, EsModel.class})
+@PowerMockIgnore({ "javax.crypto.*" })
+@PrepareForTest({ DavCmpFsImpl.class, AccessContext.class, PersoniumUnitConfig.class, DavMetadataFile.class,
+    EsClient.class, EsModel.class })
 @Category({ Unit.class })
 public class DavCmpFsImplTest {
 
@@ -1262,3 +1262,4 @@ public class DavCmpFsImplTest {
         assertThat(actual, is(expected));
     }
 }
+

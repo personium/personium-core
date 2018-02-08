@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public class EventSenderTest {
         // --------------------
         PersoniumEvent event = new PersoniumEvent(true,
                 "schema string", "subject string", "type string",
-                "object string", "info string", "requestkey string");
+                "object string", "info string", "requestkey string", "eventid string", "rulechain string");
         event.setCellId("cell id");
 
         // --------------------
@@ -81,6 +81,8 @@ public class EventSenderTest {
         // --------------------
         MapMessage message = mock(MapMessage.class);
         doReturn(true).when(message).itemExists("RequestKey");
+        doReturn(true).when(message).itemExists("EventId");
+        doReturn(true).when(message).itemExists("RuleChain");
         doReturn(true).when(message).itemExists("External");
         doReturn(true).when(message).itemExists("Schema");
         doReturn(true).when(message).itemExists("Subject");
@@ -89,6 +91,8 @@ public class EventSenderTest {
         doReturn(true).when(message).itemExists("Info");
         doReturn(true).when(message).itemExists("cellId");
         doReturn(event.getRequestKey()).when(message).getString("RequestKey");
+        doReturn(event.getEventId()).when(message).getString("EventId");
+        doReturn(event.getRuleChain()).when(message).getString("RuleChain");
         doReturn(event.getExternal()).when(message).getBoolean("External");
         doReturn(event.getSchema()).when(message).getString("Schema");
         doReturn(event.getSubject()).when(message).getString("Subject");
@@ -106,6 +110,8 @@ public class EventSenderTest {
         // Confirm result
         // --------------------
         assertThat(result.getRequestKey(), is(event.getRequestKey()));
+        assertThat(result.getEventId(), is(event.getEventId()));
+        assertThat(result.getRuleChain(), is(event.getRuleChain()));
         assertThat(result.getExternal(), is(event.getExternal()));
         assertThat(result.getSchema(), is(event.getSchema()));
         assertThat(result.getSubject(), is(event.getSubject()));
@@ -157,7 +163,7 @@ public class EventSenderTest {
         // --------------------
         PersoniumEvent event = new PersoniumEvent(false,
                 null, null, "type string",
-                "object string", "info string", "requestkey string");
+                "object string", "info string", "requestkey string", "eventid string", "rulechain string");
         event.setCellId("cell id");
 
         // --------------------
@@ -165,6 +171,8 @@ public class EventSenderTest {
         // --------------------
         MapMessage message = mock(MapMessage.class);
         doReturn(true).when(message).itemExists("RequestKey");
+        doReturn(true).when(message).itemExists("EventId");
+        doReturn(true).when(message).itemExists("RuleChain");
         doReturn(true).when(message).itemExists("External");
         doReturn(false).when(message).itemExists("Schema");
         doReturn(true).when(message).itemExists("Subject");
@@ -173,6 +181,8 @@ public class EventSenderTest {
         doReturn(true).when(message).itemExists("Info");
         doReturn(true).when(message).itemExists("cellId");
         doReturn(event.getRequestKey()).when(message).getString("RequestKey");
+        doReturn(event.getEventId()).when(message).getString("EventId");
+        doReturn(event.getRuleChain()).when(message).getString("RuleChain");
         doReturn(event.getExternal()).when(message).getBoolean("External");
         doReturn(event.getSchema()).when(message).getString("Schema");
         doReturn(event.getSubject()).when(message).getString("Subject");
@@ -190,6 +200,8 @@ public class EventSenderTest {
         // Confirm result
         // --------------------
         assertThat(result.getRequestKey(), is(event.getRequestKey()));
+        assertThat(result.getEventId(), is(event.getEventId()));
+        assertThat(result.getRuleChain(), is(event.getRuleChain()));
         assertThat(result.getExternal(), is(event.getExternal()));
         assertThat(result.getSchema(), is(event.getSchema()));
         assertThat(result.getSubject(), is(event.getSubject()));

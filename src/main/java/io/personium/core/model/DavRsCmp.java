@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -627,6 +627,30 @@ public class DavRsCmp {
         }
         Element e = doc.getDocumentElement();
         return e;
+    }
+
+    /**
+     * returns the RequestKey string.
+     * @return RequestKey String
+     */
+    public String getRequestKey() {
+        return this.parent.getRequestKey();
+    }
+
+    /**
+     * returns the EventId string.
+     * @return EventId String
+     */
+    public String getEventId() {
+        return this.parent.getEventId();
+    }
+
+    /**
+     * returns the RuleChain string.
+     * @return RuleChain String
+     */
+    public String getRuleChain() {
+        return this.parent.getRuleChain();
     }
 
 }

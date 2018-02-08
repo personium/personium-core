@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -334,7 +334,8 @@ public class MessageODataProducer extends CellCtlODataProducer {
                         UriUtils.SCHEME_LOCALCELL, ExtCell.EDM_TYPE_NAME, extCellKeyString);
                 String extCellType = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
                         + ExtCell.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-                PersoniumEvent ev = new PersoniumEvent(null, null, extCellType, object, info, null);
+                PersoniumEvent ev = new PersoniumEvent(
+                        PersoniumEvent.INTERNAL_EVENT, extCellType, object, info, this.davRsCmp);
                 eventBus.post(ev);
             }
             try {
@@ -347,7 +348,8 @@ public class MessageODataProducer extends CellCtlODataProducer {
                         + Relation.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR
                         + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
                         + ExtCell.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-                PersoniumEvent ev = new PersoniumEvent(null, null, relationType, object, info, null);
+                PersoniumEvent ev = new PersoniumEvent(
+                        PersoniumEvent.INTERNAL_EVENT, relationType, object, info, this.davRsCmp);
                 eventBus.post(ev);
             } catch (PersoniumCoreException e) {
                 if (PersoniumCoreException.OData.CONFLICT_LINKS.getCode().equals(e.getCode())) {
@@ -369,7 +371,8 @@ public class MessageODataProducer extends CellCtlODataProducer {
                     + Relation.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR
                     + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
                     + ExtCell.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-            PersoniumEvent ev = new PersoniumEvent(null, null, relationType, object, info, null);
+            PersoniumEvent ev = new PersoniumEvent(
+                    PersoniumEvent.INTERNAL_EVENT, relationType, object, info, this.davRsCmp);
             eventBus.post(ev);
         }
     }
@@ -441,7 +444,8 @@ public class MessageODataProducer extends CellCtlODataProducer {
                         UriUtils.SCHEME_LOCALCELL, ExtCell.EDM_TYPE_NAME, extCellKeyString);
                 String extCellType = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
                         + ExtCell.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-                PersoniumEvent ev = new PersoniumEvent(null, null, extCellType, object, info, null);
+                PersoniumEvent ev = new PersoniumEvent(
+                        PersoniumEvent.INTERNAL_EVENT, extCellType, object, info, this.davRsCmp);
                 eventBus.post(ev);
             }
             try {
@@ -454,7 +458,8 @@ public class MessageODataProducer extends CellCtlODataProducer {
                         + Role.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR
                         + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
                         + ExtCell.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-                PersoniumEvent ev = new PersoniumEvent(null, null, roleType, object, info, null);
+                PersoniumEvent ev = new PersoniumEvent(
+                        PersoniumEvent.INTERNAL_EVENT, roleType, object, info, this.davRsCmp);
                 eventBus.post(ev);
             } catch (PersoniumCoreException e) {
                 if (PersoniumCoreException.OData.CONFLICT_LINKS.getCode().equals(e.getCode())) {
@@ -476,7 +481,8 @@ public class MessageODataProducer extends CellCtlODataProducer {
                     + Role.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR
                     + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
                     + ExtCell.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-            PersoniumEvent ev = new PersoniumEvent(null, null, roleType, object, info, null);
+            PersoniumEvent ev = new PersoniumEvent(
+                    PersoniumEvent.INTERNAL_EVENT, roleType, object, info, this.davRsCmp);
             eventBus.post(ev);
         }
     }
@@ -530,7 +536,8 @@ public class MessageODataProducer extends CellCtlODataProducer {
             String info = "approved for message " + messageId;
             String ruleType = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
                     + Rule.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-            PersoniumEvent ev = new PersoniumEvent(null, null, ruleType, object, info, null);
+            PersoniumEvent ev = new PersoniumEvent(
+                    PersoniumEvent.INTERNAL_EVENT, ruleType, object, info, this.davRsCmp);
             EventBus eventBus = this.cell.getEventBus();
             eventBus.post(ev);
         } else if (RequestObject.REQUEST_TYPE_RULE_REMOVE.equals(requestType)) {
@@ -543,7 +550,8 @@ public class MessageODataProducer extends CellCtlODataProducer {
             String info = "approved for message " + messageId;
             String ruleType = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
                     + Rule.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-            PersoniumEvent ev = new PersoniumEvent(null, null, ruleType, object, info, null);
+            PersoniumEvent ev = new PersoniumEvent(
+                    PersoniumEvent.INTERNAL_EVENT, ruleType, object, info, this.davRsCmp);
             EventBus eventBus = this.cell.getEventBus();
             eventBus.post(ev);
         }

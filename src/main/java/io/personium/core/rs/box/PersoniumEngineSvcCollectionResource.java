@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.wink.webdav.WebDAVMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +70,6 @@ import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.PersoniumEventType;
 import io.personium.core.event.EventBus;
-import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
@@ -278,24 +276,16 @@ public class PersoniumEngineSvcCollectionResource {
 
     /**
      * Create event from request.
-     * @param uriInfo URI
-     * @param headers HTTP Header
+     * @param path service name
      * @return PersoniumEvent created event
      */
-    private PersoniumEvent createEvent(UriInfo uriInfo, HttpHeaders headers) {
-        String schema = this.davRsCmp.getAccessContext().getSchema();
-        String subject = this.davRsCmp.getAccessContext().getSubject();
-        String object = UriUtils.convertSchemeFromHttpToLocalCell(uriInfo.getRequestUri());
-        List<String> keys = headers.getRequestHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY);
-        String requestKey = null;
-        if (keys != null) {
-            requestKey = keys.get(0);
-        }
-        requestKey = ResourceUtils.validateXPersoniumRequestKey(requestKey);
+    private PersoniumEvent createEvent(String path) {
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                this.davRsCmp.getUrl() + "/" + path);
         String type = PersoniumEventType.Category.SERVICE
                 + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.EXEC;
 
-        return new PersoniumEvent(schema, subject, type, object, null, requestKey);
+        return new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, null, this.davRsCmp);
     }
 
     /**
@@ -307,6 +297,7 @@ public class PersoniumEngineSvcCollectionResource {
      * @param is リクエストボディ
      * @return JAX-RS Response
      */
+    @SuppressWarnings("deprecation")
     public Response relaycommon(
             String method,
             UriInfo uriInfo,
@@ -323,7 +314,7 @@ public class PersoniumEngineSvcCollectionResource {
         String baseUrl = uriInfo.getBaseUri().toString();
 
         // リクエストヘッダを取得し、以下内容を追加
-        HttpClient client = new DefaultHttpClient();
+        HttpClient client = new org.apache.http.impl.client.DefaultHttpClient();
         HttpUriRequest req = null;
         if (method.equals(HttpMethod.POST)) {
             HttpPost post = new HttpPost(requestUrl);
@@ -378,7 +369,7 @@ public class PersoniumEngineSvcCollectionResource {
         }
 
         // prepare event
-        PersoniumEvent event = createEvent(uriInfo, headers);
+        PersoniumEvent event = createEvent(path);
         EventBus eventBus = this.davRsCmp.getAccessContext().getCell().getEventBus();
 
         // Engineにリクエストを投げる

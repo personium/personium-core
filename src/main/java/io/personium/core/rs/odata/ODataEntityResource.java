@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -172,7 +172,6 @@ public class ODataEntityResource extends AbstractODataResource {
      * @param uriInfo UriInfo
      * @param accept Accept ヘッダ
      * @param ifNoneMatch If-None-Match ヘッダ
-     * @param requestKey X-Personium-RequestKey Header
      * @param format $format パラメタ
      * @param expand $expand パラメタ
      * @param select $select パラメタ
@@ -183,7 +182,6 @@ public class ODataEntityResource extends AbstractODataResource {
             @Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.ACCEPT) String accept,
             @HeaderParam(HttpHeaders.IF_NONE_MATCH) String ifNoneMatch,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @QueryParam("$format") String format,
             @QueryParam("$expand") String expand,
             @QueryParam("$select") String select) {
@@ -241,7 +239,7 @@ public class ODataEntityResource extends AbstractODataResource {
         String info = String.format("%s,%s",
                 Integer.toString(res.getStatus()),
                 uriInfo.getRequestUri());
-        this.odataResource.postEvent(getEntitySetName(), object, info, requestKey, PersoniumEventType.Operation.GET);
+        this.odataResource.postEvent(getEntitySetName(), object, info, PersoniumEventType.Operation.GET);
 
         return res;
     }
@@ -302,15 +300,13 @@ public class ODataEntityResource extends AbstractODataResource {
      * @param reader リクエストボディ
      * @param accept Accept ヘッダ
      * @param ifMatch If-Match ヘッダ
-     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RSResponse
      */
     @WriteAPI
     @PUT
     public Response put(Reader reader,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
-            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
+            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
 
         // メソッド実行可否チェック
         checkNotAllowedMethod();
@@ -338,7 +334,7 @@ public class ODataEntityResource extends AbstractODataResource {
         // set new entitykey's string to Info
         String newKey = AbstractODataResource.replaceDummyKeyToNull(oew.getEntityKey().toKeyString());
         String info = Integer.toString(res.getStatus()) + "," + newKey;
-        this.odataResource.postEvent(getEntitySetName(), object, info, requestKey, PersoniumEventType.Operation.UPDATE);
+        this.odataResource.postEvent(getEntitySetName(), object, info, PersoniumEventType.Operation.UPDATE);
 
         return res;
     }
@@ -372,33 +368,29 @@ public class ODataEntityResource extends AbstractODataResource {
      * @param reader リクエストボディ
      * @param accept Accept ヘッダ
      * @param ifMatch If-Match ヘッダ
-     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RSResponse
      */
     @WriteAPI
     @MERGE
     public Response merge(Reader reader,
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
-            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
+            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
         ODataMergeResource oDataMergeResource = new ODataMergeResource(this.odataResource, this.getEntitySetName(),
                 this.keyString, this.oEntityKey);
-        return oDataMergeResource.merge(reader, accept, ifMatch, requestKey);
+        return oDataMergeResource.merge(reader, accept, ifMatch);
     }
 
     /**
      * DELETEメソッドの処理.
      * @param accept Accept ヘッダ
      * @param ifMatch If-Match ヘッダ
-     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RS Response
      */
     @WriteAPI
     @DELETE
     public Response delete(
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
-            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
+            @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
         // アクセス制御
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
@@ -412,7 +404,7 @@ public class ODataEntityResource extends AbstractODataResource {
         String key = AbstractODataResource.replaceDummyKeyToNull(this.oEntityKey.toKeyString());
         String object = this.odataResource.getRootUrl() + getEntitySetName() + key;
         String info = Integer.toString(res.getStatus());
-        this.odataResource.postEvent(getEntitySetName(), object, info, requestKey, PersoniumEventType.Operation.DELETE);
+        this.odataResource.postEvent(getEntitySetName(), object, info, PersoniumEventType.Operation.DELETE);
 
         return res;
     }

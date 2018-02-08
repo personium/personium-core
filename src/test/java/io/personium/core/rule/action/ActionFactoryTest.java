@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class ActionFactoryTest {
         // --------------------
         // Test method args
         // --------------------
-        ActionInfo ai = new ActionInfo("log", null);
+        ActionInfo ai = new ActionInfo("log");
         String owner = "owner";
         String cellId = "0123456789";
 
@@ -89,7 +89,7 @@ public class ActionFactoryTest {
         // --------------------
         // Test method args
         // --------------------
-        ActionInfo ai = new ActionInfo("log.info", null);
+        ActionInfo ai = new ActionInfo("log.info");
         String owner = "owner";
         String cellId = "0123456789";
 
@@ -124,7 +124,7 @@ public class ActionFactoryTest {
         // --------------------
         // Test method args
         // --------------------
-        ActionInfo ai = new ActionInfo("log.warn", null);
+        ActionInfo ai = new ActionInfo("log.warn");
         String owner = "owner";
         String cellId = "0123456789";
 
@@ -159,7 +159,7 @@ public class ActionFactoryTest {
         // --------------------
         // Test method args
         // --------------------
-        ActionInfo ai = new ActionInfo("log.error", null);
+        ActionInfo ai = new ActionInfo("log.error");
         String owner = "owner";
         String cellId = "0123456789";
 
@@ -194,7 +194,7 @@ public class ActionFactoryTest {
         // --------------------
         // Test method args
         // --------------------
-        ActionInfo ai = new ActionInfo("log.debug", null);
+        ActionInfo ai = new ActionInfo("log.debug");
         String owner = "owner";
         String cellId = "0123456789";
 
@@ -225,7 +225,7 @@ public class ActionFactoryTest {
      */
     @Test
     public void createAction_Normal_action_is_exec() {
-        ActionInfo ai = new ActionInfo("exec", "http://personium/cell/box/col/service");
+        ActionInfo ai = new ActionInfo("exec", "http://personium/cell/box/col/service", null, null);
         assertThat(ActionFactory.createAction(null, ai), instanceOf(ExecAction.class));
     }
 
@@ -236,7 +236,7 @@ public class ActionFactoryTest {
      */
     @Test
     public void createAction_Normal_action_is_relay() {
-        ActionInfo ai = new ActionInfo("relay", "http://personium/cell/box/col/service");
+        ActionInfo ai = new ActionInfo("relay", "http://personium/cell/box/col/service", null, null);
         assertThat(ActionFactory.createAction(null, ai), instanceOf(RelayAction.class));
     }
 
@@ -247,7 +247,7 @@ public class ActionFactoryTest {
      */
     @Test
     public void createAction_Normal_action_is_invalid() {
-        ActionInfo ai = new ActionInfo("invalid", "http://personium/cell/box/col/service");
+        ActionInfo ai = new ActionInfo("invalid", "http://personium/cell/box/col/service", null, null);
         assertNull(ActionFactory.createAction(null, ai));
     }
 
@@ -258,7 +258,7 @@ public class ActionFactoryTest {
      */
     @Test
     public void createAction_Normal_action_is_null() {
-        ActionInfo ai = new ActionInfo(null, "http://personium/cell/box/col/service");
+        ActionInfo ai = new ActionInfo(null, "http://personium/cell/box/col/service", null, null);
         assertNull(ActionFactory.createAction(null, ai));
     }
 }

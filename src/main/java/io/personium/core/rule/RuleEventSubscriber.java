@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,8 @@ class RuleEventSubscriber implements Runnable {
                         log.debug("    Object: " + event.getObject());
                         log.debug("    Info: " + event.getInfo());
                         log.debug("    RequestKey: " + event.getRequestKey());
+                        log.debug("    EventId: " + event.getEventId());
+                        log.debug("    RuleChain: " + event.getRuleChain());
                         log.debug("    CellId: " + event.getCellId());
 
                         // Register or unregister rule in accordance with event about rule.

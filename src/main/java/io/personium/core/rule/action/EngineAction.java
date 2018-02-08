@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import org.json.simple.JSONObject;
@@ -31,8 +30,10 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
+import io.personium.core.rule.ActionInfo;
 
 /**
  * Abstract class of Action about Engine.
@@ -43,46 +44,56 @@ public abstract class EngineAction extends Action {
     Cell cell;
     String service;
     String action;
+    String eventId;
+    String chain;
 
     /**
      * Constructor.
      * @param cell target cell object
-     * @param service the url that HTTP POST will be sent
-     * @param action 'relay' or 'exec'
+     * @param ai ActionInfo object
      */
-    public EngineAction(Cell cell, String service, String action) {
+    public EngineAction(Cell cell, ActionInfo ai) {
         this.cell = cell;
-        this.service = service;
-        this.action = action;
+        this.service = ai.getService();
+        this.action = ai.getAction();
+        this.eventId = ai.getEventId();
+        this.chain = ai.getRuleChain();
     }
 
     @Override
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public PersoniumEvent execute(PersoniumEvent event) {
         String requestUrl = getRequestUrl();
         if (requestUrl == null) {
             return null;
         }
 
-        HttpClient client = new DefaultHttpClient();
+        HttpClient client = new org.apache.http.impl.client.DefaultHttpClient();
         HttpPost req = new HttpPost(requestUrl);
 
         // create payload as JSON
         JSONObject json = new JSONObject();
-        json.put("evt_external", event.getExternal());
-        json.put("evt_requestkey", event.getRequestKey());
+        json.put("External", event.getExternal());
         if (event.getSchema() != null) {
-            json.put("evt_schema", event.getSchema());
+            json.put("Schema", event.getSchema());
         }
         if (event.getSubject() != null) {
-            json.put("evt_subject", event.getSubject());
+            json.put("Subject", event.getSubject());
         }
-        json.put("evt_type", event.getType());
-        json.put("evt_object", event.getObject());
+        json.put("Type", event.getType());
+        json.put("Object", event.getObject());
+        json.put("Info", event.getInfo());
 
         // add specific events to payload in derrived class
         addEvents(json);
 
         req.setEntity(new StringEntity(json.toString(), ContentType.create("application/json")));
+
+        // set headers
+        //  X-Personium-RequestKey, X-Personium-EventId, X-Personium-RuleChain
+        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, event.getRequestKey());
+        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_EVENTID, eventId);
+        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RULECHAIN, chain);
 
         // set specific headers in derrived class
         setHeaders(req);
@@ -106,7 +117,8 @@ public abstract class EngineAction extends Action {
             result = "404";
         }
 
-        PersoniumEvent evt = new PersoniumEvent(null, null, action, service, result, event.getRequestKey());
+        PersoniumEvent evt = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT,
+                null, null, action, service, result, event.getRequestKey(), eventId, chain);
         evt.setCellId(cell.getId());
 
         return evt;
