@@ -52,7 +52,7 @@ import io.personium.test.categories.Unit;
  * Unit Test class for CellDataAccessor.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({CellDataAccessor.class})
+@PrepareForTest({ CellDataAccessor.class })
 @Category({Unit.class })
 public class CellDataAccessorTest {
 

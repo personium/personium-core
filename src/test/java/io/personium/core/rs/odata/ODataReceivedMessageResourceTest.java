@@ -69,7 +69,7 @@ public class ODataReceivedMessageResourceTest {
      */
     @Before
     public void befor() {
-        oDataReceivedMessageResource = PowerMockito.spy(new ODataReceivedMessageResource(null, null, null, null));
+        oDataReceivedMessageResource = PowerMockito.spy(new ODataReceivedMessageResource(null, null, null));
     }
 
     /**

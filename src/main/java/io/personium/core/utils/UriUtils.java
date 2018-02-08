@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
  */
 package io.personium.core.utils;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,30 +129,16 @@ public class UriUtils {
 
     /**
      * Convert scheme from http to LocalCell.
-     * @param uri URI
+     * @param cellUrl String
+     * @param url String
      * @return url with personium-localcell scheme
      */
-    public static String convertSchemeFromHttpToLocalCell(URI uri) {
-        if (uri == null) {
+    public static String convertSchemeFromHttpToLocalCell(String cellUrl, String url) {
+        if (url == null || !url.startsWith(cellUrl)) {
             return null;
         }
 
-        String path = uri.getPath();
-        if (path != null) {
-            // path: /cell/box/...
-            String[] paths = path.split("/", BOX_SPLIT_NUMBER);
-            if (paths.length == BOX_SPLIT_NUMBER) {
-                path = paths[BOX_SPLIT_NUMBER - 1];
-            } else {
-                path = "";
-            }
-        } else {
-            path = "";
-        }
-        String retUrl = String.format("%s:/%s", SCHEME_LOCALCELL, path);
-        if (uri.getQuery() != null) {
-            retUrl += "?" + uri.getQuery();
-        }
+        String retUrl = url.replaceFirst(cellUrl, UriUtils.SCHEME_LOCALCELL + ":/");
 
         return retUrl;
     }

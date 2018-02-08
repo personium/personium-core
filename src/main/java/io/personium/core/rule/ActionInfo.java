@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +22,32 @@ package io.personium.core.rule;
 public class ActionInfo {
     private String action;
     private String service;
+    private String eventId;
+    private String chain;
+
+    /**
+     * Constructor.
+     * @param action action to be performed
+     */
+    public ActionInfo(String action) {
+        this.action = action;
+        this.service = null;
+        this.eventId = null;
+        this.chain = null;
+    }
 
     /**
      * Constructor.
      * @param action action to be performed
      * @param service url that HTTP POST will be sent if not null
+     * @param eventId event id
+     * @param chain string to express rule chain
      */
-    public ActionInfo(String action, String service) {
+    public ActionInfo(String action, String service, String eventId, String chain) {
         this.action = action;
         this.service = service;
+        this.eventId = eventId;
+        this.chain = chain;
     }
 
     /**
@@ -47,5 +64,21 @@ public class ActionInfo {
      */
     public String getService() {
         return service;
+    }
+
+    /**
+     * Get value of event id.
+     * @return value of event id
+     */
+    public String getEventId() {
+        return eventId;
+    }
+
+    /**
+     * Get value of rule chain.
+     * @return value of chain
+     */
+    public String getRuleChain() {
+        return chain;
     }
 }

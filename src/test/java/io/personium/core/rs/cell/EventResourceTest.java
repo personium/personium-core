@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.junit.runner.RunWith;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.event.PersoniumEvent;
+import io.personium.core.model.DavRsCmp;
 import io.personium.test.categories.Unit;
 
 /**
@@ -61,6 +62,7 @@ public class EventResourceTest {
     @Test
     public void validateEventProperties_Normal() throws Exception {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -76,16 +78,20 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
-        EventResource resource = new EventResource(null, accessContext, null);
-        Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+        EventResource resource = new EventResource(null, accessContext, davRsCmp);
+        Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
         method1.setAccessible(true);
         Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
         method2.setAccessible(true);
-        PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+        PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
         method2.invoke(resource, event);
 
         // --------------------
@@ -113,9 +119,9 @@ public class EventResourceTest {
         // --------------------
         try {
             EventResource resource = new EventResource(null, null, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
@@ -128,6 +134,7 @@ public class EventResourceTest {
     @Test(expected = PersoniumCoreException.class)
     public void validateEventProperties_Error_body_is_empty() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -143,17 +150,21 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
         try {
-            EventResource resource = new EventResource(null, accessContext, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            EventResource resource = new EventResource(null, accessContext, davRsCmp);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
             Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
             method2.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
             method2.invoke(resource, event);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
@@ -167,6 +178,7 @@ public class EventResourceTest {
     @Test(expected = PersoniumCoreException.class)
     public void validateEventProperties_Error_Type_is_null() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -183,17 +195,21 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
         try {
-            EventResource resource = new EventResource(null, accessContext, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            EventResource resource = new EventResource(null, accessContext, davRsCmp);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
             Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
             method2.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
             method2.invoke(resource, event);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
@@ -207,6 +223,7 @@ public class EventResourceTest {
     @Test
     public void validateEventPropertes_Normal_Type_is_max_length() throws Exception {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -227,16 +244,20 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
-        EventResource resource = new EventResource(null, accessContext, null);
-        Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+        EventResource resource = new EventResource(null, accessContext, davRsCmp);
+        Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
         method1.setAccessible(true);
         Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
         method2.setAccessible(true);
-        PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+        PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
         method2.invoke(resource, event);
 
         // --------------------
@@ -254,6 +275,7 @@ public class EventResourceTest {
     @Test(expected = PersoniumCoreException.class)
     public void validateEventProperties_Error_Type_is_too_long() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -274,17 +296,21 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
         try {
-            EventResource resource = new EventResource(null, accessContext, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            EventResource resource = new EventResource(null, accessContext, davRsCmp);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
             Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
             method2.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
             method2.invoke(resource, event);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
@@ -298,6 +324,7 @@ public class EventResourceTest {
     @Test(expected = PersoniumCoreException.class)
     public void getRequestBody_Error_Type_is_Long() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -314,15 +341,19 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
         try {
-            EventResource resource = new EventResource(null, accessContext, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            EventResource resource = new EventResource(null, accessContext, davRsCmp);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
@@ -335,6 +366,7 @@ public class EventResourceTest {
     @Test(expected = PersoniumCoreException.class)
     public void getRequestBody_Error_Type_is_Double() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -351,15 +383,19 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
         try {
-            EventResource resource = new EventResource(null, accessContext, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            EventResource resource = new EventResource(null, accessContext, davRsCmp);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
@@ -372,6 +408,7 @@ public class EventResourceTest {
     @Test(expected = PersoniumCoreException.class)
     public void getRequestBody_Error_Type_is_boolean() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -388,15 +425,19 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
         try {
-            EventResource resource = new EventResource(null, accessContext, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            EventResource resource = new EventResource(null, accessContext, davRsCmp);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
@@ -409,6 +450,7 @@ public class EventResourceTest {
     @Test
     public void validateEventProperties_Normal_Type_is_Date() throws Exception {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -425,16 +467,20 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
-        EventResource resource = new EventResource(null, accessContext, null);
-        Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+        EventResource resource = new EventResource(null, accessContext, davRsCmp);
+        Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
         method1.setAccessible(true);
         Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
         method2.setAccessible(true);
-        PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+        PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
         method2.invoke(resource, event);
 
         // --------------------
@@ -453,6 +499,7 @@ public class EventResourceTest {
     @Test(expected = PersoniumCoreException.class)
     public void validateEventProperties_Error_Object_is_null() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -469,17 +516,21 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
         try {
-            EventResource resource = new EventResource(null, accessContext, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            EventResource resource = new EventResource(null, accessContext, davRsCmp);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
             Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
             method2.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
             method2.invoke(resource, event);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
@@ -493,6 +544,7 @@ public class EventResourceTest {
     @Test
     public void validateEventProperties_Normal_Object_is_max_length() throws Exception {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -513,16 +565,20 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
-        EventResource resource = new EventResource(null, accessContext, null);
-        Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+        EventResource resource = new EventResource(null, accessContext, davRsCmp);
+        Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
         method1.setAccessible(true);
         Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
         method2.setAccessible(true);
-        PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+        PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
         method2.invoke(resource, event);
 
         // --------------------
@@ -540,6 +596,7 @@ public class EventResourceTest {
     @Test(expected = PersoniumCoreException.class)
     public void validateEventProperties_Error_Object_is_too_long() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -560,17 +617,21 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
         try {
-            EventResource resource = new EventResource(null, accessContext, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            EventResource resource = new EventResource(null, accessContext, davRsCmp);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
             Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
             method2.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
             method2.invoke(resource, event);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
@@ -584,6 +645,7 @@ public class EventResourceTest {
     @Test(expected = PersoniumCoreException.class)
     public void getRequestBody_Error_Object_is_Long() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -600,15 +662,19 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
         try {
-            EventResource resource = new EventResource(null, accessContext, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            EventResource resource = new EventResource(null, accessContext, davRsCmp);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
@@ -622,6 +688,7 @@ public class EventResourceTest {
     @Test(expected = PersoniumCoreException.class)
     public void validateEventProperties_Error_Info_is_null() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -638,17 +705,21 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
         try {
-            EventResource resource = new EventResource(null, accessContext, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            EventResource resource = new EventResource(null, accessContext, davRsCmp);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
             Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
             method2.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
             method2.invoke(resource, event);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
@@ -662,6 +733,7 @@ public class EventResourceTest {
     @Test
     public void validateEventProperties_Normal_Info_is_max_length() throws Exception {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -682,16 +754,20 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
-        EventResource resource = new EventResource(null, accessContext, null);
-        Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+        EventResource resource = new EventResource(null, accessContext, davRsCmp);
+        Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
         method1.setAccessible(true);
         Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
         method2.setAccessible(true);
-        PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+        PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
         method2.invoke(resource, event);
 
         // --------------------
@@ -709,6 +785,7 @@ public class EventResourceTest {
     @Test(expected = PersoniumCoreException.class)
     public void validateEventProperties_Error_Info_is_too_long() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -729,17 +806,21 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
         try {
-            EventResource resource = new EventResource(null, accessContext, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            EventResource resource = new EventResource(null, accessContext, davRsCmp);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
             Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
             method2.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
             method2.invoke(resource, event);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
@@ -753,6 +834,7 @@ public class EventResourceTest {
     @Test(expected = PersoniumCoreException.class)
     public void getRequestBody_Error_Info_is_Long() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
         // --------------------
         // Test method args
@@ -769,15 +851,19 @@ public class EventResourceTest {
         // --------------------
         doReturn(schema).when(accessContext).getSchema();
         doReturn(subject).when(accessContext).getSubject();
+        doReturn(accessContext).when(davRsCmp).getAccessContext();
+        doReturn(requestKey).when(davRsCmp).getRequestKey();
+        doReturn(null).when(davRsCmp).getEventId();
+        doReturn(null).when(davRsCmp).getRuleChain();
 
         // --------------------
         // Run method
         // --------------------
         try {
-            EventResource resource = new EventResource(null, accessContext, null);
-            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class, String.class);
+            EventResource resource = new EventResource(null, accessContext, davRsCmp);
+            Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader, requestKey);
+            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }

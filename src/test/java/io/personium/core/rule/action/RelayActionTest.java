@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
+import io.personium.core.rule.ActionInfo;
 import io.personium.test.categories.Unit;
 
 /**
@@ -64,7 +65,7 @@ public class RelayActionTest {
         // --------------------
         // Expected result
         // --------------------
-        String expected = String.format("http://%s:%s/%s/%s/__/system/proxy",
+        String expected = String.format("http://%s:%s/%s/%s/__/system/relay",
                 engineHost, enginePort, enginePath, cellName);
 
         // --------------------
@@ -80,7 +81,8 @@ public class RelayActionTest {
         // --------------------
         // Run method
         // --------------------
-        RelayAction action = new RelayAction(cell, service);
+        ActionInfo ai = new ActionInfo("relay", service, null, null);
+        RelayAction action = new RelayAction(cell, ai);
         String result = action.getRequestUrl();
 
         // --------------------
@@ -116,7 +118,8 @@ public class RelayActionTest {
         // --------------------
         // Run method
         // --------------------
-        RelayAction action = new RelayAction(null, service);
+        ActionInfo ai = new ActionInfo("relay", service, null, null);
+        RelayAction action = new RelayAction(null, ai);
         String result = action.getRequestUrl();
 
         // --------------------
@@ -138,13 +141,13 @@ public class RelayActionTest {
         String cellName = "cell";
         String unitUrl = "http://personium/";
         String cellUrl = unitUrl + cellName + "/";
-        String requestUrl = "http://localhost:8080/personium-engine/cell/__/system/proxy";
+        String requestUrl = "http://localhost:8080/personium-engine/cell/__/system/relay";
 
         // --------------------
         // Expected result
         // --------------------
         String xBaseurl = unitUrl;
-        String xRequestUri = cellUrl + "__/proxy";
+        String xRequestUri = cellUrl + "__/relay";
         String xPersoniumBoxSchema = null;
 
         // --------------------
@@ -157,7 +160,8 @@ public class RelayActionTest {
         // --------------------
         // Run method
         // --------------------
-        RelayAction action = new RelayAction(cell, service);
+        ActionInfo ai = new ActionInfo("relay", service, null, null);
+        RelayAction action = new RelayAction(cell, ai);
         HttpPost req = new HttpPost(requestUrl);
         action.setHeaders(req);
 
@@ -180,7 +184,7 @@ public class RelayActionTest {
         // Test method args
         // --------------------
         String service = "http://personium/cell/box/col/service";
-        String requestUrl = "http://localhost:8080/personium-engine/cell/__/system/proxy";
+        String requestUrl = "http://localhost:8080/personium-engine/cell/__/system/relay";
 
         // --------------------
         // Expected result
@@ -193,7 +197,8 @@ public class RelayActionTest {
         // --------------------
         // Run method
         // --------------------
-        RelayAction action = new RelayAction(null, service);
+        ActionInfo ai = new ActionInfo("relay", service, null, null);
+        RelayAction action = new RelayAction(null, ai);
         HttpPost req = new HttpPost(requestUrl);
         action.setHeaders(req);
 
@@ -219,7 +224,7 @@ public class RelayActionTest {
         String cellName = "cell";
         String unitUrl = "http://personium/";
         String cellUrl = unitUrl + cellName + "/";
-        String requestUrl = "http://localhost:8080/personium-engine/cell/__/system/proxy";
+        String requestUrl = "http://localhost:8080/personium-engine/cell/__/system/relay";
 
         // --------------------
         // Expected result
@@ -235,7 +240,8 @@ public class RelayActionTest {
         // --------------------
         // Run method
         // --------------------
-        RelayAction action = new RelayAction(cell, service);
+        ActionInfo ai = new ActionInfo("relay", service, null, null);
+        RelayAction action = new RelayAction(cell, ai);
         HttpPost req = null;
         action.setHeaders(req);
 
@@ -269,7 +275,8 @@ public class RelayActionTest {
         // --------------------
         // Run method
         // --------------------
-        RelayAction action = new RelayAction(null, service);
+        ActionInfo ai = new ActionInfo("relay", service, null, null);
+        RelayAction action = new RelayAction(null, ai);
         JSONObject json = new JSONObject();
         action.addEvents(json);
 
@@ -277,7 +284,7 @@ public class RelayActionTest {
         // Confirm result
         // --------------------
         assertThat(json.size(), is(size));
-        assertThat(json.get("service"), is(expected));
+        assertThat(json.get("TargetUrl"), is(expected));
     }
 
     /**
@@ -304,7 +311,8 @@ public class RelayActionTest {
         // --------------------
         // Run method
         // --------------------
-        RelayAction action = new RelayAction(null, service);
+        ActionInfo ai = new ActionInfo("relay", service, null, null);
+        RelayAction action = new RelayAction(null, ai);
         JSONObject json = null;
         action.addEvents(json);
 

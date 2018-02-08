@@ -44,7 +44,7 @@ public class ODataMessageResourceTest {
      */
     @Before
     public void befor() {
-        oDataMessageResource = spy(new ODataMessageResource(null, null, null, null));
+        oDataMessageResource = spy(new ODataMessageResource(null, null, null));
     }
 
     /**

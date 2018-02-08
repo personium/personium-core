@@ -51,8 +51,6 @@ public class ODataMessageResource extends AbstractODataResource {
 
     /** MessageResource. */
     private MessageResource messageResource;
-    /** X-Personium-RequestKey. */
-    private String requestKey;
     /** Property map. */
     private Map<String, String> propMap = new HashMap<String, String>();
     /** Property map.(RequestObjects). */
@@ -61,14 +59,12 @@ public class ODataMessageResource extends AbstractODataResource {
     /**
      * Constructor.
      * @param messageResource Message resource
-     * @param requestKey X-Personium-RequestKey header
      * @param producer OData producer
      * @param entityTypeName Entity type name
      */
-    protected ODataMessageResource(MessageResource messageResource, String requestKey,
+    protected ODataMessageResource(MessageResource messageResource,
             PersoniumODataProducer producer, String entityTypeName) {
         this.messageResource = messageResource;
-        this.requestKey = requestKey;
         setOdataProducer(producer);
         setEntitySetName(entityTypeName);
     }
@@ -104,7 +100,7 @@ public class ODataMessageResource extends AbstractODataResource {
         // personium-localcell:/__ctl/SentMessage('key')
         String object = String.format("%s:/__ctl/%s%s", UriUtils.SCHEME_LOCALCELL, getEntitySetName(), key);
         String info = Integer.toString(response.getStatus());
-        this.messageResource.postEvent(getEntitySetName(), object, info, requestKey, operation);
+        this.messageResource.postEvent(getEntitySetName(), object, info, operation);
 
         return response;
     }
@@ -260,14 +256,6 @@ public class ODataMessageResource extends AbstractODataResource {
      */
     protected MessageResource getMessageResource() {
         return messageResource;
-    }
-
-    /**
-     * Get requestKey.
-     * @return requestKey
-     */
-    protected String getRequestKey() {
-        return requestKey;
     }
 
     /**

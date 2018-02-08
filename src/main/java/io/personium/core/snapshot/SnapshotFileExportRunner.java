@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,7 +132,7 @@ public class SnapshotFileExportRunner implements Runnable {
             String info = "";
             String type = PersoniumEventType.Category.CELL
                     + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.EXPORT;
-            PersoniumEvent event = new PersoniumEvent(null, null, type, object, info, null);
+            PersoniumEvent event = new PersoniumEvent(type, object, info, null);
             EventBus eventBus = targetCell.getEventBus();
             eventBus.post(event);
         } catch (Throwable e) {

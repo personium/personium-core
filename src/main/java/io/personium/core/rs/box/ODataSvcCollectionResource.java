@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,11 +37,15 @@ import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavMoveResource;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.jaxb.Acl;
 import io.personium.core.rs.odata.ODataResource;
+import io.personium.core.utils.UriUtils;
 
 /**
  * ODataSvcResourceを担当するJAX-RSリソース.
@@ -56,7 +60,10 @@ public final class ODataSvcCollectionResource extends ODataResource {
      * @param davCmp DavCmp
      */
     public ODataSvcCollectionResource(final DavRsCmp parent, final DavCmp davCmp) {
-        super(parent.getAccessContext(), parent.getUrl() + "/" + davCmp.getName() + "/", davCmp.getODataProducer());
+        super(parent.getAccessContext(),
+                UriUtils.convertSchemeFromHttpToLocalCell(parent.getCell().getUrl(),
+                        parent.getUrl() + "/" + davCmp.getName() + "/"),
+                davCmp.getODataProducer());
         this.davRsCmp = new DavRsCmp(parent, davCmp);
     }
 
@@ -242,6 +249,17 @@ public final class ODataSvcCollectionResource extends ODataResource {
     @Override
     public Privilege getNecessaryOptionsPrivilege() {
         return BoxPrivilege.READ;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void postEvent(String entitySet, String object, String info, String op) {
+        String type = PersoniumEventType.Category.ODATA + PersoniumEventType.SEPALATOR + op;
+        PersoniumEvent ev = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
+        EventBus eventBus = this.getAccessContext().getCell().getEventBus();
+        eventBus.post(ev);
     }
 
 }

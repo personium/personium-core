@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.PersoniumEventType;
-import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * JAX-RS Resource class for a plain WebDAV file resource.
@@ -65,7 +65,6 @@ public class DavFileResource {
      * process PUT Method and update the file.
      * @param contentType Content-Type Header
      * @param ifMatch If-Match Header
-     * @param requestKey X-Personium-RequestKey Header
      * @param inputStream Request Body
      * @return JAX-RS response object
      */
@@ -73,7 +72,6 @@ public class DavFileResource {
     @PUT
     public Response put(@HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             final InputStream inputStream) {
         // Access Control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
@@ -82,14 +80,12 @@ public class DavFileResource {
         Response res = rb.build();
 
         // post event to EventBus
-        String schema = this.davRsCmp.getAccessContext().getSchema();
-        String subject = this.davRsCmp.getAccessContext().getSubject();
-        String object = this.davRsCmp.getUrl();
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                this.davRsCmp.getUrl());
         String info = Integer.toString(res.getStatus());
-        requestKey = ResourceUtils.validateXPersoniumRequestKey(requestKey);
         String type = PersoniumEventType.Category.WEBDAV
                 + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.UPDATE;
-        PersoniumEvent event = new PersoniumEvent(schema, subject, type, object, info, requestKey);
+        PersoniumEvent event = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
         EventBus eventBus = this.davRsCmp.getCell().getEventBus();
         eventBus.post(event);
 
@@ -100,15 +96,12 @@ public class DavFileResource {
      * process GET Method and retrieve the file content.
      * @param ifNoneMatch If-None-Match Header
      * @param rangeHeaderField Range header
-     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RS response object
      */
     @GET
     public Response get(
             @HeaderParam(HttpHeaders.IF_NONE_MATCH) final String ifNoneMatch,
-            @HeaderParam("Range") final String rangeHeaderField,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey
-            ) {
+            @HeaderParam("Range") final String rangeHeaderField) {
 
         // Access Control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
@@ -117,14 +110,12 @@ public class DavFileResource {
         Response res = rb.build();
 
         // post event to EventBus
-        String schema = this.davRsCmp.getAccessContext().getSchema();
-        String subject = this.davRsCmp.getAccessContext().getSubject();
-        String object = this.davRsCmp.getUrl();
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                this.davRsCmp.getUrl());
         String info = Integer.toString(res.getStatus());
-        requestKey = ResourceUtils.validateXPersoniumRequestKey(requestKey);
         String type = PersoniumEventType.Category.WEBDAV
                 + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.GET;
-        PersoniumEvent event = new PersoniumEvent(schema, subject, type, object, info, requestKey);
+        PersoniumEvent event = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
         EventBus eventBus = this.davRsCmp.getCell().getEventBus();
         eventBus.post(event);
 
@@ -134,13 +125,11 @@ public class DavFileResource {
     /**
      * process DELETE Method and delete this resource.
      * @param ifMatch If-Match header
-     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RS response object
      */
     @WriteAPI
     @DELETE
-    public Response delete(@HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
+    public Response delete(@HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
         // Access Control
         // DavFileResourceは必ず親(最上位はBox)を持つため、this.davRsCmp.getParent()の結果がnullになることはない
         this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
@@ -149,14 +138,12 @@ public class DavFileResource {
         Response res = rb.build();
 
         // post event to EventBus
-        String schema = this.davRsCmp.getAccessContext().getSchema();
-        String subject = this.davRsCmp.getAccessContext().getSubject();
-        String object = this.davRsCmp.getUrl();
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                this.davRsCmp.getUrl());
         String info = Integer.toString(res.getStatus());
-        requestKey = ResourceUtils.validateXPersoniumRequestKey(requestKey);
         String type = PersoniumEventType.Category.WEBDAV
                 + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-        PersoniumEvent event = new PersoniumEvent(schema, subject, type, object, info, requestKey);
+        PersoniumEvent event = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
         EventBus eventBus = this.davRsCmp.getCell().getEventBus();
         eventBus.post(event);
 

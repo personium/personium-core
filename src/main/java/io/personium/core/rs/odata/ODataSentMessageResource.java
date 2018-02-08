@@ -101,14 +101,13 @@ public class ODataSentMessageResource extends ODataMessageResource {
     /**
      * Constructor.
      * @param messageResource Message resource
-     * @param requestKey X-Personium-RequestKey header
      * @param producer OData producer
      * @param entityTypeName Entity type name
      * @param version X-Personium-Version
      */
-    public ODataSentMessageResource(MessageResource messageResource, String requestKey, PersoniumODataProducer producer,
+    public ODataSentMessageResource(MessageResource messageResource, PersoniumODataProducer producer,
             String entityTypeName, String version) {
-        super(messageResource, requestKey, producer, entityTypeName);
+        super(messageResource, producer, entityTypeName);
         this.version = version;
     }
 

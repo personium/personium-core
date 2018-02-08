@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -347,12 +347,10 @@ public class BarFileReadRunner implements Runnable {
     private void setEventBus() {
         // TODO Boxのスキーマとサブジェクトのログは内部イベントの正式対応時に実装する
 
-        String schema = odataEntityResource.getAccessContext().getSchema();
-        String subject = odataEntityResource.getAccessContext().getSubject();
         String type = WebDAVMethod.MKCOL.toString();
         String object = cell.getUrl() + boxName;
         String result = "";
-        this.event = new PersoniumEvent(schema, subject, type, object, result, this.requestKey);
+        this.event = new PersoniumEvent(type, object, result, this.requestKey);
         this.eventBus = this.cell.getEventBus();
     }
 
@@ -485,14 +483,16 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     * barファイル内のコンテンツデータ(bar/90_contents)を1件読み込み、登録する.
-     * @return boolean 処理成功可否
+     * Read one content data (bar/90_contents) in the bar file and register it.
+     * @return boolean Processing result true:success false:failure
      */
     protected boolean createContents() {
         boolean isSuccess = true;
-        // CollectionタイプごとのMapを作成しておく
+        // Create a map for each collection type.
         Map<String, DavCmp> odataCols = getCollections(DavCmp.TYPE_COL_ODATA);
         Map<String, DavCmp> webdavCols = getCollections(DavCmp.TYPE_COL_WEBDAV);
+        // Since it may be referred to as parent, Box must be registered.
+        webdavCols.putAll(getCollections(DavCmp.TYPE_COL_BOX));
         Map<String, DavCmp> serviceCols = getCollections(DavCmp.TYPE_COL_SVC);
 
         DavCmp davCmp = null;
@@ -616,7 +616,6 @@ public class BarFileReadRunner implements Runnable {
                 writeOutputStream(false, "PL-BI-1003", entryName);
                 doneKeys.add(entryName);
             }
-
             // ODataCollectionのリソースに対する処理に終わった際に、ユーザデータの登録やリンクの登録をする必要があれば実行する
             if (currentPath != null) {
                 if (!execBulkRequest(davCmp.getCell().getId(), bulkRequests, fileNameMap, producer)) {
@@ -632,7 +631,6 @@ public class BarFileReadRunner implements Runnable {
             log.info("IOException: " + ex.getMessage(), ex.fillInStackTrace());
             String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2000");
             writeOutputStream(true, CODE_BAR_INSTALL_FAILED, "", message);
-
         }
         // 必須データ（bar/90_contents/{odatacol_name}/00_$metadata.xml)の確認
         isSuccess = checkNecessaryFile(isSuccess, odataCols, doneKeys);
@@ -979,7 +977,8 @@ public class BarFileReadRunner implements Runnable {
 
                 String entryName = CONTENTS_DIR + href.replaceFirst(DCBOX, "");
                 if (isBox) {
-                    // Boxの場合、ACL登録
+                    // For Box, collection and ACL registration.
+                    davCmpMap.put(entryName, boxCmp);
                     registBoxAclAndProppatch(this.box, aclElement, propElements, collectionUrl);
                 } else if (hasCollection) {
                     if (!entryName.endsWith("/")) {
@@ -1768,7 +1767,7 @@ public class BarFileReadRunner implements Runnable {
         String info = "box install";
         String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
                 + name + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-        PersoniumEvent ev = new PersoniumEvent(null, null, type, object, info, null);
+        PersoniumEvent ev = new PersoniumEvent(type, object, info, this.requestKey);
         EventBus bus = this.cell.getEventBus();
         bus.post(ev);
     }
@@ -1875,6 +1874,7 @@ public class BarFileReadRunner implements Runnable {
         postCellCtlCreateEvent(res);
     }
 
+    @SuppressWarnings("unchecked")
     private void createRules(JSONObject json) {
         log.debug("createRules: " + json.toString());
         json.put("_Box.Name", createdBoxName);
@@ -1926,7 +1926,7 @@ public class BarFileReadRunner implements Runnable {
                 + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
                 + newTargetEntity.getEntitySetName() + PersoniumEventType.SEPALATOR
                 + PersoniumEventType.Operation.CREATE;
-        PersoniumEvent ev = new PersoniumEvent(null, null, type, object, info, null);
+        PersoniumEvent ev = new PersoniumEvent(type, object, info, this.requestKey);
         EventBus bus = this.cell.getEventBus();
         bus.post(ev);
     }

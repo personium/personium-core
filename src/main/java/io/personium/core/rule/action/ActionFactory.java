@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ public class ActionFactory {
      */
     public static Action createAction(Cell cell, ActionInfo ai) {
         String action = ai.getAction();
-        String service = ai.getService();
         if (Rule.ACTION_LOG.equals(action) || Rule.ACTION_LOG_INFO.equals(action)) {
             return new LogAction(cell, LogAction.LEVEL.INFO);
         } else if (Rule.ACTION_LOG_WARN.equals(action)) {
@@ -44,9 +43,9 @@ public class ActionFactory {
         } else if (Rule.ACTION_LOG_ERROR.equals(action)) {
             return new LogAction(cell, LogAction.LEVEL.ERROR);
         } else if (Rule.ACTION_EXEC.equals(action)) {
-            return new ExecAction(cell, service);
+            return new ExecAction(cell, ai);
         } else if (Rule.ACTION_RELAY.equals(action)) {
-            return new RelayAction(cell, service);
+            return new RelayAction(cell, ai);
         }
         return null;
     }

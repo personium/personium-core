@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,17 +29,37 @@ public class CellRsCmp extends DavRsCmp {
 
     Cell cell;
     AccessContext accessContext;
+    String requestKey;
+    String eventId;
+    String ruleChain;
 
     /**
-     * コンストラクタ.
+     * Constructor.
      * @param davCmp DavCmp
      * @param cell Cell
      * @param accessContext AccessContext
      */
     public CellRsCmp(final DavCmp davCmp, final Cell cell, final AccessContext accessContext) {
+        this(davCmp, cell, accessContext, null, null, null);
+    }
+
+    /**
+     * Constructor.
+     * @param davCmp DavCmp
+     * @param cell Cell
+     * @param accessContext AccessContext
+     * @param requestKey X-Personium-RequestKey Header
+     * @param eventId X-Personium-EventId Header
+     * @param ruleChain X-Personium-RuleChain Header
+     */
+    public CellRsCmp(final DavCmp davCmp, final Cell cell, final AccessContext accessContext,
+            final String requestKey, final String eventId, final String ruleChain) {
         super(null, davCmp);
         this.cell = cell;
         this.accessContext = accessContext;
+        this.requestKey = requestKey;
+        this.eventId = eventId;
+        this.ruleChain = ruleChain;
     }
 
     /**
@@ -125,4 +145,32 @@ public class CellRsCmp extends DavRsCmp {
     public AcceptableAuthScheme getAcceptableAuthScheme() {
         return AcceptableAuthScheme.BEARER;
     }
+
+    /**
+     * Get RequestKey.
+     * @return RequestKey string
+     */
+    @Override
+    public String getRequestKey() {
+        return this.requestKey;
+    }
+
+    /**
+     * Get EventId.
+     * @return EventId string
+     */
+    @Override
+    public String getEventId() {
+        return this.eventId;
+    }
+
+    /**
+     * Get RuleChain.
+     * @return RuleChain string
+     */
+    @Override
+    public String getRuleChain() {
+        return this.ruleChain;
+    }
+
 }

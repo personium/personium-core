@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
+import io.personium.core.rule.ActionInfo;
 import io.personium.test.categories.Unit;
 
 /**
@@ -61,6 +62,7 @@ public class ExecActionTest {
         String engineHost = "personium.engine";
         String enginePort = "8080";
         String enginePath = "personium-engine";
+        String cellUrl = "http://personium/cell/";
 
         // --------------------
         // Expected result
@@ -75,11 +77,15 @@ public class ExecActionTest {
         PowerMockito.doReturn(engineHost).when(PersoniumUnitConfig.class, "getEngineHost");
         PowerMockito.doReturn(enginePort).when(PersoniumUnitConfig.class, "getEnginePort");
         PowerMockito.doReturn(enginePath).when(PersoniumUnitConfig.class, "getEnginePath");
+        Cell cell = mock(Cell.class);
+        PowerMockito.doReturn(cellUrl).when(cell).getUrl();
+        PowerMockito.doReturn(cellName).when(cell).getName();
 
         // --------------------
         // Run method
         // --------------------
-        ExecAction action = new ExecAction(null, service);
+        ActionInfo ai = new ActionInfo(null, service, null, null);
+        ExecAction action = new ExecAction(cell, ai);
         String result = action.getRequestUrl();
 
         // --------------------
@@ -100,15 +106,19 @@ public class ExecActionTest {
         // Test method args
         // --------------------
         String service = null;
+        String cellUrl = "http://personium/cell/";
 
         // --------------------
         // Mock settings
         // --------------------
+        Cell cell = mock(Cell.class);
+        PowerMockito.doReturn(cellUrl).when(cell).getUrl();
 
         // --------------------
         // Run method
         // --------------------
-        ExecAction action = new ExecAction(null, service);
+        ActionInfo ai = new ActionInfo(null, service, null, null);
+        ExecAction action = new ExecAction(cell, ai);
         String result = action.getRequestUrl();
 
         // --------------------
@@ -129,15 +139,19 @@ public class ExecActionTest {
         // Test method args
         // --------------------
         String service = "/personium/cell";
+        String cellUrl = "http://personium/cell/";
 
         // --------------------
         // Mock settings
         // --------------------
+        Cell cell = mock(Cell.class);
+        PowerMockito.doReturn(cellUrl).when(cell).getUrl();
 
         // --------------------
         // Run method
         // --------------------
-        ExecAction action = new ExecAction(null, service);
+        ActionInfo ai = new ActionInfo(null, service, null, null);
+        ExecAction action = new ExecAction(cell, ai);
         String result = action.getRequestUrl();
 
         // --------------------
@@ -158,15 +172,19 @@ public class ExecActionTest {
         // Test method args
         // --------------------
         String service = "http://personium/cell/box/svc";
+        String cellUrl = "http://personium/cell/";
 
         // --------------------
         // Mock settings
         // --------------------
+        Cell cell = mock(Cell.class);
+        PowerMockito.doReturn(cellUrl).when(cell).getUrl();
 
         // --------------------
         // Run method
         // --------------------
-        ExecAction action = new ExecAction(null, service);
+        ActionInfo ai = new ActionInfo(null, service, null, null);
+        ExecAction action = new ExecAction(cell, ai);
         String result = action.getRequestUrl();
 
         // --------------------
@@ -199,7 +217,8 @@ public class ExecActionTest {
         // --------------------
         // Run method
         // --------------------
-        ExecAction action = new ExecAction(null, service);
+        ActionInfo ai = new ActionInfo(null, service, null, null);
+        ExecAction action = new ExecAction(null, ai);
         HttpPost req = new HttpPost(requestUrl);
         action.setHeaders(req);
 
@@ -237,7 +256,8 @@ public class ExecActionTest {
         // --------------------
         // Run method
         // --------------------
-        ExecAction action = new ExecAction(cell, service);
+        ActionInfo ai = new ActionInfo(null, service, null, null);
+        ExecAction action = new ExecAction(cell, ai);
         HttpPost req = null;
         action.setHeaders(req);
 
@@ -269,7 +289,8 @@ public class ExecActionTest {
         // --------------------
         // Run method
         // --------------------
-        ExecAction action = new ExecAction(null, service);
+        ActionInfo ai = new ActionInfo(null, service, null, null);
+        ExecAction action = new ExecAction(null, ai);
         JSONObject json = new JSONObject();
         action.addEvents(json);
 
@@ -303,7 +324,8 @@ public class ExecActionTest {
         // --------------------
         // Run method
         // --------------------
-        ExecAction action = new ExecAction(null, service);
+        ActionInfo ai = new ActionInfo(null, service, null, null);
+        ExecAction action = new ExecAction(null, ai);
         JSONObject json = null;
         action.addEvents(json);
 

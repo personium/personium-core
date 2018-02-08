@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,10 +68,16 @@ public final class CellResource {
     /**
      * constructor.
      * @param accessContext AccessContext
+     * @param requestKey X-Personium-RequestKey header
+     * @param eventId X-Personium-EventId header
+     * @param ruleChain X-Personium-RuleChain header
      * @param httpServletRequest HttpServletRequest
      */
     public CellResource(
             final AccessContext accessContext,
+            final String requestKey,
+            final String eventId,
+            final String ruleChain,
             HttpServletRequest httpServletRequest) {
         // Cellが存在しないときは例外
         this.accessContext = accessContext;
@@ -85,7 +91,7 @@ public final class CellResource {
             throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
         }
 
-        this.cellRsCmp = new CellRsCmp(this.cellCmp, this.cell, this.accessContext);
+        this.cellRsCmp = new CellRsCmp(this.cellCmp, this.cell, this.accessContext, requestKey, eventId, ruleChain);
         checkReferenceMode();
 
         // If cell status is import failed, APIs other than import or token or BulkDeletion are not accepted.

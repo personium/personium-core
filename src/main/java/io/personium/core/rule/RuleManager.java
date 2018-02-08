@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,9 @@ import org.odata4j.producer.EntityResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumThread;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.EventPublisher;
 import io.personium.core.model.ctl.Common;
@@ -183,32 +185,56 @@ public class RuleManager {
 
         CellLockManager.incrementReferenceCount(cell.getId());
 
-        List<ActionInfo> actionList = new ArrayList<ActionInfo>();
+        // set event id
+        String eventId = event.getEventId();
+        if (eventId == null) {
+            eventId = PersoniumUUID.randomUUID();
+        }
 
-        synchronized (lockObj) {
-            Map<String, RuleInfo> map = rules.get(cellId);
-            if (map != null) {
-                for (Map.Entry<String, RuleInfo> e : map.entrySet()) {
-                    RuleInfo rule = e.getValue();
-                    if (match(rule, event)) {
-                        String service = rule.service;
-                        // replace personium-localcell and personium-localbox
-                        if (service != null) {
-                            if (service.startsWith(LOCALCELL)) {
-                                service = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), service);
-                            } else if (service.startsWith(LOCALBOX)) {
-                                String boxName = getBoxName(rule);
-                                if (boxName != null) {
-                                    service = service.replace(LOCALBOX, cell.getUrl() + rule.box.name);
-                                } else {
-                                    logger.error(
-                                            "ignore the Rule(%s) because _Box.Name is null.",
-                                            rule.name);
+        List<ActionInfo> actionList = new ArrayList<ActionInfo>();
+        String ruleChain = event.getRuleChain();
+        if (ruleChain == null) {
+            ruleChain = "0";
+        }
+        try {
+            int i = Integer.parseInt(ruleChain);
+            i++;
+            if (i > PersoniumUnitConfig.getMaxEventHop()) {
+                ruleChain = null;
+            } else {
+                ruleChain = String.valueOf(i);
+            }
+        } catch(NumberFormatException e) {
+            logger.info("invalid RuleChain:" + ruleChain);
+            ruleChain = null;
+        }
+        if (ruleChain != null) {
+            synchronized (lockObj) {
+                Map<String, RuleInfo> map = rules.get(cellId);
+                if (map != null) {
+                    for (Map.Entry<String, RuleInfo> e : map.entrySet()) {
+                        RuleInfo rule = e.getValue();
+                        if (match(rule, event)) {
+                            String service = rule.service;
+                            // replace personium-localcell and personium-localbox
+                            if (service != null) {
+                                if (service.startsWith(LOCALCELL)) {
+                                    service = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), service);
+                                } else if (service.startsWith(LOCALBOX)) {
+                                    String boxName = getBoxName(rule);
+                                    if (boxName != null) {
+                                        service = service.replace(LOCALBOX, cell.getUrl() + rule.box.name);
+                                    } else {
+                                        logger.error(
+                                                "ignore the Rule(%s) because _Box.Name is null.",
+                                                rule.name);
+                                        continue;
+                                    }
                                 }
                             }
+                            ActionInfo ai = new ActionInfo(rule.action, service, eventId, ruleChain);
+                            actionList.add(ai);
                         }
-                        ActionInfo ai = new ActionInfo(rule.action, service);
-                        actionList.add(ai);
                     }
                 }
             }
@@ -592,7 +618,13 @@ public class RuleManager {
                             BoxInfo bi = bmap.get(box.getId());
                             if (bi != null) {
                                 bi.name = box.getName();
-                                bi.schema = box.getSchema();
+                                String schema = box.getSchema();
+                                if (schema != null) {
+                                    if (schema.startsWith(LOCALUNIT)) {
+                                        schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
+                                    }
+                                }
+                                bi.schema = schema;
                             }
                         }
                     }
@@ -676,7 +708,13 @@ public class RuleManager {
                         bi = new BoxInfo();
                         bi.id = box.getId();
                         bi.name = box.getName();
-                        bi.schema = box.getSchema();
+                        String schema = box.getSchema();
+                        if (schema != null) {
+                            if (schema.startsWith(LOCALUNIT)) {
+                                schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
+                            }
+                        }
+                        bi.schema = schema;
                         bi.count = 0;
                         bmap.put(bi.id, bi);
                     }
@@ -751,6 +789,7 @@ public class RuleManager {
      * @param cell target cell object
      * @return JSON format string of rules managed on RuleManager
      */
+    @SuppressWarnings("unchecked")
     public String getRules(Cell cell) {
         JSONObject jsonRules = new JSONObject();
         JSONArray jsonRuleArray = new JSONArray();
