@@ -1759,9 +1759,11 @@ public class BarInstallTest extends JerseyTest {
             checkUserData(Setup.TEST_CELL1, INSTALL_TARGET, odataColName, "entity1", "barInstallTest");
 
             // Fileのチェック
-            DavResourceUtils.getWebDavFile(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "box/dav-get.txt",
+            DavResourceUtils.getWebDav(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
+                    INSTALL_TARGET, "testdavfile.txt", HttpStatus.SC_OK);
+            DavResourceUtils.getWebDav(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
                     INSTALL_TARGET, "davcol1/testdavfile.txt", HttpStatus.SC_OK);
-            DavResourceUtils.getWebDavFile(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "box/dav-get.txt",
+            DavResourceUtils.getWebDav(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
                     INSTALL_TARGET, "davcol1/testdavfile2.txt", HttpStatus.SC_OK);
         } finally {
             // ユーザデータの削除
@@ -1791,6 +1793,8 @@ public class BarInstallTest extends JerseyTest {
                     "davcol1/testdavfile.txt");
             DavResourceUtils.deleteWebDavFile(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, INSTALL_TARGET,
                     "davcol1/testdavfile2.txt");
+            DavResourceUtils.deleteWebDavFile(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, INSTALL_TARGET,
+                    "testdavfile.txt");
 
             // コレクションの削除
             DavResourceUtils.deleteCollection(reqCell, INSTALL_TARGET, "davcol1", AbstractCase.MASTER_TOKEN_NAME, -1);
