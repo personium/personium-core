@@ -1,3 +1,13 @@
+## 1.6.2
+BUG FIXES:
+* Accept Arbitrary String for User OData's __id.([#98](https://github.com/personium/personium-core/issues/98))
+* Box installation can not create file directly under the box.([#125](https://github.com/personium/personium-core/issues/125))
+
+IMPROVEMENTS:
+* It cannot know a connecting WebSocket state.([#120](https://github.com/personium/personium-core/issues/120))
+* Put an upper limit on derived number of times from a source event.([#123](https://github.com/personium/personium-core/issues/123))
+* Convert scheme of X-Personium-Box-Schema header from personim-localunit to https in ExecAction.([#127](https://github.com/personium/personium-core/issues/127))
+
 ## 1.6.1
 BUG FIXES:
 * Modify API execution privilege of NullResource.([#95](https://github.com/personium/personium-core/issues/95))
