@@ -204,7 +204,7 @@ public class RuleManager {
             } else {
                 ruleChain = String.valueOf(i);
             }
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             logger.info("invalid RuleChain:" + ruleChain);
             ruleChain = null;
         }
@@ -619,11 +619,7 @@ public class RuleManager {
                             if (bi != null) {
                                 bi.name = box.getName();
                                 String schema = box.getSchema();
-                                if (schema != null) {
-                                    if (schema.startsWith(LOCALUNIT)) {
-                                        schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
-                                    }
-                                }
+                                schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
                                 bi.schema = schema;
                             }
                         }
@@ -709,11 +705,7 @@ public class RuleManager {
                         bi.id = box.getId();
                         bi.name = box.getName();
                         String schema = box.getSchema();
-                        if (schema != null) {
-                            if (schema.startsWith(LOCALUNIT)) {
-                                schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
-                            }
-                        }
+                        schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
                         bi.schema = schema;
                         bi.count = 0;
                         bmap.put(bi.id, bi);

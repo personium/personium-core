@@ -125,8 +125,6 @@ public class UriUtils {
         return retUrl;
     }
 
-    private static final int BOX_SPLIT_NUMBER = 3;
-
     /**
      * Convert scheme from http to LocalCell.
      * @param cellUrl String
