@@ -23,6 +23,7 @@ import org.slf4j.MDC;
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.core.model.Cell;
 import io.personium.core.event.PersoniumEvent;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * Action for log action.
@@ -91,13 +92,13 @@ public class LogAction extends Action {
     }
 
     // output log in accordance with log level
-    private void outputLog(PersoniumEvent event) {
+    private void outputLog(PersoniumEvent event, String requestKey) {
         if (level == LEVEL.INFO) {
-            logger.info(createLogContent(event));
+            logger.info(createLogContent(event, requestKey));
         } else if (level == LEVEL.WARN) {
-            logger.warn(createLogContent(event));
+            logger.warn(createLogContent(event, requestKey));
         } else if (level == LEVEL.ERROR) {
-            logger.error(createLogContent(event));
+            logger.error(createLogContent(event, requestKey));
         }
     }
 
@@ -108,7 +109,11 @@ public class LogAction extends Action {
      */
     @Override
     public PersoniumEvent execute(PersoniumEvent event) {
-        outputLog(event);
+        String requestKey = event.getRequestKey();
+        if (requestKey == null) {
+            requestKey = ResourceUtils.validateXPersoniumRequestKey(requestKey);
+        }
+        outputLog(event, requestKey);
         clearEventLogPath();
         return null;
     }
@@ -120,17 +125,30 @@ public class LogAction extends Action {
      */
     @Override
     public PersoniumEvent execute(PersoniumEvent[] events) {
+        String commonRequestKey = null;
+
         for (PersoniumEvent event : events) {
-            outputLog(event);
+            String requestKey = event.getRequestKey();
+            if (requestKey == null) {
+                if (commonRequestKey != null) {
+                    requestKey = commonRequestKey;
+                } else {
+                    requestKey = ResourceUtils.validateXPersoniumRequestKey(requestKey);
+                }
+            }
+            if (commonRequestKey == null) {
+                commonRequestKey = requestKey;
+            }
+            outputLog(event, requestKey);
         }
         clearEventLogPath();
         return null;
     }
 
     // create log from event
-    private String createLogContent(PersoniumEvent event) {
+    private String createLogContent(PersoniumEvent event, String requestKey) {
         return String.format("%s,%s,%s,%s,%s,%s,%s",
-                makeCsvItem(event.getRequestKey()),
+                makeCsvItem(requestKey),
                 makeCsvItem(event.getExternal().toString()),
                 makeCsvItem(event.getSchema()),
                 makeCsvItem(event.getSubject()),

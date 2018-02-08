@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,8 @@ public class EventSender {
 
             MapMessage msg = session.createMapMessage();
             msg.setString("RequestKey", event.getRequestKey());
+            msg.setString("EventId", event.getEventId());
+            msg.setString("RuleChain", event.getRuleChain());
             msg.setBoolean("External", event.getExternal());
             msg.setString("Schema", event.getSchema());
             msg.setString("Subject", event.getSubject());
@@ -91,6 +93,8 @@ public class EventSender {
         if (msg instanceof MapMessage) {
             MapMessage mm = (MapMessage) msg;
             String requestKey = null;
+            String eventId = null;
+            String ruleChain = null;
             Boolean external = null;
             String schema = null;
             String subject = null;
@@ -102,6 +106,12 @@ public class EventSender {
             try {
                 if (mm.itemExists("RequestKey")) {
                     requestKey = mm.getString("RequestKey");
+                }
+                if (mm.itemExists("EventId")) {
+                    eventId = mm.getString("EventId");
+                }
+                if (mm.itemExists("RuleChain")) {
+                    ruleChain = mm.getString("RuleChain");
                 }
                 if (mm.itemExists("External")) {
                     external = mm.getBoolean("External");
@@ -127,7 +137,7 @@ public class EventSender {
             } catch (JMSException e) {
                 return null;
             }
-            event = new PersoniumEvent(external, schema, subject, type, object, info, requestKey);
+            event = new PersoniumEvent(external, schema, subject, type, object, info, requestKey, eventId, ruleChain);
             event.setCellId(cellId);
         }
 

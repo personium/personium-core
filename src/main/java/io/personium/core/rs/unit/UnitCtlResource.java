@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public class UnitCtlResource extends ODataResource {
      * @param uriInfo UriInfo
      */
     public UnitCtlResource(AccessContext accessContext, UriInfo uriInfo) {
-        super(accessContext, uriInfo.getBaseUri().toASCIIString() + "__ctl/",
+        super(accessContext, UriUtils.SCHEME_UNIT_URI + "__ctl/",
                 ModelFactory.ODataCtl.unitCtl(accessContext));
         this.uriInfo = uriInfo;
         checkReferenceMode(accessContext);
@@ -287,11 +287,4 @@ public class UnitCtlResource extends ODataResource {
         throw new NotImplementedException();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void postEvent(String entitySet, String object, String info, String reqKey, String op) {
-        // nothing to do because event belongs to cell
-    }
 }

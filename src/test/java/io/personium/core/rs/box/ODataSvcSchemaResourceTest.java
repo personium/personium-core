@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.odata.PersoniumODataProducer;
@@ -52,11 +53,13 @@ public class ODataSvcSchemaResourceTest {
         DavCmp davCmp = mock(DavCmp.class);
         PersoniumODataProducer producer = mock(PersoniumODataProducer.class);
         ODataSvcCollectionResource odataSvcCollectionResource = mock(ODataSvcCollectionResource.class);
+        Cell cell = mock(Cell.class);
 
         // --------------------
         // Test method args
         // --------------------
         String url = "https://personium/cell/box/col";
+        String cellUrl = "https://personium/cell/";
         String name = "$metadata";
 
         // --------------------
@@ -65,14 +68,15 @@ public class ODataSvcSchemaResourceTest {
         doReturn(null).when(davRsCmp).getAccessContext();
         doReturn(url).when(davRsCmp).getUrl();
         doReturn(davCmp).when(davRsCmp).getDavCmp();
-        doReturn(null).when(davRsCmp).getCell();
-        doReturn(producer).when(davCmp).getSchemaODataProducer(null);
+        doReturn(cell).when(davRsCmp).getCell();
+        doReturn(cellUrl).when(cell).getUrl();
+        doReturn(producer).when(davCmp).getSchemaODataProducer(cell);
         doReturn(null).when(producer).getMetadata();
 
         // --------------------
         // Expected result
         // --------------------
-        String expected = url + "/" + name + "/";
+        String expected = "personium-localcell:/box/col/" + name + "/";
 
         // --------------------
         // Run method

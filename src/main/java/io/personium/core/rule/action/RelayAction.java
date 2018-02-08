@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,21 +21,25 @@ import org.json.simple.JSONObject;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
+import io.personium.core.rule.ActionInfo;
 
 /**
  * Action for relay action.
  */
 public class RelayAction extends EngineAction {
     private static String boxName = "__";
-    private static String svcName = "proxy";
+    private static final String PROXY = "relay";
+
+    private String svcName;
 
     /**
      * Constructor.
      * @param cell target cell object
-     * @param extservice the url that HTTP POST will be sent
+     * @param ai ActionInfo object
      */
-    public RelayAction(Cell cell, String extservice) {
-        super(cell, extservice, "relay");
+    public RelayAction(Cell cell, ActionInfo ai) {
+        super(cell, ai);
+        svcName = PROXY;
     }
 
     @Override
@@ -45,7 +49,7 @@ public class RelayAction extends EngineAction {
         }
         String cellName = cell.getName();
         String requestUrl = String.format("http://%s:%s/%s/%s/%s/system/%s", PersoniumUnitConfig.getEngineHost(),
-            PersoniumUnitConfig.getEnginePort(), PersoniumUnitConfig.getEnginePath(), cellName, boxName, "proxy");
+                PersoniumUnitConfig.getEnginePort(), PersoniumUnitConfig.getEnginePath(), cellName, boxName, svcName);
         return requestUrl;
     }
 
@@ -60,11 +64,12 @@ public class RelayAction extends EngineAction {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void addEvents(JSONObject json) {
         if (json == null) {
              return;
         }
-        json.put("service", service);
+        json.put("TargetUrl", service);
     }
 }
 

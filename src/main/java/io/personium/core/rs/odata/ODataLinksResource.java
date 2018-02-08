@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
@@ -113,15 +112,13 @@ public final class ODataLinksResource {
      * as specified in [RFC2616], and contain an empty response body.
      * @param uriInfo UriInfo
      * @param reqBody リクエストボディ
-     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RS Response
      */
     @WriteAPI
     @POST
     public Response createLink(
             @Context UriInfo uriInfo,
-            final Reader reqBody,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
+            final Reader reqBody) {
 
         // アクセス制御
         this.checkWriteAccessContext();
@@ -171,7 +168,7 @@ public final class ODataLinksResource {
         String op = PersoniumEventType.Operation.LINK
                 + PersoniumEventType.SEPALATOR + targetEntitySetName
                 + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-        this.odataResource.postEvent(sourceEntity.getEntitySetName(), object, info, requestKey, op);
+        this.odataResource.postEvent(sourceEntity.getEntitySetName(), object, info, op);
 
         return noContent();
     }
@@ -276,13 +273,11 @@ public final class ODataLinksResource {
 
     /**
      * DELETEメソッドを受けて linkを削除する.
-     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RS Response
      */
     @WriteAPI
     @DELETE
-    public Response deleteLink(
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
+    public Response deleteLink() {
 
         // アクセス制御
         this.checkWriteAccessContext();
@@ -311,7 +306,7 @@ public final class ODataLinksResource {
         String op = PersoniumEventType.Operation.LINK
                 + PersoniumEventType.SEPALATOR + this.targetNavProp.substring(1)
                 + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-        this.odataResource.postEvent(sourceEntity.getEntitySetName(), object, info, requestKey, op);
+        this.odataResource.postEvent(sourceEntity.getEntitySetName(), object, info, op);
 
         return noContent();
     }
@@ -323,15 +318,13 @@ public final class ODataLinksResource {
      * @param uriInfo UriInfo
      * @param format $format
      * @param callback ??
-     * @param requestKey X-Personium-RequestKey Header
      * @return JAX-RS Response
      */
     @GET
     public Response getLinks(
             @Context final UriInfo uriInfo,
             @QueryParam("$format") final String format,
-            @QueryParam("$callback") final String callback,
-            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey) {
+            @QueryParam("$callback") final String callback) {
 
         // アクセス制御
         this.checkReadAccessContext();
@@ -392,7 +385,7 @@ public final class ODataLinksResource {
         String op = PersoniumEventType.Operation.LINK
                 + PersoniumEventType.SEPALATOR + this.targetNavProp.substring(1)
                 + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LIST;
-        this.odataResource.postEvent(this.sourceEntity.getEntitySetName(), object, info, requestKey, op);
+        this.odataResource.postEvent(this.sourceEntity.getEntitySetName(), object, info, op);
 
         return res;
     }

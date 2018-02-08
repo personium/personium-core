@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
  */
 package io.personium.core.rule.action;
 
-import java.net.URL;
-
 import org.apache.http.HttpMessage;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -30,6 +28,8 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
+import io.personium.core.rule.ActionInfo;
+import io.personium.core.utils.UriUtils;
 
 /**
  * Action for exec action.
@@ -37,17 +37,14 @@ import io.personium.core.model.impl.fs.DavCmpFsImpl;
 public class ExecAction extends EngineAction {
     static Logger logger = LoggerFactory.getLogger(ExecAction.class);
 
-    // path is expected as followe: /cell/box/col/service
-    //   parts[0]: ""
-    //   parts[1]: "cell"
-    //   parts[2]: "box"
-    //   parts[3]: "col"
-    //   parts[4]: "service"
-    static final int PATH_SPLIT_NUMBER = 5;
-    static final int INDEX_CELLNAME = 1;
-    static final int INDEX_BOXNAME = 2;
-    static final int INDEX_COLNAME = 3;
-    static final int INDEX_SVCNAME = 4;
+    // path is expected as followe: box/col/service
+    //   parts[0]: "box"
+    //   parts[1]: "col"
+    //   parts[2]: "service"
+    static final int PATH_SPLIT_NUMBER = 3;
+    static final int INDEX_BOXNAME = 0;
+    static final int INDEX_COLNAME = 1;
+    static final int INDEX_SVCNAME = 2;
 
     private String cellName;
     private String boxName;
@@ -57,32 +54,30 @@ public class ExecAction extends EngineAction {
     /**
      * Constructor.
      * @param cell target cell object
-     * @param service the url that HTTP POST will be sent
+     * @param ai ActionInfo object
      */
-    public ExecAction(Cell cell, String service) {
-        super(cell, service, "exec");
+    public ExecAction(Cell cell, ActionInfo ai) {
+        super(cell, ai);
     }
 
     @Override
     protected String getRequestUrl() {
-        URL url;
-        try {
-            url = new URL(service);
-        } catch (Exception e) {
-            logger.error("invalid service url: " + service);
-            return null;
-        }
-
-        String path = url.getPath();
-        String[] parts = path.split("/");
-        if (parts.length != PATH_SPLIT_NUMBER) {
+        String cellUrl = this.cell.getUrl();
+        if (this.service != null && this.service.startsWith(cellUrl)) {
+            String path = this.service.substring(cellUrl.length());
+            String[] parts = path.split("/");
+            if (parts.length != PATH_SPLIT_NUMBER) {
+                logger.error("incorrect service url: " + service);
+                return null;
+            }
+            this.cellName = cell.getName();
+            this.boxName = parts[INDEX_BOXNAME];
+            this.colName = parts[INDEX_COLNAME];
+            this.svcName = parts[INDEX_SVCNAME];
+        } else {
             logger.error("incorrect service url: " + service);
             return null;
         }
-        this.cellName = parts[INDEX_CELLNAME];
-        this.boxName = parts[INDEX_BOXNAME];
-        this.colName = parts[INDEX_COLNAME];
-        this.svcName = parts[INDEX_SVCNAME];
         String requestUrl = String.format("http://%s:%s/%s/%s/%s/service/%s",
                 PersoniumUnitConfig.getEngineHost(),
                 PersoniumUnitConfig.getEnginePort(),
@@ -122,7 +117,8 @@ public class ExecAction extends EngineAction {
                     req.addHeader("X-Personium-Fs-Path", dcmp.getFsPath());
                     req.addHeader("X-Personium-Fs-Routing-Id", dcmp.getCellId());
                 }
-                req.addHeader("X-Personium-Box-Schema", box.getSchema());
+                req.addHeader("X-Personium-Box-Schema",
+                        UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), box.getSchema()));
             }
         } catch (Exception e) {
             logger.error("error: " + e.getMessage(), e);

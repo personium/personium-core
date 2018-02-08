@@ -45,7 +45,7 @@ import io.personium.test.categories.Unit;
  * Unit Test class for BoxUrlRsCmp.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BoxUrlRsCmp.class})
+@PrepareForTest({ BoxUrlRsCmp.class })
 @Category({ Unit.class })
 public class BoxUrlRsCmpTest {
 
