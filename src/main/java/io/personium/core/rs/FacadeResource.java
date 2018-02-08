@@ -38,6 +38,7 @@ import io.personium.core.model.ModelFactory;
 import io.personium.core.model.lock.CellLockManager;
 import io.personium.core.rs.cell.CellResource;
 import io.personium.core.rs.unit.UnitCtlResource;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * すべてのリクエストの入り口となるJax-RS Resource.
@@ -96,6 +97,9 @@ public class FacadeResource {
 
         CellLockManager.incrementReferenceCount(cell.getId());
         httpServletRequest.setAttribute("cellId", cell.getId());
+        if (xPersoniumRequestKey != null) {
+            ResourceUtils.validateXPersoniumRequestKey(xPersoniumRequestKey);
+        }
         return new CellResource(ac, xPersoniumRequestKey, xPersoniumEventId, xPersoniumRuleChain, httpServletRequest);
     }
 

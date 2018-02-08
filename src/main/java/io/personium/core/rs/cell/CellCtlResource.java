@@ -50,7 +50,6 @@ import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.ODataResource;
-import io.personium.core.utils.ODataUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
