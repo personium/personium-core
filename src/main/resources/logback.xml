@@ -68,7 +68,7 @@
                     <maxFileSize>1MB</maxFileSize>
                 </triggeringPolicy>
                 <layout class='ch.qos.logback.classic.PatternLayout'>
-                    <pattern>%d{"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",UTC},[%-5level],%msg%n</pattern>
+                    <pattern>%msg%n</pattern>
                 </layout>
             </appender>
         </sift>
