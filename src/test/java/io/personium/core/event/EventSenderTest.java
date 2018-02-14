@@ -72,8 +72,8 @@ public class EventSenderTest {
         // Test method args
         // --------------------
         PersoniumEvent event = new PersoniumEvent(true,
-                "schema string", "subject string", "type string",
-                "object string", "info string", "requestkey string", "eventid string", "rulechain string");
+                "schema string", "subject string", "type string", "object string", "info string",
+                "requestkey string", "eventid string", "rulechain string", "via string", "roles");
         event.setCellId("cell id");
         event.setDateTime();
 
@@ -84,6 +84,8 @@ public class EventSenderTest {
         doReturn(true).when(message).itemExists("RequestKey");
         doReturn(true).when(message).itemExists("EventId");
         doReturn(true).when(message).itemExists("RuleChain");
+        doReturn(true).when(message).itemExists("Via");
+        doReturn(true).when(message).itemExists("Roles");
         doReturn(true).when(message).itemExists("External");
         doReturn(true).when(message).itemExists("Schema");
         doReturn(true).when(message).itemExists("Subject");
@@ -95,6 +97,8 @@ public class EventSenderTest {
         doReturn(event.getRequestKey()).when(message).getString("RequestKey");
         doReturn(event.getEventId()).when(message).getString("EventId");
         doReturn(event.getRuleChain()).when(message).getString("RuleChain");
+        doReturn(event.getVia()).when(message).getString("Via");
+        doReturn(event.getRoles()).when(message).getString("Roles");
         doReturn(event.getExternal()).when(message).getBoolean("External");
         doReturn(event.getSchema()).when(message).getString("Schema");
         doReturn(event.getSubject()).when(message).getString("Subject");
@@ -115,6 +119,8 @@ public class EventSenderTest {
         assertThat(result.getRequestKey(), is(event.getRequestKey()));
         assertThat(result.getEventId(), is(event.getEventId()));
         assertThat(result.getRuleChain(), is(event.getRuleChain()));
+        assertThat(result.getVia(), is(event.getVia()));
+        assertThat(result.getRoles(), is(event.getRoles()));
         assertThat(result.getExternal(), is(event.getExternal()));
         assertThat(result.getSchema(), is(event.getSchema()));
         assertThat(result.getSubject(), is(event.getSubject()));
@@ -166,8 +172,8 @@ public class EventSenderTest {
         // Test method args
         // --------------------
         PersoniumEvent event = new PersoniumEvent(false,
-                null, null, "type string",
-                "object string", "info string", "requestkey string", "eventid string", "rulechain string");
+                null, null, "type string", "object string", "info string",
+                "requestkey string", "eventid string", "rulechain string", "via string", "roles");
         event.setCellId("cell id");
         event.setDateTime();
 
@@ -178,6 +184,8 @@ public class EventSenderTest {
         doReturn(true).when(message).itemExists("RequestKey");
         doReturn(true).when(message).itemExists("EventId");
         doReturn(true).when(message).itemExists("RuleChain");
+        doReturn(true).when(message).itemExists("Via");
+        doReturn(true).when(message).itemExists("Roles");
         doReturn(true).when(message).itemExists("External");
         doReturn(false).when(message).itemExists("Schema");
         doReturn(true).when(message).itemExists("Subject");
@@ -189,6 +197,8 @@ public class EventSenderTest {
         doReturn(event.getRequestKey()).when(message).getString("RequestKey");
         doReturn(event.getEventId()).when(message).getString("EventId");
         doReturn(event.getRuleChain()).when(message).getString("RuleChain");
+        doReturn(event.getVia()).when(message).getString("Via");
+        doReturn(event.getRoles()).when(message).getString("Roles");
         doReturn(event.getExternal()).when(message).getBoolean("External");
         doReturn(event.getSchema()).when(message).getString("Schema");
         doReturn(event.getSubject()).when(message).getString("Subject");
@@ -209,6 +219,8 @@ public class EventSenderTest {
         assertThat(result.getRequestKey(), is(event.getRequestKey()));
         assertThat(result.getEventId(), is(event.getEventId()));
         assertThat(result.getRuleChain(), is(event.getRuleChain()));
+        assertThat(result.getVia(), is(event.getVia()));
+        assertThat(result.getRoles(), is(event.getRoles()));
         assertThat(result.getExternal(), is(event.getExternal()));
         assertThat(result.getSchema(), is(event.getSchema()));
         assertThat(result.getSubject(), is(event.getSubject()));

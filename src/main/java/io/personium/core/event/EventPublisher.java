@@ -74,6 +74,7 @@ public class EventPublisher {
             msg.setString("RequestKey", event.getRequestKey());
             msg.setString("EventId", event.getEventId());
             msg.setString("RuleChain", event.getRuleChain());
+            msg.setString("Via", event.getVia());
             msg.setBoolean("External", event.getExternal());
             msg.setString("Schema", event.getSchema());
             msg.setString("Subject", event.getSubject());

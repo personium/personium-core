@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.Cell;
@@ -94,7 +95,7 @@ public class ExecAction extends EngineAction {
 
 
     @Override
-    protected void setHeaders(HttpMessage req) {
+    protected void setHeaders(HttpMessage req, PersoniumEvent event) {
         if (cell == null || req == null) {
             return;
         }

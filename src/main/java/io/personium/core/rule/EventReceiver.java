@@ -69,6 +69,8 @@ class EventReceiver implements Runnable {
                         log.debug("    RequestKey: " + event.getRequestKey());
                         log.debug("    EventId: " + event.getEventId());
                         log.debug("    RuleChain: " + event.getRuleChain());
+                        log.debug("    Via: " + event.getVia());
+                        log.debug("    Roles: " + event.getRoles());
                         log.debug("    CellId: " + event.getCellId());
                         log.debug("    DateTime: " + event.getDateTime());
 

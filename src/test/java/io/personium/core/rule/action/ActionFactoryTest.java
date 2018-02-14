@@ -243,6 +243,17 @@ public class ActionFactoryTest {
     /**
      * Test createAction().
      * Normal test.
+     * action is relay.event.
+     */
+    @Test
+    public void createAction_Normal_action_is_relayevent() {
+        ActionInfo ai = new ActionInfo("relay.event", "http://personium/cell/", null, null);
+        assertThat(ActionFactory.createAction(null, ai), instanceOf(RelayEventAction.class));
+    }
+
+    /**
+     * Test createAction().
+     * Normal test.
      * action is invalid.
      */
     @Test

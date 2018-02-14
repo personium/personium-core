@@ -32,6 +32,7 @@ public class CellRsCmp extends DavRsCmp {
     String requestKey;
     String eventId;
     String ruleChain;
+    String via;
 
     /**
      * Constructor.
@@ -40,7 +41,7 @@ public class CellRsCmp extends DavRsCmp {
      * @param accessContext AccessContext
      */
     public CellRsCmp(final DavCmp davCmp, final Cell cell, final AccessContext accessContext) {
-        this(davCmp, cell, accessContext, null, null, null);
+        this(davCmp, cell, accessContext, null, null, null, null);
     }
 
     /**
@@ -51,15 +52,17 @@ public class CellRsCmp extends DavRsCmp {
      * @param requestKey X-Personium-RequestKey Header
      * @param eventId X-Personium-EventId Header
      * @param ruleChain X-Personium-RuleChain Header
+     * @param via X-Personium-Via Header
      */
     public CellRsCmp(final DavCmp davCmp, final Cell cell, final AccessContext accessContext,
-            final String requestKey, final String eventId, final String ruleChain) {
+            final String requestKey, final String eventId, final String ruleChain, final String via) {
         super(null, davCmp);
         this.cell = cell;
         this.accessContext = accessContext;
         this.requestKey = requestKey;
         this.eventId = eventId;
         this.ruleChain = ruleChain;
+        this.via = via;
     }
 
     /**
@@ -171,6 +174,15 @@ public class CellRsCmp extends DavRsCmp {
     @Override
     public String getRuleChain() {
         return this.ruleChain;
+    }
+
+    /**
+     * Get Via.
+     * @return Via string
+     */
+    @Override
+    public String getVia() {
+        return this.via;
     }
 
 }

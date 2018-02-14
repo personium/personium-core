@@ -16,11 +16,14 @@
  */
 package io.personium.core.event;
 
+import java.util.List;
+
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
+import io.personium.common.auth.token.Role;
 import io.personium.core.model.DavRsCmp;
 
 /**
@@ -44,6 +47,8 @@ public class PersoniumEvent {
     String requestKey = null;
     String eventId = null;
     String ruleChain = null;
+    String via = null;
+    String roles = null;
     String cellId = null;
     String dateTime = null;
 
@@ -83,6 +88,8 @@ public class PersoniumEvent {
      * @param requestKey key string for request
      * @param eventId event id
      * @param ruleChain string to check chain of rule
+     * @param via list of cell url that event was relayed
+     * @param roles list of role class url
      */
     public PersoniumEvent(Boolean external,
             final String schema,
@@ -92,7 +99,9 @@ public class PersoniumEvent {
             final String info,
             final String requestKey,
             final String eventId,
-            final String ruleChain) {
+            final String ruleChain,
+            final String via,
+            final String roles) {
         this.external = external;
         this.schema = schema;
         this.subject = subject;
@@ -102,6 +111,8 @@ public class PersoniumEvent {
         this.requestKey = requestKey;
         this.eventId = eventId;
         this.ruleChain = ruleChain;
+        this.via = via;
+        this.roles = roles;
     }
 
     /**
@@ -117,15 +128,7 @@ public class PersoniumEvent {
             final String object,
             final String info,
             final DavRsCmp davRsCmp) {
-        this.external = external;
-        this.type = type;
-        this.object = object;
-        this.info = info;
-        this.schema = davRsCmp.getAccessContext().getSchema();
-        this.subject = davRsCmp.getAccessContext().getSubject();
-        this.requestKey = davRsCmp.getRequestKey();
-        this.eventId = davRsCmp.getEventId();
-        this.ruleChain = davRsCmp.getRuleChain();
+        this(external, type, object, info, davRsCmp, davRsCmp.getRequestKey());
     }
 
     /**
@@ -152,6 +155,17 @@ public class PersoniumEvent {
         this.requestKey = requestKey;
         this.eventId = davRsCmp.getEventId();
         this.ruleChain = davRsCmp.getRuleChain();
+        this.via = davRsCmp.getVia();
+
+        // roles
+        List<Role> roleList = davRsCmp.getAccessContext().getRoleList();
+        for (Role role : roleList) {
+            if (this.roles == null) {
+                this.roles = role.createUrl();
+            } else {
+                this.roles += "," + role.createUrl();
+            }
+        }
     }
 
     /**
@@ -259,6 +273,22 @@ public class PersoniumEvent {
     }
 
     /**
+     * Get value of Via.
+     * @return value of Via
+     */
+    public final String getVia() {
+        return via;
+    }
+
+    /**
+     * Get value of roles.
+     * @return value of roles
+     */
+    public final String getRoles() {
+        return roles;
+    }
+
+    /**
      * Get value of CellId.
      * @return value of CellId
      */
@@ -328,7 +358,7 @@ public class PersoniumEvent {
     public PersoniumEvent copy(String typeValue, String objectValue, String infoValue,
             String eventIdValue, String ruleChainValue) {
         PersoniumEvent event = new PersoniumEvent(INTERNAL_EVENT, this.schema, this.subject,
-                typeValue, objectValue, infoValue, this.requestKey, eventIdValue, ruleChainValue);
+                typeValue, objectValue, infoValue, this.requestKey, eventIdValue, ruleChainValue, null, null);
         event.setCellId(this.cellId);
         event.setDateTime();
         return event;
