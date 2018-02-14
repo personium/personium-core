@@ -263,7 +263,8 @@ public class RuleManager {
 
         // publish event about rule
         String type = event.getType();
-        if ("cellctl.Rule.create".equals(type)
+        if (!event.getExternal()
+                && ("cellctl.Rule.create".equals(type)
                 || "cellctl.Rule.update".equals(type)
                 || "cellctl.Rule.patch".equals(type)
                 || "cellctl.Rule.delete".equals(type)
@@ -275,7 +276,7 @@ public class RuleManager {
                 || "cellctl.Box.navprop.Rule.create".equals(type)
                 || "cellctl.Box.update".equals(type)
                 || "cellctl.Box.merge".equals(type)
-                || "cell.import".equals(type)) {
+                || "cell.import".equals(type))) {
             EventPublisher.sendRuleEvent(event);
         }
     }
