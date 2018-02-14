@@ -85,15 +85,10 @@
         </encoder>
     </appender>
 
-     <logger  name="io.personium.core.event" additivity="false">
-        <level value="DEBUG" />
-        <appender-ref ref="FILE_USER" />
-        <appender-ref ref="stdout" />
-    </logger>
-
     <logger  name="io.personium">
         <level value="DEBUG" />
-        <appender-ref ref="file" />    <appender-ref ref="stdout" />
+        <appender-ref ref="file" />
+        <appender-ref ref="stdout" />
     </logger>
 
     <logger  name="org.elasticsearch">
@@ -107,7 +102,8 @@
        <appender-ref ref="file" />
        <appender-ref ref="stdout" />
     </logger>
-    <logger name="io.personium.core.rule.action" additivity="false">
+
+    <logger name="io.personium.core.rule.action.LogAction" additivity="false">
         <level value="INFO" />
         <appender-ref ref="SIFT" />
         <appender-ref ref="stdout" />

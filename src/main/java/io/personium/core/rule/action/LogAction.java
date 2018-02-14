@@ -50,7 +50,7 @@ public class LogAction extends Action {
      */
     private LogAction() {
         // get Logger per instance
-        this.logger = LoggerFactory.getLogger("io.personium.core.rule.action");
+        this.logger = LoggerFactory.getLogger("io.personium.core.rule.action.LogAction");
     }
 
     /**
