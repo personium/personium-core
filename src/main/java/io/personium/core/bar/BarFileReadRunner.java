@@ -348,7 +348,7 @@ public class BarFileReadRunner implements Runnable {
         // TODO Boxのスキーマとサブジェクトのログは内部イベントの正式対応時に実装する
 
         String type = WebDAVMethod.MKCOL.toString();
-        String object = cell.getUrl() + boxName;
+        String object = UriUtils.SCHEME_LOCALCELL + ":/" + boxName;
         String result = "";
         this.event = new PersoniumEvent(type, object, result, this.requestKey);
         this.eventBus = this.cell.getEventBus();
@@ -2457,7 +2457,7 @@ public class BarFileReadRunner implements Runnable {
      */
     public void writeInitProgressCache() {
         setEventBus();
-        writeOutputStream(false, "PL-BI-1000", this.cell.getUrl() + boxName, "");
+        writeOutputStream(false, "PL-BI-1000", UriUtils.SCHEME_LOCALCELL + ":/" + boxName, "");
         writeToProgressCache(true);
     }
 
