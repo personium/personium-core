@@ -117,9 +117,7 @@ public abstract class EngineAction extends Action {
             result = "404";
         }
 
-        PersoniumEvent evt = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT,
-                null, null, action, service, result, event.getRequestKey(), eventId, chain);
-        evt.setCellId(cell.getId());
+        PersoniumEvent evt = event.copy(action, service, result, eventId, chain);
 
         return evt;
     }

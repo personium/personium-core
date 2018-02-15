@@ -75,6 +75,7 @@ public class EventPublisherTest {
                 "schema string", "subject string", "type string",
                 "object string", "info string", "requestkey string", "eventid string", "rulechain string");
         event.setCellId("cell id");
+        event.setDateTime();
 
         // --------------------
         // Mock settings
@@ -90,6 +91,7 @@ public class EventPublisherTest {
         doReturn(true).when(message).itemExists("Object");
         doReturn(true).when(message).itemExists("Info");
         doReturn(true).when(message).itemExists("cellId");
+        doReturn(true).when(message).itemExists("dateTime");
         doReturn(event.getRequestKey()).when(message).getString("RequestKey");
         doReturn(event.getEventId()).when(message).getString("EventId");
         doReturn(event.getRuleChain()).when(message).getString("RuleChain");
@@ -100,6 +102,7 @@ public class EventPublisherTest {
         doReturn(event.getObject()).when(message).getString("Object");
         doReturn(event.getInfo()).when(message).getString("Info");
         doReturn(event.getCellId()).when(message).getString("cellId");
+        doReturn(event.getDateTime()).when(message).getString("dateTime");
 
         // --------------------
         // Run method
@@ -119,6 +122,7 @@ public class EventPublisherTest {
         assertThat(result.getObject(), is(event.getObject()));
         assertThat(result.getInfo(), is(event.getInfo()));
         assertThat(result.getCellId(), is(event.getCellId()));
+        assertThat(result.getDateTime(), is(event.getDateTime()));
     }
 
     /**
@@ -165,6 +169,7 @@ public class EventPublisherTest {
                 null, null, "type string",
                 "object string", "info string", "requestkey string", "eventid string", "rulechain string");
         event.setCellId("cell id");
+        event.setDateTime();
 
         // --------------------
         // Mock settings
@@ -180,6 +185,7 @@ public class EventPublisherTest {
         doReturn(true).when(message).itemExists("Object");
         doReturn(true).when(message).itemExists("Info");
         doReturn(true).when(message).itemExists("cellId");
+        doReturn(true).when(message).itemExists("dateTime");
         doReturn(event.getRequestKey()).when(message).getString("RequestKey");
         doReturn(event.getEventId()).when(message).getString("EventId");
         doReturn(event.getRuleChain()).when(message).getString("RuleChain");
@@ -190,6 +196,7 @@ public class EventPublisherTest {
         doReturn(event.getObject()).when(message).getString("Object");
         doReturn(event.getInfo()).when(message).getString("Info");
         doReturn(event.getCellId()).when(message).getString("cellId");
+        doReturn(event.getDateTime()).when(message).getString("dateTime");
 
         // --------------------
         // Run method
@@ -209,6 +216,7 @@ public class EventPublisherTest {
         assertThat(result.getObject(), is(event.getObject()));
         assertThat(result.getInfo(), is(event.getInfo()));
         assertThat(result.getCellId(), is(event.getCellId()));
+        assertThat(result.getDateTime(), is(event.getDateTime()));
     }
 
 }
