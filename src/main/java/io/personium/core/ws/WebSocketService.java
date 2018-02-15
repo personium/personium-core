@@ -20,6 +20,7 @@ package io.personium.core.ws;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
+import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
@@ -50,8 +51,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_A_SEC;
-import static io.personium.core.auth.OAuth2Helper.Key.EXPIRES_IN;
-
 
 /**
  * WebSocket Endpoint.
@@ -71,7 +70,8 @@ public class WebSocketService {
 
     // Keys of session user properties
     private static final String CELL_ID = "cellId";
-    private static final String ACCESS_TOKEN = "access_token";
+    private static final String ACCESS_TOKEN = "AccessToken";
+    private static final String EXPIRES_IN = "ExpiresIn";
     private static final String RULES = "rules";
     private static final String AUTHORIZED_TIME = "authorized_time";
     private static final String HEART_BEAT = "heart_beat";
@@ -79,15 +79,22 @@ public class WebSocketService {
     private static final byte[] PING_DATA = new byte[]{1, 2, 3};
     private static final int PING_MAX = 10;
     private static final int HEART_BEAT_TIME = 60000;
-    private static final String RESPONSE = "response";
+    private static final String SUBSCRIBE = "Subscribe";
+    private static final String UNSUBSCRIBE = "Unsubscribe";
+    private static final String STATE = "State";
+    private static final String EVENT = "Event";
+    private static final String TIMESTAMP = "Timestamp";
+    private static final String RESPONSE = "Response";
+    private static final String RESULT = "Result";
     private static final String RESPONSE_SUCCESS = "success";
     private static final String RESPONSE_ERROR = "error";
-    private static final String REASON = "reason";
+    private static final String REASON = "Reason";
     private static final String REASON_FORMAT_ERROR = "format error";
     private static final String REASON_UNAUTHORIZED = "unauthorized";
     private static final String REASON_SUBSCRIBE_NOT_FOUND = "subscriptions not found";
     private static final String REASON_INVALID_STATE_TYPE =
             "invalid state type. allowed status type: [all, subscriptions]";
+    private static final String REASON_INVALID_PRIVILEGE = "invalid privilege or format";
     private static final String STATE_TYPE_ALL = "all";
     private static final String STATE_TYPE_SUBSCRIBE = "subscriptions";
     private static final int EXPIRES_IN_SECONDS = 3600;
@@ -181,35 +188,23 @@ public class WebSocketService {
         Map<String, Object> userProperties = session.getUserProperties();
         String cellId = (String) userProperties.get(CELL_ID);
         log.debug("ws: onMessage[" + cellId + "]" + "[" + session.getId() + "] " + text);
-        JSONObject result = new JSONObject();
-        long currentTime = System.currentTimeMillis() / MILLISECS_IN_A_SEC;
-        result.put("timestamp", currentTime);
 
         JSONParser parser = new JSONParser();
         try {
             JSONObject json = (JSONObject) parser.parse(text);
 
             // token must be sent by client before communication
-            String receivedAccessToken = (String) json.get("access_token");
+            String receivedAccessToken = (String) json.get(ACCESS_TOKEN);
             if (receivedAccessToken != null) {
-                if (checkPrivilege(receivedAccessToken, cellId)) {
-                    log.debug("ws: set access_token");
-                    userProperties.put(ACCESS_TOKEN, receivedAccessToken);
-                    userProperties.put(AUTHORIZED_TIME, new Date());
-                    // ack
-                    result.put(RESPONSE, RESPONSE_SUCCESS);
-                    result.put(EXPIRES_IN, EXPIRES_IN_SECONDS);
-                    sendText(session, result.toJSONString());
-                } else {
-                    log.debug("ws: invalid access_token");
-                    closeSession(session);
-                }
+                onReceiveAccessToken(session, receivedAccessToken);
                 return;
             }
 
             String accessToken = (String) userProperties.get(ACCESS_TOKEN);
             if (accessToken == null) {
-                result.put(RESPONSE, RESPONSE_ERROR);
+                JSONObject result = createResultJSONObject();
+                result.put(RESPONSE, ACCESS_TOKEN);
+                result.put(RESULT, RESPONSE_ERROR);
                 result.put(REASON, REASON_UNAUTHORIZED);
                 sendText(session, result.toJSONString());
                 return;
@@ -223,109 +218,238 @@ public class WebSocketService {
             }
 
             // subscribe type is used for filtering of events
-            JSONObject subscribeInfo = (JSONObject) json.get("subscribe");
+            JSONObject subscribeInfo = (JSONObject) json.get(SUBSCRIBE);
             if (subscribeInfo != null) {
-                log.debug("ws: set subscribe: " + subscribeInfo);
-
-                // want to register multi rules using Array ...
-                String eventType = (String) subscribeInfo.get("Type");
-                String eventObject = (String) subscribeInfo.get("Object");
-                if (eventType != null && eventObject != null) {
-                    synchronized (lockObj) {
-                        List<RuleInfo> ruleList = (List<RuleInfo>) userProperties.get(RULES);
-                        RuleInfo rule = new RuleInfo();
-                        rule.type = eventType;
-                        rule.object = eventObject;
-                        ruleList.add(rule); // able to register same rule
-                        // ack
-                        result.put(RESPONSE, RESPONSE_SUCCESS);
-                    }
-                } else {
-                    result.put(RESPONSE, RESPONSE_ERROR);
-                    result.put(REASON, REASON_FORMAT_ERROR);
-                }
-                sendText(session, result.toJSONString());
+                onReceiveSubscribe(session, subscribeInfo);
                 return;
             }
 
             // delete subscribe rule in ruleList
-            JSONObject unsubscribeInfo = (JSONObject) json.get("unsubscribe");
+            JSONObject unsubscribeInfo = (JSONObject) json.get(UNSUBSCRIBE);
             if (unsubscribeInfo != null) {
-                log.debug("ws: unsubscribe: " + unsubscribeInfo);
-
-                String eventType = (String) unsubscribeInfo.get("Type");
-                String eventObject = (String) unsubscribeInfo.get("Object");
-                if (eventType != null && eventObject != null) {
-                    synchronized (lockObj) {
-                        List<RuleInfo> ruleList = (List<RuleInfo>) userProperties.get(RULES);
-                        RuleInfo targetRule = null;
-                        for (RuleInfo rule : ruleList) {
-                            if (rule.type.equals(eventType) && rule.object.equals(eventObject)) {
-                                targetRule = rule;
-                                break;
-                            }
-                        }
-                        if (targetRule != null) {
-                            ruleList.remove(targetRule);
-                            // ack
-                            result.put(RESPONSE, RESPONSE_SUCCESS);
-                        } else {
-                            result.put(RESPONSE, RESPONSE_ERROR);
-                            result.put(REASON, REASON_SUBSCRIBE_NOT_FOUND);
-                        }
-                    }
-                } else {
-                    result.put(RESPONSE, RESPONSE_ERROR);
-                    result.put(REASON, REASON_FORMAT_ERROR);
-                }
-                sendText(session, result.toJSONString());
+                onReceiveUnsubscribe(session, unsubscribeInfo);
                 return;
             }
 
             // websocket state.
-            String state = (String) json.get("state");
+            String state = (String) json.get(STATE);
             if (state != null) {
-                log.debug("ws: state: " + state);
-                if (state.equals(STATE_TYPE_ALL)
-                        ||  state.equals(STATE_TYPE_SUBSCRIBE)) {
-                    List<JSONObject> ruleJsonList = new ArrayList<>();
-                    synchronized (lockObj) {
-                        List<RuleInfo> ruleList = (List<RuleInfo>) userProperties.get(RULES);
-                        for (RuleInfo rule : ruleList) {
-                            JSONObject ruleJson = new JSONObject();
-                            ruleJson.put("type", rule.type);
-                            ruleJson.put("object", rule.object);
-                            ruleJsonList.add(ruleJson);
-                        }
-                    }
-                    if (state.equals(STATE_TYPE_SUBSCRIBE)) {
-                        result.put(RESPONSE, RESPONSE_SUCCESS);
-                        result.put("subscriptions", ruleJsonList);
-                    } else if (state.equals(STATE_TYPE_ALL)) {
-                        result.put(RESPONSE, RESPONSE_SUCCESS);
-                        result.put("subscriptions", ruleJsonList);
-                        Date now = new Date();
-                        long expireTime = authorizedDate.getTime() + EXPIRES_IN_SECONDS * MILLISECS_IN_A_SEC;
-                        long expireLimit = (expireTime - now.getTime()) / MILLISECS_IN_A_SEC;
-                        result.put("expires_in", expireLimit);
-                        String cellName = null;
-                        Cell cell = ModelFactory.cell(cellId, null);
-                        if (cell != null) {
-                            cellName = cell.getName();
-                        }
-                        result.put("cell", cellName);
-                    }
-                } else {
-                    result.put(RESPONSE, RESPONSE_ERROR);
-                    result.put(REASON, REASON_INVALID_STATE_TYPE);
-                }
-                sendText(session, result.toJSONString());
+                onReceiveState(session, state, authorizedDate);
+                return;
             }
+
+            // external event
+            JSONObject event = (JSONObject) json.get(EVENT);
+            if (event != null) {
+                onReceiveExEvent(session, event);
+                return;
+            }
+
         } catch (Exception e) {
             log.debug("Invalid message: " + text);
             // e.printStackTrace();
         }
     }
+
+    /**
+     * On receive access token.
+     * @param session
+     * @param receivedAccessToken
+     */
+    private void onReceiveAccessToken(Session session, String receivedAccessToken) {
+        Map<String, Object> userProperties = session.getUserProperties();
+        String cellId = (String) userProperties.get(CELL_ID);
+        JSONObject result = createResultJSONObject();
+
+        if (checkPrivilege(receivedAccessToken, cellId)) {
+            log.debug("ws: set " + ACCESS_TOKEN);
+
+            userProperties.put(ACCESS_TOKEN, receivedAccessToken);
+            userProperties.put(AUTHORIZED_TIME, new Date());
+            // ack
+            result.put(RESPONSE, ACCESS_TOKEN);
+            result.put(RESULT, RESPONSE_SUCCESS);
+            result.put(EXPIRES_IN, EXPIRES_IN_SECONDS);
+            sendText(session, result.toJSONString());
+        } else {
+            log.debug("ws: invalid " + ACCESS_TOKEN);
+            closeSession(session);
+        }
+    }
+
+    /**
+     * On receive subscribe.
+     * @param session
+     * @param subscribeInfo
+     */
+    private void onReceiveSubscribe(Session session, JSONObject subscribeInfo) {
+        log.debug("ws: set " + SUBSCRIBE + ": " + subscribeInfo);
+        Map<String, Object> userProperties = session.getUserProperties();
+        JSONObject result = createResultJSONObject();
+
+        // want to register multi rules using Array ...
+        String eventType = (String) subscribeInfo.get("Type");
+        String eventObject = (String) subscribeInfo.get("Object");
+        if (eventType != null && eventObject != null) {
+            synchronized (lockObj) {
+                List<RuleInfo> ruleList = (List<RuleInfo>) userProperties.get(RULES);
+                RuleInfo rule = new RuleInfo();
+                rule.type = eventType;
+                rule.object = eventObject;
+                ruleList.add(rule); // able to register same rule
+                // ack
+                result.put(RESPONSE, SUBSCRIBE);
+                result.put(RESULT, RESPONSE_SUCCESS);
+            }
+        } else {
+            result.put(RESPONSE, SUBSCRIBE);
+            result.put(RESULT, RESPONSE_ERROR);
+            result.put(REASON, REASON_FORMAT_ERROR);
+        }
+        sendText(session, result.toJSONString());
+    }
+
+    /**
+     * On receive unsubscribe.
+     * @param session
+     * @param unsubscribeInfo
+     */
+    private void onReceiveUnsubscribe(Session session, JSONObject unsubscribeInfo) {
+        log.debug("ws: " + UNSUBSCRIBE + ": " + unsubscribeInfo);
+        Map<String, Object> userProperties = session.getUserProperties();
+        JSONObject result = createResultJSONObject();
+
+        String eventType = (String) unsubscribeInfo.get("Type");
+        String eventObject = (String) unsubscribeInfo.get("Object");
+        if (eventType != null && eventObject != null) {
+            synchronized (lockObj) {
+                List<RuleInfo> ruleList = (List<RuleInfo>) userProperties.get(RULES);
+                RuleInfo targetRule = null;
+                for (RuleInfo rule : ruleList) {
+                    if (rule.type.equals(eventType) && rule.object.equals(eventObject)) {
+                        targetRule = rule;
+                        break;
+                    }
+                }
+                if (targetRule != null) {
+                    ruleList.remove(targetRule);
+                    // ack
+                    result.put(RESPONSE, UNSUBSCRIBE);
+                    result.put(RESULT, RESPONSE_SUCCESS);
+                } else {
+                    result.put(RESPONSE, UNSUBSCRIBE);
+                    result.put(RESULT, RESPONSE_ERROR);
+                    result.put(REASON, REASON_SUBSCRIBE_NOT_FOUND);
+                }
+            }
+        } else {
+            result.put(RESPONSE, UNSUBSCRIBE);
+            result.put(RESULT, RESPONSE_ERROR);
+            result.put(REASON, REASON_FORMAT_ERROR);
+        }
+        sendText(session, result.toJSONString());
+    }
+
+    /**
+     * On receive state.
+     * @param session
+     * @param state
+     */
+    private void onReceiveState(Session session, String state, Date authorizedDate) {
+        log.debug("ws: " + STATE + ": " + state);
+        Map<String, Object> userProperties = session.getUserProperties();
+        String cellId = (String) userProperties.get(CELL_ID);
+        JSONObject result = createResultJSONObject();
+
+        if (state.equals(STATE_TYPE_ALL)
+                ||  state.equals(STATE_TYPE_SUBSCRIBE)) {
+            List<JSONObject> ruleJsonList = new ArrayList<>();
+            synchronized (lockObj) {
+                List<RuleInfo> ruleList = (List<RuleInfo>) userProperties.get(RULES);
+                for (RuleInfo rule : ruleList) {
+                    JSONObject ruleJson = new JSONObject();
+                    ruleJson.put("Type", rule.type);
+                    ruleJson.put("Object", rule.object);
+                    ruleJsonList.add(ruleJson);
+                }
+            }
+            if (state.equals(STATE_TYPE_SUBSCRIBE)) {
+                result.put(RESPONSE, STATE);
+                result.put(RESULT, RESPONSE_SUCCESS);
+                result.put("Subscriptions", ruleJsonList);
+            } else if (state.equals(STATE_TYPE_ALL)) {
+                result.put(RESPONSE, STATE);
+                result.put(RESULT, RESPONSE_SUCCESS);
+                result.put("Subscriptions", ruleJsonList);
+                Date now = new Date();
+                long expireTime = authorizedDate.getTime() + EXPIRES_IN_SECONDS * MILLISECS_IN_A_SEC;
+                long expireLimit = (expireTime - now.getTime()) / MILLISECS_IN_A_SEC;
+                result.put("ExpiresIn", expireLimit);
+                String cellName = null;
+                Cell cell = ModelFactory.cell(cellId, null);
+                if (cell != null) {
+                    cellName = cell.getName();
+                }
+                result.put("Cell", cellName);
+            }
+        } else {
+            result.put(RESPONSE, STATE);
+            result.put(RESULT, RESPONSE_ERROR);
+            result.put(REASON, REASON_INVALID_STATE_TYPE);
+        }
+        sendText(session, result.toJSONString());
+    }
+
+    /**
+     * On receive external event.
+     * @param session
+     * @param event
+     */
+    private void onReceiveExEvent(Session session, JSONObject event) {
+        log.debug("ws: " + EVENT + " : " + event.get("Type"));
+        Map<String, Object> userProperties = session.getUserProperties();
+        String cellId = (String) userProperties.get(CELL_ID);
+        String accessToken = (String) userProperties.get(ACCESS_TOKEN);
+        JSONObject result = createResultJSONObject();
+
+        try {
+            // TODO It may be better cellRsCmp is managed by HashMap
+            Cell cell = ModelFactory.cell(cellId, null);
+            AccessContext ac = createAccessContext(accessToken, cell.getName());
+            CellCmp cellCmp = ModelFactory.cellCmp(cell);
+            if (cellCmp.exists()) {
+                CellRsCmp cellRsCmp = new CellRsCmp(cellCmp, cell, ac);
+                cellRsCmp.checkAccessContext(ac, CellPrivilege.EVENT);
+                PersoniumEvent pEvent = new PersoniumEvent(
+                        PersoniumEvent.EXTERNAL_EVENT,
+                        (String) event.get("Type"),
+                        (String) event.get("Object"),
+                        (String) event.get("Info"),
+                        cellRsCmp,
+                        (String) event.get("RequestKey")
+                );
+                EventBus eventBus = cell.getEventBus();
+                eventBus.post(pEvent);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put(RESPONSE, EVENT);
+            result.put(RESULT, RESPONSE_ERROR);
+            result.put(REASON, REASON_INVALID_PRIVILEGE);
+        }
+
+        result.put(RESPONSE, EVENT);
+        result.put(RESULT, RESPONSE_SUCCESS);
+        sendText(session, result.toJSONString());
+    }
+
+    private JSONObject createResultJSONObject() {
+        JSONObject result = new JSONObject();
+        long timestamp = new Date().getTime();
+        result.put(TIMESTAMP, timestamp);
+        return result;
+    }
+
 
     /**
      * On returning pong message.
@@ -486,12 +610,16 @@ public class WebSocketService {
         JSONObject json = new JSONObject();
         json.put("RequestKey", event.getRequestKey());
         json.put("External", event.getExternal());
-        json.put("Schema", event.getSchema());
+        String schema = null;
+        if (event.getSchema() != null && !event.getSchema().equals("")) {
+            schema = event.getSchema();
+        }
+        json.put("Schema", schema);
         json.put("Subject", event.getSubject());
         json.put("Type", event.getType());
         json.put("Object", event.getObject());
         json.put("Info", event.getInfo());
-        json.put("cellId", event.getCellId());
+        json.put("Timestamp", event.getTime());
         return json;
     }
 
