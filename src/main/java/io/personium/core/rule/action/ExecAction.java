@@ -118,8 +118,10 @@ public class ExecAction extends EngineAction {
                     req.addHeader("X-Personium-Fs-Path", dcmp.getFsPath());
                     req.addHeader("X-Personium-Fs-Routing-Id", dcmp.getCellId());
                 }
-                req.addHeader("X-Personium-Box-Schema",
-                        UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), box.getSchema()));
+                if (box.getSchema() != null) {
+                    req.addHeader("X-Personium-Box-Schema",
+                            UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), box.getSchema()));
+                }
             }
         } catch (Exception e) {
             logger.error("error: " + e.getMessage(), e);

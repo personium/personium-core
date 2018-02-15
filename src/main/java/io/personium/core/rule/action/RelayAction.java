@@ -69,7 +69,9 @@ public class RelayAction extends EngineAction {
         }
         req.addHeader("X-Baseurl", cell.getUnitUrl());
         req.addHeader("X-Request-Uri", cell.getUrl() + boxName + "/" + svcName);
-        req.addHeader("X-Personium-Box-Schema", event.getSchema());
+        if (event.getSchema() != null) {
+            req.addHeader("X-Personium-Box-Schema", event.getSchema());
+        }
     }
 
     @Override

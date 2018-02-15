@@ -75,7 +75,7 @@ public class EventSenderTest {
                 "schema string", "subject string", "type string", "object string", "info string",
                 "requestkey string", "eventid string", "rulechain string", "via string", "roles");
         event.setCellId("cell id");
-        event.setDateTime();
+        event.setTime();
 
         // --------------------
         // Mock settings
@@ -93,7 +93,7 @@ public class EventSenderTest {
         doReturn(true).when(message).itemExists("Object");
         doReturn(true).when(message).itemExists("Info");
         doReturn(true).when(message).itemExists("cellId");
-        doReturn(true).when(message).itemExists("dateTime");
+        doReturn(true).when(message).itemExists("Time");
         doReturn(event.getRequestKey()).when(message).getString("RequestKey");
         doReturn(event.getEventId()).when(message).getString("EventId");
         doReturn(event.getRuleChain()).when(message).getString("RuleChain");
@@ -106,7 +106,7 @@ public class EventSenderTest {
         doReturn(event.getObject()).when(message).getString("Object");
         doReturn(event.getInfo()).when(message).getString("Info");
         doReturn(event.getCellId()).when(message).getString("cellId");
-        doReturn(event.getDateTime()).when(message).getString("dateTime");
+        doReturn(event.getTime()).when(message).getLong("Time");
 
         // --------------------
         // Run method
@@ -128,7 +128,7 @@ public class EventSenderTest {
         assertThat(result.getObject(), is(event.getObject()));
         assertThat(result.getInfo(), is(event.getInfo()));
         assertThat(result.getCellId(), is(event.getCellId()));
-        assertThat(result.getDateTime(), is(event.getDateTime()));
+        assertThat(result.getTime(), is(event.getTime()));
     }
 
     /**
@@ -175,7 +175,7 @@ public class EventSenderTest {
                 null, null, "type string", "object string", "info string",
                 "requestkey string", "eventid string", "rulechain string", "via string", "roles");
         event.setCellId("cell id");
-        event.setDateTime();
+        event.setTime();
 
         // --------------------
         // Mock settings
@@ -193,7 +193,7 @@ public class EventSenderTest {
         doReturn(true).when(message).itemExists("Object");
         doReturn(true).when(message).itemExists("Info");
         doReturn(true).when(message).itemExists("cellId");
-        doReturn(true).when(message).itemExists("dateTime");
+        doReturn(true).when(message).itemExists("Time");
         doReturn(event.getRequestKey()).when(message).getString("RequestKey");
         doReturn(event.getEventId()).when(message).getString("EventId");
         doReturn(event.getRuleChain()).when(message).getString("RuleChain");
@@ -206,7 +206,7 @@ public class EventSenderTest {
         doReturn(event.getObject()).when(message).getString("Object");
         doReturn(event.getInfo()).when(message).getString("Info");
         doReturn(event.getCellId()).when(message).getString("cellId");
-        doReturn(event.getDateTime()).when(message).getString("dateTime");
+        doReturn(event.getTime()).when(message).getLong("Time");
 
         // --------------------
         // Run method
@@ -228,7 +228,7 @@ public class EventSenderTest {
         assertThat(result.getObject(), is(event.getObject()));
         assertThat(result.getInfo(), is(event.getInfo()));
         assertThat(result.getCellId(), is(event.getCellId()));
-        assertThat(result.getDateTime(), is(event.getDateTime()));
+        assertThat(result.getTime(), is(event.getTime()));
     }
 
 }

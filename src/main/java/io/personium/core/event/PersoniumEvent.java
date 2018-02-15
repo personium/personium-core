@@ -16,12 +16,8 @@
  */
 package io.personium.core.event;
 
+import java.util.Date;
 import java.util.List;
-
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 
 import io.personium.common.auth.token.Role;
 import io.personium.core.model.DavRsCmp;
@@ -50,7 +46,7 @@ public class PersoniumEvent {
     String via = null;
     String roles = null;
     String cellId = null;
-    String dateTime = null;
+    long time;
 
     /** Constructor. */
     public PersoniumEvent() {
@@ -305,45 +301,26 @@ public class PersoniumEvent {
     }
 
     /**
-     * Get value of dateTime.
-     * @return dateTime in ISO 8601 format
+     * Get value of time.
+     * @return time
      */
-    public final String getDateTime() {
-        return dateTime;
+    public long getTime() {
+        return time;
     }
 
     /**
-     * Get value of dateTime.
-     * @return dateTime in RFC 1123 format
+     * Set time to now.
      */
-    public final String getDateTimeRFC1123() {
-        if (dateTime == null) {
-            return dateTime;
-        }
-
-        // ISO 8601 -> RFC 1123
-        Instant ins = Instant.parse(dateTime);
-        OffsetDateTime parsedTime = ins.atOffset(ZoneOffset.UTC);
-        String ret = parsedTime.format(DateTimeFormatter.RFC_1123_DATE_TIME);
-        return ret;
+    void setTime() {
+        this.time = new Date().getTime();
     }
 
     /**
-     * Set dateTime to now.
+     * Set time.
+     * @param time timestamp
      */
-    void setDateTime() {
-        // set dateTime
-        //  ISO 8601 format
-        Instant time = Instant.now();
-        this.dateTime = time.toString();
-    }
-
-    /**
-     * Set dateTime.
-     * @param dateTime dateTime in ISO 8601 format
-     */
-    void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
+    void setTime(long time) {
+        this.time = time;
     }
 
     /**
@@ -360,7 +337,7 @@ public class PersoniumEvent {
         PersoniumEvent event = new PersoniumEvent(INTERNAL_EVENT, this.schema, this.subject,
                 typeValue, objectValue, infoValue, this.requestKey, eventIdValue, ruleChainValue, null, null);
         event.setCellId(this.cellId);
-        event.setDateTime();
+        event.setTime();
         return event;
     }
 

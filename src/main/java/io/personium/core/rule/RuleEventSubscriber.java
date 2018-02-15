@@ -64,7 +64,7 @@ class RuleEventSubscriber implements Runnable {
                         log.debug("    Object: " + event.getObject());
                         log.debug("    Info: " + event.getInfo());
                         log.debug("    CellId: " + event.getCellId());
-                        log.debug("    DateTime: " + event.getDateTime());
+                        log.debug("    Time: " + event.getTime());
 
                         // Register or unregister rule in accordance with event about rule.
                         rman.handleRuleEvent(event);

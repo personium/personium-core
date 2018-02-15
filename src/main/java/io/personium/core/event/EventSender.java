@@ -66,7 +66,7 @@ public class EventSender {
             msg.setString("Object", event.getObject());
             msg.setString("Info", event.getInfo());
             msg.setString("cellId", event.getCellId());
-            msg.setString("dateTime", event.getDateTime());
+            msg.setLong("Time", event.getTime());
 
             sender.send(msg);
         } catch (JMSException e) {
@@ -107,7 +107,7 @@ public class EventSender {
             String object = null;
             String info = null;
             String cellId = null;
-            String dateTime = null;
+            long time = 0;
 
             try {
                 if (mm.itemExists("RequestKey")) {
@@ -146,8 +146,8 @@ public class EventSender {
                 if (mm.itemExists("cellId")) {
                     cellId = mm.getString("cellId");
                 }
-                if (mm.itemExists("dateTime")) {
-                    dateTime = mm.getString("dateTime");
+                if (mm.itemExists("Time")) {
+                    time = mm.getLong("Time");
                 }
             } catch (JMSException e) {
                 return null;
@@ -155,7 +155,7 @@ public class EventSender {
             event = new PersoniumEvent(external, schema, subject, type, object, info,
                     requestKey, eventId, ruleChain, via, roles);
             event.setCellId(cellId);
-            event.setDateTime(dateTime);
+            event.setTime(time);
         }
 
         return event;

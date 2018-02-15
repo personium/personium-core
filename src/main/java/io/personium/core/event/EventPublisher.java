@@ -82,7 +82,7 @@ public class EventPublisher {
             msg.setString("Object", event.getObject());
             msg.setString("Info", event.getInfo());
             msg.setString("cellId", event.getCellId());
-            msg.setString("dateTime", event.getDateTime());
+            msg.setLong("Time", event.getTime());
 
             producer.send(msg);
         } catch (JMSException e) {

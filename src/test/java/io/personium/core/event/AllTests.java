@@ -26,8 +26,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
     EventPublisherTest.class,
-    EventSenderTest.class,
-    PersoniumEventTest.class
+    EventSenderTest.class
 })
 public class AllTests {
 }

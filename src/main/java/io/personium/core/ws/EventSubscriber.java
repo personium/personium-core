@@ -67,7 +67,7 @@ public class EventSubscriber implements Runnable {
                         log.debug("    RuleChain: " + event.getRuleChain());
                         log.debug("    Via: " + event.getVia());
                         log.debug("    CellId: " + event.getCellId());
-                        log.debug("    DateTime: " + event.getDateTime());
+                        log.debug("    Time: " + event.getTime());
 
                         // WebSocket send
                         WebSocketService.sendEvent(event);

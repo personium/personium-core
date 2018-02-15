@@ -91,11 +91,15 @@ public abstract class EngineAction extends Action {
 
         // set headers
         //  X-Personium-RequestKey, X-Personium-EventId, X-Personium-RuleChain, X-Personium-Via
-        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, event.getRequestKey());
+        if (event.getRequestKey() != null) {
+            req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, event.getRequestKey());
+        }
         req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_EVENTID, eventId);
         req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RULECHAIN, chain);
         String via = getVia(event);
-        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VIA, via);
+        if (via != null) {
+            req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VIA, via);
+        }
 
         // set specific headers in derrived class
         setHeaders(req, event);
