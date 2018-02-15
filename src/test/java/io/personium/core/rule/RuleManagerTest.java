@@ -19,6 +19,7 @@ package io.personium.core.rule;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyString;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -32,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.core.event.EventPublisher;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.test.categories.Unit;
 
@@ -40,7 +42,7 @@ import io.personium.test.categories.Unit;
  */
 @Category({ Unit.class })
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ LoggerFactory.class })
+@PrepareForTest({ EventPublisher.class, LoggerFactory.class })
 public class RuleManagerTest {
 
     /**
@@ -447,4 +449,113 @@ public class RuleManagerTest {
         // --------------------
         assertThat(result, is(false));
     }
+
+    /**
+     * Test publish().
+     * Normal test.
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void publish_Normal() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
+        PersoniumEvent event = new PersoniumEvent(
+                "cellctl.Rule.create", "personium-localcell:/__ctl/Rule", "200", null);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        PowerMockito.spy(EventPublisher.class);
+        PowerMockito.doNothing().when(EventPublisher.class, "send", event);
+        PowerMockito.doNothing().when(EventPublisher.class, "sendRuleEvent", event);
+
+        // --------------------
+        // Run method
+        // --------------------
+        Method publish = RuleManager.class.getDeclaredMethod("publish", PersoniumEvent.class);
+        publish.setAccessible(true);
+        publish.invoke(rman, event);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        PowerMockito.verifyStatic(Mockito.times(1));
+        EventPublisher.sendRuleEvent(event);
+    }
+
+    /**
+     * Test publish().
+     * Normal test.
+     * type is not match.
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void publish_Normal_type_is_not_match() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
+        PersoniumEvent event = new PersoniumEvent(
+                "cellctl.Role.create", "personium-localcell:/__ctl/Role", "200", null);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        PowerMockito.spy(EventPublisher.class);
+        PowerMockito.doNothing().when(EventPublisher.class, "send", event);
+        PowerMockito.doNothing().when(EventPublisher.class, "sendRuleEvent", event);
+
+        // --------------------
+        // Run method
+        // --------------------
+        Method publish = RuleManager.class.getDeclaredMethod("publish", PersoniumEvent.class);
+        publish.setAccessible(true);
+        publish.invoke(rman, event);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        PowerMockito.verifyStatic(Mockito.times(0));
+        EventPublisher.sendRuleEvent(event);
+    }
+
+    /**
+     * Test publish().
+     * Normal test.
+     * External event.
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void publish_Normal_External_event() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
+        PersoniumEvent event = new PersoniumEvent(true, null, null,
+                "cellctl.Rule.create", "personium-localcell:/__ctl/Rule", "200",
+                null, null, null);
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        PowerMockito.spy(EventPublisher.class);
+        PowerMockito.doNothing().when(EventPublisher.class, "send", event);
+        PowerMockito.doNothing().when(EventPublisher.class, "sendRuleEvent", event);
+
+        // --------------------
+        // Run method
+        // --------------------
+        Method publish = RuleManager.class.getDeclaredMethod("publish", PersoniumEvent.class);
+        publish.setAccessible(true);
+        publish.invoke(rman, event);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        PowerMockito.verifyStatic(Mockito.times(0));
+        EventPublisher.sendRuleEvent(event);
+    }
+
 }
