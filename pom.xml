@@ -3,7 +3,7 @@
 	<groupId>io.personium</groupId>
 	<artifactId>personium-core</artifactId>
 	<packaging>war</packaging>
-	<version>1.6.3-SNAPSHOT</version>
+	<version>1.6.3</version>
 	<name>personium-core Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<licenses>
@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>io.personium</groupId>
 			<artifactId>personium-lib-common</artifactId>
-			<version>1.4.9-SNAPSHOT</version>
+			<version>1.4.9</version>
 		</dependency>
 		<dependency>
 			<groupId>io.personium</groupId>
