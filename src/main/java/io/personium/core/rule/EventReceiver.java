@@ -70,6 +70,7 @@ class EventReceiver implements Runnable {
                         log.debug("    EventId: " + event.getEventId());
                         log.debug("    RuleChain: " + event.getRuleChain());
                         log.debug("    CellId: " + event.getCellId());
+                        log.debug("    DateTime: " + event.getDateTime());
 
                         // If the event matches with a rule, execute action of the rule.
                         rman.judge(event);

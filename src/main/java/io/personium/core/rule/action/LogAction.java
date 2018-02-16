@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class LogAction extends Action {
      */
     private LogAction() {
         // get Logger per instance
-        this.logger = LoggerFactory.getLogger("io.personium.core.rule.action");
+        this.logger = LoggerFactory.getLogger("io.personium.core.rule.action.LogAction");
     }
 
     /**
@@ -94,11 +94,11 @@ public class LogAction extends Action {
     // output log in accordance with log level
     private void outputLog(PersoniumEvent event, String requestKey) {
         if (level == LEVEL.INFO) {
-            logger.info(createLogContent(event, requestKey));
+            logger.info(createLogContent(event, "[INFO ]", requestKey));
         } else if (level == LEVEL.WARN) {
-            logger.warn(createLogContent(event, requestKey));
+            logger.warn(createLogContent(event, "[WARN ]", requestKey));
         } else if (level == LEVEL.ERROR) {
-            logger.error(createLogContent(event, requestKey));
+            logger.error(createLogContent(event, "[ERROR]", requestKey));
         }
     }
 
@@ -146,8 +146,10 @@ public class LogAction extends Action {
     }
 
     // create log from event
-    private String createLogContent(PersoniumEvent event, String requestKey) {
-        return String.format("%s,%s,%s,%s,%s,%s,%s",
+    private String createLogContent(PersoniumEvent event, String levelString, String requestKey) {
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s",
+                event.getDateTime(),
+                levelString,
                 makeCsvItem(requestKey),
                 makeCsvItem(event.getExternal().toString()),
                 makeCsvItem(event.getSchema()),

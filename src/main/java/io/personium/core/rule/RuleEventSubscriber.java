@@ -60,15 +60,11 @@ class RuleEventSubscriber implements Runnable {
                     if (event != null) {
                         log.debug(String.format("Received MapMessage with '%s'.", event.getType()));
                         log.debug("    External: " + event.getExternal());
-                        log.debug("    Schema: " + event.getSchema());
-                        log.debug("    Subject: " + event.getSubject());
                         log.debug("    Type: " + event.getType());
                         log.debug("    Object: " + event.getObject());
                         log.debug("    Info: " + event.getInfo());
-                        log.debug("    RequestKey: " + event.getRequestKey());
-                        log.debug("    EventId: " + event.getEventId());
-                        log.debug("    RuleChain: " + event.getRuleChain());
                         log.debug("    CellId: " + event.getCellId());
+                        log.debug("    DateTime: " + event.getDateTime());
 
                         // Register or unregister rule in accordance with event about rule.
                         rman.handleRuleEvent(event);

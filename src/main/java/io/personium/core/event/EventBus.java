@@ -40,6 +40,9 @@ public final class EventBus {
         // set cell id
         ev.setCellId(this.cell.getId());
 
+        // set date time
+        ev.setDateTime();
+
         // send event to JMS
         EventSender.send(ev);
     }

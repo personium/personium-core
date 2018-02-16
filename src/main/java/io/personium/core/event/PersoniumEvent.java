@@ -16,6 +16,11 @@
  */
 package io.personium.core.event;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+
 import io.personium.core.model.DavRsCmp;
 
 /**
@@ -40,6 +45,7 @@ public class PersoniumEvent {
     String eventId = null;
     String ruleChain = null;
     String cellId = null;
+    String dateTime = null;
 
     /** Constructor. */
     public PersoniumEvent() {
@@ -264,8 +270,68 @@ public class PersoniumEvent {
      * Set value of CellId.
      * @param cellId cellId string
      */
-    public final void setCellId(String cellId) {
+    void setCellId(String cellId) {
         this.cellId = cellId;
+    }
+
+    /**
+     * Get value of dateTime.
+     * @return dateTime in ISO 8601 format
+     */
+    public final String getDateTime() {
+        return dateTime;
+    }
+
+    /**
+     * Get value of dateTime.
+     * @return dateTime in RFC 1123 format
+     */
+    public final String getDateTimeRFC1123() {
+        if (dateTime == null) {
+            return dateTime;
+        }
+
+        // ISO 8601 -> RFC 1123
+        Instant ins = Instant.parse(dateTime);
+        OffsetDateTime parsedTime = ins.atOffset(ZoneOffset.UTC);
+        String ret = parsedTime.format(DateTimeFormatter.RFC_1123_DATE_TIME);
+        return ret;
+    }
+
+    /**
+     * Set dateTime to now.
+     */
+    void setDateTime() {
+        // set dateTime
+        //  ISO 8601 format
+        Instant time = Instant.now();
+        this.dateTime = time.toString();
+    }
+
+    /**
+     * Set dateTime.
+     * @param dateTime dateTime in ISO 8601 format
+     */
+    void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    /**
+     * Copy and override PersoniumEvent object.
+     * @param typeValue event type
+     * @param objectValue object of event
+     * @param infoValue information of event
+     * @param eventIdValue event id
+     * @param ruleChainValue string to check chain of rule
+     * @return created PersoniumEvent object
+     */
+    public PersoniumEvent copy(String typeValue, String objectValue, String infoValue,
+            String eventIdValue, String ruleChainValue) {
+        PersoniumEvent event = new PersoniumEvent(INTERNAL_EVENT, this.schema, this.subject,
+                typeValue, objectValue, infoValue, this.requestKey, eventIdValue, ruleChainValue);
+        event.setCellId(this.cellId);
+        event.setDateTime();
+        return event;
     }
 
     /**
