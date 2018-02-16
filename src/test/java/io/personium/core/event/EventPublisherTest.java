@@ -72,10 +72,10 @@ public class EventPublisherTest {
         // Test method args
         // --------------------
         PersoniumEvent event = new PersoniumEvent(true,
-                "schema string", "subject string", "type string",
-                "object string", "info string", "requestkey string", "eventid string", "rulechain string");
+                "schema string", "subject string", "type string", "object string", "info string",
+                "requestkey string", "eventid string", "rulechain string", "via string", null);
         event.setCellId("cell id");
-        event.setDateTime();
+        event.setTime();
 
         // --------------------
         // Mock settings
@@ -84,6 +84,7 @@ public class EventPublisherTest {
         doReturn(true).when(message).itemExists("RequestKey");
         doReturn(true).when(message).itemExists("EventId");
         doReturn(true).when(message).itemExists("RuleChain");
+        doReturn(true).when(message).itemExists("Via");
         doReturn(true).when(message).itemExists("External");
         doReturn(true).when(message).itemExists("Schema");
         doReturn(true).when(message).itemExists("Subject");
@@ -91,10 +92,11 @@ public class EventPublisherTest {
         doReturn(true).when(message).itemExists("Object");
         doReturn(true).when(message).itemExists("Info");
         doReturn(true).when(message).itemExists("cellId");
-        doReturn(true).when(message).itemExists("dateTime");
+        doReturn(true).when(message).itemExists("Time");
         doReturn(event.getRequestKey()).when(message).getString("RequestKey");
         doReturn(event.getEventId()).when(message).getString("EventId");
         doReturn(event.getRuleChain()).when(message).getString("RuleChain");
+        doReturn(event.getVia()).when(message).getString("Via");
         doReturn(event.getExternal()).when(message).getBoolean("External");
         doReturn(event.getSchema()).when(message).getString("Schema");
         doReturn(event.getSubject()).when(message).getString("Subject");
@@ -102,7 +104,7 @@ public class EventPublisherTest {
         doReturn(event.getObject()).when(message).getString("Object");
         doReturn(event.getInfo()).when(message).getString("Info");
         doReturn(event.getCellId()).when(message).getString("cellId");
-        doReturn(event.getDateTime()).when(message).getString("dateTime");
+        doReturn(event.getTime()).when(message).getLong("Time");
 
         // --------------------
         // Run method
@@ -115,6 +117,7 @@ public class EventPublisherTest {
         assertThat(result.getRequestKey(), is(event.getRequestKey()));
         assertThat(result.getEventId(), is(event.getEventId()));
         assertThat(result.getRuleChain(), is(event.getRuleChain()));
+        assertThat(result.getVia(), is(event.getVia()));
         assertThat(result.getExternal(), is(event.getExternal()));
         assertThat(result.getSchema(), is(event.getSchema()));
         assertThat(result.getSubject(), is(event.getSubject()));
@@ -122,7 +125,7 @@ public class EventPublisherTest {
         assertThat(result.getObject(), is(event.getObject()));
         assertThat(result.getInfo(), is(event.getInfo()));
         assertThat(result.getCellId(), is(event.getCellId()));
-        assertThat(result.getDateTime(), is(event.getDateTime()));
+        assertThat(result.getTime(), is(event.getTime()));
     }
 
     /**
@@ -166,10 +169,10 @@ public class EventPublisherTest {
         // Test method args
         // --------------------
         PersoniumEvent event = new PersoniumEvent(false,
-                null, null, "type string",
-                "object string", "info string", "requestkey string", "eventid string", "rulechain string");
+                null, null, "type string", "object string", "info string",
+                "requestkey string", "eventid string", "rulechain string", "via string", null);
         event.setCellId("cell id");
-        event.setDateTime();
+        event.setTime();
 
         // --------------------
         // Mock settings
@@ -178,6 +181,7 @@ public class EventPublisherTest {
         doReturn(true).when(message).itemExists("RequestKey");
         doReturn(true).when(message).itemExists("EventId");
         doReturn(true).when(message).itemExists("RuleChain");
+        doReturn(true).when(message).itemExists("Via");
         doReturn(true).when(message).itemExists("External");
         doReturn(false).when(message).itemExists("Schema");
         doReturn(true).when(message).itemExists("Subject");
@@ -185,10 +189,11 @@ public class EventPublisherTest {
         doReturn(true).when(message).itemExists("Object");
         doReturn(true).when(message).itemExists("Info");
         doReturn(true).when(message).itemExists("cellId");
-        doReturn(true).when(message).itemExists("dateTime");
+        doReturn(true).when(message).itemExists("Time");
         doReturn(event.getRequestKey()).when(message).getString("RequestKey");
         doReturn(event.getEventId()).when(message).getString("EventId");
         doReturn(event.getRuleChain()).when(message).getString("RuleChain");
+        doReturn(event.getVia()).when(message).getString("Via");
         doReturn(event.getExternal()).when(message).getBoolean("External");
         doReturn(event.getSchema()).when(message).getString("Schema");
         doReturn(event.getSubject()).when(message).getString("Subject");
@@ -196,7 +201,7 @@ public class EventPublisherTest {
         doReturn(event.getObject()).when(message).getString("Object");
         doReturn(event.getInfo()).when(message).getString("Info");
         doReturn(event.getCellId()).when(message).getString("cellId");
-        doReturn(event.getDateTime()).when(message).getString("dateTime");
+        doReturn(event.getTime()).when(message).getLong("Time");
 
         // --------------------
         // Run method
@@ -209,6 +214,7 @@ public class EventPublisherTest {
         assertThat(result.getRequestKey(), is(event.getRequestKey()));
         assertThat(result.getEventId(), is(event.getEventId()));
         assertThat(result.getRuleChain(), is(event.getRuleChain()));
+        assertThat(result.getVia(), is(event.getVia()));
         assertThat(result.getExternal(), is(event.getExternal()));
         assertThat(result.getSchema(), is(event.getSchema()));
         assertThat(result.getSubject(), is(event.getSubject()));
@@ -216,7 +222,7 @@ public class EventPublisherTest {
         assertThat(result.getObject(), is(event.getObject()));
         assertThat(result.getInfo(), is(event.getInfo()));
         assertThat(result.getCellId(), is(event.getCellId()));
-        assertThat(result.getDateTime(), is(event.getDateTime()));
+        assertThat(result.getTime(), is(event.getTime()));
     }
 
 }

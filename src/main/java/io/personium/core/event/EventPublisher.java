@@ -74,6 +74,7 @@ public class EventPublisher {
             msg.setString("RequestKey", event.getRequestKey());
             msg.setString("EventId", event.getEventId());
             msg.setString("RuleChain", event.getRuleChain());
+            msg.setString("Via", event.getVia());
             msg.setBoolean("External", event.getExternal());
             msg.setString("Schema", event.getSchema());
             msg.setString("Subject", event.getSubject());
@@ -81,7 +82,7 @@ public class EventPublisher {
             msg.setString("Object", event.getObject());
             msg.setString("Info", event.getInfo());
             msg.setString("cellId", event.getCellId());
-            msg.setString("dateTime", event.getDateTime());
+            msg.setLong("Time", event.getTime());
 
             producer.send(msg);
         } catch (JMSException e) {

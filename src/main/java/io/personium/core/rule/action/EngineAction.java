@@ -90,13 +90,19 @@ public abstract class EngineAction extends Action {
         req.setEntity(new StringEntity(json.toString(), ContentType.create("application/json")));
 
         // set headers
-        //  X-Personium-RequestKey, X-Personium-EventId, X-Personium-RuleChain
-        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, event.getRequestKey());
+        //  X-Personium-RequestKey, X-Personium-EventId, X-Personium-RuleChain, X-Personium-Via
+        if (event.getRequestKey() != null) {
+            req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, event.getRequestKey());
+        }
         req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_EVENTID, eventId);
         req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RULECHAIN, chain);
+        String via = getVia(event);
+        if (via != null) {
+            req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VIA, via);
+        }
 
         // set specific headers in derrived class
-        setHeaders(req);
+        setHeaders(req, event);
 
         HttpResponse objResponse = null;
         try {
@@ -117,6 +123,7 @@ public abstract class EngineAction extends Action {
             result = "404";
         }
 
+        // create event for result of script execution
         PersoniumEvent evt = event.copy(action, service, result, eventId, chain);
 
         return evt;
@@ -143,7 +150,18 @@ public abstract class EngineAction extends Action {
     /**
      * Set specific HTTP headers in derrived class.
      * @param req Request to set headers
+     * @param event PersoniumEvent object
      */
-    protected abstract void setHeaders(HttpMessage req);
+    protected abstract void setHeaders(HttpMessage req, PersoniumEvent event);
+
+    /**
+     * Get Via header string.
+     * @param event PersoniumEvent object
+     * @return via header string
+     */
+    protected String getVia(PersoniumEvent event) {
+        return event.getVia();
+    }
+
 }
 

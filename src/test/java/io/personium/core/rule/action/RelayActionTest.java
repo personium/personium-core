@@ -34,6 +34,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
 import io.personium.core.rule.ActionInfo;
 import io.personium.test.categories.Unit;
@@ -148,7 +149,7 @@ public class RelayActionTest {
         // --------------------
         String xBaseurl = unitUrl;
         String xRequestUri = cellUrl + "__/relay";
-        String xPersoniumBoxSchema = null;
+        String xPersoniumBoxSchema = "http://personium/appcell/";
 
         // --------------------
         // Mock settings
@@ -163,7 +164,9 @@ public class RelayActionTest {
         ActionInfo ai = new ActionInfo("relay", service, null, null);
         RelayAction action = new RelayAction(cell, ai);
         HttpPost req = new HttpPost(requestUrl);
-        action.setHeaders(req);
+        PersoniumEvent event = new PersoniumEvent(true, xPersoniumBoxSchema,
+                null, null, null, null, null, null, null, null, null);
+        action.setHeaders(req, event);
 
         // --------------------
         // Confirm result
@@ -200,7 +203,7 @@ public class RelayActionTest {
         ActionInfo ai = new ActionInfo("relay", service, null, null);
         RelayAction action = new RelayAction(null, ai);
         HttpPost req = new HttpPost(requestUrl);
-        action.setHeaders(req);
+        action.setHeaders(req, null);
 
         // --------------------
         // Confirm result
@@ -243,7 +246,7 @@ public class RelayActionTest {
         ActionInfo ai = new ActionInfo("relay", service, null, null);
         RelayAction action = new RelayAction(cell, ai);
         HttpPost req = null;
-        action.setHeaders(req);
+        action.setHeaders(req, null);
 
         // --------------------
         // Confirm result

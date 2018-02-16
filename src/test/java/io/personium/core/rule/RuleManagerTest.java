@@ -133,7 +133,7 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.FALSE;
         PersoniumEvent event = new PersoniumEvent(null,
-            null, null, null, null, null, null, null, null);
+            null, null, null, null, null, null, null, null, null, null);
 
         // --------------------
         // Mock settings
@@ -172,7 +172,8 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.FALSE;
         PersoniumEvent event = new PersoniumEvent(Boolean.FALSE,
-                "schema string", "subject", "type", "object", "info", "requestKey", "eventid", "rulechain");
+                "schema string", "subject", "type", "object", "info",
+                "requestKey", "eventid", "rulechain", "via", "roles");
 
         // --------------------
         // Mock settings
@@ -211,7 +212,8 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "schema", "subject", "type", "object", "info", "requestKey", "eventid", "rulechain");
+                "schema", "subject", "type", "object", "info",
+                "requestKey", "eventid", "rulechain", "via", "roles");
 
         // --------------------
         // Mock settings
@@ -254,7 +256,7 @@ public class RuleManagerTest {
         ri.box = bi;
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
                 "http://personium/dummyCell/", "subject", "type", "object", "info",
-                "requestKey", "eventid", "rulechain");
+                "requestKey", "eventid", "rulechain", "via", "roles");
 
         // --------------------
         // Mock settings
@@ -297,7 +299,7 @@ public class RuleManagerTest {
         ri.box = bi;
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
                 "http://personium/dummyCell/invalid/", "subject", "type", "object", "info",
-                "requestKey", "eventid", "rulechain");
+                "requestKey", "eventid", "rulechain", "via", "roles");
 
         // --------------------
         // Mock settings
@@ -344,7 +346,7 @@ public class RuleManagerTest {
         ri.type = "cellctl.Rule.create";
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
                 "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info",
-                "requestKey", "eventid", "rulechain");
+                "requestKey", "eventid", "rulechain", "via", "roles");
 
         // --------------------
         // Mock settings
@@ -385,7 +387,7 @@ public class RuleManagerTest {
         ri.type = "cellctl.Rule";
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
                 "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info",
-                "requestKey", "eventid", "rulechain");
+                "requestKey", "eventid", "rulechain", "via", "roles");
 
         // --------------------
         // Mock settings
@@ -426,7 +428,7 @@ public class RuleManagerTest {
         ri.type = "cellctl.Rule.create.some";
         PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
                 "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info",
-                "requestKey", "eventid", "rulechain");
+                "requestKey", "eventid", "rulechain", "via", "roles");
 
         // --------------------
         // Mock settings
@@ -535,7 +537,7 @@ public class RuleManagerTest {
         RuleManager rman = PowerMockito.mock(RuleManager.class);
         PersoniumEvent event = new PersoniumEvent(true, null, null,
                 "cellctl.Rule.create", "personium-localcell:/__ctl/Rule", "200",
-                null, null, null);
+                null, null, null, null, null);
 
         // --------------------
         // Mock settings

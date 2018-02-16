@@ -46,6 +46,8 @@ public class ActionFactory {
             return new ExecAction(cell, ai);
         } else if (Rule.ACTION_RELAY.equals(action)) {
             return new RelayAction(cell, ai);
+        } else if (Rule.ACTION_RELAY_EVENT.equals(action)) {
+            return new RelayEventAction(cell, ai);
         }
         return null;
     }

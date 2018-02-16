@@ -220,7 +220,7 @@ public class ExecActionTest {
         ActionInfo ai = new ActionInfo(null, service, null, null);
         ExecAction action = new ExecAction(null, ai);
         HttpPost req = new HttpPost(requestUrl);
-        action.setHeaders(req);
+        action.setHeaders(req, null);
 
         // --------------------
         // Confirm result
@@ -259,7 +259,7 @@ public class ExecActionTest {
         ActionInfo ai = new ActionInfo(null, service, null, null);
         ExecAction action = new ExecAction(cell, ai);
         HttpPost req = null;
-        action.setHeaders(req);
+        action.setHeaders(req, null);
 
         // --------------------
         // Confirm result

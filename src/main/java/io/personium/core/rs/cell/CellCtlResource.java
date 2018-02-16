@@ -50,6 +50,7 @@ import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.ODataResource;
+import io.personium.core.utils.ODataUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
@@ -237,7 +238,8 @@ public final class CellCtlResource extends ODataResource {
             }
 
             // action: relay or relay.event or exec -> service: not null
-            if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_EXEC.equals(action)) && service == null) {
+            if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_RELAY_EVENT.equals(action)
+                    || Rule.ACTION_EXEC.equals(action)) && service == null) {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
             }
 
@@ -267,6 +269,12 @@ public final class CellCtlResource extends ODataResource {
                     && !service.startsWith(UriUtils.SCHEME_HTTP)
                     && !service.startsWith(UriUtils.SCHEME_HTTPS)
                     && !service.startsWith(UriUtils.SCHEME_LOCALUNIT)) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
+            }
+
+            // action: relay.event -> service: cell url
+            if (Rule.ACTION_RELAY_EVENT.equals(action)
+                    && !ODataUtils.isValidCellUrl(service)) {
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
             }
         }

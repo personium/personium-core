@@ -595,12 +595,13 @@ public class ODataSentMessageResource extends ODataMessageResource {
                     // rule.add
                     //   Name pattern id
                     //   Action required
-                    //   Action: relay or exec -> TargetUrl required
+                    //   Action: relay or relay.event or exec -> TargetUrl required
                     //   BoxBound: true  -> EventObject: personium-localbox:/xxx
                     //                   -> Action: exec -> TargetUrl: personium-localbox:/xxx
                     //   BoxBound: false -> EventObject: personium-localcell:/xxx
                     //                   -> Action: exec -> TargetUrl: personium-localcell:/xxx
-                    //   Action: relay -> TargetUrl: personium-localunit: or http: or https:
+                    //   Action: relay       -> TargetUrl: personium-localunit: or http: or https:
+                    //   Action: relay.event -> TargetUrl: cell url
                     String name = requestObjectMap.get(RequestObject.P_NAME.getName());
                     if (name != null && !ODataUtils.validateRegEx(name, Common.PATTERN_ID)) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
@@ -611,7 +612,8 @@ public class ODataSentMessageResource extends ODataMessageResource {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                 concatRequestObjectPropertyName(Rule.P_ACTION.getName()));
                     }
-                    if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_EXEC.equals(action))
+                    if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_RELAY_EVENT.equals(action)
+                            || Rule.ACTION_EXEC.equals(action))
                             && requestObjectMap.get(RequestObject.P_TARGET_URL.getName()) == null) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                 concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
@@ -645,6 +647,11 @@ public class ODataSentMessageResource extends ODataMessageResource {
                             && !targetUrl.startsWith(UriUtils.SCHEME_LOCALUNIT)
                             && !targetUrl.startsWith(UriUtils.SCHEME_HTTP)
                             && !targetUrl.startsWith(UriUtils.SCHEME_HTTPS)) {
+                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
+                                concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
+                    }
+                    if (Rule.ACTION_RELAY_EVENT.equals(action)
+                            && !ODataUtils.isValidCellUrl(targetUrl)) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                 concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
                     }
