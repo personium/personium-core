@@ -106,7 +106,7 @@ public class WebSocketService {
     private static final String REASON_UNAUTHORIZED = "Unauthorized";
     private static final String REASON_SUBSCRIBE_NOT_FOUND = "Subscriptions not found";
     private static final String REASON_INVALID_STATE_TYPE =
-            "invalid state type. allowed status type: [all, subscriptions]";
+            "Invalid state type. Allowed status type: [" + STATE_TYPE_ALL + ", " + STATE_TYPE_SUBSCRIBE + "]";
     private static final String REASON_INVALID_PRIVILEGE = "Invalid privilege or format";
 
     // session and cell id map for send event
