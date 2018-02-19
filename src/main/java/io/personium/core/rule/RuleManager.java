@@ -44,6 +44,7 @@ import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumThread;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.event.EventPublisher;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.Rule;
@@ -87,6 +88,58 @@ public class RuleManager {
         BoxInfo box;
         String name;
     }
+
+    /** EventType definition for rule event. */
+    private static final String RULEEVENT_RULE_CREATE =
+            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
+    private static final String RULEEVENT_RULE_UPDATE =
+            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.UPDATE;
+    private static final String RULEEVENT_RULE_MERGE =
+            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.MERGE;
+    private static final String RULEEVENT_RULE_DELETE =
+            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
+    private static final String RULEEVENT_RULE_LINK_BOX_CREATE =
+            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LINK
+            + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
+    private static final String RULEEVENT_RULE_LINK_BOX_DELETE =
+            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LINK
+            + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
+    private static final String RULEEVENT_BOX_LINK_RULE_CREATE =
+            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LINK
+            + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
+    private static final String RULEEVENT_BOX_LINK_RULE_DELETE =
+            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LINK
+            + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
+    private static final String RULEEVENT_RULE_NAVPROP_BOX_CREATE =
+            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.NAVPROP
+            + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
+    private static final String RULEEVENT_BOX_NAVPROP_RULE_CREATE =
+            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.NAVPROP
+            + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
+    private static final String RULEEVENT_BOX_UPDATE =
+            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.UPDATE;
+    private static final String RULEEVENT_BOX_MERGE =
+            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
+            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.MERGE;
+    private static final String RULEEVENT_CELL_IMPORT =
+            PersoniumEventType.Category.CELL + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.IMPORT;
 
     static final String LOCALUNIT = UriUtils.SCHEME_LOCALUNIT + ":";
     static final String LOCALCELL = UriUtils.SCHEME_LOCALCELL + ":";
@@ -264,19 +317,19 @@ public class RuleManager {
         // publish event about rule
         String type = event.getType();
         if (!event.getExternal()
-                && ("cellctl.Rule.create".equals(type)
-                || "cellctl.Rule.update".equals(type)
-                || "cellctl.Rule.patch".equals(type)
-                || "cellctl.Rule.delete".equals(type)
-                || "cellctl.Rule.links.Box.create".equals(type)
-                || "cellctl.Rule.links.Box.delete".equals(type)
-                || "cellctl.Box.links.Rule.create".equals(type)
-                || "cellctl.Box.links.Rule.delete".equals(type)
-                || "cellctl.Rule.navprop.Box.create".equals(type)
-                || "cellctl.Box.navprop.Rule.create".equals(type)
-                || "cellctl.Box.update".equals(type)
-                || "cellctl.Box.merge".equals(type)
-                || "cell.import".equals(type))) {
+                && (RULEEVENT_RULE_CREATE.equals(type)
+                || RULEEVENT_RULE_UPDATE.equals(type)
+                || RULEEVENT_RULE_MERGE.equals(type)
+                || RULEEVENT_RULE_DELETE.equals(type)
+                || RULEEVENT_RULE_LINK_BOX_CREATE.equals(type)
+                || RULEEVENT_RULE_LINK_BOX_DELETE.equals(type)
+                || RULEEVENT_BOX_LINK_RULE_CREATE.equals(type)
+                || RULEEVENT_BOX_LINK_RULE_DELETE.equals(type)
+                || RULEEVENT_RULE_NAVPROP_BOX_CREATE.equals(type)
+                || RULEEVENT_BOX_NAVPROP_RULE_CREATE.equals(type)
+                || RULEEVENT_BOX_UPDATE.equals(type)
+                || RULEEVENT_BOX_MERGE.equals(type)
+                || RULEEVENT_CELL_IMPORT.equals(type))) {
             EventPublisher.sendRuleEvent(event);
         }
     }
@@ -538,11 +591,11 @@ public class RuleManager {
         try {
 
             String type = event.getType();
-            if ("cellctl.Rule.create".equals(type)) {
+            if (RULEEVENT_RULE_CREATE.equals(type)) {
                 // register
                 OEntityKey oEntityKey = convertFirst(event.getObject());
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
-            } else if ("cellctl.Rule.update".equals(type) || "cellctl.Rule.patch".equals(type)) {
+            } else if (RULEEVENT_RULE_UPDATE.equals(type) || RULEEVENT_RULE_MERGE.equals(type)) {
                 // unregister
                 OEntityKey oEntityKey = convertFirst(event.getObject());
                 ret = unregisterRuleByOEntityKey(oEntityKey, cell);
@@ -552,11 +605,11 @@ public class RuleManager {
                 // register
                 OEntityKey newOEntityKey = convertFirst(event.getInfo());
                 ret = registerRuleByOEntityKey(producer, newOEntityKey, cell);
-            } else if ("cellctl.Rule.delete".equals(type)) {
+            } else if (RULEEVENT_RULE_DELETE.equals(type)) {
                 // unregister
                 OEntityKey oEntityKey = convertFirst(event.getObject());
                 ret = unregisterRuleByOEntityKey(oEntityKey, cell);
-            } else if ("cellctl.Rule.links.Box.create".equals(type)) {
+            } else if (RULEEVENT_RULE_LINK_BOX_CREATE.equals(type)) {
                 // link (unregister & register)
                 OEntityKey ruleKey = convertFirst(event.getObject());
                 ret = unregisterRuleByOEntityKey(ruleKey, cell);
@@ -564,7 +617,7 @@ public class RuleManager {
                 OEntityKey boxKey = convertSecond(event.getObject());
                 OEntityKey oEntityKey = createOEntityKeyFromBoxAndRule(boxKey, ruleKey);
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
-            } else if ("cellctl.Rule.links.Box.delete".equals(type)) {
+            } else if (RULEEVENT_RULE_LINK_BOX_DELETE.equals(type)) {
                 // delete link (unregister & register)
                 OEntityKey ruleKey = convertFirst(event.getObject());
                 ret = unregisterRuleByOEntityKey(ruleKey, cell);
@@ -575,7 +628,7 @@ public class RuleManager {
                 values.put(Rule.P_NAME.getName(), ruleName);
                 OEntityKey oEntityKey = OEntityKey.create(values);
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
-            } else if ("cellctl.Box.links.Rule.create".equals(type)) {
+            } else if (RULEEVENT_BOX_LINK_RULE_CREATE.equals(type)) {
                 // link (unregister & register)
                 OEntityKey ruleKey = convertSecond(event.getObject());
                 ret = unregisterRuleByOEntityKey(ruleKey, cell);
@@ -583,7 +636,7 @@ public class RuleManager {
                 OEntityKey boxKey = convertFirst(event.getObject());
                 OEntityKey oEntityKey = createOEntityKeyFromBoxAndRule(boxKey, ruleKey);
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
-            } else if ("cellctl.Box.links.Rule.delete".equals(type)) {
+            } else if (RULEEVENT_BOX_LINK_RULE_DELETE.equals(type)) {
                 // link (unregister & register)
                 OEntityKey ruleKey = convertSecond(event.getObject());
                 ret = unregisterRuleByOEntityKey(ruleKey, cell);
@@ -594,7 +647,7 @@ public class RuleManager {
                 values.put(Rule.P_NAME.getName(), ruleName);
                 OEntityKey oEntityKey = OEntityKey.create(values);
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
-            } else if ("cellctl.Rule.navprop.Box.create".equals(type)) {
+            } else if (RULEEVENT_RULE_NAVPROP_BOX_CREATE.equals(type)) {
                 // link (unregister & register)
                 OEntityKey ruleKey = convertFirst(event.getObject());
                 ret = unregisterRuleByOEntityKey(ruleKey, cell);
@@ -602,13 +655,13 @@ public class RuleManager {
                 OEntityKey boxKey = convertSecond(event.getObject());
                 OEntityKey oEntityKey = createOEntityKeyFromBoxAndRule(boxKey, ruleKey);
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
-            } else if ("cellctl.Box.navprop.Rule.create".equals(type)) {
+            } else if (RULEEVENT_BOX_NAVPROP_RULE_CREATE.equals(type)) {
                 // register
                 OEntityKey boxKey = convertFirst(event.getObject());
                 OEntityKey ruleKey = convertSecond(event.getObject());
                 OEntityKey oEntityKey = createOEntityKeyFromBoxAndRule(boxKey, ruleKey);
                 ret = registerRuleByOEntityKey(producer, oEntityKey, cell);
-            } else if ("cellctl.Box.update".equals(type) || "cellctl.Box.patch".equals(type)) {
+            } else if (RULEEVENT_BOX_UPDATE.equals(type) || RULEEVENT_BOX_MERGE.equals(type)) {
                 OEntityKey boxKey = convertFirst(event.getInfo());
                 String boxName = getComplexKeyValue(boxKey, Rule.P_NAME.getName());
                 Box box = cell.getBoxForName(boxName);
@@ -627,7 +680,7 @@ public class RuleManager {
                     }
                 }
                 ret = true;
-            } else if ("cell.import".equals(type)) {
+            } else if (RULEEVENT_CELL_IMPORT.equals(type)) {
                 deleteRule(cell.getId());
                 loadRule(cell);
                 ret = true;
