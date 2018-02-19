@@ -57,7 +57,7 @@ import io.personium.core.rs.box.BoxResource;
  * JAX-RS Resource handling Cell Level Api.
  *  logics for the url path /{cell name}.
  */
-public final class CellResource {
+public class CellResource {
     static Logger log = LoggerFactory.getLogger(CellResource.class);
 
     Cell cell;

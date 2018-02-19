@@ -23,7 +23,7 @@ package io.personium.core.auth;
 public abstract class Privilege {
 
     // Access type is provisional.
-    // Only READ is used in the current(core-1.6.2) process.
+    // Only READ is used in the current(core-1.6.4) process.
     /** Access type : READ. */
     public static final String ACCESS_TYPE_READ = "read";
     /** Access type : WRITE. */

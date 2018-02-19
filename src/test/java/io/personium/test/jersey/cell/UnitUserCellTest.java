@@ -19,6 +19,7 @@ package io.personium.test.jersey.cell;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import org.apache.http.HttpStatus;
@@ -38,6 +39,7 @@ import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.utils.UriUtils;
@@ -59,17 +61,20 @@ import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
 
 /**
- * UnitUserでCellをCRUDするテスト.
+ * Test of UnitUser.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class UnitUserCellCRUDTest extends JerseyTest {
+public class UnitUserCellTest extends JerseyTest {
 
     private static final String UNIT_USER_CELL = "UnitUserCell";
     private static final String UNIT_USER_ACCOUNT = "UnitUserName";
-    private static final String UNIT_ADMIN_ROLE = "unitAdmin";
     private static final String UNIT_USER_ACCOUNT_PASS = "password";
     private static final String CREATE_CELL = "createCell";
+
+    private static String unitAdminRole;
+    private static String contentsReaderRole;
+    private static String contentsAdminRole;
 
     /** unitUser.issuers in properties. */
     private static String issuersBackup = "";
@@ -77,19 +82,31 @@ public class UnitUserCellCRUDTest extends JerseyTest {
     /**
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
-    public UnitUserCellCRUDTest() {
+    public UnitUserCellTest() {
         super("io.personium.core.rs");
     }
 
     /**
      * Befor class.
+     * @throws Exception Unintended exception in test
      */
     @BeforeClass
-    public static void beforeClass() {
+    public static void beforeClass() throws Exception {
         // Override issuers in unitconfig.
         issuersBackup = PersoniumUnitConfig.get("io.personium.core.unitUser.issuers");
         PersoniumUnitConfig.set("io.personium.core.unitUser.issuers",
                 UriUtils.SCHEME_UNIT_URI + UNIT_USER_CELL + "/");
+
+        // Read role name from AccessContext
+        Field admin = AccessContext.class.getDeclaredField("ROLE_UNIT_ADMIN");
+        admin.setAccessible(true);
+        unitAdminRole = (String) admin.get(null);
+        Field contentsReader = AccessContext.class.getDeclaredField("ROLE_CELL_CONTENTS_READER");
+        contentsReader.setAccessible(true);
+        contentsReaderRole = (String) contentsReader.get(null);
+        Field contentsAdmin = AccessContext.class.getDeclaredField("ROLE_CELL_CONTENTS_ADMIN");
+        contentsAdmin.setAccessible(true);
+        contentsAdminRole = (String) contentsAdmin.get(null);
     }
 
     /**
@@ -106,7 +123,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * マスタートークンでX_PERSONIUM_UnitUserヘッダを指定すると指定したユニットユーザトークンになることを確認.
      */
     @Test
-    public final void マスタートークンでX_PERSONIUM_UnitUserヘッダを指定すると指定したユニットユーザトークンになることを確認() {
+    public void マスタートークンでX_PERSONIUM_UnitUserヘッダを指定すると指定したユニットユーザトークンになることを確認() {
         // マスタートークンでX-Personium-UnitUserヘッダを指定すると指定した値のOwnerでセルが作成される。
         CellUtils.create(CREATE_CELL, AbstractCase.MASTER_TOKEN_NAME, Setup.OWNER_VET, HttpStatus.SC_CREATED);
 
@@ -125,7 +142,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * ユニットユーザートークンでセル作成を行いオーナーが設定されることを確認.
      */
     @Test
-    public final void ユニットユーザートークンでセル作成を行いオーナーが設定されることを確認() {
+    public void ユニットユーザートークンでセル作成を行いオーナーが設定されることを確認() {
         try {
             // 本テスト用セルの作成
             CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
@@ -189,7 +206,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * ユニットアドミンロールをもつユニットユーザートークンでセル作成を行いオーナーが設定されないことを確認.
      */
     @Test
-    public final void ユニットアドミンロールをもつユニットユーザートークンでセル作成を行いオーナーが設定されないことを確認() {
+    public void ユニットアドミンロールをもつユニットユーザートークンでセル作成を行いオーナーが設定されないことを確認() {
 
         try {
             // 本テスト用セルの作成
@@ -200,12 +217,12 @@ public class UnitUserCellCRUDTest extends JerseyTest {
                     UNIT_USER_ACCOUNT, UNIT_USER_ACCOUNT_PASS, HttpStatus.SC_CREATED);
 
             // ロール追加（ユニットアドミンロール）
-            RoleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, UNIT_ADMIN_ROLE,
+            RoleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, unitAdminRole,
                     null, HttpStatus.SC_CREATED);
 
             // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
             LinksUtils.createLinks(UNIT_USER_CELL, Account.EDM_TYPE_NAME, UNIT_USER_ACCOUNT, null, Role.EDM_TYPE_NAME,
-                    UNIT_ADMIN_ROLE, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
+                    unitAdminRole, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // 認証（ユニットユーザートークン取得）
             TResponse res = Http.request("authn/password-tc-c0.txt")
@@ -239,9 +256,9 @@ public class UnitUserCellCRUDTest extends JerseyTest {
         } finally {
             // ロール結びつけ削除（BOXに結びつかないロールとアカウント結びつけ）
             LinksUtils.deleteLinks(UNIT_USER_CELL, Account.EDM_TYPE_NAME, UNIT_USER_ACCOUNT, null,
-                    Role.EDM_TYPE_NAME, UNIT_ADMIN_ROLE, null, AbstractCase.MASTER_TOKEN_NAME, -1);
+                    Role.EDM_TYPE_NAME, unitAdminRole, null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // ロール削除（BOXに結びつかない）
-            RoleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, UNIT_ADMIN_ROLE, null);
+            RoleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, unitAdminRole, null);
             // アカウント削除
             AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME,
                     UNIT_USER_ACCOUNT, -1);
@@ -257,7 +274,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     @Ignore // UUT promotion setting API invalidation.
-    public final void パスワード認証でユニットローカルユニットユーザトークンへ昇格したトークンでセル作成を行いオーナーが設定されることを確認() throws TokenParseException {
+    public void パスワード認証でユニットローカルユニットユーザトークンへ昇格したトークンでセル作成を行いオーナーが設定されることを確認() throws TokenParseException {
 
         try {
             // アカウントにユニット昇格権限付与
@@ -307,7 +324,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     @Ignore // UUT promotion setting API invalidation.
-    public final void 昇格設定のないアカウントがパスワード認証でユニットローカルユニットユーザトークンへ昇格できないことの確認() throws TokenParseException {
+    public void 昇格設定のないアカウントがパスワード認証でユニットローカルユニットユーザトークンへ昇格できないことの確認() throws TokenParseException {
         // アカウントにユニット昇格権限付与
         DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
                 "cell/proppatch-uluut.txt", HttpStatus.SC_MULTI_STATUS);
@@ -328,7 +345,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     @Ignore // UUT promotion setting API invalidation.
-    public final void リフレッシュトークン認証でユニットローカルユニットユーザトークンへ昇格したトークンでセル作成を行いオーナーが設定されることを確認() throws TokenParseException {
+    public void リフレッシュトークン認証でユニットローカルユニットユーザトークンへ昇格したトークンでセル作成を行いオーナーが設定されることを確認() throws TokenParseException {
         // 認証（パスワード認証）
         TResponse res = Http.request("authn/password-cl-c0.txt")
                 .with("remoteCell", Setup.TEST_CELL1)
@@ -366,7 +383,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     @Ignore // UUT promotion setting API invalidation.
-    public final void 昇格設定のないアカウントがリフレッシュトークン認証でユニットローカルユニットユーザトークンへ昇格できないことの確認() throws TokenParseException {
+    public void 昇格設定のないアカウントがリフレッシュトークン認証でユニットローカルユニットユーザトークンへ昇格できないことの確認() throws TokenParseException {
         // 認証（パスワード認証）
         TResponse res = Http.request("authn/password-cl-c0.txt")
                 .with("remoteCell", Setup.TEST_CELL1)
@@ -396,7 +413,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     @Ignore // UUT promotion setting API invalidation.
-    public final void トランスセルトークンではセルの昇格ができないことの確認() throws TokenParseException {
+    public void トランスセルトークンではセルの昇格ができないことの確認() throws TokenParseException {
         // 認証（パスワード認証）
         TResponse res = Http.request("authn/password-tc-c0.txt")
                 .with("remoteCell", Setup.TEST_CELL2)
@@ -427,7 +444,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     @Ignore // UUT promotion setting API invalidation.
-    public final void 他人セルリフレッシュトークンではセルの昇格ができないことの確認() throws TokenParseException {
+    public void 他人セルリフレッシュトークンではセルの昇格ができないことの確認() throws TokenParseException {
         // 認証（パスワード認証）
         TResponse res = Http.request("authn/password-tc-c0.txt")
                 .with("remoteCell", Setup.TEST_CELL2)
@@ -467,7 +484,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     @Ignore // UUT promotion setting API invalidation.
-    public final void オーナーが未設定のセルの昇格が認証エラーになることの確認() throws TokenParseException {
+    public void オーナーが未設定のセルの昇格が認証エラーになることの確認() throws TokenParseException {
         try {
             // 本テスト用セルの作成
             CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
@@ -504,7 +521,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     @Ignore // UUT promotion setting API invalidation.
-    public final void セルレベルPROPPATCHをユニットユーザトークンで実行可能なことを確認() throws TokenParseException {
+    public void セルレベルPROPPATCHをユニットユーザトークンで実行可能なことを確認() throws TokenParseException {
         // UnitUserTokenを自作
         TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
                 Setup.OWNER_VET, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null);
@@ -522,7 +539,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     @Ignore // UUT promotion setting API invalidation.
-    public final void セルレベルPROPPATCHをオーナーの違うユニットユーザトークンでは実行不可なことを確認() throws TokenParseException {
+    public void セルレベルPROPPATCHをオーナーの違うユニットユーザトークンでは実行不可なことを確認() throws TokenParseException {
         // UnitUserTokenを自作
         TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
                 Setup.OWNER_HMC, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null);
@@ -540,7 +557,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     @Ignore // UUT promotion setting API invalidation.
-    public final void セルレベルPROPPATCHをユニットローカルユニットユーザトークンで実行可能なことを確認() throws TokenParseException {
+    public void セルレベルPROPPATCHをユニットローカルユニットユーザトークンで実行可能なことを確認() throws TokenParseException {
         // アカウントにユニット昇格権限付与
         DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
                 "cell/proppatch-uluut.txt", HttpStatus.SC_MULTI_STATUS);
@@ -567,7 +584,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     @Ignore // UUT promotion setting API invalidation.
-    public final void セルレベルPROPPATCHをオーナーが違うユニットローカルユニットユーザトークンで実行不可なことを確認() throws TokenParseException {
+    public void セルレベルPROPPATCHをオーナーが違うユニットローカルユニットユーザトークンで実行不可なことを確認() throws TokenParseException {
         // アカウントにユニット昇格権限付与
         DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
                 "cell/proppatch-uluut.txt", HttpStatus.SC_MULTI_STATUS);
@@ -594,7 +611,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      */
     @Test
     @Ignore // UUT promotion setting API invalidation.
-    public final void ユニットローカルユニットユーザトークンでオーナーによる実行判断の確認() throws TokenParseException {
+    public void ユニットローカルユニットユーザトークンでオーナーによる実行判断の確認() throws TokenParseException {
         // アカウントにユニット昇格権限付与
         DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
                 "cell/proppatch-uluut.txt", HttpStatus.SC_MULTI_STATUS);
@@ -629,22 +646,43 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * ユニットユーザトークンでオーナーによる実行判断の確認.
      */
     @Test
-    public final void ユニットユーザトークンでオーナーによる実行判断の確認() {
+    public void ユニットユーザトークンでオーナーによる実行判断の確認() {
 
         String boxName = "createCellBox";
         try {
-
-            // UnitUserTokenを自作
-            TransCellAccessToken tcat = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
-                    Setup.OWNER_VET, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null);
-
-            String unitUserToken = tcat.toTokenString();
+            // 本テスト用セルの作成
+            CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            // アカウント追加
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
+                    UNIT_USER_ACCOUNT, UNIT_USER_ACCOUNT_PASS, HttpStatus.SC_CREATED);
+            // ロール追加（ContentsAdminRole）
+            RoleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, contentsAdminRole,
+                    null, HttpStatus.SC_CREATED);
+            // ロール結びつけ（BOXに結びつかないロールとアカウント結びつけ）
+            LinksUtils.createLinks(UNIT_USER_CELL, Account.EDM_TYPE_NAME, UNIT_USER_ACCOUNT, null, Role.EDM_TYPE_NAME,
+                    contentsAdminRole, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
+            // 認証（ユニットユーザートークン取得）
+            TResponse res = Http.request("authn/password-tc-c0.txt")
+                    .with("remoteCell", UNIT_USER_CELL)
+                    .with("username", UNIT_USER_ACCOUNT)
+                    .with("password", UNIT_USER_ACCOUNT_PASS)
+                    .with("p_target", UrlUtils.unitRoot())
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+            JSONObject json = res.bodyAsJson();
+            String unitUserToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
             // ユニットユーザートークンを使ってセル作成をするとオーナーがユニットユーザー（ここだとuserNameアカウントのURL）になるはず。
             CellUtils.create(CREATE_CELL, unitUserToken, HttpStatus.SC_CREATED);
 
             // ボックスレベルPROPFIND用のボックス作成
             BoxUtils.create(CREATE_CELL, boxName, unitUserToken);
+
+            // UnitLevel GetCell other owner
+            CellUtils.get(Setup.TEST_CELL2, unitUserToken, HttpStatus.SC_FORBIDDEN);
+
+            // UnitLevel GetCell owner
+            CellUtils.get(CREATE_CELL, unitUserToken, HttpStatus.SC_OK);
 
             // セルレベルPROPFIND 非オーナーのため、アクセス不可
             CellUtils.propfind(Setup.TEST_CELL2 + "/", unitUserToken, "0", HttpStatus.SC_FORBIDDEN);
@@ -660,9 +698,19 @@ public class UnitUserCellCRUDTest extends JerseyTest {
             CellUtils.propfind(CREATE_CELL + "/" + boxName + "/", unitUserToken,
                     "0", HttpStatus.SC_MULTI_STATUS);
         } finally {
+            // ロール結びつけ削除
+            LinksUtils.deleteLinks(UNIT_USER_CELL, Account.EDM_TYPE_NAME, UNIT_USER_ACCOUNT, null,
+                    Role.EDM_TYPE_NAME, contentsAdminRole, null, AbstractCase.MASTER_TOKEN_NAME, -1);
+            // ロール削除
+            RoleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, contentsAdminRole, null);
+            // アカウント削除
+            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME,
+                    UNIT_USER_ACCOUNT, -1);
+
             // 本テスト用ボックスの削除
             BoxUtils.delete(CREATE_CELL, AbstractCase.MASTER_TOKEN_NAME, boxName, -1);
             // 本テスト用セルの削除
+            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, CREATE_CELL, -1);
         }
     }
@@ -672,7 +720,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * @throws TokenParseException トークンパースエラー
      */
     @Test
-    public final void セルの検索でオーナーが一致するものだけ検索できることの確認() throws TokenParseException {
+    public void セルの検索でオーナーが一致するものだけ検索できることの確認() throws TokenParseException {
         // VETをオーナーにもつUnitUserTokenを自作
         TransCellAccessToken tcatvet = new TransCellAccessToken(UrlUtils.cellRoot(UNIT_USER_CELL),
                 Setup.OWNER_VET, UrlUtils.getBaseUrl() + "/", new ArrayList<Role>(), null);
@@ -700,7 +748,7 @@ public class UnitUserCellCRUDTest extends JerseyTest {
      * アクセストークンではセル作成ができないことを確認.
      */
     @Test
-    public final void アクセストークンではセル作成ができないことを確認() {
+    public void アクセストークンではセル作成ができないことを確認() {
         // パスワード認証
         TResponse res = Http.request("authn/password-tc-c0.txt")
                 .with("remoteCell", Setup.TEST_CELL1)
@@ -715,5 +763,201 @@ public class UnitUserCellCRUDTest extends JerseyTest {
 
         // アクセストークンではセルの作成ができないことを確認。
         CellUtils.create(CREATE_CELL, token, HttpStatus.SC_FORBIDDEN);
+    }
+
+    /**
+     * Normal test.
+     * Confirm permissions of unituser.
+     */
+    @Test
+    public void normal_permission_of_unituser() {
+        String boxName = "createCellBox";
+        String collectionName = "createCellCollection";
+        try {
+            // Create unit user cell.
+            CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            // Create account.
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
+                    UNIT_USER_ACCOUNT, UNIT_USER_ACCOUNT_PASS, HttpStatus.SC_CREATED);
+            // Get token.
+            TResponse res = Http.request("authn/password-tc-c0.txt")
+                    .with("remoteCell", UNIT_USER_CELL)
+                    .with("username", UNIT_USER_ACCOUNT)
+                    .with("password", UNIT_USER_ACCOUNT_PASS)
+                    .with("p_target", UrlUtils.unitRoot())
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+            JSONObject json = res.bodyAsJson();
+            String unitUserToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // UnitLevel Create cell.
+            CellUtils.create(CREATE_CELL, unitUserToken, HttpStatus.SC_CREATED);
+            // UnitLevel Get cell.
+            CellUtils.get(CREATE_CELL, unitUserToken, HttpStatus.SC_OK);
+
+            // CellLevel Create box.
+            BoxUtils.create(CREATE_CELL, boxName, unitUserToken, HttpStatus.SC_FORBIDDEN);
+            BoxUtils.create(CREATE_CELL, boxName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            // CellLevel Get box.
+            BoxUtils.get(CREATE_CELL, unitUserToken, boxName, HttpStatus.SC_FORBIDDEN);
+
+            // BoxLevel Create collection.
+            DavResourceUtils.createODataCollection(
+                    unitUserToken, HttpStatus.SC_FORBIDDEN, CREATE_CELL, boxName, collectionName);
+            DavResourceUtils.createODataCollection(
+                    AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED, CREATE_CELL, boxName, collectionName);
+            // BoxLevel Propfind collection.
+            DavResourceUtils.propfind(
+                    unitUserToken, CREATE_CELL, boxName + "/" + collectionName, "0", HttpStatus.SC_FORBIDDEN);
+        } finally {
+            // Delete collection.
+            DavResourceUtils.deleteCollection(CREATE_CELL, boxName, collectionName, AbstractCase.MASTER_TOKEN_NAME, -1);
+            // Delete box.
+            BoxUtils.delete(CREATE_CELL, AbstractCase.MASTER_TOKEN_NAME, boxName, -1);
+            // Delete cell.
+            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, CREATE_CELL, -1);
+
+            // Delete unituser account.
+            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_ACCOUNT, -1);
+            // Delete unituser cell.
+            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
+        }
+    }
+
+    /**
+     * Normal test.
+     * Confirm permissions of contents reader role.
+     */
+    @Test
+    public void normal_permission_of_contents_reader_role() {
+        String boxName = "createCellBox";
+        String collectionName = "createCellCollection";
+        try {
+            // Create unit user cell.
+            CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            // Create account.
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
+                    UNIT_USER_ACCOUNT, UNIT_USER_ACCOUNT_PASS, HttpStatus.SC_CREATED);
+            // Create role.(ContentsReaderRole)
+            RoleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, contentsReaderRole,
+                    null, HttpStatus.SC_CREATED);
+            // Link account-role.
+            LinksUtils.createLinks(UNIT_USER_CELL, Account.EDM_TYPE_NAME, UNIT_USER_ACCOUNT, null, Role.EDM_TYPE_NAME,
+                    contentsReaderRole, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
+            // Get token.
+            TResponse res = Http.request("authn/password-tc-c0.txt")
+                    .with("remoteCell", UNIT_USER_CELL)
+                    .with("username", UNIT_USER_ACCOUNT)
+                    .with("password", UNIT_USER_ACCOUNT_PASS)
+                    .with("p_target", UrlUtils.unitRoot())
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+            JSONObject json = res.bodyAsJson();
+            String unitUserToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // UnitLevel Create cell.
+            CellUtils.create(CREATE_CELL, unitUserToken, HttpStatus.SC_CREATED);
+            // UnitLevel Get cell.
+            CellUtils.get(CREATE_CELL, unitUserToken, HttpStatus.SC_OK);
+
+            // CellLevel Create box.
+            BoxUtils.create(CREATE_CELL, boxName, unitUserToken, HttpStatus.SC_FORBIDDEN);
+            BoxUtils.create(CREATE_CELL, boxName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            // CellLevel Get box.
+            BoxUtils.get(CREATE_CELL, unitUserToken, boxName, HttpStatus.SC_OK);
+
+            // BoxLevel Create collection.
+            DavResourceUtils.createODataCollection(
+                    unitUserToken, HttpStatus.SC_FORBIDDEN, CREATE_CELL, boxName, collectionName);
+            DavResourceUtils.createODataCollection(
+                    AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED, CREATE_CELL, boxName, collectionName);
+            // BoxLevel Propfind collection.
+            DavResourceUtils.propfind(
+                    unitUserToken, CREATE_CELL, boxName + "/" + collectionName, "0", HttpStatus.SC_MULTI_STATUS);
+        } finally {
+            // Delete collection.
+            DavResourceUtils.deleteCollection(CREATE_CELL, boxName, collectionName, AbstractCase.MASTER_TOKEN_NAME, -1);
+            // Delete box.
+            BoxUtils.delete(CREATE_CELL, AbstractCase.MASTER_TOKEN_NAME, boxName, -1);
+            // Delete cell.
+            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, CREATE_CELL, -1);
+
+            // Delete unituser link.
+            LinksUtils.deleteLinks(UNIT_USER_CELL, Account.EDM_TYPE_NAME, UNIT_USER_ACCOUNT, null,
+                    Role.EDM_TYPE_NAME, contentsReaderRole, null, AbstractCase.MASTER_TOKEN_NAME, -1);
+            // Delete unituser role.
+            RoleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, contentsReaderRole, null, -1);
+            // Delete unituser account.
+            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_ACCOUNT, -1);
+            // Delete unituser cell.
+            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
+        }
+    }
+
+    /**
+     * Normal test.
+     * Confirm permissions of contents admin role.
+     */
+    @Test
+    public void normal_permission_of_contents_admin_role() {
+        String boxName = "createCellBox";
+        String collectionName = "createCellCollection";
+        try {
+            // Create unit user cell.
+            CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            // Create account.
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
+                    UNIT_USER_ACCOUNT, UNIT_USER_ACCOUNT_PASS, HttpStatus.SC_CREATED);
+            // Create role.(ContentsAdminRole)
+            RoleUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, contentsAdminRole,
+                    null, HttpStatus.SC_CREATED);
+            // Link account-role.
+            LinksUtils.createLinks(UNIT_USER_CELL, Account.EDM_TYPE_NAME, UNIT_USER_ACCOUNT, null, Role.EDM_TYPE_NAME,
+                    contentsAdminRole, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
+            // Get token.
+            TResponse res = Http.request("authn/password-tc-c0.txt")
+                    .with("remoteCell", UNIT_USER_CELL)
+                    .with("username", UNIT_USER_ACCOUNT)
+                    .with("password", UNIT_USER_ACCOUNT_PASS)
+                    .with("p_target", UrlUtils.unitRoot())
+                    .returns()
+                    .statusCode(HttpStatus.SC_OK);
+            JSONObject json = res.bodyAsJson();
+            String unitUserToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
+
+            // UnitLevel Create cell.
+            CellUtils.create(CREATE_CELL, unitUserToken, HttpStatus.SC_CREATED);
+            // UnitLevel Get cell.
+            CellUtils.get(CREATE_CELL, unitUserToken, HttpStatus.SC_OK);
+
+            // CellLevel Create box.
+            BoxUtils.create(CREATE_CELL, boxName, unitUserToken, HttpStatus.SC_CREATED);
+            // CellLevel Get box.
+            BoxUtils.get(CREATE_CELL, unitUserToken, boxName, HttpStatus.SC_OK);
+
+            // BoxLevel Create collection.
+            DavResourceUtils.createODataCollection(
+                    unitUserToken, HttpStatus.SC_CREATED, CREATE_CELL, boxName, collectionName);
+            // BoxLevel Propfind collection.
+            DavResourceUtils.propfind(
+                    unitUserToken, CREATE_CELL, boxName + "/" + collectionName, "0", HttpStatus.SC_MULTI_STATUS);
+        } finally {
+            // Delete collection.
+            DavResourceUtils.deleteCollection(CREATE_CELL, boxName, collectionName, AbstractCase.MASTER_TOKEN_NAME, -1);
+            // Delete box.
+            BoxUtils.delete(CREATE_CELL, AbstractCase.MASTER_TOKEN_NAME, boxName, -1);
+            // Delete cell.
+            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, CREATE_CELL, -1);
+
+            // Delete unituser link.
+            LinksUtils.deleteLinks(UNIT_USER_CELL, Account.EDM_TYPE_NAME, UNIT_USER_ACCOUNT, null,
+                    Role.EDM_TYPE_NAME, contentsAdminRole, null, AbstractCase.MASTER_TOKEN_NAME, -1);
+            // Delete unituser role.
+            RoleUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, contentsAdminRole, null, -1);
+            // Delete unituser account.
+            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_ACCOUNT, -1);
+            // Delete unituser cell.
+            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
+        }
     }
 }

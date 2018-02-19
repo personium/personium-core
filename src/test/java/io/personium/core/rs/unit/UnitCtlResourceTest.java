@@ -20,9 +20,11 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -41,8 +43,10 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.auth.Privilege;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Unit;
@@ -159,6 +163,139 @@ public class UnitCtlResourceTest {
 
         // Confirm result
         // None.
+    }
+
+    /**
+     * Test checkAccessContext().
+     * normal.
+     * Type is UnitMaster.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void checkAccessContext_Normal_type_unitmaster() throws Exception {
+        // Test method args
+        AccessContext ac = PowerMockito.mock(AccessContext.class);
+        Privilege privilege = null;
+
+        // Mock settings
+        UriInfo uriInfo = mock(UriInfo.class);
+        URI uri = new URI("");
+        doReturn(uri).when(uriInfo).getBaseUri();
+        unitCtlResource = spy(new UnitCtlResource(ac, uriInfo));
+
+        doReturn(AccessContext.TYPE_UNIT_MASTER).when(ac).getType();
+
+        // Expected result
+        // None.
+
+        // Run method
+        unitCtlResource.checkAccessContext(ac, privilege);
+    }
+
+    /**
+     * Test checkAccessContext().
+     * error.
+     * Type is Invalid.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void checkAccessContext_Error_type_invalid() throws Exception {
+        // Test method args
+        AccessContext ac = PowerMockito.mock(AccessContext.class);
+        Privilege privilege = null;
+
+        // Mock settings
+        UriInfo uriInfo = mock(UriInfo.class);
+        URI uri = new URI("");
+        doReturn(uri).when(uriInfo).getBaseUri();
+        unitCtlResource = spy(new UnitCtlResource(ac, uriInfo));
+
+        doReturn(AccessContext.TYPE_INVALID).when(ac).getType();
+        doReturn(null).when(unitCtlResource).getAcceptableAuthScheme();
+        doThrow(PersoniumCoreAuthzException.EXPIRED_ACCESS_TOKEN).when(ac).throwInvalidTokenException(anyObject());
+
+        // Expected result
+        PersoniumCoreAuthzException expected = PersoniumCoreAuthzException.EXPIRED_ACCESS_TOKEN;
+
+        try {
+            // Run method
+            unitCtlResource.checkAccessContext(ac, privilege);
+            fail("Not throws exception.");
+        } catch (PersoniumCoreAuthzException e) {
+            // Confirm result
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test checkAccessContext().
+     * error.
+     * Type is Anonymous.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void checkAccessContext_Error_type_anonymous() throws Exception {
+        // Test method args
+        AccessContext ac = PowerMockito.mock(AccessContext.class);
+        Privilege privilege = null;
+
+        // Mock settings
+        UriInfo uriInfo = mock(UriInfo.class);
+        URI uri = new URI("");
+        doReturn(uri).when(uriInfo).getBaseUri();
+        unitCtlResource = spy(new UnitCtlResource(ac, uriInfo));
+
+        doReturn(AccessContext.TYPE_ANONYMOUS).when(ac).getType();
+        doReturn(null).when(unitCtlResource).getAcceptableAuthScheme();
+        doReturn("realm").when(ac).getRealm();
+
+        // Expected result
+        PersoniumCoreAuthzException expected = PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED;
+
+        try {
+            // Run method
+            unitCtlResource.checkAccessContext(ac, privilege);
+            fail("Not throws exception.");
+        } catch (PersoniumCoreAuthzException e) {
+            // Confirm result
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
+    }
+
+    /**
+     * Test checkAccessContext().
+     * error.
+     * Type is Local.
+     * @throws Exception Unintended exception in test
+     */
+    @Test
+    public void checkAccessContext_Error_type_local() throws Exception {
+        // Test method args
+        AccessContext ac = PowerMockito.mock(AccessContext.class);
+        Privilege privilege = null;
+
+        // Mock settings
+        UriInfo uriInfo = mock(UriInfo.class);
+        URI uri = new URI("");
+        doReturn(uri).when(uriInfo).getBaseUri();
+        unitCtlResource = spy(new UnitCtlResource(ac, uriInfo));
+
+        doReturn(AccessContext.TYPE_LOCAL).when(ac).getType();
+
+        // Expected result
+        PersoniumCoreException expected = PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
+
+        try {
+            // Run method
+            unitCtlResource.checkAccessContext(ac, privilege);
+            fail("Not throws exception.");
+        } catch (PersoniumCoreException e) {
+            // Confirm result
+            assertThat(e.getCode(), is(expected.getCode()));
+            assertThat(e.getMessage(), is(expected.getMessage()));
+        }
     }
 
     /**

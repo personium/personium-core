@@ -44,7 +44,7 @@ import org.junit.runners.Suite.SuiteClasses;
         PropPatchTest.class,
         ReadListTest.class,
         ReadTest.class,
-        UnitUserCellCRUDTest.class,
+        UnitUserCellTest.class,
         UpdateTest.class
 })
 public class AllTests {
