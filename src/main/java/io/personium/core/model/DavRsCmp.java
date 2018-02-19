@@ -653,4 +653,12 @@ public class DavRsCmp {
         return this.parent.getRuleChain();
     }
 
+    /**
+     * returns the Via string.
+     * @return Via String
+     */
+    public String getVia() {
+        return this.parent.getVia();
+    }
+
 }

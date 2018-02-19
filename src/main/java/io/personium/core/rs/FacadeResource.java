@@ -67,6 +67,7 @@ public class FacadeResource {
      * @param xPersoniumRequestKey X-Personium-RequestKey header
      * @param xPersoniumEventId X-Personium-EventId header
      * @param xPersoniumRuleChain X-Personium-RuleChain header
+     * @param xPersoniumVia X-Personium-Via header
      * @param httpServletRequest HttpServletRequest
      * @return CellResourceオブジェクトまたはResponseオブジェクト
      */
@@ -80,6 +81,7 @@ public class FacadeResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) final String xPersoniumRequestKey,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_EVENTID) final String xPersoniumEventId,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RULECHAIN) final String xPersoniumRuleChain,
+            @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VIA) final String xPersoniumVia,
             @Context final UriInfo uriInfo,
             @Context HttpServletRequest httpServletRequest) {
         Cell cell = ModelFactory.cell(uriInfo);
@@ -100,7 +102,8 @@ public class FacadeResource {
         if (xPersoniumRequestKey != null) {
             ResourceUtils.validateXPersoniumRequestKey(xPersoniumRequestKey);
         }
-        return new CellResource(ac, xPersoniumRequestKey, xPersoniumEventId, xPersoniumRuleChain, httpServletRequest);
+        return new CellResource(ac, xPersoniumRequestKey,
+                xPersoniumEventId, xPersoniumRuleChain, xPersoniumVia, httpServletRequest);
     }
 
     /**

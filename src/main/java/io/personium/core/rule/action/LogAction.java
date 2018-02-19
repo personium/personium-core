@@ -16,6 +16,8 @@
  */
 package io.personium.core.rule.action;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -148,7 +150,7 @@ public class LogAction extends Action {
     // create log from event
     private String createLogContent(PersoniumEvent event, String levelString, String requestKey) {
         return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s",
-                event.getDateTime(),
+                new Date(event.getTime()).toInstant().toString(),
                 levelString,
                 makeCsvItem(requestKey),
                 makeCsvItem(event.getExternal().toString()),

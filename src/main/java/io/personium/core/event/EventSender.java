@@ -57,6 +57,8 @@ public class EventSender {
             msg.setString("RequestKey", event.getRequestKey());
             msg.setString("EventId", event.getEventId());
             msg.setString("RuleChain", event.getRuleChain());
+            msg.setString("Via", event.getVia());
+            msg.setString("Roles", event.getRoles());
             msg.setBoolean("External", event.getExternal());
             msg.setString("Schema", event.getSchema());
             msg.setString("Subject", event.getSubject());
@@ -64,7 +66,7 @@ public class EventSender {
             msg.setString("Object", event.getObject());
             msg.setString("Info", event.getInfo());
             msg.setString("cellId", event.getCellId());
-            msg.setString("dateTime", event.getDateTime());
+            msg.setLong("Time", event.getTime());
 
             sender.send(msg);
         } catch (JMSException e) {
@@ -96,6 +98,8 @@ public class EventSender {
             String requestKey = null;
             String eventId = null;
             String ruleChain = null;
+            String via = null;
+            String roles = null;
             Boolean external = null;
             String schema = null;
             String subject = null;
@@ -103,7 +107,7 @@ public class EventSender {
             String object = null;
             String info = null;
             String cellId = null;
-            String dateTime = null;
+            long time = 0;
 
             try {
                 if (mm.itemExists("RequestKey")) {
@@ -114,6 +118,12 @@ public class EventSender {
                 }
                 if (mm.itemExists("RuleChain")) {
                     ruleChain = mm.getString("RuleChain");
+                }
+                if (mm.itemExists("Via")) {
+                    via = mm.getString("Via");
+                }
+                if (mm.itemExists("Roles")) {
+                    roles = mm.getString("Roles");
                 }
                 if (mm.itemExists("External")) {
                     external = mm.getBoolean("External");
@@ -136,15 +146,16 @@ public class EventSender {
                 if (mm.itemExists("cellId")) {
                     cellId = mm.getString("cellId");
                 }
-                if (mm.itemExists("dateTime")) {
-                    dateTime = mm.getString("dateTime");
+                if (mm.itemExists("Time")) {
+                    time = mm.getLong("Time");
                 }
             } catch (JMSException e) {
                 return null;
             }
-            event = new PersoniumEvent(external, schema, subject, type, object, info, requestKey, eventId, ruleChain);
+            event = new PersoniumEvent(external, schema, subject, type, object, info,
+                    requestKey, eventId, ruleChain, via, roles);
             event.setCellId(cellId);
-            event.setDateTime(dateTime);
+            event.setTime(time);
         }
 
         return event;

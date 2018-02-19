@@ -1,3 +1,13 @@
+## 1.6.3
+IMPROVEMENTS:
+* Event has no date and time of when the event occurred.([#132](https://github.com/personium/personium-core/issues/132))
+* Don't publish rule event in case of external event.([#134](https://github.com/personium/personium-core/issues/134))
+* Add new Action 'relay.event' to Rule.([#140](https://github.com/personium/personium-core/issues/140))
+
+BUG FIXES:
+* Event log is output to unknown folder.([#136](https://github.com/personium/personium-core/issues/136))
+* Scheme of object of internal event in box install is not personium-localcell.([#138](https://github.com/personium/personium-core/issues/138))
+
 ## 1.6.2
 BUG FIXES:
 * Accept Arbitrary String for User OData's __id.([#98](https://github.com/personium/personium-core/issues/98))

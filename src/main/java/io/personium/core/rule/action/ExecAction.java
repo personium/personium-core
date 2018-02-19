@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.Cell;
@@ -94,7 +95,7 @@ public class ExecAction extends EngineAction {
 
 
     @Override
-    protected void setHeaders(HttpMessage req) {
+    protected void setHeaders(HttpMessage req, PersoniumEvent event) {
         if (cell == null || req == null) {
             return;
         }
@@ -117,8 +118,10 @@ public class ExecAction extends EngineAction {
                     req.addHeader("X-Personium-Fs-Path", dcmp.getFsPath());
                     req.addHeader("X-Personium-Fs-Routing-Id", dcmp.getCellId());
                 }
-                req.addHeader("X-Personium-Box-Schema",
-                        UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), box.getSchema()));
+                if (box.getSchema() != null) {
+                    req.addHeader("X-Personium-Box-Schema",
+                            UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), box.getSchema()));
+                }
             }
         } catch (Exception e) {
             logger.error("error: " + e.getMessage(), e);

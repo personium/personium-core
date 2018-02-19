@@ -240,19 +240,18 @@ public class BarInstallEventLogTest extends JerseyTest {
             assertTrue(count < lines.size());
             lines.remove(count);
 
-            int index = 0;
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1000",
-                    UrlUtils.getBaseUrl() + "/UnitUserCell/installBox", "Bar installation started.", index++);
+                    UrlUtils.getBaseUrl() + "/UnitUserCell/installBox", "Bar installation started.");
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1001",
-                    "bar/00_meta/00_manifest.json", "Installation started.", index++);
+                    "bar/00_meta/00_manifest.json", "Installation started.");
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1003",
-                    "bar/00_meta/00_manifest.json", "Installation completed.", index++);
+                    "bar/00_meta/00_manifest.json", "Installation completed.");
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1001",
-                    "bar/00_meta/90_rootprops.xml", "Installation started.", index++);
+                    "bar/00_meta/90_rootprops.xml", "Installation started.");
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1003",
-                    "bar/00_meta/90_rootprops.xml", "Installation completed.", index++);
+                    "bar/00_meta/90_rootprops.xml", "Installation completed.");
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-0000",
-                    UrlUtils.getBaseUrl() + "/UnitUserCell/installBox", "Bar installation completed.", index++);
+                    UrlUtils.getBaseUrl() + "/UnitUserCell/installBox", "Bar installation completed.");
             response.statusCode(HttpStatus.SC_OK);
         } finally {
             cleanup();
@@ -333,12 +332,17 @@ public class BarInstallEventLogTest extends JerseyTest {
     }
 
     private void checkResponseLog(List<String[]> lines, String logLevel,
-            String external, String type, String object, String info, int index) {
-        String[] line = lines.get(index);
-        assertEquals(logLevel, line[1]);
-        assertEquals(external, line[3]);
-        assertEquals(type, line[6]);
-        assertEquals(object, line[7]);
-        assertEquals(info, line[8].trim());
+            String external, String type, String object, String info) {
+        for (String[] line : lines) {
+            if (line[6].equals(type) && line[7].equals(object)) {
+                assertEquals(logLevel, line[1]);
+                assertEquals(external, line[3]);
+                assertEquals(type, line[6]);
+                assertEquals(object, line[7]);
+                assertEquals(info, line[8].trim());
+                return;
+            }
+        }
+        assertTrue(false);
     }
 }

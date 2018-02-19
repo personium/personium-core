@@ -20,6 +20,7 @@ import org.apache.http.HttpMessage;
 import org.json.simple.JSONObject;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
 import io.personium.core.rule.ActionInfo;
 
@@ -28,8 +29,8 @@ import io.personium.core.rule.ActionInfo;
  */
 public class RelayAction extends EngineAction {
     private static String boxName = "__";
-    private static final String PROXY = "relay";
 
+    /** System script name for relay. */
     private String svcName;
 
     /**
@@ -39,7 +40,15 @@ public class RelayAction extends EngineAction {
      */
     public RelayAction(Cell cell, ActionInfo ai) {
         super(cell, ai);
-        svcName = PROXY;
+        this.svcName = "relay";
+    }
+
+    /**
+     * Set svcName.
+     * @param svcName system script name
+     */
+    protected void setSvcName(String svcName) {
+        this.svcName = svcName;
     }
 
     @Override
@@ -54,13 +63,15 @@ public class RelayAction extends EngineAction {
     }
 
     @Override
-    protected void setHeaders(HttpMessage req) {
+    protected void setHeaders(HttpMessage req, PersoniumEvent event) {
         if (cell == null || req == null) {
             return;
         }
         req.addHeader("X-Baseurl", cell.getUnitUrl());
         req.addHeader("X-Request-Uri", cell.getUrl() + boxName + "/" + svcName);
-        req.addHeader("X-Personium-Box-Schema", null);
+        if (event.getSchema() != null) {
+            req.addHeader("X-Personium-Box-Schema", event.getSchema());
+        }
     }
 
     @Override

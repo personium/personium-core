@@ -470,7 +470,7 @@ public class CellEsImpl implements Cell {
                 boxName = (String) boxs.get(KEY_NAME);
                 schema = (String) boxs.get(KEY_SCHEMA);
             }
-            Role roleObj = new Role(roleName, boxName, schema);
+            Role roleObj = new Role(roleName, boxName, schema, this.getUrl());
 
             ret.add(roleObj);
         }
