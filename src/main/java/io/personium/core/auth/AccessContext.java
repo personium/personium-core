@@ -755,6 +755,7 @@ public class AccessContext {
                         null, tca.getIssuer());
                 String cellContentsAdminUrl = cellContentsAdminRole.createUrl();
 
+                String unitUserRole = null;
                 for (Role role : roles) {
                     String roleUrl = role.createUrl();
                     if (unitAdminRoleUrl.equals(roleUrl)) {
@@ -765,15 +766,16 @@ public class AccessContext {
                             // If there is an X-Personium-UnitUser header, UnitUser
                             ret.subject = xPersoniumUnitUser;
                         }
-                    } else if (cellContentsReaderUrl.equals(roleUrl) && ret.unitUserRole == null) {
+                    } else if (cellContentsReaderUrl.equals(roleUrl) && unitUserRole == null) {
                         // If roles are not set, set the CellContentsReader role.
                         // To preferentially set the CellContentsAdmin role.
-                        ret.unitUserRole = ROLE_CELL_CONTENTS_READER;
+                        unitUserRole = ROLE_CELL_CONTENTS_READER;
                     } else if (cellContentsAdminUrl.equals(roleUrl)) {
                         // Set the CellContentsAdmin role.
-                        ret.unitUserRole = ROLE_CELL_CONTENTS_ADMIN;
+                        unitUserRole = ROLE_CELL_CONTENTS_ADMIN;
                     }
                 }
+                ret.unitUserRole = unitUserRole;
 
                 // ユニットユーザトークンはスキーマ認証関係無いのでここで復帰
                 return ret;
