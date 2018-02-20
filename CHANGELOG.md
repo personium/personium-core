@@ -1,3 +1,8 @@
+## 1.6.4
+IMPROVEMENTS:
+* Limit Unit User privilege.([#66](https://github.com/personium/personium-core/issues/66))
+* Define string constants.([#144](https://github.com/personium/personium-core/issues/144))
+
 ## 1.6.3
 IMPROVEMENTS:
 * Event has no date and time of when the event occurred.([#132](https://github.com/personium/personium-core/issues/132))
