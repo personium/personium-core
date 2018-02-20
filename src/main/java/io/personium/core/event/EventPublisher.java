@@ -71,18 +71,7 @@ public class EventPublisher {
             MessageProducer producer = session.createProducer(dest);
 
             MapMessage msg = session.createMapMessage();
-            msg.setString("RequestKey", event.getRequestKey());
-            msg.setString("EventId", event.getEventId());
-            msg.setString("RuleChain", event.getRuleChain());
-            msg.setString("Via", event.getVia());
-            msg.setBoolean("External", event.getExternal());
-            msg.setString("Schema", event.getSchema());
-            msg.setString("Subject", event.getSubject());
-            msg.setString("Type", event.getType());
-            msg.setString("Object", event.getObject());
-            msg.setString("Info", event.getInfo());
-            msg.setString("cellId", event.getCellId());
-            msg.setLong("Time", event.getTime());
+            EventSender.convertToMessage(event, msg);
 
             producer.send(msg);
         } catch (JMSException e) {

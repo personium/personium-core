@@ -81,30 +81,31 @@ public class EventPublisherTest {
         // Mock settings
         // --------------------
         MapMessage message = mock(MapMessage.class);
-        doReturn(true).when(message).itemExists("RequestKey");
-        doReturn(true).when(message).itemExists("EventId");
-        doReturn(true).when(message).itemExists("RuleChain");
-        doReturn(true).when(message).itemExists("Via");
-        doReturn(true).when(message).itemExists("External");
-        doReturn(true).when(message).itemExists("Schema");
-        doReturn(true).when(message).itemExists("Subject");
-        doReturn(true).when(message).itemExists("Type");
-        doReturn(true).when(message).itemExists("Object");
-        doReturn(true).when(message).itemExists("Info");
-        doReturn(true).when(message).itemExists("cellId");
-        doReturn(true).when(message).itemExists("Time");
-        doReturn(event.getRequestKey()).when(message).getString("RequestKey");
-        doReturn(event.getEventId()).when(message).getString("EventId");
-        doReturn(event.getRuleChain()).when(message).getString("RuleChain");
-        doReturn(event.getVia()).when(message).getString("Via");
-        doReturn(event.getExternal()).when(message).getBoolean("External");
-        doReturn(event.getSchema()).when(message).getString("Schema");
-        doReturn(event.getSubject()).when(message).getString("Subject");
-        doReturn(event.getType()).when(message).getString("Type");
-        doReturn(event.getObject()).when(message).getString("Object");
-        doReturn(event.getInfo()).when(message).getString("Info");
-        doReturn(event.getCellId()).when(message).getString("cellId");
-        doReturn(event.getTime()).when(message).getLong("Time");
+        doReturn(false).when(message).itemExists(EventSender.KEY_ROLES);
+        doReturn(true).when(message).itemExists(EventSender.KEY_REQUESTKEY);
+        doReturn(true).when(message).itemExists(EventSender.KEY_EVENTID);
+        doReturn(true).when(message).itemExists(EventSender.KEY_RULECHAIN);
+        doReturn(true).when(message).itemExists(EventSender.KEY_VIA);
+        doReturn(true).when(message).itemExists(EventSender.KEY_EXTERNAL);
+        doReturn(true).when(message).itemExists(EventSender.KEY_SCHEMA);
+        doReturn(true).when(message).itemExists(EventSender.KEY_SUBJECT);
+        doReturn(true).when(message).itemExists(EventSender.KEY_TYPE);
+        doReturn(true).when(message).itemExists(EventSender.KEY_OBJECT);
+        doReturn(true).when(message).itemExists(EventSender.KEY_INFO);
+        doReturn(true).when(message).itemExists(EventSender.KEY_CELLID);
+        doReturn(true).when(message).itemExists(EventSender.KEY_TIME);
+        doReturn(event.getRequestKey()).when(message).getString(EventSender.KEY_REQUESTKEY);
+        doReturn(event.getEventId()).when(message).getString(EventSender.KEY_EVENTID);
+        doReturn(event.getRuleChain()).when(message).getString(EventSender.KEY_RULECHAIN);
+        doReturn(event.getVia()).when(message).getString(EventSender.KEY_VIA);
+        doReturn(event.getExternal()).when(message).getBoolean(EventSender.KEY_EXTERNAL);
+        doReturn(event.getSchema()).when(message).getString(EventSender.KEY_SCHEMA);
+        doReturn(event.getSubject()).when(message).getString(EventSender.KEY_SUBJECT);
+        doReturn(event.getType()).when(message).getString(EventSender.KEY_TYPE);
+        doReturn(event.getObject()).when(message).getString(EventSender.KEY_OBJECT);
+        doReturn(event.getInfo()).when(message).getString(EventSender.KEY_INFO);
+        doReturn(event.getCellId()).when(message).getString(EventSender.KEY_CELLID);
+        doReturn(event.getTime()).when(message).getLong(EventSender.KEY_TIME);
 
         // --------------------
         // Run method
@@ -114,6 +115,7 @@ public class EventPublisherTest {
         // --------------------
         // Confirm result
         // --------------------
+        assertThat(result.getRoles(), is(event.getRoles()));
         assertThat(result.getRequestKey(), is(event.getRequestKey()));
         assertThat(result.getEventId(), is(event.getEventId()));
         assertThat(result.getRuleChain(), is(event.getRuleChain()));
@@ -144,7 +146,7 @@ public class EventPublisherTest {
         // Mock settings
         // --------------------
         MapMessage message = mock(MapMessage.class);
-        doThrow(new JMSException("dummy")).when(message).itemExists("RequestKey");
+        doThrow(new JMSException("dummy")).when(message).itemExists(EventSender.KEY_REQUESTKEY);
 
         // --------------------
         // Run method
@@ -178,30 +180,30 @@ public class EventPublisherTest {
         // Mock settings
         // --------------------
         MapMessage message = mock(MapMessage.class);
-        doReturn(true).when(message).itemExists("RequestKey");
-        doReturn(true).when(message).itemExists("EventId");
-        doReturn(true).when(message).itemExists("RuleChain");
-        doReturn(true).when(message).itemExists("Via");
-        doReturn(true).when(message).itemExists("External");
-        doReturn(false).when(message).itemExists("Schema");
-        doReturn(true).when(message).itemExists("Subject");
-        doReturn(true).when(message).itemExists("Type");
-        doReturn(true).when(message).itemExists("Object");
-        doReturn(true).when(message).itemExists("Info");
-        doReturn(true).when(message).itemExists("cellId");
-        doReturn(true).when(message).itemExists("Time");
-        doReturn(event.getRequestKey()).when(message).getString("RequestKey");
-        doReturn(event.getEventId()).when(message).getString("EventId");
-        doReturn(event.getRuleChain()).when(message).getString("RuleChain");
-        doReturn(event.getVia()).when(message).getString("Via");
-        doReturn(event.getExternal()).when(message).getBoolean("External");
-        doReturn(event.getSchema()).when(message).getString("Schema");
-        doReturn(event.getSubject()).when(message).getString("Subject");
-        doReturn(event.getType()).when(message).getString("Type");
-        doReturn(event.getObject()).when(message).getString("Object");
-        doReturn(event.getInfo()).when(message).getString("Info");
-        doReturn(event.getCellId()).when(message).getString("cellId");
-        doReturn(event.getTime()).when(message).getLong("Time");
+        doReturn(false).when(message).itemExists(EventSender.KEY_ROLES);
+        doReturn(true).when(message).itemExists(EventSender.KEY_REQUESTKEY);
+        doReturn(true).when(message).itemExists(EventSender.KEY_EVENTID);
+        doReturn(true).when(message).itemExists(EventSender.KEY_RULECHAIN);
+        doReturn(true).when(message).itemExists(EventSender.KEY_VIA);
+        doReturn(true).when(message).itemExists(EventSender.KEY_EXTERNAL);
+        doReturn(false).when(message).itemExists(EventSender.KEY_SCHEMA);
+        doReturn(true).when(message).itemExists(EventSender.KEY_SUBJECT);
+        doReturn(true).when(message).itemExists(EventSender.KEY_TYPE);
+        doReturn(true).when(message).itemExists(EventSender.KEY_OBJECT);
+        doReturn(true).when(message).itemExists(EventSender.KEY_INFO);
+        doReturn(true).when(message).itemExists(EventSender.KEY_CELLID);
+        doReturn(true).when(message).itemExists(EventSender.KEY_TIME);
+        doReturn(event.getRequestKey()).when(message).getString(EventSender.KEY_REQUESTKEY);
+        doReturn(event.getEventId()).when(message).getString(EventSender.KEY_EVENTID);
+        doReturn(event.getRuleChain()).when(message).getString(EventSender.KEY_RULECHAIN);
+        doReturn(event.getVia()).when(message).getString(EventSender.KEY_VIA);
+        doReturn(event.getExternal()).when(message).getBoolean(EventSender.KEY_EXTERNAL);
+        doReturn(event.getSubject()).when(message).getString(EventSender.KEY_SUBJECT);
+        doReturn(event.getType()).when(message).getString(EventSender.KEY_TYPE);
+        doReturn(event.getObject()).when(message).getString(EventSender.KEY_OBJECT);
+        doReturn(event.getInfo()).when(message).getString(EventSender.KEY_INFO);
+        doReturn(event.getCellId()).when(message).getString(EventSender.KEY_CELLID);
+        doReturn(event.getTime()).when(message).getLong(EventSender.KEY_TIME);
 
         // --------------------
         // Run method
@@ -211,6 +213,7 @@ public class EventPublisherTest {
         // --------------------
         // Confirm result
         // --------------------
+        assertThat(result.getRoles(), is(event.getRoles()));
         assertThat(result.getRequestKey(), is(event.getRequestKey()));
         assertThat(result.getEventId(), is(event.getEventId()));
         assertThat(result.getRuleChain(), is(event.getRuleChain()));
