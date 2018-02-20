@@ -390,12 +390,12 @@ public class AccessContext {
         if (TYPE_UNIT_MASTER.equals(type)) {
             return true;
         } else if (TYPE_UNIT_ADMIN.equals(type)
-                || ((TYPE_UNIT_USER.equals(type) || TYPE_UNIT_LOCAL.equals(type))
+                || ((TYPE_UNIT_USER.equals(type) || TYPE_UNIT_LOCAL.equals(type)) //NOPMD - To maintain readability
                         && getSubject().equals(getCell().getOwner()))) {
             // In the case of a UnitUser or UnitLocal, it is effective only when the unit owner name included
             // in the processing target cell owner and the token matches.
 
-            if (ROLE_CELL_CONTENTS_ADMIN.equals(getUnitUserRole())
+            if (ROLE_CELL_CONTENTS_ADMIN.equals(getUnitUserRole()) //NOPMD - To maintain readability
                     || ROLE_CELL_CONTENTS_READER.equals(getUnitUserRole())
                     && Privilege.ACCESS_TYPE_READ.equals(resourcePrivilege.getAccessType())) {
                 // In the case of CellContentsReader, only when the necessary authority is READ is permitted.

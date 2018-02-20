@@ -76,7 +76,6 @@ public class AuthCheckTest extends JerseyTest {
 
     static final String TEST_CELL1 = Setup.TEST_CELL1;
     static final String ACL_AUTH_TEST_SETTING_FILE = "box/acl-authtest.txt";
-    private static final String UNIT_USER_CELL = "UnitUserCell";
     /**
      * デフォルトボックス名.
      */
@@ -917,101 +916,82 @@ public class AuthCheckTest extends JerseyTest {
     @Test
     public final void CellACLを設定後にロール削除してCellレベル操作で403が返却されること() {
         String cellName = "aclRoletest";
-        String user1 = "uuser001";
-        String user2 = "uuser002";
-        String roleName = "testRole";
+        String userName = "user";
         String pass = "password";
+        String roleName = "testRole";
 
         try {
-            // 本テスト用セルの作成
-            CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            // Create cell
+            CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            // Create account
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, userName, pass, HttpStatus.SC_CREATED);
+            // Create role
+            RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, HttpStatus.SC_CREATED);
+            // Set acl
+            setCellACL(cellName, roleName, AbstractCase.MASTER_TOKEN_NAME);
+            // Link account-role
+            LinksUtils.createLinks(cellName, Account.EDM_TYPE_NAME, userName, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
+            // Get token
+            String token = ResourceUtils.getMyCellLocalToken(cellName, userName, pass);
+            // Delete role
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, HttpStatus.SC_NO_CONTENT);
 
-            // Accountの作成
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
-                    user1, pass, HttpStatus.SC_CREATED);
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
-                    user2, pass, HttpStatus.SC_CREATED);
-
-            // 認証
-            String accessToken1 = authByPasswordAndGetAccessToken(user1, pass);
-            String accessToken2 = authByPasswordAndGetAccessToken(user2, pass);
-
-            // Cellの作成
-            CellUtils.create(cellName, accessToken1, HttpStatus.SC_CREATED);
-
-            // ロールの作成
-            RoleUtils.create(cellName, accessToken1, roleName, null, HttpStatus.SC_CREATED);
-            setCellACL(cellName, roleName, accessToken1);
-
-            // ロールの削除
-            RoleUtils.delete(cellName, accessToken1, roleName, null, HttpStatus.SC_NO_CONTENT);
-
-            // セルレベルAPI操作
-            // アカウント一覧取得
-            AccountUtils.get(accessToken2, HttpStatus.SC_FORBIDDEN, cellName, user1);
+            // Get account
+            AccountUtils.get(token, HttpStatus.SC_FORBIDDEN, cellName, userName);
         } finally {
-            // アカウントの削除
-            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user1, -1);
-            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user2, -1);
-            // ロールの削除
+            // Delete link
+            LinksUtils.deleteLinks(cellName, Account.EDM_TYPE_NAME, userName, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, -1);
+            // Delete role
             RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
-            // Cellの削除
+            // Delete account
+            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, userName, -1);
+            // Delete cell
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, cellName, -1);
-            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
         }
     }
 
     /**
-     * CellACLを設定後にロールをリネームしてCellレベル操作で403が返却されること.
+     * CellACLを設定後にロールをリネームしてCellレベル操作で200が返却されること.
      */
     @Test
-    public final void CellACLを設定後にロールをリネームしてCellレベル操作で403が返却されること() {
+    public final void CellACLを設定後にロールをリネームしてCellレベル操作で200が返却されること() {
         String cellName = "aclRoletest";
-        String user1 = "uuser001";
-        String user2 = "uuser002";
-        String roleName = "testRole";
+        String userName = "user";
         String pass = "password";
+        String roleName = "testRole";
 
         try {
-            // 本テスト用セルの作成
-            CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            // Create cell
+            CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            // Create account
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, userName, pass, HttpStatus.SC_CREATED);
+            // Create role
+            RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, HttpStatus.SC_CREATED);
+            // Set acl
+            setCellACL(cellName, roleName, AbstractCase.MASTER_TOKEN_NAME);
+            // Link account-role
+            LinksUtils.createLinks(cellName, Account.EDM_TYPE_NAME, userName, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
+            // Get token
+            String token = ResourceUtils.getMyCellLocalToken(cellName, userName, pass);
+            // Update role
+            RoleUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, roleName, roleName + "updated",
+                    null, HttpStatus.SC_NO_CONTENT);
 
-            // Accountの作成
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
-                    user1, pass, HttpStatus.SC_CREATED);
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
-                    user2, pass, HttpStatus.SC_CREATED);
-
-            // 認証
-            String accessToken1 = authByPasswordAndGetAccessToken(user1, pass);
-            String accessToken2 = authByPasswordAndGetAccessToken(user2, pass);
-
-            // Cellの作成
-            CellUtils.create(cellName, accessToken1, HttpStatus.SC_CREATED);
-
-            // ロールの作成
-            RoleUtils.create(cellName, accessToken1, roleName, null, HttpStatus.SC_CREATED);
-            // CellにACLの設定
-            // ACLをtestcell1に設定
-            setCellACL(cellName, roleName, accessToken1);
-
-            // ロールのリネーム
-            RoleUtils.update(accessToken1, cellName, roleName, roleName + "updated", null,
-                    HttpStatus.SC_NO_CONTENT);
-
-            // セルレベルAPI操作
-            // アカウント一覧取得
-            AccountUtils.get(accessToken2, HttpStatus.SC_FORBIDDEN, cellName, user1);
+            // Get account
+            AccountUtils.get(token, HttpStatus.SC_OK, cellName, userName);
         } finally {
-            // アカウントの削除
-            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user1, -1);
-            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user2, -1);
-            // ロールの削除
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
+            // Delete link
+            LinksUtils.deleteLinks(cellName, Account.EDM_TYPE_NAME, userName, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, -1);
+            // Delete role
             RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName + "updated", null, -1);
-            // Cellの削除
+            // Delete account
+            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, userName, -1);
+            // Delete cell
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, cellName, -1);
-            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
         }
     }
 
@@ -1021,112 +1001,41 @@ public class AuthCheckTest extends JerseyTest {
     @Test
     public final void CellACLを設定後にロール削除_再作成してCellレベル操作で403が返却されること() {
         String cellName = "aclRoletest";
-        String user1 = "uuser001";
-        String user2 = "uuser002";
-        String roleName = "testRole";
+        String userName = "user";
         String pass = "password";
+        String roleName = "testRole";
 
         try {
-            // 本テスト用セルの作成
-            CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            // Create cell
+            CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            // Create account
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, userName, pass, HttpStatus.SC_CREATED);
+            // Create role
+            RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, HttpStatus.SC_CREATED);
+            // Set acl
+            setCellACL(cellName, roleName, AbstractCase.MASTER_TOKEN_NAME);
+            // Link account-role
+            LinksUtils.createLinks(cellName, Account.EDM_TYPE_NAME, userName, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
+            // Get token
+            String token = ResourceUtils.getMyCellLocalToken(cellName, userName, pass);
+            // Delete role
+            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, HttpStatus.SC_NO_CONTENT);
+            // Create role
+            RoleUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, HttpStatus.SC_CREATED);
 
-            // Accountの作成
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
-                    user1, pass, HttpStatus.SC_CREATED);
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
-                    user2, pass, HttpStatus.SC_CREATED);
-
-            // 認証
-            String accessToken1 = authByPasswordAndGetAccessToken(user1, pass);
-            String accessToken2 = authByPasswordAndGetAccessToken(user2, pass);
-
-            // Cellの作成
-            CellUtils.create(cellName, accessToken1, HttpStatus.SC_CREATED);
-
-            // ロールの作成
-            RoleUtils.create(cellName, accessToken1, roleName, null, HttpStatus.SC_CREATED);
-            setCellACL(cellName, roleName, accessToken1);
-
-            // ロールの削除
-            RoleUtils.delete(cellName, accessToken1, roleName, null, HttpStatus.SC_NO_CONTENT);
-
-            // ロールの作成
-            RoleUtils.create(cellName, accessToken1, roleName, null, HttpStatus.SC_CREATED);
-            // セルレベルAPI操作
-            // アカウント一覧取得
-            AccountUtils.get(accessToken2, HttpStatus.SC_FORBIDDEN, cellName, user1);
-            // ACLの再設定
-            setCellACL(cellName, roleName, accessToken1);
-
-            // セルレベルAPI操作
-            // アカウント一覧取得
-            AccountUtils.get(accessToken2, HttpStatus.SC_FORBIDDEN, cellName, user1);
+            // Get account
+            AccountUtils.get(token, HttpStatus.SC_FORBIDDEN, cellName, userName);
         } finally {
-            // アカウントの削除
-            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user1, -1);
-            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user2, -1);
-            // ロールの削除
+            // Delete link
+            LinksUtils.deleteLinks(cellName, Account.EDM_TYPE_NAME, userName, null,
+                    Role.EDM_TYPE_NAME, roleName, null, AbstractCase.MASTER_TOKEN_NAME, -1);
+            // Delete role
             RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, null, -1);
-            // Cellの削除
+            // Delete account
+            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, userName, -1);
+            // Delete cell
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, cellName, -1);
-            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
-        }
-    }
-
-    /**
-     * BoxACLを設定後にロール削除してCellレベル操作で403が返却されること.
-     */
-    @Test
-    public final void BoxACLを設定後にロール削除してCellレベル操作で403が返却されること() {
-        String cellName = "aclRoletest";
-        String user1 = "uuser001";
-        String user2 = "uuser002";
-        String roleName = "testRole";
-        String boxName = "testBox";
-        String pass = "password";
-
-        try {
-            // 本テスト用セルの作成
-            CellUtils.create(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
-
-            // Accountの作成
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
-                    user1, pass, HttpStatus.SC_CREATED);
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL,
-                    user2, pass, HttpStatus.SC_CREATED);
-
-            // 認証
-            String accessToken1 = authByPasswordAndGetAccessToken(user1, pass);
-            String accessToken2 = authByPasswordAndGetAccessToken(user2, pass);
-
-            // Cellの作成
-            CellUtils.create(cellName, accessToken1, HttpStatus.SC_CREATED);
-
-            // Boxの作成
-            BoxUtils.create(cellName, boxName, accessToken1, HttpStatus.SC_CREATED);
-
-            // ロールの作成
-            RoleUtils.create(cellName, accessToken1, roleName, boxName, HttpStatus.SC_CREATED);
-
-            setBoxACL(cellName, boxName, roleName, accessToken1);
-
-            // ロールの削除
-            RoleUtils.delete(cellName, accessToken1, roleName, boxName, HttpStatus.SC_NO_CONTENT);
-
-            // セルレベルAPI操作
-            // アカウント一覧取得
-            AccountUtils.get(accessToken2, HttpStatus.SC_FORBIDDEN, cellName, user1);
-        } finally {
-            // アカウントの削除
-            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user1, -1);
-            AccountUtils.delete(UNIT_USER_CELL, AbstractCase.MASTER_TOKEN_NAME, user2, -1);
-            // ロールの削除
-            RoleUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, roleName, boxName, -1);
-            // Boxの削除
-            BoxUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, boxName, -1);
-            // Cellの削除
-            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, cellName, -1);
-            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, UNIT_USER_CELL, -1);
         }
     }
 
@@ -1138,31 +1047,6 @@ public class AuthCheckTest extends JerseyTest {
                 .with("roleBaseUrl", UrlUtils.roleResource(cellName, null, roleName))
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
-    }
-
-    private void setBoxACL(String cellName, String boxName, String roleName, String accessToken1) {
-        Http.request("box/acl-setting-single.txt")
-                .with("cell", cellName)
-                .with("box", boxName)
-                .with("token", accessToken1)
-                .with("role1", roleName)
-                .with("roleBaseUrl", UrlUtils.roleResource(cellName, boxName, roleName))
-                .returns()
-                .statusCode(HttpStatus.SC_OK);
-    }
-
-    private String authByPasswordAndGetAccessToken(String user1, String pass) {
-        TResponse res =
-                Http.request("authn/password-tc-c0.txt")
-                        .with("remoteCell", UNIT_USER_CELL)
-                        .with("username", user1)
-                        .with("password", pass)
-                        .with("p_target", UrlUtils.getBaseUrl())
-                        .returns()
-                        .statusCode(HttpStatus.SC_OK);
-        JSONObject json = res.bodyAsJson();
-        String accessToken1 = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
-        return accessToken1;
     }
 
     private List<Role> checkTransCellAccessToken(final String tokenAuthCellName, final String accountAuthCellName,
