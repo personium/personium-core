@@ -89,23 +89,22 @@ public class UnitCtlResource extends ODataResource {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void checkAccessContext(AccessContext ac, Privilege privilege) {
-
-        // ユニットマスター、ユニットユーザ、ユニットローカルユニットユーザなら受け付ける
-        if (AccessContext.TYPE_UNIT_MASTER.equals(ac.getType())) {
-            return;
-        } else if (AccessContext.TYPE_UNIT_USER.equals(ac.getType())) {
-            return;
-        } else if (AccessContext.TYPE_UNIT_LOCAL.equals(ac.getType())) {
+        // Accept if UnitMaster, UnitAdmin, UnitUser, UnitLocal.
+        if (AccessContext.TYPE_UNIT_MASTER.equals(ac.getType())
+                || AccessContext.TYPE_UNIT_ADMIN.equals(ac.getType())
+                || AccessContext.TYPE_UNIT_USER.equals(ac.getType())
+                || AccessContext.TYPE_UNIT_LOCAL.equals(ac.getType())) {
             return;
         } else if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
             ac.throwInvalidTokenException(getAcceptableAuthScheme());
         } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
             throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(), getAcceptableAuthScheme());
         }
-
-        // ユニットマスター、ユニットユーザ、ユニットローカルユニットユーザ以外なら権限エラー
         throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
     }
 
@@ -241,7 +240,8 @@ public class UnitCtlResource extends ODataResource {
         String owner = UriUtils.convertSchemeFromLocalUnitToHttp(ac.getBaseUri(), (String) meta.get("Owner"));
 
         // In case of master token, no check is required.
-        if (AccessContext.TYPE_UNIT_MASTER.equals(ac.getType())) {
+        if (AccessContext.TYPE_UNIT_MASTER.equals(ac.getType())
+                || AccessContext.TYPE_UNIT_ADMIN.equals(ac.getType())) {
             return;
         }
 

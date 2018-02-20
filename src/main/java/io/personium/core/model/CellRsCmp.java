@@ -113,13 +113,13 @@ public class CellRsCmp extends DavRsCmp {
     }
 
     /**
-     * アクセス制御を行う.
-     * @param ac アクセスコンテキスト
-     * @param privilege アクセス可能な権限
+     * Performs access control.
+     * @param ac Access context
+     * @param privilege Required privilege
      */
-    public void checkAccessContext(final AccessContext ac, Privilege privilege) {
-        // ユニットユーザトークンチェック
-        if (ac.isUnitUserToken()) {
+    public void checkAccessContext(AccessContext ac, Privilege privilege) {
+        // Check UnitUser token.
+        if (ac.isUnitUserToken(privilege)) {
             return;
         }
 

@@ -47,7 +47,7 @@ public class BoxUrlRsCmp extends BoxRsCmp {
         AcceptableAuthScheme allowedAuthScheme = getAcceptableAuthScheme();
 
         // For unit user token, do not check
-        if (ac.isUnitUserToken()) {
+        if (ac.isUnitUserToken(privilege)) {
             return;
         }
 

@@ -28,6 +28,7 @@ import io.personium.core.rs.odata.ODataMessageResourceTest;
 @RunWith(Suite.class)
 @SuiteClasses({
     CellCtlResourceTest.class,
+    CellResourceTest.class,
     EventResourceTest.class,
     ODataMessageResourceTest.class,
     TokenEndPointResourceTest.class
