@@ -88,7 +88,6 @@ public class WebSocketService {
     private static final String KEY_JSON_SUBSCRIBE = "Subscribe";
     private static final String KEY_JSON_UNSUBSCRIBE = "Unsubscribe";
     private static final String KEY_JSON_STATE = "State";
-    private static final String KEY_JSON_EVENT = "Event";
     private static final String KEY_JSON_EXPIRES_IN = "ExpiresIn";
     private static final String KEY_JSON_TIMESTAMP = "Timestamp";
     private static final String KEY_JSON_RESPONSE = "Response";
@@ -248,12 +247,8 @@ public class WebSocketService {
                 return;
             }
 
-            // external event
-            JSONObject event = (JSONObject) json.get(KEY_JSON_EVENT);
-            if (event != null) {
-                onReceiveExEvent(session, event);
-                return;
-            }
+            // the others are external events
+            onReceiveExEvent(session, json);
 
         } catch (Exception e) {
             log.debug("Invalid message: " + text);
@@ -412,45 +407,45 @@ public class WebSocketService {
 
     /**
      * On receive external event.
+     * It does not send response messages for external events.
      * @param session
      * @param event
      */
     private void onReceiveExEvent(Session session, JSONObject event) {
-        log.debug("ws: " + KEY_JSON_EVENT + " : " + event.get("Type"));
+        log.debug("ws: External event Type: " + event.get("Type"));
+        log.debug("ws: External event Object: " + event.get("Object"));
+        log.debug("ws: External event Info: " + event.get("Info"));
+        log.debug("ws: External event RequestKey: " + event.get("RequestKey"));
         Map<String, Object> userProperties = session.getUserProperties();
         String cellId = (String) userProperties.get(KEY_PROPERTIES_CELL_ID);
         String accessToken = (String) userProperties.get(KEY_PROPERTIES_ACCESS_TOKEN);
-        JSONObject result = createResultJSONObject();
 
-        try {
-            // TODO It may be better cellRsCmp is managed by HashMap
-            Cell cell = ModelFactory.cell(cellId, null);
-            AccessContext ac = createAccessContext(accessToken, cell.getName());
-            CellCmp cellCmp = ModelFactory.cellCmp(cell);
-            if (cellCmp.exists()) {
-                CellRsCmp cellRsCmp = new CellRsCmp(cellCmp, cell, ac);
-                cellRsCmp.checkAccessContext(ac, CellPrivilege.EVENT);
-                PersoniumEvent pEvent = new PersoniumEvent(
-                        PersoniumEvent.EXTERNAL_EVENT,
-                        (String) event.get("Type"),
-                        (String) event.get("Object"),
-                        (String) event.get("Info"),
-                        cellRsCmp,
-                        (String) event.get("RequestKey")
-                );
-                EventBus eventBus = cell.getEventBus();
-                eventBus.post(pEvent);
+        if (event.get("Type") != null && event.get("Object") != null && event.get("Info") != null) {
+            try {
+                // TODO It may be better cellRsCmp is managed by HashMap
+                Cell cell = ModelFactory.cell(cellId, null);
+                AccessContext ac = createAccessContext(accessToken, cell.getName());
+                CellCmp cellCmp = ModelFactory.cellCmp(cell);
+                if (cellCmp.exists()) {
+                    CellRsCmp cellRsCmp = new CellRsCmp(cellCmp, cell, ac);
+                    cellRsCmp.checkAccessContext(ac, CellPrivilege.EVENT);
+                    PersoniumEvent pEvent = new PersoniumEvent(
+                            PersoniumEvent.EXTERNAL_EVENT,
+                            (String) event.get("Type"),
+                            (String) event.get("Object"),
+                            (String) event.get("Info"),
+                            cellRsCmp,
+                            (String) event.get("RequestKey")
+                    );
+                    EventBus eventBus = cell.getEventBus();
+                    eventBus.post(pEvent);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            result.put(KEY_JSON_RESPONSE, KEY_JSON_EVENT);
-            result.put(KEY_JSON_RESULT, RESPONSE_ERROR);
-            result.put(KEY_JSON_REASON, REASON_INVALID_PRIVILEGE);
+        } else {
+            log.debug("ws: Invalid External Event format: Type/Object/Info is/are null.");
         }
-
-        result.put(KEY_JSON_RESPONSE, KEY_JSON_EVENT);
-        result.put(KEY_JSON_RESULT, RESPONSE_SUCCESS);
-        sendText(session, result.toJSONString());
     }
 
     private JSONObject createResultJSONObject() {
