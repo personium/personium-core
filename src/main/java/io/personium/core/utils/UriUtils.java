@@ -148,7 +148,11 @@ public class UriUtils {
      * @return url with personim-localcell scheme
      */
     public static String convertSchemeFromLocalBoxToLocalCell(String boxUrl, String boxName) {
-        if (boxUrl == null || boxName == null || !boxUrl.startsWith(SCHEME_LOCALBOX)) {
+        if (boxUrl == null || boxName == null) {
+            return null;
+        } else if (boxUrl.startsWith(SCHEME_LOCALCELL)) {
+             return boxUrl;
+        } else if (!boxUrl.startsWith(SCHEME_LOCALBOX)) {
             return null;
         }
 

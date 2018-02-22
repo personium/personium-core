@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,4 +63,49 @@ public class UriUtilsTest {
         String actual = UriUtils.convertSchemeFromHttpToLocalUnit("http://uniturl/", null);
         assertNull(actual);
     }
+
+    /**
+     * Test convertSchemeFromLocalBoxToLocalCell().
+     * normal.
+     * url starts with personium-localbox.
+     */
+    @Test
+    public void convertSchemeFromLocalBoxToLocalCell_Noraml_url_starts_with_localbox() {
+        String actual = UriUtils.convertSchemeFromLocalBoxToLocalCell("personium-localbox:/col", "box");
+        assertThat(actual, is("personium-localcell:/box/col"));
+    }
+
+    /**
+     * Test convertSchemeFromLocalBoxToLocalCell().
+     * normal.
+     * boxName is null.
+     */
+    @Test
+    public void convertSchemeFromLocalBoxToLocalCell_Noraml_boxName_is_null() {
+        String actual = UriUtils.convertSchemeFromLocalBoxToLocalCell("personium-localbox:/col", null);
+        assertNull(actual);
+    }
+
+    /**
+     * Test convertSchemeFromLocalBoxToLocalCell().
+     * normal.
+     * url not starts with personium-localbox.
+     */
+    @Test
+    public void convertSchemeFromLocalBoxToLocalCell_Noraml_url_not_starts_with_localbox() {
+        String actual = UriUtils.convertSchemeFromLocalBoxToLocalCell("personium-localunit:/cell", "box");
+        assertNull(actual);
+    }
+
+    /**
+     * Test convertSchemeFromLocalBoxToLocalCell().
+     * normal.
+     * url starts with personium-localcell.
+     */
+    @Test
+    public void convertSchemeFromLocalBoxToLocalCell_Noraml_url_starts_with_localcell() {
+        String actual = UriUtils.convertSchemeFromLocalBoxToLocalCell("personium-localcell:/cell/box", "box");
+        assertThat(actual, is("personium-localcell:/cell/box"));
+    }
+
 }
