@@ -252,6 +252,8 @@ public final class ODataSvcCollectionResource extends ODataResource {
         return BoxPrivilege.READ;
     }
 
+    private static final int OP_SPLIT_NUM = 3;
+
     // convert op as follows:
     //   links.EntitySetName.create -> links.create
     //   navprop.EntitySetName.create -> navprop.create
@@ -259,7 +261,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
     private String deleteEntitySetNameFromOp(String op) {
         String ret = op;
         String[] parts = op.split(Pattern.quote(PersoniumEventType.SEPALATOR));
-        if (parts.length == 3) {
+        if (parts.length == OP_SPLIT_NUM) {
             ret = parts[0] + PersoniumEventType.SEPALATOR + parts[2];
         }
         return ret;
