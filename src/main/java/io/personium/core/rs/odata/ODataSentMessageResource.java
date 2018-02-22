@@ -622,7 +622,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
                     String targetUrl = requestObjectMap.get(RequestObject.P_TARGET_URL.getName());
                     if (boxBound.booleanValue()) {
                         log.debug("validate: boxBound is true");
-                        if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALBOX)) {
+                        if (object != null && !ODataUtils.isValidLocalBoxUrl(object)) {
                             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                     concatRequestObjectPropertyName(Rule.P_OBJECT.getName()));
                         }
@@ -633,7 +633,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
                         }
                     } else {
                         log.debug("validate: boxBound is false");
-                        if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALCELL)) {
+                        if (object != null && !ODataUtils.isValidLocalCellUrl(object)) {
                             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                     concatRequestObjectPropertyName(Rule.P_OBJECT.getName()));
                         }

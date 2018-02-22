@@ -355,6 +355,9 @@ public final class ODataUtils {
      * @return true if valid
      */
     public static boolean isValidUri(String str) {
+        if (str == null) {
+            return false;
+        }
         boolean isValidLength = str.length() <= URI_MAX_LENGTH;
         URI uri;
         try {
@@ -373,6 +376,9 @@ public final class ODataUtils {
      * @return true if valid
      */
     public static boolean isValidUrn(String str) {
+        if (str == null) {
+            return false;
+        }
         boolean isValidLength = str.length() <= URI_MAX_LENGTH;
         URI uri;
         try {
@@ -391,6 +397,9 @@ public final class ODataUtils {
      * @return true if valid
      */
     public static boolean isValidCellUrl(String str) {
+        if (str == null) {
+            return false;
+        }
         boolean isValidLength = str.length() <= URI_MAX_LENGTH;
         URI uri;
         try {
@@ -415,11 +424,14 @@ public final class ODataUtils {
     }
 
     /**
-     * Check if string is valid Local Cell or Box URL.
+     * Check if string is valid Local Cell URL.
      * @param str Input string
      * @return true if valid
      */
-    public static boolean isValidLocalCellOrBoxUrl(String str) {
+    public static boolean isValidLocalCellUrl(String str) {
+        if (str == null) {
+            return false;
+        }
         boolean isValidLength = str.length() <= URI_MAX_LENGTH;
         URI uri;
         try {
@@ -428,7 +440,29 @@ public final class ODataUtils {
             return false;
         }
         String scheme = uri.getScheme();
-        boolean isValidScheme = isValidLocalCellUrlScheme(scheme) || isValidLocalBoxUrlScheme(scheme);
+        boolean isValidScheme = isValidLocalCellUrlScheme(scheme);
+        boolean isNormalized = uri.normalize().toString().equals(str);
+        return isValidLength && isValidScheme && isNormalized;
+    }
+
+    /**
+     * Check if string is valid Local Box URL.
+     * @param str Input string
+     * @return true if valid
+     */
+    public static boolean isValidLocalBoxUrl(String str) {
+        if (str == null) {
+            return false;
+        }
+        boolean isValidLength = str.length() <= URI_MAX_LENGTH;
+        URI uri;
+        try {
+            uri = new URI(str);
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        String scheme = uri.getScheme();
+        boolean isValidScheme = isValidLocalBoxUrlScheme(scheme);
         boolean isNormalized = uri.normalize().toString().equals(str);
         return isValidLength && isValidScheme && isNormalized;
     }

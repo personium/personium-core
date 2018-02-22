@@ -233,69 +233,157 @@ public class ODataUtilsTest {
     }
 
     /**
-     * Test isValidLocalCellOrBoxUrl().
+     * Test isValidLocalCellUrl().
      * Normal test.
      * localcell url.
      */
     @Test
-    public void isValidLocalCellOrBoxUrl_Normal_localcell_url() {
+    public void isValidLocalCellUrl_Normal_localcell_url() {
         String str = "personium-localcell:/dummyBox/dummyCol/dummyEntity";
-        assertThat(ODataUtils.isValidLocalCellOrBoxUrl(str), is(true));
+        assertThat(ODataUtils.isValidLocalCellUrl(str), is(true));
     }
 
     /**
-     * Test isValidLocalCellOrBoxUrl().
+     * Test isValidLocalCellUrl().
      * Normal test.
      * localbox url.
      */
     @Test
-    public void isValidLocalCellOrBoxUrl_Normal_localbox_url() {
+    public void isValidLocalCellUrl_Normal_localbox_url() {
         String str = "personium-localbox:/dummyCol/dummyEntity";
-        assertThat(ODataUtils.isValidLocalCellOrBoxUrl(str), is(true));
+        assertThat(ODataUtils.isValidLocalCellUrl(str), is(false));
     }
 
     /**
-     * Test isValidLocalCellOrBoxUrl().
+     * Test isValidLocalCellUrl().
      * Normal test.
-     * localbox url without path.
+     * localcell url without path.
      */
     @Test
-    public void isValidLocalCellOrBoxUrl_Normal_localbox_url_without_path() {
-        String str = "personium-localbox:/";
-        assertThat(ODataUtils.isValidLocalCellOrBoxUrl(str), is(true));
+    public void isValidLocalCellUrl_Normal_localcell_url_without_path() {
+        String str = "personium-localcell:/";
+        assertThat(ODataUtils.isValidLocalCellUrl(str), is(true));
     }
 
     /**
-     * Test isValidLocalCellOrBoxUrl().
+     * Test isValidLocalCellUrl().
      * Normal test.
-     * localbox url with args.
+     * localcell url with args.
      */
     @Test
-    public void isValidLocalCellOrBoxUrl_Normal_localbox_url_with_args() {
-        String str = "personium-localbox:/dummyCollection/dummyEntity?arg=hogehoge";
-        assertThat(ODataUtils.isValidLocalCellOrBoxUrl(str), is(true));
+    public void isValidLocalCellUrl_Normal_localcell_url_with_args() {
+        String str = "personium-localcell:/dummyBox/dummyCollection/dummyEntity?arg=hogehoge";
+        assertThat(ODataUtils.isValidLocalCellUrl(str), is(true));
     }
 
     /**
-     * Test isValidLocalCellOrBoxUrl().
+     * Test isValidLocalCellUrl().
      * Normal test.
      * localunit url.
      */
     @Test
-    public void isValidLocalCellOrBoxUrl_Normal_localunit_url() {
+    public void isValidLocalCellUrl_Normal_localunit_url() {
         String str = "personium-localunit:/dummyCollection/dummyEntity";
-        assertThat(ODataUtils.isValidLocalCellOrBoxUrl(str), is(false));
+        assertThat(ODataUtils.isValidLocalCellUrl(str), is(false));
     }
 
     /**
-     * Test isValidLocalCellOrBoxUrl().
+     * Test isValidLocalCellUrl().
      * Normal test.
      * http scheme url.
      */
     @Test
-    public void isValidLocalCellOrBoxUrl_Normal_http_url() {
+    public void isValidLocalCellUrl_Normal_http_url() {
         String str = "http://personium/dummyCollection/dummyEntity";
-        assertThat(ODataUtils.isValidLocalCellOrBoxUrl(str), is(false));
+        assertThat(ODataUtils.isValidLocalCellUrl(str), is(false));
+    }
+
+    /**
+     * Test isValidLocalCellUrl().
+     * Normal test.
+     * url is null.
+     */
+    @Test
+    public void isValidLocalCellUrl_Normal_url_is_null() {
+        String str = null;
+        assertThat(ODataUtils.isValidLocalCellUrl(str), is(false));
+    }
+
+    /**
+     * Test isValidLocalBoxUrl().
+     * Normal test.
+     * localcell url.
+     */
+    @Test
+    public void isValidLocalBoxUrl_Normal_localcell_url() {
+        String str = "personium-localcell:/dummyBox/dummyCol/dummyEntity";
+        assertThat(ODataUtils.isValidLocalBoxUrl(str), is(false));
+    }
+
+    /**
+     * Test isValidLocalBoxUrl().
+     * Normal test.
+     * localbox url.
+     */
+    @Test
+    public void isValidLocalBoxUrl_Normal_localbox_url() {
+        String str = "personium-localbox:/dummyCol/dummyEntity";
+        assertThat(ODataUtils.isValidLocalBoxUrl(str), is(true));
+    }
+
+    /**
+     * Test isValidLocalBoxUrl().
+     * Normal test.
+     * localbox url without path.
+     */
+    @Test
+    public void isValidLocalBoxUrl_Normal_localbox_url_without_path() {
+        String str = "personium-localbox:/";
+        assertThat(ODataUtils.isValidLocalBoxUrl(str), is(true));
+    }
+
+    /**
+     * Test isValidLocalBoxUrl().
+     * Normal test.
+     * localbox url with args.
+     */
+    @Test
+    public void isValidLocalBoxUrl_Normal_localbox_url_with_args() {
+        String str = "personium-localbox:/dummyCollection/dummyEntity?arg=hogehoge";
+        assertThat(ODataUtils.isValidLocalBoxUrl(str), is(true));
+    }
+
+    /**
+     * Test isValidLocalBoxUrl().
+     * Normal test.
+     * localunit url.
+     */
+    @Test
+    public void isValidLocalBoxUrl_Normal_localunit_url() {
+        String str = "personium-localunit:/dummyCollection/dummyEntity";
+        assertThat(ODataUtils.isValidLocalBoxUrl(str), is(false));
+    }
+
+    /**
+     * Test isValidLocalBoxUrl().
+     * Normal test.
+     * http scheme url.
+     */
+    @Test
+    public void isValidLocalBoxUrl_Normal_http_url() {
+        String str = "http://personium/dummyCollection/dummyEntity";
+        assertThat(ODataUtils.isValidLocalBoxUrl(str), is(false));
+    }
+
+    /**
+     * Test isValidLocalBoxUrl().
+     * Normal test.
+     * url is null.
+     */
+    @Test
+    public void isValidLocalBoxUrl_Normal_url_is_null() {
+        String str = null;
+        assertThat(ODataUtils.isValidLocalBoxUrl(str), is(false));
     }
 
     /**

@@ -694,8 +694,6 @@ public abstract class AbstractODataResource {
                     validatePropertyCellUrl(propName, op);
                 } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_USUSST)) {
                     validatePropertyUsusst(propName, op, pFormat);
-                } else if (pFormat.startsWith(Rule.P_FORMAT_PATTERN_RULE_OBJECT)) {
-                    validatePropertyRuleObject(propName, op);
                 } else if (pFormat.startsWith(Rule.P_FORMAT_PATTERN_RULE_SERVICE)) {
                     validatePropertyRuleService(propName, op);
                 }
@@ -879,18 +877,6 @@ public abstract class AbstractODataResource {
                } else {
                    overlapChk.add(token);
                }
-        }
-    }
-
-    /**
-     * Rule Object Format Check.
-     * @param propName Property name
-     * @param op OProperty
-     */
-    protected void validatePropertyRuleObject(String propName, OProperty<?> op) {
-        // personium-localcell:/xxx or personium-localbox:/xxx
-        if (!ODataUtils.isValidLocalCellOrBoxUrl(op.getValue().toString())) {
-            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
         }
     }
 
