@@ -299,6 +299,17 @@ public class ODataUtilsTest {
     }
 
     /**
+     * Test isValidLocalCellUrl().
+     * Normal test.
+     * url is null.
+     */
+    @Test
+    public void isValidLocalCellUrl_Normal_url_is_null() {
+        String str = null;
+        assertThat(ODataUtils.isValidLocalCellUrl(str), is(false));
+    }
+
+    /**
      * Test isValidLocalBoxUrl().
      * Normal test.
      * localcell url.
@@ -361,6 +372,17 @@ public class ODataUtilsTest {
     @Test
     public void isValidLocalBoxUrl_Normal_http_url() {
         String str = "http://personium/dummyCollection/dummyEntity";
+        assertThat(ODataUtils.isValidLocalBoxUrl(str), is(false));
+    }
+
+    /**
+     * Test isValidLocalBoxUrl().
+     * Normal test.
+     * url is null.
+     */
+    @Test
+    public void isValidLocalBoxUrl_Normal_url_is_null() {
+        String str = null;
         assertThat(ODataUtils.isValidLocalBoxUrl(str), is(false));
     }
 

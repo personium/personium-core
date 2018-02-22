@@ -355,6 +355,9 @@ public final class ODataUtils {
      * @return true if valid
      */
     public static boolean isValidUri(String str) {
+        if (str == null) {
+            return false;
+        }
         boolean isValidLength = str.length() <= URI_MAX_LENGTH;
         URI uri;
         try {
@@ -373,6 +376,9 @@ public final class ODataUtils {
      * @return true if valid
      */
     public static boolean isValidUrn(String str) {
+        if (str == null) {
+            return false;
+        }
         boolean isValidLength = str.length() <= URI_MAX_LENGTH;
         URI uri;
         try {
@@ -391,6 +397,9 @@ public final class ODataUtils {
      * @return true if valid
      */
     public static boolean isValidCellUrl(String str) {
+        if (str == null) {
+            return false;
+        }
         boolean isValidLength = str.length() <= URI_MAX_LENGTH;
         URI uri;
         try {
@@ -420,6 +429,9 @@ public final class ODataUtils {
      * @return true if valid
      */
     public static boolean isValidLocalCellUrl(String str) {
+        if (str == null) {
+            return false;
+        }
         boolean isValidLength = str.length() <= URI_MAX_LENGTH;
         URI uri;
         try {
@@ -439,6 +451,9 @@ public final class ODataUtils {
      * @return true if valid
      */
     public static boolean isValidLocalBoxUrl(String str) {
+        if (str == null) {
+            return false;
+        }
         boolean isValidLength = str.length() <= URI_MAX_LENGTH;
         URI uri;
         try {
