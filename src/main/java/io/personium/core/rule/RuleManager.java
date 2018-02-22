@@ -405,8 +405,12 @@ public class RuleManager {
         }
 
         // compare info
-        if (rule.info != null && !rule.info.equals(event.getInfo())) {
-            return false;
+        if (rule.info != null) {
+            if (event.getInfo() == null) {
+                return false;
+            } else if (!event.getInfo().startsWith(rule.info)) {
+                return false;
+            }
         }
 
         return true;
