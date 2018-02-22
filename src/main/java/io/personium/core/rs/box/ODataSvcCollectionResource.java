@@ -17,6 +17,7 @@
 package io.personium.core.rs.box;
 
 import java.io.Reader;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.HeaderParam;
@@ -251,12 +252,25 @@ public final class ODataSvcCollectionResource extends ODataResource {
         return BoxPrivilege.READ;
     }
 
+    // convert op as follows:
+    //   links.EntitySetName.create -> links.create
+    //   navprop.EntitySetName.create -> navprop.create
+    //   create -> create
+    private String deleteEntitySetNameFromOp(String op) {
+        String ret = op;
+        String[] parts = op.split(Pattern.quote(PersoniumEventType.SEPALATOR));
+        if (parts.length == 3) {
+            ret = parts[0] + PersoniumEventType.SEPALATOR + parts[2];
+        }
+        return ret;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void postEvent(String entitySet, String object, String info, String op) {
-        String type = PersoniumEventType.Category.ODATA + PersoniumEventType.SEPALATOR + op;
+        String type = PersoniumEventType.Category.ODATA + PersoniumEventType.SEPALATOR + deleteEntitySetNameFromOp(op);
         PersoniumEvent ev = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
         EventBus eventBus = this.getAccessContext().getCell().getEventBus();
         eventBus.post(ev);

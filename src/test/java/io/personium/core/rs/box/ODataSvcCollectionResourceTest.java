@@ -20,6 +20,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import org.powermock.api.mockito.PowerMockito;
+
+import java.lang.reflect.Method;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -44,11 +47,6 @@ public class ODataSvcCollectionResourceTest {
      */
     @Test
     public void constructor_Normal() {
-        DavRsCmp davRsCmp = mock(DavRsCmp.class);
-        DavCmp davCmp = mock(DavCmp.class);
-        PersoniumODataProducer producer = mock(PersoniumODataProducer.class);
-        Cell cell = mock(Cell.class);
-
         // --------------------
         // Test method args
         // --------------------
@@ -59,6 +57,10 @@ public class ODataSvcCollectionResourceTest {
         // --------------------
         // Mock settings
         // --------------------
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
+        DavCmp davCmp = mock(DavCmp.class);
+        PersoniumODataProducer producer = mock(PersoniumODataProducer.class);
+        Cell cell = mock(Cell.class);
         doReturn(null).when(davRsCmp).getAccessContext();
         doReturn(url).when(davRsCmp).getUrl();
         doReturn(cell).when(davRsCmp).getCell();
@@ -81,6 +83,156 @@ public class ODataSvcCollectionResourceTest {
         // Confirm result
         // --------------------
         assertThat(odataSvcCollectionResource.getRootUrl(), is(expected));
+    }
+
+    /**
+     * Test deleteEntitySetNameFromOp().
+     * Normal test.
+     * op is links.Entity.create
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void deleteEntitySetNameFromOp_Normal_op_is_links() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String url = "https://personium/cell/box";
+        String name = "col";
+        String cellUrl = "https://personium/cell/";
+        String op = "links.Entity.create";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
+        DavCmp davCmp = mock(DavCmp.class);
+        PersoniumODataProducer producer = mock(PersoniumODataProducer.class);
+        Cell cell = mock(Cell.class);
+        doReturn(null).when(davRsCmp).getAccessContext();
+        doReturn(url).when(davRsCmp).getUrl();
+        doReturn(cell).when(davRsCmp).getCell();
+        doReturn(cellUrl).when(cell).getUrl();
+        doReturn(name).when(davCmp).getName();
+        doReturn(producer).when(davCmp).getODataProducer();
+        doReturn(null).when(producer).getMetadata();
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expected = "links.create";
+
+        // --------------------
+        // Run method
+        // --------------------
+        ODataSvcCollectionResource resource = new ODataSvcCollectionResource(davRsCmp, davCmp);
+        Method method = ODataSvcCollectionResource.class.getDeclaredMethod("deleteEntitySetNameFromOp", String.class);
+        method.setAccessible(true);
+        String result = (String) method.invoke(resource, op);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(result, is(expected));
+    }
+
+    /**
+     * Test deleteEntitySetNameFromOp().
+     * Normal test.
+     * op is navprop.Entity.list
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void deleteEntitySetNameFromOp_Normal_op_is_navprop() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String url = "https://personium/cell/box";
+        String name = "col";
+        String cellUrl = "https://personium/cell/";
+        String op = "navprop.Entity.list";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
+        DavCmp davCmp = mock(DavCmp.class);
+        PersoniumODataProducer producer = mock(PersoniumODataProducer.class);
+        Cell cell = mock(Cell.class);
+        doReturn(null).when(davRsCmp).getAccessContext();
+        doReturn(url).when(davRsCmp).getUrl();
+        doReturn(cell).when(davRsCmp).getCell();
+        doReturn(cellUrl).when(cell).getUrl();
+        doReturn(name).when(davCmp).getName();
+        doReturn(producer).when(davCmp).getODataProducer();
+        doReturn(null).when(producer).getMetadata();
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expected = "navprop.list";
+
+        // --------------------
+        // Run method
+        // --------------------
+        ODataSvcCollectionResource resource = new ODataSvcCollectionResource(davRsCmp, davCmp);
+        Method method = ODataSvcCollectionResource.class.getDeclaredMethod("deleteEntitySetNameFromOp", String.class);
+        method.setAccessible(true);
+        String result = (String) method.invoke(resource, op);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(result, is(expected));
+    }
+
+    /**
+     * Test deleteEntitySetNameFromOp().
+     * Normal test.
+     * op is update
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void deleteEntitySetNameFromOp_Normal_op_is_update() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        String url = "https://personium/cell/box";
+        String name = "col";
+        String cellUrl = "https://personium/cell/";
+        String op = "update";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        DavRsCmp davRsCmp = mock(DavRsCmp.class);
+        DavCmp davCmp = mock(DavCmp.class);
+        PersoniumODataProducer producer = mock(PersoniumODataProducer.class);
+        Cell cell = mock(Cell.class);
+        doReturn(null).when(davRsCmp).getAccessContext();
+        doReturn(url).when(davRsCmp).getUrl();
+        doReturn(cell).when(davRsCmp).getCell();
+        doReturn(cellUrl).when(cell).getUrl();
+        doReturn(name).when(davCmp).getName();
+        doReturn(producer).when(davCmp).getODataProducer();
+        doReturn(null).when(producer).getMetadata();
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expected = "update";
+
+        // --------------------
+        // Run method
+        // --------------------
+        ODataSvcCollectionResource resource = new ODataSvcCollectionResource(davRsCmp, davCmp);
+        Method method = ODataSvcCollectionResource.class.getDeclaredMethod("deleteEntitySetNameFromOp", String.class);
+        method.setAccessible(true);
+        String result = (String) method.invoke(resource, op);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(result, is(expected));
     }
 
 }
