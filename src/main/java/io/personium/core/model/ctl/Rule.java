@@ -56,35 +56,20 @@ public class Rule {
     /** action log.error. */
     public static final String ACTION_LOG_ERROR = "log.error";
 
-    /** Extended Schema Format rule-object. */
-    public static final String P_FORMAT_PATTERN_RULE_OBJECT = "rule-object";
     /** Extended Schema Format rule-service. */
     public static final String P_FORMAT_PATTERN_RULE_SERVICE = "rule-service";
 
     /** Pattern action. */
     private static final String PATTERN_ACTION = "^(exec)|(relay)|(relay\\.event)|(log)|(log\\.info)|(log\\.warn)|(log\\.error)$"; // CHECKSTYLE IGNORE - To maintein readability
 
-    /** Annotations for Object. */
-    private static final List<EdmAnnotation<?>> P_FORMAT_OBJECT = new ArrayList<EdmAnnotation<?>>();
     /** Annotations for Action. */
     private static final List<EdmAnnotation<?>> P_FORMAT_ACTION = new ArrayList<EdmAnnotation<?>>();
     /** Annotations for Service. */
     private static final List<EdmAnnotation<?>> P_FORMAT_SERVICE = new ArrayList<EdmAnnotation<?>>();
 
     static {
-        P_FORMAT_OBJECT.add(createFormatObjectAnnotation());
         P_FORMAT_ACTION.add(createFormatActionAnnotation());
         P_FORMAT_SERVICE.add(createFormatServiceAnnotation());
-    }
-
-    /**
-     * Get annotation for Object.
-     * @return annotation for Object
-     */
-    private static EdmAnnotation<?> createFormatObjectAnnotation() {
-        return new EdmAnnotationAttribute(
-                Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
-                Common.P_FORMAT, P_FORMAT_PATTERN_RULE_OBJECT);
     }
 
     /**
@@ -141,8 +126,7 @@ public class Rule {
      */
     public static final EdmProperty.Builder P_OBJECT = EdmProperty.newBuilder("EventObject")
             .setType(EdmSimpleType.STRING)
-            .setNullable(true)
-            .setAnnotations(P_FORMAT_OBJECT);
+            .setNullable(true);
     /**
      * EventInfo property.
      */

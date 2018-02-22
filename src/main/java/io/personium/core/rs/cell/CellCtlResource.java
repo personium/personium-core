@@ -212,6 +212,7 @@ public final class CellCtlResource extends ODataResource {
     public void validate(String entitySetName, List<OProperty<?>> props) {
         if (Rule.EDM_TYPE_NAME.equals(entitySetName)) {
             // get properties
+            Boolean external = false;
             String action = null;
             String service = null;
             String object = null;
@@ -228,6 +229,8 @@ public final class CellCtlResource extends ODataResource {
                     } else {
                         action = value;
                     }
+                } else if (Rule.P_EXTERNAL.getName().equals(name) && value != null) {
+                    external = Boolean.valueOf(value);
                 } else if (Rule.P_SERVICE.getName().equals(name) && value != null) {
                     service = value;
                 } else if (Rule.P_OBJECT.getName().equals(name) && value != null) {
@@ -245,8 +248,8 @@ public final class CellCtlResource extends ODataResource {
 
             // boxname: not null
             if (boxname != null) {
-                // object: personium-localbox:/xxx
-                if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALBOX)) {
+                // external: false -> object: personium-localbox:/xxx
+                if (!external && object != null && !ODataUtils.isValidLocalBoxUrl(object)) {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_OBJECT.getName());
                 }
                 // action: exec -> service: personium-localbox:/xxx
@@ -254,8 +257,8 @@ public final class CellCtlResource extends ODataResource {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
                 }
             } else {
-                // object: personium-localcell:/xxx
-                if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALCELL)) {
+                // external: false -> object: personium-localcell:/xxx
+                if (!external && object != null && !ODataUtils.isValidLocalCellUrl(object)) {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_OBJECT.getName());
                 }
                 // action: exec -> service: personium-localcell:/xxx

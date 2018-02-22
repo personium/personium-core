@@ -257,7 +257,7 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
                     String object = requestObjectMap.get(Rule.P_OBJECT.getName());
                     String targetUrl = requestObjectMap.get(RequestObject.P_TARGET_URL.getName());
                     if (schema != null) {
-                        if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALBOX)) {
+                        if (object != null && !ODataUtils.isValidLocalBoxUrl(object)) {
                             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                     concatRequestObjectPropertyName(Rule.P_OBJECT.getName()));
                         }
@@ -267,7 +267,7 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
                                     concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
                         }
                     } else {
-                        if (object != null && !object.startsWith(UriUtils.SCHEME_LOCALCELL)) {
+                        if (object != null && !ODataUtils.isValidLocalCellUrl(object)) {
                             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                     concatRequestObjectPropertyName(Rule.P_OBJECT.getName()));
                         }
