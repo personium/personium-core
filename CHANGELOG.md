@@ -1,3 +1,9 @@
+## 1.6.5
+IMPROVEMENTS:
+* Change matching of EventInfo to forward match.([#149](https://github.com/personium/personium-core/issues/149))
+* Change Type value of Internal Event for odata operation.([#150](https://github.com/personium/personium-core/issues/150))
+* Enable to set any string to EventObject in case of external event.([#151](https://github.com/personium/personium-core/issues/151))
+
 ## 1.6.4
 IMPROVEMENTS:
 * Limit Unit User privilege.([#66](https://github.com/personium/personium-core/issues/66))
