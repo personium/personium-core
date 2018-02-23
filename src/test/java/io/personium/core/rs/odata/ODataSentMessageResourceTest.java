@@ -130,8 +130,6 @@ public class ODataSentMessageResourceTest {
         AccessContext accessContext = PowerMockito.mock(AccessContext.class);
         doReturn("http://personium/").when(accessContext).getBaseUri();
         doReturn(accessContext).when(messageResource).getAccessContext();
-        PowerMockito.doNothing().when(oDataSentMessageResource,
-                "validateToValue", "http://personium/user001", "http://personium/");
 
         // --------------------
         // Expected result

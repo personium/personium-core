@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -558,9 +556,6 @@ public class ODataSentMessageResource extends ODataMessageResource {
         validateToAndToRelation(
                 propMap.get(SentMessage.P_TO.getName()),
                 propMap.get(SentMessage.P_TO_RELATION.getName()));
-        validateToValue(
-                propMap.get(SentMessage.P_TO.getName()),
-                getMessageResource().getAccessContext().getBaseUri());
 
         // validate properties per Type
         //   type 'message' is nothing to do
@@ -683,39 +678,6 @@ public class ODataSentMessageResource extends ODataMessageResource {
                 throw PersoniumCoreException.SentMessage.BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS.params(schema);
             }
         }
-    }
-
-    /**
-     * Toで指定されたリクエスト先がbaseUrlのホストと一致するかのチェック.
-     * @param toValue toで指定された値
-     * @param baseUrl baseUrl
-     */
-    private void validateToValue(String toValue, String baseUrl) {
-        if (toValue == null) {
-            return;
-        }
-        // リクエストURLのドメインチェック
-        String checkBaseUrl = null;
-        String[] uriList = toValue.split(",");
-        for (String uriStr : uriList) {
-            try {
-                URI uri = new URI(uriStr);
-                checkBaseUrl = uri.getScheme() + "://" + uri.getHost();
-                int port = uri.getPort();
-                if (port != -1) {
-                    checkBaseUrl += ":" + Integer.toString(port);
-                }
-                checkBaseUrl += "/";
-            } catch (URISyntaxException e) {
-                log.info(e.getMessage());
-                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(SentMessage.P_TO.getName());
-            }
-
-            if (checkBaseUrl == null || !checkBaseUrl.equals(baseUrl)) {
-                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(SentMessage.P_TO.getName());
-            }
-        }
-
     }
 
     /**
