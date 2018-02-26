@@ -16,7 +16,11 @@
  */
 package io.personium.core.rs.cell;
 
+import java.io.IOException;
 import java.io.Reader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HttpMethod;
@@ -96,13 +100,22 @@ public class CellExportResource {
         cellRsCmp.checkAccessContext(cellRsCmp.getAccessContext(), CellPrivilege.ROOT);
 
         // Reading body.
-        JSONObject body;
-        body = ResourceUtils.parseBodyAsJSON(reader);
-        String name = (String) body.get(BODY_JSON_KEY_NAME);
-        // Validate body.
-        if (name == null) {
-            throw PersoniumCoreException.Common.REQUEST_BODY_REQUIRED_KEY_MISSING.params(BODY_JSON_KEY_NAME);
+        String name = null;
+        try {
+            if (reader != null && reader.ready()) {
+                JSONObject body = ResourceUtils.parseBodyAsJSON(reader);
+                name = (String) body.get(BODY_JSON_KEY_NAME);
+            }
+        } catch (IOException e) {
+            throw PersoniumCoreException.Common.REQUEST_BODY_LOAD_FAILED.reason(e);
         }
+        if (name == null) {
+            // Default name is "{CellName}_yyyyMMdd_HHmmss".
+            SimpleDateFormat defaultNameFormat = new SimpleDateFormat("_yyyyMMdd_HHmmss");
+            defaultNameFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            name = cellRsCmp.getCell().getName() + defaultNameFormat.format(new Date());
+        }
+        // Validate body.
         if (!ODataUtils.validateRegEx(name, Common.PATTERN_SNAPSHOT_NAME)) {
             throw PersoniumCoreException.Common.REQUEST_BODY_FIELD_FORMAT_ERROR.params(
                     BODY_JSON_KEY_NAME, Common.PATTERN_SNAPSHOT_NAME);
