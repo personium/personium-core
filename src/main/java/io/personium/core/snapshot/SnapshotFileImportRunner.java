@@ -17,6 +17,8 @@
 package io.personium.core.snapshot;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -164,8 +166,23 @@ public class SnapshotFileImportRunner implements Runnable {
     private void deleteWebDAV() {
         Path webdavRootPath = Paths.get(PersoniumUnitConfig.getBlobStoreRoot(),
                 targetCell.getDataBundleName(), targetCell.getId());
+
+        // Since want to keep .pmeta file under the cell, delete only the directory.
+        FileFilter filter = new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isDirectory();
+            }
+        };
+        File[] dirList = webdavRootPath.toFile().listFiles(filter);
+
+        if (dirList == null || dirList.length == 0) {
+            return;
+        }
         try {
-            FileUtils.cleanDirectory(webdavRootPath.toFile());
+            for (File dir : dirList) {
+                FileUtils.deleteDirectory(dir);
+            }
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("delete WebDAV files").reason(e);
         }
@@ -252,12 +269,14 @@ public class SnapshotFileImportRunner implements Runnable {
                 if (BULK_REQUEST_LIMIT <= bulkRequestList.size()) {
                     accessor.bulkCreate(bulkRequestList, targetCell.getId());
                     progressInfo.addDelta(bulkRequestList.size());
+                    progressInfo.writeToCache();
                     bulkRequestList.clear();
                 }
             }
             if (!bulkRequestList.isEmpty()) {
                 accessor.bulkCreate(bulkRequestList, targetCell.getId());
                 progressInfo.addDelta(bulkRequestList.size());
+                progressInfo.writeToCache();
             }
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read data pjson from snapshot file").reason(e);

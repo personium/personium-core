@@ -23,6 +23,7 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.slf4j.Logger;
@@ -88,7 +89,7 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
         if (DavMetadataFile.DAV_META_FILE_NAME.equals(file.getFileName().toString())) {
             // Metadata file
             // It reads the setting file and decides whether to encrypt it or not.
-            Files.copy(file, path);
+            Files.copy(file, path, StandardCopyOption.REPLACE_EXISTING);
             if (PersoniumUnitConfig.isDavEncryptEnabled()) {
                 // In the case of ZipPath, toFile() can not be used, so copy it first and rewrite it.
                 DavMetadataFile metadata = DavMetadataFile.newInstance(path.toFile());
