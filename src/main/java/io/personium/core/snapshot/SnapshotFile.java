@@ -41,6 +41,9 @@ import io.personium.core.PersoniumCoreException;
  */
 public class SnapshotFile implements Closeable {
 
+    /** Replaced name of MainBox directory. */
+    public static final String MAIN_BOX_DIR_NAME = "__";
+
     /** File name : manifest. */
     private static final String MANIFEST_JSON = "00_manifest.json";
     /** Directory name : odata. */

@@ -24,6 +24,7 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.apache.commons.io.Charsets;
@@ -72,7 +73,7 @@ public class SnapshotFileExportVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         // Create directory in zip
-        Path relativePath = webdavRootDir.relativize(dir);
+        Path relativePath = replaceMainboxIdToUnderscore(webdavRootDir.relativize(dir));
         Path pathInZip = webdavRootDirInZip.resolve(relativePath.toString());
         Files.createDirectories(pathInZip);
         return FileVisitResult.CONTINUE;
@@ -83,7 +84,7 @@ public class SnapshotFileExportVisitor implements FileVisitor<Path> {
      */
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        Path relativePath = webdavRootDir.relativize(file);
+        Path relativePath = replaceMainboxIdToUnderscore(webdavRootDir.relativize(file));
         Path pathInZip = webdavRootDirInZip.resolve(relativePath.toString());
 
         if (DavMetadataFile.DAV_META_FILE_NAME.equals(file.getFileName().toString())) {
@@ -133,5 +134,19 @@ public class SnapshotFileExportVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
         return FileVisitResult.CONTINUE;
+    }
+
+    /**
+     * Replace MainBoxID(same as CellID) in Path with "__" and return it.
+     * @param path target path
+     * @return Replaced path
+     */
+    private Path replaceMainboxIdToUnderscore(Path path) {
+        Path resultPath = path;
+        if (path.startsWith(cellId)) {
+            String replace = path.toString().replaceFirst(cellId, SnapshotFile.MAIN_BOX_DIR_NAME);
+            resultPath = Paths.get(replace);
+        }
+        return resultPath;
     }
 }
