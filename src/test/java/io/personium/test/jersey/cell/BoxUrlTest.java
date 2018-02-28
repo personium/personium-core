@@ -94,7 +94,9 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1 + "/"),
+                    res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1 + "/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         }
@@ -124,9 +126,9 @@ public class BoxUrlTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(
                     UrlUtils.boxUrl(Setup.TEST_CELL1, httpUrl), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1),
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1 + "/"),
                     res.getFirstHeader(HttpHeaders.LOCATION));
-
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1 + "/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -154,8 +156,9 @@ public class BoxUrlTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(
                     UrlUtils.boxUrl(Setup.TEST_CELL1, localunitUrl), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1),
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1 + "/"),
                     res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, Setup.TEST_BOX1 + "/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         }
@@ -323,7 +326,8 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -400,7 +404,8 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -436,7 +441,8 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -482,7 +488,8 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -528,7 +535,8 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -565,7 +573,8 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -640,7 +649,8 @@ public class BoxUrlTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -679,7 +689,8 @@ public class BoxUrlTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -718,7 +729,8 @@ public class BoxUrlTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -757,7 +769,8 @@ public class BoxUrlTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -795,7 +808,8 @@ public class BoxUrlTest extends ODataCommon {
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -836,7 +850,8 @@ public class BoxUrlTest extends ODataCommon {
                     UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
 
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -1070,8 +1085,8 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -1109,8 +1124,8 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -1147,8 +1162,8 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -1186,8 +1201,8 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -1224,8 +1239,8 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -1263,8 +1278,8 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -1302,8 +1317,8 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {
@@ -1341,8 +1356,8 @@ public class BoxUrlTest extends ODataCommon {
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest"), res.getFirstHeader(HttpHeaders.LOCATION));
-
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
+            assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
         } catch (PersoniumException e) {
             fail(e.getMessage());
         } finally {

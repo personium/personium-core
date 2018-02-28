@@ -22,7 +22,9 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
+import org.json.simple.JSONObject;
 
+import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
@@ -39,6 +41,9 @@ import io.personium.core.utils.ODataUtils;
  * BoxURL取得用JAX-RS Resource.
  */
 public class BoxUrlResource {
+
+    /** Box url json key name. */
+    private static final String BOX_URL_KEY_NAME = "Url";
 
     private AccessContext accessContext = null;
     private CellRsCmp cellRsCmp;
@@ -57,6 +62,7 @@ public class BoxUrlResource {
      * @param querySchema 取得対象のBoxのスキーマURL
      * @return BoxUrlResourceオブジェクト
      */
+    @SuppressWarnings("unchecked")
     @GET
     public final Response boxUrl(@QueryParam("schema") final String querySchema) {
 
@@ -101,9 +107,15 @@ public class BoxUrlResource {
         DavRsCmp boxUrlRsCmp = new BoxUrlRsCmp(this.cellRsCmp, davCmp, this.accessContext, box);
         boxUrlRsCmp.checkAccessContext(this.accessContext, BoxPrivilege.READ);
 
+        // Response body
+        JSONObject responseBody = new JSONObject();
+        responseBody.put(BOX_URL_KEY_NAME, box.getUrl());
+
         // レスポンスを返却する
         return Response.status(HttpStatus.SC_OK)
-                .header(HttpHeaders.LOCATION, box.getCell().getUrl() + box.getName())
+                .header(PersoniumCoreUtils.HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS, HttpHeaders.LOCATION)
+                .header(HttpHeaders.LOCATION, box.getUrl())
+                .entity(responseBody.toJSONString())
                 .build();
     }
 

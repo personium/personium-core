@@ -32,17 +32,18 @@ import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.common.utils.PersoniumCoreUtils.HttpHeaders;
-import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.PersoniumCoreException;
-import io.personium.core.PersoniumReadDeleteModeManager;
-import io.personium.core.model.lock.CellLockManager;
 import com.sun.jersey.core.header.InBoundHeaders;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 import com.sun.jersey.spi.container.ContainerResponse;
 import com.sun.jersey.spi.container.ContainerResponseFilter;
+
+import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.PersoniumCoreUtils.HttpHeaders;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumReadDeleteModeManager;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.model.lock.CellLockManager;
 
 /**
  * 本アプリのリクエスト及びレスポンスに対してかけるフィルター.
@@ -208,15 +209,32 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
      */
     private void addResponseHeaders(final ContainerRequest request, final ContainerResponse response) {
         MultivaluedMap<String, Object> mm = response.getHttpHeaders();
-        String acrh = request.getHeaderValue(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
-        if (acrh != null) {
-            mm.putSingle(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, acrh);
-        } else {
-            mm.remove(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS);
-        }
-        mm.putSingle(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, HttpHeaders.Value.ASTERISK);
+
         // X-Personium-Version
         mm.putSingle(HttpHeaders.X_PERSONIUM_VERSION, PersoniumUnitConfig.getCoreVersion());
+
+        // CORS
+        if (request.getHeaderValue(HttpHeaders.ORIGIN) != null) {
+            // Access-Control-Allow-Origin
+            mm.putSingle(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, HttpHeaders.Value.ASTERISK);
+
+            // Access-Control-Allow-Headers
+            String acrh = request.getHeaderValue(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
+            if (acrh != null) {
+                mm.putSingle(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, acrh);
+            }
+
+            // Access-Control-Expose-Headers
+            String exposeValue = HttpHeaders.X_PERSONIUM_VERSION;
+            if (mm.containsKey(HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS)) {
+                StringBuilder builder = new StringBuilder();
+                builder.append(exposeValue).append(",").append(mm.get(HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS));
+                exposeValue = builder.toString();
+            }
+            mm.putSingle(HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS, exposeValue);
+        } else {
+            mm.remove(HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS);
+        }
     }
 
     /**
