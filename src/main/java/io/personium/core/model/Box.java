@@ -163,6 +163,14 @@ public class Box {
         return published;
     }
 
+    /**
+     * Get box url.
+     * @return box url
+     */
+    public String getUrl() {
+        return getCell().getUrl() + getName() + "/";
+    }
+
     // Schema information
 
     /**
