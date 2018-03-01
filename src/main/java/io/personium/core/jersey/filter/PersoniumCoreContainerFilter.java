@@ -228,7 +228,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
             String exposeValue = HttpHeaders.X_PERSONIUM_VERSION;
             if (mm.containsKey(HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS)) {
                 StringBuilder builder = new StringBuilder();
-                builder.append(exposeValue).append(",").append(mm.get(HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS));
+                builder.append(exposeValue).append(",").append(mm.getFirst(HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS));
                 exposeValue = builder.toString();
             }
             mm.putSingle(HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS, exposeValue);
