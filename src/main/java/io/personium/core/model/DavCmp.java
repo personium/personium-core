@@ -204,7 +204,7 @@ public interface DavCmp {
     boolean isEmpty();
 
     /**
-     * 配下にあるデータをすべて削除する.
+     * Delete all data under the component, including itself.
      */
     void makeEmpty();
 

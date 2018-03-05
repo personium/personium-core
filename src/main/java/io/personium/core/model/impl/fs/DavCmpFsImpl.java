@@ -988,7 +988,7 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     * Delete all data under the control, including itself.
+     * {@inheritDoc}
      */
     @Override
     public void makeEmpty() {

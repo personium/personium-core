@@ -73,7 +73,7 @@ public class BoxCmpFsImpl extends DavCmpFsImpl implements BoxCmp {
     }
 
     /**
-     * Delete all data under the control, including itself.
+     * {@inheritDoc}
      */
     @Override
     public void makeEmpty() {
@@ -96,7 +96,6 @@ public class BoxCmpFsImpl extends DavCmpFsImpl implements BoxCmp {
         doDelete();
         BoxCache.clear(getBox().getName(), getCell());
     }
-
 
     @Override
     public String getUrl() {
