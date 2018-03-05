@@ -101,8 +101,6 @@ public class CellEsImpl implements Cell {
     /** Esの検索結果出力上限. */
     private static final int TOP_NUM = PersoniumUnitConfig.getEsTopNum();
 
-    private static final int DAVFILE_DEFAULT_FETCH_COUNT = 1000;
-
     /** logger. */
     static Logger log = LoggerFactory.getLogger(CellEsImpl.class);
 
