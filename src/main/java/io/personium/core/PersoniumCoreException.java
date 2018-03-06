@@ -869,6 +869,11 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException CONFLICT_CELLACCESS = create("PR409-MC-0001");
         /**
+         * TODO Provisional.
+         * Provisional check error of cell import.
+         */
+        public static final PersoniumCoreException EXPORT_CELL_EXISTS = create("PR409-MC-0002");
+        /**
          * ヘッダの前提条件指定が満たされていないとき.
          */
         public static final PersoniumCoreException PRECONDITION_FAILED = create("PR412-MC-0001");
