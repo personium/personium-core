@@ -71,6 +71,25 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
         this.load();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void createNewMetadataFile() {
+        metaFile = DavMetadataFile.prepareNewFile(this, this.getType());
+        metaFile.setCellStatus(Cell.STATUS_NORMAL);
+        metaFile.save();
+    }
+
+    /**
+     * Cellをロックする.
+     * @return 自ノードのロック
+     */
+    @Override
+    public Lock lock() {
+        return LockManager.getLock(Lock.CATEGORY_CELL, this.cell.getId(), null, null);
+    }
+
     @Override
     void createDir() {
         try {
@@ -85,27 +104,12 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
      * {@inheritDoc}
      */
     @Override
-    void createNewMetadataFile() {
-        metaFile = DavMetadataFile.prepareNewFile(this, this.getType());
-        metaFile.setCellStatus(Cell.STATUS_NORMAL);
+    public void setCellStatusAndSave(String status) {
+        metaFile.setCellStatus(status);
         metaFile.save();
+        log.info(String.format("Changed cell status. CellName:%s, CellStatus:%s", getName(), status));
     }
 
-    @Override
-    public String getId() {
-        return this.cell.getId();
-    }
-
-    @Override
-    public String getType() {
-        return DavCmp.TYPE_CELL;
-    }
-
-
-    @Override
-    public void makeEmpty() {
-        // TODO Impl
-    }
     /**
      * checks if this cmp is Cell level.
      * @return true if Cell level
@@ -115,27 +119,26 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
         return true;
     }
 
-    /**
-     * Cellをロックする.
-     * @return 自ノードのロック
-     */
     @Override
-    public Lock lock() {
-        return LockManager.getLock(Lock.CATEGORY_CELL, this.cell.getId(), null, null);
+    public String getType() {
+        return DavCmp.TYPE_CELL;
     }
 
     @Override
-    public PersoniumCoreException getNotFoundException() {
-        return PersoniumCoreException.Dav.CELL_NOT_FOUND;
+    public String getId() {
+        return this.cell.getId();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setCellStatusAndSave(String status) {
-        metaFile.setCellStatus(status);
-        metaFile.save();
-        log.info(String.format("Changed cell status. CellName:%s, CellStatus:%s", getName(), status));
+    public void makeEmpty() {
+        doDelete();
+    }
+
+    @Override
+    public PersoniumCoreException getNotFoundException() {
+        return PersoniumCoreException.Dav.CELL_NOT_FOUND;
     }
 }

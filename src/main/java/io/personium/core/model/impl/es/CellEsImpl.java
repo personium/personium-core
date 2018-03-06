@@ -60,6 +60,7 @@ import io.personium.core.event.EventUtils;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.Cell;
+import io.personium.core.model.CellCmp;
 import io.personium.core.model.CellSnapshotCellCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
@@ -71,7 +72,6 @@ import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.file.BinaryDataAccessException;
-import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.model.impl.es.accessor.CellAccessor;
 import io.personium.core.model.impl.es.accessor.CellDataAccessor;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
@@ -98,14 +98,10 @@ public class CellEsImpl implements Cell {
     private Long published;
     private Map<String, Object> json;
 
-    /**
-     * Esの検索結果出力上限.
-     */
+    /** Esの検索結果出力上限. */
     private static final int TOP_NUM = PersoniumUnitConfig.getEsTopNum();
 
-    /**
-     * logger.
-     */
+    /** logger. */
     static Logger log = LoggerFactory.getLogger(CellEsImpl.class);
 
     /**
@@ -938,7 +934,7 @@ public class CellEsImpl implements Cell {
 
         CellLockManager.setCellStatus(this.id, CellLockManager.STATUS.BULK_DELETION);
 
-        // Cellエンティティを削除する
+        // Delete cell entity.
         CellAccessor cellAccessor = (CellAccessor) EsModel.cell();
         CellDocHandler docHandler = new CellDocHandler(cellAccessor.get(this.getId()));
         try {
@@ -949,7 +945,7 @@ public class CellEsImpl implements Cell {
             CellLockManager.setCellStatus(this.getId(), CellLockManager.STATUS.NORMAL);
         }
 
-        // Make this cell empty asynchronously
+        // Make this cell empty asynchronously.
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -976,59 +972,50 @@ public class CellEsImpl implements Cell {
         throw PersoniumCoreException.Misc.CONFLICT_CELLACCESS;
     }
 
-    private static final int DAVFILE_DEFAULT_FETCH_COUNT = 1000;
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void makeEmpty() {
-        CellAccessor cellAccessor = (CellAccessor) EsModel.cell();
         String unitUserNameWithOutPrefix = this.getDataBundleNameWithOutPrefix();
         String cellInfoLog = String.format(" CellId:[%s], CellName:[%s], CellUnitUserName:[%s]", this.getId(),
                 this.getName(), this.getDataBundleName());
-
-        // セルIDとタイプ情報をクエリに使用してWebDavファイルの管理情報一覧の件数を取得する
-        long davfileCount = cellAccessor.getDavFileTotalCount(this.getId(), unitUserNameWithOutPrefix);
-
-        // 1000件ずつ、WebDavファイルの管理情報件数まで以下を実施する
-        int fetchCount = DAVFILE_DEFAULT_FETCH_COUNT;
-        BinaryDataAccessor accessor = new BinaryDataAccessor(
-                PersoniumUnitConfig.getBlobStoreRoot(), unitUserNameWithOutPrefix,
-                PersoniumUnitConfig.getPhysicalDeleteMode(), PersoniumUnitConfig.getFsyncEnabled());
-        for (int i = 0; i <= davfileCount; i += fetchCount) {
-            // WebDavファイルのID一覧を取得する
-            List<String> davFileIdList = cellAccessor.getDavFileIdList(this.getId(), unitUserNameWithOutPrefix,
-                    fetchCount, i);
-            // BinaryDataAccessorのdeleteメソッドにて「.deleted」にリネームする
-            for (String davFileId : davFileIdList) {
-                try {
-                    accessor.delete(davFileId);
-                } catch (BinaryDataAccessException e) {
-                    // 削除に失敗した場合はログを出力して処理を続行する
-                    log.warn(String.format("Delete DavFile Failed DavFileId:[%s].", davFileId) + cellInfoLog, e);
-                }
-            }
-        }
-        log.info("DavFile Deletion End.");
-
-        // delete CellSnapshot
+        //--------------------
+        // WebDav file.
+        //--------------------
+        // Delete cell snapshot file.
         CellSnapshotCellCmp snapshotCmp = ModelFactory.cellSnapshotCellCmp(this);
         try {
-            snapshotCmp.delete(null, false);
+            snapshotCmp.delete(null, true);
         } catch (PersoniumCoreException e) {
             // If the deletion fails, output a log and continue processing.
-            log.warn(String.format("Delete CellSnapshot Failed."), e);
+            log.warn("Delete CellSnapshot Failed." + cellInfoLog, e);
         }
         log.info("CellSnapshotFile Deletion End.");
 
-        // delete EventLog file
+        // Delete event log file.
         try {
             EventUtils.deleteEventLog(this.getId(), this.getOwner());
-            log.info("EventLog Deletion End.");
         } catch (BinaryDataAccessException e) {
-            // 削除に失敗した場合はログを出力して処理を続行する
+            // If the deletion fails, output a log and continue processing.
             log.warn("Delete EventLog Failed." + cellInfoLog, e);
         }
+        log.info("EventLog Deletion End.");
 
-        // Cell配下のエンティティを削除する
+        // Delete dav file.
+        CellCmp cellCmp = ModelFactory.cellCmp(this);
+        try {
+            cellCmp.delete(null, true);
+        } catch (PersoniumCoreException e) {
+            // If the deletion fails, output a log and continue processing.
+            log.warn("Delete DavFile Failed." + cellInfoLog, e);
+        }
+        log.info("DavFile Deletion End.");
+
+        //--------------------
+        // OData.
+        //--------------------
+        // Delete all entities under the cell.
         CellDataAccessor cellDataAccessor = EsModel.cellData(unitUserNameWithOutPrefix, this.getId());
         cellDataAccessor.bulkDeleteCell();
         log.info("Cell Entity Resource Deletion End.");

@@ -17,17 +17,9 @@
 package io.personium.core.model.impl.fs;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Map;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.http.HttpStatus;
 import org.apache.wink.webdav.model.ObjectFactory;
 
-import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellSnapshotCellCmp;
@@ -66,25 +58,6 @@ public class CellSnapshotCellCmpFsImpl extends CellCmpFsImpl implements CellSnap
         metaFile = DavMetadataFile.newInstance(davPathBuilder.toString());
 
         load();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final ResponseBuilder delete(final String ifMatch, boolean recursive) {
-        // Delete child files.
-        Map<String, DavCmp> childrenMap = getChildren();
-        for (DavCmp davCmp : childrenMap.values()) {
-            davCmp.delete(ifMatch, recursive);
-        }
-        // Delete itself.
-        try {
-            FileUtils.deleteDirectory(this.fsDir);
-        } catch (IOException e) {
-            throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND.reason(e);
-        }
-        return Response.ok().status(HttpStatus.SC_NO_CONTENT);
     }
 
     /**
