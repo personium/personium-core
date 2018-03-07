@@ -187,7 +187,9 @@ public class BarFileReadRunner implements Runnable {
     private String schemaUrl; // ACL名前空間チェック用
     private BoxCmp boxCmp;
     private Map<String, DavCmp> davCmpMap;
-    private Map<String, String> davFileMap = new HashMap<String, String>();
+    private Map<String, String> davFileContentTypeMap = new HashMap<String, String>();
+    private Map<String, Element> davFileAclMap = new HashMap<String, Element>();
+    private Map<String, List<Element>> davFilePropsMap = new HashMap<String, List<Element>>();
     private long linksOutputStreamSize = Long.parseLong(PersoniumUnitConfig
             .get(PersoniumUnitConfig.BAR.BAR_USERDATA_LINKS_OUTPUT_STREAM_SIZE));
     private long bulkSize = Long.parseLong(PersoniumUnitConfig
@@ -528,7 +530,7 @@ public class BarFileReadRunner implements Runnable {
                     userDataLinks = new ArrayList<JSONMappedObject>();
                     currentPath = null;
                 }
-                int entryType = getEntryType(entryName, odataCols, webdavCols, serviceCols, this.davFileMap);
+                int entryType = getEntryType(entryName, odataCols, webdavCols, serviceCols, this.davFileContentTypeMap);
                 switch (entryType) {
                 case TYPE_ODATA_COLLECTION:
                     // ODataコレクションの登録
@@ -851,7 +853,7 @@ public class BarFileReadRunner implements Runnable {
         // Content-Typeのチェック
         String contentType = null;
         try {
-            contentType = this.davFileMap.get(entryName);
+            contentType = this.davFileContentTypeMap.get(entryName);
             RuntimeDelegate.getInstance().createHeaderDelegate(MediaType.class).fromString(contentType);
         } catch (Exception e) {
             String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2005");
@@ -869,6 +871,22 @@ public class BarFileReadRunner implements Runnable {
             writeOutputStream(true, "PL-BI-1004", entryName, message);
             return false;
         }
+
+        // ACL登録
+        Element aclElement = davFileAclMap.get(entryName);
+        if (aclElement != null) {
+            String baseUrl = uriInfo.getBaseUri().toASCIIString();
+            Element convElement =
+                    BarFileUtils.convertToRoleInstanceUrl(aclElement, baseUrl, this.cell.getName(), this.boxName);
+            StringBuffer sbAclXml = new StringBuffer();
+            sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
+            sbAclXml.append(PersoniumCoreUtils.nodeToString(convElement));
+            Reader aclXml = new StringReader(sbAclXml.toString());
+            fileCmp.acl(aclXml);
+        }
+
+        // PROPPATCH登録
+        registProppatch(fileCmp, davFilePropsMap.get(entryName), fileCmp.getUrl());
 
         return true;
     }
@@ -990,7 +1008,9 @@ public class BarFileReadRunner implements Runnable {
                             propElements);
                 } else {
                     // WebDAVファイル
-                    this.davFileMap.put(entryName, contentType);
+                    this.davFileContentTypeMap.put(entryName, contentType);
+                    this.davFileAclMap.put(entryName, aclElement);
+                    this.davFilePropsMap.put(entryName, propElements);
                 }
             }
         } catch (PersoniumCoreException e) {
