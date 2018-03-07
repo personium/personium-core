@@ -89,7 +89,10 @@ public class SnapshotFileImportVisitor implements FileVisitor<Path> {
         if (DavMetadataFile.DAV_META_FILE_NAME.equals(file.getFileName().toString())) {
             // Metadata file
             // It reads the setting file and decides whether to encrypt it or not.
-            Files.copy(file, path, StandardCopyOption.REPLACE_EXISTING);
+            Path tempPath = webdavRootDir.resolve(relativePath.toString() + ".temp");
+            Files.copy(file, tempPath);
+            // In order to perform atomic file operation, it moves after copying.
+            Files.move(tempPath, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
             if (PersoniumUnitConfig.isDavEncryptEnabled()) {
                 // In the case of ZipPath, toFile() can not be used, so copy it first and rewrite it.
                 DavMetadataFile metadata = DavMetadataFile.newInstance(path.toFile());
