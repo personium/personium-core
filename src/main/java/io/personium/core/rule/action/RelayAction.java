@@ -16,9 +16,16 @@
  */
 package io.personium.core.rule.action;
 
+import java.util.Date;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpMessage;
 import org.json.simple.JSONObject;
 
+import io.personium.common.auth.token.TransCellAccessToken;
+import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
@@ -72,6 +79,20 @@ public class RelayAction extends EngineAction {
         if (event.getSchema() != null) {
             req.addHeader("X-Personium-Box-Schema", event.getSchema());
         }
+
+        // create transcell token
+        TransCellAccessToken token = new TransCellAccessToken(
+            UUID.randomUUID().toString(),
+            new Date().getTime(),
+            TransCellAccessToken.LIFESPAN,
+            cell.getUrl(),
+            event.getSubject(),
+            getTargetCellUrl(), // targetUrl
+            getRoleList(event),
+            event.getSchema() // schema
+        );
+        String accessToken = token.toTokenString();
+        req.addHeader(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + accessToken);
     }
 
     @Override
@@ -82,5 +103,23 @@ public class RelayAction extends EngineAction {
         }
         json.put("TargetUrl", service);
     }
-}
 
+    private static final int SPLIT_NUM = 7;
+    private static final int BOXCOLSVC_SPLIT_NUM = 3;
+
+    /**
+     * Get target cell from targetUrl.
+     * @return cell url
+     */
+    protected String getTargetCellUrl() {
+        String[] parts = service.split(Pattern.quote("/"));
+        if (parts.length < SPLIT_NUM) {
+            return null;
+        }
+        String target = parts[0];
+        for (int i = 1; i < parts.length - BOXCOLSVC_SPLIT_NUM; i++) {
+            target += "/" + parts[i];
+        }
+        return target + "/";
+    }
+}

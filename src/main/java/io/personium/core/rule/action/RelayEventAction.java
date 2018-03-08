@@ -16,19 +16,6 @@
  */
 package io.personium.core.rule.action;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpMessage;
-
-import io.personium.common.auth.token.Role;
-import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
 import io.personium.core.rule.ActionInfo;
@@ -48,41 +35,6 @@ public class RelayEventAction extends RelayAction {
     }
 
     @Override
-    protected void setHeaders(HttpMessage req, PersoniumEvent event) {
-        super.setHeaders(req, event);
-
-        // create permitted role list
-        List<Role> roleList = new ArrayList<Role>();
-        String roles = event.getRoles();
-        if (roles != null) {
-            String[] parts = roles.split(",");
-            for (int i = 0; i < parts.length; i++) {
-                try {
-                    URL url = new URL(parts[i]);
-                    Role role = new Role(url);
-                    roleList.add(role);
-                } catch (MalformedURLException e) {
-                    // do nothing because of error
-                    return;
-                }
-            }
-        }
-        // create transcell token
-        TransCellAccessToken token = new TransCellAccessToken(
-            UUID.randomUUID().toString(),
-            new Date().getTime(),
-            TransCellAccessToken.LIFESPAN,
-            cell.getUrl(),
-            event.getSubject(),
-            service, // targetUrl
-            roleList,
-            event.getSchema() // schema
-        );
-        String accessToken = token.toTokenString();
-        req.addHeader(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + accessToken);
-    }
-
-    @Override
     protected String getVia(PersoniumEvent event) {
         // set X-Personium-Via header
         String via = event.getVia();
@@ -92,6 +44,11 @@ public class RelayEventAction extends RelayAction {
             via = via + "," + cell.getUrl();
         }
         return via;
+    }
+
+    @Override
+    protected String getTargetCellUrl() {
+        return service;
     }
 }
 
