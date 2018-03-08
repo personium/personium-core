@@ -16,6 +16,11 @@
  */
 package io.personium.core.rule.action;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.http.HttpMessage;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -30,6 +35,7 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.auth.token.Role;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
@@ -163,5 +169,28 @@ public abstract class EngineAction extends Action {
         return event.getVia();
     }
 
+    /**
+     * Get permitted role list from event.
+     * @param event PersoniumEvent object
+     * @return role list
+     */
+    protected List<Role> getRoleList(PersoniumEvent event) {
+        // create permitted role list
+        List<Role> roleList = new ArrayList<Role>();
+        String roles = event.getRoles();
+        if (roles != null) {
+            String[] parts = roles.split(",");
+            for (int i = 0; i < parts.length; i++) {
+                try {
+                    URL url = new URL(parts[i]);
+                    Role role = new Role(url);
+                    roleList.add(role);
+                } catch (MalformedURLException e) {
+                    // return empty list because of error
+                    return new ArrayList<Role>();
+                }
+            }
+        }
+        return roleList;
+    }
 }
-

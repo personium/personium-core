@@ -16,12 +16,19 @@
  */
 package io.personium.core.rule.action;
 
+import java.util.Date;
+import java.util.regex.Pattern;
+
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpMessage;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.personium.common.auth.token.AccountAccessToken;
+import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
@@ -126,6 +133,41 @@ public class ExecAction extends EngineAction {
         } catch (Exception e) {
             logger.error("error: " + e.getMessage(), e);
             // ignore error, continue
+        }
+
+        // Authorization header
+        String subject = event.getSubject();
+        if (subject != null) {
+            String accessToken = null;
+            if (subject.startsWith(cell.getUrl())) {
+                String[] parts = subject.split(Pattern.quote("#"));
+                if (parts.length == 2) {
+                    subject = parts[1];
+                } else {
+                    subject = null;
+                }
+                // AccountAccessToken
+                AccountAccessToken token = new AccountAccessToken(
+                    new Date().getTime(),
+                    AccountAccessToken.ACCESS_TOKEN_EXPIRES_HOUR * AccountAccessToken.MILLISECS_IN_AN_HOUR,
+                    cell.getUrl(),
+                    subject,
+                    event.getSchema()
+                );
+                accessToken = token.toTokenString();
+            } else {
+                // CellLocalAccessToken
+                CellLocalAccessToken token = new CellLocalAccessToken(
+                    new Date().getTime(),
+                    CellLocalAccessToken.ACCESS_TOKEN_EXPIRES_HOUR * CellLocalAccessToken.MILLISECS_IN_AN_HOUR,
+                    cell.getUrl(),
+                    subject,
+                    getRoleList(event),
+                    event.getSchema()
+                );
+                accessToken = token.toTokenString();
+            }
+            req.addHeader(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + accessToken);
         }
     }
 }

@@ -34,7 +34,6 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
 import io.personium.core.rule.ActionInfo;
 import io.personium.test.categories.Unit;
@@ -127,53 +126,6 @@ public class RelayActionTest {
         // Confirm result
         // --------------------
         assertNull(result);
-    }
-
-    /**
-     * Test setHeaders().
-     * Normal test.
-     */
-    @Test
-    public void setHeaders_Normal() {
-        // --------------------
-        // Test method args
-        // --------------------
-        String service = "http://personium/cell/box/col/service";
-        String cellName = "cell";
-        String unitUrl = "http://personium/";
-        String cellUrl = unitUrl + cellName + "/";
-        String requestUrl = "http://localhost:8080/personium-engine/cell/__/system/relay";
-
-        // --------------------
-        // Expected result
-        // --------------------
-        String xBaseurl = unitUrl;
-        String xRequestUri = cellUrl + "__/relay";
-        String xPersoniumBoxSchema = "http://personium/appcell/";
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Cell cell = mock(Cell.class);
-        doReturn(unitUrl).when(cell).getUnitUrl();
-        doReturn(cellUrl).when(cell).getUrl();
-
-        // --------------------
-        // Run method
-        // --------------------
-        ActionInfo ai = new ActionInfo("relay", service, null, null);
-        RelayAction action = new RelayAction(cell, ai);
-        HttpPost req = new HttpPost(requestUrl);
-        PersoniumEvent event = new PersoniumEvent(true, xPersoniumBoxSchema,
-                null, null, null, null, null, null, null, null, null);
-        action.setHeaders(req, event);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertThat(req.getLastHeader("X-Baseurl").getValue(), is(xBaseurl));
-        assertThat(req.getLastHeader("X-Request-Uri").getValue(), is(xRequestUri));
-        assertThat(req.getLastHeader("X-Personium-Box-Schema").getValue(), is(xPersoniumBoxSchema));
     }
 
     /**
@@ -323,6 +275,73 @@ public class RelayActionTest {
         // Confirm result
         // --------------------
         assertNull(json);
+    }
+
+    /**
+     * Test getTargetCellUrl().
+     * Normal test
+     */
+    @Test
+    public void getTargetCellUrl_Normal() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String service = "http://personium/path/cell/box/col/service";
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expected = "http://personium/path/cell/";
+
+        // --------------------
+        // Mock settings
+        // --------------------
+
+        // --------------------
+        // Run method
+        // --------------------
+        ActionInfo ai = new ActionInfo("relay", service, null, null);
+        RelayAction action = new RelayAction(null, ai);
+        String result = action.getTargetCellUrl();
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(result, is(expected));
+    }
+
+    /**
+     * Test getTargetCellUrl().
+     * Normal test.
+     * service is invalid.
+     */
+    @Test
+    public void getTargetCellUrl_Normal_service_is_invalid() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String service = "http://personium/box/col/service";
+
+        // --------------------
+        // Expected result
+        // --------------------
+        String expected = null;
+
+        // --------------------
+        // Mock settings
+        // --------------------
+
+        // --------------------
+        // Run method
+        // --------------------
+        ActionInfo ai = new ActionInfo("relay", service, null, null);
+        RelayAction action = new RelayAction(null, ai);
+        String result = action.getTargetCellUrl();
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(result, is(expected));
     }
 
 }
