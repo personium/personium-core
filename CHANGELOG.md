@@ -1,3 +1,18 @@
+## 1.6.6
+BUG FIXES:
+* Message API does not send to other Unit.([#37](https://github.com/personium/personium-core/issues/37))
+* Cell recursive deletion does not delete WebDAV files.([#71](https://github.com/personium/personium-core/issues/71))
+* The body check of CellExport API is incorrect.([#104](https://github.com/personium/personium-core/issues/104))
+* BAR file installation does not allow specifying ACL on file basis.([#131](https://github.com/personium/personium-core/issues/131))
+* MainBox will not be imported when importing into cell different from exported cell.([#157](https://github.com/personium/personium-core/issues/157))
+* When importing to a cell different from the exported cell, contents in the cell move.([#158](https://github.com/personium/personium-core/issues/158))
+* Accessing cell during cell import returns 500 error.([#161](https://github.com/personium/personium-core/issues/161))
+
+IMPROVEMENTS:
+* Append "/" to the end of URL returned by Box URL acquisition API.([#102](https://github.com/personium/personium-core/issues/102))
+* Box URL API does not support CORS.([#112](https://github.com/personium/personium-core/issues/112))
+* Let RelayAction, ExecAction be triggered with appropriate access tokens.([#169](https://github.com/personium/personium-core/issues/169))
+
 ## 1.6.5
 IMPROVEMENTS:
 * Change matching of EventInfo to forward match.([#149](https://github.com/personium/personium-core/issues/149))
