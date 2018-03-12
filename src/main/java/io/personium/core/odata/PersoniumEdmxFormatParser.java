@@ -550,7 +550,9 @@ public class PersoniumEdmxFormatParser extends EdmxFormatParser {
         String fixedLength = getAttributeValueIfExists(event.asStartElement(), "FixedLength");
         String collectionKindS = getAttributeValueIfExists(event.asStartElement(), "CollectionKind");
         CollectionKind ckind = CollectionKind.NONE;
-        if (null != collectionKindS) {
+        // Issue #84. Allow setting of "None".
+        // For compatibility, leave "NONE" as it is.
+        if (collectionKindS != null && !"None".equals(collectionKindS)) {
             ckind = Enum.valueOf(CollectionKind.class, collectionKindS);
         }
         String defaultValue = getAttributeValueIfExists(event.asStartElement(), "DefaultValue");
