@@ -271,7 +271,7 @@ public class TokenEndPointResource {
         }
 
         // When processing is normally completed, issue a token.
-        return this.issueToken(target, owner, schema, account, host);
+        return this.issueToken(target, owner, host, schema, account);
     }
 
     /**
