@@ -232,7 +232,7 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
                     // rule.add
                     //   Name, Action required
                     //   Action: relay or relay.event or exec -> TargetUrl required
-                    //   Schema: exists -> EventObject: personium-localbox:/xxx
+                    //   Schema: exists -> EventObject: personium-localbox:/xxx or personium-localcell:/__xxx
                     //                  -> Action: exec -> TargetUrl: personium-localbox:/xxx
                     //   Schema: null   -> EventObject: personium-localcell:/xxx
                     //                  -> Action: exec -> TargetUrl: personium-localcell:/xxx
@@ -257,7 +257,9 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
                     String object = requestObjectMap.get(Rule.P_OBJECT.getName());
                     String targetUrl = requestObjectMap.get(RequestObject.P_TARGET_URL.getName());
                     if (schema != null) {
-                        if (object != null && !ODataUtils.isValidLocalBoxUrl(object)) {
+                        if (object != null && !ODataUtils.isValidLocalBoxUrl(object)
+                                && !(ODataUtils.isValidLocalCellUrl(object)
+                                        && object.startsWith(UriUtils.SCHEME_LOCALCELL + ":/__"))) {
                             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                     concatRequestObjectPropertyName(Rule.P_OBJECT.getName()));
                         }

@@ -128,7 +128,7 @@ public class SnapshotFileExportRunner implements Runnable {
             // Create new metadata file
             createMetaFile();
             // Post event to EventBus.
-            String object = UriUtils.SCHEME_LOCALCELL + ":/";
+            String object = UriUtils.SCHEME_LOCALCELL + ":/__export";
             String info = "";
             String type = PersoniumEventType.Category.CELL
                     + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.EXPORT;

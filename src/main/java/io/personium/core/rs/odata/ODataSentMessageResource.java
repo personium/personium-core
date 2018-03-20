@@ -591,7 +591,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
                     //   Name pattern id
                     //   Action required
                     //   Action: relay or relay.event or exec -> TargetUrl required
-                    //   BoxBound: true  -> EventObject: personium-localbox:/xxx
+                    //   BoxBound: true  -> EventObject: personium-localbox:/xxx or personium-localcell:/__xxx
                     //                   -> Action: exec -> TargetUrl: personium-localbox:/xxx
                     //   BoxBound: false -> EventObject: personium-localcell:/xxx
                     //                   -> Action: exec -> TargetUrl: personium-localcell:/xxx
@@ -617,7 +617,9 @@ public class ODataSentMessageResource extends ODataMessageResource {
                     String targetUrl = requestObjectMap.get(RequestObject.P_TARGET_URL.getName());
                     if (boxBound.booleanValue()) {
                         log.debug("validate: boxBound is true");
-                        if (object != null && !ODataUtils.isValidLocalBoxUrl(object)) {
+                        if (object != null && !ODataUtils.isValidLocalBoxUrl(object)
+                                && !(ODataUtils.isValidLocalCellUrl(object)
+                                        && object.startsWith(UriUtils.SCHEME_LOCALCELL + ":/__"))) {
                             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                     concatRequestObjectPropertyName(Rule.P_OBJECT.getName()));
                         }
