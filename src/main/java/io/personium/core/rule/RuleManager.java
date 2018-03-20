@@ -735,9 +735,8 @@ public class RuleManager {
         RuleInfo rule = createRuleInfo(oEntity);
 
         // Replace personium-localunit scheme to http scheme.
-        if (rule.service != null && rule.service.startsWith(LOCALUNIT)) {
-            rule.service = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), rule.service);
-        }
+        rule.subject = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), rule.subject);
+        rule.service = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), rule.service);
 
         if (rule.action == null) {
             return false;
@@ -763,8 +762,7 @@ public class RuleManager {
                         bi.id = box.getId();
                         bi.name = box.getName();
                         String schema = box.getSchema();
-                        schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
-                        bi.schema = schema;
+                        bi.schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
                         bi.count = 0;
                         bmap.put(bi.id, bi);
                     }
