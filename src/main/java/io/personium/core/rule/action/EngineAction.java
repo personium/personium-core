@@ -18,8 +18,12 @@ package io.personium.core.rule.action;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpMessage;
 import org.apache.http.HttpResponse;
@@ -27,7 +31,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 
 import org.json.simple.JSONObject;
@@ -93,10 +96,11 @@ public abstract class EngineAction extends Action {
         // add specific events to payload in derrived class
         addEvents(json);
 
-        req.setEntity(new StringEntity(json.toString(), ContentType.create("application/json")));
+        req.setEntity(new StringEntity(json.toString(), StandardCharsets.UTF_8.toString()));
 
         // set headers
-        //  X-Personium-RequestKey, X-Personium-EventId, X-Personium-RuleChain, X-Personium-Via
+        //  Content-Type, X-Personium-RequestKey, X-Personium-EventId, X-Personium-RuleChain, X-Personium-Via
+        req.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         if (event.getRequestKey() != null) {
             req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, event.getRequestKey());
         }
