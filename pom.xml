@@ -36,12 +36,12 @@
 		<dependency>
 			<groupId>io.personium</groupId>
 			<artifactId>personium-plugin-base</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>io.personium</groupId>
 			<artifactId>personium-plugins</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>io.personium</groupId>
