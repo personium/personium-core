@@ -196,7 +196,7 @@ public class TokenEndPointResource {
         } else {
             // Call Auth Plugins
             return this.callAuthPlugins(grantType, idToken, target, pOwner,
-                    schema, username, host);
+                    schema, host);
         }
     }
 
@@ -212,8 +212,7 @@ public class TokenEndPointResource {
      * @return Response
      */
     private Response callAuthPlugins(String grantType, String idToken,
-            String target, String owner, String schema, String username,
-            String host) {
+            String target, String owner, String schema, String host) {
         // Plugin manager.
         PluginManager pm = PersoniumCoreApplication.getPluginManager();
         // Search target plugin.
