@@ -1,3 +1,13 @@
+## 1.6.7
+BUG FIXES:
+* Authority of the token acquired by Google account authentication is incorrect.([#173](https://github.com/personium/personium-core/issues/173))
+* Some item's value of event are garbled when action 'exec', 'relay' or 'relay.event' is executed.([#175](https://github.com/personium/personium-core/issues/175))
+
+IMPROVEMENTS:
+* Unify the values of CollectionKind.([#84](https://github.com/personium/personium-core/issues/84))
+* Can't set personium-localcell:/__ctl/Role to EventObject on rule with _Box.Name.([#177](https://github.com/personium/personium-core/issues/177))
+* Convert personium-localunit scheme to https scheme on EventSubject.([#179](https://github.com/personium/personium-core/issues/179))
+
 ## 1.6.6
 BUG FIXES:
 * Message API does not send to other Unit.([#37](https://github.com/personium/personium-core/issues/37))
