@@ -248,8 +248,11 @@ public final class CellCtlResource extends ODataResource {
 
             // boxname: not null
             if (boxname != null) {
-                // external: false -> object: personium-localbox:/xxx
-                if (!external && object != null && !ODataUtils.isValidLocalBoxUrl(object)) {
+                // external: false -> object: personium-localbox:/xxx or personium-localcell:/__xxx
+                if (!external && object != null
+                        && !ODataUtils.isValidLocalBoxUrl(object)
+                        && !(ODataUtils.isValidLocalCellUrl(object)
+                                && object.startsWith(UriUtils.SCHEME_LOCALCELL + ":/__"))) {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_OBJECT.getName());
                 }
                 // action: exec -> service: personium-localbox:/xxx

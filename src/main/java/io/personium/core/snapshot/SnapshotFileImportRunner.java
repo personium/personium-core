@@ -116,7 +116,7 @@ public class SnapshotFileImportRunner implements Runnable {
             // Delete error file.
             deleteErrorFile();
             // Post event to EventBus.
-            String object = UriUtils.SCHEME_LOCALCELL + ":/";
+            String object = UriUtils.SCHEME_LOCALCELL + ":/__import";
             String info = "";
             String type = PersoniumEventType.Category.CELL
                     + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.IMPORT;
