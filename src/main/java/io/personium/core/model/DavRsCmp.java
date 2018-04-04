@@ -259,24 +259,7 @@ public class DavRsCmp {
             throw PersoniumCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
         }
 
-        String reqUri = this.getUrl();
-        // take away trailing slash
-        if (reqUri.endsWith("/")) {
-            reqUri = reqUri.substring(0, reqUri.length() - 1);
-        }
-
-        // URL esacaping if the resource name is multibyte
-        int resourcePos = reqUri.lastIndexOf("/");
-        if (resourcePos != -1) {
-            String resourceName = reqUri.substring(resourcePos + 1);
-            try {
-                resourceName = URLEncoder.encode(resourceName, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                log.debug("UnsupportedEncodingException");
-            }
-            String collectionUrl = reqUri.substring(0, resourcePos);
-            reqUri = collectionUrl + "/" + resourceName;
-        }
+        String reqUri = getEsacapingUrl();
 
         // The actural processing
         final Multistatus ms = this.of.createMultistatus();
@@ -481,6 +464,31 @@ public class DavRsCmp {
         return false;
     }
 
+    /**
+     * URL esacaping if the resource name is multibyte.
+     * @return Escaping URL
+     */
+    protected String getEsacapingUrl() {
+        String reqUri = this.getUrl();
+        // take away trailing slash
+        if (reqUri.endsWith("/")) {
+            reqUri = reqUri.substring(0, reqUri.length() - 1);
+        }
+
+        // URL esacaping if the resource name is multibyte
+        int resourcePos = reqUri.lastIndexOf("/");
+        if (resourcePos != -1) {
+            String resourceName = reqUri.substring(resourcePos + 1);
+            try {
+                resourceName = URLEncoder.encode(resourceName, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                log.debug("UnsupportedEncodingException");
+            }
+            String collectionUrl = reqUri.substring(0, resourcePos);
+            reqUri = collectionUrl + "/" + resourceName;
+        }
+        return reqUri;
+    }
 
     static final org.apache.wink.webdav.model.Response createDavResponse(final String pathName,
             final String href,

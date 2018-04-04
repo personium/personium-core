@@ -16,6 +16,12 @@
  */
 package io.personium.core.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.wink.webdav.model.Multistatus;
+
 import io.personium.core.auth.AccessContext;
 
 
@@ -73,5 +79,39 @@ public class BoxRsCmp extends DavRsCmp {
      */
     public AccessContext getAccessContext() {
         return this.accessContext;
+    }
+
+    /**
+     * Get rootprops xml object.
+     * @return Multistatus xml object
+     */
+    public Multistatus getRootProps() {
+        String requestUrl = getEsacapingUrl();
+        // The actural processing
+        final Multistatus ms = this.of.createMultistatus();
+        List<org.apache.wink.webdav.model.Response> responseList = ms.getResponse();
+        responseList.addAll(createPropfindResponseList(pathName, requestUrl, this.davCmp));
+        return ms;
+    }
+
+    /**
+     * Create propfind response list.<p>
+     * Called recursively, including children.<p>
+     * It is the same as calling propfind method with depth=Infinity.
+     * @param pathName WebDav object name
+     * @param href href of propfind response
+     * @param dCmp DavCmp
+     * @return Propfind response list
+     */
+    private List<org.apache.wink.webdav.model.Response> createPropfindResponseList(
+            String pathName, String href, DavCmp dCmp) {
+        List<org.apache.wink.webdav.model.Response> resList = new ArrayList<org.apache.wink.webdav.model.Response>();
+        resList.add(createDavResponse(pathName, href, dCmp, null, true));
+        Map<String, DavCmp> childrenMap = dCmp.getChildren();
+        for (String childName : childrenMap.keySet()) {
+            DavCmp child = childrenMap.get(childName);
+            resList.addAll(createPropfindResponseList(childName, href + "/" + childName, child));
+        }
+        return resList;
     }
 }
