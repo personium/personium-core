@@ -19,6 +19,7 @@ package io.personium.core.bar;
 import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.commons.io.Charsets;
 import org.apache.wink.webdav.model.Multistatus;
@@ -119,6 +121,20 @@ public class BarFile implements Closeable {
             Files.createDirectory(pathInZip);
         } catch (IOException e) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add dir to bar file").reason(e);
+        }
+    }
+
+    /**
+     * Create file in contents dir.
+     * @param relativePath Target file path under the contents dir
+     * @param dataStream Data stream to write to the file
+     */
+    public void createFileInContentsDir(Path relativePath, StreamingOutput dataStream) {
+        Path pathInZip = pathMap.get(CONTENTS_DIR).resolve(relativePath.toString());
+        try (OutputStream os = Files.newOutputStream(pathInZip)) {
+            dataStream.write(os);
+        } catch (IOException e) {
+            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add file to bar file").reason(e);
         }
     }
 
