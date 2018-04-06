@@ -180,7 +180,9 @@ public class SnapshotFileManager {
             // If there is a cell with the same id in unit except for target cell, an error.
             EntitySetAccessor esCells = EsModel.cell();
             PersoniumGetResponse resp = esCells.get(cellId);
-            if (resp.exists()) {
+            // get(cellId) may return null.
+            // Ref:lib-es-adapter EsTypeImpl#get()
+            if (resp != null && resp.exists()) {
                 throw PersoniumCoreException.Misc.EXPORT_CELL_EXISTS;
             }
         } catch (IOException e) {
