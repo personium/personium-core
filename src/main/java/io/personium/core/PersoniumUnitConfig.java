@@ -330,8 +330,8 @@ public class PersoniumUnitConfig {
         /** ユーザデータの一括登録件数のプロパティキー. */
         public static final String BAR_USERDATA_BULK_SIZE = KEY_ROOT + "bar.userdata.bulkSize";
 
-        /** barファイルやログ詳細の格納用ルートディレクトリ. */
-        public static final String BAR_INSTALLFILE_DIR = KEY_ROOT + "bar.installfile.dir";
+        /** Temporary storage directory for bar files. */
+        public static final String BAR_TMP_DIR = KEY_ROOT + "bar.tmp.dir";
 
         /** memcachedに格納するbarインストール処理状況の有効期限（秒). */
         public static final String BAR_PROGRESS_EXPIRE_IN_SEC = KEY_ROOT + "bar.progress.expireInSec";
@@ -936,6 +936,22 @@ public class PersoniumUnitConfig {
      */
     public static String getESRetryInterval() {
         return get(ES.RETRY_INTERVAL);
+    }
+
+    /**
+     * Get temp dir path for barinstall.
+     * @return temp dir path
+     */
+    public static String getBarInstallTempDir() {
+        return get(BAR.BAR_TMP_DIR) + "/install";
+    }
+
+    /**
+     * Get temp dir path for barexport.
+     * @return temp dir path
+     */
+    public static String getBarExportTempDir() {
+        return get(BAR.BAR_TMP_DIR) + "/export";
     }
 
     /**

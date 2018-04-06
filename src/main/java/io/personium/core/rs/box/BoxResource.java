@@ -33,6 +33,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -52,6 +53,8 @@ import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.CellPrivilege;
+import io.personium.core.bar.BarFile;
+import io.personium.core.bar.BarFileExporter;
 import io.personium.core.bar.BarFileInstaller;
 import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
@@ -61,7 +64,6 @@ import io.personium.core.model.BoxCmp;
 import io.personium.core.model.BoxRsCmp;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellRsCmp;
-import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.progress.Progress;
 import io.personium.core.model.progress.ProgressInfo;
@@ -76,13 +78,16 @@ import io.personium.core.utils.UriUtils;
  */
 public class BoxResource {
     static Logger log = LoggerFactory.getLogger(BoxResource.class);
-    String boxName;
 
+    /** Media-Type:personium bar file. */
+    private static final MediaType MEDIATYPE_PERSONIUM_BAR = MediaType.valueOf(BarFile.CONTENT_TYPE);
+
+    String boxName;
     Cell cell;
     Box box;
     AccessContext accessContext;
     BoxRsCmp boxRsCmp;
-    DavRsCmp cellRsCmp; // for box Install
+    CellRsCmp cellRsCmp; // for box Install
 
     /**
      * Constructor.
@@ -160,13 +165,39 @@ public class BoxResource {
     }
 
     /**
-     * GET リクエストの処理 .
+     * Process GET method.
+     * @param httpHeaders Headers
      * @return JAX-RS Response
      */
     @GET
-    public Response get() {
+    public Response get(@Context HttpHeaders httpHeaders) {
+        if (httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_BAR)) {
+            return getBarFile();
+        } else {
+            return getMetadata();
+        }
+    }
 
-        // アクセス制御
+    /**
+     * Get bar file and response it.
+     * @return JAX-RS Response
+     */
+    private Response getBarFile() {
+        // Access control.
+        boxRsCmp.checkAccessContext(boxRsCmp.getAccessContext(), BoxPrivilege.READ);
+        boxRsCmp.checkAccessContext(boxRsCmp.getAccessContext(), BoxPrivilege.READ_ACL);
+
+        BarFileExporter exporter = new BarFileExporter(boxRsCmp);
+        // Execute export.
+        return exporter.export();
+    }
+
+    /**
+     * Get box metadata and response it.
+     * @return JAX-RS Response
+     */
+    private Response getMetadata() {
+        // Access control.
         this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.READ);
 
         // キャッシュからboxインストールの非同期処理状況を取得する。
@@ -187,7 +218,7 @@ public class BoxResource {
             throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
         }
 
-        // キャッシュから取得できたが、boxインストールの処理状況ではない場合
+        // Could get cache but not box install cache.
         JSONObject barInfo = (JSONObject) jsonObj.get("barInfo");
         if (barInfo == null) {
             log.info("cache(" + key + "): process" + (String) jsonObj.get("process"));
@@ -195,7 +226,7 @@ public class BoxResource {
             return Response.ok().entity(response.toJSONString()).build();
         }
 
-        // boxインストールの処理状況に合わせてレスポンスを作成する。
+        // Create response.
         JSONObject response = createResponse(barInfo);
         return Response.ok().entity(response.toJSONString()).build();
     }

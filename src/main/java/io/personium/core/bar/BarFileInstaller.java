@@ -46,8 +46,8 @@ import org.odata4j.producer.QueryInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.bar.jackson.JSONManifest;
@@ -75,7 +75,7 @@ public class BarFileInstaller {
     private ODataEntityResource oDataEntityResource;
     private UriInfo uriInfo;
 
-    private String barTempDir = PersoniumUnitConfig.get(PersoniumUnitConfig.BAR.BAR_INSTALLFILE_DIR);
+    private String barTempDir = PersoniumUnitConfig.getBarInstallTempDir();
 
     private JSONObject manifestJson;
 
