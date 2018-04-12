@@ -163,7 +163,8 @@ public class BarFileExporter {
      */
     private void addContentsRecurcive(BarFile barFile, Path path, DavCmp davCmp) {
         String type = davCmp.getType();
-        if (DavCmp.TYPE_COL_WEBDAV.equals(type)) {
+        if (DavCmp.TYPE_COL_WEBDAV.equals(type)
+                || DavCmp.TYPE_COL_SVC.equals(type)) {
             // Create directory.
             barFile.createDirectoryInContentsDir(path);
             Map<String, DavCmp> childrenMap = davCmp.getChildren();
@@ -181,6 +182,12 @@ public class BarFileExporter {
             EdmxFormatWriter.write(dataEdmDataSearvices, writer);
             // Write metadata xml.
             barFile.writeMetadataXml(path, writer.toString());
+        } else if (DavCmp.TYPE_DAV_FILE.equals(type)) {
+            // Get file data.
+            Response response = davCmp.get(null).build();
+            StreamingOutput stream = (StreamingOutput) response.getEntity();
+            // Create file in zip.
+            barFile.createFileInContentsDir(path, stream);
         }
     }
 }
