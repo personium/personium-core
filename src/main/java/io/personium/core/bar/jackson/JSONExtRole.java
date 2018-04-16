@@ -16,13 +16,14 @@
  */
 package io.personium.core.bar.jackson;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.simple.JSONObject;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * barファイル内のExtRole定義用JSONファイル読み込み用Mapping定義クラス.
  */
-public class JSONExtRoles implements JSONMappedObject {
+public class JSONExtRole implements JSONMappedObject {
 
     /**
      * ExtRole.

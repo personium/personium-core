@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.wink.webdav.model.Multistatus;
 
 import io.personium.core.auth.AccessContext;
+import io.personium.core.utils.UriUtils;
 
 
 /**
@@ -86,11 +87,12 @@ public class BoxRsCmp extends DavRsCmp {
      * @return Multistatus xml object
      */
     public Multistatus getRootProps() {
-        String requestUrl = getEsacapingUrl();
+        String url = getEsacapingUrl();
+        String localBoxUrl = UriUtils.convertSchemeFromHttpToLocalBox(url, url);
         // The actural processing
         final Multistatus ms = this.of.createMultistatus();
         List<org.apache.wink.webdav.model.Response> responseList = ms.getResponse();
-        responseList.addAll(createPropfindResponseList(pathName, requestUrl, this.davCmp));
+        responseList.addAll(createPropfindResponseList(pathName, localBoxUrl, this.davCmp));
         return ms;
     }
 
@@ -110,7 +112,10 @@ public class BoxRsCmp extends DavRsCmp {
         Map<String, DavCmp> childrenMap = dCmp.getChildren();
         for (String childName : childrenMap.keySet()) {
             DavCmp child = childrenMap.get(childName);
-            resList.addAll(createPropfindResponseList(childName, href + "/" + childName, child));
+            if (!href.endsWith("/")) {
+                href += "/";
+            }
+            resList.addAll(createPropfindResponseList(childName, href + childName, child));
         }
         return resList;
     }

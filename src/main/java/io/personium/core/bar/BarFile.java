@@ -98,6 +98,58 @@ public class BarFile implements Closeable {
     }
 
     /**
+     * Write to manifest json.
+     * @param data Data to write
+     */
+    public void writeManifestJson(String data) {
+        Path pathInZip = pathMap.get(MANIFEST_JSON);
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+            writer.write(data);
+        } catch (IOException e) {
+            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add manifest json to bar file").reason(e);
+        }
+    }
+
+    /**
+     * Write to relations json.
+     * @param data Data to write
+     */
+    public void writeRelationsJson(String data) {
+        Path pathInZip = pathMap.get(RELATIONS_JSON);
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+            writer.write(data);
+        } catch (IOException e) {
+            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add relations json to bar file").reason(e);
+        }
+    }
+
+    /**
+     * Write to roles json.
+     * @param data Data to write
+     */
+    public void writeRolesJson(String data) {
+        Path pathInZip = pathMap.get(ROLES_JSON);
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+            writer.write(data);
+        } catch (IOException e) {
+            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add roles json to bar file").reason(e);
+        }
+    }
+
+    /**
+     * Write to rules json.
+     * @param data Data to write
+     */
+    public void writeRulesJson(String data) {
+        Path pathInZip = pathMap.get(RULES_JSON);
+        try (BufferedWriter writer = Files.newBufferedWriter(pathInZip, Charsets.UTF_8)) {
+            writer.write(data);
+        } catch (IOException e) {
+            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add roles json to bar file").reason(e);
+        }
+    }
+
+    /**
      * Write to rootprops xml.
      * @param multistatus multistatus xml data
      */
@@ -220,6 +272,7 @@ public class BarFile implements Closeable {
     private Map<String, Path> createItemPathInZip(FileSystem fs) {
         Map<String, Path> map = new HashMap<>();
         map.put(BAR_DIR, fs.getPath(BAR_DIR));
+
         map.put(META_DIR, fs.getPath(BAR_DIR, META_DIR));
         map.put(MANIFEST_JSON, fs.getPath(BAR_DIR, META_DIR, MANIFEST_JSON));
         map.put(RELATIONS_JSON, fs.getPath(BAR_DIR, META_DIR, RELATIONS_JSON));
