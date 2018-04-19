@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,18 @@
  */
 package io.personium.core.bar.jackson;
 
-import org.json.simple.JSONObject;
+import java.util.List;
+
+import org.odata4j.core.OEntity;
 
 /**
- * Mappingされたオブジェクトの共通インタフェース.
+ * Interface that handles JSON of CellCtl objects in bar installation.
  */
-public interface JSONMappedObject {
+public interface IJSONMappedObjects {
 
     /**
-     * JSONオブジェクトを返す.
-     * @return JSONObject
+     * Add CellCtlObject to the list.
+     * @param entities OEntity response.
      */
-    JSONObject getJson();
+    void addObjects(List<OEntity> entities);
 }

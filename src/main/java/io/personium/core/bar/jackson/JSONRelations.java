@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,41 +16,53 @@
  */
 package io.personium.core.bar.jackson;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.json.simple.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.odata4j.core.OEntity;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * barファイル内のRelation定義用JSONファイル読み込み用Mapping定義クラス.
+ * Jackson correspondence class for handling relations.json.
  */
-public class JSONRelations implements JSONMappedObject {
+public class JSONRelations implements IJSONMappedObjects {
+
+    /** JsonProperty:Relations. */
+    @JsonProperty("Relations")
+    private List<JSONRelation> relations;
 
     /**
-     * Name.
+     * Constructor.
      */
-    @JsonProperty("Name")
-    private String name;
-
-    /**
-     * Nameプロパティの取得.
-     * @return Name
-     */
-    public String getName() {
-        return this.name;
+    public JSONRelations() {
+        relations = new ArrayList<JSONRelation>();
     }
 
     /**
-     * Nameプロパティの設定.
-     * @param name Name.
+     * Get value of Relations.
+     * @return value of Relations
      */
-    public void setName(String name) {
-        this.name = name;
+    public List<JSONRelation> getRelations() {
+        return relations;
     }
 
+    /**
+     * Set value of Relations.
+     * @param relations relations
+     */
+    public void setRelations(List<JSONRelation> relations) {
+        this.relations = relations;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    @SuppressWarnings("unchecked")
-    public JSONObject getJson() {
-        JSONObject json = new JSONObject();
-        json.put("Name", this.name);
-        return json;
+    public void addObjects(List<OEntity> entities) {
+        for (OEntity entity : entities) {
+            JSONRelation object = JSONRelation.newInstance(entity);
+            relations.add(object);
+        }
     }
 }

@@ -53,13 +53,6 @@ import org.apache.wink.webdav.model.Propertyupdate;
 import org.apache.wink.webdav.model.Propstat;
 import org.apache.wink.webdav.model.Resourcetype;
 import org.apache.wink.webdav.model.Response;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.exc.UnrecognizedPropertyException;
 import org.json.simple.JSONObject;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityId;
@@ -82,18 +75,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.bar.jackson.JSONExtRoles;
+import io.personium.core.bar.jackson.JSONExtRole;
 import io.personium.core.bar.jackson.JSONLinks;
 import io.personium.core.bar.jackson.JSONManifest;
 import io.personium.core.bar.jackson.JSONMappedObject;
-import io.personium.core.bar.jackson.JSONRelations;
-import io.personium.core.bar.jackson.JSONRoles;
-import io.personium.core.bar.jackson.JSONRules;
+import io.personium.core.bar.jackson.JSONRelation;
+import io.personium.core.bar.jackson.JSONRole;
+import io.personium.core.bar.jackson.JSONRule;
 import io.personium.core.bar.jackson.JSONUserDataLinks;
 import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
@@ -1506,7 +1507,7 @@ public class BarFileReadRunner implements Runnable {
     protected JSONMappedObject barFileJsonValidate(
             JsonParser jp, ObjectMapper mapper, String jsonName) throws IOException {
         if (jsonName.equals(EXTROLE_JSON)) {
-            JSONExtRoles extRoles = mapper.readValue(jp, JSONExtRoles.class);
+            JSONExtRole extRoles = mapper.readValue(jp, JSONExtRole.class);
             if (extRoles.getExtRole() == null) {
                 throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
@@ -1515,13 +1516,13 @@ public class BarFileReadRunner implements Runnable {
             }
             return extRoles;
         } else if (jsonName.equals(ROLE_JSON)) {
-            JSONRoles roles = mapper.readValue(jp, JSONRoles.class);
+            JSONRole roles = mapper.readValue(jp, JSONRole.class);
             if (roles.getName() == null) {
                 throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
             return roles;
         } else if (jsonName.equals(RELATION_JSON)) {
-            JSONRelations relations = mapper.readValue(jp, JSONRelations.class);
+            JSONRelation relations = mapper.readValue(jp, JSONRelation.class);
             if (relations.getName() == null) {
                 throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }
@@ -1535,7 +1536,7 @@ public class BarFileReadRunner implements Runnable {
             userDataLinksJsonValidate(jsonName, links);
             return links;
         } else if (jsonName.equals(RULE_JSON)) {
-            JSONRules rules = mapper.readValue(jp, JSONRules.class);
+            JSONRule rules = mapper.readValue(jp, JSONRule.class);
             if (rules.getAction() == null) { //TODO 他には？
                 throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
             }

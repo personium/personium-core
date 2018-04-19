@@ -18,8 +18,9 @@ package io.personium.core.bar.jackson;
 
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.simple.JSONObject;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * barファイル内の$links定義用JSONファイル(70_$links_json)読み込み用Mapping定義クラス.

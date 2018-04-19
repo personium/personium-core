@@ -16,39 +16,51 @@
  */
 package io.personium.core.bar.jackson;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.simple.JSONObject;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.personium.core.utils.ODataUtils;
 
 /**
- * barファイル内のmanifest.json読み込み用Mapping定義クラス.
+ * Mapping class for reading 00_manifest.json.
  */
 public class JSONManifest implements JSONMappedObject {
 
-    /**
-     * bar_version.
-     */
+    /** bar_version. */
     @JsonProperty("bar_version")
     private String barVersion;
-
-    /**
-     * box_version.
-     */
+    /** box_version. */
     @JsonProperty("box_version")
     private String boxVersion;
-
-    /**
-     * DefaultPath.
-     */
+    /** DefaultPath. */
     @JsonProperty("DefaultPath")
     private String defaultPath;
-
-    /**
-     * schema.
-     */
+    /** schema. */
     @JsonProperty("schema")
     private String schema;
+
+    /**
+     * Default constructor.
+     * If this method does not exist, it will fail with deserialization of Json.
+     */
+    public JSONManifest() {
+    }
+
+    /**
+     * Constructor.
+     * @param barVersion bar_version
+     * @param boxVersion box_version
+     * @param defaultPath DefaultPath
+     * @param schema schema
+     */
+    public JSONManifest(String barVersion, String boxVersion, String defaultPath, String schema) {
+        this.barVersion = barVersion;
+        this.boxVersion = boxVersion;
+        this.defaultPath = defaultPath;
+        this.schema = schema;
+    }
 
     /**
      * bar_versionプロパティの取得.
@@ -129,6 +141,7 @@ public class JSONManifest implements JSONMappedObject {
     }
 
     @Override
+    @JsonIgnore
     @SuppressWarnings("unchecked")
     public JSONObject getJson() {
         JSONObject json = new JSONObject();

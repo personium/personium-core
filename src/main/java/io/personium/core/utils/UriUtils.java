@@ -103,6 +103,20 @@ public class UriUtils {
     }
 
     /**
+     * Convert scheme from http to LocalUnit.
+     * Convert only if the target URL matches UnitURL.
+     * @param unitUrl UnitURL
+     * @param url Target URL
+     * @return Url with LocalUnit scheme
+     */
+    public static String convertSchemeFromHttpToLocalUnit(String unitUrl, String url) {
+        if (url != null && url.startsWith(unitUrl)) {
+            return url.replace(unitUrl, SCHEME_UNIT_URI);
+        }
+        return url;
+    }
+
+    /**
      * Convert scheme from LocalCell to http.
      * @param cellUrl String
      * @param localCellUrl String
@@ -142,6 +156,20 @@ public class UriUtils {
     }
 
     /**
+     * Convert scheme from http to LocalBox.
+     * Convert only if the target URL matches BoxURL.
+     * @param boxUrl boxURL
+     * @param url Target URL
+     * @return Url with LocalBox scheme
+     */
+    public static String convertSchemeFromHttpToLocalBox(String boxUrl, String url) {
+        if (url != null && url.startsWith(boxUrl)) {
+            return url.replaceFirst(boxUrl, UriUtils.SCHEME_LOCALBOX + ":/");
+        }
+        return url;
+    }
+
+    /**
      * Convert scheme from LocalBox to LocalCell.
      * @param boxUrl String
      * @param boxName String
@@ -164,20 +192,6 @@ public class UriUtils {
         String retUrl = String.format("%s:/%s/%s", SCHEME_LOCALCELL, boxName, parts[1]);
 
         return retUrl;
-    }
-
-    /**
-     * Convert scheme from http to LocalUnit.
-     * Convert only if the target URL matches UnitURL.
-     * @param unitUrl UnitURL
-     * @param url Target URL
-     * @return Url with LocalUnit scheme
-     */
-    public static String convertSchemeFromHttpToLocalUnit(String unitUrl, String url) {
-        if (url != null && url.startsWith(unitUrl)) {
-            return url.replace(unitUrl, SCHEME_UNIT_URI);
-        }
-        return url;
     }
 
     /**
