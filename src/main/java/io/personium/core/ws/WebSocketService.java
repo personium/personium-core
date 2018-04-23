@@ -191,6 +191,7 @@ public class WebSocketService {
      * @param text received message
      * @param session sender session
      */
+    @SuppressWarnings("unchecked")
     @OnMessage
     public void onMessage(String text, Session session) {
         Map<String, Object> userProperties = session.getUserProperties();
@@ -260,6 +261,7 @@ public class WebSocketService {
      * @param session
      * @param receivedAccessToken
      */
+    @SuppressWarnings("unchecked")
     private void onReceiveAccessToken(Session session, String receivedAccessToken) {
         Map<String, Object> userProperties = session.getUserProperties();
         String cellId = (String) userProperties.get(KEY_PROPERTIES_CELL_ID);
@@ -286,6 +288,7 @@ public class WebSocketService {
      * @param session
      * @param subscribeInfo
      */
+    @SuppressWarnings("unchecked")
     private void onReceiveSubscribe(Session session, JSONObject subscribeInfo) {
         log.debug("ws: set " + KEY_JSON_SUBSCRIBE + ": " + subscribeInfo);
         Map<String, Object> userProperties = session.getUserProperties();
@@ -318,6 +321,7 @@ public class WebSocketService {
      * @param session
      * @param unsubscribeInfo
      */
+    @SuppressWarnings("unchecked")
     private void onReceiveUnsubscribe(Session session, JSONObject unsubscribeInfo) {
         log.debug("ws: " + KEY_JSON_UNSUBSCRIBE + ": " + unsubscribeInfo);
         Map<String, Object> userProperties = session.getUserProperties();
@@ -359,6 +363,7 @@ public class WebSocketService {
      * @param session
      * @param state
      */
+    @SuppressWarnings("unchecked")
     private void onReceiveState(Session session, String state, Date authorizedDate) {
         log.debug("ws: " + KEY_JSON_STATE + ": " + state);
         Map<String, Object> userProperties = session.getUserProperties();
@@ -447,6 +452,7 @@ public class WebSocketService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private JSONObject createResultJSONObject() {
         JSONObject result = new JSONObject();
         long timestamp = new Date().getTime();
@@ -610,6 +616,7 @@ public class WebSocketService {
      * @param event
      * @return
      */
+    @SuppressWarnings("unchecked")
     private static JSONObject toJSON(PersoniumEvent event) {
         JSONObject json = new JSONObject();
         json.put("RequestKey", event.getRequestKey());
@@ -635,10 +642,20 @@ public class WebSocketService {
      */
     private static boolean isExistMatchedRule(Session session, PersoniumEvent event) {
         boolean result = false;
-        List<RuleInfo> ruleList = (List) session.getUserProperties().get(KEY_PROPERTIES_RULES);
+        List<?> ruleList = null;
+        Object o = session.getUserProperties().get(KEY_PROPERTIES_RULES);
+        if (o instanceof List<?>) {
+            ruleList = (List<?>) o;
+        }
 
         if (ruleList != null && ruleList.size() > 0) {
-            for (RuleInfo rule : ruleList) {
+            for (Object item : ruleList) {
+                RuleInfo rule;
+                if (item instanceof RuleInfo) {
+                    rule = (RuleInfo) item;
+                } else {
+                    continue;
+                }
                 if (rule.type != null
                         && event.getType() != null
                         && (event.getType().startsWith(rule.type) || rule.type.equals("*"))

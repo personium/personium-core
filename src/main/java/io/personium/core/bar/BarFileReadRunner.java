@@ -752,7 +752,7 @@ public class BarFileReadRunner implements Runnable {
             // エラーが発生していた場合はエラーのレスポンスを返却する
             if (request.getValue().getError() != null) {
                 if (request.getValue().getError() instanceof PersoniumCoreException) {
-                    PersoniumCoreException e = ((PersoniumCoreException) request.getValue().getError());
+                    PersoniumCoreException e = (PersoniumCoreException) request.getValue().getError();
                     writeOutputStream(true, "PL-BI-1004", fileNameMap.get(request.getKey()), e.getMessage());
                     log.info("PersoniumCoreException: " + e.getMessage());
                 } else {
@@ -1192,7 +1192,7 @@ public class BarFileReadRunner implements Runnable {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory f = new JsonFactory();
         try {
-            jp = f.createJsonParser(inputStream);
+            jp = f.createParser(inputStream);
             JsonToken token = jp.nextToken(); // JSONルート要素（"{"）
             Pattern formatPattern = Pattern.compile(".*/+(.*)");
             Matcher formatMatcher = formatPattern.matcher(entryName);
@@ -1248,7 +1248,7 @@ public class BarFileReadRunner implements Runnable {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory f = new JsonFactory();
         try {
-            jp = f.createJsonParser(inputStream);
+            jp = f.createParser(inputStream);
             JsonToken token = jp.nextToken(); // JSONルート要素（"{"）
 
             if (token == JsonToken.START_OBJECT) {
