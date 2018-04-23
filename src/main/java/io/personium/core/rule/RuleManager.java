@@ -25,6 +25,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 
@@ -43,9 +45,10 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumThread;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.event.EventFactory;
+import io.personium.core.event.EventPublisher;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.PersoniumEventType;
-import io.personium.core.event.EventPublisher;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.Cell;
@@ -90,56 +93,32 @@ public class RuleManager {
     }
 
     /** EventType definition for rule event. */
-    private static final String RULEEVENT_RULE_CREATE =
-            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-    private static final String RULEEVENT_RULE_UPDATE =
-            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.UPDATE;
-    private static final String RULEEVENT_RULE_MERGE =
-            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.MERGE;
-    private static final String RULEEVENT_RULE_DELETE =
-            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-    private static final String RULEEVENT_RULE_LINK_BOX_CREATE =
-            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LINK
-            + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-    private static final String RULEEVENT_RULE_LINK_BOX_DELETE =
-            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LINK
-            + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-    private static final String RULEEVENT_BOX_LINK_RULE_CREATE =
-            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LINK
-            + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-    private static final String RULEEVENT_BOX_LINK_RULE_DELETE =
-            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LINK
-            + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-    private static final String RULEEVENT_RULE_NAVPROP_BOX_CREATE =
-            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.NAVPROP
-            + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-    private static final String RULEEVENT_BOX_NAVPROP_RULE_CREATE =
-            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.NAVPROP
-            + PersoniumEventType.SEPALATOR + Rule.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-    private static final String RULEEVENT_BOX_UPDATE =
-            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.UPDATE;
-    private static final String RULEEVENT_BOX_MERGE =
-            PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR + Box.EDM_TYPE_NAME
-            + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.MERGE;
-    private static final String RULEEVENT_CELL_IMPORT =
-            PersoniumEventType.Category.CELL + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.IMPORT;
+    private static final String RULEEVENT_RULE_CREATE = PersoniumEventType.cellctl(
+            Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+    private static final String RULEEVENT_RULE_UPDATE = PersoniumEventType.cellctl(
+            Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.UPDATE);
+    private static final String RULEEVENT_RULE_MERGE = PersoniumEventType.cellctl(
+            Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.MERGE);
+    private static final String RULEEVENT_RULE_DELETE = PersoniumEventType.cellctl(
+            Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.DELETE);
+    private static final String RULEEVENT_RULE_LINK_BOX_CREATE = PersoniumEventType.cellctlLink(
+            Rule.EDM_TYPE_NAME, Box.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+    private static final String RULEEVENT_RULE_LINK_BOX_DELETE = PersoniumEventType.cellctlLink(
+            Rule.EDM_TYPE_NAME, Box.EDM_TYPE_NAME, PersoniumEventType.Operation.DELETE);
+    private static final String RULEEVENT_BOX_LINK_RULE_CREATE = PersoniumEventType.cellctlLink(
+            Box.EDM_TYPE_NAME, Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+    private static final String RULEEVENT_BOX_LINK_RULE_DELETE = PersoniumEventType.cellctlLink(
+            Box.EDM_TYPE_NAME, Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.DELETE);
+    private static final String RULEEVENT_RULE_NAVPROP_BOX_CREATE = PersoniumEventType.cellctlNavProp(
+            Rule.EDM_TYPE_NAME, Box.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+    private static final String RULEEVENT_BOX_NAVPROP_RULE_CREATE = PersoniumEventType.cellctlNavProp(
+            Box.EDM_TYPE_NAME, Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+    private static final String RULEEVENT_BOX_UPDATE = PersoniumEventType.cellctl(
+            Box.EDM_TYPE_NAME, PersoniumEventType.Operation.UPDATE);
+    private static final String RULEEVENT_BOX_MERGE = PersoniumEventType.cellctl(
+            Box.EDM_TYPE_NAME, PersoniumEventType.Operation.MERGE);
+    private static final String RULEEVENT_CELL_IMPORT = PersoniumEventType.cell(
+            PersoniumEventType.Operation.IMPORT);
 
     static final String LOCALUNIT = UriUtils.SCHEME_LOCALUNIT + ":";
     static final String LOCALCELL = UriUtils.SCHEME_LOCALCELL + ":";
@@ -151,12 +130,11 @@ public class RuleManager {
     private Logger logger;
 
     private Object lockObj;
-
-    private static final int EVENTRECEIVER_NUM = 2;
-    private static final int RULEEVENTSUBSCRIBER_NUM = 1;
-    private static final int THREAD_NUMBER = EVENTRECEIVER_NUM + RULEEVENTSUBSCRIBER_NUM;
+    private Object boxLockObj;
 
     private ExecutorService pool;
+
+    private EventPublisher ruleEventPublisher;
 
     /**
      * Constructor.
@@ -166,6 +144,7 @@ public class RuleManager {
         boxes = new HashMap<>();
         logger = LoggerFactory.getLogger(RuleManager.class);
         lockObj = new Object();
+        boxLockObj = new Object();
     }
 
     /**
@@ -188,19 +167,23 @@ public class RuleManager {
         load();
 
         // Create ThreadPool.
-        pool = Executors.newFixedThreadPool(THREAD_NUMBER);
-        // Execute receiver for processing rule.
-        for (int i = 0; i < EVENTRECEIVER_NUM; i++) {
-            pool.execute(new EventReceiver());
-        }
-        // Execute receiver for managing rule.
-        pool.execute(new RuleEventSubscriber());
+        final ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
+        builder.setNameFormat("ruleevent-subscriber-%d");
+        pool = Executors.newFixedThreadPool(1, builder.build());
+        // Execute subscriber for managing rule.
+        pool.execute(new RuleEventSubscribeRunner());
+
+        // init EventPublisher
+        ruleEventPublisher = EventFactory.createEventPublisher(PersoniumUnitConfig.getEventBusRuleTopicName());
     }
 
     /**
-     * Finalize RuleManager.
+     * Shutdown RuleManager.
      */
-    public void finalize() {
+    public void shutdown() {
+        // close EventPublisher
+        ruleEventPublisher.close();
+
         // Shutdown thread pool.
         try {
             pool.shutdown();
@@ -210,6 +193,8 @@ public class RuleManager {
         } catch (InterruptedException e) {
             pool.shutdownNow();
         }
+
+        instance = null;
     }
 
     /**
@@ -274,14 +259,16 @@ public class RuleManager {
                                 if (service.startsWith(LOCALCELL)) {
                                     service = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), service);
                                 } else if (service.startsWith(LOCALBOX)) {
-                                    String boxName = getBoxName(rule);
-                                    if (boxName != null) {
-                                        service = service.replace(LOCALBOX, cell.getUrl() + rule.box.name);
-                                    } else {
-                                        logger.error(
-                                                "ignore the Rule(%s) because _Box.Name is null.",
-                                                rule.name);
-                                        continue;
+                                    synchronized (boxLockObj) {
+                                        String boxName = getBoxName(rule);
+                                        if (boxName != null) {
+                                            service = service.replace(LOCALBOX, cell.getUrl() + boxName);
+                                        } else {
+                                            logger.error(
+                                                    "ignore the Rule(%s) because _Box.Name is null.",
+                                                    rule.name);
+                                            continue;
+                                        }
                                     }
                                 }
                             }
@@ -294,10 +281,8 @@ public class RuleManager {
         }
 
         // convert object's scheme to http scheme
-        String object = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), event.getObject());
-        if (object != null) {
-            event.setObject(object);
-        }
+        event.convertObject(cell.getUrl());
+
         // execute action
         for (ActionInfo ai : actionList) {
             ActionRunner runner = new ActionRunner(cell, ai, event);
@@ -305,15 +290,13 @@ public class RuleManager {
         }
 
         // publish event
+        event.convertToPublish();
         publish(event);
 
         CellLockManager.decrementReferenceCount(cell.getId());
     }
 
     private void publish(PersoniumEvent event) {
-        // publish all event
-        EventPublisher.send(event);
-
         // publish event about rule
         String type = event.getType();
         if (!event.getExternal()
@@ -330,7 +313,7 @@ public class RuleManager {
                 || RULEEVENT_BOX_UPDATE.equals(type)
                 || RULEEVENT_BOX_MERGE.equals(type)
                 || RULEEVENT_CELL_IMPORT.equals(type))) {
-            EventPublisher.sendRuleEvent(event);
+            ruleEventPublisher.send(event);
         }
     }
 
@@ -344,13 +327,6 @@ public class RuleManager {
     private String getBoxSchema(RuleInfo rule) {
         if (rule.box != null) {
             return rule.box.schema;
-        }
-        return null;
-    }
-
-    private String getBoxId(RuleInfo rule) {
-        if (rule.box != null) {
-            return rule.box.id;
         }
         return null;
     }
@@ -378,9 +354,11 @@ public class RuleManager {
         }
 
         // compare schema
-        String schema = getBoxSchema(rule);
-        if (schema != null && !schema.equals(event.getSchema())) {
-            return false;
+        synchronized (boxLockObj) {
+            String schema = getBoxSchema(rule);
+            if (schema != null && !schema.equals(event.getSchema())) {
+                return false;
+            }
         }
 
         // compare subject
@@ -390,12 +368,14 @@ public class RuleManager {
 
         // compare object
         String object = rule.object;
-        String boxName = getBoxName(rule);
         if (object != null) {
-            if (object.startsWith(LOCALBOX)) {
-                // replace personium-localbox to personium-localcell
-                object = UriUtils.convertSchemeFromLocalBoxToLocalCell(object, boxName);
-                logger.debug(rule.object + " -> " + object);
+            synchronized (boxLockObj) {
+                String boxName = getBoxName(rule);
+                if (object.startsWith(LOCALBOX)) {
+                    // replace personium-localbox to personium-localcell
+                    object = UriUtils.convertSchemeFromLocalBoxToLocalCell(object, boxName);
+                    logger.debug(rule.object + " -> " + object);
+                }
             }
             if (event.getObject() == null) {
                 return false;
@@ -670,18 +650,7 @@ public class RuleManager {
                 String boxName = getComplexKeyValue(boxKey, Rule.P_NAME.getName());
                 Box box = cell.getBoxForName(boxName);
                 if (box != null) {
-                    synchronized (lockObj) {
-                        Map<String, BoxInfo> bmap = boxes.get(cell.getId());
-                        if (bmap != null) {
-                            BoxInfo bi = bmap.get(box.getId());
-                            if (bi != null) {
-                                bi.name = box.getName();
-                                String schema = box.getSchema();
-                                schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
-                                bi.schema = schema;
-                            }
-                        }
-                    }
+                    setBoxInfo(cell, box);
                 }
                 ret = true;
             } else if (RULEEVENT_CELL_IMPORT.equals(type)) {
@@ -699,6 +668,34 @@ public class RuleManager {
         return ret;
     }
 
+    private void setBoxInfo(Cell cell, Box box) {
+        synchronized (boxLockObj) {
+            Map<String, BoxInfo> bmap = boxes.get(cell.getId());
+            if (bmap != null) {
+                BoxInfo bi = bmap.get(box.getId());
+                if (bi != null) {
+                    bi.name = box.getName();
+                    String schema = box.getSchema();
+                    schema = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), schema);
+                    bi.schema = schema;
+                }
+            }
+        }
+    }
+
+    String getSchemaForBoxId(String cellId, String boxId) {
+        synchronized (boxLockObj) {
+            Map<String, BoxInfo> bmap = boxes.get(cellId);
+            if (bmap != null) {
+                BoxInfo bi = bmap.get(boxId);
+                if (bi != null && bi.schema != null) {
+                    return new String(bi.schema);
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Get key string for HashMap from ruleName and box's id.
      * @param ruleName the name of rule
@@ -706,11 +703,12 @@ public class RuleManager {
      * @return key string for HashMap
      */
     private String getRuleKey(String ruleName, String boxId) {
-        String ret = ruleName;
+        StringBuilder builder = new StringBuilder(ruleName);
         if (boxId != null) {
-            ret += "." + boxId;
+            builder.append('.');
+            builder.append(boxId);
         }
-        return ret;
+        return builder.toString();
     }
 
     /**
@@ -720,7 +718,9 @@ public class RuleManager {
     private void deleteRule(String cellId) {
         synchronized (lockObj) {
             rules.remove(cellId);
-            boxes.remove(cellId);
+            synchronized (boxLockObj) {
+                boxes.remove(cellId);
+            }
         }
     }
 
@@ -744,11 +744,13 @@ public class RuleManager {
 
         String cellId = cell.getId();
 
+        String boxId = null;
+
         // Register box as necessary.
         if (rule.boxname != null) {
             Box box = cell.getBoxForName(rule.boxname);
             if (box != null) {
-                synchronized (lockObj) {
+                synchronized (boxLockObj) {
                     Map<String, BoxInfo> bmap = boxes.get(cellId);
                     BoxInfo bi = null;
                     if (bmap == null) {
@@ -768,13 +770,13 @@ public class RuleManager {
                     }
                     bi.count++;
                     rule.box = bi;
+                    boxId = bi.id;
                 }
             } else {
                 return false;
             }
         }
 
-        String boxId = getBoxId(rule);
         String keyString = getRuleKey(rule.name, boxId);
 
         // Register rule.
@@ -817,10 +819,12 @@ public class RuleManager {
                 RuleInfo rule = map.remove(key);
                 if (rule != null) {
                     if (rule.box != null) {
-                        rule.box.count--;
-                        if (rule.box.count == 0) {
-                            Map<String, BoxInfo> bmap = boxes.get(cell.getId());
-                            bmap.remove(rule.box.id);
+                        synchronized (boxLockObj) {
+                            rule.box.count--;
+                            if (rule.box.count == 0) {
+                                Map<String, BoxInfo> bmap = boxes.get(cell.getId());
+                                bmap.remove(rule.box.id);
+                            }
                         }
                         rule.box = null;
                     }
@@ -866,14 +870,16 @@ public class RuleManager {
                     jsonRuleArray.add(json);
                 }
             }
-            Map<String, BoxInfo> mapBox = boxes.get(cellId);
-            if (mapBox != null) {
-                for (BoxInfo bi : mapBox.values()) {
-                    JSONObject json = new JSONObject();
-                    json.put(Common.P_NAME.getName(), bi.name);
-                    json.put(Box.P_SCHEMA.getName(), bi.schema);
-                    json.put("id", bi.id);
-                    jsonBoxArray.add(json);
+            synchronized (boxLockObj) {
+                Map<String, BoxInfo> mapBox = boxes.get(cellId);
+                if (mapBox != null) {
+                    for (BoxInfo bi : mapBox.values()) {
+                        JSONObject json = new JSONObject();
+                        json.put(Common.P_NAME.getName(), bi.name);
+                        json.put(Box.P_SCHEMA.getName(), bi.schema);
+                        json.put("id", bi.id);
+                        jsonBoxArray.add(json);
+                    }
                 }
             }
         }

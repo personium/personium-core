@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,43 +17,40 @@
 package io.personium.test.jersey;
 
 import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
+import org.apache.http.ssl.SSLContextBuilder;
 
 /**
  * HttpClientの実装を切り替えてNewする.
  */
-public class HttpClientFactory extends DefaultHttpClient {
+public class HttpClientFactory {
     /** HTTP通信のタイプ. */
     public static final String TYPE_DEFAULT = "default";
     /** HTTP通信のタイプ. */
     public static final String TYPE_INSECURE = "insecure";
 
-    /** PORT SSL. */
-    private static final int PORTHTTPS = 443;
-    /** PORT HTTP. */
-    private static final int PORTHTTP = 80;
     /** 接続タイムアウト値. */
     private static final int TIMEOUT = 75000; // 20000;
+
+    /** Constructor. */
+    private HttpClientFactory() {
+    }
 
     /**
      * HTTPClientオブジェクトを作成.
@@ -62,77 +59,57 @@ public class HttpClientFactory extends DefaultHttpClient {
      * @return 作成したHttpClientクラスインスタンス
      */
     public static HttpClient create(final String type, final int connectionTimeout) {
-        if (TYPE_DEFAULT.equalsIgnoreCase(type)) {
-            return new DefaultHttpClient();
-        }
-
-        SSLSocketFactory sf = null;
-        try {
-            if (TYPE_INSECURE.equalsIgnoreCase(type)) {
-                sf = createInsecureSSLSocketFactory();
-            }
-        } catch (Exception e) {
-            return null;
-        }
-
-        SchemeRegistry schemeRegistry = new SchemeRegistry();
-        schemeRegistry.register(new Scheme("https", PORTHTTPS, sf));
-        schemeRegistry.register(new Scheme("http", PORTHTTP, PlainSocketFactory.getSocketFactory()));
-        HttpParams params = new BasicHttpParams();
-        ClientConnectionManager cm = new SingleClientConnManager(schemeRegistry);
-        // ClientConnectionManager cm = new
-        // ThreadSafeClientConnManager(schemeRegistry);
-        HttpClient hc = new DefaultHttpClient(cm, params);
-
-        HttpParams params2 = hc.getParams();
         int timeout = TIMEOUT;
         if (connectionTimeout != 0) {
             timeout = connectionTimeout;
         }
-        HttpConnectionParams.setConnectionTimeout(params2, timeout); // 接続のタイムアウト
-        HttpConnectionParams.setSoTimeout(params2, timeout); // データ取得のタイムアウト
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(timeout)
+                .setSocketTimeout(timeout)
+                .setRedirectsEnabled(false)
+                .build();
+
+        if (TYPE_DEFAULT.equalsIgnoreCase(type)) {
+            return HttpClientBuilder.create()
+                    .setDefaultRequestConfig(config)
+                    .build();
+        } else if (!TYPE_INSECURE.equalsIgnoreCase(type)) {
+            return null;
+        }
+
+        SSLConnectionSocketFactory sf = null;
+        try {
+            sf = createInsecureSSLConnectionSocketFactory();
+        } catch (Exception e) {
+            return null;
+        }
+
+        Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("https", sf)
+                .register("http", PlainConnectionSocketFactory.INSTANCE)
+                .build();
+        HttpClientConnectionManager cm = new BasicHttpClientConnectionManager(registry);
+
+        HttpClient hc = HttpClientBuilder.create()
+                .setDefaultRequestConfig(config)
+                .setConnectionManager(cm)
+                .build();
+
         return hc;
     }
 
     /**
-     * SSLSocketを生成.
-     * @return 生成したSSLSocket
+     * SSLConnectionSocketFactoryを生成.
+     * @return 生成したSSLConnectionSocketFactory
      */
-    private static SSLSocketFactory createInsecureSSLSocketFactory() {
-        // CHECKSTYLE:OFF
-        SSLContext sslContext = null;
-        try {
-            sslContext = SSLContext.getInstance("SSL");
-        } catch (NoSuchAlgorithmException e1) {
-            throw new RuntimeException(e1);
-        }
+    private static SSLConnectionSocketFactory createInsecureSSLConnectionSocketFactory()
+            throws KeyManagementException, KeyStoreException, NoSuchAlgorithmException {
+        SSLContext sslContext = SSLContextBuilder.create()
+                .loadTrustMaterial(TrustSelfSignedStrategy.INSTANCE)
+                .build();
 
-        try {
-            sslContext.init(null, new TrustManager[] {new X509TrustManager() {
-                public X509Certificate[] getAcceptedIssuers() {
-                    // System.out.println("getAcceptedIssuers =============");
-                    X509Certificate[] ret = new X509Certificate[0];
-                    return ret;
-                }
-
-                public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
-                    // System.out.println("checkClientTrusted =============");
-                }
-
-                public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
-                    // System.out.println("checkServerTrusted =============");
-                }
-            } }, new SecureRandom());
-        } catch (KeyManagementException e1) {
-            throw new RuntimeException(e1);
-        }
-        // CHECKSTYLE:ON
-
-        HostnameVerifier hostnameVerifier = org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
-        SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext, (X509HostnameVerifier) hostnameVerifier);
-        // socketFactory.setHostnameVerifier((X509HostnameVerifier)
-        // hostnameVerifier);
-
-        return socketFactory;
+        return new SSLConnectionSocketFactory(
+                sslContext,
+                NoopHostnameVerifier.INSTANCE);
     }
 }

@@ -98,48 +98,7 @@ public class RuleManagerTest {
         // --------------------
         RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = rman.new RuleInfo();
-        PersoniumEvent event = new PersoniumEvent();
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Logger logger = PowerMockito.mock(Logger.class);
-        PowerMockito.doNothing().when(logger).info(anyString());
-        PowerMockito.doNothing().when(logger).error(anyString());
-        PowerMockito.doNothing().when(logger).debug(anyString());
-
-        // --------------------
-        // Run method
-        // --------------------
-        Field field = RuleManager.class.getDeclaredField("logger");
-        field.setAccessible(true);
-        field.set(rman, logger);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertThat(result, is(false));
-    }
-
-    /**
-     * Test match().
-     * Normal test.
-     * external of event is null.
-     * @throws Exception exception occurred in some errors
-     */
-    @Test
-    public void match_Normal_external_of_event_is_null() throws Exception {
-        // --------------------
-        // Test method args
-        // --------------------
-        RuleManager rman = PowerMockito.mock(RuleManager.class);
-        RuleManager.RuleInfo ri = rman.new RuleInfo();
-        ri.external = Boolean.FALSE;
-        PersoniumEvent event = new PersoniumEvent(null,
-            null, null, null, null, null, null, null, null, null, null);
+        PersoniumEvent event = new PersoniumEvent.Builder().build();
 
         // --------------------
         // Mock settings
@@ -179,9 +138,18 @@ public class RuleManagerTest {
         RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.FALSE;
-        PersoniumEvent event = new PersoniumEvent(Boolean.FALSE,
-                "schema string", "subject", "type", "object", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .schema("schema string")
+                .subject("subject")
+                .type("type")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -197,6 +165,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -221,9 +193,19 @@ public class RuleManagerTest {
         RuleManager rman = PowerMockito.mock(RuleManager.class);
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
-        PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "schema", "subject", "type", "object", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("schema")
+                .subject("subject")
+                .type("type")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -239,6 +221,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -266,9 +252,19 @@ public class RuleManagerTest {
         bi.schema = "http://personium/appCell/";
         ri.external = Boolean.TRUE;
         ri.box = bi;
-        PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/appCell/", "subject", "type", "object", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("http://personium/appCell/")
+                .subject("subject")
+                .type("type")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -284,6 +280,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -311,9 +311,19 @@ public class RuleManagerTest {
         bi.schema = "http://personium/";
         ri.external = Boolean.TRUE;
         ri.box = bi;
-        PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/appCell/", "subject", "type", "object", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("http://personium/appCell/")
+                .subject("subject")
+                .type("type")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -329,6 +339,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -354,9 +368,19 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.subject = "http://personium/dummyCell/#account";
         ri.external = Boolean.TRUE;
-        PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/", "http://personium/dummyCell/#account", "type", "object", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("http://personium/dummyCell/")
+                .subject("http://personium/dummyCell/#account")
+                .type("type")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -372,6 +396,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -397,9 +425,19 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.subject = "http://personium/dummyCell/";
         ri.external = Boolean.TRUE;
-        PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/appCell/", "http://personium/dummyCell/#account", "type", "object", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("http://personium/appCell/")
+                .subject("http://personium/dummyCell/#account")
+                .type("type")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -415,6 +453,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -439,9 +481,19 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         ri.type = "cellctl.Rule.create";
-        PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("http://personium/dummyCell/")
+                .subject("subject")
+                .type("cellctl.Rule.create")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -457,6 +509,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -482,9 +538,19 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         ri.type = "cellctl.Rule";
-        PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("http://personium/dummyCell/")
+                .subject("subject")
+                .type("cellctl.Rule.create")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -500,6 +566,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -525,9 +595,19 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         ri.type = "cellctl.Rule.create.some";
-        PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("http://personium/dummyCell/")
+                .subject("subject")
+                .type("cellctl.Rule.create")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -543,6 +623,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -568,10 +652,19 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         ri.object = "personium-localcell:/__ctl/Role";
-        PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/", "subject",
-                "cellctl.Role.create", "personium-localcell:/__ctl/Role", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("http://personium/dummyCell/")
+                .subject("subject")
+                .type("cellctl.Role.create")
+                .object("personium-localcell:/__ctl/Role")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -587,6 +680,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -616,10 +713,18 @@ public class RuleManagerTest {
         ri.external = Boolean.FALSE;
         ri.object = "personium-localbox:/col/entity";
         ri.box = bi;
-        PersoniumEvent event = new PersoniumEvent(Boolean.FALSE,
-                "http://personium/appCell/", "subject", "odata.create",
-                "personium-localcell:/box/col/entity", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .schema("http://personium/appCell/")
+                .subject("subject")
+                .type("odata.create")
+                .object("personium-localcell:/box/col/entity")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -638,6 +743,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -663,10 +772,18 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.FALSE;
         ri.object = "personium-localcell:/__ctl";
-        PersoniumEvent event = new PersoniumEvent(Boolean.FALSE,
-                "http://personium/appCell/", "subject", "cellctl.Rule.create",
-                "personium-localcell:/__ctl/Rule", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .schema("http://personium/appCell/")
+                .subject("subject")
+                .type("cellctl.Rule.create")
+                .object("personium-localcell:/__ctl/Rule")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -682,6 +799,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -707,10 +828,18 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.FALSE;
         ri.object = "personium-localcell:/__ctl/Role";
-        PersoniumEvent event = new PersoniumEvent(Boolean.FALSE,
-                "http://personium/appCell/", "subject", "cellctl.Rule.create",
-                "personium-localcell:/__ctl/Rule", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .schema("http://personium/appCell/")
+                .subject("subject")
+                .type("cellctl.Rule.create")
+                .object("personium-localcell:/__ctl/Rule")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -726,6 +855,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -751,9 +884,19 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         ri.info = "info";
-        PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("http://personium/dummyCell/")
+                .subject("subject")
+                .type("cellctl.Rule.create")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -769,6 +912,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -794,9 +941,19 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         ri.info = "info";
-        PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "information",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("http://personium/dummyCell/")
+                .subject("subject")
+                .type("cellctl.Rule.create")
+                .object("object")
+                .info("information")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -812,6 +969,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -837,9 +998,19 @@ public class RuleManagerTest {
         RuleManager.RuleInfo ri = rman.new RuleInfo();
         ri.external = Boolean.TRUE;
         ri.info = "information";
-        PersoniumEvent event = new PersoniumEvent(Boolean.TRUE,
-                "http://personium/dummyCell/", "subject", "cellctl.Rule.create", "object", "info",
-                "requestKey", "eventid", "rulechain", "via", "roles");
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("http://personium/dummyCell/")
+                .subject("subject")
+                .type("cellctl.Rule.create")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
 
         // --------------------
         // Mock settings
@@ -855,6 +1026,10 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
         Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
         match.setAccessible(true);
         boolean result = (boolean) match.invoke(rman, ri, event);
@@ -876,8 +1051,11 @@ public class RuleManagerTest {
         // Test method args
         // --------------------
         RuleManager rman = PowerMockito.mock(RuleManager.class);
-        PersoniumEvent event = new PersoniumEvent(
-                "cellctl.Rule.create", "personium-localcell:/__ctl/Rule", "200", null);
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .type("cellctl.Rule.create")
+                .object("personium-localcell:/__ctl/Rule")
+                .info("200")
+                .build();
 
         // --------------------
         // Mock settings
@@ -886,9 +1064,8 @@ public class RuleManagerTest {
         PowerMockito.doNothing().when(logger).info(anyString());
         PowerMockito.doNothing().when(logger).error(anyString());
         PowerMockito.doNothing().when(logger).debug(anyString());
-        PowerMockito.spy(EventPublisher.class);
-        PowerMockito.doNothing().when(EventPublisher.class, "send", event);
-        PowerMockito.doNothing().when(EventPublisher.class, "sendRuleEvent", event);
+        EventPublisher publisher = PowerMockito.mock(EventPublisher.class);
+        PowerMockito.doNothing().when(publisher).send(event);
 
         // --------------------
         // Run method
@@ -896,6 +1073,9 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Field fieldRuleEventPublisher = RuleManager.class.getDeclaredField("ruleEventPublisher");
+        fieldRuleEventPublisher.setAccessible(true);
+        fieldRuleEventPublisher.set(rman, publisher);
         Method publish = RuleManager.class.getDeclaredMethod("publish", PersoniumEvent.class);
         publish.setAccessible(true);
         publish.invoke(rman, event);
@@ -903,8 +1083,8 @@ public class RuleManagerTest {
         // --------------------
         // Confirm result
         // --------------------
-        PowerMockito.verifyStatic(Mockito.times(1));
-        EventPublisher.sendRuleEvent(event);
+        PowerMockito.verifyStatic(Mockito.times(2));
+        publisher.send(event);
     }
 
     /**
@@ -919,8 +1099,11 @@ public class RuleManagerTest {
         // Test method args
         // --------------------
         RuleManager rman = PowerMockito.mock(RuleManager.class);
-        PersoniumEvent event = new PersoniumEvent(
-                "cellctl.Role.create", "personium-localcell:/__ctl/Role", "200", null);
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .type("cellctl.Role.create")
+                .object("personium-localcell:/__ctl/Role")
+                .info("200")
+                .build();
 
         // --------------------
         // Mock settings
@@ -929,9 +1112,8 @@ public class RuleManagerTest {
         PowerMockito.doNothing().when(logger).info(anyString());
         PowerMockito.doNothing().when(logger).error(anyString());
         PowerMockito.doNothing().when(logger).debug(anyString());
-        PowerMockito.spy(EventPublisher.class);
-        PowerMockito.doNothing().when(EventPublisher.class, "send", event);
-        PowerMockito.doNothing().when(EventPublisher.class, "sendRuleEvent", event);
+        EventPublisher publisher = PowerMockito.mock(EventPublisher.class);
+        PowerMockito.doNothing().when(publisher).send(event);
 
         // --------------------
         // Run method
@@ -939,6 +1121,9 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Field fieldRuleEventPublisher = RuleManager.class.getDeclaredField("ruleEventPublisher");
+        fieldRuleEventPublisher.setAccessible(true);
+        fieldRuleEventPublisher.set(rman, publisher);
         Method publish = RuleManager.class.getDeclaredMethod("publish", PersoniumEvent.class);
         publish.setAccessible(true);
         publish.invoke(rman, event);
@@ -946,8 +1131,8 @@ public class RuleManagerTest {
         // --------------------
         // Confirm result
         // --------------------
-        PowerMockito.verifyStatic(Mockito.times(0));
-        EventPublisher.sendRuleEvent(event);
+        PowerMockito.verifyStatic(Mockito.times(1));
+        publisher.send(event);
     }
 
     /**
@@ -962,9 +1147,12 @@ public class RuleManagerTest {
         // Test method args
         // --------------------
         RuleManager rman = PowerMockito.mock(RuleManager.class);
-        PersoniumEvent event = new PersoniumEvent(true, null, null,
-                "cellctl.Rule.create", "personium-localcell:/__ctl/Rule", "200",
-                null, null, null, null, null);
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .type("cellctl.Rule.create")
+                .object("personium-localcell:/__ctl/Rule")
+                .info("200")
+                .build();
 
         // --------------------
         // Mock settings
@@ -973,9 +1161,8 @@ public class RuleManagerTest {
         PowerMockito.doNothing().when(logger).info(anyString());
         PowerMockito.doNothing().when(logger).error(anyString());
         PowerMockito.doNothing().when(logger).debug(anyString());
-        PowerMockito.spy(EventPublisher.class);
-        PowerMockito.doNothing().when(EventPublisher.class, "send", event);
-        PowerMockito.doNothing().when(EventPublisher.class, "sendRuleEvent", event);
+        EventPublisher publisher = PowerMockito.mock(EventPublisher.class);
+        PowerMockito.doNothing().when(publisher).send(event);
 
         // --------------------
         // Run method
@@ -983,6 +1170,9 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
+        Field fieldRuleEventPublisher = RuleManager.class.getDeclaredField("ruleEventPublisher");
+        fieldRuleEventPublisher.setAccessible(true);
+        fieldRuleEventPublisher.set(rman, publisher);
         Method publish = RuleManager.class.getDeclaredMethod("publish", PersoniumEvent.class);
         publish.setAccessible(true);
         publish.invoke(rman, event);
@@ -990,8 +1180,8 @@ public class RuleManagerTest {
         // --------------------
         // Confirm result
         // --------------------
-        PowerMockito.verifyStatic(Mockito.times(0));
-        EventPublisher.sendRuleEvent(event);
+        PowerMockito.verifyStatic(Mockito.times(1));
+        publisher.send(event);
     }
 
 }

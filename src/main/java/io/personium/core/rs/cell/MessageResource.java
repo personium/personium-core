@@ -146,8 +146,13 @@ public class MessageResource extends ODataCtlResource {
      */
     @Override
     public void postEvent(String entitySetName, String object, String info, String op) {
-        String type = PersoniumEventType.Category.MESSAGE + PersoniumEventType.SEPALATOR + op;
-        PersoniumEvent ev = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
+        String type = PersoniumEventType.message(op);
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .info(info)
+                .davRsCmp(this.davRsCmp)
+                .build();
         EventBus eventBus = this.accessContext.getCell().getEventBus();
         eventBus.post(ev);
     }

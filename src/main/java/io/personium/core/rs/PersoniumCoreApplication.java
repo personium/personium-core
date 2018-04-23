@@ -28,7 +28,6 @@ import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.file.DataCryptor;
 import io.personium.core.plugin.PluginManager;
-import io.personium.core.rule.RuleManager;
 
 /**
  * Personium-coreの/_cell_/* 以下URLを担当するJAX-RSのApplication.
@@ -36,7 +35,13 @@ import io.personium.core.rule.RuleManager;
 public class PersoniumCoreApplication extends Application {
     private static PluginManager pm;
 
-    static {
+    /** Maximum timeout seconds. */
+    private static final long TIMEOUT_SECONDS = 50;
+
+    /**
+     * Start Application.
+     */
+    public static void start() {
         try {
             TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
                     PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
@@ -44,11 +49,17 @@ public class PersoniumCoreApplication extends Application {
             DataCryptor.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
             PersoniumThread.createThreadPool(PersoniumUnitConfig.getThreadPoolNum());
             pm = new PluginManager();
-            RuleManager.getInstance();
         } catch (Exception e) {
             PersoniumCoreLog.Server.FAILED_TO_START_SERVER.reason(e).writeLog();
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Stop Application.
+     */
+    public static void stop() {
+        PersoniumThread.shutdown(TIMEOUT_SECONDS);
     }
 
     /*

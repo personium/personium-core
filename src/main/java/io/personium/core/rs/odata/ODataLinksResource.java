@@ -157,18 +157,16 @@ public final class ODataLinksResource {
         // post event to EventBus
         String srcKey = AbstractODataResource.replaceDummyKeyToNull(sourceEntity.getEntityKey().toKeyString());
         String targetKey = AbstractODataResource.replaceDummyKeyToNull(newTargetEntity.getEntityKey().toKeyString());
-        String object = String.format("%s%s%s/$links/%s%s",
-                this.odataResource.getRootUrl(),
-                sourceEntity.getEntitySetName(),
-                srcKey,
-                this.targetNavProp,
-                targetKey);
+        String object = new StringBuilder(this.odataResource.getRootUrl())
+                .append(sourceEntity.getEntitySetName())
+                .append(srcKey)
+                .append("/$links/")
+                .append(this.targetNavProp)
+                .append(targetKey)
+                .toString();
         String info = "204";
-        // links.Rule.create or links.Box.create
-        String op = PersoniumEventType.Operation.LINK
-                + PersoniumEventType.SEPALATOR + targetEntitySetName
-                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-        this.odataResource.postEvent(sourceEntity.getEntitySetName(), object, info, op);
+        String op = PersoniumEventType.Operation.CREATE;
+        this.odataResource.postLinkEvent(sourceEntity.getEntitySetName(), object, info, targetEntitySetName, op);
 
         return noContent();
     }
@@ -296,17 +294,21 @@ public final class ODataLinksResource {
         // post event to EventBus
         String srcKey = AbstractODataResource.replaceDummyKeyToNull(this.sourceEntity.getEntityKey().toKeyString());
         String targetKey = AbstractODataResource.replaceDummyKeyToNull(targetEntityKey.toKeyString());
-        String object = String.format("%s%s%s/$links/%s%s",
-                this.odataResource.getRootUrl(),
-                sourceEntity.getEntitySetName(),
-                srcKey,
-                this.targetNavProp,
-                targetKey);
+        String object = new StringBuilder(this.odataResource.getRootUrl())
+                .append(sourceEntity.getEntitySetName())
+                .append(srcKey)
+                .append("/$links/")
+                .append(this.targetNavProp)
+                .append(targetKey)
+                .toString();
         String info = "204";
-        String op = PersoniumEventType.Operation.LINK
-                + PersoniumEventType.SEPALATOR + this.targetNavProp.substring(1)
-                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-        this.odataResource.postEvent(sourceEntity.getEntitySetName(), object, info, op);
+        String op = PersoniumEventType.Operation.DELETE;
+        this.odataResource.postLinkEvent(
+                sourceEntity.getEntitySetName(),
+                object,
+                info,
+                this.targetNavProp.substring(1),
+                op);
 
         return noContent();
     }
@@ -374,18 +376,23 @@ public final class ODataLinksResource {
 
         // post event to EventBus
         String srcKey = AbstractODataResource.replaceDummyKeyToNull(this.sourceEntity.getEntityKey().toKeyString());
-        String object = String.format("%s%s%s/$links/%s",
-                this.odataResource.getRootUrl(),
+        String object = new StringBuilder(this.odataResource.getRootUrl())
+                .append(this.sourceEntity.getEntitySetName())
+                .append(srcKey)
+                .append("/$links/")
+                .append(this.targetNavProp)
+                .toString();
+        String info = new StringBuilder(Integer.toString(res.getStatus()))
+                .append(",")
+                .append(uriInfo.getRequestUri())
+                .toString();
+        String op = PersoniumEventType.Operation.LIST;
+        this.odataResource.postLinkEvent(
                 this.sourceEntity.getEntitySetName(),
-                srcKey,
-                this.targetNavProp);
-        String info = String.format("%s,%s",
-                Integer.toString(res.getStatus()),
-                uriInfo.getRequestUri());
-        String op = PersoniumEventType.Operation.LINK
-                + PersoniumEventType.SEPALATOR + this.targetNavProp.substring(1)
-                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LIST;
-        this.odataResource.postEvent(this.sourceEntity.getEntitySetName(), object, info, op);
+                object,
+                info,
+                this.targetNavProp.substring(1),
+                op);
 
         return res;
     }

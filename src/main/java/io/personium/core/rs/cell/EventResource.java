@@ -138,8 +138,13 @@ public class EventResource {
         }
         String info = (String) body.get("Info");
 
-        PersoniumEvent ev = new PersoniumEvent(PersoniumEvent.EXTERNAL_EVENT,
-                type, object, info, this.davRsCmp);
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                .external()
+                .type(type)
+                .object(object)
+                .info(info)
+                .davRsCmp(this.davRsCmp)
+                .build();
 
         return ev;
     }

@@ -118,9 +118,12 @@ public class SnapshotFileImportRunner implements Runnable {
             // Post event to EventBus.
             String object = UriUtils.SCHEME_LOCALCELL + ":/__import";
             String info = "";
-            String type = PersoniumEventType.Category.CELL
-                    + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.IMPORT;
-            PersoniumEvent event = new PersoniumEvent(type, object, info, null);
+            String type = PersoniumEventType.cell(PersoniumEventType.Operation.IMPORT);
+            PersoniumEvent event = new PersoniumEvent.Builder()
+                    .type(type)
+                    .object(object)
+                    .info(info)
+                    .build();
             EventBus eventBus = targetCell.getEventBus();
             eventBus.post(event);
         } catch (Throwable e) {

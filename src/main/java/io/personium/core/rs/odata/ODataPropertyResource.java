@@ -150,18 +150,24 @@ public class ODataPropertyResource extends AbstractODataResource {
 
         // post event to EventBus
         String srcKey = AbstractODataResource.replaceDummyKeyToNull(this.sourceEntityId.getEntityKey().toKeyString());
-        String object = String.format("%s%s%s/%s%s",
-                this.odataResource.getRootUrl(),
+        String object = new StringBuilder(this.odataResource.getRootUrl())
+                .append(this.sourceEntityId.getEntitySetName())
+                .append(srcKey)
+                .append("/")
+                .append(this.targetNavProp)
+                .append(key)
+                .toString();
+        String info = new StringBuilder(Integer.toString(ret.getStatus()))
+                .append(",")
+                .append(uriInfo.getRequestUri())
+                .toString();
+        String op = PersoniumEventType.Operation.CREATE;
+        this.odataResource.postNavPropEvent(
                 this.sourceEntityId.getEntitySetName(),
-                srcKey,
-                this.targetNavProp,
-                key);
-        String info = String.format("%s,%s",
-                Integer.toString(ret.getStatus()), uriInfo.getRequestUri());
-        String op = PersoniumEventType.Operation.NAVPROP
-                + PersoniumEventType.SEPALATOR + this.targetNavProp.substring(1)
-                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-        this.odataResource.postEvent(this.sourceEntityId.getEntitySetName(), object, info, op);
+                object,
+                info,
+                this.targetNavProp.substring(1),
+                op);
 
         return ret;
     }
@@ -273,17 +279,23 @@ public class ODataPropertyResource extends AbstractODataResource {
 
         // post event to EventBus
         String srcKey = AbstractODataResource.replaceDummyKeyToNull(this.sourceEntityId.getEntityKey().toKeyString());
-        String object = String.format("%s%s%s/%s",
-                this.odataResource.getRootUrl(),
+        String object = new StringBuilder(this.odataResource.getRootUrl())
+                .append(this.sourceEntityId.getEntitySetName())
+                .append(srcKey)
+                .append("/")
+                .append(this.targetNavProp)
+                .toString();
+        String info = new StringBuilder(Integer.toString(ret.getStatus()))
+                .append(",")
+                .append(uriInfo.getRequestUri())
+                .toString();
+        String op = PersoniumEventType.Operation.LIST;
+        this.odataResource.postNavPropEvent(
                 this.sourceEntityId.getEntitySetName(),
-                srcKey,
-                this.targetNavProp);
-        String info = String.format("%s,%s",
-                Integer.toString(ret.getStatus()), uriInfo.getRequestUri());
-        String op = PersoniumEventType.Operation.NAVPROP
-                + PersoniumEventType.SEPALATOR + this.targetNavProp.substring(1)
-                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.LIST;
-        this.odataResource.postEvent(this.sourceEntityId.getEntitySetName(), object, info, op);
+                object,
+                info,
+                this.targetNavProp.substring(1),
+                op);
 
         return ret;
     }

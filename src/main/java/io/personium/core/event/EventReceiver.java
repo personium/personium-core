@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017-2018 FUJITSU LIMITED
+ * Copyright 2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,28 @@
  */
 package io.personium.core.event;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.List;
 
 /**
- * Test suite for perform all tests on this package.
+ * EventReceiver interface.
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-    EventPublisherTest.class,
-    EventSenderTest.class
-})
-public class AllTests {
+public interface EventReceiver {
+
+    /**
+     * Subscribe.
+     * @param queueName queue name
+     */
+    void subscribe(final String queueName);
+
+    /**
+     * Receive.
+     * @return list of event
+     */
+    List<PersoniumEvent> receive();
+
+    /**
+     * Unsubscribe.
+     */
+    void unsubscribe();
+
 }

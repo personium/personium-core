@@ -44,6 +44,7 @@ import io.personium.core.model.ctl.RequestObject;
 import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.impl.es.odata.MessageODataProducer;
 import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.rs.cell.CellCtlResource;
 import io.personium.core.rs.cell.MessageResource;
 import io.personium.core.utils.ODataUtils;
 import io.personium.core.utils.ResourceUtils;
@@ -127,8 +128,11 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
         } else if (ReceivedMessage.STATUS_REJECTED.equals(status)) {
             op = PersoniumEventType.Operation.REJECT;
         }
-        String object = String.format("%s:/__ctl/%s%s",
-                UriUtils.SCHEME_LOCALCELL, getEntitySetName(), oEntityKey.toKeyString());
+        String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                .append(":/__ctl/")
+                .append(getEntitySetName())
+                .append(oEntityKey.toKeyString())
+                .toString();
         String info = Integer.toString(response.getStatus());
         getMessageResource().postEvent(getEntitySetName(), object, info, op);
 
@@ -231,13 +235,6 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
                 } else if (RequestObject.REQUEST_TYPE_RULE_ADD.equals(requestType)) {
                     // rule.add
                     //   Name, Action required
-                    //   Action: relay or relay.event or exec -> TargetUrl required
-                    //   Schema: exists -> EventObject: personium-localbox:/xxx or personium-localcell:/__xxx
-                    //                  -> Action: exec -> TargetUrl: personium-localbox:/xxx
-                    //   Schema: null   -> EventObject: personium-localcell:/xxx
-                    //                  -> Action: exec -> TargetUrl: personium-localcell:/xxx
-                    //   Action: relay       -> TargetUrl: personium-localunit: or http: or https:
-                    //   Action: relay.event -> TargetUrl: cell url
                     String name = requestObjectMap.get(RequestObject.P_NAME.getName());
                     if (name == null || !ODataUtils.validateRegEx(name, Common.PATTERN_ID)) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
@@ -248,48 +245,18 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                 concatRequestObjectPropertyName(Rule.P_ACTION.getName()));
                     }
-                    if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_RELAY_EVENT.equals(action)
-                            || Rule.ACTION_EXEC.equals(action))
-                            && requestObjectMap.get(RequestObject.P_TARGET_URL.getName()) == null) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
-                    }
+
+                    // validate rule
+                    String eventType = requestObjectMap.get(Rule.P_TYPE.getName());
                     String object = requestObjectMap.get(Rule.P_OBJECT.getName());
+                    String info = requestObjectMap.get(Rule.P_INFO.getName());
                     String targetUrl = requestObjectMap.get(RequestObject.P_TARGET_URL.getName());
-                    if (schema != null) {
-                        if (object != null && !ODataUtils.isValidLocalBoxUrl(object)
-                                && !(ODataUtils.isValidLocalCellUrl(object)
-                                        && object.startsWith(UriUtils.SCHEME_LOCALCELL + ":/__"))) {
-                            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                    concatRequestObjectPropertyName(Rule.P_OBJECT.getName()));
-                        }
-                        if (Rule.ACTION_EXEC.equals(action)
-                                && !targetUrl.startsWith(UriUtils.SCHEME_LOCALBOX)) {
-                            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                    concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
-                        }
-                    } else {
-                        if (object != null && !ODataUtils.isValidLocalCellUrl(object)) {
-                            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                    concatRequestObjectPropertyName(Rule.P_OBJECT.getName()));
-                        }
-                        if (Rule.ACTION_EXEC.equals(action)
-                                && !targetUrl.startsWith(UriUtils.SCHEME_LOCALCELL)) {
-                            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                    concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
-                        }
-                    }
-                    if (Rule.ACTION_RELAY.equals(action)
-                            && !targetUrl.startsWith(UriUtils.SCHEME_LOCALUNIT)
-                            && !targetUrl.startsWith(UriUtils.SCHEME_HTTP)
-                            && !targetUrl.startsWith(UriUtils.SCHEME_HTTPS)) {
+                    Boolean boxBound = Boolean.valueOf(schema != null);
+                    String error = CellCtlResource.validateRule(
+                            false, eventType, object, info, action, targetUrl, boxBound);
+                    if (error != null) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
-                    }
-                    if (Rule.ACTION_RELAY_EVENT.equals(action)
-                            && !ODataUtils.isValidCellUrl(targetUrl)) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
+                                concatRequestObjectPropertyName(error));
                     }
                 } else if (RequestObject.REQUEST_TYPE_RULE_REMOVE.equals(requestType)) {
                     // rule.remove

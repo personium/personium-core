@@ -83,9 +83,13 @@ public class DavFileResource {
         String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
                 this.davRsCmp.getUrl());
         String info = Integer.toString(res.getStatus());
-        String type = PersoniumEventType.Category.WEBDAV
-                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.UPDATE;
-        PersoniumEvent event = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
+        String type = PersoniumEventType.webdav(PersoniumEventType.Operation.UPDATE);
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .info(info)
+                .davRsCmp(this.davRsCmp)
+                .build();
         EventBus eventBus = this.davRsCmp.getCell().getEventBus();
         eventBus.post(event);
 
@@ -113,9 +117,13 @@ public class DavFileResource {
         String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
                 this.davRsCmp.getUrl());
         String info = Integer.toString(res.getStatus());
-        String type = PersoniumEventType.Category.WEBDAV
-                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.GET;
-        PersoniumEvent event = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
+        String type = PersoniumEventType.webdav(PersoniumEventType.Operation.GET);
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .info(info)
+                .davRsCmp(this.davRsCmp)
+                .build();
         EventBus eventBus = this.davRsCmp.getCell().getEventBus();
         eventBus.post(event);
 
@@ -141,9 +149,13 @@ public class DavFileResource {
         String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
                 this.davRsCmp.getUrl());
         String info = Integer.toString(res.getStatus());
-        String type = PersoniumEventType.Category.WEBDAV
-                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-        PersoniumEvent event = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
+        String type = PersoniumEventType.webdav(PersoniumEventType.Operation.DELETE);
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .info(info)
+                .davRsCmp(this.davRsCmp)
+                .build();
         EventBus eventBus = this.davRsCmp.getCell().getEventBus();
         eventBus.post(event);
 

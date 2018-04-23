@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017-2018 FUJITSU LIMITED
+ * Copyright 2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.core.rule.action;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
 /**
- * Test suite for executing all the test cases under package.
+ * Classes for implementations by activemq.
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-    ActionFactoryTest.class,
-    ExecActionTest.class,
-    RelayActionTest.class,
-    RelayEventActionTest.class
-})
-public class AllTests {
-}
+package io.personium.core.event.impl.activemq;

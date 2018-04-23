@@ -2058,12 +2058,12 @@ public class CellCtlResourceTest {
 
     /**
      * Test validate().
-     * Error test.
+     * Normal test.
      * EntitySet is Rule, action is relay, object is localcell and service is localcell.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void validate_Error_action_relay_object_localcell_service_localcell() throws Exception {
+    public void validate_Normal_action_relay_object_localcell_service_localcell() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -2078,8 +2078,6 @@ public class CellCtlResourceTest {
         // --------------------
         // Expected result
         // --------------------
-        PersoniumCoreException expected =
-                PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
 
         // --------------------
         // Mock settings
@@ -2097,17 +2095,7 @@ public class CellCtlResourceTest {
         // Run method
         // --------------------
         CellCtlResource resource = new CellCtlResource(accessContext, null, null);
-        try {
-            resource.validate(entitySetName, props);
-            fail("Not exception.");
-        } catch (PersoniumCoreException e) {
-            // --------------------
-            // Confirm result
-            // --------------------
-            assertThat(e.getStatus(), is(expected.getStatus()));
-            assertThat(e.getCode(), is(expected.getCode()));
-            assertThat(e.getMessage(), is(expected.getMessage()));
-        }
+        resource.validate(entitySetName, props);
     }
 
     /**

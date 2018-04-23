@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017-2018 FUJITSU LIMITED
+ * Copyright 2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,10 @@ import io.personium.core.rule.ActionInfo;
 import io.personium.test.categories.Unit;
 
 /**
- * Unit Test class for RelayAction.
+ * Unit Test class for RelayEventAction.
  */
 @Category({ Unit.class })
-public class RelayActionTest {
+public class RelayEventActionTest {
 
     /**
      * Test getRequestUrl().
@@ -44,12 +44,12 @@ public class RelayActionTest {
         // --------------------
         // Test method args
         // --------------------
-        String service = "http://personium/cell/box/col/service";
+        String service = "http://personium/cell/";
 
         // --------------------
         // Expected result
         // --------------------
-        String expected = service;
+        String expected = service + "__event";
 
         // --------------------
         // Mock settings
@@ -58,8 +58,8 @@ public class RelayActionTest {
         // --------------------
         // Run method
         // --------------------
-        ActionInfo ai = new ActionInfo("relay", service, null, null);
-        RelayAction action = new RelayAction(null, ai);
+        ActionInfo ai = new ActionInfo("relay.event", service, null, null);
+        RelayEventAction action = new RelayEventAction(null, ai);
         String result = action.getRequestUrl();
 
         // --------------------
@@ -71,28 +71,14 @@ public class RelayActionTest {
     /**
      * Test createEvent().
      * Normal test.
+     * external is false.
      */
     @Test
-    public void createEvent_Normal() {
+    public void createEvent_Normal_external_is_false() {
         // --------------------
         // Test method args
         // --------------------
-        String service = "http://personium/cell/box/col/service";
-
-        // --------------------
-        // Expected result
-        // --------------------
-        int size = 6;
-
-        // --------------------
-        // Mock settings
-        // --------------------
-
-        // --------------------
-        // Run method
-        // --------------------
-        ActionInfo ai = new ActionInfo("relay", service, null, null);
-        RelayAction action = new RelayAction(null, ai);
+        String service = "http://personium/cell/";
         PersoniumEvent event = new PersoniumEvent.Builder()
                 .schema("schema")
                 .subject("subject")
@@ -105,36 +91,12 @@ public class RelayActionTest {
                 .via("via")
                 .roles("roles")
                 .build();
-        JSONObject json = action.createEvent(event);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertThat(json.size(), is(size));
-        assertThat(json.get("External"), is(event.getExternal()));
-        assertThat(json.get("Schema"), is(event.getSchema()));
-        assertThat(json.get("Subject"), is(event.getSubject()));
-        assertThat(json.get("Type"), is(event.getType()));
-        assertThat(json.get("Object"), is(event.getObject()));
-        assertThat(json.get("Info"), is(event.getInfo()));
-    }
-
-    /**
-     * Test createEvent().
-     * Normal test.
-     * schema is null.
-     */
-    @Test
-    public void createEvent_Normal_schema_is_null() {
-        // --------------------
-        // Test method args
-        // --------------------
-        String service = "http://personium/cell/box/col/service";
 
         // --------------------
         // Expected result
         // --------------------
-        int size = 5;
+        int size = 3;
+        String type = "relay.type";
 
         // --------------------
         // Mock settings
@@ -143,9 +105,33 @@ public class RelayActionTest {
         // --------------------
         // Run method
         // --------------------
-        ActionInfo ai = new ActionInfo("relay", service, null, null);
-        RelayAction action = new RelayAction(null, ai);
+        ActionInfo ai = new ActionInfo("relay.event", service, null, null);
+        RelayEventAction action = new RelayEventAction(null, ai);
+        JSONObject json = action.createEvent(event);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(json.size(), is(size));
+        assertThat(json.get("Type"), is(type));
+        assertThat(json.get("Object"), is(event.getObject()));
+        assertThat(json.get("Info"), is(event.getInfo()));
+    }
+
+    /**
+     * Test createEvent().
+     * Normal test.
+     * external is true.
+     */
+    @Test
+    public void createEvent_Normal_external_is_true() {
+        // --------------------
+        // Test method args
+        // --------------------
+        String service = "http://personium/cell/";
         PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("schema")
                 .subject("subject")
                 .type("type")
                 .object("object")
@@ -156,35 +142,12 @@ public class RelayActionTest {
                 .via("via")
                 .roles("roles")
                 .build();
-        JSONObject json = action.createEvent(event);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertThat(json.size(), is(size));
-        assertThat(json.get("External"), is(event.getExternal()));
-        assertThat(json.get("Subject"), is(event.getSubject()));
-        assertThat(json.get("Type"), is(event.getType()));
-        assertThat(json.get("Object"), is(event.getObject()));
-        assertThat(json.get("Info"), is(event.getInfo()));
-    }
-
-    /**
-     * Test createEvent().
-     * Normal test.
-     * subject is null.
-     */
-    @Test
-    public void createEvent_Normal_subject_is_null() {
-        // --------------------
-        // Test method args
-        // --------------------
-        String service = "http://personium/cell/box/col/service";
 
         // --------------------
         // Expected result
         // --------------------
-        int size = 5;
+        int size = 3;
+        String type = "relay.ext.type";
 
         // --------------------
         // Mock settings
@@ -193,28 +156,15 @@ public class RelayActionTest {
         // --------------------
         // Run method
         // --------------------
-        ActionInfo ai = new ActionInfo("relay", service, null, null);
-        RelayAction action = new RelayAction(null, ai);
-        PersoniumEvent event = new PersoniumEvent.Builder()
-                .schema("schema")
-                .type("type")
-                .object("object")
-                .info("info")
-                .requestKey("requestKey")
-                .eventId("eventid")
-                .ruleChain("rulechain")
-                .via("via")
-                .roles("roles")
-                .build();
+        ActionInfo ai = new ActionInfo("relay.event", service, null, null);
+        RelayEventAction action = new RelayEventAction(null, ai);
         JSONObject json = action.createEvent(event);
 
         // --------------------
         // Confirm result
         // --------------------
         assertThat(json.size(), is(size));
-        assertThat(json.get("External"), is(event.getExternal()));
-        assertThat(json.get("Schema"), is(event.getSchema()));
-        assertThat(json.get("Type"), is(event.getType()));
+        assertThat(json.get("Type"), is(type));
         assertThat(json.get("Object"), is(event.getObject()));
         assertThat(json.get("Info"), is(event.getInfo()));
     }
@@ -228,12 +178,12 @@ public class RelayActionTest {
         // --------------------
         // Test method args
         // --------------------
-        String service = "http://personium/path/cell/box/col/service";
+        String service = "http://personium/path/cell/";
 
         // --------------------
         // Expected result
         // --------------------
-        String expected = "http://personium/path/cell/";
+        String expected = service;
 
         // --------------------
         // Mock settings
@@ -242,42 +192,8 @@ public class RelayActionTest {
         // --------------------
         // Run method
         // --------------------
-        ActionInfo ai = new ActionInfo("relay", service, null, null);
-        RelayAction action = new RelayAction(null, ai);
-        String result = action.getTargetCellUrl();
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertThat(result, is(expected));
-    }
-
-    /**
-     * Test getTargetCellUrl().
-     * Normal test.
-     * service is invalid.
-     */
-    @Test
-    public void getTargetCellUrl_Normal_service_is_invalid() {
-        // --------------------
-        // Test method args
-        // --------------------
-        String service = "http://personium/box/col/service";
-
-        // --------------------
-        // Expected result
-        // --------------------
-        String expected = null;
-
-        // --------------------
-        // Mock settings
-        // --------------------
-
-        // --------------------
-        // Run method
-        // --------------------
-        ActionInfo ai = new ActionInfo("relay", service, null, null);
-        RelayAction action = new RelayAction(null, ai);
+        ActionInfo ai = new ActionInfo("relay.event", service, null, null);
+        RelayEventAction action = new RelayEventAction(null, ai);
         String result = action.getTargetCellUrl();
 
         // --------------------

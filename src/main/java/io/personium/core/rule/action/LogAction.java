@@ -65,7 +65,14 @@ public class LogAction extends Action {
         String unitUserName = getUnitUserName(cell.getOwner());
         String prefix1 = cell.getId().substring(IDX_1ST_START, IDX_1ST_END);
         String prefix2 = cell.getId().substring(IDX_2ND_START, IDX_2ND_END);
-        String path = String.format("%s/%s/%s/%s", unitUserName, prefix1, prefix2, cell.getId());
+        String path = new StringBuilder(unitUserName)
+                .append("/")
+                .append(prefix1)
+                .append("/")
+                .append(prefix2)
+                .append("/")
+                .append(cell.getId())
+                .toString();
 
         // set eventlog_path to MDC
         MDC.put("eventlog_path", path);
@@ -149,16 +156,24 @@ public class LogAction extends Action {
 
     // create log from event
     private String createLogContent(PersoniumEvent event, String levelString, String requestKey) {
-        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s",
-                new Date(event.getTime()).toInstant().toString(),
-                levelString,
-                makeCsvItem(requestKey),
-                makeCsvItem(event.getExternal().toString()),
-                makeCsvItem(event.getSchema()),
-                makeCsvItem(event.getSubject()),
-                makeCsvItem(event.getType()),
-                makeCsvItem(event.getObject()),
-                makeCsvItem(event.getInfo()));
+        return new StringBuilder(new Date(event.getTime()).toInstant().toString())
+                .append(",")
+                .append(levelString)
+                .append(",")
+                .append(makeCsvItem(requestKey))
+                .append(",")
+                .append(makeCsvItem(event.getExternal().toString()))
+                .append(",")
+                .append(makeCsvItem(event.getSchema()))
+                .append(",")
+                .append(makeCsvItem(event.getSubject()))
+                .append(",")
+                .append(makeCsvItem(event.getType()))
+                .append(",")
+                .append(makeCsvItem(event.getObject()))
+                .append(",")
+                .append(makeCsvItem(event.getInfo()))
+                .toString();
     }
 
     // convert to CSV format
@@ -167,7 +182,10 @@ public class LogAction extends Action {
             return item;
         }
         String replacedItem = item.replaceAll("\"", "\"\"");
-        return String.format("\"%s\"", replacedItem);
+        return new StringBuilder("\"")
+                .append(replacedItem)
+                .append("\"")
+                .toString();
     }
 
 }

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public class JSONManifestTest {
         json.put("box_version", "1");
         json.put("DefaultPath", "boxName");
         json.put("schema", "http://app1.example.com/");
-        JsonParser jp = f.createJsonParser(json.toJSONString());
+        JsonParser jp = f.createParser(json.toJSONString());
         ObjectMapper mapper = new ObjectMapper();
         jp.nextToken();
 
@@ -73,7 +73,7 @@ public class JSONManifestTest {
         json.put("box_version", "1");
         json.put("DefaultPath", "boxName");
         json.put("schema", "test");
-        JsonParser jp = f.createJsonParser(json.toJSONString());
+        JsonParser jp = f.createParser(json.toJSONString());
         ObjectMapper mapper = new ObjectMapper();
         jp.nextToken();
 
@@ -95,7 +95,7 @@ public class JSONManifestTest {
         json.put("box_version", "1");
         json.put("DefaultPath", "boxName");
         json.put("schema", null);
-        JsonParser jp = f.createJsonParser(json.toJSONString());
+        JsonParser jp = f.createParser(json.toJSONString());
         ObjectMapper mapper = new ObjectMapper();
         jp.nextToken();
 
@@ -116,7 +116,7 @@ public class JSONManifestTest {
         json.put("bar_version", "1");
         json.put("box_version", "1");
         json.put("DefaultPath", "boxName");
-        JsonParser jp = f.createJsonParser(json.toJSONString());
+        JsonParser jp = f.createParser(json.toJSONString());
         ObjectMapper mapper = new ObjectMapper();
         jp.nextToken();
 

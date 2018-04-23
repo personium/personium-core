@@ -330,26 +330,41 @@ public class MessageODataProducer extends CellCtlODataProducer {
                 createEntityWithoutLock(ExtCell.EDM_TYPE_NAME, oew);
 
                 // post event
-                String object = String.format("%s:/__ctl/%s%s",
-                        UriUtils.SCHEME_LOCALCELL, ExtCell.EDM_TYPE_NAME, extCellKeyString);
-                String extCellType = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                        + ExtCell.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-                PersoniumEvent ev = new PersoniumEvent(
-                        PersoniumEvent.INTERNAL_EVENT, extCellType, object, info, this.davRsCmp);
+                String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                        .append(":/__ctl/")
+                        .append(ExtCell.EDM_TYPE_NAME)
+                        .append(extCellKeyString)
+                        .toString();
+                String extCellType = PersoniumEventType.cellctl(
+                        ExtCell.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+                PersoniumEvent ev = new PersoniumEvent.Builder()
+                        .type(extCellType)
+                        .object(object)
+                        .info(info)
+                        .davRsCmp(this.davRsCmp)
+                        .build();
                 eventBus.post(ev);
             }
             try {
                 createLinkWithoutLock(entityId, targetNavProp, extCellEntityId);
 
                 // post event
-                String object = String.format("%s:/__ctl/%s%s/$links/%s%s",
-                        UriUtils.SCHEME_LOCALCELL, Relation.EDM_TYPE_NAME, keyString, targetNavProp, extCellKeyString);
-                String relationType = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                        + Relation.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR
-                        + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
-                        + ExtCell.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-                PersoniumEvent ev = new PersoniumEvent(
-                        PersoniumEvent.INTERNAL_EVENT, relationType, object, info, this.davRsCmp);
+                String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                        .append(":/__ctl/")
+                        .append(Relation.EDM_TYPE_NAME)
+                        .append(keyString)
+                        .append("/$links/")
+                        .append(targetNavProp)
+                        .append(extCellKeyString)
+                        .toString();
+                String relationType = PersoniumEventType.cellctlLink(
+                        Relation.EDM_TYPE_NAME, ExtCell.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+                PersoniumEvent ev = new PersoniumEvent.Builder()
+                        .type(relationType)
+                        .object(object)
+                        .info(info)
+                        .davRsCmp(this.davRsCmp)
+                        .build();
                 eventBus.post(ev);
             } catch (PersoniumCoreException e) {
                 if (PersoniumCoreException.OData.CONFLICT_LINKS.getCode().equals(e.getCode())) {
@@ -365,14 +380,22 @@ public class MessageODataProducer extends CellCtlODataProducer {
             deleteLinkWithoutLock(entityId, targetNavProp, extCellKey);
 
             // post event
-            String object = String.format("%s:/__ctl/%s%s/$links/%s%s",
-                    UriUtils.SCHEME_LOCALCELL, Relation.EDM_TYPE_NAME, keyString, targetNavProp, extCellKeyString);
-            String relationType = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                    + Relation.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR
-                    + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
-                    + ExtCell.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-            PersoniumEvent ev = new PersoniumEvent(
-                    PersoniumEvent.INTERNAL_EVENT, relationType, object, info, this.davRsCmp);
+            String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                    .append(":/__ctl/")
+                    .append(Relation.EDM_TYPE_NAME)
+                    .append(keyString)
+                    .append("/$links/")
+                    .append(targetNavProp)
+                    .append(extCellKeyString)
+                    .toString();
+            String relationType = PersoniumEventType.cellctlLink(
+                    Relation.EDM_TYPE_NAME, ExtCell.EDM_TYPE_NAME, PersoniumEventType.Operation.DELETE);
+            PersoniumEvent ev = new PersoniumEvent.Builder()
+                    .type(relationType)
+                    .object(object)
+                    .info(info)
+                    .davRsCmp(this.davRsCmp)
+                    .build();
             eventBus.post(ev);
         }
     }
@@ -440,26 +463,41 @@ public class MessageODataProducer extends CellCtlODataProducer {
                 createEntityWithoutLock(ExtCell.EDM_TYPE_NAME, oew);
 
                 // post event
-                String object = String.format("%s:/__ctl/%s%s",
-                        UriUtils.SCHEME_LOCALCELL, ExtCell.EDM_TYPE_NAME, extCellKeyString);
-                String extCellType = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                        + ExtCell.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-                PersoniumEvent ev = new PersoniumEvent(
-                        PersoniumEvent.INTERNAL_EVENT, extCellType, object, info, this.davRsCmp);
+                String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                        .append(":/__ctl/")
+                        .append(ExtCell.EDM_TYPE_NAME)
+                        .append(extCellKeyString)
+                        .toString();
+                String extCellType = PersoniumEventType.cellctl(
+                        ExtCell.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+                PersoniumEvent ev = new PersoniumEvent.Builder()
+                        .type(extCellType)
+                        .object(object)
+                        .info(info)
+                        .davRsCmp(this.davRsCmp)
+                        .build();
                 eventBus.post(ev);
             }
             try {
                 createLinkWithoutLock(entityId, targetNavProp, extCellEntityId);
 
                 // post event
-                String object = String.format("%s:/__ctl/%s%s/$links/%s%s",
-                        UriUtils.SCHEME_LOCALCELL, Role.EDM_TYPE_NAME, keyString, targetNavProp, extCellKeyString);
-                String roleType = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                        + Role.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR
-                        + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
-                        + ExtCell.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-                PersoniumEvent ev = new PersoniumEvent(
-                        PersoniumEvent.INTERNAL_EVENT, roleType, object, info, this.davRsCmp);
+                String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                        .append(":/__ctl/")
+                        .append(Role.EDM_TYPE_NAME)
+                        .append(keyString)
+                        .append("/$links/")
+                        .append(targetNavProp)
+                        .append(extCellKeyString)
+                        .toString();
+                String roleType = PersoniumEventType.cellctlLink(
+                        Role.EDM_TYPE_NAME, ExtCell.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+                PersoniumEvent ev = new PersoniumEvent.Builder()
+                        .type(roleType)
+                        .object(object)
+                        .info(info)
+                        .davRsCmp(this.davRsCmp)
+                        .build();
                 eventBus.post(ev);
             } catch (PersoniumCoreException e) {
                 if (PersoniumCoreException.OData.CONFLICT_LINKS.getCode().equals(e.getCode())) {
@@ -475,14 +513,22 @@ public class MessageODataProducer extends CellCtlODataProducer {
             deleteLinkWithoutLock(entityId, targetNavProp, extCellKey);
 
             // post event
-            String object = String.format("%s:/__ctl/%s%s/$links/%s%s",
-                    UriUtils.SCHEME_LOCALCELL, Role.EDM_TYPE_NAME, keyString, targetNavProp, extCellKeyString);
-            String roleType = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                    + Role.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR
-                    + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
-                    + ExtCell.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-            PersoniumEvent ev = new PersoniumEvent(
-                    PersoniumEvent.INTERNAL_EVENT, roleType, object, info, this.davRsCmp);
+            String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                    .append(":/__ctl/")
+                    .append(Role.EDM_TYPE_NAME)
+                    .append(keyString)
+                    .append("/$links/")
+                    .append(targetNavProp)
+                    .append(extCellKeyString)
+                    .toString();
+            String roleType = PersoniumEventType.cellctlLink(
+                    Role.EDM_TYPE_NAME, ExtCell.EDM_TYPE_NAME, PersoniumEventType.Operation.DELETE);
+            PersoniumEvent ev = new PersoniumEvent.Builder()
+                    .type(roleType)
+                    .object(object)
+                    .info(info)
+                    .davRsCmp(this.davRsCmp)
+                    .build();
             eventBus.post(ev);
         }
     }
@@ -532,12 +578,20 @@ public class MessageODataProducer extends CellCtlODataProducer {
 
             // post rule event to eventBus
             String keyString = AbstractODataResource.replaceDummyKeyToNull(entityKey.toKeyString());
-            String object = String.format("%s:/__ctl/%s%s", UriUtils.SCHEME_LOCALCELL, Rule.EDM_TYPE_NAME, keyString);
+            String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                    .append(":/__ctl/")
+                    .append(Rule.EDM_TYPE_NAME)
+                    .append(keyString)
+                    .toString();
             String info = "approved for message " + messageId;
-            String ruleType = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                    + Rule.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-            PersoniumEvent ev = new PersoniumEvent(
-                    PersoniumEvent.INTERNAL_EVENT, ruleType, object, info, this.davRsCmp);
+            String ruleType = PersoniumEventType.cellctl(
+                    Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.CREATE);
+            PersoniumEvent ev = new PersoniumEvent.Builder()
+                    .type(ruleType)
+                    .object(object)
+                    .info(info)
+                    .davRsCmp(this.davRsCmp)
+                    .build();
             EventBus eventBus = this.cell.getEventBus();
             eventBus.post(ev);
         } else if (RequestObject.REQUEST_TYPE_RULE_REMOVE.equals(requestType)) {
@@ -546,12 +600,20 @@ public class MessageODataProducer extends CellCtlODataProducer {
 
             // post rule event to eventBus
             String keyString = AbstractODataResource.replaceDummyKeyToNull(entityKey.toKeyString());
-            String object = String.format("%s:/__ctl/%s%s", UriUtils.SCHEME_LOCALCELL, Rule.EDM_TYPE_NAME, keyString);
+            String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                    .append(":/__ctl/")
+                    .append(Rule.EDM_TYPE_NAME)
+                    .append(keyString)
+                    .toString();
             String info = "approved for message " + messageId;
-            String ruleType = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                    + Rule.EDM_TYPE_NAME + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.DELETE;
-            PersoniumEvent ev = new PersoniumEvent(
-                    PersoniumEvent.INTERNAL_EVENT, ruleType, object, info, this.davRsCmp);
+            String ruleType = PersoniumEventType.cellctl(
+                    Rule.EDM_TYPE_NAME, PersoniumEventType.Operation.DELETE);
+            PersoniumEvent ev = new PersoniumEvent.Builder()
+                    .type(ruleType)
+                    .object(object)
+                    .info(info)
+                    .davRsCmp(this.davRsCmp)
+                    .build();
             EventBus eventBus = this.cell.getEventBus();
             eventBus.post(ev);
         }
