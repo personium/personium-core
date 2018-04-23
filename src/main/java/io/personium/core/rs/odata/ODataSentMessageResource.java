@@ -183,6 +183,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
         EdmComplexType ct = SentMessage.COMPLEX_TYPE_RESULT.build();
 
         String fromCellUrl = getMessageResource().getAccessContext().getCell().getUrl();
+        String schema = getMessageResource().getAccessContext().getSchema();
 
         // 宛先リスト作成
         List<String> toList = createRequestUrl();
@@ -194,7 +195,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
 
             // 受信API呼出しのトークン作成
             TransCellAccessToken token = new TransCellAccessToken(
-                    fromCellUrl, fromCellUrl, toCellUrl, new ArrayList<Role>(), "");
+                    fromCellUrl, fromCellUrl, toCellUrl, new ArrayList<Role>(), schema);
 
             // ('ID')からIDを抜き出す
             Pattern formatPattern = Pattern.compile("\\('(.+)'\\)");
