@@ -30,6 +30,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
@@ -116,22 +117,20 @@ public abstract class EngineAction extends Action {
         setHeaders(req, event);
 
         HttpResponse objResponse = null;
+        String result;
         try {
             objResponse = client.execute(req);
             logger.info(EntityUtils.toString(objResponse.getEntity()));
+            result = Integer.toString(objResponse.getStatusLine().getStatusCode());
         } catch (ClientProtocolException e) {
             logger.error("Invalid Http response: " + e.getMessage(), e);
-            return null;
+            result = "404";
         } catch (Exception e) {
             logger.error("Connection Error: " + e.getMessage(), e);
-            return null;
-        }
-
-        String result;
-        if (objResponse != null) {
-            result = Integer.toString(objResponse.getStatusLine().getStatusCode());
-        } else {
             result = "404";
+        } finally {
+            HttpClientUtils.closeQuietly(objResponse);
+            HttpClientUtils.closeQuietly(client);
         }
 
         // create event for result of script execution
