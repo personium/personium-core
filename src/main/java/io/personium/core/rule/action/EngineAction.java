@@ -43,6 +43,7 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
 import io.personium.core.rule.ActionInfo;
+import io.personium.core.utils.HttpClientFactory;
 
 /**
  * Abstract class of Action about Engine.
@@ -77,7 +78,7 @@ public abstract class EngineAction extends Action {
             return null;
         }
 
-        HttpClient client = new org.apache.http.impl.client.DefaultHttpClient();
+        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
         HttpPost req = new HttpPost(requestUrl);
 
         // create payload as JSON
