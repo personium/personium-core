@@ -351,8 +351,14 @@ public class PersoniumUnitConfig {
      * EventBus configurations.
      */
     public static final class EventBus {
+        /** message queue implementation to use. */
+        public static final String MQ = KEY_ROOT + "eventbus.mq";
+
         /** ActiveMQ broker url. */
         public static final String ACTIVEMQ_BROKER_URL = KEY_ROOT + "eventbus.activemq.brokerUrl";
+
+        /** Kafka servers. */
+        public static final String KAFKA_SERVERS = KEY_ROOT + "eventbus.kafka.bootstrap.servers";
 
         /** queue name of EventBus. */
         public static final String QUEUE = KEY_ROOT + "eventbus.queue";
@@ -1122,11 +1128,27 @@ public class PersoniumUnitConfig {
     }
 
     /**
+     * Get message queue implementation of EventBus.
+     * @return message queue
+     */
+    public static String getEventBusMQ() {
+        return get(EventBus.MQ);
+    }
+
+    /**
      * Get broker url of setting for activemq.
      * @return broker url
      */
     public static String getEventBusActiveMQBrokerUrl() {
         return get(EventBus.ACTIVEMQ_BROKER_URL);
+    }
+
+    /**
+     * Get servers of setting for kafka.
+     * @return comma-separated servers
+     */
+    public static String getEventBusKafkaServers() {
+        return get(EventBus.KAFKA_SERVERS);
     }
 
     /**
