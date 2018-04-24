@@ -44,7 +44,11 @@ public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
         super(klass);
     }
 
+    MessageBroker broker;
+
     private void start() throws Exception {
+        broker = new MessageBroker();
+        broker.start();
         PersoniumCoreApplication.start();
         EventBus.start();
     }
@@ -52,6 +56,7 @@ public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
     private void stop() throws Exception {
         EventBus.stop();
         PersoniumCoreApplication.stop();
+        broker.stop();
     }
 
     @Override
