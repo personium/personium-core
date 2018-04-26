@@ -178,7 +178,7 @@ public class BarFileUtils {
         JsonParser jp = null;
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory f = new JsonFactory();
-        jp = f.createJsonParser(inStream);
+        jp = f.createParser(inStream);
         JsonToken token = jp.nextToken(); // JSONルート要素（"{"）
         Pattern formatPattern = Pattern.compile(".*/+(.*)");
         Matcher formatMatcher = formatPattern.matcher(entryName);

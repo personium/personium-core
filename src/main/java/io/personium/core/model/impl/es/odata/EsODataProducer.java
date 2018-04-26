@@ -847,9 +847,9 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         List<String> processedPropertyAlias = new ArrayList<String>();
         for (PersoniumSearchHit property : hits) {
             Map<String, Object> fields = property.getSource();
-            Map<String, Object> staticFileds = ((Map<String, Object>) fields.get(OEntityDocHandler.KEY_STATIC_FIELDS));
-            Map<String, Object> hideenFileds = ((Map<String, Object>) fields.get(OEntityDocHandler.KEY_HIDDEN_FIELDS));
-            Map<String, Object> linkFileds = ((Map<String, Object>) fields.get(OEntityDocHandler.KEY_LINK));
+            Map<String, Object> staticFileds = (Map<String, Object>) fields.get(OEntityDocHandler.KEY_STATIC_FIELDS);
+            Map<String, Object> hideenFileds = (Map<String, Object>) fields.get(OEntityDocHandler.KEY_HIDDEN_FIELDS);
+            Map<String, Object> linkFileds = (Map<String, Object>) fields.get(OEntityDocHandler.KEY_LINK);
 
             String propertyName = (String) staticFileds.get("Name");
             String propertyType = (String) staticFileds.get("Type");

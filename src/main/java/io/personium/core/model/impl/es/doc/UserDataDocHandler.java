@@ -373,7 +373,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
                     ret.put(alias, fields);
                 } else if (alias.startsWith("C") && value instanceof List<?>) {
                     List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
-                    for (Map<String, Object> item : ((List<Map<String, Object>>) value)) {
+                    for (Map<String, Object> item : (List<Map<String, Object>>) value) {
                         String complexTypeName = getComplexTypeName(key);
                         Map<String, Object> fields = getStaticFieldMap(
                                 ComplexTypeProperty.P_COMPLEXTYPE_NAME.getName(),

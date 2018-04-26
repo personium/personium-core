@@ -300,8 +300,8 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     private void checkNotAllowedMethod(UriInfo uriInfo) {
         // メソッド許可チェック
         String[] uriPath = uriInfo.getPath().split("/");
-        if (ReceivedMessage.EDM_TYPE_NAME.equals(uriPath[(uriPath.length - 1)])
-                || SentMessage.EDM_TYPE_NAME.equals(uriPath[(uriPath.length - 1)])) {
+        if (ReceivedMessage.EDM_TYPE_NAME.equals(uriPath[uriPath.length - 1])
+                || SentMessage.EDM_TYPE_NAME.equals(uriPath[uriPath.length - 1])) {
             throw PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         }
     }
