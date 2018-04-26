@@ -125,6 +125,7 @@ public class RuleManager {
     static final String LOCALBOX = UriUtils.SCHEME_LOCALBOX + ":";
 
     private static RuleManager instance = null;
+    private TimerRuleManager timerRuleManager = null;
     private Map<String, Map<String, RuleInfo>> rules;
     private Map<String, Map<String, BoxInfo>> boxes;
     private Logger logger;
@@ -163,6 +164,11 @@ public class RuleManager {
      * Initialize RuleManager and execute threads in order to receive event.
      */
     private void initialize() {
+        // Initialize TimerRuleManager.
+        if (PersoniumUnitConfig.getTimerEventThreadNum() > 0) {
+            timerRuleManager = TimerRuleManager.getInstance();
+        }
+
         // Load rules from DB.
         load();
 
@@ -183,6 +189,12 @@ public class RuleManager {
     public void shutdown() {
         // close EventPublisher
         ruleEventPublisher.close();
+
+        // Finalize TimerRuleManager.
+        if (timerRuleManager != null) {
+            timerRuleManager.shutdown();
+            timerRuleManager = null;
+        }
 
         // Shutdown thread pool.
         try {
@@ -282,6 +294,16 @@ public class RuleManager {
 
         // convert object's scheme to http scheme
         event.convertObject(cell.getUrl());
+
+        // when the type of the event is timer.periodic or timer.oneshot
+        if (PersoniumEventType.timerPeriodic().equals(event.getType())
+                || PersoniumEventType.timerOneshot().equals(event.getType())) {
+            // validate subject
+            String subject = event.getSubject();
+            if (subject != null && !subject.startsWith(cell.getUrl())) {
+                event.resetSubject();
+            }
+        }
 
         // execute action
         for (ActionInfo ai : actionList) {
@@ -787,6 +809,12 @@ public class RuleManager {
                 rules.put(cellId, rmap);
             }
             rmap.put(keyString, rule);
+
+            // TimerRuleManager
+            if (timerRuleManager != null) {
+                timerRuleManager.registerRule(rule.name, rule.subject,
+                        rule.type, rule.object, rule.info, cellId, boxId);
+            }
         }
 
         return true;
@@ -828,6 +856,13 @@ public class RuleManager {
                         }
                         rule.box = null;
                     }
+
+                    // TimerRuleManager
+                    if (timerRuleManager != null) {
+                        timerRuleManager.unregisterRule(rule.subject,
+                                rule.type, rule.object, rule.info, cell.getId(), boxId);
+                    }
+
                     return true;
                 }
             }
@@ -885,6 +920,9 @@ public class RuleManager {
         }
         jsonRules.put("rules", jsonRuleArray);
         jsonRules.put("boxes", jsonBoxArray);
+        if (timerRuleManager != null) {
+            jsonRules.put("timers", timerRuleManager.getTimerList(cell));
+        }
 
         return jsonRules.toString();
     }

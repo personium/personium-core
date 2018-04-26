@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
 import io.personium.core.rule.RuleManager;
 
@@ -55,7 +56,6 @@ public final class EventBus {
     }
 
     private static ExecutorService pool;
-    private static final int EVENTRECEIVER_NUM = 2;
 
     /**
      * Start EventBus.
@@ -67,7 +67,7 @@ public final class EventBus {
         EventFactory.createEventPublisher();
 
         // create thread pool.
-        int threadNumber = EVENTRECEIVER_NUM;
+        int threadNumber = PersoniumUnitConfig.getEventProcThreadNum();
         final ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
         builder.setNameFormat("event-receiver-%d");
         pool = Executors.newFixedThreadPool(threadNumber, builder.build());

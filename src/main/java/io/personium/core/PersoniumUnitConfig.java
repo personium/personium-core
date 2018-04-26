@@ -352,7 +352,7 @@ public class PersoniumUnitConfig {
      */
     public static final class EventBus {
         /** ActiveMQ broker url. */
-        public static final String BROKER_URL = KEY_ROOT + "eventbus.activemq.brokerUrl";
+        public static final String ACTIVEMQ_BROKER_URL = KEY_ROOT + "eventbus.activemq.brokerUrl";
 
         /** queue name of EventBus. */
         public static final String QUEUE = KEY_ROOT + "eventbus.queue";
@@ -362,6 +362,17 @@ public class PersoniumUnitConfig {
 
         /** topic name for rule event. */
         public static final String TOPIC_RULE = KEY_ROOT + "eventbus.topic.rule";
+
+        /** Number of threads to process event. */
+        public static final String EVENTPROC_THREAD_NUM = KEY_ROOT + "eventbus.eventProcessing.thread.num";
+    }
+
+    /**
+     * rule configurations.
+     */
+    public static final class Rule {
+        /** Number of threads to manage timer event. */
+        public static final String TIMEREVENT_THREAD_NUM = KEY_ROOT + "rule.timerEvent.thread.num";
     }
 
     static {
@@ -1111,11 +1122,11 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Get broker url of EventBus.
+     * Get broker url of setting for activemq.
      * @return broker url
      */
     public static String getEventBusActiveMQBrokerUrl() {
-        return get(EventBus.BROKER_URL);
+        return get(EventBus.ACTIVEMQ_BROKER_URL);
     }
 
     /**
@@ -1140,6 +1151,22 @@ public class PersoniumUnitConfig {
      */
     public static String getEventBusRuleTopicName() {
         return get(EventBus.TOPIC_RULE);
+    }
+
+    /**
+     * Get thread number for eventprocessing.
+     * @return thread num
+     */
+    public static int getEventProcThreadNum() {
+        return Integer.parseInt(get(EventBus.EVENTPROC_THREAD_NUM));
+    }
+
+    /**
+     * Get thread number of timer event.
+     * @return thread num
+     */
+    public static int getTimerEventThreadNum() {
+        return Integer.parseInt(get(Rule.TIMEREVENT_THREAD_NUM));
     }
 
     /**
