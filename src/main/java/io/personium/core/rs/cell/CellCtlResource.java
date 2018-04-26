@@ -317,7 +317,7 @@ public final class CellCtlResource extends ODataResource {
             if (external) {
                 return Rule.P_EXTERNAL.getName();
             }
-            // object: [0-9]*
+            // object: > 0
             if (object == null || !ODataUtils.validateTime(object)) {
                 return Rule.P_OBJECT.getName();
             }

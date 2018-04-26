@@ -253,7 +253,7 @@ public final class ODataUtils {
     public static boolean validateTime(String value) {
         try {
             long longDate = Long.parseLong(value);
-            if (longDate < DATETIME_MIN || longDate > DATETIME_MAX) {
+            if (longDate <= 0 || longDate > DATETIME_MAX) {
                 return false;
             }
             return true;
