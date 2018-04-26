@@ -177,7 +177,7 @@ public class BoxResource {
 //        } else {
 //            return getMetadata();
 //        }
-        getMetadata();
+        return getMetadata();
     }
 
     /**
