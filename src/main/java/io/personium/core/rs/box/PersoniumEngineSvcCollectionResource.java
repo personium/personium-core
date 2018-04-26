@@ -51,6 +51,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.wink.webdav.WebDAVMethod;
 import org.slf4j.Logger;
@@ -70,6 +71,7 @@ import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.PersoniumEventType;
 import io.personium.core.event.EventBus;
+import io.personium.core.utils.HttpClientFactory;
 import io.personium.core.utils.UriUtils;
 
 /**
@@ -288,6 +290,12 @@ public class PersoniumEngineSvcCollectionResource {
         return new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, null, this.davRsCmp);
     }
 
+    // close httpclient
+    private void closeHttpClient(HttpClient httpClient, HttpResponse httpResponse) {
+        HttpClientUtils.closeQuietly(httpResponse);
+        HttpClientUtils.closeQuietly(httpClient);
+    }
+
     /**
      * relay共通処理のメソッド.
      * @param method メソッド
@@ -297,7 +305,6 @@ public class PersoniumEngineSvcCollectionResource {
      * @param is リクエストボディ
      * @return JAX-RS Response
      */
-    @SuppressWarnings("deprecation")
     public Response relaycommon(
             String method,
             UriInfo uriInfo,
@@ -314,7 +321,7 @@ public class PersoniumEngineSvcCollectionResource {
         String baseUrl = uriInfo.getBaseUri().toString();
 
         // リクエストヘッダを取得し、以下内容を追加
-        HttpClient client = new org.apache.http.impl.client.DefaultHttpClient();
+        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_DEFAULT);
         HttpUriRequest req = null;
         if (method.equals(HttpMethod.POST)) {
             HttpPost post = new HttpPost(requestUrl);
@@ -384,11 +391,13 @@ public class PersoniumEngineSvcCollectionResource {
             // post event to EventBus
             event.setInfo("500");
             eventBus.post(event);
+            closeHttpClient(client, objResponse);
             throw PersoniumCoreException.ServiceCollection.SC_INVALID_HTTP_RESPONSE_ERROR;
         } catch (Exception ioe) {
             // post event to EventBus
             event.setInfo("500");
             eventBus.post(event);
+            closeHttpClient(client, objResponse);
             throw PersoniumCoreException.ServiceCollection.SC_ENGINE_CONNECTION_ERROR.reason(ioe);
         }
 
@@ -419,11 +428,15 @@ public class PersoniumEngineSvcCollectionResource {
             try {
                 isResBody = entity.getContent();
             } catch (IllegalStateException e) {
+                closeHttpClient(client, objResponse);
                 throw PersoniumCoreException.ServiceCollection.SC_UNKNOWN_ERROR.reason(e);
             } catch (IOException e) {
+                closeHttpClient(client, objResponse);
                 throw PersoniumCoreException.ServiceCollection.SC_ENGINE_CONNECTION_ERROR.reason(e);
             }
             final InputStream isInvariable = isResBody;
+            final HttpClient httpClient = client;
+            final HttpResponse httpResponse = objResponse;
             // 処理結果を出力
             StreamingOutput strOutput = new StreamingOutput() {
                 @Override
@@ -435,6 +448,8 @@ public class PersoniumEngineSvcCollectionResource {
                         }
                     } finally {
                         isInvariable.close();
+                        HttpClientUtils.closeQuietly(httpResponse);
+                        HttpClientUtils.closeQuietly(httpClient);
                     }
                 }
             };

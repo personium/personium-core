@@ -38,6 +38,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.StringEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -448,22 +449,25 @@ public class ODataSentMessageResource extends ODataMessageResource {
         HttpResponse objResponse = null;
         try {
             objResponse = client.execute(req);
+
+            // リクエスト結果の作成
+            String statusCode = Integer.toString(objResponse.getStatusLine().getStatusCode());
+            List<OProperty<?>> properties = new ArrayList<OProperty<?>>();
+            properties.add(OProperties.string(SentMessage.P_RESULT_TO.getName(), requestCellUrl));
+            properties.add(OProperties.string(SentMessage.P_RESULT_CODE.getName(), statusCode));
+            if (Integer.toString(HttpStatus.SC_CREATED).equals(statusCode)) {
+                properties.add(OProperties.string(SentMessage.P_RESULT_REASON.getName(), "Created."));
+            } else {
+                properties.add(OProperties.string(SentMessage.P_RESULT_REASON.getName(), getErrorMessage(objResponse)));
+            }
+
+            return properties;
         } catch (Exception ioe) {
             throw PersoniumCoreException.SentMessage.SM_CONNECTION_ERROR.reason(ioe);
+        } finally {
+            HttpClientUtils.closeQuietly(objResponse);
+            HttpClientUtils.closeQuietly(client);
         }
-
-        // リクエスト結果の作成
-        String statusCode = Integer.toString(objResponse.getStatusLine().getStatusCode());
-        List<OProperty<?>> properties = new ArrayList<OProperty<?>>();
-        properties.add(OProperties.string(SentMessage.P_RESULT_TO.getName(), requestCellUrl));
-        properties.add(OProperties.string(SentMessage.P_RESULT_CODE.getName(), statusCode));
-        if (Integer.toString(HttpStatus.SC_CREATED).equals(statusCode)) {
-            properties.add(OProperties.string(SentMessage.P_RESULT_REASON.getName(), "Created."));
-        } else {
-            properties.add(OProperties.string(SentMessage.P_RESULT_REASON.getName(), getErrorMessage(objResponse)));
-        }
-
-        return properties;
 
     }
 
