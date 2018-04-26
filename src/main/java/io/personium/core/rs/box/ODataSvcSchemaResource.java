@@ -359,9 +359,35 @@ public final class ODataSvcSchemaResource extends ODataResource {
      */
     @Override
     public void postEvent(String entitySetName, String object, String info, String op) {
-        String type = PersoniumEventType.Category.ODATA + PersoniumEventType.SEPALATOR
-                + entitySetName + PersoniumEventType.SEPALATOR + op;
-        PersoniumEvent ev = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
+        String type = PersoniumEventType.odataSchema(entitySetName, op);
+        postEventInternal(type, object, info);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void postLinkEvent(String src, String object, String info, String target, String op) {
+        String type = PersoniumEventType.odataSchemaLink(src, target, op);
+        postEventInternal(type, object, info);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void postNavPropEvent(String src, String object, String info, String target, String op) {
+        String type = PersoniumEventType.odataSchemaNavProp(src, target, op);
+        postEventInternal(type, object, info);
+    }
+
+    private void postEventInternal(String type, String object, String info) {
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .info(info)
+                .davRsCmp(this.davRsCmp)
+                .build();
         EventBus eventBus = this.getAccessContext().getCell().getEventBus();
         eventBus.post(ev);
     }

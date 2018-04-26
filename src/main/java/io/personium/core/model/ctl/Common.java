@@ -119,6 +119,12 @@ public class Common {
      * $4:ServiceName
      */
     public static final String PATTERN_SERVICE_LOCALUNIT_PATH = "/(" + REGEX_NAME + ")" + PATTERN_SERVICE_LOCALCELL_PATH; // CHECKSTYLE IGNORE - To maintain readability
+    /**
+     * Pattern cell path using personium-localunit "/$1/".<br>
+     * Explanation of applicable group.<br>
+     * $1:CellName
+     */
+    public static final String PATTERN_CELL_LOCALUNIT_PATH = "/(" + REGEX_NAME + ")/$";
     /** Pattern multiplicity. */
     public static final String PATTERN_MULTIPLICITY = "0\\.\\.1|1|\\*";
     /** Pattern id. */

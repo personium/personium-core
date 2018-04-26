@@ -246,6 +246,23 @@ public final class ODataUtils {
     }
 
     /**
+     * Validate Time value.
+     * @param value checked string
+     * @return boolean
+     */
+    public static boolean validateTime(String value) {
+        try {
+            long longDate = Long.parseLong(value);
+            if (longDate < DATETIME_MIN || longDate > DATETIME_MAX) {
+                return false;
+            }
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
      * Singleの値チェック.
      * @param value チェック対象値
      * @return boolean
@@ -323,6 +340,11 @@ public final class ODataUtils {
                 || UriUtils.SCHEME_LOCALUNIT.equals(scheme);
     }
 
+    private static boolean isValidUrlScheme(String scheme) {
+        return UriUtils.SCHEME_HTTP.equals(scheme)
+                || UriUtils.SCHEME_HTTPS.equals(scheme);
+    }
+
     private static boolean isValidUrnScheme(String scheme) {
         return UriUtils.SCHEME_URN.equals(scheme);
     }
@@ -371,6 +393,28 @@ public final class ODataUtils {
     }
 
     /**
+     * Check if string is valid Url.
+     * @param str Input string
+     * @return true if valid
+     */
+    public static boolean isValidUrl(String str) {
+        if (str == null) {
+            return false;
+        }
+        boolean isValidLength = str.length() <= URI_MAX_LENGTH;
+        URI uri;
+        try {
+            uri = new URI(str);
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        String scheme = uri.getScheme();
+        boolean isValidScheme = isValidUrlScheme(scheme);
+        boolean isNormalized = uri.normalize().toString().equals(str);
+        return isValidLength && isValidScheme && isNormalized;
+    }
+
+    /**
      * Check if string is valid Urn.
      * @param str Input string
      * @return true if valid
@@ -409,6 +453,9 @@ public final class ODataUtils {
         }
         String scheme = uri.getScheme();
         boolean isValidScheme = isValidCellUrlScheme(scheme);
+        if (isValidScheme && isValidLocalUnitUrlScheme(scheme)) {
+            isValidScheme = validateLocalUnitUrl(str, Common.PATTERN_CELL_LOCALUNIT_PATH);
+        }
         boolean isNormalized = uri.normalize().toString().equals(str);
         boolean hasTrailingSlash = str.endsWith("/");
         return isValidLength && isValidScheme && isNormalized && hasTrailingSlash;
@@ -463,6 +510,28 @@ public final class ODataUtils {
         }
         String scheme = uri.getScheme();
         boolean isValidScheme = isValidLocalBoxUrlScheme(scheme);
+        boolean isNormalized = uri.normalize().toString().equals(str);
+        return isValidLength && isValidScheme && isNormalized;
+    }
+
+    /**
+     * Check if string is valid Local Unit URL.
+     * @param str Input string
+     * @return true if valid
+     */
+    public static boolean isValidLocalUnitUrl(String str) {
+        if (str == null) {
+            return false;
+        }
+        boolean isValidLength = str.length() <= URI_MAX_LENGTH;
+        URI uri;
+        try {
+            uri = new URI(str);
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        String scheme = uri.getScheme();
+        boolean isValidScheme = isValidLocalUnitUrlScheme(scheme);
         boolean isNormalized = uri.normalize().toString().equals(str);
         return isValidLength && isValidScheme && isNormalized;
     }

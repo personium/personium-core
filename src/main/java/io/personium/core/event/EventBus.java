@@ -16,7 +16,14 @@
  */
 package io.personium.core.event;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import io.personium.core.model.Cell;
+import io.personium.core.rule.RuleManager;
 
 /**
  * Bus for sendig event.
@@ -43,8 +50,58 @@ public final class EventBus {
         // set time
         ev.setTime();
 
-        // send event to JMS
-        EventSender.send(ev);
+        // send event
+        EventFactory.getEventSender().send(ev);
+    }
+
+    private static ExecutorService pool;
+    private static final int EVENTRECEIVER_NUM = 2;
+
+    /**
+     * Start EventBus.
+     */
+    public static void start() {
+        // RuleManager
+        RuleManager.getInstance();
+
+        EventFactory.createEventPublisher();
+
+        // create thread pool.
+        int threadNumber = EVENTRECEIVER_NUM;
+        final ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
+        builder.setNameFormat("event-receiver-%d");
+        pool = Executors.newFixedThreadPool(threadNumber, builder.build());
+        // Execute receiver for processing rule.
+        for (int i = 0; i < threadNumber; i++) {
+            pool.execute(new EventReceiveRunner());
+        }
+
+        EventFactory.createEventSender();
+    }
+
+    /**
+     * Stop EventBus.
+     */
+    public static void stop() {
+        EventFactory.closeEventSender();
+
+        // shutdown thread pool.
+        try {
+            pool.shutdown();
+            if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
+                pool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            pool.shutdownNow();
+        }
+
+        EventFactory.closeEventPublisher();
+
+        // shutdown RuleManager.
+        RuleManager rman = RuleManager.getInstance();
+        if (rman != null) {
+            rman.shutdown();
+        }
     }
 
 }

@@ -16,6 +16,8 @@
  */
 package io.personium.core.rule.action;
 
+import org.json.simple.JSONObject;
+
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
 import io.personium.core.rule.ActionInfo;
@@ -31,7 +33,31 @@ public class RelayEventAction extends RelayAction {
      */
     public RelayEventAction(Cell cell, ActionInfo ai) {
         super(cell, ai);
-        setSvcName("relayevent");
+    }
+
+    @Override
+    protected String getRequestUrl() {
+        return service + "__event";
+    }
+
+    @Override
+    @SuppressWarnings({ "unchecked" })
+    protected JSONObject createEvent(PersoniumEvent event) {
+        String type = event.getType();
+        if (!type.startsWith("relay.")) {
+            if (event.getExternal()) {
+                type = "relay.ext." + type;
+            } else {
+                type = "relay." + type;
+            }
+        }
+
+        JSONObject json = new JSONObject();
+        json.put("Type", type);
+        json.put("Object", event.getObject());
+        json.put("Info", event.getInfo());
+
+        return json;
     }
 
     @Override

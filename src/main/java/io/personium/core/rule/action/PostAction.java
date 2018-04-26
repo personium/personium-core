@@ -22,9 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-
 import org.apache.http.HttpMessage;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -32,6 +29,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 
 import org.json.simple.JSONObject;
@@ -47,10 +45,10 @@ import io.personium.core.rule.ActionInfo;
 import io.personium.core.utils.HttpClientFactory;
 
 /**
- * Abstract class of Action about Engine.
+ * Abstract class of Action about Post.
  */
-public abstract class EngineAction extends Action {
-    static Logger logger = LoggerFactory.getLogger(EngineAction.class);
+public abstract class PostAction extends Action {
+    static Logger logger = LoggerFactory.getLogger(PostAction.class);
 
     Cell cell;
     String service;
@@ -63,7 +61,7 @@ public abstract class EngineAction extends Action {
      * @param cell target cell object
      * @param ai ActionInfo object
      */
-    public EngineAction(Cell cell, ActionInfo ai) {
+    public PostAction(Cell cell, ActionInfo ai) {
         this.cell = cell;
         this.service = ai.getService();
         this.action = ai.getAction();
@@ -72,7 +70,6 @@ public abstract class EngineAction extends Action {
     }
 
     @Override
-    @SuppressWarnings({ "deprecation", "unchecked" })
     public PersoniumEvent execute(PersoniumEvent event) {
         String requestUrl = getRequestUrl();
         if (requestUrl == null) {
@@ -83,26 +80,13 @@ public abstract class EngineAction extends Action {
         HttpPost req = new HttpPost(requestUrl);
 
         // create payload as JSON
-        JSONObject json = new JSONObject();
-        json.put("External", event.getExternal());
-        if (event.getSchema() != null) {
-            json.put("Schema", event.getSchema());
-        }
-        if (event.getSubject() != null) {
-            json.put("Subject", event.getSubject());
-        }
-        json.put("Type", event.getType());
-        json.put("Object", event.getObject());
-        json.put("Info", event.getInfo());
-
-        // add specific events to payload in derrived class
-        addEvents(json);
-
-        req.setEntity(new StringEntity(json.toString(), StandardCharsets.UTF_8.toString()));
+        JSONObject json = createEvent(event);
+        req.setEntity(new StringEntity(
+                json.toString(),
+                ContentType.APPLICATION_JSON.withCharset(StandardCharsets.UTF_8)));
 
         // set headers
-        //  Content-Type, X-Personium-RequestKey, X-Personium-EventId, X-Personium-RuleChain, X-Personium-Via
-        req.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        //  X-Personium-RequestKey, X-Personium-EventId, X-Personium-RuleChain, X-Personium-Via
         if (event.getRequestKey() != null) {
             req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, event.getRequestKey());
         }
@@ -134,7 +118,13 @@ public abstract class EngineAction extends Action {
         }
 
         // create event for result of script execution
-        PersoniumEvent evt = event.copy(action, service, result, eventId, chain);
+        PersoniumEvent evt = event.clone()
+                .type(action)
+                .object(service)
+                .info(result)
+                .eventId(eventId)
+                .ruleChain(chain)
+                .build();
 
         return evt;
     }
@@ -152,10 +142,27 @@ public abstract class EngineAction extends Action {
     protected abstract String getRequestUrl();
 
     /**
-     * Add specific events in derrived class.
-     * @param json JSONObject to add events
+     * Create event in json format.
+     * @param event PersoniumEvent object
+     * @return json object
      */
-    protected abstract void addEvents(JSONObject json);
+    @SuppressWarnings({ "unchecked" })
+    protected JSONObject createEvent(PersoniumEvent event) {
+        JSONObject json = new JSONObject();
+
+        json.put("External", event.getExternal());
+        if (event.getSchema() != null) {
+            json.put("Schema", event.getSchema());
+        }
+        if (event.getSubject() != null) {
+            json.put("Subject", event.getSubject());
+        }
+        json.put("Type", event.getType());
+        json.put("Object", event.getObject());
+        json.put("Info", event.getInfo());
+
+        return json;
+    }
 
     /**
      * Set specific HTTP headers in derrived class.

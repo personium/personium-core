@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -52,6 +54,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.HttpClientUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.wink.webdav.WebDAVMethod;
 import org.slf4j.Logger;
@@ -284,10 +287,37 @@ public class PersoniumEngineSvcCollectionResource {
     private PersoniumEvent createEvent(String path) {
         String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
                 this.davRsCmp.getUrl() + "/" + path);
-        String type = PersoniumEventType.Category.SERVICE
-                + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.EXEC;
+        String type = PersoniumEventType.service(PersoniumEventType.Operation.EXEC);
 
-        return new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, null, this.davRsCmp);
+        return new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .davRsCmp(this.davRsCmp)
+                .build();
+    }
+
+    // create url to request to engine
+    private URI createRequestUrl(String path) {
+        String cellName = this.davRsCmp.getCell().getName();
+        String boxName = this.davRsCmp.getBox().getName();
+        String urlPath = new StringBuilder()
+                .append(PersoniumUnitConfig.getEnginePath() + "/")
+                .append(cellName + "/")
+                .append(boxName + "/")
+                .append("service/")
+                .append(path)
+                .toString();
+
+        try {
+            return new URIBuilder()
+                    .setScheme("http")
+                    .setHost(PersoniumUnitConfig.getEngineHost())
+                    .setPort(PersoniumUnitConfig.getEnginePort())
+                    .setPath(urlPath)
+                    .build();
+        } catch (URISyntaxException e) {
+            throw PersoniumCoreException.ServiceCollection.SC_ENGINE_CONNECTION_ERROR.reason(e);
+        }
     }
 
     // close httpclient
@@ -305,17 +335,15 @@ public class PersoniumEngineSvcCollectionResource {
      * @param is リクエストボディ
      * @return JAX-RS Response
      */
-    public Response relaycommon(
+    private Response relaycommon(
             String method,
             UriInfo uriInfo,
             String path,
             HttpHeaders headers,
             InputStream is) {
 
-        String cellName = this.davRsCmp.getCell().getName();
-        String boxName = this.davRsCmp.getBox().getName();
-        String requestUrl = String.format("http://%s:%s/%s/%s/%s/service/%s", PersoniumUnitConfig.getEngineHost(),
-                PersoniumUnitConfig.getEnginePort(), PersoniumUnitConfig.getEnginePath(), cellName, boxName, path);
+        // url to request to engine
+        URI requestUrl = createRequestUrl(path);
 
         // baseUrlを取得
         String baseUrl = uriInfo.getBaseUri().toString();

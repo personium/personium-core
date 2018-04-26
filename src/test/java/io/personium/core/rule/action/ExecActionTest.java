@@ -16,8 +16,6 @@
  */
 package io.personium.core.rule.action;
 
-import org.apache.http.client.methods.HttpPost;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -33,6 +31,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
 import io.personium.core.rule.ActionInfo;
 import io.personium.test.categories.Unit;
@@ -60,14 +59,14 @@ public class ExecActionTest {
         String boxName = "box";
         String svcName = "service";
         String engineHost = "personium.engine";
-        String enginePort = "8080";
+        int enginePort = 8080;
         String enginePath = "personium-engine";
         String cellUrl = "http://personium/cell/";
 
         // --------------------
         // Expected result
         // --------------------
-        String expected = String.format("http://%s:%s/%s/%s/%s/service/%s",
+        String expected = String.format("http://%s:%d/%s/%s/%s/service/%s",
                 engineHost, enginePort, enginePath, cellName, boxName, svcName);
 
         // --------------------
@@ -194,21 +193,20 @@ public class ExecActionTest {
     }
 
     /**
-     * Test setHeaders().
+     * Test createEvent().
      * Normal test.
-     * cell is null.
      */
     @Test
-    public void setHeaders_Normal_cell_is_null() {
+    public void createEvent_Normal() {
         // --------------------
         // Test method args
         // --------------------
         String service = "http://personium/cell/box/col/service";
-        String requestUrl = "http://localhost:8080/personium-engine/cell/box/service/svc";
 
         // --------------------
         // Expected result
         // --------------------
+        int size = 6;
 
         // --------------------
         // Mock settings
@@ -219,26 +217,33 @@ public class ExecActionTest {
         // --------------------
         ActionInfo ai = new ActionInfo(null, service, null, null);
         ExecAction action = new ExecAction(null, ai);
-        HttpPost req = new HttpPost(requestUrl);
-        action.setHeaders(req, null);
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .schema("schema")
+                .subject("subject")
+                .type("type")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
+        JSONObject json = action.createEvent(event);
 
         // --------------------
         // Confirm result
         // --------------------
-        assertNull(req.getLastHeader("X-Baseurl"));
-        assertNull(req.getLastHeader("X-Request-Uri"));
-        assertNull(req.getLastHeader("X-Personium-Fs-Path"));
-        assertNull(req.getLastHeader("X-Personium-Fs-Routing-Id"));
-        assertNull(req.getLastHeader("X-Personium-Box-Schema"));
+        assertThat(json.size(), is(size));
     }
 
     /**
-     * Test setHeaders().
+     * Test createEvent().
      * Normal test.
-     * req is null.
+     * schema is null
      */
     @Test
-    public void setHeaders_Normal_req_is_null() {
+    public void createEvent_Normal_schema_is_null() {
         // --------------------
         // Test method args
         // --------------------
@@ -247,40 +252,7 @@ public class ExecActionTest {
         // --------------------
         // Expected result
         // --------------------
-
-        // --------------------
-        // Mock settings
-        // --------------------
-        Cell cell = mock(Cell.class);
-
-        // --------------------
-        // Run method
-        // --------------------
-        ActionInfo ai = new ActionInfo(null, service, null, null);
-        ExecAction action = new ExecAction(cell, ai);
-        HttpPost req = null;
-        action.setHeaders(req, null);
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertNull(req);
-    }
-
-    /**
-     * Test addEvents().
-     * Normal test.
-     */
-    @Test
-    public void addEvents_Normal() {
-        // --------------------
-        // Test method args
-        // --------------------
-        String service = "http://personium/cell/box/col/service";
-
-        // --------------------
-        // Expected result
-        // --------------------
+        int size = 5;
 
         // --------------------
         // Mock settings
@@ -291,22 +263,32 @@ public class ExecActionTest {
         // --------------------
         ActionInfo ai = new ActionInfo(null, service, null, null);
         ExecAction action = new ExecAction(null, ai);
-        JSONObject json = new JSONObject();
-        action.addEvents(json);
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .subject("subject")
+                .type("type")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
+        JSONObject json = action.createEvent(event);
 
         // --------------------
         // Confirm result
         // --------------------
-        assertThat(json.isEmpty(), is(true));
+        assertThat(json.size(), is(size));
     }
 
     /**
-     * Test addEvents().
+     * Test createEvent().
      * Normal test.
-     * json is null.
+     * subject is null.
      */
     @Test
-    public void addEvents_Normal_json_is_null() {
+    public void createEvent_Normal_subject_is_null() {
         // --------------------
         // Test method args
         // --------------------
@@ -315,7 +297,7 @@ public class ExecActionTest {
         // --------------------
         // Expected result
         // --------------------
-        String expected = service;
+        int size = 5;
 
         // --------------------
         // Mock settings
@@ -326,13 +308,23 @@ public class ExecActionTest {
         // --------------------
         ActionInfo ai = new ActionInfo(null, service, null, null);
         ExecAction action = new ExecAction(null, ai);
-        JSONObject json = null;
-        action.addEvents(json);
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .schema("schema")
+                .type("type")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
+        JSONObject json = action.createEvent(event);
 
         // --------------------
         // Confirm result
         // --------------------
-        assertNull(json);
+        assertThat(json.size(), is(size));
     }
 
 }

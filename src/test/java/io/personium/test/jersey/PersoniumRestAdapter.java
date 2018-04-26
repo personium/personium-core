@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,11 +36,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import io.personium.test.PersoniumCoreTestConfig;
 
@@ -63,13 +62,13 @@ public class PersoniumRestAdapter {
     private static final int TIMEOUT = 85000;
     /** HTTPClient. */
     private HttpClient httpClient;
+    private HttpClientContext httpContext;
 
     /**
      * コンストラクタ.
      */
     public PersoniumRestAdapter() {
         httpClient = HttpClientFactory.create("insecure", TIMEOUT);
-        HttpClientParams.setRedirecting(httpClient.getParams(), false);
         log = LogFactory.getLog(PersoniumRestAdapter.class);
     }
 
@@ -368,7 +367,8 @@ public class PersoniumRestAdapter {
      */
     private PersoniumResponse request(final HttpUriRequest httpReq) throws PersoniumException {
         try {
-            HttpResponse objResponse = httpClient.execute(httpReq);
+            httpContext = HttpClientContext.create();
+            HttpResponse objResponse = httpClient.execute(httpReq, httpContext);
             PersoniumResponse dcRes = new PersoniumResponse(objResponse);
             /*
              * int statusCode = objResponse.getStatusLine().getStatusCode(); if (statusCode >= STATUS300) {
@@ -388,7 +388,7 @@ public class PersoniumRestAdapter {
      * @return cookieリスト
      */
     public List<Cookie> getCookies() {
-        return ((DefaultHttpClient) httpClient).getCookieStore().getCookies();
+        return httpContext.getCookieStore().getCookies();
     }
 
     /** 日本語UTFのためのマスク値. */

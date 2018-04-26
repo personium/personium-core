@@ -98,7 +98,11 @@ public class ODataMessageResource extends AbstractODataResource {
         Response response = rb.build();
 
         // personium-localcell:/__ctl/SentMessage('key')
-        String object = String.format("%s:/__ctl/%s%s", UriUtils.SCHEME_LOCALCELL, getEntitySetName(), key);
+        String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                .append(":/__ctl/")
+                .append(getEntitySetName())
+                .append(key)
+                .toString();
         String info = Integer.toString(response.getStatus());
         this.messageResource.postEvent(getEntitySetName(), object, info, operation);
 

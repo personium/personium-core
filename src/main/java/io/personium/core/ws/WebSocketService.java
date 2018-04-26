@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.personium.core.ws;
 
 import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_A_SEC;
@@ -29,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -38,6 +40,8 @@ import javax.websocket.PongMessage;
 import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -112,6 +116,35 @@ public class WebSocketService {
 
     // lock object
     static Object lockObj = new Object();
+
+    private static ExecutorService pool;
+
+    /**
+     * Start WebSocketService.
+     */
+    public static void start() {
+        // create thread pool.
+        final ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
+        builder.setNameFormat("ws-event-subscriber-%d");
+        pool = Executors.newFixedThreadPool(1, builder.build());
+        // Execute receiver for for all event.
+        pool.execute(new EventSubscribeRunner());
+    }
+
+    /**
+     * Stop WebSocketService.
+     */
+    public static void stop() {
+        // shutdown thread pool.
+        try {
+            pool.shutdown();
+            if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
+                pool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            pool.shutdownNow();
+        }
+    }
 
     /**
      * This callback method is called when a client connects.
@@ -433,14 +466,14 @@ public class WebSocketService {
                 if (cellCmp.exists()) {
                     CellRsCmp cellRsCmp = new CellRsCmp(cellCmp, cell, ac);
                     cellRsCmp.checkAccessContext(ac, CellPrivilege.EVENT);
-                    PersoniumEvent pEvent = new PersoniumEvent(
-                            PersoniumEvent.EXTERNAL_EVENT,
-                            (String) event.get("Type"),
-                            (String) event.get("Object"),
-                            (String) event.get("Info"),
-                            cellRsCmp,
-                            (String) event.get("RequestKey")
-                    );
+                    PersoniumEvent pEvent = new PersoniumEvent.Builder()
+                            .external()
+                            .type((String) event.get("Type"))
+                            .object((String) event.get("Object"))
+                            .info((String) event.get("Info"))
+                            .davRsCmp(cellRsCmp)
+                            .requestKey((String) event.get("RequestKey"))
+                            .build();
                     EventBus eventBus = cell.getEventBus();
                     eventBus.post(pEvent);
                 }
@@ -559,10 +592,10 @@ public class WebSocketService {
     }
 
     /**
-     * This method is called by EventSubscriber.
+     * This method is called by EventSubscribeRunner.
      * @param event send event of personium to all cell session
      */
-    public static void sendEvent(PersoniumEvent event) {
+    static void sendEvent(PersoniumEvent event) {
         String cellId = event.getCellId();
         String cellName = null;
         Cell cell = ModelFactory.cell(cellId, null);

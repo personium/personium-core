@@ -28,6 +28,7 @@ import org.odata4j.core.OEntityKey;
 import org.odata4j.core.OProperty;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.CellPrivilege;
@@ -213,10 +214,13 @@ public final class CellCtlResource extends ODataResource {
         if (Rule.EDM_TYPE_NAME.equals(entitySetName)) {
             // get properties
             Boolean external = false;
-            String action = null;
-            String service = null;
+            String subject = null;
+            String type = null;
             String object = null;
-            String boxname = null;
+            String info = null;
+            String action = null;
+            String targetUrl = null;
+            Boolean boxBound = false;
             for (OProperty<?> property : props) {
                 String name = property.getName();
                 String value = null;
@@ -232,65 +236,183 @@ public final class CellCtlResource extends ODataResource {
                 } else if (Rule.P_EXTERNAL.getName().equals(name) && value != null) {
                     external = Boolean.valueOf(value);
                 } else if (Rule.P_SERVICE.getName().equals(name) && value != null) {
-                    service = value;
+                    targetUrl = value;
+                } else if (Rule.P_SUBJECT.getName().equals(name) && value != null) {
+                    subject = value;
+                } else if (Rule.P_TYPE.getName().equals(name) && value != null) {
+                    type = value;
                 } else if (Rule.P_OBJECT.getName().equals(name) && value != null) {
                     object = value;
+                } else if (Rule.P_INFO.getName().equals(name) && value != null) {
+                    info = value;
                 } else if (Common.P_BOX_NAME.getName().equals(name) && value != null) {
-                    boxname = value;
+                    boxBound = true;
                 }
             }
 
-            // action: relay or relay.event or exec -> service: not null
-            if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_RELAY_EVENT.equals(action)
-                    || Rule.ACTION_EXEC.equals(action)) && service == null) {
-                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
-            }
-
-            // boxname: not null
-            if (boxname != null) {
-                // external: false -> object: personium-localbox:/xxx or personium-localcell:/__xxx
-                if (!external && object != null
-                        && !ODataUtils.isValidLocalBoxUrl(object)
-                        && !(ODataUtils.isValidLocalCellUrl(object)
-                                && object.startsWith(UriUtils.SCHEME_LOCALCELL + ":/__"))) {
-                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_OBJECT.getName());
-                }
-                // action: exec -> service: personium-localbox:/xxx
-                if (Rule.ACTION_EXEC.equals(action) && !service.startsWith(UriUtils.SCHEME_LOCALBOX)) {
-                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
-                }
-            } else {
-                // external: false -> object: personium-localcell:/xxx
-                if (!external && object != null && !ODataUtils.isValidLocalCellUrl(object)) {
-                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_OBJECT.getName());
-                }
-                // action: exec -> service: personium-localcell:/xxx
-                if (Rule.ACTION_EXEC.equals(action) && !service.startsWith(UriUtils.SCHEME_LOCALCELL)) {
-                    throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
-                }
-            }
-
-            // action: relay -> service: personium-localunit: or http: or https:
-            if (Rule.ACTION_RELAY.equals(action)
-                    && !service.startsWith(UriUtils.SCHEME_HTTP)
-                    && !service.startsWith(UriUtils.SCHEME_HTTPS)
-                    && !service.startsWith(UriUtils.SCHEME_LOCALUNIT)) {
-                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
-            }
-
-            // action: relay.event -> service: cell url
-            if (Rule.ACTION_RELAY_EVENT.equals(action)
-                    && !ODataUtils.isValidCellUrl(service)) {
-                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Rule.P_SERVICE.getName());
+            String error = validateRule(PersoniumUnitConfig.getBaseUrl(),
+                    external, subject, type, object, info, action, targetUrl, boxBound);
+            if (error != null) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(error);
             }
         }
     }
 
+    /**
+     * Validate Rule.
+     * @param unitUrl unit base url
+     * @param external value of EventExternal
+     * @param subject value of EventSubject
+     * @param type value of EventType
+     * @param object value of EventObject
+     * @param info value of EventInfo
+     * @param action value of Action
+     * @param targetUrl value of TargetUrl
+     * @param boxBound flag of box bounded
+     * @return property name of format error
+     */
+    public static String validateRule(String unitUrl,
+            Boolean external, String subject,
+            String type, String object, String info, String action, String targetUrl, Boolean boxBound) {
+
+        // check if convert scheme to localunit
+        String converted = UriUtils.convertSchemeFromHttpToLocalUnit(unitUrl, subject);
+        if (converted != null && !converted.equals(subject)) {
+            return Rule.P_SUBJECT.getName();
+        }
+        converted = UriUtils.convertSchemeFromHttpToLocalUnit(unitUrl, targetUrl);
+        if (converted != null && !converted.equals(targetUrl)) {
+            return Rule.P_SERVICE.getName();
+        }
+
+        return validateRule(external, type, object, info, action, targetUrl, boxBound);
+    }
+
+    /**
+     * Validate Rule.
+     * @param external value of EventExternal
+     * @param type value of EventType
+     * @param object value of EventObject
+     * @param info value of EventInfo
+     * @param action value of Action
+     * @param targetUrl value of TargetUrl
+     * @param boxBound flag of box bounded
+     * @return property name of format error
+     */
+    public static String validateRule(
+            Boolean external,
+            String type, String object, String info, String action, String targetUrl, Boolean boxBound) {
+
+        // action: relay or relay.event or exec -> targetUrl: not null
+        if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_RELAY_EVENT.equals(action)
+                || Rule.ACTION_EXEC.equals(action)) && targetUrl == null) {
+            return Rule.P_SERVICE.getName();
+        }
+
+        // type: timer.periodic or timer.oneshot -> external: false
+        //                                       -> object: decimal number
+        //                                       -> info: required
+        if (PersoniumEventType.timerPeriodic().equals(type) || PersoniumEventType.timerOneshot().equals(type)) {
+            // external: false
+            if (external) {
+                return Rule.P_EXTERNAL.getName();
+            }
+            // object: [0-9]*
+            if (object == null || !ODataUtils.validateTime(object)) {
+                return Rule.P_OBJECT.getName();
+            }
+            // info: required
+            if (info == null) {
+                return Rule.P_INFO.getName();
+            }
+        } else if (boxBound.booleanValue()) {
+            // boxbound
+
+            // external: false -> object: personium-localbox:/xxx or personium-localcell:/__xxx
+            if (!external && object != null
+                    && !ODataUtils.isValidLocalBoxUrl(object)
+                    && !(ODataUtils.isValidLocalCellUrl(object)
+                            && object.startsWith(UriUtils.SCHEME_LOCALCELL + ":/__"))) {
+                return Rule.P_OBJECT.getName();
+            }
+            // action: exec -> targetUrl: personium-localbox:/col/srv
+            if (Rule.ACTION_EXEC.equals(action)
+                    && !ODataUtils.validateLocalBoxUrl(targetUrl, Common.PATTERN_SERVICE_LOCALBOX_PATH)) {
+                return Rule.P_SERVICE.getName();
+            }
+            // action: relay -> targetUrl: personium-localunit:/xxx or http://xxx or https://xxx
+            //                           or personium-localcell:/xxx or personium-localbox:/xxx
+            if (Rule.ACTION_RELAY.equals(action)
+                    && !ODataUtils.isValidUrl(targetUrl)
+                    && !ODataUtils.isValidLocalUnitUrl(targetUrl)
+                    && !ODataUtils.isValidLocalCellUrl(targetUrl)
+                    && !ODataUtils.isValidLocalBoxUrl(targetUrl)) {
+                return Rule.P_SERVICE.getName();
+            }
+        } else {
+            // external: false -> object: personium-localcell:/xxx
+            if (!external && object != null && !ODataUtils.isValidLocalCellUrl(object)) {
+                return Rule.P_OBJECT.getName();
+            }
+            // action: exec -> targetUrl: personium-localcell:/box/col/srv
+            if (Rule.ACTION_EXEC.equals(action)
+                    && !ODataUtils.validateLocalCellUrl(targetUrl, Common.PATTERN_SERVICE_LOCALCELL_PATH)) {
+                return Rule.P_SERVICE.getName();
+            }
+            // action: relay -> targetUrl: personium-localunit:/xxx or http://xxx or https://xxx
+            //                             or personium-localcell:/xxx
+            if (Rule.ACTION_RELAY.equals(action)
+                    && !ODataUtils.isValidUrl(targetUrl)
+                    && !ODataUtils.isValidLocalUnitUrl(targetUrl)
+                    && !ODataUtils.isValidLocalCellUrl(targetUrl)) {
+                return Rule.P_SERVICE.getName();
+            }
+        }
+
+        // action: relay.event -> targetUrl: cell url or personium-localcell:/
+        if (Rule.ACTION_RELAY_EVENT.equals(action)
+                && !ODataUtils.isValidCellUrl(targetUrl)
+                && !targetUrl.equals(UriUtils.SCHEME_LOCALCELL + ":/")) {
+            return Rule.P_SERVICE.getName();
+        }
+
+        return null; // valid
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void postEvent(String entitySetName, String object, String info, String op) {
-        String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                + entitySetName + PersoniumEventType.SEPALATOR + op;
-        PersoniumEvent ev = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT, type, object, info, this.davRsCmp);
+        String type = PersoniumEventType.cellctl(entitySetName, op);
+        postEventInternal(type, object, info);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void postLinkEvent(String src, String object, String info, String target, String op) {
+        String type = PersoniumEventType.cellctlLink(src, target, op);
+        postEventInternal(type, object, info);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void postNavPropEvent(String src, String object, String info, String target, String op) {
+        String type = PersoniumEventType.cellctlNavProp(src, target, op);
+        postEventInternal(type, object, info);
+    }
+
+    private void postEventInternal(String type, String object, String info) {
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .info(info)
+                .davRsCmp(this.davRsCmp)
+                .build();
         EventBus eventBus = this.getAccessContext().getCell().getEventBus();
         eventBus.post(ev);
     }
