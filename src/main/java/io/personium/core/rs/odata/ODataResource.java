@@ -352,4 +352,26 @@ public abstract class ODataResource extends ODataCtlResource {
      */
     public abstract boolean hasPrivilegeForBatch(AccessContext ac);
 
+    /**
+     * Post links event to EventBus.
+     * @param src the name of the entitySet of processing object
+     * @param object string of processing object
+     * @param info string of the information about processing
+     * @param target the name of the target entitySet
+     * @param op kind of operation
+     */
+    public void postLinkEvent(String src, String object, String info, String target, String op) {
+    }
+
+    /**
+     * Post navprop event to EventBus.
+     * @param src the name of the entitySet of processing object
+     * @param object string of processing object
+     * @param info string of the information about processing
+     * @param target the name of the target entitySet
+     * @param op kind of operation
+     */
+    public void postNavPropEvent(String src, String object, String info, String target, String op) {
+    }
+
 }

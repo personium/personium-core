@@ -16,87 +16,26 @@
  */
 package io.personium.core.event;
 
-import javax.jms.JMSException;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-
-import org.apache.activemq.ActiveMQConnectionFactory;
-
-import io.personium.core.PersoniumUnitConfig;
-
 /**
  * Send event to topic.
  */
-public class EventPublisher {
-    /** Constructor. */
-    private EventPublisher() {
-    }
+public interface EventPublisher {
 
     /**
-     * Send event to topic.
+     * Open connection.
+     * @param topic topic name
+     */
+    void open(final String topic);
+
+    /**
+     * Send event to default topic.
      * @param event event to send
      */
-    public static void send(PersoniumEvent event) {
-        send(event, PersoniumUnitConfig.getEventBusTopicName());
-    }
+    void send(final PersoniumEvent event);
 
     /**
-     * Send rule event to rule topic.
-     * @param event event to send
+     * Close connection.
      */
-    public static void sendRuleEvent(PersoniumEvent event) {
-        send(event, PersoniumUnitConfig.getEventBusRuleTopicName());
-    }
+    void close();
 
-    /**
-     * Send event.
-     * @param event event to send
-     * @param topic topic name for sending event
-     */
-    public static void send(PersoniumEvent event, String topic) {
-        Connection connection = null;
-        Session session = null;
-        try {
-            ConnectionFactory factory = new ActiveMQConnectionFactory(PersoniumUnitConfig.getEventBusBrokerUrl());
-            connection = factory.createConnection();
-            connection.start();
-
-            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination dest = session.createTopic(topic);
-            MessageProducer producer = session.createProducer(dest);
-
-            MapMessage msg = session.createMapMessage();
-            EventSender.convertToMessage(event, msg);
-
-            producer.send(msg);
-        } catch (JMSException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (session != null) {
-                    session.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (JMSException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Convert message to event.
-     * @param msg message to be converted
-     * @return event converted from message
-     */
-    public static PersoniumEvent convertToEvent(Message msg) {
-        // use EventSender.convertToEvent because of same processing.
-        return EventSender.convertToEvent(msg);
-    }
 }

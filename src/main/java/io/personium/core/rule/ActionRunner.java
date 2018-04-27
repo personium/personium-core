@@ -37,7 +37,7 @@ class ActionRunner implements Runnable {
      * @param ai information of action for target event
      * @param event target event object
      */
-    public ActionRunner(Cell cell, ActionInfo ai, PersoniumEvent event) {
+    ActionRunner(Cell cell, ActionInfo ai, PersoniumEvent event) {
         this.cell = cell;
         this.actionInfo = ai;
         this.event = event;

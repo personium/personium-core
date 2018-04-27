@@ -136,9 +136,7 @@ public class UriUtils {
             return null;
         }
 
-        String retUrl = String.format("%s%s", cellUrl, parts[1]);
-
-        return retUrl;
+        return new StringBuilder(cellUrl).append(parts[1]).toString();
     }
 
     /**
@@ -191,9 +189,12 @@ public class UriUtils {
             return null;
         }
 
-        String retUrl = String.format("%s:/%s/%s", SCHEME_LOCALCELL, boxName, parts[1]);
-
-        return retUrl;
+        return new StringBuilder(SCHEME_LOCALCELL)
+                .append(":/")
+                .append(boxName)
+                .append("/")
+                .append(parts[1])
+                .toString();
     }
 
     /**

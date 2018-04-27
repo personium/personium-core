@@ -133,12 +133,13 @@ public final class ODataEntitiesResource extends AbstractODataResource {
                 .header(ODataConstants.Headers.DATA_SERVICE_VERSION, version.asString).build();
 
         // post event to EventBus
-        String object = String.format("%s%s",
-                this.odataResource.getRootUrl(),
-                getEntitySetName());
-        String info = String.format("%s,%s",
-                Integer.toString(response.getStatus()),
-                uriInfo.getRequestUri());
+        String object = new StringBuilder(this.odataResource.getRootUrl())
+                .append(getEntitySetName())
+                .toString();
+        String info = new StringBuilder(Integer.toString(response.getStatus()))
+                .append(",")
+                .append(uriInfo.getRequestUri())
+                .toString();
         this.odataResource.postEvent(getEntitySetName(), object, info, PersoniumEventType.Operation.LIST);
 
         return response;
@@ -215,13 +216,14 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         Response response = rb.build();
 
         // post event to EventBus
-        String object = String.format("%s%s%s",
-                this.odataResource.getRootUrl(),
-                getEntitySetName(),
-                key);
-        String info = String.format("%s,%s",
-                Integer.toString(response.getStatus()),
-                uriInfo.getRequestUri());
+        String object = new StringBuilder(this.odataResource.getRootUrl())
+                .append(getEntitySetName())
+                .append(key)
+                .toString();
+        String info = new StringBuilder(Integer.toString(response.getStatus()))
+                .append(",")
+                .append(uriInfo.getRequestUri())
+                .toString();
         this.odataResource.postEvent(getEntitySetName(), object, info, PersoniumEventType.Operation.CREATE);
 
         return response;
@@ -300,8 +302,8 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     private void checkNotAllowedMethod(UriInfo uriInfo) {
         // メソッド許可チェック
         String[] uriPath = uriInfo.getPath().split("/");
-        if (ReceivedMessage.EDM_TYPE_NAME.equals(uriPath[(uriPath.length - 1)])
-                || SentMessage.EDM_TYPE_NAME.equals(uriPath[(uriPath.length - 1)])) {
+        if (ReceivedMessage.EDM_TYPE_NAME.equals(uriPath[uriPath.length - 1])
+                || SentMessage.EDM_TYPE_NAME.equals(uriPath[uriPath.length - 1])) {
             throw PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
         }
     }

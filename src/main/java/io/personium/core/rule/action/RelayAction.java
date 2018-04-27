@@ -22,11 +22,11 @@ import java.util.regex.Pattern;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpMessage;
-import org.json.simple.JSONObject;
 
+import io.personium.common.auth.token.AccountAccessToken;
+import io.personium.common.auth.token.CellLocalAccessToken;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.auth.OAuth2Helper;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
 import io.personium.core.rule.ActionInfo;
@@ -34,12 +34,7 @@ import io.personium.core.rule.ActionInfo;
 /**
  * Action for relay action.
  */
-public class RelayAction extends EngineAction {
-    private static String boxName = "__";
-
-    /** System script name for relay. */
-    private String svcName;
-
+public class RelayAction extends PostAction {
     /**
      * Constructor.
      * @param cell target cell object
@@ -47,61 +42,67 @@ public class RelayAction extends EngineAction {
      */
     public RelayAction(Cell cell, ActionInfo ai) {
         super(cell, ai);
-        this.svcName = "relay";
-    }
-
-    /**
-     * Set svcName.
-     * @param svcName system script name
-     */
-    protected void setSvcName(String svcName) {
-        this.svcName = svcName;
     }
 
     @Override
     protected String getRequestUrl() {
-        if (cell == null) {
-            return null;
-        }
-        String cellName = cell.getName();
-        String requestUrl = String.format("http://%s:%s/%s/%s/%s/system/%s", PersoniumUnitConfig.getEngineHost(),
-                PersoniumUnitConfig.getEnginePort(), PersoniumUnitConfig.getEnginePath(), cellName, boxName, svcName);
-        return requestUrl;
+        return service;
     }
 
     @Override
     protected void setHeaders(HttpMessage req, PersoniumEvent event) {
-        if (cell == null || req == null) {
+        if (cell == null || req == null || event.getSubject() == null) {
             return;
         }
-        req.addHeader("X-Baseurl", cell.getUnitUrl());
-        req.addHeader("X-Request-Uri", cell.getUrl() + boxName + "/" + svcName);
-        if (event.getSchema() != null) {
-            req.addHeader("X-Personium-Box-Schema", event.getSchema());
-        }
 
-        // create transcell token
-        TransCellAccessToken token = new TransCellAccessToken(
-            UUID.randomUUID().toString(),
-            new Date().getTime(),
-            TransCellAccessToken.LIFESPAN,
-            cell.getUrl(),
-            event.getSubject(),
-            getTargetCellUrl(), // targetUrl
-            getRoleList(event),
-            event.getSchema() // schema
-        );
-        String accessToken = token.toTokenString();
+        String accessToken;
+        String targetCell = getTargetCellUrl();
+        if (cell.getUrl().equals(targetCell)) {
+            // local access token
+            String subject = event.getSubject();
+            if (subject.startsWith(cell.getUrl())) {
+                String[] parts = subject.split(Pattern.quote("#"));
+                if (parts.length == 2) {
+                    subject = parts[1];
+                } else {
+                    subject = null;
+                }
+                // AccountAccessToken
+                AccountAccessToken token = new AccountAccessToken(
+                    new Date().getTime(),
+                    AccountAccessToken.ACCESS_TOKEN_EXPIRES_HOUR * AccountAccessToken.MILLISECS_IN_AN_HOUR,
+                    cell.getUrl(),
+                    subject,
+                    event.getSchema()
+                );
+                accessToken = token.toTokenString();
+            } else {
+                // CellLocalAccessToken
+                CellLocalAccessToken token = new CellLocalAccessToken(
+                    new Date().getTime(),
+                    CellLocalAccessToken.ACCESS_TOKEN_EXPIRES_HOUR * CellLocalAccessToken.MILLISECS_IN_AN_HOUR,
+                    cell.getUrl(),
+                    subject,
+                    getRoleList(event),
+                    event.getSchema()
+                );
+                accessToken = token.toTokenString();
+            }
+        } else {
+            // create transcell token
+            TransCellAccessToken token = new TransCellAccessToken(
+                UUID.randomUUID().toString(),
+                new Date().getTime(),
+                TransCellAccessToken.LIFESPAN,
+                cell.getUrl(),
+                event.getSubject(),
+                getTargetCellUrl(), // targetUrl
+                getRoleList(event),
+                event.getSchema() // schema
+            );
+            accessToken = token.toTokenString();
+        }
         req.addHeader(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + accessToken);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected void addEvents(JSONObject json) {
-        if (json == null) {
-             return;
-        }
-        json.put("TargetUrl", service);
     }
 
     private static final int SPLIT_NUM = 7;

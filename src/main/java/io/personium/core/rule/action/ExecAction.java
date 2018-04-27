@@ -16,12 +16,13 @@
  */
 package io.personium.core.rule.action;
 
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.regex.Pattern;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpMessage;
-import org.json.simple.JSONObject;
+import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,7 @@ import io.personium.core.utils.UriUtils;
 /**
  * Action for exec action.
  */
-public class ExecAction extends EngineAction {
+public class ExecAction extends PostAction {
     static Logger logger = LoggerFactory.getLogger(ExecAction.class);
 
     // path is expected as followe: box/col/service
@@ -86,20 +87,29 @@ public class ExecAction extends EngineAction {
             logger.error("incorrect service url: " + service);
             return null;
         }
-        String requestUrl = String.format("http://%s:%s/%s/%s/%s/service/%s",
-                PersoniumUnitConfig.getEngineHost(),
-                PersoniumUnitConfig.getEnginePort(),
-                PersoniumUnitConfig.getEnginePath(),
-                this.cellName, this.boxName, this.svcName);
 
-        return requestUrl;
+        String urlPath = new StringBuilder()
+                .append(PersoniumUnitConfig.getEnginePath())
+                .append("/")
+                .append(this.cellName)
+                .append("/")
+                .append(this.boxName)
+                .append("/service/")
+                .append(this.svcName)
+                .toString();
+
+        try {
+            return new URIBuilder()
+                    .setScheme("http")
+                    .setHost(PersoniumUnitConfig.getEngineHost())
+                    .setPort(PersoniumUnitConfig.getEnginePort())
+                    .setPath(urlPath)
+                    .build()
+                    .toString();
+        } catch (URISyntaxException e) {
+            return null;
+        }
     }
-
-    @Override
-    protected void addEvents(JSONObject json) {
-        // There is no event to be added.
-    }
-
 
     @Override
     protected void setHeaders(HttpMessage req, PersoniumEvent event) {

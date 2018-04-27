@@ -16,53 +16,40 @@
  */
 package io.personium.core;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import javax.servlet.annotation.WebListener;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletContextEvent;
 
-import io.personium.common.utils.PersoniumThread;
-import io.personium.core.rule.RuleManager;
-import io.personium.core.ws.EventSubscriber;
+import io.personium.core.event.EventBus;
+import io.personium.core.rs.PersoniumCoreApplication;
+import io.personium.core.ws.WebSocketService;
 
 /**
  * Listener Class for start/shutdown processing.
  */
 @WebListener
 public class PersoniumCoreListener implements ServletContextListener {
-    /** Maximum timeout seconds. */
-    private static final long TIMEOUT_SECONDS = 50;
-
-    private ExecutorService pool;
-
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        // Create ThreadPool.
-        pool = Executors.newFixedThreadPool(1);
-        // Execute receiver for all event.
-        pool.execute(new EventSubscriber());
+        // Start Application.
+        PersoniumCoreApplication.start();
+
+        // Start EventBus.
+        EventBus.start();
+
+        // Start WebSocketService.
+        WebSocketService.start();
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        // Shutdown ThreadPool.
-        try {
-            pool.shutdown();
-            if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
-                pool.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            pool.shutdownNow();
-        }
-        // Finalize RuleManager.
-        RuleManager rman = RuleManager.getInstance();
-        if (rman != null) {
-            rman.finalize();
-        }
-        // Shutdown PersoniumThread.
-        PersoniumThread.shutdown(TIMEOUT_SECONDS);
+        // Stop WebSocket service.
+        WebSocketService.stop();
+
+        // Stop EventBus.
+        EventBus.stop();
+
+        // Stop Application.
+        PersoniumCoreApplication.stop();
     }
 }

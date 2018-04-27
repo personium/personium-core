@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,24 @@ public class PersoniumEventType {
     }
 
     /** Category. */
-    public static class Category {
+    static class Category {
         /** Cell category. */
-        public static final String CELL    = "cell";
+        static final String CELL    = "cell";
         /** Cell control object category. */
-        public static final String CELLCTL = "cellctl";
+        static final String CELLCTL = "cellctl";
         /** OData category. */
-        public static final String ODATA   = "odata";
+        static final String ODATA   = "odata";
         /** Webdav category. */
-        public static final String WEBDAV  = "davfile";
+        static final String WEBDAV  = "davfile";
         /** Message category. */
-        public static final String MESSAGE = "message";
+        static final String MESSAGE = "message";
         /** Service category. */
-        public static final String SERVICE = "service";
+        static final String SERVICE = "service";
         /** Box Install category. */
-        public static final String BI      = "boxinstall";
+        static final String BI      = "boxinstall";
+
+        /** Timer category. */
+        static final String TIMER   = "timer";
     }
 
     /** Operation. */
@@ -81,8 +84,269 @@ public class PersoniumEventType {
         public static final String IMPORT  = "import";
         /** Export operation fora Cell category. */
         public static final String EXPORT  = "export";
+
+        /** Oneshot timer. */
+        public static final String ONESHOT = "oneshot";
+        /** Periodic timer. */
+        public static final String PERIODIC = "periodic";
     }
 
     /** Separator string. */
-    public static final String SEPALATOR = ".";
+    static final String SEPARATOR = ".";
+
+    /**
+     * Get Type of cell operations.
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String cell(String op) {
+        return new StringBuilder(Category.CELL)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of cellctl basic operations.
+     * @param entityName entitySetName
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String cellctl(String entityName, String op) {
+        return new StringBuilder(Category.CELLCTL)
+                .append(SEPARATOR)
+                .append(entityName)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of cellctl link operations.
+     * @param src entitySetName to be linked
+     * @param target entitySetName to link
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String cellctlLink(String src, String target, String op) {
+        if (!Operation.LIST.equals(op) && src.compareTo(target) > 0) {
+            // e.g. cellctl.Rule.links.Box.create -> cellct.Box.links.Rule.create
+            return new StringBuilder(Category.CELLCTL)
+                    .append(SEPARATOR)
+                    .append(target)
+                    .append(SEPARATOR)
+                    .append(Operation.LINK)
+                    .append(SEPARATOR)
+                    .append(src)
+                    .append(SEPARATOR)
+                    .append(op)
+                    .toString();
+        } else {
+            return new StringBuilder(Category.CELLCTL)
+                    .append(SEPARATOR)
+                    .append(src)
+                    .append(SEPARATOR)
+                    .append(Operation.LINK)
+                    .append(SEPARATOR)
+                    .append(target)
+                    .append(SEPARATOR)
+                    .append(op)
+                    .toString();
+        }
+    }
+
+    /**
+     * Get Type of cellctl navprop operations.
+     * @param src entitySetName
+     * @param target entitySetName
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String cellctlNavProp(String src, String target, String op) {
+        return new StringBuilder(Category.CELLCTL)
+                .append(SEPARATOR)
+                .append(src)
+                .append(SEPARATOR)
+                .append(Operation.NAVPROP)
+                .append(SEPARATOR)
+                .append(target)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of odata basic operations.
+     * @param entityName entitySetName
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String odata(String entityName, String op) {
+        return new StringBuilder(Category.ODATA)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of odata link operations.
+     * @param src entitySetName to be linked
+     * @param target entitySetName to link
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String odataLink(String src, String target, String op) {
+        return new StringBuilder(Category.ODATA)
+                .append(SEPARATOR)
+                .append(Operation.LINK)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of odata navprop operations.
+     * @param src entitySetName
+     * @param target entitySetName
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String odataNavProp(String src, String target, String op) {
+        return new StringBuilder(Category.ODATA)
+                .append(SEPARATOR)
+                .append(Operation.NAVPROP)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of odata schema basic operations.
+     * @param entityName entitySetName
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String odataSchema(String entityName, String op) {
+        return new StringBuilder(Category.ODATA)
+                .append(SEPARATOR)
+                .append(entityName)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of odata scheam link operations.
+     * @param src entitySetName to be linked
+     * @param target entitySetName to link
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String odataSchemaLink(String src, String target, String op) {
+        if (!Operation.LIST.equals(op) && src.compareTo(target) > 0) {
+            // e.g. odata.Property.links.EntityType.create -> odata.EntityType.links.Property.create
+            return new StringBuilder(Category.ODATA)
+                    .append(SEPARATOR)
+                    .append(target)
+                    .append(SEPARATOR)
+                    .append(Operation.LINK)
+                    .append(SEPARATOR)
+                    .append(src)
+                    .append(SEPARATOR)
+                    .append(op)
+                    .toString();
+        } else {
+            return new StringBuilder(Category.ODATA)
+                    .append(SEPARATOR)
+                    .append(src)
+                    .append(SEPARATOR)
+                    .append(Operation.LINK)
+                    .append(SEPARATOR)
+                    .append(target)
+                    .append(SEPARATOR)
+                    .append(op)
+                    .toString();
+        }
+    }
+
+    /**
+     * Get Type of odata schema navprop operations.
+     * @param src entitySetName
+     * @param target entitySetName
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String odataSchemaNavProp(String src, String target, String op) {
+        return new StringBuilder(Category.ODATA)
+                .append(SEPARATOR)
+                .append(src)
+                .append(SEPARATOR)
+                .append(Operation.NAVPROP)
+                .append(SEPARATOR)
+                .append(target)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of webdav operations.
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String webdav(String op) {
+        return new StringBuilder(Category.WEBDAV)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of message operations.
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String message(String op) {
+        return new StringBuilder(Category.MESSAGE)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of service operations.
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String service(String op) {
+        return new StringBuilder(Category.SERVICE)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of boxinstall operations.
+     * @return Type string
+     */
+    public static final String boxinstall() {
+        return new StringBuilder(Category.BI)
+                .toString();
+    }
+
+    /**
+     * Get Type of oneshot timer.
+     * @return Type string
+     */
+    public static final String timerOneshot() {
+        return Category.TIMER + SEPARATOR + Operation.ONESHOT;
+    }
+
+    /**
+     * Get Type of periodic timer.
+     * @return Type string
+     */
+    public static final String timerPeriodic() {
+        return Category.TIMER + SEPARATOR + Operation.PERIODIC;
+    }
 }

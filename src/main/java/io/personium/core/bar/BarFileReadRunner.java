@@ -196,7 +196,7 @@ public class BarFileReadRunner implements Runnable {
     private long bulkSize = Long.parseLong(PersoniumUnitConfig
             .get(PersoniumUnitConfig.BAR.BAR_USERDATA_BULK_SIZE));
     private EventBus eventBus;
-    private PersoniumEvent event;
+    private PersoniumEvent.Builder eventBuilder;
     private BarInstallProgressInfo progressInfo;
 
     /**
@@ -353,7 +353,11 @@ public class BarFileReadRunner implements Runnable {
         String type = WebDAVMethod.MKCOL.toString();
         String object = UriUtils.SCHEME_LOCALCELL + ":/" + boxName;
         String result = "";
-        this.event = new PersoniumEvent(type, object, result, this.requestKey);
+        this.eventBuilder = new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .info(result)
+                .requestKey(this.requestKey);
         this.eventBus = this.cell.getEventBus();
     }
 
@@ -752,7 +756,7 @@ public class BarFileReadRunner implements Runnable {
             // エラーが発生していた場合はエラーのレスポンスを返却する
             if (request.getValue().getError() != null) {
                 if (request.getValue().getError() instanceof PersoniumCoreException) {
-                    PersoniumCoreException e = ((PersoniumCoreException) request.getValue().getError());
+                    PersoniumCoreException e = (PersoniumCoreException) request.getValue().getError();
                     writeOutputStream(true, "PL-BI-1004", fileNameMap.get(request.getKey()), e.getMessage());
                     log.info("PersoniumCoreException: " + e.getMessage());
                 } else {
@@ -1193,7 +1197,7 @@ public class BarFileReadRunner implements Runnable {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory f = new JsonFactory();
         try {
-            jp = f.createJsonParser(inputStream);
+            jp = f.createParser(inputStream);
             JsonToken token = jp.nextToken(); // JSONルート要素（"{"）
             Pattern formatPattern = Pattern.compile(".*/+(.*)");
             Matcher formatMatcher = formatPattern.matcher(entryName);
@@ -1249,7 +1253,7 @@ public class BarFileReadRunner implements Runnable {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory f = new JsonFactory();
         try {
-            jp = f.createJsonParser(inputStream);
+            jp = f.createParser(inputStream);
             JsonToken token = jp.nextToken(); // JSONルート要素（"{"）
 
             if (token == JsonToken.START_OBJECT) {
@@ -1717,10 +1721,12 @@ public class BarFileReadRunner implements Runnable {
      */
     @SuppressWarnings("unchecked")
     private void outputEventBus(boolean isError, String code, String path, String message) {
-        if (event != null) {
-            event.setType(code);
-            event.setObject(path);
-            event.setInfo(message);
+        if (eventBuilder != null) {
+            PersoniumEvent event = eventBuilder
+                    .type(code)
+                    .object(path)
+                    .info(message)
+                    .build();
             eventBus.post(event);
         }
         if (this.progressInfo != null && isError) {
@@ -1785,11 +1791,16 @@ public class BarFileReadRunner implements Runnable {
     private void postCellCtlCreateEvent(EntityResponse res) {
         String name = res.getEntity().getEntitySetName();
         String keyString = AbstractODataResource.replaceDummyKeyToNull(res.getEntity().getEntityKey().toKeyString());
-        String object = String.format("%s:/__ctl/%s%s", UriUtils.SCHEME_LOCALCELL, name, keyString);
+        String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                .append(":/__ctl/").append(name).append(keyString).toString();
         String info = "box install";
-        String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                + name + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-        PersoniumEvent ev = new PersoniumEvent(type, object, info, this.requestKey);
+        String type = PersoniumEventType.cellctl(name, PersoniumEventType.Operation.CREATE);
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .info(info)
+                .requestKey(this.requestKey)
+                .build();
         EventBus bus = this.cell.getEventBus();
         bus.post(ev);
     }
@@ -1940,15 +1951,25 @@ public class BarFileReadRunner implements Runnable {
         // post event
         String keyString = AbstractODataResource.replaceDummyKeyToNull(fromOEKey.toString());
         String targetKeyString = AbstractODataResource.replaceDummyKeyToNull(toOEKey.toString());
-        String object = String.format("%s:/__ctl/%s%s/$links/%s%s",
-                UriUtils.SCHEME_LOCALCELL, sourceEntity.getEntitySetName(), keyString, targetNavProp, targetKeyString);
+        String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                .append(":/__ctl/")
+                .append(sourceEntity.getEntitySetName())
+                .append(keyString)
+                .append("/$links/")
+                .append(targetNavProp)
+                .append(targetKeyString)
+                .toString();
         String info = "box install";
-        String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                + sourceEntity.getEntitySetName() + PersoniumEventType.SEPALATOR
-                + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
-                + newTargetEntity.getEntitySetName() + PersoniumEventType.SEPALATOR
-                + PersoniumEventType.Operation.CREATE;
-        PersoniumEvent ev = new PersoniumEvent(type, object, info, this.requestKey);
+        String type = PersoniumEventType.cellctlLink(
+                sourceEntity.getEntitySetName(),
+                newTargetEntity.getEntitySetName(),
+                PersoniumEventType.Operation.CREATE);
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .info(info)
+                .requestKey(this.requestKey)
+                .build();
         EventBus bus = this.cell.getEventBus();
         bus.post(ev);
     }

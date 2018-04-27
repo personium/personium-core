@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.personium.core.ws;
 
 import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_A_SEC;
@@ -29,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -38,6 +40,8 @@ import javax.websocket.PongMessage;
 import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -112,6 +116,35 @@ public class WebSocketService {
 
     // lock object
     static Object lockObj = new Object();
+
+    private static ExecutorService pool;
+
+    /**
+     * Start WebSocketService.
+     */
+    public static void start() {
+        // create thread pool.
+        final ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
+        builder.setNameFormat("ws-event-subscriber-%d");
+        pool = Executors.newFixedThreadPool(1, builder.build());
+        // Execute receiver for for all event.
+        pool.execute(new EventSubscribeRunner());
+    }
+
+    /**
+     * Stop WebSocketService.
+     */
+    public static void stop() {
+        // shutdown thread pool.
+        try {
+            pool.shutdown();
+            if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
+                pool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            pool.shutdownNow();
+        }
+    }
 
     /**
      * This callback method is called when a client connects.
@@ -191,6 +224,7 @@ public class WebSocketService {
      * @param text received message
      * @param session sender session
      */
+    @SuppressWarnings("unchecked")
     @OnMessage
     public void onMessage(String text, Session session) {
         Map<String, Object> userProperties = session.getUserProperties();
@@ -260,6 +294,7 @@ public class WebSocketService {
      * @param session
      * @param receivedAccessToken
      */
+    @SuppressWarnings("unchecked")
     private void onReceiveAccessToken(Session session, String receivedAccessToken) {
         Map<String, Object> userProperties = session.getUserProperties();
         String cellId = (String) userProperties.get(KEY_PROPERTIES_CELL_ID);
@@ -286,6 +321,7 @@ public class WebSocketService {
      * @param session
      * @param subscribeInfo
      */
+    @SuppressWarnings("unchecked")
     private void onReceiveSubscribe(Session session, JSONObject subscribeInfo) {
         log.debug("ws: set " + KEY_JSON_SUBSCRIBE + ": " + subscribeInfo);
         Map<String, Object> userProperties = session.getUserProperties();
@@ -318,6 +354,7 @@ public class WebSocketService {
      * @param session
      * @param unsubscribeInfo
      */
+    @SuppressWarnings("unchecked")
     private void onReceiveUnsubscribe(Session session, JSONObject unsubscribeInfo) {
         log.debug("ws: " + KEY_JSON_UNSUBSCRIBE + ": " + unsubscribeInfo);
         Map<String, Object> userProperties = session.getUserProperties();
@@ -359,6 +396,7 @@ public class WebSocketService {
      * @param session
      * @param state
      */
+    @SuppressWarnings("unchecked")
     private void onReceiveState(Session session, String state, Date authorizedDate) {
         log.debug("ws: " + KEY_JSON_STATE + ": " + state);
         Map<String, Object> userProperties = session.getUserProperties();
@@ -428,14 +466,14 @@ public class WebSocketService {
                 if (cellCmp.exists()) {
                     CellRsCmp cellRsCmp = new CellRsCmp(cellCmp, cell, ac);
                     cellRsCmp.checkAccessContext(ac, CellPrivilege.EVENT);
-                    PersoniumEvent pEvent = new PersoniumEvent(
-                            PersoniumEvent.EXTERNAL_EVENT,
-                            (String) event.get("Type"),
-                            (String) event.get("Object"),
-                            (String) event.get("Info"),
-                            cellRsCmp,
-                            (String) event.get("RequestKey")
-                    );
+                    PersoniumEvent pEvent = new PersoniumEvent.Builder()
+                            .external()
+                            .type((String) event.get("Type"))
+                            .object((String) event.get("Object"))
+                            .info((String) event.get("Info"))
+                            .davRsCmp(cellRsCmp)
+                            .requestKey((String) event.get("RequestKey"))
+                            .build();
                     EventBus eventBus = cell.getEventBus();
                     eventBus.post(pEvent);
                 }
@@ -447,6 +485,7 @@ public class WebSocketService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private JSONObject createResultJSONObject() {
         JSONObject result = new JSONObject();
         long timestamp = new Date().getTime();
@@ -553,10 +592,10 @@ public class WebSocketService {
     }
 
     /**
-     * This method is called by EventSubscriber.
+     * This method is called by EventSubscribeRunner.
      * @param event send event of personium to all cell session
      */
-    public static void sendEvent(PersoniumEvent event) {
+    static void sendEvent(PersoniumEvent event) {
         String cellId = event.getCellId();
         String cellName = null;
         Cell cell = ModelFactory.cell(cellId, null);
@@ -610,6 +649,7 @@ public class WebSocketService {
      * @param event
      * @return
      */
+    @SuppressWarnings("unchecked")
     private static JSONObject toJSON(PersoniumEvent event) {
         JSONObject json = new JSONObject();
         json.put("RequestKey", event.getRequestKey());
@@ -635,10 +675,20 @@ public class WebSocketService {
      */
     private static boolean isExistMatchedRule(Session session, PersoniumEvent event) {
         boolean result = false;
-        List<RuleInfo> ruleList = (List) session.getUserProperties().get(KEY_PROPERTIES_RULES);
+        List<?> ruleList = null;
+        Object o = session.getUserProperties().get(KEY_PROPERTIES_RULES);
+        if (o instanceof List<?>) {
+            ruleList = (List<?>) o;
+        }
 
         if (ruleList != null && ruleList.size() > 0) {
-            for (RuleInfo rule : ruleList) {
+            for (Object item : ruleList) {
+                RuleInfo rule;
+                if (item instanceof RuleInfo) {
+                    rule = (RuleInfo) item;
+                } else {
+                    continue;
+                }
                 if (rule.type != null
                         && event.getType() != null
                         && (event.getType().startsWith(rule.type) || rule.type.equals("*"))

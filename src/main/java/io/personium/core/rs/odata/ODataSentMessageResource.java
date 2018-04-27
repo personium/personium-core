@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +34,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang.CharEncoding;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.HttpClientUtils;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -77,10 +79,10 @@ import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.model.ctl.SentMessagePort;
 import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.rs.cell.CellCtlResource;
 import io.personium.core.rs.cell.MessageResource;
 import io.personium.core.utils.HttpClientFactory;
 import io.personium.core.utils.ODataUtils;
-import io.personium.core.utils.UriUtils;
 
 /**
  * OData operation class of sent message.
@@ -182,6 +184,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
         EdmComplexType ct = SentMessage.COMPLEX_TYPE_RESULT.build();
 
         String fromCellUrl = getMessageResource().getAccessContext().getCell().getUrl();
+        String schema = getMessageResource().getAccessContext().getSchema();
 
         // 宛先リスト作成
         List<String> toList = createRequestUrl();
@@ -193,7 +196,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
 
             // 受信API呼出しのトークン作成
             TransCellAccessToken token = new TransCellAccessToken(
-                    fromCellUrl, fromCellUrl, toCellUrl, new ArrayList<Role>(), "");
+                    fromCellUrl, fromCellUrl, toCellUrl, new ArrayList<Role>(), schema);
 
             // ('ID')からIDを抜き出す
             Pattern formatPattern = Pattern.compile("\\('(.+)'\\)");
@@ -433,7 +436,9 @@ public class ODataSentMessageResource extends ODataMessageResource {
         // リクエストボディ
         StringEntity body = null;
         try {
-            body = new StringEntity(jsonBody.toJSONString(), CharEncoding.UTF_8);
+            body = new StringEntity(
+                    jsonBody.toJSONString(),
+                    ContentType.APPLICATION_JSON.withCharset(StandardCharsets.UTF_8));
         } catch (UnsupportedCharsetException e) {
             throw PersoniumCoreException.SentMessage.SM_BODY_PARSE_ERROR.reason(e);
         }
@@ -441,29 +446,31 @@ public class ODataSentMessageResource extends ODataMessageResource {
 
         req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VERSION, version);
         req.addHeader(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + token.toTokenString());
-        req.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         req.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
 
         // リクエストを投げる
         HttpResponse objResponse = null;
         try {
             objResponse = client.execute(req);
+
+            // リクエスト結果の作成
+            String statusCode = Integer.toString(objResponse.getStatusLine().getStatusCode());
+            List<OProperty<?>> properties = new ArrayList<OProperty<?>>();
+            properties.add(OProperties.string(SentMessage.P_RESULT_TO.getName(), requestCellUrl));
+            properties.add(OProperties.string(SentMessage.P_RESULT_CODE.getName(), statusCode));
+            if (Integer.toString(HttpStatus.SC_CREATED).equals(statusCode)) {
+                properties.add(OProperties.string(SentMessage.P_RESULT_REASON.getName(), "Created."));
+            } else {
+                properties.add(OProperties.string(SentMessage.P_RESULT_REASON.getName(), getErrorMessage(objResponse)));
+            }
+
+            return properties;
         } catch (Exception ioe) {
             throw PersoniumCoreException.SentMessage.SM_CONNECTION_ERROR.reason(ioe);
+        } finally {
+            HttpClientUtils.closeQuietly(objResponse);
+            HttpClientUtils.closeQuietly(client);
         }
-
-        // リクエスト結果の作成
-        String statusCode = Integer.toString(objResponse.getStatusLine().getStatusCode());
-        List<OProperty<?>> properties = new ArrayList<OProperty<?>>();
-        properties.add(OProperties.string(SentMessage.P_RESULT_TO.getName(), requestCellUrl));
-        properties.add(OProperties.string(SentMessage.P_RESULT_CODE.getName(), statusCode));
-        if (Integer.toString(HttpStatus.SC_CREATED).equals(statusCode)) {
-            properties.add(OProperties.string(SentMessage.P_RESULT_REASON.getName(), "Created."));
-        } else {
-            properties.add(OProperties.string(SentMessage.P_RESULT_REASON.getName(), getErrorMessage(objResponse)));
-        }
-
-        return properties;
 
     }
 
@@ -590,13 +597,6 @@ public class ODataSentMessageResource extends ODataMessageResource {
                     // rule.add
                     //   Name pattern id
                     //   Action required
-                    //   Action: relay or relay.event or exec -> TargetUrl required
-                    //   BoxBound: true  -> EventObject: personium-localbox:/xxx or personium-localcell:/__xxx
-                    //                   -> Action: exec -> TargetUrl: personium-localbox:/xxx
-                    //   BoxBound: false -> EventObject: personium-localcell:/xxx
-                    //                   -> Action: exec -> TargetUrl: personium-localcell:/xxx
-                    //   Action: relay       -> TargetUrl: personium-localunit: or http: or https:
-                    //   Action: relay.event -> TargetUrl: cell url
                     String name = requestObjectMap.get(RequestObject.P_NAME.getName());
                     if (name != null && !ODataUtils.validateRegEx(name, Common.PATTERN_ID)) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
@@ -607,50 +607,17 @@ public class ODataSentMessageResource extends ODataMessageResource {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
                                 concatRequestObjectPropertyName(Rule.P_ACTION.getName()));
                     }
-                    if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_RELAY_EVENT.equals(action)
-                            || Rule.ACTION_EXEC.equals(action))
-                            && requestObjectMap.get(RequestObject.P_TARGET_URL.getName()) == null) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
-                    }
+
+                    // validate rule
+                    String eventType = requestObjectMap.get(Rule.P_TYPE.getName());
                     String object = requestObjectMap.get(Rule.P_OBJECT.getName());
+                    String info = requestObjectMap.get(Rule.P_INFO.getName());
                     String targetUrl = requestObjectMap.get(RequestObject.P_TARGET_URL.getName());
-                    if (boxBound.booleanValue()) {
-                        log.debug("validate: boxBound is true");
-                        if (object != null && !ODataUtils.isValidLocalBoxUrl(object)
-                                && !(ODataUtils.isValidLocalCellUrl(object)
-                                        && object.startsWith(UriUtils.SCHEME_LOCALCELL + ":/__"))) {
-                            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                    concatRequestObjectPropertyName(Rule.P_OBJECT.getName()));
-                        }
-                        if (Rule.ACTION_EXEC.equals(action)
-                                && !targetUrl.startsWith(UriUtils.SCHEME_LOCALBOX)) {
-                            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                    concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
-                        }
-                    } else {
-                        log.debug("validate: boxBound is false");
-                        if (object != null && !ODataUtils.isValidLocalCellUrl(object)) {
-                            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                    concatRequestObjectPropertyName(Rule.P_OBJECT.getName()));
-                        }
-                        if (Rule.ACTION_EXEC.equals(action)
-                                && !targetUrl.startsWith(UriUtils.SCHEME_LOCALCELL)) {
-                            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                    concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
-                        }
-                    }
-                    if (Rule.ACTION_RELAY.equals(action)
-                            && !targetUrl.startsWith(UriUtils.SCHEME_LOCALUNIT)
-                            && !targetUrl.startsWith(UriUtils.SCHEME_HTTP)
-                            && !targetUrl.startsWith(UriUtils.SCHEME_HTTPS)) {
+                    String error = CellCtlResource.validateRule(
+                            false, eventType, object, info, action, targetUrl, boxBound);
+                    if (error != null) {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
-                    }
-                    if (Rule.ACTION_RELAY_EVENT.equals(action)
-                            && !ODataUtils.isValidCellUrl(targetUrl)) {
-                        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                                concatRequestObjectPropertyName(RequestObject.P_TARGET_URL.getName()));
+                                concatRequestObjectPropertyName(error));
                     }
                 } else if (RequestObject.REQUEST_TYPE_RULE_REMOVE.equals(requestType)) {
                     // rule.remove

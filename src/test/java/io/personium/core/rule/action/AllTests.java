@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
     ActionFactoryTest.class,
     ExecActionTest.class,
-    RelayActionTest.class
+    RelayActionTest.class,
+    RelayEventActionTest.class
 })
 public class AllTests {
 }

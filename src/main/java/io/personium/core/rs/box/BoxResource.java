@@ -171,11 +171,13 @@ public class BoxResource {
      */
     @GET
     public Response get(@Context HttpHeaders httpHeaders) {
-        if (httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_BAR)) {
-            return getBarFile();
-        } else {
-            return getMetadata();
-        }
+// TODO Implement box export.
+//        if (httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_BAR)) {
+//            return getBarFile();
+//        } else {
+//            return getMetadata();
+//        }
+        return getMetadata();
     }
 
     /**
@@ -366,7 +368,10 @@ public class BoxResource {
 
         EventBus eventBus = this.cell.getEventBus();
         String result = "";
-        String object = String.format("%s:/%s", UriUtils.SCHEME_LOCALCELL, this.boxName);
+        String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                .append(":/")
+                .append(this.boxName)
+                .toString();
         String requestKey = this.cellRsCmp.getRequestKey();
         Response res = null;
         try {
@@ -405,8 +410,14 @@ public class BoxResource {
             throw e;
         } finally {
             // post event to EventBus
-            PersoniumEvent event = new PersoniumEvent(PersoniumEvent.INTERNAL_EVENT,
-                    PersoniumEventType.Category.BI, object, result, this.cellRsCmp, requestKey);
+            String type = PersoniumEventType.boxinstall();
+            PersoniumEvent event = new PersoniumEvent.Builder()
+                    .type(type)
+                    .object(object)
+                    .info(result)
+                    .davRsCmp(this.cellRsCmp)
+                    .requestKey(requestKey)
+                    .build();
             eventBus.post(event);
         }
         return res;

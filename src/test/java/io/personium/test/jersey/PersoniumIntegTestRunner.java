@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@
  */
 package io.personium.test.jersey;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
-
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -28,12 +23,8 @@ import org.junit.runners.model.InitializationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.auth.token.LocalToken;
-import io.personium.common.auth.token.TransCellAccessToken;
-import io.personium.common.utils.PersoniumThread;
-import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.model.file.DataCryptor;
-import io.personium.core.rule.RuleManager;
+import io.personium.core.event.EventBus;
+import io.personium.core.rs.PersoniumCoreApplication;
 
 /**
  * IT用テストランナークラス.
@@ -48,25 +39,40 @@ public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
      * コンストラクタ.
      * @param klass klass
      * @throws InitializationError InitializationError
-     * @throws IOException IOException
-     * @throws CertificateException CertificateException
-     * @throws InvalidKeySpecException InvalidKeySpecException
-     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
-     * @throws javax.security.cert.CertificateException CertificateException
-     * @throws javax.naming.InvalidNameException InvalidNameException
      */
-    public PersoniumIntegTestRunner(Class<?> klass)
-            throws InitializationError, NoSuchAlgorithmException,
-            InvalidKeySpecException, CertificateException, IOException, javax.security.cert.CertificateException,
-            javax.naming.InvalidNameException {
+    public PersoniumIntegTestRunner(Class<?> klass) throws InitializationError {
         super(klass);
-        // トークン処理ライブラリの初期設定.
-        TransCellAccessToken.configureX509(PersoniumUnitConfig.getX509PrivateKey(),
-                PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
-        LocalToken.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
-        DataCryptor.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
-        PersoniumThread.createThreadPool(PersoniumUnitConfig.getThreadPoolNum());
-        RuleManager.getInstance();
+    }
+
+    MessageBroker broker;
+
+    private void start() throws Exception {
+        broker = new MessageBroker();
+        broker.start();
+        PersoniumCoreApplication.start();
+        EventBus.start();
+    }
+
+    private void stop() throws Exception {
+        EventBus.stop();
+        PersoniumCoreApplication.stop();
+        broker.stop();
+    }
+
+    @Override
+    public void run(RunNotifier notifier) {
+        try {
+            // start
+            start();
+
+            // run
+            super.run(notifier);
+
+            // stop
+            stop();
+        } catch (Exception e) {
+            log.debug("exeption occurred: ", e);
+        }
     }
 
     @Override
@@ -74,4 +80,5 @@ public class PersoniumIntegTestRunner extends BlockJUnit4ClassRunner {
         log.debug("■■■■ " + method.getName() + " ■■■■");
         super.runChild(method, notifier);
     }
+
 }

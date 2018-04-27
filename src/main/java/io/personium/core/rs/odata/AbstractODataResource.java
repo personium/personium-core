@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014-2017 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,6 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.Property;
-import io.personium.core.model.ctl.Rule;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker;
 import io.personium.core.model.impl.es.odata.PropertyLimitChecker.CheckError;
 import io.personium.core.odata.OEntityWrapper;
@@ -694,8 +693,6 @@ public abstract class AbstractODataResource {
                     validatePropertyCellUrl(propName, op);
                 } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_USUSST)) {
                     validatePropertyUsusst(propName, op, pFormat);
-                } else if (pFormat.startsWith(Rule.P_FORMAT_PATTERN_RULE_SERVICE)) {
-                    validatePropertyRuleService(propName, op);
                 }
             }
         }
@@ -877,22 +874,6 @@ public abstract class AbstractODataResource {
                } else {
                    overlapChk.add(token);
                }
-        }
-    }
-
-    /**
-     * Rule Service Format Check.
-     * @param propName Property name
-     * @param op OProperty
-     */
-    protected void validatePropertyRuleService(String propName, OProperty<?> op) {
-        // http://xxx or https://xxx
-        // personium-localunit:/xxx
-        // personium-localcell:/box/col/srv or presonium-localbox:/col/srv
-        if (!ODataUtils.isValidUri(op.getValue().toString())
-                && !ODataUtils.validateLocalCellUrl(op.getValue().toString(), Common.PATTERN_SERVICE_LOCALCELL_PATH)
-                && !ODataUtils.validateLocalBoxUrl(op.getValue().toString(), Common.PATTERN_SERVICE_LOCALBOX_PATH)) {
-            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
         }
     }
 

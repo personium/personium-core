@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.ws.rs.core.UriBuilder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -349,8 +351,14 @@ public class PersoniumUnitConfig {
      * EventBus configurations.
      */
     public static final class EventBus {
+        /** message queue implementation to use. */
+        public static final String MQ = KEY_ROOT + "eventbus.mq";
+
         /** ActiveMQ broker url. */
-        public static final String BROKER_URL = KEY_ROOT + "eventbus.activemq.brokerUrl";
+        public static final String ACTIVEMQ_BROKER_URL = KEY_ROOT + "eventbus.activemq.brokerUrl";
+
+        /** Kafka servers. */
+        public static final String KAFKA_SERVERS = KEY_ROOT + "eventbus.kafka.bootstrap.servers";
 
         /** queue name of EventBus. */
         public static final String QUEUE = KEY_ROOT + "eventbus.queue";
@@ -360,6 +368,17 @@ public class PersoniumUnitConfig {
 
         /** topic name for rule event. */
         public static final String TOPIC_RULE = KEY_ROOT + "eventbus.topic.rule";
+
+        /** Number of threads to process event. */
+        public static final String EVENTPROC_THREAD_NUM = KEY_ROOT + "eventbus.eventProcessing.thread.num";
+    }
+
+    /**
+     * rule configurations.
+     */
+    public static final class Rule {
+        /** Number of threads to manage timer event. */
+        public static final String TIMEREVENT_THREAD_NUM = KEY_ROOT + "rule.timerEvent.thread.num";
     }
 
     static {
@@ -604,8 +623,14 @@ public class PersoniumUnitConfig {
      * Get port number for Unit.
      * @return port
      */
-    public static String getUnitPort() {
-        return get(UNIT_PORT);
+    public static int getUnitPort() {
+        int port;
+        try {
+            port = Integer.parseInt(get(UNIT_PORT));
+        } catch (NumberFormatException e) {
+            port = -1;
+        }
+        return port;
     }
 
     /**
@@ -628,17 +653,22 @@ public class PersoniumUnitConfig {
      * @return base url
      */
     public static String getBaseUrl() {
-        String ret = getUnitScheme() + "://" + PersoniumCoreUtils.getFQDN();
-        String port = getUnitPort();
         String path = getUnitPath();
-        if (port != null) {
-            ret += ":" + port;
-        }
         if (path != null) {
-            ret += path;
+            if (path.endsWith("/")) {
+                path = path.substring(0, path.length() - 1);
+            }
+        } else {
+            path = "";
         }
-        ret += "/";
-        return ret;
+
+        UriBuilder uriBuilder = UriBuilder
+                .fromPath(path)
+                .scheme(getUnitScheme())
+                .host(PersoniumCoreUtils.getFQDN())
+                .port(getUnitPort());
+
+        return uriBuilder.build().toString() + "/";
     }
 
     /**
@@ -1040,8 +1070,8 @@ public class PersoniumUnitConfig {
      * Enineのportの設定値を取得します.
      * @return 設定値
      */
-    public static String getEnginePort() {
-        return get(Engine.PORT);
+    public static int getEnginePort() {
+        return Integer.parseInt(get(Engine.PORT));
     }
 
     /**
@@ -1106,11 +1136,27 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Get broker url of EventBus.
+     * Get message queue implementation of EventBus.
+     * @return message queue
+     */
+    public static String getEventBusMQ() {
+        return get(EventBus.MQ);
+    }
+
+    /**
+     * Get broker url of setting for activemq.
      * @return broker url
      */
-    public static String getEventBusBrokerUrl() {
-        return get(EventBus.BROKER_URL);
+    public static String getEventBusActiveMQBrokerUrl() {
+        return get(EventBus.ACTIVEMQ_BROKER_URL);
+    }
+
+    /**
+     * Get servers of setting for kafka.
+     * @return comma-separated servers
+     */
+    public static String getEventBusKafkaServers() {
+        return get(EventBus.KAFKA_SERVERS);
     }
 
     /**
@@ -1135,6 +1181,22 @@ public class PersoniumUnitConfig {
      */
     public static String getEventBusRuleTopicName() {
         return get(EventBus.TOPIC_RULE);
+    }
+
+    /**
+     * Get thread number for eventprocessing.
+     * @return thread num
+     */
+    public static int getEventProcThreadNum() {
+        return Integer.parseInt(get(EventBus.EVENTPROC_THREAD_NUM));
+    }
+
+    /**
+     * Get thread number of timer event.
+     * @return thread num
+     */
+    public static int getTimerEventThreadNum() {
+        return Integer.parseInt(get(Rule.TIMEREVENT_THREAD_NUM));
     }
 
     /**

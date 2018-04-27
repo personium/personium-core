@@ -232,13 +232,14 @@ public class ODataEntityResource extends AbstractODataResource {
 
         // post event to EventBus
         String key = AbstractODataResource.replaceDummyKeyToNull(this.oEntityKey.toKeyString());
-        String object = String.format("%s%s%s",
-                this.odataResource.getRootUrl(),
-                getEntitySetName(),
-                key);
-        String info = String.format("%s,%s",
-                Integer.toString(res.getStatus()),
-                uriInfo.getRequestUri());
+        String object = new StringBuilder(this.odataResource.getRootUrl())
+                .append(getEntitySetName())
+                .append(key)
+                .toString();
+        String info = new StringBuilder(Integer.toString(res.getStatus()))
+                .append(",")
+                .append(uriInfo.getRequestUri())
+                .toString();
         this.odataResource.postEvent(getEntitySetName(), object, info, PersoniumEventType.Operation.GET);
 
         return res;
