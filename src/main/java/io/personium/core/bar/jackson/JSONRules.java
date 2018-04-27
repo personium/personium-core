@@ -59,6 +59,14 @@ public class JSONRules implements IJSONMappedObjects {
      * {@inheritDoc}
      */
     @Override
+    public int getObjectsSize() {
+        return rules.size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void addObjects(List<OEntity> entities) {
         for (OEntity entity : entities) {
             JSONRule object = JSONRule.newInstance(entity);

@@ -20,6 +20,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import io.personium.core.bar.BarFileUtilsTest;
+
 /**
  * パッケージ配下のテストケースを全て実行するためのテストスイート.
  */

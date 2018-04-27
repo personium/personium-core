@@ -25,6 +25,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.SyncFailedException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,6 +41,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -45,6 +49,8 @@ import org.odata4j.expression.BoolCommonExpression;
 import org.odata4j.producer.QueryInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
@@ -115,19 +121,27 @@ public class BarFileInstaller {
         checkPreConditions(headers);
 
         // barファイルの格納
-        File barFile = storeTemporaryBarFile(inStream);
+        File file = storeTemporaryBarFile(inStream);
+
+        // bar_version : 2
+        if (execVer2Process(file, requestKey)) {
+            // レスポンスの返却
+            ResponseBuilder res = Response.status(HttpStatus.SC_ACCEPTED);
+            res.header(HttpHeaders.LOCATION, this.cell.getUrl() + boxName);
+            return res.build();
+        }
 
         BarFileReadRunner runner = null;
         try {
             // barファイルのバリデート
-            long entryCount = checkBarFileContents(barFile);
+            long entryCount = checkBarFileContents(file);
 
             // BoxおよびスキーマURLの重複チェック
-            checkDuplicateBoxAndSchema();
+            checkDuplicateBoxAndSchema((String) this.manifestJson.get("Schema"));
 
             // Boxの作成
             // ここまでのエラーは400番台のエラーとなり、Boxは作成されないため、Boxメタデータ（キャッシュ）には書き込まずに終了する。
-            runner = new BarFileReadRunner(barFile, this.cell, this.boxName,
+            runner = new BarFileReadRunner(file, this.cell, this.boxName,
                     this.oDataEntityResource, this.oDataEntityResource.getOdataProducer(),
                     Box.EDM_TYPE_NAME, this.uriInfo, requestKey);
             runner.createBox(this.manifestJson);
@@ -140,13 +154,13 @@ public class BarFileInstaller {
             if (null != runner) {
                 runner.writeErrorProgressCache();
             }
-            removeBarFile(barFile);
+            removeBarFile(file);
             throw e;
         } catch (Exception e) {
             if (null != runner) {
                 runner.writeErrorProgressCache();
             }
-            removeBarFile(barFile);
+            removeBarFile(file);
             throw PersoniumCoreException.Server.UNKNOWN_ERROR;
         } finally {
             IOUtils.closeQuietly(inStream);
@@ -161,6 +175,57 @@ public class BarFileInstaller {
         ResponseBuilder res = Response.status(HttpStatus.SC_ACCEPTED);
         res.header(HttpHeaders.LOCATION, this.cell.getUrl() + boxName);
         return res.build();
+    }
+
+    private boolean execVer2Process(File file, String requestKey) {
+        long entryCount;
+        String schema;
+        try (BarFile barFile = BarFile.newInstance(file.toPath())) {
+            if (!barFile.exists(BarFile.MANIFEST_JSON)) {
+                return false;
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            JSONManifest manifest = mapper.readValue(barFile.getReader(BarFile.MANIFEST_JSON), JSONManifest.class);
+            if (StringUtils.isEmpty(manifest.getBarVersion())) {
+                removeBarFile(file);
+                throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params("bar_version");
+            }
+            int barVersion = Float.valueOf(manifest.getBarVersion()).intValue();
+            if (barVersion == 2) {
+                checkBarFileSize(file);
+                barFile.checkStructure();
+                // Use FileVisitor to check process recursively.
+                FileVisitor<Path> visitor = new BarFileCheckVisitor();
+                try {
+                    Files.walkFileTree(barFile.getRootDirPath(), visitor);
+                } catch (IOException e) {
+                    removeBarFile(file);
+                    throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params(e.getMessage());
+                }
+                // BoxおよびスキーマURLの重複チェック
+                checkDuplicateBoxAndSchema(manifest.getSchema());
+
+                entryCount = ((BarFileCheckVisitor) visitor).getEntryCount();
+                schema = manifest.getSchema();
+            } else {
+                removeBarFile(file);
+                throw PersoniumCoreException.BarInstall.BAR_FILE_STRUCTURE_AND_VERSION_MISMATCH;
+            }
+        } catch (IOException e) {
+            removeBarFile(file);
+            throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.params(e.getMessage());
+        } catch (NumberFormatException e) {
+            removeBarFile(file);
+            throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params("bar_version");
+        }
+        // TODO コンストラクタでやってるBox作成とかはやっぱrunの中でやるべきじゃね？
+        BarFileInstallRunner runner = new BarFileInstallRunner(file.toPath(), entryCount,
+                boxName, schema, uriInfo, oDataEntityResource, requestKey);
+        // TODO 多重実行時を考慮してスレッドプール化するなどの対策が必要
+        Thread thread = new Thread(runner);
+        thread.start();
+        removeBarFile(file);
+        return true;
     }
 
     private void removeBarFile(File barFile) {
@@ -439,16 +504,15 @@ public class BarFileInstaller {
     /**
      * インストール先Boxが既に登録されているかどうか、マニフェストに定義されているスキーマURLが既に登録されているかどうかをチェックする.
      */
-    private void checkDuplicateBoxAndSchema() {
+    private void checkDuplicateBoxAndSchema(String schema) {
         PersoniumODataProducer producer = oDataEntityResource.getOdataProducer();
 
         // [400]既に同じscheme URLが設定されたBoxが存在している
         // 同じスキーマURLを持つBoxを検索し、1件以上ヒットした場合はエラーとする。
-        String schemaUrl = (String) this.manifestJson.get("Schema");
-        BoolCommonExpression filter = PersoniumOptionsQueryParser.parseFilter("Schema eq '" + schemaUrl + "'");
+        BoolCommonExpression filter = PersoniumOptionsQueryParser.parseFilter("Schema eq '" + schema + "'");
         QueryInfo query = new QueryInfo(null, null, null, filter, null, null, null, null, null);
         if (producer.getEntitiesCount(Box.EDM_TYPE_NAME, query).getCount() > 0) {
-            throw PersoniumCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.params(schemaUrl);
+            throw PersoniumCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.params(schema);
         }
 
         // [405]既に同名のBoxが存在している

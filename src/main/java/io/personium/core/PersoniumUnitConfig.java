@@ -939,6 +939,14 @@ public class PersoniumUnitConfig {
     }
 
     /**
+     * Get max size of bar file.
+     * @return max size of bar file
+     */
+    public static long getBarEntryMaxSize() {
+        return Long.parseLong(get(BAR.BAR_ENTRY_MAX_SIZE));
+    }
+
+    /**
      * Get temp dir path for barinstall.
      * @return temp dir path
      */

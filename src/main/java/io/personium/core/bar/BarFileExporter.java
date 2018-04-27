@@ -112,6 +112,8 @@ public class BarFileExporter {
         String barFileName = boxRsCmp.getBox().getName() + UUID.randomUUID().toString() + BAR_FILE_EXTENSION;
         Path barFilePath = barDirPath.resolve(barFileName);
         try (BarFile barFile = BarFile.newInstance(barFilePath)) {
+            // init
+            barFile.initDirCreating();
             // Make the contents of the zip file.
             makeBarFile(barFile);
         } catch (IOException e) {
@@ -170,7 +172,7 @@ public class BarFileExporter {
     private void addManifestToZip(BarFile barFile) {
         String defaultPath = boxRsCmp.getBox().getName();
         String schema = boxRsCmp.getBox().getSchema();
-        JSONManifest manifest = new JSONManifest("1", "1", defaultPath, schema);
+        JSONManifest manifest = new JSONManifest("2.0", "1", defaultPath, schema);
         ObjectMapper mapper = new ObjectMapper();
         try {
             barFile.writeManifestJson(mapper.writeValueAsString(manifest));

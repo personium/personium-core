@@ -26,7 +26,7 @@ import io.personium.core.utils.ODataUtils;
 /**
  * Mapping class for reading 00_manifest.json.
  */
-public class JSONManifest implements JSONMappedObject {
+public class JSONManifest implements IJSONMappedObject {
 
     /** bar_version. */
     @JsonProperty("bar_version")
@@ -34,8 +34,11 @@ public class JSONManifest implements JSONMappedObject {
     /** box_version. */
     @JsonProperty("box_version")
     private String boxVersion;
-    /** DefaultPath. */
+    /** DefaultPath. bar_version 1. */
     @JsonProperty("DefaultPath")
+    private String oldDefaultPath;
+    /** default_path. bar_version 2. */
+    @JsonProperty("default_path")
     private String defaultPath;
     /** schema. */
     @JsonProperty("schema")
@@ -98,12 +101,28 @@ public class JSONManifest implements JSONMappedObject {
      * DefaultPathプロパティの取得.
      * @return defaultPath
      */
+    public String getOldDefaultPath() {
+        return oldDefaultPath;
+    }
+
+    /**
+     * DefaultPathプロパティの設定.
+     * @param oldDefaultPath oldDefaultPath.
+     */
+    public void setOldDefaultPath(String oldDefaultPath) {
+        this.oldDefaultPath = oldDefaultPath;
+    }
+
+    /**
+     * default_pathプロパティの取得.
+     * @return defaultPath
+     */
     public String getDefaultPath() {
         return defaultPath;
     }
 
     /**
-     * DefaultPathプロパティの設定.
+     * default_pathプロパティの設定.
      * @param defaultPath defaultPath.
      */
     public void setDefaultPath(String defaultPath) {
@@ -145,7 +164,7 @@ public class JSONManifest implements JSONMappedObject {
     @SuppressWarnings("unchecked")
     public JSONObject getJson() {
         JSONObject json = new JSONObject();
-        json.put("Name", this.defaultPath);
+        json.put("Name", this.oldDefaultPath);
         json.put("Schema", this.schema);
         return json;
     }

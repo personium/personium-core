@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,133 +16,40 @@
  */
 package io.personium.core.bar.jackson;
 
-import java.util.Map;
-
-import org.json.simple.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * barファイル内の$links定義用JSONファイル(70_$links_json)読み込み用Mapping定義クラス.
+ * Jackson correspondence class for handling odatarelations.json.
  */
-public class JSONUserDataLinks implements JSONMappedObject {
+public class JSONUserDataLinks {
+
+    /** JsonProperty:Links. */
+    @JsonProperty("Links")
+    private List<JSONUserDataLink> links;
 
     /**
-     * FromType.
+     * Constructor.
      */
-    @JsonProperty("FromType")
-    private String fromType;
-
-    /**
-     * FromId.
-     */
-    @JsonProperty("FromId")
-    private Map<String, String> fromId;
-
-    /**
-     * ToType.
-     */
-    @JsonProperty("ToType")
-    private String toType;
-
-    /**
-     * ToId.
-     */
-    @JsonProperty("ToId")
-    private Map<String, String> toId;
-
-    /**
-     * FromTypeプロパティの取得.
-     * @return FromType名
-     */
-    public String getFromType() {
-        return this.fromType;
+    public JSONUserDataLinks() {
+        links = new ArrayList<JSONUserDataLink>();
     }
 
     /**
-     * FromTypeプロパティの設定.
-     * @param fromType FromType.
+     * Get value of Links.
+     * @return value of Links
      */
-    public void setFromType(String fromType) {
-        this.fromType = fromType;
+    public List<JSONUserDataLink> getLinks() {
+        return links;
     }
 
     /**
-     * FromId名プロパティの取得.
-     * @return FromId
+     * Set value of Links.
+     * @param links links
      */
-    public Map<String, String> getFromId() {
-        return this.fromId;
-    }
-
-    /**
-     * FromId名プロパティの設定.
-     * @param fromIdValue FromId
-     */
-    public void setFromId(Map<String, String> fromIdValue) {
-        this.fromId = fromIdValue;
-    }
-
-    /**
-     * ToTypeプロパティの取得.
-     * @return ToType名
-     */
-    public String getToType() {
-        return this.toType;
-    }
-
-    /**
-     * ToTypeプロパティの設定.
-     * @param toType ToType.
-     */
-    public void setToType(String toType) {
-        this.toType = toType;
-    }
-
-    /**
-     * ToId名プロパティの取得.
-     * @return ToId
-     */
-    public Map<String, String> getToId() {
-        return this.toId;
-    }
-
-    /**
-     * ToId名プロパティの設定.
-     * @param toIdValue ToId
-     */
-    public void setToId(Map<String, String> toIdValue) {
-        this.toId = toIdValue;
-    }
-
-    /**
-     * NavigatioinProperty形式のToTypeプロパティの取得.
-     * @return NavigatioinProperty形式のToType名
-     */
-    public String getNavPropToType() {
-        return "_" + this.toType;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public JSONObject getJson() {
-        JSONObject json = new JSONObject();
-        json.put("FromType", this.fromType);
-
-        JSONObject fromIdJson = new JSONObject();
-        for (String name : this.fromId.keySet()) {
-            fromIdJson.put(name, this.fromId.get(name));
-        }
-        json.put("FromId", fromIdJson);
-
-        json.put("ToType", this.toType);
-
-        JSONObject toIdJson = new JSONObject();
-        for (String name : this.toId.keySet()) {
-            toIdJson.put(name, this.toId.get(name));
-        }
-        json.put("ToId", toIdJson);
-
-        return json;
+    public void setLinks(List<JSONUserDataLink> links) {
+        this.links = links;
     }
 }

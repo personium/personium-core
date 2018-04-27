@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * barファイル内のRelation定義用JSONファイル読み込み用Mapping定義クラス.
  */
-public class JSONRelation implements JSONMappedObject {
+public class JSONRelation implements IJSONMappedObject {
 
     /** Name. */
     @JsonProperty("Name")

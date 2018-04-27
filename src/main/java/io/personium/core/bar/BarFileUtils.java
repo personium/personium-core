@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -35,14 +38,26 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import io.personium.common.es.util.IndexNameEncoder;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.ctl.ExtRole;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.model.progress.Progress;
+import io.personium.core.model.progress.ProgressManager;
 
 /**
  * Httpリクエストボディからbarファイルを読み込むためのクラス.
  */
 public class BarFileUtils {
+
+    static Logger log = LoggerFactory.getLogger(BarFileUtils.class);
+
+    static final String CODE_BAR_INSTALL_COMPLETED = "PL-BI-0000";
+    static final String CODE_BAR_INSTALL_FAILED = "PL-BI-0001";
+    static final String CODE_INSTALL_STARTED = "PL-BI-1001";
+    static final String CODE_INSTALL_PROCESSING = "PL-BI-1002";
+    static final String CODE_INSTALL_COMPLETED = "PL-BI-1003";
 
     private static final int PATH_CELL_INDEX = 1;
     private static final int PATH_BOX_INDEX = 3;
@@ -58,7 +73,7 @@ public class BarFileUtils {
      * @param schemaUrl BoxスキーマURL
      * @return 処理結果
      */
-    public static boolean aclNameSpaceValidate(final String entryName, final Element element, final String schemaUrl) {
+    static boolean aclNameSpaceValidate(final String entryName, final Element element, final String schemaUrl) {
         return true;
     }
 
@@ -69,7 +84,7 @@ public class BarFileUtils {
      * @param boxName Box名
      * @return Entity作成時に使用するEntityKey名
      */
-    public static String getComplexKeyName(final String type, final Map<String, String> names, final String boxName) {
+    static String getComplexKeyName(final String type, final Map<String, String> names, final String boxName) {
         String keyname = null;
         // 複合キー
         if (type.equals(Role.EDM_TYPE_NAME) || type.equals(Relation.EDM_TYPE_NAME)) {
@@ -93,7 +108,7 @@ public class BarFileUtils {
      * @param fileName 処理中のbarファイルエントリ名
      * @return 生成したURL
      */
-    public static String getLocalUrl(final String url, final String baseUrl, final String fileName) {
+    static String getLocalUrl(final String url, final String baseUrl, final String fileName) {
         String newUrl = baseUrl;
         if (newUrl.endsWith("/")) {
             newUrl = newUrl.substring(0, newUrl.length() - 1);
@@ -115,7 +130,7 @@ public class BarFileUtils {
      * @param boxName boxName
      * @return 生成したElementノード
      */
-    public static Element convertToRoleInstanceUrl(
+    static Element convertToRoleInstanceUrl(
             final Element element, final String baseUrl, final String cellName, final String boxName) {
         String namespaceUri = element.getAttribute("xml:base");
         String roleClassUrl = getLocalUrl(namespaceUri, baseUrl, BarFileReadRunner.ROOTPROPS_XML);
@@ -154,7 +169,7 @@ public class BarFileUtils {
      * @param owner オーナー情報(URL)
      * @return UnitUser名
      */
-    public static String getUnitUserName(final String owner) {
+    static String getUnitUserName(final String owner) {
         String unitUserName = null;
         if (owner == null) {
             unitUserName = AccessContext.TYPE_ANONYMOUS;
@@ -173,7 +188,7 @@ public class BarFileUtils {
      * @return JSONファイルから読み込んだオブジェクト
      * @throws IOException JSONファイル読み込みエラー
      */
-    public static <T> T readJsonEntry(
+    static <T> T readJsonEntry(
             InputStream inStream, String entryName, Class<T> clazz) throws IOException {
         JsonParser jp = null;
         ObjectMapper mapper = new ObjectMapper();
@@ -194,6 +209,60 @@ public class BarFileUtils {
             throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         }
         return json;
+    }
+
+    /**
+     * 内部イベントとしてEventBusへインストール処理状況を出力する.
+     * @param event Personium event object
+     * @param eventBus Personium event bus for sending event
+     * @param code 処理コード（ex. PL-BI-0000）
+     * @param path barファイル内のエントリパス（Edmxの場合は、ODataのパス）
+     * @param message 出力用メッセージ
+     */
+    static void outputEventBus(PersoniumEvent event, EventBus eventBus, String code, String path, String message) {
+        if (event != null) {
+            event.setType(code);
+            event.setObject(path);
+            event.setInfo(message);
+            eventBus.post(event);
+        }
+    }
+
+    /**
+     * ProgressInfoへbarインストール状況を出力する.
+     * @param isError エラー時の場合はtrueを、それ以外はfalseを指定する.
+     * @param progressInfo bar install progress
+     * @param code 処理コード（ex. PL-BI-0000）
+     * @param message 出力用メッセージ
+     */
+    @SuppressWarnings("unchecked")
+    static void writeToProgress(boolean isError, BarInstallProgressInfo progressInfo, String code, String message) {
+        if (progressInfo != null && isError) {
+            JSONObject messageJson = new JSONObject();
+            JSONObject messageDetail = new JSONObject();
+            messageJson.put("code", code);
+            messageJson.put("message", messageDetail);
+            messageDetail.put("lang", "en");
+            messageDetail.put("value", message);
+            progressInfo.setMessage(messageJson);
+            writeToProgressCache(true, progressInfo);
+        } else {
+            writeToProgressCache(false, progressInfo);
+        }
+    }
+
+    /**
+     * キャッシュへbarインストール状況を出力する.
+     * @param forceOutput 強制的に出力する場合はtrueを、それ以外はfalseを指定する
+     * @param progressInfo bar install progress
+     */
+    static void writeToProgressCache(boolean forceOutput, BarInstallProgressInfo progressInfo) {
+        if (progressInfo != null && progressInfo.isOutputEventBus() || forceOutput) {
+            String key = "box-" + progressInfo.getBoxId();
+            Progress progress = new Progress(key, progressInfo.toString());
+            ProgressManager.putProgress(key, progress);
+            log.info("Progress(" + key + "): " + progressInfo.toString());
+        }
     }
 
 }

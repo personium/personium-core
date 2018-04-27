@@ -53,7 +53,7 @@ import io.personium.core.PersoniumUnitConfig.BinaryData;
 import io.personium.core.bar.BarFileInstaller;
 import io.personium.core.bar.BarFileReadRunner;
 import io.personium.core.bar.jackson.JSONManifest;
-import io.personium.core.bar.jackson.JSONMappedObject;
+import io.personium.core.bar.jackson.IJSONMappedObject;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.impl.es.CellEsImpl;
 import io.personium.test.categories.Unit;
@@ -91,7 +91,7 @@ public class BarFileValidateTest {
          * @param jsonName jsonName
          * @throws IOException
          */
-        public JSONMappedObject barFileJsonValidate(
+        public IJSONMappedObject barFileJsonValidate(
                 JsonParser jp, ObjectMapper mapper, String jsonName) throws IOException {
             return super.barFileJsonValidate(jp, mapper, jsonName);
         }
@@ -146,7 +146,7 @@ public class BarFileValidateTest {
          * @param inputStream 入力ストリーム
          * @return 正常終了した場合はtrue
          */
-        public List<JSONMappedObject> registJsonLinksUserdata(String entryName, InputStream inputStream) {
+        public List<IJSONMappedObject> registJsonLinksUserdata(String entryName, InputStream inputStream) {
             return super.registJsonLinksUserdata(entryName, inputStream);
         }
 
@@ -491,7 +491,7 @@ public class BarFileValidateTest {
             String jsonName = "70_$links.json";
 
             TestBarRunner testBarRunner = new TestBarRunner();
-            JSONMappedObject result = testBarRunner.barFileJsonValidate(jp, mapper, jsonName);
+            IJSONMappedObject result = testBarRunner.barFileJsonValidate(jp, mapper, jsonName);
 
             assertEquals("Relation", result.getJson().get("FromType"));
             assertTrue(result.getJson().get("FromName") instanceof JSONObject);
@@ -534,7 +534,7 @@ public class BarFileValidateTest {
             String jsonName = "10_odatarelations.json";
 
             TestBarRunner testBarRunner = new TestBarRunner();
-            JSONMappedObject result = testBarRunner.barFileJsonValidate(jp, mapper, jsonName);
+            IJSONMappedObject result = testBarRunner.barFileJsonValidate(jp, mapper, jsonName);
 
             assertEquals("Relation", result.getJson().get("FromType"));
 
@@ -578,7 +578,7 @@ public class BarFileValidateTest {
             assertNotNull(manifest);
             assertEquals("1", manifest.getBarVersion());
             assertEquals("1", manifest.getBoxVersion());
-            assertEquals("boxName", manifest.getDefaultPath());
+            assertEquals("boxName", manifest.getOldDefaultPath());
             assertEquals("http://app1.example.com", manifest.getSchema());
         } catch (IOException e) {
             fail(e.getMessage());
@@ -725,7 +725,7 @@ public class BarFileValidateTest {
             assertNotNull(manifest);
             assertEquals("1", manifest.getBarVersion());
             assertEquals("1", manifest.getBoxVersion());
-            assertEquals("boxName", manifest.getDefaultPath());
+            assertEquals("boxName", manifest.getOldDefaultPath());
             assertNull(manifest.getSchema());
         } catch (IOException e) {
             fail(e.getMessage());
@@ -1600,7 +1600,7 @@ public class BarFileValidateTest {
         try {
             fis = new FileInputStream(file);
             TestBarRunner testBarRunner = new TestBarRunner();
-            List<JSONMappedObject> res = testBarRunner.registJsonLinksUserdata(entryName, fis);
+            List<IJSONMappedObject> res = testBarRunner.registJsonLinksUserdata(entryName, fis);
             assertNull(res);
             return;
         } catch (PersoniumCoreException dce) {
@@ -1624,7 +1624,7 @@ public class BarFileValidateTest {
         try {
             fis = new FileInputStream(file);
             TestBarRunner testBarRunner = new TestBarRunner();
-            List<JSONMappedObject> res = testBarRunner.registJsonLinksUserdata(entryName, fis);
+            List<IJSONMappedObject> res = testBarRunner.registJsonLinksUserdata(entryName, fis);
             assertNull(res);
             return;
         } catch (PersoniumCoreException dce) {
@@ -1648,7 +1648,7 @@ public class BarFileValidateTest {
         try {
             fis = new FileInputStream(file);
             TestBarRunner testBarRunner = new TestBarRunner();
-            List<JSONMappedObject> res = testBarRunner.registJsonLinksUserdata(entryName, fis);
+            List<IJSONMappedObject> res = testBarRunner.registJsonLinksUserdata(entryName, fis);
             assertNull(res);
             return;
         } catch (PersoniumCoreException dce) {

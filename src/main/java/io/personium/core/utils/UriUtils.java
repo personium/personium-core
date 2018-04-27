@@ -42,6 +42,8 @@ public class UriUtils {
 
     /** LOCAL_UNIT ADDITION. */
     public static final String SCHEME_UNIT_URI = "personium-localunit:/";
+    /** LOCAL_BOX ADDITION. */
+    public static final String SCHEME_BOX_URI = "personium-localbox:/";
 
     /** SLASH. */
     public static final String STRING_SLASH = "/";
