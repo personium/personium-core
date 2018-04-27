@@ -1,3 +1,18 @@
+## 1.6.8
+BUG FIXES:
+* Error occurs when importing snapshot of the cell into different unit.([#183](https://github.com/personium/personium-core/issues/183))
+* Token on receiving a message does not include schema information.([#197](https://github.com/personium/personium-core/issues/197))
+
+IMPROVEMENTS:
+* Update pom.xml.([#191](https://github.com/personium/personium-core/issues/191))
+* HTTP Proxy support.([#193](https://github.com/personium/personium-core/issues/193))
+* Close HttpClient.([#195](https://github.com/personium/personium-core/issues/195))
+* Improve eventbus and event processing.([#199](https://github.com/personium/personium-core/issues/199))
+* Introduce timer event.([#201](https://github.com/personium/personium-core/issues/201))
+* Enable select of message broker used on EventBus.([#203](https://github.com/personium/personium-core/issues/203))
+* Use embedded message broker on test.([#205](https://github.com/personium/personium-core/issues/205))
+* Allow only positive number for EventObject in case of timer rule.([#207](https://github.com/personium/personium-core/issues/207))
+
 ## 1.6.7
 BUG FIXES:
 * Authority of the token acquired by Google account authentication is incorrect.([#173](https://github.com/personium/personium-core/issues/173))
