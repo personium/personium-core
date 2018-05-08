@@ -80,9 +80,9 @@
 
         var data= JSON.parse(res || "null");
         //ページで表示
-        document.getElementById("logo").src = data.image;
-        document.getElementById("appName").innerHTML = data.name;
-        document.getElementById("description").innerHTML = data.description;
+        document.getElementById("logo").src = data.Image;
+        document.getElementById("appName").textContent = data.DisplayName;
+        document.getElementById("description").textContent = data.Description;
   }
 
   //コールバック関数 ( 受信時に実行されます )
@@ -93,8 +93,8 @@
 
         var data= JSON.parse(res || "null");
         //ページで表示
-        document.getElementById("userimg").src = data.image;
-        document.getElementById("dataUserName").innerHTML = data.name;
+        document.getElementById("userimg").src = data.Image;
+        document.getElementById("dataUserName").textContent = data.DisplayName;
   }
 
   // キャンセルボタン
