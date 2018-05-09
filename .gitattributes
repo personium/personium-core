@@ -8,6 +8,9 @@
 *.json text eol=lf
 *.txt text eol=lf
 *.md text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
 
 # Explicitly declare non-text file. These files not perform LF normalization.
 *.bar binary
