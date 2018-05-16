@@ -171,13 +171,11 @@ public class BoxResource {
      */
     @GET
     public Response get(@Context HttpHeaders httpHeaders) {
-// TODO Implement box export.
-//        if (httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_BAR)) {
-//            return getBarFile();
-//        } else {
-//            return getMetadata();
-//        }
-        return getMetadata();
+        if (httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_BAR)) {
+            return getBarFile();
+        } else {
+            return getMetadata();
+        }
     }
 
     /**

@@ -832,6 +832,10 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException BAR_FILE_INVALID_STRUCTURES = create("PR400-BI-0009");
         /**
+         * Bar file structure and bar_version do not match.
+         */
+        public static final PersoniumCoreException BAR_FILE_STRUCTURE_AND_VERSION_MISMATCH = create("PR400-BI-0010");
+        /**
          * インストール対象のBoxが登録済みのとき.
          */
         public static final PersoniumCoreException BAR_FILE_BOX_ALREADY_EXISTS = create("PR405-BI-0001");

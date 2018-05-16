@@ -88,14 +88,14 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.bar.jackson.IJSONMappedObject;
 import io.personium.core.bar.jackson.JSONExtRole;
-import io.personium.core.bar.jackson.JSONLinks;
+import io.personium.core.bar.jackson.JSONLink;
 import io.personium.core.bar.jackson.JSONManifest;
-import io.personium.core.bar.jackson.JSONMappedObject;
 import io.personium.core.bar.jackson.JSONRelation;
 import io.personium.core.bar.jackson.JSONRole;
 import io.personium.core.bar.jackson.JSONRule;
-import io.personium.core.bar.jackson.JSONUserDataLinks;
+import io.personium.core.bar.jackson.JSONUserDataLink;
 import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.PersoniumEventType;
@@ -185,7 +185,6 @@ public class BarFileReadRunner implements Runnable {
 
     private Cell cell;
     private Box box;
-    private String schemaUrl; // ACL名前空間チェック用
     private BoxCmp boxCmp;
     private Map<String, DavCmp> davCmpMap;
     private Map<String, String> davFileContentTypeMap = new HashMap<String, String>();
@@ -508,7 +507,7 @@ public class BarFileReadRunner implements Runnable {
             ZipArchiveEntry zae = null;
             String currentPath = null;
             int userDataCount = 0;
-            List<JSONMappedObject> userDataLinks = new ArrayList<JSONMappedObject>();
+            List<IJSONMappedObject> userDataLinks = new ArrayList<IJSONMappedObject>();
             LinkedHashMap<String, BulkRequest> bulkRequests = new LinkedHashMap<String, BulkRequest>();
             Map<String, String> fileNameMap = new HashMap<String, String>();
             PersoniumODataProducer producer = null;
@@ -532,7 +531,7 @@ public class BarFileReadRunner implements Runnable {
                     if (!createUserdataLinks(producer, userDataLinks)) {
                         return false;
                     }
-                    userDataLinks = new ArrayList<JSONMappedObject>();
+                    userDataLinks = new ArrayList<IJSONMappedObject>();
                     currentPath = null;
                 }
                 int entryType = getEntryType(entryName, odataCols, webdavCols, serviceCols, this.davFileContentTypeMap);
@@ -880,12 +879,9 @@ public class BarFileReadRunner implements Runnable {
         // ACL登録
         Element aclElement = davFileAclMap.get(entryName);
         if (aclElement != null) {
-            String baseUrl = uriInfo.getBaseUri().toASCIIString();
-            Element convElement =
-                    BarFileUtils.convertToRoleInstanceUrl(aclElement, baseUrl, this.cell.getName(), this.boxName);
             StringBuffer sbAclXml = new StringBuffer();
             sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-            sbAclXml.append(PersoniumCoreUtils.nodeToString(convElement));
+            sbAclXml.append(PersoniumCoreUtils.nodeToString(aclElement));
             Reader aclXml = new StringReader(sbAclXml.toString());
             fileCmp.acl(aclXml);
         }
@@ -985,13 +981,9 @@ public class BarFileReadRunner implements Runnable {
                             continue;
                         }
                         if (nodeName.equals("acl")) {
-                            if (!BarFileUtils.aclNameSpaceValidate(rootPropsName, element, this.schemaUrl)) {
-                                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2007");
-                                log.info(message + " [" + rootPropsName + "]");
-                                writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
-                                return false;
-                            }
-                            aclElement = element;
+                            String baseUrl = uriInfo.getBaseUri().toASCIIString();
+                            aclElement = BarFileUtils.convertToRoleInstanceUrl(element, baseUrl,
+                                    box.getCell().getName(), box.getName());
                             continue;
                         }
                         propElements.add(element);
@@ -1057,7 +1049,8 @@ public class BarFileReadRunner implements Runnable {
             }
             // href属性値として"dcbox:/" で始まらない場合は定義エラーとみなす。
             if (!href.startsWith(DCBOX_NO_SLUSH)) {
-                String message = MessageFormat.format(PersoniumCoreMessageUtils.getMessage("PL-BI-2010"), href);
+                String message = MessageFormat.format(
+                        PersoniumCoreMessageUtils.getMessage("PL-BI-2010"), DCBOX_NO_SLUSH, href);
                 writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
                 return false;
             }
@@ -1246,8 +1239,8 @@ public class BarFileReadRunner implements Runnable {
      * @param inputStream 入力ストリーム
      * @return 正常終了した場合はtrue
      */
-    protected List<JSONMappedObject> registJsonLinksUserdata(String entryName, InputStream inputStream) {
-        List<JSONMappedObject> userDataLinks = new ArrayList<JSONMappedObject>();
+    protected List<IJSONMappedObject> registJsonLinksUserdata(String entryName, InputStream inputStream) {
+        List<IJSONMappedObject> userDataLinks = new ArrayList<IJSONMappedObject>();
         JsonParser jp = null;
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory f = new JsonFactory();
@@ -1483,7 +1476,7 @@ public class BarFileReadRunner implements Runnable {
             }
 
             // 1件登録処理
-            JSONMappedObject mappedObject = barFileJsonValidate(jp, mapper, jsonName);
+            IJSONMappedObject mappedObject = barFileJsonValidate(jp, mapper, jsonName);
             if (jsonName.equals(RELATION_JSON)) {
                 createRelation(mappedObject.getJson());
             } else if (jsonName.equals(ROLE_JSON)) {
@@ -1508,7 +1501,7 @@ public class BarFileReadRunner implements Runnable {
      * @throws IOException IOException
      * @return JSONMappedObject JSONMappedオブジェクト
      */
-    protected JSONMappedObject barFileJsonValidate(
+    protected IJSONMappedObject barFileJsonValidate(
             JsonParser jp, ObjectMapper mapper, String jsonName) throws IOException {
         if (jsonName.equals(EXTROLE_JSON)) {
             JSONExtRole extRoles = mapper.readValue(jp, JSONExtRole.class);
@@ -1532,11 +1525,11 @@ public class BarFileReadRunner implements Runnable {
             }
             return relations;
         } else if (jsonName.equals(LINKS_JSON)) {
-            JSONLinks links = mapper.readValue(jp, JSONLinks.class);
+            JSONLink links = mapper.readValue(jp, JSONLink.class);
             linksJsonValidate(jsonName, links);
             return links;
         } else if (jsonName.equals(USERDATA_LINKS_JSON)) {
-            JSONUserDataLinks links = mapper.readValue(jp, JSONUserDataLinks.class);
+            JSONUserDataLink links = mapper.readValue(jp, JSONUserDataLink.class);
             userDataLinksJsonValidate(jsonName, links);
             return links;
         } else if (jsonName.equals(RULE_JSON)) {
@@ -1554,7 +1547,7 @@ public class BarFileReadRunner implements Runnable {
      * @param jsonName JSONファイル名
      * @param links 読み込んだJSONオブジェクト
      */
-    private void linksJsonValidate(String jsonName, JSONLinks links) {
+    private void linksJsonValidate(String jsonName, JSONLink links) {
         if (links.getFromType() == null) {
             throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         } else {
@@ -1600,7 +1593,7 @@ public class BarFileReadRunner implements Runnable {
      * @param jsonName JSONファイル名
      * @param links 読み込んだJSONオブジェクト
      */
-    private void userDataLinksJsonValidate(String jsonName, JSONUserDataLinks links) {
+    private void userDataLinksJsonValidate(String jsonName, JSONUserDataLink links) {
         if (links.getFromType() == null) {
             throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(jsonName);
         }
@@ -1651,7 +1644,7 @@ public class BarFileReadRunner implements Runnable {
         if (manifest.getBoxVersion() == null) {
             throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params("manifest.json#boxVersion");
         }
-        if (manifest.getDefaultPath() == null) {
+        if (manifest.getOldDefaultPath() == null) {
             throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params("manifest.json#DefaultPath");
         }
         return manifest;
@@ -1832,7 +1825,6 @@ public class BarFileReadRunner implements Runnable {
         this.boxCmp = ModelFactory.boxCmp(newBox);
 
         this.box = newBox;
-        this.schemaUrl = (String) json.get("Schema");
 
         // post event
         postCellCtlCreateEvent(res);
@@ -1928,22 +1920,22 @@ public class BarFileReadRunner implements Runnable {
      * 70_$links.jsonに定義されているリンク情報をESへ登録する.
      * @param mappedObject JSONファイルから読み込んだオブジェクト
      */
-    private void createLinks(JSONMappedObject mappedObject, PersoniumODataProducer producer) {
-        Map<String, String> fromNameMap = ((JSONLinks) mappedObject).getFromName();
+    private void createLinks(IJSONMappedObject mappedObject, PersoniumODataProducer producer) {
+        Map<String, String> fromNameMap = ((JSONLink) mappedObject).getFromName();
         String fromkey =
-                BarFileUtils.getComplexKeyName(((JSONLinks) mappedObject).getFromType(), fromNameMap, this.boxName);
+                BarFileUtils.getComplexKeyName(((JSONLink) mappedObject).getFromType(), fromNameMap, this.boxName);
         OEntityKey fromOEKey = OEntityKey.parse(fromkey);
-        OEntityId sourceEntity = OEntityIds.create(((JSONLinks) mappedObject).getFromType(), fromOEKey);
-        String targetNavProp = ((JSONLinks) mappedObject).getNavPropToType();
+        OEntityId sourceEntity = OEntityIds.create(((JSONLink) mappedObject).getFromType(), fromOEKey);
+        String targetNavProp = ((JSONLink) mappedObject).getNavPropToType();
 
         // リンク作成前処理
         odataEntityResource.getOdataResource().beforeLinkCreate(sourceEntity, targetNavProp);
 
-        Map<String, String> toNameMap = ((JSONLinks) mappedObject).getToName();
+        Map<String, String> toNameMap = ((JSONLink) mappedObject).getToName();
         String tokey =
-                BarFileUtils.getComplexKeyName(((JSONLinks) mappedObject).getToType(), toNameMap, this.boxName);
+                BarFileUtils.getComplexKeyName(((JSONLink) mappedObject).getToType(), toNameMap, this.boxName);
         OEntityKey toOEKey = OEntityKey.parse(tokey);
-        OEntityId newTargetEntity = OEntityIds.create(((JSONLinks) mappedObject).getToType(), toOEKey);
+        OEntityId newTargetEntity = OEntityIds.create(((JSONLink) mappedObject).getToType(), toOEKey);
         // $linksの登録
         producer.createLink(sourceEntity, targetNavProp, newTargetEntity);
 
@@ -1973,11 +1965,11 @@ public class BarFileReadRunner implements Runnable {
         bus.post(ev);
     }
 
-    private boolean createUserdataLinks(PersoniumODataProducer producer, List<JSONMappedObject> userDataLinks) {
+    private boolean createUserdataLinks(PersoniumODataProducer producer, List<IJSONMappedObject> userDataLinks) {
         int linkSize = userDataLinks.size();
         int linkCount = 0;
         String message = PersoniumCoreMessageUtils.getMessage("PL-BI-1002");
-        for (JSONMappedObject json : userDataLinks) {
+        for (IJSONMappedObject json : userDataLinks) {
             linkCount++;
             if (!createUserdataLink(json, producer)) {
                 return false;
@@ -1996,29 +1988,29 @@ public class BarFileReadRunner implements Runnable {
      * 10_odatarelations.jsonに定義されているリンク情報をESへ登録する.
      * @param mappedObject JSONファイルから読み込んだオブジェクト
      */
-    private boolean createUserdataLink(JSONMappedObject mappedObject, PersoniumODataProducer producer) {
+    private boolean createUserdataLink(IJSONMappedObject mappedObject, PersoniumODataProducer producer) {
         OEntityId sourceEntity = null;
         OEntityId newTargetEntity = null;
         try {
-            Map<String, String> fromId = ((JSONUserDataLinks) mappedObject).getFromId();
+            Map<String, String> fromId = ((JSONUserDataLink) mappedObject).getFromId();
             String fromKey = "";
             Iterator<Entry<String, String>> fromIterator = fromId.entrySet().iterator();
             fromKey = String.format("('%s')", fromIterator.next().getValue());
 
             OEntityKey fromOEKey = OEntityKey.parse(fromKey);
-            sourceEntity = OEntityIds.create(((JSONUserDataLinks) mappedObject).getFromType(), fromOEKey);
-            String targetNavProp = ((JSONUserDataLinks) mappedObject).getNavPropToType();
+            sourceEntity = OEntityIds.create(((JSONUserDataLink) mappedObject).getFromType(), fromOEKey);
+            String targetNavProp = ((JSONUserDataLink) mappedObject).getNavPropToType();
 
             // リンク作成前処理
             odataEntityResource.getOdataResource().beforeLinkCreate(sourceEntity, targetNavProp);
 
-            Map<String, String> toId = ((JSONUserDataLinks) mappedObject).getToId();
+            Map<String, String> toId = ((JSONUserDataLink) mappedObject).getToId();
             String toKey = "";
             Iterator<Entry<String, String>> toIterator = toId.entrySet().iterator();
             toKey = String.format("('%s')", toIterator.next().getValue());
 
             OEntityKey toOEKey = OEntityKey.parse(toKey);
-            newTargetEntity = OEntityIds.create(((JSONUserDataLinks) mappedObject).getToType(), toOEKey);
+            newTargetEntity = OEntityIds.create(((JSONUserDataLink) mappedObject).getToType(), toOEKey);
 
             // $linksの登録
             producer.createLink(sourceEntity, targetNavProp, newTargetEntity);
@@ -2123,12 +2115,9 @@ public class BarFileReadRunner implements Runnable {
 
         // ACL登録
         if (aclElement != null) {
-            String baseUrl = uriInfo.getBaseUri().toASCIIString();
-            Element convElement =
-                    BarFileUtils.convertToRoleInstanceUrl(aclElement, baseUrl, this.cell.getName(), this.boxName);
             StringBuffer sbAclXml = new StringBuffer();
             sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-            sbAclXml.append(PersoniumCoreUtils.nodeToString(convElement));
+            sbAclXml.append(PersoniumCoreUtils.nodeToString(aclElement));
             Reader aclXml = new StringReader(sbAclXml.toString());
             collectionCmp.acl(aclXml);
         }
@@ -2152,12 +2141,9 @@ public class BarFileReadRunner implements Runnable {
 
         // ACL登録
         if (aclElement != null) {
-            String baseUrl = uriInfo.getBaseUri().toASCIIString();
-            Element convElement =
-                    BarFileUtils.convertToRoleInstanceUrl(aclElement, baseUrl, this.cell.getName(), this.boxName);
             StringBuffer sbAclXml = new StringBuffer();
             sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-            sbAclXml.append(PersoniumCoreUtils.nodeToString(convElement));
+            sbAclXml.append(PersoniumCoreUtils.nodeToString(aclElement));
             Reader aclXml = new StringReader(sbAclXml.toString());
             boxCmp.acl(aclXml);
         }

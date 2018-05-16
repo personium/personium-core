@@ -59,6 +59,14 @@ public class JSONRelations implements IJSONMappedObjects {
      * {@inheritDoc}
      */
     @Override
+    public int size() {
+        return relations.size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void addObjects(List<OEntity> entities) {
         for (OEntity entity : entities) {
             JSONRelation object = JSONRelation.newInstance(entity);

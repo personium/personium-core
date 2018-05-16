@@ -16,10 +16,7 @@
  */
 package io.personium.core.bar;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.file.Files;
@@ -34,7 +31,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.wink.webdav.model.Multistatus;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.edm.EdmDataServices;
@@ -77,6 +73,10 @@ public class BarFileExporter {
 
     /** Extension of the bar file to be created. */
     private static final String BAR_FILE_EXTENSION = ".bar";
+    /** BarVersion. */
+    private static final String BAR_VERSION = "2";
+    /** BoxVersion. */
+    private static final String BOX_VERSION = "1";
     /** Limit when retrieving OData. */
     private static final int SEARCH_LIMIT = 1000;
 
@@ -112,6 +112,8 @@ public class BarFileExporter {
         String barFileName = boxRsCmp.getBox().getName() + UUID.randomUUID().toString() + BAR_FILE_EXTENSION;
         Path barFilePath = barDirPath.resolve(barFileName);
         try (BarFile barFile = BarFile.newInstance(barFilePath)) {
+            // init
+            barFile.initDirCreating();
             // Make the contents of the zip file.
             makeBarFile(barFile);
         } catch (IOException e) {
@@ -120,24 +122,22 @@ public class BarFileExporter {
         log.info(String.format("End export. BoxName:%s", boxRsCmp.getBox().getName()));
 
         // Create response.
-        InputStream in;
-        try {
-            in = new FileInputStream(barFilePath.toFile());
-        } catch (FileNotFoundException e) {
-            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read bar file").reason(e);
-        }
         StreamingOutput streaming = new StreamingOutput() {
             @Override
             public void write(OutputStream output) throws IOException, WebApplicationException {
                 try {
-                    IOUtils.copy(in, output);
+                    Files.copy(barFilePath, output);
                 } finally {
-                    IOUtils.closeQuietly(in);
                     Files.delete(barFilePath);
                 }
             }
         };
-        Long fileSize = barFilePath.toFile().length();
+        Long fileSize;
+        try {
+            fileSize = Files.size(barFilePath);
+        } catch (IOException e) {
+            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("read bar file").reason(e);
+        }
         return Response.ok(streaming)
                 .header(HttpHeaders.CONTENT_LENGTH, fileSize)
                 .header(HttpHeaders.CONTENT_TYPE, BarFile.CONTENT_TYPE)
@@ -170,7 +170,7 @@ public class BarFileExporter {
     private void addManifestToZip(BarFile barFile) {
         String defaultPath = boxRsCmp.getBox().getName();
         String schema = boxRsCmp.getBox().getSchema();
-        JSONManifest manifest = new JSONManifest("1", "1", defaultPath, schema);
+        JSONManifest manifest = new JSONManifest(BAR_VERSION, BOX_VERSION, defaultPath, schema);
         ObjectMapper mapper = new ObjectMapper();
         try {
             barFile.writeManifestJson(mapper.writeValueAsString(manifest));

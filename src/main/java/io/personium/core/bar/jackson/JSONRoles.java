@@ -59,6 +59,14 @@ public class JSONRoles implements IJSONMappedObjects {
      * {@inheritDoc}
      */
     @Override
+    public int size() {
+        return roles.size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void addObjects(List<OEntity> entities) {
         for (OEntity entity : entities) {
             JSONRole object = JSONRole.newInstance(entity);

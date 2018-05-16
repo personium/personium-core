@@ -47,9 +47,10 @@ import org.apache.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.jersey.core.header.OutBoundHeaders;
+
 import io.personium.test.PersoniumCoreTestConfig;
 import io.personium.test.unit.core.UrlUtils;
-import com.sun.jersey.core.header.OutBoundHeaders;
 
 /**
  * Httpリクエストを送るテスト用ユーティリティ.

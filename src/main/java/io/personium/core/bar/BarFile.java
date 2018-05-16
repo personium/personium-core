@@ -16,6 +16,7 @@
  */
 package io.personium.core.bar;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.IOException;
@@ -26,7 +27,9 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.WebApplicationException;
@@ -45,33 +48,38 @@ public class BarFile implements Closeable {
     /** Content-Type of bar file. */
     public static final String CONTENT_TYPE = "application/x-personium-bar+zip";
 
-    /** Directory name : bar. */
-    private static final String BAR_DIR = "bar";
     /** Directory name : meta. */
     private static final String META_DIR = "00_meta";
     /** File name : manifest. */
-    private static final String MANIFEST_JSON = "00_manifest.json";
+    public static final String MANIFEST_JSON = "00_manifest.json";
     /** File name : relations. */
-    private static final String RELATIONS_JSON = "10_relations.json";
+    public static final String RELATIONS_JSON = "10_relations.json";
     /** File name : roles. */
-    private static final String ROLES_JSON = "20_roles.json";
+    public static final String ROLES_JSON = "20_roles.json";
     /** File name : extroles. */
-    private static final String EXTROLES_JSON = "30_extroles.json";
+    public static final String EXTROLES_JSON = "30_extroles.json";
     /** File name : rules. */
-    private static final String RULES_JSON = "50_rules.json";
+    public static final String RULES_JSON = "50_rules.json";
     /** File name : $links. */
-    private static final String LINKS_JSON = "70_$links.json";
+    public static final String LINKS_JSON = "70_$links.json";
     /** File name : rootprops. */
-    private static final String ROOTPROPS_XML = "90_rootprops.xml";
+    public static final String ROOTPROPS_XML = "90_rootprops.xml";
 
     /** Directory name : contents. */
-    private static final String CONTENTS_DIR = "90_contents";
+    public static final String CONTENTS_DIR = "90_contents";
     /** File name : metadata. */
-    private static final String METADATA_XML = "00_$metadata.xml";
+    public static final String METADATA_XML = "00_$metadata.xml";
+    /** File name : odatarelations. */
+    public static final String ODATA_RELATIONS_JSON = "10_odatarelations.json";
+    /** Directory name : odata. */
+    public static final String ODATA_DIR = "90_data";
+
+    /** List that stores require item name in zip file. */
+    private static final List<String> REQUIRE_ITEM_LIST = Arrays.asList(META_DIR, MANIFEST_JSON, ROOTPROPS_XML);
 
     /** FileSystem class of target zip(bar) file. */
     private final FileSystem fileSystem;
-    /** Map that stores file path in zip file. */
+    /** Map that stores item path in zip file. */
     private final Map<String, Path> pathMap;
 
     /**
@@ -82,9 +90,6 @@ public class BarFile implements Closeable {
     private BarFile(Path filePath) throws IOException {
         fileSystem = toZipFileSystem(filePath);
         pathMap = createItemPathInZip(fileSystem);
-        createBarDir();
-        createMetaDir();
-        createContentsDir();
     }
 
     /**
@@ -95,6 +100,67 @@ public class BarFile implements Closeable {
      */
     public static BarFile newInstance(Path filePath) throws IOException {
         return new BarFile(filePath);
+    }
+
+    /**
+     * Create necessary directory in zip.
+     */
+    public void initDirCreating() {
+        createMetaDir();
+        createContentsDir();
+    }
+
+    /**
+     * Check the structure in the bar file.
+     * Does the required directory/file exist.
+     */
+    public void checkStructure() {
+        for (String name : REQUIRE_ITEM_LIST) {
+            if (!exists(name)) {
+                throw PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.params(name);
+            }
+        }
+    }
+
+    /**
+     * Get root dir path in zip.
+     * @return Root dir path in zip
+     */
+    public Path getRootDirPath() {
+        return fileSystem.getRootDirectories().iterator().next();
+    }
+
+    /**
+     * Get path in zip.
+     * @param fileName Target file name
+     * @return Path in zip
+     */
+    public Path getPath(String fileName) {
+        return pathMap.get(fileName);
+    }
+
+    /**
+     * Check if the file exists in zip.
+     * @param fileName Target file name
+     * @return true:exists, false:not exists
+     */
+    public boolean exists(String fileName) {
+        Path pathInZip = pathMap.get(fileName);
+        return Files.exists(pathInZip);
+    }
+
+    /**
+     * Get file reader.
+     * @param fileName Target file name
+     * @return File reader
+     */
+    public BufferedReader getReader(String fileName) {
+        Path pathInZip = pathMap.get(fileName);
+        try {
+            return Files.newBufferedReader(pathInZip, Charsets.UTF_8);
+        } catch (IOException e) {
+            throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params(fileName);
+        }
     }
 
     /**
@@ -226,7 +292,12 @@ public class BarFile implements Closeable {
         env.put("create", "true");
         // env.put("encoding", UTF-8); default encoding is utf-8
 
-        return FileSystems.newFileSystem(uri, env);
+        try {
+            return FileSystems.newFileSystem(uri, env);
+        } catch (UnsupportedOperationException e) {
+            // UnsupportedOperationException occurs if body at the time of box install api invocation is empty.
+            throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.params("archive is not a ZIP archive");
+        }
     }
 
     /**
@@ -249,8 +320,6 @@ public class BarFile implements Closeable {
      * <p>
      * <pre>
      * -------------------------
-     * BAR_DIR
-     * │
      * ├─META_DIR
      * │  ├─MANIFEST_JSON
      * │  ├─RELATIONS_JSON
@@ -271,33 +340,18 @@ public class BarFile implements Closeable {
      */
     private Map<String, Path> createItemPathInZip(FileSystem fs) {
         Map<String, Path> map = new HashMap<>();
-        map.put(BAR_DIR, fs.getPath(BAR_DIR));
 
-        map.put(META_DIR, fs.getPath(BAR_DIR, META_DIR));
-        map.put(MANIFEST_JSON, fs.getPath(BAR_DIR, META_DIR, MANIFEST_JSON));
-        map.put(RELATIONS_JSON, fs.getPath(BAR_DIR, META_DIR, RELATIONS_JSON));
-        map.put(ROLES_JSON, fs.getPath(BAR_DIR, META_DIR, ROLES_JSON));
-        map.put(EXTROLES_JSON, fs.getPath(BAR_DIR, META_DIR, EXTROLES_JSON));
-        map.put(RULES_JSON, fs.getPath(BAR_DIR, META_DIR, RULES_JSON));
-        map.put(LINKS_JSON, fs.getPath(BAR_DIR, META_DIR, LINKS_JSON));
-        map.put(ROOTPROPS_XML, fs.getPath(BAR_DIR, META_DIR, ROOTPROPS_XML));
+        map.put(META_DIR, fs.getPath(META_DIR));
+        map.put(MANIFEST_JSON, fs.getPath(META_DIR, MANIFEST_JSON));
+        map.put(RELATIONS_JSON, fs.getPath(META_DIR, RELATIONS_JSON));
+        map.put(ROLES_JSON, fs.getPath(META_DIR, ROLES_JSON));
+        map.put(EXTROLES_JSON, fs.getPath(META_DIR, EXTROLES_JSON));
+        map.put(RULES_JSON, fs.getPath(META_DIR, RULES_JSON));
+        map.put(LINKS_JSON, fs.getPath(META_DIR, LINKS_JSON));
+        map.put(ROOTPROPS_XML, fs.getPath(META_DIR, ROOTPROPS_XML));
 
-        map.put(CONTENTS_DIR, fs.getPath(BAR_DIR, CONTENTS_DIR));
+        map.put(CONTENTS_DIR, fs.getPath(CONTENTS_DIR));
         return map;
-    }
-
-    /**
-     * Create bar directory.
-     */
-    private void createBarDir() {
-        if (Files.exists(pathMap.get(BAR_DIR))) {
-            return;
-        }
-        try {
-            Files.createDirectory(pathMap.get(BAR_DIR));
-        } catch (IOException e) {
-            throw PersoniumCoreException.Common.FILE_IO_ERROR.params("add bar dir to bar file").reason(e);
-        }
     }
 
     /**

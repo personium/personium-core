@@ -17,25 +17,34 @@
 package io.personium.core.bar.jackson;
 
 import org.json.simple.JSONObject;
+import org.odata4j.core.OEntity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * barファイル内のExtRole定義用JSONファイル読み込み用Mapping定義クラス.
  */
-public class JSONExtRole implements JSONMappedObject {
+public class JSONExtRole implements IJSONMappedObject {
 
-    /**
-     * ExtRole.
-     */
+    /** ExtRole. */
     @JsonProperty("ExtRole")
     private String extRole;
-
-    /**
-     * _Relation.Name.
-     */
+    /** _Relation.Name. */
     @JsonProperty("_Relation.Name")
     private String relation;
+
+    /**
+     * Create new instance.
+     * @param entity Source entity
+     * @return JSONExtRole instance.
+     */
+    public static JSONExtRole newInstance(OEntity entity) {
+        JSONExtRole instance = new JSONExtRole();
+        instance.setExtRole(entity.getProperty("ExtRole", String.class).getValue());
+        instance.setRelationName(entity.getProperty("_Relation.Name", String.class).getValue());
+        return instance;
+    }
 
     /**
      * ExtRoleプロパティの取得.
@@ -70,6 +79,7 @@ public class JSONExtRole implements JSONMappedObject {
     }
 
     @Override
+    @JsonIgnore
     @SuppressWarnings("unchecked")
     public JSONObject getJson() {
         JSONObject json = new JSONObject();
