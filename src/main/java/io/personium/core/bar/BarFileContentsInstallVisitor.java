@@ -448,7 +448,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
             doneKeys.add(entryName);
             long bulkSize = Long.parseLong(PersoniumUnitConfig
                     .get(PersoniumUnitConfig.BAR.BAR_USERDATA_BULK_SIZE));
-            if ((userDataCount % bulkSize) == 0) {
+            if (userDataCount % bulkSize == 0) {
                 execBulkRequest(currentDavCmp.getCell().getId(), currentDavCmp.getODataProducer());
             }
             return;
@@ -653,7 +653,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
 
         // ComplexTypeに紐付いているComplexTypePropertyの登録
         for (EdmComplexType complexType : complexTypes) {
-            createProperties(complexType, davCmp, producer);
+            createProperties(complexType, producer);
         }
     }
 
@@ -691,18 +691,17 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
         }
         // EntityTypeに紐付いているPropertyの登録
         for (EdmEntityType entity : entityTypes) {
-            createProperties(entity, davCmp, producer);
+            createProperties(entity, producer);
         }
     }
 
     /**
      * Edmxに定義されているProperty/ComplexTypePropertyを登録する.
      * @param entity 登録対象のPropertyが定義されているEntityType/ComplexTypeオブジェクト
-     * @param davCmp Collection操作用オブジェクト
      * @param producer ODataプロデューサー
      */
     @SuppressWarnings("unchecked")
-    private void createProperties(EdmStructuralType entity, DavCmp davCmp, PersoniumODataProducer producer) {
+    private void createProperties(EdmStructuralType entity, PersoniumODataProducer producer) {
         Iterable<EdmProperty> properties = entity.getDeclaredProperties();
         EdmDataServices userMetadata = null;
         String edmTypeName = Property.EDM_TYPE_NAME;
