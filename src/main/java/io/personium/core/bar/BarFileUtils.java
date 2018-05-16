@@ -18,12 +18,11 @@ package io.personium.core.bar;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,22 +58,10 @@ public class BarFileUtils {
     static final String CODE_INSTALL_PROCESSING = "PL-BI-1002";
     static final String CODE_INSTALL_COMPLETED = "PL-BI-1003";
 
-    private static final int PATH_CELL_INDEX = 1;
-    private static final int PATH_BOX_INDEX = 3;
+    /** xml:baseのチェック用. 現状ほとんどの値を内部で置き換えてしまうのでチェックは緩くしている. */
+    private static final String PATTERN_XML_BASE = "^(https?://.+)/([^/]{1,128})/__role/([^/]{1,128})/?$";
 
     private BarFileUtils() {
-    }
-
-    /**
-     * ACLの名前空間をバリデートする.
-     * この際、ついでにロールインスタンスURLへの変換、BaseURLの変換を行う。
-     * @param entryName エントリ名
-     * @param element Elementノード
-     * @param schemaUrl BoxスキーマURL
-     * @return 処理結果
-     */
-    static boolean aclNameSpaceValidate(final String entryName, final Element element, final String schemaUrl) {
-        return true;
     }
 
     /**
@@ -102,26 +89,6 @@ public class BarFileUtils {
     }
 
     /**
-     * barファイル内に記載されたURLのホスト情報（scheme://hostname/)を処理中サーバの情報へ置換する.
-     * @param url 変更対象のURL（エンコードされていないURL）
-     * @param baseUrl インポート先のURL
-     * @param fileName 処理中のbarファイルエントリ名
-     * @return 生成したURL
-     */
-    static String getLocalUrl(final String url, final String baseUrl, final String fileName) {
-        String newUrl = baseUrl;
-        if (newUrl.endsWith("/")) {
-            newUrl = newUrl.substring(0, newUrl.length() - 1);
-        }
-        try {
-            newUrl = newUrl + new URL(url).getPath();
-        } catch (MalformedURLException e) {
-            throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(fileName);
-        }
-        return newUrl;
-    }
-
-    /**
      * ACLの名前空間をバリデートする.
      * この際、ついでにロールインスタンスURLへの変換、BaseURLの変換を行う。
      * @param element element
@@ -133,35 +100,38 @@ public class BarFileUtils {
     static Element convertToRoleInstanceUrl(
             final Element element, final String baseUrl, final String cellName, final String boxName) {
         String namespaceUri = element.getAttribute("xml:base");
-        String roleClassUrl = getLocalUrl(namespaceUri, baseUrl, BarFileReadRunner.ROOTPROPS_XML);
-        Element retElement = (Element) element.cloneNode(true);
-        String[] paths = null;
-        try {
-            URL url = new URL(roleClassUrl);
-            paths = url.getPath().split("/");
-        } catch (MalformedURLException e) {
+        if (StringUtils.isEmpty(namespaceUri)) {
+            return null;
+        }
+
+        Pattern pattern = Pattern.compile(PATTERN_XML_BASE);
+        Matcher m = pattern.matcher(namespaceUri);
+        if (!m.matches()) {
             throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(BarFileReadRunner.ROOTPROPS_XML);
         }
-        // ロールクラスURLからロールインスタンスURLへ変換して属性として設定
-        StringBuilder newBaseUrl = null;
-        String url = baseUrl;
-        if (url.endsWith("/")) {
-            url = url.substring(0, url.lastIndexOf("/"));
-        }
-        newBaseUrl = new StringBuilder(url);
-        paths[PATH_CELL_INDEX] = cellName;
-        paths[PATH_BOX_INDEX] = boxName;
-        for (String path : paths) {
-            if (path.length() == 0) {
-                continue;
-            }
-            newBaseUrl.append("/");
-            newBaseUrl.append(path);
-        }
-        newBaseUrl.append("/");
-        retElement.setAttribute("xml:base", newBaseUrl.toString());
+
+        String converted = getLocalUrl(baseUrl, cellName, boxName);
+        Element retElement = (Element) element.cloneNode(true);
+        retElement.setAttribute("xml:base", converted);
 
         return retElement;
+    }
+
+    /**
+     * barファイル内に記載されたURLのホスト情報（scheme://hostname/)を処理中サーバの情報へ置換する.
+     * @param baseUrl baseUrl
+     * @param cellName cellName
+     * @param boxName boxName
+     * @return 生成したURL
+     */
+    private static String getLocalUrl(String baseUrl, String cellName, String boxName) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(baseUrl);
+        if (!baseUrl.endsWith("/")) {
+            builder.append("/");
+        }
+        builder.append(cellName).append("/__role/").append(boxName).append("/");
+        return builder.toString();
     }
 
     /**
@@ -219,11 +189,14 @@ public class BarFileUtils {
      * @param path barファイル内のエントリパス（Edmxの場合は、ODataのパス）
      * @param message 出力用メッセージ
      */
-    static void outputEventBus(PersoniumEvent event, EventBus eventBus, String code, String path, String message) {
-        if (event != null) {
-            event.setType(code);
-            event.setObject(path);
-            event.setInfo(message);
+    static void outputEventBus(PersoniumEvent.Builder eventBuilder, EventBus eventBus, String code,
+            String path, String message) {
+        if (eventBuilder != null) {
+            PersoniumEvent event = eventBuilder
+                    .type(code)
+                    .object(path)
+                    .info(message)
+                    .build();
             eventBus.post(event);
         }
     }

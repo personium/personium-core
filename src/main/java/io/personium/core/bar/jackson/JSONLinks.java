@@ -59,7 +59,7 @@ public class JSONLinks implements IJSONMappedObjects {
      * {@inheritDoc}
      */
     @Override
-    public int getObjectsSize() {
+    public int size() {
         return links.size();
     }
 

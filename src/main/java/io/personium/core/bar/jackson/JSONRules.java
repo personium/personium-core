@@ -59,7 +59,7 @@ public class JSONRules implements IJSONMappedObjects {
      * {@inheritDoc}
      */
     @Override
-    public int getObjectsSize() {
+    public int size() {
         return rules.size();
     }
 

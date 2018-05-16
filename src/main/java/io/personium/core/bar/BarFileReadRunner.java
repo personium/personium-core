@@ -88,10 +88,10 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.bar.jackson.IJSONMappedObject;
 import io.personium.core.bar.jackson.JSONExtRole;
 import io.personium.core.bar.jackson.JSONLink;
 import io.personium.core.bar.jackson.JSONManifest;
-import io.personium.core.bar.jackson.IJSONMappedObject;
 import io.personium.core.bar.jackson.JSONRelation;
 import io.personium.core.bar.jackson.JSONRole;
 import io.personium.core.bar.jackson.JSONRule;
@@ -185,7 +185,6 @@ public class BarFileReadRunner implements Runnable {
 
     private Cell cell;
     private Box box;
-    private String schemaUrl; // ACL名前空間チェック用
     private BoxCmp boxCmp;
     private Map<String, DavCmp> davCmpMap;
     private Map<String, String> davFileContentTypeMap = new HashMap<String, String>();
@@ -880,12 +879,9 @@ public class BarFileReadRunner implements Runnable {
         // ACL登録
         Element aclElement = davFileAclMap.get(entryName);
         if (aclElement != null) {
-            String baseUrl = uriInfo.getBaseUri().toASCIIString();
-            Element convElement =
-                    BarFileUtils.convertToRoleInstanceUrl(aclElement, baseUrl, this.cell.getName(), this.boxName);
             StringBuffer sbAclXml = new StringBuffer();
             sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-            sbAclXml.append(PersoniumCoreUtils.nodeToString(convElement));
+            sbAclXml.append(PersoniumCoreUtils.nodeToString(aclElement));
             Reader aclXml = new StringReader(sbAclXml.toString());
             fileCmp.acl(aclXml);
         }
@@ -985,13 +981,9 @@ public class BarFileReadRunner implements Runnable {
                             continue;
                         }
                         if (nodeName.equals("acl")) {
-                            if (!BarFileUtils.aclNameSpaceValidate(rootPropsName, element, this.schemaUrl)) {
-                                String message = PersoniumCoreMessageUtils.getMessage("PL-BI-2007");
-                                log.info(message + " [" + rootPropsName + "]");
-                                writeOutputStream(true, "PL-BI-1004", rootPropsName, message);
-                                return false;
-                            }
-                            aclElement = element;
+                            String baseUrl = uriInfo.getBaseUri().toASCIIString();
+                            aclElement = BarFileUtils.convertToRoleInstanceUrl(element, baseUrl,
+                                    box.getCell().getName(), box.getName());
                             continue;
                         }
                         propElements.add(element);
@@ -1833,7 +1825,6 @@ public class BarFileReadRunner implements Runnable {
         this.boxCmp = ModelFactory.boxCmp(newBox);
 
         this.box = newBox;
-        this.schemaUrl = (String) json.get("Schema");
 
         // post event
         postCellCtlCreateEvent(res);
@@ -2124,12 +2115,9 @@ public class BarFileReadRunner implements Runnable {
 
         // ACL登録
         if (aclElement != null) {
-            String baseUrl = uriInfo.getBaseUri().toASCIIString();
-            Element convElement =
-                    BarFileUtils.convertToRoleInstanceUrl(aclElement, baseUrl, this.cell.getName(), this.boxName);
             StringBuffer sbAclXml = new StringBuffer();
             sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-            sbAclXml.append(PersoniumCoreUtils.nodeToString(convElement));
+            sbAclXml.append(PersoniumCoreUtils.nodeToString(aclElement));
             Reader aclXml = new StringReader(sbAclXml.toString());
             collectionCmp.acl(aclXml);
         }
@@ -2153,12 +2141,9 @@ public class BarFileReadRunner implements Runnable {
 
         // ACL登録
         if (aclElement != null) {
-            String baseUrl = uriInfo.getBaseUri().toASCIIString();
-            Element convElement =
-                    BarFileUtils.convertToRoleInstanceUrl(aclElement, baseUrl, this.cell.getName(), this.boxName);
             StringBuffer sbAclXml = new StringBuffer();
             sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-            sbAclXml.append(PersoniumCoreUtils.nodeToString(convElement));
+            sbAclXml.append(PersoniumCoreUtils.nodeToString(aclElement));
             Reader aclXml = new StringReader(sbAclXml.toString());
             boxCmp.acl(aclXml);
         }

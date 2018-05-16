@@ -19,6 +19,7 @@ package io.personium.core.bar.jackson;
 import org.json.simple.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.personium.core.utils.ODataUtils;
@@ -36,6 +37,7 @@ public class JSONManifest implements IJSONMappedObject {
     private String boxVersion;
     /** DefaultPath. bar_version 1. */
     @JsonProperty("DefaultPath")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String oldDefaultPath;
     /** default_path. bar_version 2. */
     @JsonProperty("default_path")

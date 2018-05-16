@@ -1,3 +1,19 @@
+/**
+ * personium.io
+ * Copyright 2018 FUJITSU LIMITED
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.personium.core.bar;
 
 import java.io.BufferedReader;
@@ -20,6 +36,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.RuntimeDelegate;
@@ -80,11 +97,13 @@ import io.personium.core.rs.odata.ODataEntitiesResource;
 import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.core.rs.odata.ODataResource;
 
+/**
+ * FileVisitor for install contents recursively from zip file to file system.
+ */
 public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
 
+    /** Logger. */
     static Logger log = LoggerFactory.getLogger(BarFileContentsInstallVisitor.class);
-
-    private static final String CONTENTS_DIR = BarFile.CONTENTS_DIR + "/";
 
     private static final int TYPE_WEBDAV_COLLECTION = 0;
     private static final int TYPE_ODATA_COLLECTION = 1;
@@ -92,31 +111,28 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     private static final int TYPE_DAV_FILE = 3;
     private static final int TYPE_SVC_FILE = 4;
 
-    /**  */
+    /** Install target box. */
     private Box box;
-    /** */
-    private String baseUrl;
     /** Progress info. */
     private BarInstallProgressInfo progressInfo;
-    /**  */
+    /** OData entity resource. */
     private ODataEntityResource entityResource;
-    /**  */
+    /** Personium event bus for sending event. */
     private EventBus eventBus;
-    /**  */
-    private PersoniumEvent event;
-    /**  */
+    /** Personium event builder. */
+    private PersoniumEvent.Builder eventBuilder;
+    /** Map of dav file content-type to register. */
     private Map<String, String> davFileContentTypeMap;
-    /**  */
+    /** Map of dav file acl to register. */
     private Map<String, Element> davFileAclMap;
-    /**  */
+    /** Map of dav file property to register. */
     private Map<String, List<Element>> davFilePropsMap;
-    /**  */
-    private Map<String, DavCmp> odataCollections;
-    /**  */
-    private Map<String, DavCmp> webdavCollections;
-    /**  */
-    private Map<String, DavCmp> serviceCollections;
-
+    /** Map of OData collection to register. */
+    private Map<String, DavCmp> odataCollectionMap;
+    /** Map of WebDAV collection to register. */
+    private Map<String, DavCmp> webdavCollectionMap;
+    /** Map of service collection to register. */
+    private Map<String, DavCmp> serviceCollectionMap;
 
     private String currentPath = null;
     private int userDataCount = 0;
@@ -126,50 +142,58 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     private DavCmp currentDavCmp = null;
     private List<String> doneKeys = new ArrayList<String>();
 
+    /**
+     * Constructor.
+     * @param box Install target box
+     * @param progressInfo Progress info
+     * @param entityResource OData entity resource
+     * @param eventBus Personium event bus for sending event
+     * @param eventBuilder Personium event builder
+     * @param davCollectionMap Map of dav collection to register
+     * @param davFileContentTypeMap Map of dav file content-type to register
+     * @param davFileAclMap Map of dav file acl to register
+     * @param davFilePropsMap Map of dav file property to register
+     */
     public BarFileContentsInstallVisitor(Box box,
-            String baseUrl,
             BarInstallProgressInfo progressInfo,
             ODataEntityResource entityResource,
             EventBus eventBus,
-            PersoniumEvent event,
-            Map<String, DavCmp> davCmpMap,
+            PersoniumEvent.Builder eventBuilder,
+            Map<String, DavCmp> davCollectionMap,
             Map<String, String> davFileContentTypeMap,
             Map<String, Element> davFileAclMap,
             Map<String, List<Element>> davFilePropsMap) {
         this.box = box;
-        this.baseUrl = baseUrl;
         this.progressInfo = progressInfo;
         this.entityResource = entityResource;
         this.eventBus = eventBus;
-        this.event = event;
+        this.eventBuilder = eventBuilder;
         this.davFileContentTypeMap = davFileContentTypeMap;
         this.davFileAclMap = davFileAclMap;
         this.davFilePropsMap = davFilePropsMap;
         // Create a map for each collection type.
-        odataCollections = getCollections(davCmpMap, DavCmp.TYPE_COL_ODATA);
-        webdavCollections = getCollections(davCmpMap, DavCmp.TYPE_COL_WEBDAV);
+        odataCollectionMap = getCollections(davCollectionMap, DavCmp.TYPE_COL_ODATA);
+        webdavCollectionMap = getCollections(davCollectionMap, DavCmp.TYPE_COL_WEBDAV);
         // Since it may be referred to as parent, Box must be registered.
-        webdavCollections.putAll(getCollections(davCmpMap, DavCmp.TYPE_COL_BOX));
-        serviceCollections = getCollections(davCmpMap, DavCmp.TYPE_COL_SVC);
+        webdavCollectionMap.putAll(getCollections(davCollectionMap, DavCmp.TYPE_COL_BOX));
+        serviceCollectionMap = getCollections(davCollectionMap, DavCmp.TYPE_COL_SVC);
     }
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        createContents(dir);
-        return FileVisitResult.CONTINUE;
+        return createContents(dir);
     }
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        createContents(file);
-        return FileVisitResult.CONTINUE;
+        progressInfo.addDelta(1L);
+        return createContents(file);
     }
 
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
         log.info("IOException: " + exc.getMessage(), exc.fillInStackTrace());
         throw PersoniumBarException.INSTALLATION_FAILED.path(file.toString()).detail(exc.getMessage());
-//        throw exc;
     }
 
     @Override
@@ -181,11 +205,11 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
      * barファイル内で定義されているコレクションのMap<key, DavCmpEsImpl>を取得する.
      * @return コレクションのMapDavCmpEsImplオブジェクト
      */
-    private Map<String, DavCmp> getCollections(Map<String, DavCmp> davCmpMap, String colType) {
+    private Map<String, DavCmp> getCollections(Map<String, DavCmp> davCollectionMap, String colType) {
         Map<String, DavCmp> map = new HashMap<String, DavCmp>();
-        Set<String> keySet = davCmpMap.keySet();
+        Set<String> keySet = davCollectionMap.keySet();
         for (String key : keySet) {
-            DavCmp davCmp = davCmpMap.get(key);
+            DavCmp davCmp = davCollectionMap.get(key);
             if (davCmp != null && colType.equals(davCmp.getType())) {
                 map.put(key, davCmp);
             }
@@ -198,88 +222,46 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
      * @param pathInZip File path obj in zip
      * @return boolean Processing result true:success false:failure
      */
-    private void createContents(Path pathInZip) {
-
+    private FileVisitResult createContents(Path pathInZip) {
         try {
-//            ZipArchiveEntry zae = null;
-
-//            while ((zae = this.zipArchiveInputStream.getNextZipEntry()) != null) {
             String entryName = pathInZip.toString();
+            if (entryName.startsWith("/")) {
+                entryName = entryName.replaceFirst("/", "");
+            }
             log.debug("Entry Name: " + entryName);
             log.debug("Entry Size: " + Files.size(pathInZip));
-//            log.debug("Entry Compressed Size: " + zae.getCompressedSize());
-            if (!Files.isDirectory(pathInZip)) {
-                this.progressInfo.addDelta(1L);
+            if (BarFile.CONTENTS_DIR.equals(entryName)) {
+                // Do not need to process content root directory.
+                return FileVisitResult.CONTINUE;
             }
+
             writeOutputStream(false, BarFileUtils.CODE_INSTALL_STARTED, entryName);
 
             // ODataCollectionからDav/ServiceCollection/別ODataCollectionのリソースに対する処理に変わった際に
             // ユーザデータの登録やリンクの登録をする必要があれば、処理を実行する
             if (currentPath != null && !entryName.startsWith(currentPath)) {
-                execBulkRequest(currentDavCmp.getCell().getId(),
-                        bulkRequests, fileNameMap, currentDavCmp.getODataProducer());
-                createUserdataLinks(currentDavCmp.getODataProducer(), userDataLinks);
+                execBulkRequest(currentDavCmp.getCell().getId(), currentDavCmp.getODataProducer());
+                createUserdataLinks(currentDavCmp.getODataProducer());
                 userDataLinks = new JSONUserDataLinks();
                 currentPath = null;
             }
-            int entryType = getEntryType(entryName, odataCollections,
-                    webdavCollections, serviceCollections, this.davFileContentTypeMap);
+            int entryType = getEntryType(entryName);
             switch (entryType) {
             case TYPE_ODATA_COLLECTION:
-                // ODataコレクションの登録
-                if (!odataCollections.isEmpty()) {
-                    isValidODataContents(entryName, odataCollections, doneKeys);
-
-                    Pattern formatPattern = Pattern.compile(CONTENTS_DIR + ".+/90_data/");
-                    Matcher formatMatcher = formatPattern.matcher(entryName);
-                    if (formatMatcher.matches()) {
-                        currentPath = entryName;
-                    }
-                    Pattern userodataDirPattern = Pattern.compile(CONTENTS_DIR + ".+/90_data/.+");
-                    Matcher userodataDirMatcher = userodataDirPattern.matcher(entryName);
-
-                    if (getFileExtension(entryName).equals(".xml")) {
-                        // 00_$metadata.xmlの解析・ユーザスキーマ登録
-                        currentDavCmp = getCollection(entryName, odataCollections);
-                        registUserSchema(entryName, pathInZip, currentDavCmp);
-                        writeOutputStream(false, BarFileUtils.CODE_INSTALL_COMPLETED, entryName);
-                        doneKeys.add(entryName);
-                        return;
-                    } else if (entryName.endsWith(BarFile.ODATA_RELATIONS_JSON)) {
-                        userDataLinks = registJsonLinksUserdata(entryName, pathInZip);
-                        writeOutputStream(false, BarFileUtils.CODE_INSTALL_COMPLETED, entryName);
-                        doneKeys.add(entryName);
-                        return;
-                    } else if (userodataDirMatcher.matches() && getFileExtension(entryName).equals(".json")) {
-                        userDataCount++;
-                        setBulkRequests(pathInZip, entryName, currentDavCmp.getODataProducer(),
-                                bulkRequests, fileNameMap);
-                        doneKeys.add(entryName);
-                        long bulkSize = Long.parseLong(PersoniumUnitConfig
-                                .get(PersoniumUnitConfig.BAR.BAR_USERDATA_BULK_SIZE));
-                        if ((userDataCount % bulkSize) == 0) {
-                            execBulkRequest(currentDavCmp.getCell().getId(),
-                                    bulkRequests, fileNameMap, currentDavCmp.getODataProducer());
-                        }
-                        return;
-                    } else if (!entryName.endsWith("/")) {
-                        // xml,jsonファイル以外のファイルがあった場合はエラーを返却する
-                        PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2001");
-                        log.info(detail.getDetailMessage() + " [" + entryName + "]");
-                        throw PersoniumBarException.INSTALLATION_FAILED.path(entryName).detail(detail);
-                    }
-                }
-                break;
+                createODataCollectionContents(entryName, pathInZip);
+                writeOutputStream(false, BarFileUtils.CODE_INSTALL_COMPLETED, entryName);
+                doneKeys.add(entryName);
+                return FileVisitResult.SKIP_SUBTREE;
 
             case TYPE_DAV_FILE:
                 // WebDAVコレクションの登録
                 // bar/90_contents/{davcol_name}配下のエントリを1つずつ登録する
-                registWebDavFile(entryName, pathInZip, webdavCollections);
+                registWebDavFile(entryName, pathInZip);
                 break;
 
             case TYPE_SVC_FILE:
                 // Serviceコレクションの登録
-                installSvcCollection(pathInZip, webdavCollections, entryName);
+                installSvcCollection(pathInZip, entryName);
                 break;
 
             default:
@@ -287,26 +269,15 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
             }
             writeOutputStream(false, BarFileUtils.CODE_INSTALL_COMPLETED, entryName);
             doneKeys.add(entryName);
-//            }
-            // ODataCollectionのリソースに対する処理に終わった際に、ユーザデータの登録やリンクの登録をする必要があれば実行する
-            if (currentPath != null) {
-                execBulkRequest(currentDavCmp.getCell().getId(), bulkRequests,
-                        fileNameMap, currentDavCmp.getODataProducer());
-                createUserdataLinks(currentDavCmp.getODataProducer(), userDataLinks);
-                userDataLinks = null;
-            }
         } catch (IOException ex) {
             log.info("IOException: " + ex.getMessage(), ex.fillInStackTrace());
             PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2000");
             throw PersoniumBarException.INSTALLATION_FAILED.path("").detail(detail);
         }
-        // 必須データ（bar/90_contents/{odatacol_name}/00_$metadata.xml)の確認
-        checkNecessaryFile(odataCollections, doneKeys);
+        return FileVisitResult.CONTINUE;
     }
 
-    private void execBulkRequest(String cellId, LinkedHashMap<String, BulkRequest> bulkRequests,
-            Map<String, String> fileNameMap,
-            PersoniumODataProducer producer) {
+    private void execBulkRequest(String cellId, PersoniumODataProducer producer) {
         // バルクで一括登録を実行
         producer.bulkCreateEntity(producer.getMetadata(), bulkRequests, cellId);
 
@@ -315,7 +286,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
             // エラーが発生していた場合はエラーのレスポンスを返却する
             if (request.getValue().getError() != null) {
                 if (request.getValue().getError() instanceof PersoniumCoreException) {
-                    PersoniumCoreException e = ((PersoniumCoreException) request.getValue().getError());
+                    PersoniumCoreException e = (PersoniumCoreException) request.getValue().getError();
                     log.info("PersoniumCoreException: " + e.getMessage());
                     throw PersoniumBarException.INSTALLATION_FAILED.path(
                             fileNameMap.get(request.getKey())).detail(e.getMessage());
@@ -337,7 +308,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
         fileNameMap.clear();
     }
 
-    private void createUserdataLinks(PersoniumODataProducer producer, JSONUserDataLinks userDataLinks) {
+    private void createUserdataLinks(PersoniumODataProducer producer) {
         int linkSize = userDataLinks.getLinks().size();
         int linkCount = 0;
         String message = PersoniumCoreMessageUtils.getMessage(BarFileUtils.CODE_INSTALL_PROCESSING);
@@ -402,36 +373,28 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     /**
      * barファイルの90_contents配下のエントリのタイプを取得する.
      * @param entryName barファイルのエントリ名
-     * @param odataCols ODataコレクションの一覧
-     * @param webdavCols WebDAVコレクションの一覧
-     * @param serviceCols サービスコレクションの一覧
-     * @param davFiles WebDAVファイルの一覧
      * @return エントリのタイプ
      */
-    private int getEntryType(String entryName,
-            Map<String, DavCmp> odataCols,
-            Map<String, DavCmp> webdavCols,
-            Map<String, DavCmp> serviceCols,
-            Map<String, String> davFiles) {
+    private int getEntryType(String entryName) {
 
-        if (odataCols.containsKey(entryName)) {
+        if (odataCollectionMap.containsKey(entryName)) {
             return TYPE_ODATA_COLLECTION;
-        } else if (webdavCols.containsKey(entryName)) {
+        } else if (webdavCollectionMap.containsKey(entryName)) {
             return TYPE_WEBDAV_COLLECTION;
-        } else if (serviceCols.containsKey(entryName)) {
+        } else if (serviceCollectionMap.containsKey(entryName)) {
             return TYPE_SERVICE_COLLECTION;
-        } else if (davFiles.containsKey(entryName)) {
+        } else if (davFileContentTypeMap.containsKey(entryName)) {
             return TYPE_DAV_FILE;
         }
 
-        for (Entry<String, DavCmp> entry : odataCols.entrySet()) {
+        for (Entry<String, DavCmp> entry : odataCollectionMap.entrySet()) {
             String odataColPath = entry.getKey();
             if (entryName.startsWith(odataColPath)) {
                 return TYPE_ODATA_COLLECTION;
             }
         }
 
-        for (Entry<String, DavCmp> entry : serviceCols.entrySet()) {
+        for (Entry<String, DavCmp> entry : serviceCollectionMap.entrySet()) {
             String serviceColPath = entry.getKey();
             if (entryName.startsWith(serviceColPath)) {
                 return TYPE_SVC_FILE;
@@ -440,20 +403,86 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
 
         // ODataコレクション配下ではなく、かつ、rootpropsに定義されていないエントリ
         PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2006");
-        log.info(detail.getDetailMessage() + " [" + entryName + "]");
+        log.info(detail.getMessage() + " [" + entryName + "]");
         throw PersoniumBarException.INSTALLATION_FAILED.path(entryName).detail(detail);
+    }
+
+    /**
+     * Create ODataCollection contents.
+     * @param entryName target name
+     * @param pathInZip target path
+     */
+    private void createODataCollectionContents(String entryName, Path pathInZip) {
+        // ODataコレクションの登録
+        if (odataCollectionMap.isEmpty()) {
+            return;
+        }
+        isValidODataCollectionContents(entryName);
+
+        Pattern formatPattern = Pattern.compile(BarFile.CONTENTS_DIR + "/.+/90_data/");
+        Matcher formatMatcher = formatPattern.matcher(entryName);
+        if (formatMatcher.matches()) {
+            currentPath = entryName;
+        }
+        Pattern userodataDirPattern = Pattern.compile(BarFile.CONTENTS_DIR + "/.+/90_data/.+");
+        Matcher userodataDirMatcher = userodataDirPattern.matcher(entryName);
+
+        if (getFileExtension(entryName).equals(".xml")) {
+            // 00_$metadata.xmlの解析・ユーザスキーマ登録
+            progressInfo.addDelta(1L);
+            currentDavCmp = getCollection(entryName);
+            registUserSchema(entryName, pathInZip, currentDavCmp);
+            writeOutputStream(false, BarFileUtils.CODE_INSTALL_COMPLETED, entryName);
+            doneKeys.add(entryName);
+            return;
+        } else if (entryName.endsWith(BarFile.ODATA_RELATIONS_JSON)) {
+            progressInfo.addDelta(1L);
+            userDataLinks = registJsonLinksUserdata(entryName, pathInZip);
+            writeOutputStream(false, BarFileUtils.CODE_INSTALL_COMPLETED, entryName);
+            doneKeys.add(entryName);
+            return;
+        } else if (userodataDirMatcher.matches() && getFileExtension(entryName).equals(".json")) {
+            progressInfo.addDelta(1L);
+            userDataCount++;
+            setBulkRequests(pathInZip, entryName, currentDavCmp.getODataProducer());
+            doneKeys.add(entryName);
+            long bulkSize = Long.parseLong(PersoniumUnitConfig
+                    .get(PersoniumUnitConfig.BAR.BAR_USERDATA_BULK_SIZE));
+            if ((userDataCount % bulkSize) == 0) {
+                execBulkRequest(currentDavCmp.getCell().getId(), currentDavCmp.getODataProducer());
+            }
+            return;
+        } else if (!entryName.endsWith("/")) {
+            // xml,jsonファイル以外のファイルがあった場合はエラーを返却する
+            PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2001");
+            log.info(detail.getMessage() + " [" + entryName + "]");
+            throw PersoniumBarException.INSTALLATION_FAILED.path(entryName).detail(detail);
+        } else {
+            // In the case of a directory, subordinates are processed recursively.
+            // Reason for being separate from recursive processing using FileVisit.
+            // - Because the order of processing is fixed, sort path and process it
+            try {
+                Stream<Path> pathst = Files.list(pathInZip).sorted();
+                pathst.forEach(
+                        path -> createODataCollectionContents(path.toString().replaceFirst("/", ""), path)
+                        );
+            } catch (IOException e) {
+                log.info("IOException: " + e.getMessage(), e.fillInStackTrace());
+                PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2000");
+                throw PersoniumBarException.INSTALLATION_FAILED.path("").detail(detail);
+            }
+        }
     }
 
     /**
      * bar/90_contents/{OdataCol_name}配下のエントリが正しい定義であるかどうかを確認する.
      * @param entryName エントリ名(コレクション名)
-     * @param colMap コレクションのMapオブジェクト
-     * @param doneKeys 処理済みのODataコレクション用エントリリスト
+     * @param odataCollectionMap コレクションのMapオブジェクト
      */
-    protected void isValidODataContents(String entryName, Map<String, DavCmp> colMap, List<String> doneKeys) {
+    private void isValidODataCollectionContents(String entryName) {
 
         String odataColPath = "";
-        for (Map.Entry<String, DavCmp> entry : colMap.entrySet()) {
+        for (Map.Entry<String, DavCmp> entry : odataCollectionMap.entrySet()) {
             if (entryName.startsWith(entry.getKey())) {
                 odataColPath = entry.getKey();
                 break;
@@ -470,14 +499,14 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
             String meatadataPath = odataColPath + BarFile.METADATA_XML;
             if (!doneKeys.contains(meatadataPath)) {
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2001");
-                log.info(detail.getDetailMessage() + "entryName: " + entryName);
+                log.info(detail.getMessage() + "entryName: " + entryName);
                 throw PersoniumBarException.INSTALLATION_FAILED.path(entryName).detail(detail);
             }
             // 90_data/の処理が済んでいないかのチェック
             String userDataPath = odataColPath + BarFile.ODATA_DIR + "/";
             if (doneKeys.contains(userDataPath)) {
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2001");
-                log.info(detail.getDetailMessage() + "entryName: " + entryName);
+                log.info(detail.getMessage() + "entryName: " + entryName);
                 throw PersoniumBarException.INSTALLATION_FAILED.path(entryName).detail(detail);
             }
         }
@@ -486,7 +515,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
             String meatadataPath = odataColPath + BarFile.METADATA_XML;
             if (!doneKeys.contains(meatadataPath)) {
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2001");
-                log.info(detail.getDetailMessage() + "entryName: " + entryName);
+                log.info(detail.getMessage() + "entryName: " + entryName);
                 throw PersoniumBarException.INSTALLATION_FAILED.path(entryName).detail(detail);
             }
         }
@@ -501,7 +530,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
         if (dirPath != null && !dirPath.equals(BarFile.ODATA_DIR)) {
             // bar/90_contents/{OData_collection}/{dir}/の場合はエラーとする
             PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2001");
-            log.info(detail.getDetailMessage() + "entryName: " + entryName);
+            log.info(detail.getMessage() + "entryName: " + entryName);
             throw PersoniumBarException.INSTALLATION_FAILED.path(entryName).detail(detail);
         }
 
@@ -518,7 +547,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
             if (!m.matches()) {
                 // bar/90_contents/{OData_collection}/{dir}/の場合はエラーとする
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2001");
-                log.info(detail.getDetailMessage() + "entryName: " + entryName);
+                log.info(detail.getMessage() + "entryName: " + entryName);
                 throw PersoniumBarException.INSTALLATION_FAILED.path(entryName).detail(detail);
             }
         }
@@ -540,16 +569,15 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     /**
      * barファイル内で定義されているコレクションのMap<key, DavCmpEsImpl>を取得する.
      * @param entryName エントリ名
-     * @param collections コレクションのMapオブジェクト
      * @return コレクションのMapDavCmpEsImplオブジェクト
      */
-    private DavCmp getCollection(String entryName, Map<String, DavCmp> collections) {
+    private DavCmp getCollection(String entryName) {
         int pos = entryName.lastIndexOf("/");
         if (pos == entryName.length() - 1) {
-            return collections.get(entryName);
+            return odataCollectionMap.get(entryName);
         }
         String colName = entryName.substring(0, pos + 1);
-        return collections.get(colName);
+        return odataCollectionMap.get(colName);
     }
 
     /**
@@ -599,7 +627,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
      * @param davCmp Collection操作用オブジェクト
      */
     @SuppressWarnings("unchecked")
-    protected void createComplexTypes(EdmDataServices metadata, DavCmp davCmp) {
+    private void createComplexTypes(EdmDataServices metadata, DavCmp davCmp) {
         // DeclaredPropertyはComplexTypeに紐付いているため、ComplexTypeごとにComplexTypePropertyを登録する
         Iterable<EdmComplexType> complexTypes = metadata.getComplexTypes();
         PersoniumODataProducer producer = null;
@@ -635,7 +663,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
      * @param davCmp Collection操作用オブジェクト
      */
     @SuppressWarnings("unchecked")
-    protected void createEntityTypes(EdmDataServices metadata, DavCmp davCmp) {
+    private void createEntityTypes(EdmDataServices metadata, DavCmp davCmp) {
         // DeclaredPropertyはEntityTypeに紐付いているため、EntityTypeごとにPropertyを登録する
         Iterable<EdmEntityType> entityTypes = metadata.getEntityTypes();
         UserSchemaODataProducer producer = null;
@@ -674,7 +702,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
      * @param producer ODataプロデューサー
      */
     @SuppressWarnings("unchecked")
-    protected void createProperties(EdmStructuralType entity, DavCmp davCmp, PersoniumODataProducer producer) {
+    private void createProperties(EdmStructuralType entity, DavCmp davCmp, PersoniumODataProducer producer) {
         Iterable<EdmProperty> properties = entity.getDeclaredProperties();
         EdmDataServices userMetadata = null;
         String edmTypeName = Property.EDM_TYPE_NAME;
@@ -725,7 +753,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
      * @param metadata Edmxのメタデータ
      * @param davCmp Collection操作用オブジェクト
      */
-    protected void createAssociations(EdmDataServices metadata, DavCmp davCmp) {
+    private void createAssociations(EdmDataServices metadata, DavCmp davCmp) {
         Iterable<EdmAssociation> associations = metadata.getAssociations();
         PersoniumODataProducer producer = null;
         EdmDataServices userMetadata = null;
@@ -771,7 +799,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
      * @param associationEndName AssociationEnd名
      */
     @SuppressWarnings("unchecked")
-    protected void createAssociationEnd(PersoniumODataProducer producer,
+    private void createAssociationEnd(PersoniumODataProducer producer,
             EdmDataServices userMetadata, EdmAssociationEnd associationEnd, String associationEndName) {
         // AssociationEndの名前は、AssociationEndのロール名を使用する
         JSONObject json = new JSONObject();
@@ -871,8 +899,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
         }
     }
 
-    private void setBulkRequests(Path pathInZip, String entryName, PersoniumODataProducer producer,
-            LinkedHashMap<String, BulkRequest> bulkRequests, Map<String, String> fileNameMap) {
+    private void setBulkRequests(Path pathInZip, String entryName, PersoniumODataProducer producer) {
         BulkRequest bulkRequest = new BulkRequest();
         String key = PersoniumUUID.randomUUID();
         try {
@@ -943,16 +970,15 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
      * WebDAVファイルの登録を行う.
      * @param entryName barファイルのエントリ名
      * @param pathInZip Path
-     * @param webdavCols WebDAVコレクション一覧
      */
-    protected void registWebDavFile(String entryName, Path pathInZip, Map<String, DavCmp> webdavCols) {
+    private void registWebDavFile(String entryName, Path pathInZip) {
 
         // 登録先のファイルパス・コレクション名を取得
-        String filePath = entryName.replaceAll(CONTENTS_DIR, "");
+        String filePath = entryName.replaceAll(BarFile.CONTENTS_DIR, "");
         String colPath = entryName.substring(0, entryName.lastIndexOf("/") + 1);
 
         // DavCmp作成
-        DavCmp parentCmp = webdavCols.get(colPath);
+        DavCmp parentCmp = webdavCollectionMap.get(colPath);
 
         // 親コレクション内のコレクション・ファイル数のチェック
         int maxChildResource = PersoniumUnitConfig.getMaxChildResourceCount();
@@ -979,7 +1005,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
             RuntimeDelegate.getInstance().createHeaderDelegate(MediaType.class).fromString(contentType);
         } catch (Exception e) {
             PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2005");
-            log.info(detail.getDetailMessage() + ": " + e.getMessage(), e.fillInStackTrace());
+            log.info(detail.getMessage() + ": " + e.getMessage(), e.fillInStackTrace());
             throw PersoniumBarException.INSTALLATION_FAILED.path(entryName).detail(detail);
         }
 
@@ -988,18 +1014,16 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
             fileCmp.putForCreate(contentType, inputStream);
         } catch (Exception e) {
             PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2004");
-            log.info(detail.getDetailMessage() + ": " + e.getMessage(), e.fillInStackTrace());
+            log.info(detail.getMessage() + ": " + e.getMessage(), e.fillInStackTrace());
             throw PersoniumBarException.INSTALLATION_FAILED.path(entryName).detail(detail);
         }
 
         // ACL登録
         Element aclElement = davFileAclMap.get(entryName);
         if (aclElement != null) {
-            Element convElement =
-                    BarFileUtils.convertToRoleInstanceUrl(aclElement, baseUrl, box.getCell().getName(), box.getName());
             StringBuffer sbAclXml = new StringBuffer();
             sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-            sbAclXml.append(PersoniumCoreUtils.nodeToString(convElement));
+            sbAclXml.append(PersoniumCoreUtils.nodeToString(aclElement));
             Reader aclXml = new StringReader(sbAclXml.toString());
             fileCmp.acl(aclXml);
         }
@@ -1037,7 +1061,7 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
         return propXml;
     }
 
-    private void installSvcCollection(Path pathInZip, Map<String, DavCmp> webdavCols, String entryName) {
+    private void installSvcCollection(Path pathInZip, String entryName) {
         // bar/90_contents/{svccol_name}配下のエントリを1つずつWebDAV/サービスとして登録する
         // {serviceCollection}/{scriptName}を{serviceCollection}/__src/{scriptName}に変換
         int lastSlashIndex = entryName.lastIndexOf("/");
@@ -1046,27 +1070,14 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
         serviceSrcName.append("/__src");
         serviceSrcName.append(entryName.substring(lastSlashIndex));
 
-        registWebDavFile(serviceSrcName.toString(), pathInZip, webdavCols);
-    }
-
-    private void checkNecessaryFile(Map<String, DavCmp> odataCols, List<String> doneKeys) {
-        Set<String> colList = odataCols.keySet();
-        for (String colName : colList) {
-            String filename = colName + BarFile.METADATA_XML;
-            if (!doneKeys.contains(filename)) {
-                PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2001");
-                throw PersoniumBarException.INSTALLATION_FAILED.path(filename).detail(detail);
-            }
-        }
+        registWebDavFile(serviceSrcName.toString(), pathInZip);
     }
 
     /**
      * Httpレスポンス用メッセージの出力.
      * @param isError エラー時の場合はtrueを、それ以外はfalseを指定する.
-     * @param code
-     *        メッセージコード(personium-messages.propertiesに定義されたメッセージコード)
-     * @param path
-     *        処理対象リソースパス（ex. /bar/meta/roles.json)
+     * @param code メッセージコード(personium-messages.propertiesに定義されたメッセージコード)
+     * @param path 処理対象リソースパス（ex. /bar/meta/roles.json)
      */
     private void writeOutputStream(boolean isError, String code, String path) {
         writeOutputStream(isError, code, path, "");
@@ -1075,12 +1086,9 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     /**
      * barファイルインストールログ詳細の出力.
      * @param isError エラー時の場合はtrueを、それ以外はfalseを指定する.
-     * @param code
-     *        メッセージコード(personium-messages.propertiesに定義されたメッセージコード)
-     * @param path
-     *        処理対象リソースパス（ex. /bar/meta/roles.json)
-     * @param detail
-     *        処理失敗時の詳細情報(PL-BI-2xxx)
+     * @param code メッセージコード(personium-messages.propertiesに定義されたメッセージコード)
+     * @param path 処理対象リソースパス（ex. /bar/meta/roles.json)
+     * @param detail 処理失敗時の詳細情報(PL-BI-2xxx)
      */
     private void writeOutputStream(boolean isError, String code, String path, String detail) {
         String message = PersoniumCoreMessageUtils.getMessage(code);
@@ -1089,24 +1097,37 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
         } else {
             message = message.replace("{0}", detail);
         }
-        BarFileUtils.outputEventBus(event, eventBus, code, path, message);
+        BarFileUtils.outputEventBus(eventBuilder, eventBus, code, path, message);
         BarFileUtils.writeToProgress(isError, progressInfo, code, message);
 
         String output = String.format("\"%s\",\"%s\",\"%s\"", code, path, message);
         log.info(output);
     }
 
-//    /**
-//     *
-//     * @param exception
-//     */
-//    private void writeOutputStream(PersoniumBarException exception) {
-//        String code = exception.getCode();
-//        String path = exception.getPath();
-//        String message = exception.getMessage();
-//        outputEventBus(true, code, path, message);
-//        String output = String.format("\"%s\",\"%s\",\"%s\"", code, path, message);
-//        log.info(output);
-//    }
+    /**
+     * Create user data.
+     */
+    public void createUserdata() {
+        // ODataCollectionのリソースに対する処理に終わった際に、ユーザデータの登録やリンクの登録をする必要があれば実行する
+        if (currentPath != null) {
+            execBulkRequest(currentDavCmp.getCell().getId(), currentDavCmp.getODataProducer());
+            createUserdataLinks(currentDavCmp.getODataProducer());
+            userDataLinks = null;
+        }
+    }
 
+    /**
+     * Check whether a required file exists.
+     */
+    public void checkNecessaryFile() {
+        // 必須データ（bar/90_contents/{odatacol_name}/00_$metadata.xml)の確認
+        Set<String> colList = odataCollectionMap.keySet();
+        for (String colName : colList) {
+            String filename = colName + BarFile.METADATA_XML;
+            if (!doneKeys.contains(filename)) {
+                PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2001");
+                throw PersoniumBarException.INSTALLATION_FAILED.path(filename).detail(detail);
+            }
+        }
+    }
 }

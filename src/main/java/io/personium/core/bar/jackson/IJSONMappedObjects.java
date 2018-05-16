@@ -29,14 +29,7 @@ public interface IJSONMappedObjects {
      * Get CellCtlObjects list size.
      * @return list size
      */
-    int getObjectsSize();
-
-//    /**
-//     * Get CellCtlObject of the index specified by argument.
-//     * @param index index
-//     * @return CellCtlObject
-//     */
-//    JSONMappedObject getObject(int index);
+    int size();
 
     /**
      * Add CellCtlObject to the list.

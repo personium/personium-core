@@ -59,7 +59,7 @@ public class JSONExtRoles implements IJSONMappedObjects {
      * {@inheritDoc}
      */
     @Override
-    public int getObjectsSize() {
+    public int size() {
         return extRoles.size();
     }
 

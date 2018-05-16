@@ -183,59 +183,6 @@ public class BarInstallTest extends JerseyTest {
 
     private static void cleanup() {
         String reqCell = Setup.TEST_CELL1;
-
-        try {
-            // コレクションの削除
-            Http.request("box/delete-col.txt")
-                    .with("cellPath", reqCell)
-                    .with("box", "installBox")
-                    .with("path", "col1/col11")
-                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .returns()
-                    .debug();
-        } catch (Exception ex) {
-            log.debug(ex.getMessage());
-        }
-
-        try {
-            // コレクションの削除
-            Http.request("box/delete-col.txt")
-                    .with("cellPath", reqCell)
-                    .with("box", "installBox")
-                    .with("path", "col1")
-                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .returns()
-                    .debug();
-        } catch (Exception ex) {
-            log.debug(ex.getMessage());
-        }
-
-        try {
-            // コレクションの削除
-            Http.request("box/delete-col.txt")
-                    .with("cellPath", reqCell)
-                    .with("box", "installBox")
-                    .with("path", "col3")
-                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .returns()
-                    .debug();
-        } catch (Exception ex) {
-            log.debug(ex.getMessage());
-        }
-
-        try {
-            // コレクションの削除
-            Http.request("box/delete-col.txt")
-                    .with("cellPath", reqCell)
-                    .with("box", "installBox")
-                    .with("path", "col2")
-                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .returns()
-                    .debug();
-        } catch (Exception ex) {
-            log.debug(ex.getMessage());
-        }
-
         try {
             // Delete link.
             String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellName/__role/__/role2");
@@ -273,42 +220,7 @@ public class BarInstallTest extends JerseyTest {
             log.debug(ex.getMessage());
         }
 
-        try {
-            // Delete Role.
-            Http.request("role-delete.txt")
-                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", Setup.TEST_CELL1)
-                    .with("rolename", "role1")
-                    .with("boxname", "'" + INSTALL_TARGET + "'")
-                    .returns()
-                    .debug();
-        } catch (Exception ex) {
-            log.debug(ex.getMessage());
-        }
-
-        try {
-            // Delete Relation.
-            Http.request("relation-delete.txt")
-                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", Setup.TEST_CELL1)
-                    .with("relationname", "relation1")
-                    .with("boxname", "'" + INSTALL_TARGET + "'")
-                    .returns()
-                    .debug();
-        } catch (Exception ex) {
-            log.debug(ex.getMessage());
-        }
-
-        try {
-            Http.request("cell/box-delete.txt")
-                    .with("cellPath", reqCell)
-                    .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("boxPath", INSTALL_TARGET)
-                    .returns()
-                    .debug();
-        } catch (Exception ex) {
-            log.debug(ex.getMessage());
-        }
+        BoxUtils.deleteRecursive(reqCell, "installBox", AbstractCase.MASTER_TOKEN_NAME, -1);
     }
 
     /**
@@ -574,17 +486,29 @@ public class BarInstallTest extends JerseyTest {
      * 全てのOdata情報をもつbarファイルをインストールして正常終了すること.
      */
     @Test
-    public final void 全てのOdata情報をもつbarファイルをインストールして正常終了すること() {
-        final String barFilename = "/V1_3_12_bar_maximum.bar";
-        final String reqCell = Setup.TEST_CELL1;
-        final String reqPath = INSTALL_TARGET;
-        final String user = "testuser";
-        final String password = "password";
-        final String testCell = "dummyCell00";
-        final String odataColName = "odatacol1";
+    public void 全てのOdata情報をもつbarファイルをインストールして正常終了すること() {
+        execMaximumBarTest("/V1_3_12_bar_maximum.bar");
+    }
+
+    /**
+     * Normal test.
+     * Bar file containing all the contents. bar_version:2.
+     */
+    @Test
+    public void normal_maximum_bar_install_ver2() {
+        execMaximumBarTest("/V2_bar_maximum.bar");
+    }
+
+    private void execMaximumBarTest(String barFileName) {
+        String reqCell = Setup.TEST_CELL1;
+        String reqPath = INSTALL_TARGET;
+        String user = "testuser";
+        String password = "password";
+        String testCell = "dummyCell00";
+        String odataColName = "odatacol1";
 
         TResponse res = null;
-        File barFile = new File(RESOURCE_PATH + barFilename);
+        File barFile = new File(RESOURCE_PATH + barFileName);
         byte[] body = BarInstallTestUtils.readBarFile(barFile);
         Map<String, String> headers = new LinkedHashMap<String, String>();
         headers.put(HttpHeaders.CONTENT_TYPE, REQ_CONTENT_TYPE);
@@ -782,7 +706,7 @@ public class BarInstallTest extends JerseyTest {
     private void checkRegistData() {
         final String token = AbstractCase.MASTER_TOKEN_NAME;
         final String colName = "odatacol1";
-        final String roleName = "../__/role1";
+        final String roleName = "role1";
         final String nameSpace = "http://www.w3.com/standards/z39.50/";
         List<String> rolList = new ArrayList<String>();
         rolList.add("read");

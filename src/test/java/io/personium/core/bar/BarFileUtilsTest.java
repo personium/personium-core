@@ -17,21 +17,18 @@
 package io.personium.core.bar;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import io.personium.core.PersoniumCoreException;
-import io.personium.core.bar.BarFileUtils;
 import io.personium.test.categories.Unit;
 
 /**
@@ -96,130 +93,6 @@ public class BarFileUtilsTest {
 
             BarFileUtils.convertToRoleInstanceUrl(element, targetUrl, cellName, boxName);
             fail("Unexpected exception");
-        } catch (ParserConfigurationException e) {
-            fail("DOM Parsing Error: " + e.getMessage());
-        } catch (PersoniumCoreException dce) {
-            String code = dce.getCode();
-            assertEquals(PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
-            return;
-        } catch (Exception ex) {
-            fail("Unexpected exception");
-        }
-        fail("PersoniumCoreExceptionが返却されない");
-    }
-
-    /**
-     * スキーマなしBoxへのインストールでACL_URLが正しくない場合にバリデートがfalseで返却されること.
-     */
-    @Test
-    @Ignore
-    public void スキーマなしBoxへのインストールでACL_URLが正しくない場合にバリデートがfalseで返却されること() {
-        // URL形式ではない
-        final String baseUrl = "https//baseserver/testcell1/__role/_a_/col1/";
-        final String schemaUrl = null;
-        try {
-            DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docbuilder;
-            docbuilder = dbfactory.newDocumentBuilder();
-            Document document = docbuilder.newDocument();
-            Element element = document.createElement("acl");
-            element.setAttribute("xml:base", baseUrl);
-
-            assertFalse(BarFileUtils.aclNameSpaceValidate("90_rootprops.xml", element, schemaUrl));
-            fail("Unexpected exception");
-        } catch (ParserConfigurationException e) {
-            fail("DOM Parsing Error: " + e.getMessage());
-        } catch (PersoniumCoreException dce) {
-            String code = dce.getCode();
-            assertEquals(PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
-            return;
-        } catch (Exception ex) {
-            fail("Unexpected exception");
-        }
-        fail("PersoniumCoreExceptionが返却されない");
-    }
-
-    /**
-     * スキーマなしBoxへのインストールでACL_URLのBoxが正しくない場合にバリデートがfalseで返却されること.
-     */
-    @Test
-    @Ignore
-    public void スキーマなしBoxへのインストールでACL_URLのBoxが正しくない場合にバリデートがfalseで返却されること() {
-        // デフォルトBoxではない
-        final String baseUrl = "https://baseserver/testcell1/__role/_a_/col1/";
-        final String schemaUrl = null;
-        try {
-            DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docbuilder;
-            docbuilder = dbfactory.newDocumentBuilder();
-            Document document = docbuilder.newDocument();
-            Element element = document.createElement("acl");
-            element.setAttribute("xml:base", baseUrl);
-
-            assertFalse(BarFileUtils.aclNameSpaceValidate("90_rootprops.xml", element, schemaUrl));
-            return;
-        } catch (ParserConfigurationException e) {
-            fail("DOM Parsing Error: " + e.getMessage());
-        } catch (PersoniumCoreException dce) {
-            String code = dce.getCode();
-            assertEquals(PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
-            return;
-        } catch (Exception ex) {
-            fail("Unexpected exception");
-        }
-        fail("PersoniumCoreExceptionが返却されない");
-    }
-
-    /**
-     * スキーマありBoxへのインストールでACL_URL中のCellがアプリセルではない場合にバリデートがfalseで返却されること.
-     */
-    @Test
-    @Ignore
-    public void スキーマありBoxへのインストールでACL_URL中のCellがアプリセルではない場合にバリデートがfalseで返却されること() {
-        // アプリセルではない
-        final String baseUrl = "https://baseserver/testcell1/__role/__/col1/";
-        final String schemaUrl = "https://targetserver/testcellx/";
-        try {
-            DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docbuilder;
-            docbuilder = dbfactory.newDocumentBuilder();
-            Document document = docbuilder.newDocument();
-            Element element = document.createElement("acl");
-            element.setAttribute("xml:base", baseUrl);
-
-            assertFalse(BarFileUtils.aclNameSpaceValidate("90_rootprops.xml", element, schemaUrl));
-            return;
-        } catch (ParserConfigurationException e) {
-            fail("DOM Parsing Error: " + e.getMessage());
-        } catch (PersoniumCoreException dce) {
-            String code = dce.getCode();
-            assertEquals(PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.getCode(), code);
-            return;
-        } catch (Exception ex) {
-            fail("Unexpected exception");
-        }
-        fail("PersoniumCoreExceptionが返却されない");
-    }
-
-    /**
-     * スキーマありBoxへのインストールでACL_URL中のBoxが不正の場合にバリデートがfalseで返却されること.
-     */
-    @Test
-    @Ignore
-    public void スキーマありBoxへのインストールでACL_URL中のBoxが不正の場合にバリデートがfalseで返却されること() {
-        // アプリセルではない
-        final String baseUrl = "https://targetserver/testcell1/__role/_x_/col1/";
-        final String schemaUrl = "https://targetserver/testcell1/";
-        try {
-            DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docbuilder;
-            docbuilder = dbfactory.newDocumentBuilder();
-            Document document = docbuilder.newDocument();
-            Element element = document.createElement("acl");
-            element.setAttribute("xml:base", baseUrl);
-
-            assertFalse(BarFileUtils.aclNameSpaceValidate("90_rootprops.xml", element, schemaUrl));
-            return;
         } catch (ParserConfigurationException e) {
             fail("DOM Parsing Error: " + e.getMessage());
         } catch (PersoniumCoreException dce) {

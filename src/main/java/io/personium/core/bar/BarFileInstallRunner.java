@@ -1,3 +1,19 @@
+/**
+ * personium.io
+ * Copyright 2018 FUJITSU LIMITED
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.personium.core.bar;
 
 import java.io.BufferedReader;
@@ -5,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -73,37 +88,57 @@ import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.core.utils.UriUtils;
 
+/**
+ * Runner that performs bar install processing.
+ */
 public class BarFileInstallRunner implements Runnable {
 
+    /** Logger. */
     static Logger log = LoggerFactory.getLogger(BarFileInstallRunner.class);
 
+    /** Contents directory in bar file. */
     private static final String CONTENTS_DIR = BarFile.CONTENTS_DIR + "/";
+    /** personium-localbox:/ non slush. */
     private static final String LOCALBOX_NO_SLUSH = UriUtils.SCHEME_LOCALBOX + ":";
 
-    /**  */
+    /** Install target box. */
     private Box box;
-    /**  */
+    /** Install target boxCmp. */
     private BoxCmp boxCmp;
     /** Bar file path. */
     private Path barFilePath;
-    /** */
+    /** Unit base url. */
     private String baseUrl;
     /** Progress info. */
     private BarInstallProgressInfo progressInfo;
-    /**  */
+    /** OData entity resource. */
     private ODataEntityResource entityResource;
-    /**  */
+    /** Personium event bus for sending event. */
     private EventBus eventBus;
-    /**  */
-    private PersoniumEvent event;
-    /**  */
+    /** Personium event builder. */
+    private PersoniumEvent.Builder eventBuilder;
+    /** Personium event request key. */
     private String requestKey;
 
-    private Map<String, DavCmp> davCmpMap;
+    /** Map of dav collection to register. */
+    private Map<String, DavCmp> davCollectionMap = new HashMap<String, DavCmp>();
+    /** Map of dav file content-type to register. */
     private Map<String, String> davFileContentTypeMap = new HashMap<String, String>();
+    /** Map of dav file acl to register. */
     private Map<String, Element> davFileAclMap = new HashMap<String, Element>();
+    /** Map of dav file property to register. */
     private Map<String, List<Element>> davFilePropsMap = new HashMap<String, List<Element>>();
 
+    /**
+     * Constructor.
+     * @param barFilePath Bar file path
+     * @param entryCount Entry file count in bar file
+     * @param boxName Target box name
+     * @param schema Target box schema
+     * @param uriInfo URI info
+     * @param entityResource OData entity resource
+     * @param requestKey Personium event request key
+     */
     public BarFileInstallRunner(Path barFilePath,
             long entryCount,
             String boxName,
@@ -117,9 +152,9 @@ public class BarFileInstallRunner implements Runnable {
         this.requestKey = requestKey;
 
         createBox(boxName, schema);
-        setEntryCount(entryCount);
+        // Since manifest.json has already been processed, subtract 1 from entryCount.
+        progressInfo = new BarInstallProgressInfo(box.getCell().getId(), box.getId(), entryCount - 1);
         setEventBus();
-        writeInitProgressCache();
     }
 
     /**
@@ -149,21 +184,6 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * @param entryCount the entryCount to set
-     */
-    private void setEntryCount(long entryCount) {
-        progressInfo = new BarInstallProgressInfo(box.getCell().getId(), box.getId(), entryCount);
-    }
-
-    /**
-     * 処理が開始した情報をキャッシュに記録する.
-     */
-    private void writeInitProgressCache() {
-        writeOutputStream(false, "PL-BI-1000", UriUtils.SCHEME_LOCALCELL + ":/" + box.getName(), "");
-        BarFileUtils.writeToProgressCache(true, progressInfo);
-    }
-
-    /**
      * barインストール処理状況の内部イベント出力用の設定を行う.
      */
     private void setEventBus() {
@@ -171,41 +191,64 @@ public class BarFileInstallRunner implements Runnable {
         String type = WebDAVMethod.MKCOL.toString();
         String object = UriUtils.SCHEME_LOCALCELL + ":/" + box.getName();
         String result = "";
-        event = new PersoniumEvent(type, object, result, requestKey);
+        eventBuilder = new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .info(result)
+                .requestKey(this.requestKey);
         eventBus = box.getCell().getEventBus();
     }
 
+    /**
+     * Install bar file.
+     */
     @Override
     public void run() {
         try (BarFile barFile = BarFile.newInstance(barFilePath)) {
+            // Start install.
+            writeStartProgressCache();
+
+            // Install cell control objects.
             ObjectMapper mapper = new ObjectMapper();
             createCellCtlObjects(barFile, mapper, BarFile.RELATIONS_JSON, JSONRelations.class);
             createCellCtlObjects(barFile, mapper, BarFile.ROLES_JSON, JSONRoles.class);
             createCellCtlObjects(barFile, mapper, BarFile.EXTROLES_JSON, JSONExtRoles.class);
             createCellCtlObjects(barFile, mapper, BarFile.RULES_JSON, JSONRules.class);
             createCellCtlObjects(barFile, mapper, BarFile.LINKS_JSON, JSONLinks.class);
-            registXmlEntry(barFile.getRootPropsXmlPathString(), barFile.getReader(BarFile.ROOTPROPS_XML));
 
-            FileVisitor<Path> visitor = new BarFileContentsInstallVisitor(box, baseUrl, progressInfo,
-                    entityResource, eventBus, event, davCmpMap, davFileContentTypeMap, davFileAclMap, davFilePropsMap);
-//            try {
-            Files.walkFileTree(barFile.getContentsDirPath().toAbsolutePath(), visitor);
-//            } catch (IOException e) {
-//                throw PersoniumCoreException.Common.FILE_IO_ERROR.params("copy webdav data from snapshot file").reason(e);
-//            }
+            // Install collections.
+            registXmlEntry(barFile.getPath(BarFile.ROOTPROPS_XML).toString(), barFile.getReader(BarFile.ROOTPROPS_XML));
+
+            // Install webdav files and user data.
+            BarFileContentsInstallVisitor visitor = new BarFileContentsInstallVisitor(box, progressInfo, entityResource,
+                    eventBus, eventBuilder, davCollectionMap, davFileContentTypeMap, davFileAclMap, davFilePropsMap);
+            Files.walkFileTree(barFile.getPath(BarFile.CONTENTS_DIR).toAbsolutePath(), visitor);
+            visitor.createUserdata();
+            visitor.checkNecessaryFile();
         } catch (PersoniumBarException e) {
+            progressInfo.setStatus(ProgressInfo.STATUS.FAILED);
+            progressInfo.setEndTime();
+            log.info("PersoniumException" + e.getMessage(), e.fillInStackTrace());
             writeOutputStream(e);
             writeOutputStream(false, BarFileUtils.CODE_BAR_INSTALL_FAILED,
                     UriUtils.SCHEME_LOCALCELL + ":/" + box.getName(), e.getMessage());
+            return;
+        } catch (PersoniumCoreException e) {
             progressInfo.setStatus(ProgressInfo.STATUS.FAILED);
+            progressInfo.setEndTime();
+            log.info("PersoniumException" + e.getMessage(), e.fillInStackTrace());
+            writeOutputStream(PersoniumBarException.INSTALLATION_FAILED.detail(e.getMessage()));
+            writeOutputStream(false, BarFileUtils.CODE_BAR_INSTALL_FAILED,
+                    UriUtils.SCHEME_LOCALCELL + ":/" + box.getName(), e.getMessage());
             return;
         } catch (Throwable t) {
+            progressInfo.setStatus(ProgressInfo.STATUS.FAILED);
+            progressInfo.setEndTime();
             String message = getErrorMessage(t);
             log.info("Exception: " + message, t.fillInStackTrace());
             writeOutputStream(true, "PL-BI-1005", "", message);
             writeOutputStream(false, BarFileUtils.CODE_BAR_INSTALL_FAILED,
                     UriUtils.SCHEME_LOCALCELL + ":/" + box.getName(), message);
-            progressInfo.setStatus(ProgressInfo.STATUS.FAILED);
             return;
         } finally {
             try {
@@ -216,6 +259,22 @@ public class BarFileInstallRunner implements Runnable {
                 log.info("Failed to remove bar file. [" + barFilePath.toAbsolutePath().toString() + "].");
             }
         }
+        // End install.
+        writeCompleteProgressCache();
+    }
+
+    /**
+     * 処理が開始した情報をキャッシュに記録する.
+     */
+    private void writeStartProgressCache() {
+        writeOutputStream(false, "PL-BI-1000", UriUtils.SCHEME_LOCALCELL + ":/" + box.getName(), "");
+        BarFileUtils.writeToProgressCache(true, progressInfo);
+    }
+
+    /**
+     * 処理が完了した情報をキャッシュに記録する.
+     */
+    private void writeCompleteProgressCache() {
         writeOutputStream(false, BarFileUtils.CODE_BAR_INSTALL_COMPLETED,
                 UriUtils.SCHEME_LOCALCELL + ":/" + box.getName());
         progressInfo.setStatus(ProgressInfo.STATUS.COMPLETED);
@@ -223,16 +282,25 @@ public class BarFileInstallRunner implements Runnable {
         BarFileUtils.writeToProgressCache(true, progressInfo);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Create cell controle objects.
+     * @param barFile Bar file
+     * @param mapper Object mapper(Jackson)
+     * @param jsonFileName Source json file name
+     * @param jsonClazz Class corresponding to Jackson
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void createCellCtlObjects(BarFile barFile, ObjectMapper mapper, String jsonFileName, Class jsonClazz) {
         if (!barFile.exists(jsonFileName)) {
             return;
         }
+        // Start cell controle object install.
         writeOutputStream(false, BarFileUtils.CODE_INSTALL_STARTED, jsonFileName);
+        progressInfo.addDelta(1L);
         try {
             IJSONMappedObjects objects =
                     (IJSONMappedObjects) mapper.readValue(barFile.getReader(jsonFileName), jsonClazz);
-            if (objects.getObjectsSize() <= 0) {
+            if (objects.size() <= 0) {
                 return;
             }
             if (BarFile.RELATIONS_JSON.equals(jsonFileName)) {
@@ -251,6 +319,7 @@ public class BarFileInstallRunner implements Runnable {
         } catch (IOException e) {
             throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params(e.getMessage());
         }
+        // End cell controle object install.
         writeOutputStream(false, BarFileUtils.CODE_INSTALL_COMPLETED, jsonFileName);
     }
 
@@ -365,16 +434,25 @@ public class BarFileInstallRunner implements Runnable {
             // post event
             String keyString = AbstractODataResource.replaceDummyKeyToNull(fromOEKey.toString());
             String targetKeyString = AbstractODataResource.replaceDummyKeyToNull(toOEKey.toString());
-            String object = String.format("%s:/__ctl/%s%s/$links/%s%s",
-                    UriUtils.SCHEME_LOCALCELL, sourceEntity.getEntitySetName(),
-                    keyString, targetNavProp, targetKeyString);
+            String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                    .append(":/__ctl/")
+                    .append(sourceEntity.getEntitySetName())
+                    .append(keyString)
+                    .append("/$links/")
+                    .append(targetNavProp)
+                    .append(targetKeyString)
+                    .toString();
             String info = "box install";
-            String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                    + sourceEntity.getEntitySetName() + PersoniumEventType.SEPALATOR
-                    + PersoniumEventType.Operation.LINK + PersoniumEventType.SEPALATOR
-                    + newTargetEntity.getEntitySetName() + PersoniumEventType.SEPALATOR
-                    + PersoniumEventType.Operation.CREATE;
-            PersoniumEvent ev = new PersoniumEvent(type, object, info, this.requestKey);
+            String type = PersoniumEventType.cellctlLink(
+                    sourceEntity.getEntitySetName(),
+                    newTargetEntity.getEntitySetName(),
+                    PersoniumEventType.Operation.CREATE);
+            PersoniumEvent ev = new PersoniumEvent.Builder()
+                    .type(type)
+                    .object(object)
+                    .info(info)
+                    .requestKey(this.requestKey)
+                    .build();
             EventBus bus = box.getCell().getEventBus();
             bus.post(ev);
         }
@@ -387,11 +465,16 @@ public class BarFileInstallRunner implements Runnable {
     private void postCellCtlCreateEvent(EntityResponse res) {
         String name = res.getEntity().getEntitySetName();
         String keyString = AbstractODataResource.replaceDummyKeyToNull(res.getEntity().getEntityKey().toKeyString());
-        String object = String.format("%s:/__ctl/%s%s", UriUtils.SCHEME_LOCALCELL, name, keyString);
+        String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
+                .append(":/__ctl/").append(name).append(keyString).toString();
         String info = "box install";
-        String type = PersoniumEventType.Category.CELLCTL + PersoniumEventType.SEPALATOR
-                + name + PersoniumEventType.SEPALATOR + PersoniumEventType.Operation.CREATE;
-        PersoniumEvent ev = new PersoniumEvent(type, object, info, requestKey);
+        String type = PersoniumEventType.cellctl(name, PersoniumEventType.Operation.CREATE);
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .info(info)
+                .requestKey(this.requestKey)
+                .build();
         EventBus bus = box.getCell().getEventBus();
         bus.post(ev);
     }
@@ -403,6 +486,7 @@ public class BarFileInstallRunner implements Runnable {
      */
     protected void registXmlEntry(String rootPropsName, BufferedReader bufferedReader) {
         writeOutputStream(false, BarFileUtils.CODE_INSTALL_STARTED, rootPropsName);
+        progressInfo.addDelta(1L);
         try {
             // XMLパーサ(StAX,SAX,DOM)にInputStreamをそのまま渡すとファイル一覧の取得処理が
             // 中断してしまうため暫定対処としてバッファに格納してからパースする
@@ -468,12 +552,8 @@ public class BarFileInstallRunner implements Runnable {
                             continue;
                         }
                         if (nodeName.equals("acl")) {
-                            if (!BarFileUtils.aclNameSpaceValidate(rootPropsName, element, box.getSchema())) {
-                                PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2007");
-                                log.info(detail.getDetailMessage() + " [" + rootPropsName + "]");
-                                throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
-                            }
-                            aclElement = element;
+                            aclElement = BarFileUtils.convertToRoleInstanceUrl(element, baseUrl,
+                                    box.getCell().getName(), box.getName());
                             continue;
                         }
                         propElements.add(element);
@@ -483,7 +563,7 @@ public class BarFileInstallRunner implements Runnable {
                 String entryName = CONTENTS_DIR + href.replaceFirst(UriUtils.SCHEME_BOX_URI, "");
                 if (isBox) {
                     // For Box, collection and ACL registration.
-                    davCmpMap.put(entryName, boxCmp);
+                    davCollectionMap.put(entryName, boxCmp);
                     registBoxAclAndProppatch(this.box, aclElement, propElements, collectionUrl);
                 } else if (hasCollection) {
                     if (!entryName.endsWith("/")) {
@@ -665,11 +745,9 @@ public class BarFileInstallRunner implements Runnable {
 
         // ACL登録
         if (aclElement != null) {
-            Element convElement =
-                    BarFileUtils.convertToRoleInstanceUrl(aclElement, baseUrl, box.getCell().getName(), box.getName());
             StringBuffer sbAclXml = new StringBuffer();
             sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-            sbAclXml.append(PersoniumCoreUtils.nodeToString(convElement));
+            sbAclXml.append(PersoniumCoreUtils.nodeToString(aclElement));
             Reader aclXml = new StringReader(sbAclXml.toString());
             boxCmp.acl(aclXml);
         }
@@ -728,7 +806,7 @@ public class BarFileInstallRunner implements Runnable {
         } else {
             index = entryName.lastIndexOf("/", entryName.length() - 2);
             parenEntryName = entryName.substring(0, index + 1);
-            parentCmp = this.davCmpMap.get(parenEntryName);
+            parentCmp = this.davCollectionMap.get(parenEntryName);
             if (parentCmp == null) {
                 throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(entryName);
             } else if (parentCmp.getType().equals(DavCmp.TYPE_COL_ODATA)) {
@@ -748,15 +826,13 @@ public class BarFileInstallRunner implements Runnable {
         DavCmp collectionCmp = parentCmp.getChild(collectionName);
         collectionCmp.mkcol(collectionType);
 
-        this.davCmpMap.put(entryName, collectionCmp);
+        this.davCollectionMap.put(entryName, collectionCmp);
 
         // ACL登録
         if (aclElement != null) {
-            Element convElement =
-                    BarFileUtils.convertToRoleInstanceUrl(aclElement, baseUrl, box.getCell().getName(), box.getName());
             StringBuffer sbAclXml = new StringBuffer();
             sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-            sbAclXml.append(PersoniumCoreUtils.nodeToString(convElement));
+            sbAclXml.append(PersoniumCoreUtils.nodeToString(aclElement));
             Reader aclXml = new StringReader(sbAclXml.toString());
             collectionCmp.acl(aclXml);
         }
@@ -808,7 +884,7 @@ public class BarFileInstallRunner implements Runnable {
         } else {
             message = message.replace("{0}", detail);
         }
-        BarFileUtils.outputEventBus(event, eventBus, code, path, message);
+        BarFileUtils.outputEventBus(eventBuilder, eventBus, code, path, message);
         BarFileUtils.writeToProgress(isError, progressInfo, code, message);
 
         String output = String.format("\"%s\",\"%s\",\"%s\"", code, path, message);
@@ -816,27 +892,16 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     *
-     * @param exception
+     * barファイルインストールログ詳細の出力.
+     * @param exception Personium bar exception
      */
     private void writeOutputStream(PersoniumBarException exception) {
         String code = exception.getCode();
         String path = exception.getPath();
         String message = exception.getMessage();
-        BarFileUtils.outputEventBus(event, eventBus, code, path, message);
+        BarFileUtils.outputEventBus(eventBuilder, eventBus, code, path, message);
         BarFileUtils.writeToProgress(true, progressInfo, code, message);
         String output = String.format("\"%s\",\"%s\",\"%s\"", code, path, message);
         log.info(output);
-    }
-
-    /**
-     * エラー情報をキャッシュに記録する.
-     */
-    public void writeErrorProgressCache() {
-        if (progressInfo != null) {
-            progressInfo.setStatus(ProgressInfo.STATUS.FAILED);
-            progressInfo.setEndTime();
-            BarFileUtils.writeToProgressCache(true, progressInfo);
-        }
     }
 }

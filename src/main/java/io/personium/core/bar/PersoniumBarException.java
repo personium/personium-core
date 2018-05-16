@@ -26,48 +26,76 @@ import io.personium.core.utils.EscapeControlCode;
  */
 public class PersoniumBarException extends RuntimeException {
 
-//    public static final PersoniumBarException BAR_INSTALLATION_FAILED = create("PL-BI-0001");
+    /** Bar installation failed. */
     public static final PersoniumBarException INSTALLATION_FAILED = create("PL-BI-1004");
-//    public static final PersoniumBarException UNKNOWN_ERROR = create("PL-BI-1005");
 
+    /** Erro code. */
     private String code;
+    /** Path of the file where error occurred. */
     private String path;
+    /** Erro message. */
     private String message;
 
+    /**
+     * Constructor.
+     * @param code Erro code
+     * @param path Path of the file where error occurred
+     * @param message Erro message
+     */
     private PersoniumBarException(String code, String path, String message) {
         this.code = code;
         this.path = path;
         this.message = message;
     }
 
+    /**
+     * Get code.
+     * @return code
+     */
     public String getCode() {
         return code;
     }
 
+    /**
+     * Get path.
+     * @return path
+     */
     public String getPath() {
         return path;
     }
 
+    /**
+     * Get message.
+     * @return message
+     */
     public String getMessage() {
         return message;
     }
 
     /**
-     * ファクトリーメソッド.
-     * @param code メッセージコード
-     * @return PersoniumCoreException
+     * Factory method.
+     * @param code Error code
+     * @return PersoniumBarException
      */
-    private static PersoniumBarException create(String code) {
-        // ログメッセージの取得
-        String message = PersoniumCoreMessageUtils.getMessage(code);
-
-        return new PersoniumBarException(code, null, message);
+    private static PersoniumBarException create(String errorCode) {
+        String message = PersoniumCoreMessageUtils.getMessage(errorCode);
+        return new PersoniumBarException(errorCode, "", message);
     }
 
-    public PersoniumBarException path(String path) {
-        return new PersoniumBarException(this.code, path, this.message);
+    /**
+     * Set PersoniumBarException to path and return it.
+     * @param filePath Path of the file where error occurred
+     * @return PersoniumBarException
+     */
+    public PersoniumBarException path(String filePath) {
+        return new PersoniumBarException(this.code, filePath, this.message);
     }
 
+    /**
+     * Set PersoniumBarException to error message and return it.
+     * @param detailMessage Error message
+     * @return PersoniumBarException
+     */
     public PersoniumBarException detail(String detailMessage) {
         // 置換メッセージ作成
         String ms = MessageFormat.format(this.message, detailMessage);
@@ -77,9 +105,14 @@ public class PersoniumBarException extends RuntimeException {
         return new PersoniumBarException(this.code, this.path, ms);
     }
 
+    /**
+     * Set PersoniumBarException to error message and return it.
+     * @param detail Detail message object
+     * @return PersoniumBarException
+     */
     public PersoniumBarException detail(PersoniumBarException.Detail detail) {
         // 置換メッセージ作成
-        String ms = MessageFormat.format(this.message, detail.getDetailMessage());
+        String ms = MessageFormat.format(this.message, detail.getMessage());
         // 制御コードのエスケープ処理
         ms = EscapeControlCode.escape(ms);
         // メッセージ置換クローンを作成
@@ -87,32 +120,51 @@ public class PersoniumBarException extends RuntimeException {
     }
 
     /**
-     *
+     * Class for storing error details.
      */
     public static class Detail {
-        private String detailCode;
-        private String detailMessage;
+        /** Error code. */
+        private String code;
+        /** Error message. */
+        private String message;
 
-        public Detail(String detailCode) {
-            this.detailCode = detailCode;
-            detailMessage = PersoniumCoreMessageUtils.getMessage(detailCode);
+        /**
+         * Constructor.
+         * @param code Error code
+         */
+        public Detail(String code) {
+            this.code = code;
+            message = PersoniumCoreMessageUtils.getMessage(code);
         }
 
-        public Detail(String detailCode, Object... params) {
-            this.detailCode = detailCode;
-            String message = PersoniumCoreMessageUtils.getMessage(detailCode);
+        /**
+         * Constructor.
+         * @param code Error code
+         * @param params Error message parameter
+         */
+        public Detail(String code, Object... params) {
+            this.code = code;
+            String ms = PersoniumCoreMessageUtils.getMessage(code);
             // 置換メッセージ作成
-            message = MessageFormat.format(message, params);
+            ms = MessageFormat.format(message, params);
             // 制御コードのエスケープ処理
-            detailMessage = EscapeControlCode.escape(message);
+            message = EscapeControlCode.escape(ms);
         }
 
-        public String getDetailCode() {
-            return detailCode;
+        /**
+         * Get code.
+         * @return code
+         */
+        public String getCode() {
+            return code;
         }
 
-        public String getDetailMessage() {
-            return detailMessage;
+        /**
+         * Get message.
+         * @return message
+         */
+        public String getMessage() {
+            return message;
         }
     }
 }

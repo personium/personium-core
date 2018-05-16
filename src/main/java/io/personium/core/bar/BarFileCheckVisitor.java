@@ -28,6 +28,9 @@ import org.slf4j.LoggerFactory;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 
+/**
+ * FileVisitor for check bar file contents.
+ */
 public class BarFileCheckVisitor implements FileVisitor<Path> {
 
     /** Logger. */
@@ -40,24 +43,18 @@ public class BarFileCheckVisitor implements FileVisitor<Path> {
     private long entryCount = 0L;
 
     /**
-     *
-     * @return
+     * Get entry count.
+     * @return entry count
      */
     public long getEntryCount() {
         return entryCount;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         return FileVisitResult.CONTINUE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         entryCount++;
@@ -75,21 +72,14 @@ public class BarFileCheckVisitor implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
         log.error("visitFileFailed. file:" + file.toString());
         throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params(file.toString());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
         return FileVisitResult.CONTINUE;
     }
-
 }

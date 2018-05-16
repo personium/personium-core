@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.SyncFailedException;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
@@ -52,6 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.personium.common.utils.PersoniumThread;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
@@ -122,13 +122,19 @@ public class BarFileInstaller {
 
         // barファイルの格納
         File file = storeTemporaryBarFile(inStream);
+        IOUtils.closeQuietly(inStream);
 
         // bar_version : 2
-        if (execVer2Process(file, requestKey)) {
-            // レスポンスの返却
-            ResponseBuilder res = Response.status(HttpStatus.SC_ACCEPTED);
-            res.header(HttpHeaders.LOCATION, this.cell.getUrl() + boxName);
-            return res.build();
+        try {
+            if (execVer2Process(file, requestKey)) {
+                // レスポンスの返却
+                ResponseBuilder res = Response.status(HttpStatus.SC_ACCEPTED);
+                res.header(HttpHeaders.LOCATION, this.cell.getUrl() + boxName);
+                return res.build();
+            }
+        } catch (Exception e) {
+            removeBarFile(file);
+            throw e;
         }
 
         BarFileReadRunner runner = null;
@@ -162,14 +168,10 @@ public class BarFileInstaller {
             }
             removeBarFile(file);
             throw PersoniumCoreException.Server.UNKNOWN_ERROR;
-        } finally {
-            IOUtils.closeQuietly(inStream);
         }
 
         // 非同期実行
-        // TODO 多重実行時を考慮してスレッドプール化するなどの対策が必要
-        Thread thread = new Thread(runner);
-        thread.start();
+        PersoniumThread.execute(runner);
 
         // レスポンスの返却
         ResponseBuilder res = Response.status(HttpStatus.SC_ACCEPTED);
@@ -177,6 +179,13 @@ public class BarFileInstaller {
         return res.build();
     }
 
+    /**
+     * Exec bar_version 2 process.
+     * If bar file structure is different from version 2, do not process anything.
+     * @param file bar file
+     * @param requestKey personium event requestkey
+     * @return false:bar file structure is different from version 2
+     */
     private boolean execVer2Process(File file, String requestKey) {
         long entryCount;
         String schema;
@@ -187,44 +196,39 @@ public class BarFileInstaller {
             ObjectMapper mapper = new ObjectMapper();
             JSONManifest manifest = mapper.readValue(barFile.getReader(BarFile.MANIFEST_JSON), JSONManifest.class);
             if (StringUtils.isEmpty(manifest.getBarVersion())) {
-                removeBarFile(file);
                 throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params("bar_version");
             }
-            int barVersion = Float.valueOf(manifest.getBarVersion()).intValue();
-            if (barVersion == 2) {
-                checkBarFileSize(file);
-                barFile.checkStructure();
-                // Use FileVisitor to check process recursively.
-                FileVisitor<Path> visitor = new BarFileCheckVisitor();
-                try {
-                    Files.walkFileTree(barFile.getRootDirPath(), visitor);
-                } catch (IOException e) {
-                    removeBarFile(file);
-                    throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params(e.getMessage());
-                }
-                // BoxおよびスキーマURLの重複チェック
-                checkDuplicateBoxAndSchema(manifest.getSchema());
-
-                entryCount = ((BarFileCheckVisitor) visitor).getEntryCount();
-                schema = manifest.getSchema();
-            } else {
-                removeBarFile(file);
+            int barVersion;
+            try {
+                barVersion = Integer.parseInt(manifest.getBarVersion());
+            } catch (NumberFormatException e) {
+                throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params("bar_version");
+            }
+            if (barVersion != 2) {
                 throw PersoniumCoreException.BarInstall.BAR_FILE_STRUCTURE_AND_VERSION_MISMATCH;
             }
+            checkBarFileSize(file);
+            barFile.checkStructure();
+            // BoxおよびスキーマURLの重複チェック
+            checkDuplicateBoxAndSchema(manifest.getSchema());
+            // Use FileVisitor to check process recursively.
+            BarFileCheckVisitor visitor = new BarFileCheckVisitor();
+            try {
+                Path path = barFile.getRootDirPath();
+                Files.walkFileTree(path, visitor);
+            } catch (IOException e) {
+                removeBarFile(file);
+                throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params(e.getMessage());
+            }
+
+            entryCount = visitor.getEntryCount();
+            schema = manifest.getSchema();
         } catch (IOException e) {
-            removeBarFile(file);
             throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.params(e.getMessage());
-        } catch (NumberFormatException e) {
-            removeBarFile(file);
-            throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_READ.params("bar_version");
         }
-        // TODO コンストラクタでやってるBox作成とかはやっぱrunの中でやるべきじゃね？
         BarFileInstallRunner runner = new BarFileInstallRunner(file.toPath(), entryCount,
                 boxName, schema, uriInfo, oDataEntityResource, requestKey);
-        // TODO 多重実行時を考慮してスレッドプール化するなどの対策が必要
-        Thread thread = new Thread(runner);
-        thread.start();
-        removeBarFile(file);
+        PersoniumThread.execute(runner);
         return true;
     }
 

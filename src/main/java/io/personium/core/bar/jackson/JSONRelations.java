@@ -59,7 +59,7 @@ public class JSONRelations implements IJSONMappedObjects {
      * {@inheritDoc}
      */
     @Override
-    public int getObjectsSize() {
+    public int size() {
         return relations.size();
     }
 
