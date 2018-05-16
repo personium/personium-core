@@ -44,9 +44,9 @@ public class BarFileUtilsTest {
     public void rootprops_xmlのACL_URLがロールインスタンスURLに変換されること() {
         final String cellName = "installTargetCell";
         final String boxName = "installTargetBox";
-        final String baseUrl = "https://baseserver/testcell1/__role/__/col1";
+        final String baseUrl = "https://baseserver/testcell1/__role/__";
         final String targetUrl = "https://targetserver/";
-        final String master = targetUrl + cellName + "/__role/" + boxName + "/col1/";
+        final String master = targetUrl + cellName + "/__role/" + boxName + "/";
         try {
             DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docbuilder;
