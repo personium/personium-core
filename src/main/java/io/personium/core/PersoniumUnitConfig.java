@@ -50,8 +50,12 @@ public class PersoniumUnitConfig {
     /** Core version設定のキー. */
     public static final String CORE_VERSION = KEY_ROOT + "version";
 
-    /** Thread pool num key. */
-    public static final String THREAD_POOL_NUM = KEY_ROOT + "thread.pool.num";
+    /** Thread pool num io cell key. */
+    public static final String THREAD_POOL_NUM_IO_CELL = KEY_ROOT + "thread.pool.num.io.cell";
+    /** Thread pool num io box key. */
+    public static final String THREAD_POOL_NUM_IO_BOX = KEY_ROOT + "thread.pool.num.io.box";
+    /** Thread pool num misc key. */
+    public static final String THREAD_POOL_NUM_MISC = KEY_ROOT + "thread.pool.num.misc";
 
     /** マスタートークン設定のキー. */
     public static final String MASTER_TOKEN = KEY_ROOT + "masterToken";
@@ -590,11 +594,27 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Get thread pool num.
+     * Get thread pool num for cell io.
      * @return thread pool num
      */
-    public static int getThreadPoolNum() {
-        return Integer.parseInt(get(THREAD_POOL_NUM));
+    public static int getThreadPoolNumForCellIO() {
+        return Integer.parseInt(get(THREAD_POOL_NUM_IO_CELL));
+    }
+
+    /**
+     * Get thread pool num for box io.
+     * @return thread pool num
+     */
+    public static int getThreadPoolNumForBoxIO() {
+        return Integer.parseInt(get(THREAD_POOL_NUM_IO_BOX));
+    }
+
+    /**
+     * Get thread pool num for misc.
+     * @return thread pool num
+     */
+    public static int getThreadPoolNumForMisc() {
+        return Integer.parseInt(get(THREAD_POOL_NUM_MISC));
     }
 
     /**

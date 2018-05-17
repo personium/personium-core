@@ -92,7 +92,7 @@ public class SnapshotFileManager {
         try {
             CellLockManager.setCellStatus(targetCell.getId(), CellLockManager.STATUS.EXPORT);
             SnapshotFileExportRunner runner = new SnapshotFileExportRunner(targetCell, snapshotFilePath);
-            PersoniumThread.execute(runner);
+            PersoniumThread.CELL_IO.execute(runner);
         } catch (Throwable e) {
             // If an exception occurs before the execution of the thread, return the lock status to its original state.
             // If it is normal, lock is released in the thread.
@@ -121,7 +121,7 @@ public class SnapshotFileManager {
         try {
             CellLockManager.setCellStatus(targetCell.getId(), CellLockManager.STATUS.IMPORT);
             SnapshotFileImportRunner runner = new SnapshotFileImportRunner(targetCell, snapshotFilePath);
-            PersoniumThread.execute(runner);
+            PersoniumThread.CELL_IO.execute(runner);
         } catch (Throwable e) {
             // If an exception occurs before the execution of the thread, return the lock status to its original state.
             // If it is normal, lock is released in the thread.

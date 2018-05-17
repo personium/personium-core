@@ -17,19 +17,16 @@
 package io.personium.core.rule;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
-import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
-
+import org.json.simple.JSONObject;
 import org.odata4j.core.NamedValue;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityKey;
@@ -38,9 +35,10 @@ import org.odata4j.core.OProperty;
 import org.odata4j.edm.EdmEntitySet;
 import org.odata4j.producer.EntitiesResponse;
 import org.odata4j.producer.EntityResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumThread;
@@ -49,15 +47,15 @@ import io.personium.core.event.EventFactory;
 import io.personium.core.event.EventPublisher;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.PersoniumEventType;
+import io.personium.core.model.Box;
+import io.personium.core.model.Cell;
+import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.Rule;
-import io.personium.core.model.Cell;
-import io.personium.core.model.Box;
-import io.personium.core.model.lock.CellLockManager;
-import io.personium.core.model.ModelFactory;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
 import io.personium.core.model.impl.es.odata.UnitCtlODataProducer;
+import io.personium.core.model.lock.CellLockManager;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.core.utils.UriUtils;
@@ -308,7 +306,7 @@ public class RuleManager {
         // execute action
         for (ActionInfo ai : actionList) {
             ActionRunner runner = new ActionRunner(cell, ai, event);
-            PersoniumThread.execute(runner);
+            PersoniumThread.MISC.execute(runner);
         }
 
         // publish event
