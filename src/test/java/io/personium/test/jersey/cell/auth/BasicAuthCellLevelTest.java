@@ -104,7 +104,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
         authorizationHeader.put(HttpHeaders.AUTHORIZATION, authorization);
         dcRes = CellUtils.implicitflowAuthenticate(authTargetCell, authSchemaCell, authSchemaAccount,
                 authSchemaPassword, "__/redirect.html", ImplicitFlowTest.DEFAULT_STATE, authorizationHeader);
-        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_MOVED_TEMPORARILY);
+        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
         assertThat(dcRes.getFirstHeader(HttpHeaders.LOCATION)).contains("access_token");
 
     }

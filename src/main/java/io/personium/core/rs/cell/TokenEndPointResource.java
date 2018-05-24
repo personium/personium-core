@@ -40,6 +40,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.edm.EdmEntitySet;
@@ -126,6 +127,7 @@ public class TokenEndPointResource {
      * @param pOwner One of query parameters
      * @param assertion One of query parameters
      * @param refreshToken One of query parameters
+     * @param code One of query parameters
      * @param clientId One of query parameters
      * @param clientSecret One of query parameters
      * @param pCookie One of query parameters
@@ -143,6 +145,7 @@ public class TokenEndPointResource {
             @FormParam(Key.OWNER) final String pOwner,
             @FormParam(Key.ASSERTION) final String assertion,
             @FormParam(Key.REFRESH_TOKEN) final String refreshToken,
+            @FormParam(Key.CODE) final String code,
             @FormParam(Key.CLIENT_ID) final String clientId,
             @FormParam(Key.CLIENT_SECRET) final String clientSecret,
             @FormParam("p_cookie") final String pCookie,
@@ -193,11 +196,79 @@ public class TokenEndPointResource {
             return this.receiveSaml2(target, pOwner, schema, assertion);
         } else if (OAuth2Helper.GrantType.REFRESH_TOKEN.equals(grantType)) {
             return this.receiveRefresh(target, pOwner, schema, host, refreshToken);
+        } else if (OAuth2Helper.GrantType.AUTHORIZATION_CODE.equals(grantType)) {
+            return receiveCode(target, pOwner, schema, host, code);
         } else {
             // Call Auth Plugins
             return this.callAuthPlugins(grantType, idToken, target, pOwner,
                     schema, host);
         }
+    }
+
+    // TODO 仮実装
+    private Response receiveCode(final String target, String owner, String schema,
+            final String host, final String code) {
+        if (code == null) {
+            // codeが未設定の場合、パースエラーとみなす
+            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
+        }
+        if (schema == null) {
+            throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.realm(
+                    this.cell.getUrl()).params(Key.CLIENT_ID);
+        }
+        if (Key.TRUE_STR.equals(owner)) {
+            throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER
+                    .realm(this.cell.getUrl());
+        }
+        if (!code.startsWith(CellLocalAccessToken.PREFIX_CODE)) {
+            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
+        }
+
+        CellLocalAccessToken token;
+        try {
+            token = (CellLocalAccessToken) AbstractOAuth2Token.parse(code, cell.getUrl(), host);
+        } catch (TokenParseException e) {
+            // パースに失敗したので
+            PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
+            throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl()).reason(e);
+        } catch (TokenDsigException e) {
+            // 証明書検証に失敗したので
+            PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
+            throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID.realm(this.cell.getUrl());
+        } catch (TokenRootCrtException e) {
+            // ルートCA証明書の設定エラー
+            PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
+            throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
+        }
+
+        // Check if expired.
+        if (token.isRefreshExpired()) {
+            throw PersoniumCoreAuthnException.TOKEN_EXPIRED.realm(this.cell.getUrl());
+        }
+
+        if (!StringUtils.equals(schema, token.getSchema())) {
+            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
+        }
+
+        long issuedAt = new Date().getTime();
+
+        // 受け取ったTokenから AccessTokenとRefreshTokenを再生成
+        CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, cell.getUrl(), token.getSubject(), schema);
+        IAccessToken aToken = null;
+        if (target == null) {
+            aToken = new CellLocalAccessToken(issuedAt, cell.getUrl(), token.getSubject(), token.getRoles(), schema);
+        } else {
+            List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
+            aToken = new TransCellAccessToken(issuedAt, cell.getUrl(), cell.getUrl() + "#" + token.getSubject(),
+                    target, roleList, schema);
+        }
+
+        if (aToken instanceof TransCellAccessToken) {
+            log.debug("reissuing TransCell Token");
+            // aToken.addRole("admin");
+            // return this.responseAuthSuccess(tcToken);
+        }
+        return this.responseAuthSuccess(aToken, rToken);
     }
 
     /**

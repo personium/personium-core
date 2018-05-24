@@ -49,6 +49,7 @@ import io.personium.test.utils.TResponse;
 @Category({Unit.class, Integration.class, Regression.class })
 public class CrossDomainTest extends JerseyTest {
 
+    static final String ORIGIN = "example.com";
     static final String TEST_CELL1 = "testcell1";
     static final String ODATA_COL = "odatacol";
     static final String CROSSDOMAIN_XML = "<?xml version=\"1.0\"?>"
@@ -1374,7 +1375,7 @@ public class CrossDomainTest extends JerseyTest {
      * @params allowMethod 許可メソッド
      */
     private void checkXHR2Header(TResponse response, String allowMethod) {
-        response.checkHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, HttpHeaders.Value.ASTERISK)
+        response.checkHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, ORIGIN)
                 .checkHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, allowMethod)
                 .checkHeader(HttpHeaders.ALLOW, allowMethod)
                 .checkHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "Accept");
@@ -1385,7 +1386,7 @@ public class CrossDomainTest extends JerseyTest {
      * @params response レスポンス情報
      */
     private void checkXHR2HeaderOnlyOrigin(TResponse response) {
-        response.checkHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, HttpHeaders.Value.ASTERISK)
+        response.checkHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, ORIGIN)
                 .checkHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, null)
                 .checkHeader(HttpHeaders.ALLOW, null)
                 .checkHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, null);

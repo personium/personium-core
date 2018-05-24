@@ -61,6 +61,7 @@ public class HttpClientFactory {
         RequestConfig config = RequestConfig.custom()
                 .setConnectTimeout(TIMEOUT)
                 .setSocketTimeout(TIMEOUT)
+                .setRedirectsEnabled(false)
                 .build();
 
         if (TYPE_DEFAULT.equalsIgnoreCase(type)) {
