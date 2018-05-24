@@ -307,8 +307,8 @@ public class AuthzEndPointResource {
             return this.handleImplicitFlow(redirectUri, clientId, host, username, password, cookieRefreshToken,
                     pTarget, keepLogin, assertion, schema, state, pOwner);
         } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
-            return handleCodeFlow(redirectUri, clientId, host, username, password, pCookie, cookieRefreshToken,
-                    pTarget, keepLogin, assertion, schema, state, pOwner, uriInfo);
+            return handleCodeFlow(redirectUri, clientId, host, username, password, pCookie,
+                    pTarget, state, pOwner, uriInfo);
         } else {
             return this.returnErrorRedirect(redirectUri, OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE,
                     OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE, state, "PR400-AZ-0001");
@@ -323,11 +323,11 @@ public class AuthzEndPointResource {
             final String username,
             final String password,
             final String pCookie,
-            final String cookieRefreshToken,
+//            final String cookieRefreshToken,
             final String pTarget,
-            final String keepLogin,
-            final String assertion,
-            final String schema,
+//            final String keepLogin,
+//            final String assertion,
+//            final String schema,
             final String state,
             final String pOwner,
             UriInfo uriInfo) {
