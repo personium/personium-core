@@ -1,3 +1,8 @@
+## 1.6.9
+IMPROVEMENTS:
+* Corresponds to authorization code grant flow.([#213](https://github.com/personium/personium-core/issues/213))
+  * Only a part of the function is implemented. Refer to https://github.com/personium/personium-core/issues/213 for details.
+
 ## 1.6.8
 BUG FIXES:
 * Error occurs when importing snapshot of the cell into different unit.([#183](https://github.com/personium/personium-core/issues/183))
