@@ -24,35 +24,35 @@ import org.odata4j.core.OEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Jackson correspondence class for handling rules.json.
+ * Jackson correspondence class for handling extroles.json.
  */
-public class JSONRules implements IJSONMappedObjects {
+public class JSONExtRoles implements IJSONMappedObjects {
 
-    /** JsonProperty:Rules. */
-    @JsonProperty("Rules")
-    private List<JSONRule> rules;
+    /** JsonProperty:ExtRoles. */
+    @JsonProperty("ExtRoles")
+    private List<JSONExtRole> extRoles;
 
     /**
      * Constructor.
      */
-    public JSONRules() {
-        rules = new ArrayList<JSONRule>();
+    public JSONExtRoles() {
+        extRoles = new ArrayList<JSONExtRole>();
     }
 
     /**
-     * Get value of Rules.
-     * @return value of Rules
+     * Get value of ExtRoles.
+     * @return value of ExtRoles
      */
-    public List<JSONRule> getRules() {
-        return rules;
+    public List<JSONExtRole> getExtRoles() {
+        return extRoles;
     }
 
     /**
-     * Set value of Rules.
-     * @param rules rules
+     * Set value of ExtRoles.
+     * @param extRoles ExtRoles
      */
-    public void setRules(List<JSONRule> rules) {
-        this.rules = rules;
+    public void setExtRoles(List<JSONExtRole> extRoles) {
+        this.extRoles = extRoles;
     }
 
     /**
@@ -60,7 +60,7 @@ public class JSONRules implements IJSONMappedObjects {
      */
     @Override
     public int size() {
-        return rules.size();
+        return extRoles.size();
     }
 
     /**
@@ -69,8 +69,8 @@ public class JSONRules implements IJSONMappedObjects {
     @Override
     public void addObjects(List<OEntity> entities) {
         for (OEntity entity : entities) {
-            JSONRule object = JSONRule.newInstance(entity);
-            rules.add(object);
+            JSONExtRole object = JSONExtRole.newInstance(entity);
+            extRoles.add(object);
         }
     }
 }

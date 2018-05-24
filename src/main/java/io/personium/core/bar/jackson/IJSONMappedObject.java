@@ -21,7 +21,7 @@ import org.json.simple.JSONObject;
 /**
  * Mappingされたオブジェクトの共通インタフェース.
  */
-public interface JSONMappedObject {
+public interface IJSONMappedObject {
 
     /**
      * JSONオブジェクトを返す.

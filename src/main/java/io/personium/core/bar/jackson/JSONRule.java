@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Mapping class for reading 50_rules.json.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL) // When the value is null, it is not output to Json.
-public class JSONRule implements JSONMappedObject {
+public class JSONRule implements IJSONMappedObject {
 
     /** External. */
     @JsonProperty("EventExternal")

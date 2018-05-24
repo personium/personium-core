@@ -26,6 +26,12 @@ import org.odata4j.core.OEntity;
 public interface IJSONMappedObjects {
 
     /**
+     * Get CellCtlObjects list size.
+     * @return list size
+     */
+    int size();
+
+    /**
      * Add CellCtlObject to the list.
      * @param entities OEntity response.
      */

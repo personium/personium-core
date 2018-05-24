@@ -31,6 +31,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import com.sun.jersey.api.client.ClientResponse.Status;
+
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
@@ -38,7 +40,6 @@ import io.personium.core.rs.cell.AuthzEndPointResource;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.unit.core.UrlUtils;
-import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * AccessContext ユニットテストクラス.
@@ -68,7 +69,7 @@ public class AuthzTest {
      */
     @Test
     public void 認証に成功している場合チェックがtrueを返すこと() {
-        ResponseBuilder rb = Response.status(Status.FOUND)
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
         rb.header(HttpHeaders.LOCATION, UrlUtils.cellRoot("authz") + "#"
                 + OAuth2Helper.Key.ACCESS_TOKEN + "=tokenstr&"
@@ -111,7 +112,7 @@ public class AuthzTest {
      */
     @Test
     public void LocationヘッダのURLのフラグメントにエラー情報が全て存在する場合チェックがfalseを返すこと() throws UnsupportedEncodingException {
-        ResponseBuilder rb = Response.status(Status.FOUND).type(MediaType.APPLICATION_JSON_TYPE);
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER).type(MediaType.APPLICATION_JSON_TYPE);
         StringBuilder sbuf = new StringBuilder(UrlUtils.cellRoot("authz") + "#" + OAuth2Helper.Key.ERROR + "=");
         sbuf.append(URLEncoder.encode("Server Connection Error.", "utf-8"));
         sbuf.append("&" + OAuth2Helper.Key.ERROR_DESCRIPTION + "=");
@@ -133,7 +134,7 @@ public class AuthzTest {
      */
     @Test
     public void LocationヘッダのURLのフラグメントにerrorが存在しない場合チェックがtrueを返すこと() throws UnsupportedEncodingException {
-        ResponseBuilder rb = Response.status(Status.FOUND).type(MediaType.APPLICATION_JSON_TYPE);
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER).type(MediaType.APPLICATION_JSON_TYPE);
         StringBuilder sbuf = new StringBuilder(UrlUtils.cellRoot("authz") + "#");
         sbuf.append("&" + OAuth2Helper.Key.ERROR_DESCRIPTION + "=");
         sbuf.append(URLEncoder.encode("Server Connection Error.", "utf-8"));
@@ -154,7 +155,7 @@ public class AuthzTest {
      */
     @Test
     public void LocationヘッダのURLのフラグメントにerror_descriptionが存在しない場合チェックがtrueを返すこと() throws UnsupportedEncodingException {
-        ResponseBuilder rb = Response.status(Status.FOUND).type(MediaType.APPLICATION_JSON_TYPE);
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER).type(MediaType.APPLICATION_JSON_TYPE);
         StringBuilder sbuf = new StringBuilder(UrlUtils.cellRoot("authz") + "#" + OAuth2Helper.Key.ERROR + "=");
         sbuf.append(URLEncoder.encode("Server Connection Error.", "utf-8"));
         sbuf.append("&" + OAuth2Helper.Key.STATE + "=");
@@ -174,7 +175,7 @@ public class AuthzTest {
      */
     @Test
     public void LocationヘッダのURLのフラグメントにstateが存在しない場合チェックがtrueを返すこと() throws UnsupportedEncodingException {
-        ResponseBuilder rb = Response.status(Status.FOUND).type(MediaType.APPLICATION_JSON_TYPE);
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER).type(MediaType.APPLICATION_JSON_TYPE);
         StringBuilder sbuf = new StringBuilder(UrlUtils.cellRoot("authz") + "#" + OAuth2Helper.Key.ERROR + "=");
         sbuf.append(URLEncoder.encode("Server Connection Error.", "utf-8"));
         sbuf.append("&" + OAuth2Helper.Key.ERROR_DESCRIPTION + "=");
@@ -194,7 +195,7 @@ public class AuthzTest {
      */
     @Test
     public void LocationヘッダのURLのフラグメントにcodeが存在しない場合チェックがtrueを返すこと() throws UnsupportedEncodingException {
-        ResponseBuilder rb = Response.status(Status.FOUND).type(MediaType.APPLICATION_JSON_TYPE);
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER).type(MediaType.APPLICATION_JSON_TYPE);
         StringBuilder sbuf = new StringBuilder(UrlUtils.cellRoot("authz") + "#" + OAuth2Helper.Key.ERROR + "=");
         sbuf.append(URLEncoder.encode("Server Connection Error.", "utf-8"));
         sbuf.append("&" + OAuth2Helper.Key.ERROR_DESCRIPTION + "=");
@@ -214,7 +215,7 @@ public class AuthzTest {
      */
     @Test
     public void LocationヘッダのURLのフラグメントが存在しない場合チェックがfalseを返すこと() throws UnsupportedEncodingException {
-        ResponseBuilder rb = Response.status(Status.FOUND).type(MediaType.APPLICATION_JSON_TYPE);
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER).type(MediaType.APPLICATION_JSON_TYPE);
         StringBuilder sbuf = new StringBuilder(UrlUtils.cellRoot("authz") + "?" + OAuth2Helper.Key.ERROR + "=");
         sbuf.append(URLEncoder.encode("Server Connection Error.", "utf-8"));
         sbuf.append("&" + OAuth2Helper.Key.ERROR_DESCRIPTION + "=");
