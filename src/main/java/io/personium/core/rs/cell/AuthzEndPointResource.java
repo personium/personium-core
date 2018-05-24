@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -67,6 +68,7 @@ import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.IRefreshToken;
+import io.personium.common.auth.token.LocalToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
@@ -76,6 +78,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
@@ -89,6 +92,7 @@ import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.rs.FacadeResource;
 
 /**
  * ImplicitFlow認証処理を司るJAX-RSリソース.
@@ -148,6 +152,48 @@ public class AuthzEndPointResource {
      * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
      * </ul>
      * @param authzHeader Authorization ヘッダ
+     * @param pTarget クエリパラメタ
+     * @param pOwner クエリパラメタ
+     * @param assertion クエリパラメタ
+     * @param clientId クエリパラメタ
+     * @param responseType クエリパラメタ
+     * @param redirectUri クエリパラメタ
+     * @param host Hostヘッダ
+     * @param pCookie p_cookie
+     * @param cookieRefreshToken クッキー
+     * @param keepLogin クエリパラメタ
+     * @param state クエリパラメタ
+     * @param isCancel Cancelフラグ
+     * @param uriInfo コンテキスト
+     * @return JAX-RS Response Object
+     */
+    @GET
+    public final Response authGet(@HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,
+            @QueryParam(Key.TARGET) final String pTarget,
+            @QueryParam(Key.OWNER) final String pOwner,
+            @QueryParam(Key.ASSERTION) final String assertion,
+            @QueryParam(Key.CLIENT_ID) final String clientId,
+            @QueryParam(Key.RESPONSE_TYPE) final String responseType,
+            @QueryParam(Key.REDIRECT_URI) final String redirectUri,
+            @HeaderParam(HttpHeaders.HOST) final String host,
+            @CookieParam(FacadeResource.P_COOKIE_KEY) final String pCookie,
+            @CookieParam(Key.SESSION_ID) final String cookieRefreshToken,
+            @QueryParam(Key.KEEPLOGIN) final String keepLogin,
+            @QueryParam(Key.STATE) final String state,
+            @QueryParam(Key.CANCEL_FLG) final String isCancel,
+            @Context final UriInfo uriInfo) {
+
+        return auth(pOwner, null, null, pTarget, assertion, clientId, responseType, redirectUri, host,
+                pCookie, cookieRefreshToken, keepLogin, state, isCancel, uriInfo);
+
+    }
+
+    /**
+     * 認証のエンドポイント. <h2>トークンの発行しわけ</h2>
+     * <ul>
+     * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
+     * </ul>
+     * @param authzHeader Authorization ヘッダ
      * @param pOwner フォームパラメタ
      * @param username フォームパラメタ
      * @param password フォームパラメタ
@@ -157,6 +203,7 @@ public class AuthzEndPointResource {
      * @param responseType フォームパラメタ
      * @param redirectUri フォームパラメタ
      * @param host Hostヘッダ
+     * @param pCookie p_cookie
      * @param cookieRefreshToken クッキー
      * @param keepLogin フォームパラメタ
      * @param state フォームパラメタ
@@ -165,7 +212,7 @@ public class AuthzEndPointResource {
      * @return JAX-RS Response Object
      */
     @POST
-    public final Response authPost(@HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,
+    public final Response authPost(@HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,  // CHECKSTYLE IGNORE
             @FormParam(Key.OWNER) final String pOwner,
             @FormParam(Key.USERNAME) final String username,
             @FormParam(Key.PASSWORD) final String password,
@@ -175,14 +222,15 @@ public class AuthzEndPointResource {
             @FormParam(Key.RESPONSE_TYPE) final String responseType,
             @FormParam(Key.REDIRECT_URI) final String redirectUri,
             @HeaderParam(HttpHeaders.HOST) final String host,
-            @HeaderParam(Key.SESSION_ID) final String cookieRefreshToken,
+            @CookieParam(FacadeResource.P_COOKIE_KEY) final String pCookie,
+            @CookieParam(Key.SESSION_ID) final String cookieRefreshToken,
             @FormParam(Key.KEEPLOGIN) final String keepLogin,
             @FormParam(Key.STATE) final String state,
             @FormParam(Key.CANCEL_FLG) final String isCancel,
             @Context final UriInfo uriInfo) {
 
         return auth(pOwner, username, password, pTarget, assertion, clientId, responseType, redirectUri, host,
-                cookieRefreshToken, keepLogin, state, isCancel, uriInfo);
+                pCookie, cookieRefreshToken, keepLogin, state, isCancel, uriInfo);
     }
 
     private Response auth(final String pOwner,
@@ -194,6 +242,7 @@ public class AuthzEndPointResource {
             final String responseType,
             final String redirectUri,
             final String host,
+            final String pCookie,
             final String cookieRefreshToken,
             final String keepLogin,
             final String state,
@@ -254,54 +303,192 @@ public class AuthzEndPointResource {
             // redirect_uriへリダイレクト
             return this.returnErrorRedirect(redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
                     OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0004");
-        } else if (!OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
-            // redirect_uriへリダイレクト
-            return this.returnErrorRedirect(redirectUri, OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE,
-                    OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE, state, "PR400-AZ-0001");
-        } else {
+        } else if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
             return this.handleImplicitFlow(redirectUri, clientId, host, username, password, cookieRefreshToken,
                     pTarget, keepLogin, assertion, schema, state, pOwner);
+        } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
+            return handleCodeFlow(redirectUri, clientId, host, username, password, pCookie, cookieRefreshToken,
+                    pTarget, keepLogin, assertion, schema, state, pOwner, uriInfo);
+        } else {
+            return this.returnErrorRedirect(redirectUri, OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE,
+                    OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE, state, "PR400-AZ-0001");
         }
     }
 
-    /**
-     * 認証のエンドポイント. <h2>トークンの発行しわけ</h2>
-     * <ul>
-     * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
-     * </ul>
-     * @param authzHeader Authorization ヘッダ
-     * @param pTarget クエリパラメタ
-     * @param pOwner クエリパラメタ
-     * @param assertion クエリパラメタ
-     * @param clientId クエリパラメタ
-     * @param responseType クエリパラメタ
-     * @param redirectUri クエリパラメタ
-     * @param host Hostヘッダ
-     * @param cookieRefreshToken クッキー
-     * @param keepLogin クエリパラメタ
-     * @param state クエリパラメタ
-     * @param isCancel Cancelフラグ
-     * @param uriInfo コンテキスト
-     * @return JAX-RS Response Object
-     */
-    @GET
-    public final Response authGet(@HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,
-            @QueryParam(Key.TARGET) final String pTarget,
-            @QueryParam(Key.OWNER) final String pOwner,
-            @QueryParam(Key.ASSERTION) final String assertion,
-            @QueryParam(Key.CLIENT_ID) final String clientId,
-            @QueryParam(Key.RESPONSE_TYPE) final String responseType,
-            @QueryParam(Key.REDIRECT_URI) final String redirectUri,
-            @HeaderParam(HttpHeaders.HOST) final String host,
-            @HeaderParam(Key.SESSION_ID) final String cookieRefreshToken,
-            @QueryParam(Key.KEEPLOGIN) final String keepLogin,
-            @QueryParam(Key.STATE) final String state,
-            @QueryParam(Key.CANCEL_FLG) final String isCancel,
-            @Context final UriInfo uriInfo) {
+    // TODO CodeFlow関連は仮実装
+    private Response handleCodeFlow(
+            final String redirectUriStr,
+            final String clientId,
+            final String host,
+            final String username,
+            final String password,
+            final String pCookie,
+            final String cookieRefreshToken,
+            final String pTarget,
+            final String keepLogin,
+            final String assertion,
+            final String schema,
+            final String state,
+            final String pOwner,
+            UriInfo uriInfo) {
+        // p_target がURLでない場合はヘッダInjectionの脆弱性を産んでしまう。(改行コードが入っているなど)
+        try {
+            this.checkPTarget(pTarget);
+        } catch (PersoniumCoreAuthnException e) {
+            return this.returnErrorRedirectCodeGrant(redirectUriStr, OAuth2Helper.Error.INVALID_REQUEST,
+                    e.getMessage(), state, "code");
+        }
 
-        return auth(pOwner, null, null, pTarget, assertion, clientId, responseType, redirectUri, host,
-                cookieRefreshToken, keepLogin, state, isCancel, uriInfo);
+        // パスワード認証・トランスセルトークン認証・cookie認証の切り分け
+        if (username != null || password != null) {
+            // TODO まだ未実装のためエラーを返す
+            return this.returnErrorRedirectCodeGrant(redirectUriStr, OAuth2Helper.Error.UNSUPPORTED_GRANT_TYPE,
+                    OAuth2Helper.Error.UNSUPPORTED_GRANT_TYPE, state, "PR400-AZ-0007");
+         // TODO 必要？
+//        } else if (cookieRefreshToken != null) {
+//            // cookieの指定がある場合
+//            // cookie認証の場合、keepLoginは常にtrueとして動作する
+//            return handleCookieRefreshToken(redirectUriStr, clientId, host,
+//                    cookieRefreshToken, OAuth2Helper.Key.TRUE_STR, state, pOwner);
+        } else if (pCookie != null) {
+            return handlePCookie(redirectUriStr, clientId, host,
+                    pCookie, OAuth2Helper.Key.TRUE_STR, state, pOwner, uriInfo);
+        } else {
+            // TODO まだ未実装のためエラーを返す
+//            // ユーザID・パスワード・assertion・cookieが未指定の場合、フォーム送信
+//            ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+//                    return rb.entity(createForm(clientId, redirectUriStr, passFormMsg, state,
+//            OAuth2Helper.ResponseType.CODE, pTarget, pOwner))
+//                    .header("Content-Type", "text/html; charset=UTF-8").build();
+            return this.returnErrorRedirectCodeGrant(redirectUriStr, OAuth2Helper.Error.UNSUPPORTED_GRANT_TYPE,
+                    OAuth2Helper.Error.UNSUPPORTED_GRANT_TYPE, state, "PR400-AZ-0007");
+        }
+    }
 
+    private Response handlePCookie(final String redirectUriStr,
+            final String clientId,
+            final String host,
+            final String pCookie,
+            final String keepLogin,
+            final String state,
+            final String pOwner,
+            UriInfo uriInfo) {
+        // クッキー認証の場合
+        // クッキー内の値を復号化した値を取得
+        CellLocalRefreshToken rToken;
+        CellLocalAccessToken aToken;
+        try {
+            String decodedCookieValue = LocalToken.decode(pCookie,
+                    UnitLocalUnitUserToken.getIvBytes(
+                            AccessContext.getCookieCryptKey(uriInfo.getBaseUri())));
+            int separatorIndex = decodedCookieValue.indexOf("\t");
+            // クッキー内の情報から authorizationHeader相当のトークンを取得
+            String authToken = decodedCookieValue.substring(separatorIndex + 1);
+
+            AbstractOAuth2Token token = AbstractOAuth2Token.parse(authToken, cell.getUrl(), host);
+
+            if (!(token instanceof IAccessToken)) {
+                return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
+            }
+
+            // トークンの有効期限チェック
+            if (token.isExpired()) {
+                return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
+            }
+
+            long issuedAt = new Date().getTime();
+
+            rToken = new CellLocalRefreshToken(issuedAt, token.getIssuer(), token.getSubject(), clientId);
+            // 受け取ったTokenから AccessTokenを再生成
+            List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
+            aToken = new CellLocalAccessToken(issuedAt, token.getIssuer(), token.getSubject(), roleList, clientId);
+        } catch (TokenParseException e) {
+            // パースに失敗したので
+            PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
+            return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
+        } catch (TokenDsigException e) {
+            // 証明書検証に失敗したので
+            PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
+            return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
+        } catch (TokenRootCrtException e) {
+            // ルートCA証明書の設定エラー
+            PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
+            return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
+        }
+        // Cookieでの認証成功
+        // 303でレスポンスし、Locationヘッダを返却
+        try {
+            return returnSuccessRedirect(redirectUriStr, aToken.toCodeString(),
+                    rToken.toTokenString(), keepLogin, state);
+        } catch (MalformedURLException e) {
+            return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
+        }
+    }
+
+    private Response returnSuccessRedirect(String redirectUriStr, String code,
+            String refreshToken, String keepLogin, String state) throws MalformedURLException {
+        // 302でレスポンスし、Locationヘッダを返却
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER)
+                .type(MediaType.APPLICATION_JSON_TYPE);
+        rb.header(HttpHeaders.LOCATION, redirectUriStr + getConnectionCode(redirectUriStr)
+                + "code" + "=" + code
+                + "&" + OAuth2Helper.Key.STATE + "=" + state);
+        // レスポンスの返却
+
+        // 認証を行うセルでのみ有効なcookieを返却する
+        URL cellUrl = new URL(cell.getUrl());
+        NewCookie cookies = null;
+        Cookie cookie = new Cookie(OAuth2Helper.Key.SESSION_ID, refreshToken, cellUrl.getPath(), null);
+        if (code != null) {
+            // リフレッシュトークンの有効期限と同じSSLのみで使用出来るCookieを作成
+            // 実行環境がhttpsの場合のみ、secureフラグを立てる
+            if (OAuth2Helper.Key.TRUE_STR.equals(keepLogin)) {
+                // Cookieの有効期限を24時間に設定
+                cookies = new NewCookie(cookie, "", COOKIE_MAX_AGE, PersoniumUnitConfig.isHttps());
+            } else {
+                // Cookieの有効期限を設定しない
+                cookies = new NewCookie(cookie, "", -1, PersoniumUnitConfig.isHttps());
+            }
+        } else {
+            cookies = new NewCookie(cookie, "", 0, PersoniumUnitConfig.isHttps());
+        }
+        return rb.entity("").cookie(cookies).build();
+    }
+
+    private Response returnErrorRedirectCodeGrant(String redirectUri, String error,
+            String errorDesp, String state, String code) {
+        // 303でレスポンスし、Locationヘッダを返却
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER)
+                .type(MediaType.APPLICATION_JSON_TYPE);
+        // Locationヘッダに付加するフラグメント情報をURLエンコードする
+        StringBuilder sbuf = new StringBuilder();
+        sbuf.append(redirectUri)
+            .append(getConnectionCode(redirectUri))
+            .append(OAuth2Helper.Key.ERROR)
+            .append("=");
+        try {
+            sbuf.append(URLEncoder.encode(error, "utf-8"));
+            sbuf.append("&" + OAuth2Helper.Key.ERROR_DESCRIPTION + "=");
+            sbuf.append(URLEncoder.encode(errorDesp, "utf-8"));
+            sbuf.append("&" + OAuth2Helper.Key.STATE + "=");
+            sbuf.append(URLEncoder.encode(state, "utf-8"));
+            sbuf.append("&" + OAuth2Helper.Key.CODE + "=");
+            sbuf.append(URLEncoder.encode(code, "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            // エンコード種別は固定でutf-8にしているので、ここに来ることはありえない
+            log.warn("Failed to URLencode, fragmentInfo of Location header.");
+        }
+        rb.header(HttpHeaders.LOCATION, sbuf.toString());
+        // レスポンスの返却
+        return rb.entity("").build();
+    }
+
+    private Response returnErrorMessageCodeGrant(String clientId, String redirectUriStr, String massage,
+            String state, String pTarget, String pOwner) {
+        ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+        return rb.entity(this.createForm(clientId, redirectUriStr, massage, state,
+                OAuth2Helper.ResponseType.CODE, pTarget, pOwner))
+                .header("Content-Type", "text/html; charset=UTF-8").build();
     }
 
     private void checkPTarget(final String pTarget) {
@@ -334,7 +521,7 @@ public class AuthzEndPointResource {
      * @return HTML
      */
     private String createForm(String clientId, String redirectUriStr, String message, String state,
-            String dcTraget, String pOwner) {
+            String responseType, String pTarget, String pOwner) {
 
         List<Object> paramsList = new ArrayList<Object>();
 
@@ -357,16 +544,9 @@ public class AuthzEndPointResource {
         paramsList.add(message);
         // hidden項目
         paramsList.add(state);
-        if (dcTraget == null) {
-            paramsList.add("");
-        } else {
-            paramsList.add(dcTraget);
-        }
-        if (pOwner == null) {
-            paramsList.add("");
-        } else {
-            paramsList.add(pOwner);
-        }
+        paramsList.add(responseType);
+        paramsList.add(pTarget != null ? pTarget : ""); // CHECKSTYLE IGNORE
+        paramsList.add(pOwner != null ? pOwner : ""); // CHECKSTYLE IGNORE
         paramsList.add(clientId);
         paramsList.add(redirectUriStr);
         paramsList.add(AuthResourceUtils.getJavascript(jsFileName));
@@ -406,7 +586,8 @@ public class AuthzEndPointResource {
         boolean passCheck = true;
         if (username == null || password == null || "".equals(username) || "".equals(password)) {
             ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
-            return rb.entity(this.createForm(clientId, redirectUriStr, noIdPassMsg, state, pTarget, pOwner))
+            return rb.entity(this.createForm(clientId, redirectUriStr, noIdPassMsg, state,
+                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
                     .header("Content-Type", "text/html; charset=UTF-8").build();
         }
 
@@ -417,7 +598,8 @@ public class AuthzEndPointResource {
             log.info("MessageCode : " + resCode);
             log.info("responseMessage : " + missIdPassMsg);
             ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
-            return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state, pTarget, pOwner))
+            return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state,
+                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
                     .header("Content-Type", "text/html; charset=UTF-8").build();
         }
         // 最終ログイン時刻を更新するために、UUIDをクラス変数にひかえておく
@@ -435,7 +617,8 @@ public class AuthzEndPointResource {
                 log.info("MessageCode : " + resCode);
                 log.info("responseMessage : " + accountLockMsg);
                 ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
-                return rb.entity(this.createForm(clientId, redirectUriStr, accountLockMsg, state, pTarget, pOwner))
+                return rb.entity(this.createForm(clientId, redirectUriStr, accountLockMsg, state,
+                        OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
                         .header("Content-Type", "text/html; charset=UTF-8").build();
             }
 
@@ -449,7 +632,8 @@ public class AuthzEndPointResource {
                 log.info("MessageCode : " + resCode);
                 log.info("responseMessage : " + missIdPassMsg);
                 ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
-                return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state, pTarget, pOwner))
+                return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state,
+                        OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
                         .header("Content-Type", "text/html; charset=UTF-8").build();
             }
         } catch (PersoniumCoreException e) {
@@ -483,7 +667,7 @@ public class AuthzEndPointResource {
         CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt,
                 CellLocalRefreshToken.REFRESH_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
                 cell.getUrl(), username, schema);
-        // 302でレスポンスし、Locationヘッダを返却
+        // 303でレスポンスし、Locationヘッダを返却
         try {
             if (localToken != null) {
                 // ULUUTの返却
@@ -589,7 +773,7 @@ public class AuthzEndPointResource {
                     tcToken.getSubject(), pTarget, rolesHere, schemaVerified);
         }
         // トランスセルトークンでの認証成功
-        // 302でレスポンスし、Locationヘッダを返却
+        // 303でレスポンスし、Locationヘッダを返却
         try {
             return returnSuccessRedirect(redirectUriStr, aToken.toTokenString(), aToken.expiresIn(),
                     null, keepLogin, state);
@@ -650,7 +834,7 @@ public class AuthzEndPointResource {
                         issuedAt, UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
                         cell.getOwner(), host);
                 // Cookieでの認証成功
-                // 302でレスポンスし、Locationヘッダを返却
+                // 303でレスポンスし、Locationヘッダを返却
                 try {
                     return returnSuccessRedirect(redirectUriStr, uluut.toTokenString(), uluut.expiresIn(),
                             null, keepLogin, state);
@@ -687,7 +871,7 @@ public class AuthzEndPointResource {
             return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
         }
         // Cookieでの認証成功
-        // 302でレスポンスし、Locationヘッダを返却
+        // 303でレスポンスし、Locationヘッダを返却
         try {
             return returnSuccessRedirect(redirectUriStr, aToken.toTokenString(), aToken.expiresIn(),
                     rToken.toTokenString(), keepLogin, state);
@@ -763,7 +947,8 @@ public class AuthzEndPointResource {
         } else {
             // ユーザID・パスワード・assertion・cookieが未指定の場合、フォーム送信
             ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
-            return rb.entity(this.createForm(clientId, redirectUriStr, passFormMsg, state, pTarget, pOwner))
+            return rb.entity(this.createForm(clientId, redirectUriStr, passFormMsg, state,
+                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
                     .header("Content-Type", "text/html; charset=UTF-8").build();
         }
     }
@@ -774,8 +959,8 @@ public class AuthzEndPointResource {
      * @return true: 認証成功 false:認証失敗
      */
     protected boolean isSuccessAuthorization(Response response) {
-        // レスポンスコードが302以外の場合は、画面遷移しないエラーとみなす
-        if (Status.FOUND.getStatusCode() != response.getStatus()) {
+        // レスポンスコードが303以外の場合は、画面遷移しないエラーとみなす
+        if (Status.SEE_OTHER.getStatusCode() != response.getStatus()) {
             return false;
         }
 
@@ -814,8 +999,8 @@ public class AuthzEndPointResource {
     private Response returnSuccessRedirect(String redirectUriStr, String localTokenStr,
             int localTokenExpiresIn, String refreshTokenStr,
             String keepLogin, String state) throws MalformedURLException {
-        // 302でレスポンスし、Locationヘッダを返却
-        ResponseBuilder rb = Response.status(Status.FOUND)
+        // 303でレスポンスし、Locationヘッダを返却
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
         rb.header(HttpHeaders.LOCATION, redirectUriStr + "#"
                 + OAuth2Helper.Key.ACCESS_TOKEN + "=" + localTokenStr + "&"
@@ -852,10 +1037,10 @@ public class AuthzEndPointResource {
      * @throws MalformedURLException
      */
     private Response returnErrorRedirect(String redirectUri, String code) {
-        // 302でレスポンスし、Locationヘッダを返却
-        ResponseBuilder rb = Response.status(Status.FOUND)
+        // 303でレスポンスし、Locationヘッダを返却
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
-        rb.header(HttpHeaders.LOCATION, redirectUri + "?"
+        rb.header(HttpHeaders.LOCATION, redirectUri + getConnectionCode(redirectUri)
                 + OAuth2Helper.Key.CODE + "=" + code);
         // レスポンスの返却
         return rb.entity("").build();
@@ -870,7 +1055,7 @@ public class AuthzEndPointResource {
     private Response returnErrorRedirect(String redirectUri, String error,
             String errorDesp, String state, String code) {
         // 302でレスポンスし、Locationヘッダを返却
-        ResponseBuilder rb = Response.status(Status.FOUND)
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
         // Locationヘッダに付加するフラグメント情報をURLエンコードする
         StringBuilder sbuf = new StringBuilder(redirectUri + "#" + OAuth2Helper.Key.ERROR + "=");
@@ -902,7 +1087,8 @@ public class AuthzEndPointResource {
     private Response returnErrorMessage(String clientId, String redirectUriStr, String massage,
             String state, String pTarget, String pOwner) {
         ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
-        return rb.entity(this.createForm(clientId, redirectUriStr, massage, state, pTarget, pOwner))
+        return rb.entity(this.createForm(clientId, redirectUriStr, massage, state,
+                OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
                 .header("Content-Type", "text/html; charset=UTF-8").build();
     }
 
@@ -1006,6 +1192,19 @@ public class AuthzEndPointResource {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
         }
 
+    }
+
+    /**
+     *
+     * @param redirectUriStr
+     * @return
+     */
+    private String getConnectionCode(String redirectUriStr) {
+        if (StringUtils.contains(redirectUriStr, "?")) {
+            return "&";
+        } else {
+            return "?";
+        }
     }
 
     /**

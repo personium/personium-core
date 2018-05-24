@@ -52,6 +52,9 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
 
     static Logger log = LoggerFactory.getLogger(PersoniumCoreContainerFilter.class);
 
+    /** 1day. */
+    private static final int ONE_DAY_SECONDS = 86400;
+
     // Acceptヘッダーが取り得る値の正規表現
     static Pattern acceptHeaderValueRegex = Pattern.compile("\\A\\p{ASCII}*\\z");
 
@@ -216,7 +219,9 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         // CORS
         if (request.getHeaderValue(HttpHeaders.ORIGIN) != null) {
             // Access-Control-Allow-Origin
-            mm.putSingle(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, HttpHeaders.Value.ASTERISK);
+            mm.putSingle(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, request.getHeaderValue(HttpHeaders.ORIGIN));
+            mm.putSingle(HttpHeaders.ACCESS_CONTROLE_ALLOW_CREDENTIALS, true);
+            mm.putSingle(HttpHeaders.ACCESS_CONTROL_MAX_AGE, ONE_DAY_SECONDS);
 
             // Access-Control-Allow-Headers
             String acrh = request.getHeaderValue(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
