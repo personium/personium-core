@@ -381,6 +381,7 @@ public class PersoniumRestAdapter {
         } catch (Exception ioe) {
             throw PersoniumException.create("io exception : " + ioe.getMessage(), 0);
         }
+
     }
 
     /**

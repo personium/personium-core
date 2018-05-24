@@ -212,6 +212,10 @@ public class TokenEndPointResource {
             // codeが未設定の場合、パースエラーとみなす
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
         }
+        if (schema == null) {
+            throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.realm(
+                    this.cell.getUrl()).params(Key.CLIENT_ID);
+        }
         if (Key.TRUE_STR.equals(owner)) {
             throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER
                     .realm(this.cell.getUrl());
