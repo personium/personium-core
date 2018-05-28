@@ -168,6 +168,8 @@ public final class OAuth2Helper {
          * token.
          */
         public static final String TOKEN = "token";
+        /** code. */
+        public static final String CODE = "code";
     }
 
     /**
