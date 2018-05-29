@@ -171,7 +171,7 @@ public class BarFileInstaller {
         }
 
         // 非同期実行
-        PersoniumThread.execute(runner);
+        PersoniumThread.BOX_IO.execute(runner);
 
         // レスポンスの返却
         ResponseBuilder res = Response.status(HttpStatus.SC_ACCEPTED);
@@ -228,7 +228,7 @@ public class BarFileInstaller {
         }
         BarFileInstallRunner runner = new BarFileInstallRunner(file.toPath(), entryCount,
                 boxName, schema, uriInfo, oDataEntityResource, requestKey);
-        PersoniumThread.execute(runner);
+        PersoniumThread.BOX_IO.execute(runner);
         return true;
     }
 

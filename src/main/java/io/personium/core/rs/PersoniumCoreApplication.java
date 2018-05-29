@@ -47,7 +47,9 @@ public class PersoniumCoreApplication extends Application {
                     PersoniumUnitConfig.getX509Certificate(), PersoniumUnitConfig.getX509RootCertificate());
             LocalToken.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
             DataCryptor.setKeyString(PersoniumUnitConfig.getTokenSecretKey());
-            PersoniumThread.createThreadPool(PersoniumUnitConfig.getThreadPoolNum());
+            PersoniumThread.start(PersoniumUnitConfig.getThreadPoolNumForCellIO(),
+                    PersoniumUnitConfig.getThreadPoolNumForBoxIO(),
+                    PersoniumUnitConfig.getThreadPoolNumForMisc());
             pm = new PluginManager();
         } catch (Exception e) {
             PersoniumCoreLog.Server.FAILED_TO_START_SERVER.reason(e).writeLog();
@@ -59,7 +61,7 @@ public class PersoniumCoreApplication extends Application {
      * Stop Application.
      */
     public static void stop() {
-        PersoniumThread.shutdown(TIMEOUT_SECONDS);
+        PersoniumThread.stop(TIMEOUT_SECONDS);
     }
 
     /*

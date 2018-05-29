@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>io.personium</groupId>
 			<artifactId>personium-lib-common</artifactId>
-			<version>1.4.12</version>
+			<version>1.4.13-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>io.personium</groupId>
@@ -573,6 +573,8 @@
 				<artifactId>jdepend-maven-plugin</artifactId>
 				<version>2.0</version>
 			</plugin>
+			<!-- Error occurred. -->
+			<!-- Does not it correspond to lambda expression? -->
 			<!--
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
