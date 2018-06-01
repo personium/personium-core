@@ -1,3 +1,9 @@
+## 1.6.10
+IMPROVEMENTS:
+* Implement box export pre-function.([#182](https://github.com/personium/personium-core/issues/182), [#185](https://github.com/personium/personium-core/issues/185), [#188](https://github.com/personium/personium-core/issues/188))
+* Correspondence of Bar file ver 2.0.([#190](https://github.com/personium/personium-core/issues/190))
+* Thread pool support for Box installation function.([#210](https://github.com/personium/personium-core/issues/210))
+
 ## 1.6.9
 IMPROVEMENTS:
 * Corresponds to authorization code grant flow.([#213](https://github.com/personium/personium-core/issues/213))
