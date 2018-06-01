@@ -4,11 +4,11 @@ Personium
 
 An open source PDS (Personal Data Store) server software.
 
-http://personium.io/
+https://personium.io/
 
-## Documentation
-
-http://personium.io/docs/
+## Documentation  
+[English Documentation](http://personium.io/docs/en/)  
+[Japanese Documentation](http://personium.io/docs/ja/)  
 
 ## License
 
