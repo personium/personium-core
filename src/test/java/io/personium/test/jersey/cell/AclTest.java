@@ -1480,36 +1480,33 @@ public class AclTest extends AbstractCase {
                     extCellNameBase, "\"" + relationName + "\"", "null", HttpStatus.SC_NO_CONTENT);
 
             // extRoleの削除 authが必要
-            ExtRoleUtils.delete(account.get(0), TEST_CELL1, extCellNameBase, "'" + relationName + "'",
-                    "null", HttpStatus.SC_FORBIDDEN);
-            ExtRoleUtils.delete(account.get(1), TEST_CELL1, extCellNameBase, "'" + relationName + "'",
-                    "null", HttpStatus.SC_NO_CONTENT);
+            ExtRoleUtils.delete(TEST_CELL1, extCellNameBase, relationName,
+                    null, account.get(0), HttpStatus.SC_FORBIDDEN);
+            ExtRoleUtils.delete(TEST_CELL1, extCellNameBase, relationName,
+                    null, account.get(1), HttpStatus.SC_NO_CONTENT);
             // 再作成
             ExtRoleUtils.create(TOKEN, TEST_CELL1, extRoleBody, HttpStatus.SC_CREATED);
 
-            ExtRoleUtils.delete(account.get(2), TEST_CELL1, extCellNameBase, "'" + relationName + "'",
-                    "null", HttpStatus.SC_FORBIDDEN);
-            ExtRoleUtils.delete(account.get(9), TEST_CELL1, extCellNameBase, "'" + relationName + "'",
-                    "null", HttpStatus.SC_NO_CONTENT);
+            ExtRoleUtils.delete(TEST_CELL1, extCellNameBase, relationName,
+                    null, account.get(2), HttpStatus.SC_FORBIDDEN);
+            ExtRoleUtils.delete(TEST_CELL1, extCellNameBase, relationName,
+                    null, account.get(9), HttpStatus.SC_NO_CONTENT);
             // 再作成
             ExtRoleUtils.create(TOKEN, TEST_CELL1, extRoleBody, HttpStatus.SC_CREATED);
 
-            ExtRoleUtils.delete(account.get(10), TEST_CELL1, extCellNameBase, "'" + relationName + "'",
-                    "null", HttpStatus.SC_NO_CONTENT);
+            ExtRoleUtils.delete(TEST_CELL1, extCellNameBase, relationName,
+                    null, account.get(10), HttpStatus.SC_NO_CONTENT);
             // 再作成
             ExtRoleUtils.create(TOKEN, TEST_CELL1, extRoleBody, HttpStatus.SC_CREATED);
-            ExtRoleUtils.delete(account.get(11), TEST_CELL1, extCellNameBase, "'" + relationName + "'",
-                    "null", HttpStatus.SC_FORBIDDEN);
+            ExtRoleUtils.delete(TEST_CELL1, extCellNameBase, relationName,
+                    null, account.get(11), HttpStatus.SC_FORBIDDEN);
         } finally {
             // extRoleの削除
-            ExtRoleUtils.delete(TOKEN, TEST_CELL1, extCellNameBase, "'" + relationName + "'",
-                    "null", HttpStatus.SC_NO_CONTENT);
-            ExtRoleUtils.delete(TOKEN, TEST_CELL1, extRoleName2, "'" + relationName + "'",
-                    "null", HttpStatus.SC_NO_CONTENT);
-            ExtRoleUtils.delete(TOKEN, TEST_CELL1, extRoleName3, "'" + relationName + "'",
-                    "null", HttpStatus.SC_NO_CONTENT);
+            ExtRoleUtils.delete(TEST_CELL1, extCellNameBase, relationName, null, TOKEN, -1);
+            ExtRoleUtils.delete(TEST_CELL1, extRoleName2, relationName, null, TOKEN, -1);
+            ExtRoleUtils.delete(TEST_CELL1, extRoleName3, relationName, null, TOKEN, -1);
             // Relationの削除
-            RelationUtils.delete(TEST_CELL1, TOKEN, relationName, null, HttpStatus.SC_NO_CONTENT);
+            RelationUtils.delete(TEST_CELL1, TOKEN, relationName, null, -1);
         }
     }
 

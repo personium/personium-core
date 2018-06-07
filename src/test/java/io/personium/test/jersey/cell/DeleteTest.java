@@ -537,8 +537,8 @@ public class DeleteTest extends ODataCommon {
             assertEquals(MediaType.APPLICATION_JSON, res.getResponseHeaders(HttpHeaders.CONTENT_TYPE)[0].getValue());
 
             // ExtRole削除
-            ExtRoleUtils.delete(MASTER_TOKEN_NAME, this.cellInfo.cellName, extRoleName,
-                    "'relation'", "null", HttpStatus.SC_NO_CONTENT);
+            ExtRoleUtils.delete(this.cellInfo.cellName, extRoleName, "relation", null,
+                    MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // Relation削除
             RelationUtils.delete(this.cellInfo.cellName, MASTER_TOKEN_NAME, "relation",
@@ -551,8 +551,7 @@ public class DeleteTest extends ODataCommon {
             // Cell作成
             CellUtils.create(this.cellInfo.cellName, MASTER_TOKEN_NAME, -1);
             // ExtRole削除
-            ExtRoleUtils.delete(MASTER_TOKEN_NAME, this.cellInfo.cellName, extRoleName,
-                    "'relation'", "null", -1);
+            ExtRoleUtils.delete(this.cellInfo.cellName, extRoleName, "relation", null, MASTER_TOKEN_NAME, -1);
             // Relation削除
             RelationUtils.delete(this.cellInfo.cellName, MASTER_TOKEN_NAME, "relation", null, -1);
         }

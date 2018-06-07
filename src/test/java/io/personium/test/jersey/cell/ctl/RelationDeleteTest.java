@@ -163,15 +163,15 @@ public class RelationDeleteTest extends ODataCommon {
             RelationUtils.delete(cellName, MASTER_TOKEN_NAME, relationName, boxName, HttpStatus.SC_CONFLICT);
 
             // 結びつくextRoleの削除
-            ExtRoleUtils.delete(MASTER_TOKEN_NAME, cellName, extRoleName, "'" + relationName + "'",
-                    "'" + boxName + "'", HttpStatus.SC_NO_CONTENT);
+            ExtRoleUtils.delete(cellName, extRoleName, relationName,
+                    boxName, MASTER_TOKEN_NAME, HttpStatus.SC_NO_CONTENT);
 
             // Relationの削除(結びつくextRoleが存在しないため、204)
             RelationUtils.delete(cellName, MASTER_TOKEN_NAME, relationName, boxName, HttpStatus.SC_NO_CONTENT);
         } finally {
             // 結びつくextRoleの削除
-            ExtRoleUtils.delete(MASTER_TOKEN_NAME, cellName, extRoleName, "'" + relationName + "'",
-                    "'" + boxName + "'", -1);
+            ExtRoleUtils.delete(cellName, extRoleName, relationName,
+                    boxName, MASTER_TOKEN_NAME, -1);
             // Relationの削除
             RelationUtils.delete(cellName, MASTER_TOKEN_NAME, relationName, boxName, -1);
         }

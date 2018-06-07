@@ -34,6 +34,7 @@ import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.ExtRoleUtils;
+import io.personium.test.utils.RelationUtils;
 import io.personium.test.utils.TResponse;
 
 /**
@@ -44,8 +45,8 @@ public class ExtRoleListTest extends ODataCommon {
 
     private final String token = AbstractCase.MASTER_TOKEN_NAME;
 
-    private static String extRoleTestCell = "testextrolecell1";
-    private static String testExtRoleName = UrlUtils.roleResource(extRoleTestCell, "__", "testextrole");
+    private static final String EXT_ROLE_TEST_CELL = "testextrolecell1";
+    private static final String EXT_ROLE_URL = UrlUtils.roleResource(EXT_ROLE_TEST_CELL, "__", "testextrole");
     private static final String EXT_ROLE_TYPE = "CellCtl.ExtRole";
 
     /**
@@ -62,58 +63,66 @@ public class ExtRoleListTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ExtRole一覧取得の正常系のテスト() throws Exception {
-        String relationName = "testrelation02";
-        String relationBoxName = "box1";
+        String relationName1 = "testrelation01";
+        String relationBoxName1 = "box1";
+        String relationName2 = "testrelation02";
+        String relationBoxName2 = null;
         try {
             // Cell作成
-            CellUtils.create(extRoleTestCell, token, HttpStatus.SC_CREATED);
+            CellUtils.create(EXT_ROLE_TEST_CELL, token, HttpStatus.SC_CREATED);
             // Box作成
-            BoxUtils.create(extRoleTestCell, relationBoxName, token);
+            BoxUtils.create(EXT_ROLE_TEST_CELL, relationBoxName1, token);
             // Relation作成
-            CellCtlUtils.createRelation(extRoleTestCell, relationName, relationBoxName);
+            CellCtlUtils.createRelation(EXT_ROLE_TEST_CELL, relationName1, relationBoxName1);
+            CellCtlUtils.createRelation(EXT_ROLE_TEST_CELL, relationName2, relationBoxName2);
             JSONObject body = new JSONObject();
-            body.put("ExtRole", testExtRoleName);
-            body.put("_Relation.Name", relationName);
-            body.put("_Relation._Box.Name", relationBoxName);
+            body.put("ExtRole", EXT_ROLE_URL);
+            body.put("_Relation.Name", relationName1);
+            body.put("_Relation._Box.Name", relationBoxName1);
             JSONObject body2 = new JSONObject();
-            body2.put("ExtRole", testExtRoleName + "1");
-            body2.put("_Relation.Name", relationName);
-            body2.put("_Relation._Box.Name", relationBoxName);
+            body2.put("ExtRole", EXT_ROLE_URL + "1");
+            body2.put("_Relation.Name", relationName2);
+            body2.put("_Relation._Box.Name", relationBoxName2);
             // ExtRole作成
-            ExtRoleUtils.create(token, extRoleTestCell, body, HttpStatus.SC_CREATED);
-            ExtRoleUtils.create(token, extRoleTestCell, body2, HttpStatus.SC_CREATED);
+            ExtRoleUtils.create(token, EXT_ROLE_TEST_CELL, body, HttpStatus.SC_CREATED);
+            ExtRoleUtils.create(token, EXT_ROLE_TEST_CELL, body2, HttpStatus.SC_CREATED);
             // ExtRole一覧取得
-            TResponse response = ExtRoleUtils.list(token, extRoleTestCell, HttpStatus.SC_OK);
+            TResponse response = ExtRoleUtils.list(token, EXT_ROLE_TEST_CELL, HttpStatus.SC_OK);
 
             // レスポンスボディーのチェック(URI)
             Map<String, String> uri = new HashMap<String, String>();
-            String encodedExtRoleUrl = URLEncoder.encode(testExtRoleName, "utf-8");
-            uri.put(testExtRoleName,
-                    UrlUtils.extRoleUrl(extRoleTestCell, relationBoxName, relationName, encodedExtRoleUrl));
-            uri.put(testExtRoleName + "1",
-                    UrlUtils.extRoleUrl(extRoleTestCell, relationBoxName, relationName, encodedExtRoleUrl + "1"));
+            String encodedExtRoleUrl = URLEncoder.encode(EXT_ROLE_URL, "utf-8");
+            uri.put(EXT_ROLE_URL,
+                    UrlUtils.extRoleUrl(EXT_ROLE_TEST_CELL, relationBoxName1, relationName1, encodedExtRoleUrl));
+            uri.put(EXT_ROLE_URL + "1",
+                    UrlUtils.extRoleUrl(EXT_ROLE_TEST_CELL, relationBoxName2, relationName2, encodedExtRoleUrl + "1"));
 
             // レスポンスボディーのチェック
             Map<String, Map<String, Object>> additional = new HashMap<String, Map<String, Object>>();
             Map<String, Object> additionalprop = new HashMap<String, Object>();
             Map<String, Object> additionalprop2 = new HashMap<String, Object>();
-            additionalprop.put("ExtRole", testExtRoleName);
-            additionalprop.put("_Relation.Name", relationName);
-            additionalprop.put("_Relation._Box.Name", relationBoxName);
-            additionalprop2.put("ExtRole", testExtRoleName + "1");
-            additionalprop2.put("_Relation.Name", relationName);
-            additionalprop2.put("_Relation._Box.Name", relationBoxName);
-            additional.put(testExtRoleName, additionalprop);
-            additional.put(testExtRoleName + "1", additionalprop2);
+            additionalprop.put("ExtRole", EXT_ROLE_URL);
+            additionalprop.put("_Relation.Name", relationName1);
+            additionalprop.put("_Relation._Box.Name", relationBoxName1);
+            additionalprop2.put("ExtRole", EXT_ROLE_URL + "1");
+            additionalprop2.put("_Relation.Name", relationName2);
+            additionalprop2.put("_Relation._Box.Name", relationBoxName2);
+            additional.put(EXT_ROLE_URL, additionalprop);
+            additional.put(EXT_ROLE_URL + "1", additionalprop2);
 
             ODataCommon.checkResponseBodyList(response.bodyAsJson(), uri,
                     EXT_ROLE_TYPE, additional, "ExtRole");
         } finally {
-            CellCtlUtils.deleteExtRole(extRoleTestCell, testExtRoleName, relationName, relationBoxName);
-            CellCtlUtils.deleteExtRole(extRoleTestCell, testExtRoleName + "1", relationName, relationBoxName);
-            CellCtlUtils.deleteRelation(extRoleTestCell, relationName, relationBoxName);
-            BoxUtils.delete(extRoleTestCell, token, relationBoxName);
-            CellUtils.delete(token, extRoleTestCell);
+            ExtRoleUtils.delete(EXT_ROLE_TEST_CELL, EXT_ROLE_URL, relationName1, relationBoxName1,
+                    AbstractCase.MASTER_TOKEN_NAME, -1);
+            ExtRoleUtils.delete(EXT_ROLE_TEST_CELL, EXT_ROLE_URL + "1", relationName2, relationBoxName2,
+                    AbstractCase.MASTER_TOKEN_NAME, -1);
+            RelationUtils.delete(EXT_ROLE_TEST_CELL, AbstractCase.MASTER_TOKEN_NAME,
+                    relationName1, relationBoxName1, -1);
+            RelationUtils.delete(EXT_ROLE_TEST_CELL, AbstractCase.MASTER_TOKEN_NAME,
+                    relationName2, relationBoxName2, -1);
+            BoxUtils.delete(EXT_ROLE_TEST_CELL, token, relationBoxName1);
+            CellUtils.delete(token, EXT_ROLE_TEST_CELL);
         }
     }
 }

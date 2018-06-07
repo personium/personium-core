@@ -100,7 +100,7 @@ public class AuthCheckTest extends JerseyTest {
     static final String RELATION_NAME = "relation1";
     static final String EXTCELL_URL = UrlUtils.extCellResource(CELL_NAME1, UrlUtils.cellRoot(CELL_NAME2));
     static final String ROLE_URI = UrlUtils.roleUrl(CELL_NAME1, null, ROLE_NAME);
-    static final String RELATION_BOX_NAME = "null";
+    static final String RELATION_BOX_NAME = null;
     static final String EXTROLE_NAME1 = UrlUtils.roleResource(APP_CELL_NAME, Box.DEFAULT_BOX_NAME, ROLE_NAME1);
     static final String EXTROLE_NAME2 = UrlUtils.roleResource(CELL_NAME2, Box.DEFAULT_BOX_NAME, ROLE_NAME2);
     static final String EXTROLE_NAME4 = UrlUtils.roleResource(APP_CELL_NAME, Box.DEFAULT_BOX_NAME, ROLE_NAME4);
@@ -540,12 +540,12 @@ public class AuthCheckTest extends JerseyTest {
             LinksUtils.deleteLinksExtCell(CELL_NAME1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot(CELL_NAME2)),
                     Relation.EDM_TYPE_NAME, RELATION_NAME, null, masterToken, -1);
             // Cell1のExtRoleを削除する
-            ExtRoleUtils.delete(masterToken, CELL_NAME1, EXTROLE_NAME1,
-                    "'" + RELATION_NAME + "'", RELATION_BOX_NAME, HttpStatus.SC_NO_CONTENT);
-            ExtRoleUtils.delete(masterToken, CELL_NAME1, EXTROLE_NAME2,
-                    "'" + RELATION_NAME + "'", RELATION_BOX_NAME, HttpStatus.SC_NO_CONTENT);
-            ExtRoleUtils.delete(masterToken, CELL_NAME1, EXTROLE_NAME4,
-                    "'" + RELATION_NAME + "'", RELATION_BOX_NAME, HttpStatus.SC_NO_CONTENT);
+            ExtRoleUtils.delete(CELL_NAME1, EXTROLE_NAME1,
+                    RELATION_NAME, RELATION_BOX_NAME, masterToken, HttpStatus.SC_NO_CONTENT);
+            ExtRoleUtils.delete(CELL_NAME1, EXTROLE_NAME2,
+                    RELATION_NAME, RELATION_BOX_NAME, masterToken, HttpStatus.SC_NO_CONTENT);
+            ExtRoleUtils.delete(CELL_NAME1, EXTROLE_NAME4,
+                    RELATION_NAME, RELATION_BOX_NAME, masterToken, HttpStatus.SC_NO_CONTENT);
             // Cell1のRelationを削除
             RelationUtils.delete(CELL_NAME1, masterToken, RELATION_NAME, null, HttpStatus.SC_NO_CONTENT);
             // Cell1のExtCellを削除
