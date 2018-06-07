@@ -36,16 +36,11 @@
  */
 package io.personium.core.odata;
 
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.ws.rs.core.UriInfo;
 
-import org.odata4j.core.NamedValue;
 import org.odata4j.core.OCollection;
 import org.odata4j.core.OComplexObject;
 import org.odata4j.core.OEntity;
@@ -63,9 +58,6 @@ import org.odata4j.edm.EdmType;
 import org.odata4j.format.json.JsonFormatWriter;
 import org.odata4j.format.json.JsonWriter;
 
-import io.personium.core.PersoniumCoreException;
-import io.personium.core.model.ctl.ExtCell;
-import io.personium.core.model.ctl.ExtRole;
 import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.core.rs.odata.ODataResource;
 
@@ -244,46 +236,9 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
      * @return EntityRelId
      */
     public String getEntityRelId(EdmEntitySet entitySet, OEntityKey entityKey) {
-        OEntityKey convertedKey = convertToUrlEncodeKey(entitySet, entityKey);
+        OEntityKey convertedKey = AbstractODataResource.convertToUrlEncodeKey(entitySet, entityKey);
         String key = AbstractODataResource.replaceDummyKeyToNull(convertedKey.toKeyString());
         return entitySet.getName() + key;
-    }
-
-    /**
-     * URL encode the uri part of EntityKey and return it.
-     * Correspondence of core-issue #214.
-     * @param entitySet EntitySet
-     * @param entityKey EntityKey
-     * @return Converted EntityKey
-     */
-    private OEntityKey convertToUrlEncodeKey(EdmEntitySet entitySet, OEntityKey entityKey) {
-        // Responses that require URL encoding are ExtCell and ExtRole only.
-        if (ExtCell.EDM_TYPE_NAME.equals(entitySet.getName())) {
-            String encoded;
-            try {
-                encoded = URLEncoder.encode((String) entityKey.asSingleValue(), "utf-8");
-            } catch (UnsupportedEncodingException e) {
-                // Usually it is impossible to go through this route.
-                throw PersoniumCoreException.Server.UNKNOWN_ERROR;
-            }
-            return OEntityKey.create(encoded);
-        } else if (ExtRole.EDM_TYPE_NAME.equals(entitySet.getName())) {
-            Map<String, Object> map = new HashMap<String, Object>();
-            for (NamedValue<?> namedValue : entityKey.asComplexValue()) {
-                if (ExtRole.P_EXT_ROLE.getName().equals(namedValue.getName())) {
-                    try {
-                        map.put(namedValue.getName(), URLEncoder.encode((String) namedValue.getValue(), "utf-8"));
-                    } catch (UnsupportedEncodingException e) {
-                        // Usually it is impossible to go through this route.
-                        throw PersoniumCoreException.Server.UNKNOWN_ERROR;
-                    }
-                } else {
-                    map.put(namedValue.getName(), namedValue.getValue());
-                }
-            }
-            return OEntityKey.create(map);
-        }
-        return entityKey;
     }
 
     /**

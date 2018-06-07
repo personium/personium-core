@@ -16,6 +16,7 @@
  */
 package io.personium.test.jersey.cell.ctl;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,10 +57,11 @@ public class ExtRoleListTest extends ODataCommon {
 
     /**
      * ExtRole一覧取得の正常系のテスト.
+     * @throws Exception exception
      */
     @SuppressWarnings("unchecked")
     @Test
-    public final void ExtRole一覧取得の正常系のテスト() {
+    public final void ExtRole一覧取得の正常系のテスト() throws Exception {
         String relationName = "testrelation02";
         String relationBoxName = "box1";
         try {
@@ -85,10 +87,11 @@ public class ExtRoleListTest extends ODataCommon {
 
             // レスポンスボディーのチェック(URI)
             Map<String, String> uri = new HashMap<String, String>();
+            String encodedExtRoleUrl = URLEncoder.encode(testExtRoleName, "utf-8");
             uri.put(testExtRoleName,
-                    UrlUtils.extRoleUrl(extRoleTestCell, relationBoxName, relationName, testExtRoleName));
+                    UrlUtils.extRoleUrl(extRoleTestCell, relationBoxName, relationName, encodedExtRoleUrl));
             uri.put(testExtRoleName + "1",
-                    UrlUtils.extRoleUrl(extRoleTestCell, relationBoxName, relationName, testExtRoleName + "1"));
+                    UrlUtils.extRoleUrl(extRoleTestCell, relationBoxName, relationName, encodedExtRoleUrl + "1"));
 
             // レスポンスボディーのチェック
             Map<String, Map<String, Object>> additional = new HashMap<String, Map<String, Object>>();

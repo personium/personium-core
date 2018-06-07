@@ -41,6 +41,7 @@ import javax.ws.rs.core.UriInfo;
 import org.odata4j.core.ODataConstants;
 import org.odata4j.core.ODataVersion;
 import org.odata4j.core.OEntity;
+import org.odata4j.core.OEntityKey;
 import org.odata4j.core.OProperty;
 import org.odata4j.expression.BoolCommonExpression;
 import org.odata4j.expression.EntitySimpleProperty;
@@ -206,7 +207,8 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         List<MediaType> contentTypes = new ArrayList<MediaType>();
         contentTypes.add(outputFormat);
 
-        String key = AbstractODataResource.replaceDummyKeyToNull(ent.getEntityKey().toKeyString());
+        OEntityKey convertedKey = AbstractODataResource.convertToUrlEncodeKey(ent.getEntitySet(), ent.getEntityKey());
+        String key = AbstractODataResource.replaceDummyKeyToNull(convertedKey.toKeyString());
         String responseStr = renderEntityResponse(resUriInfo, res, format, contentTypes);
 
         // 制御コードのエスケープ処理

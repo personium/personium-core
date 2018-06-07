@@ -24,7 +24,6 @@ import org.json.simple.JSONObject;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.model.ctl.ExtRole;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -72,17 +71,13 @@ public class ExtRoleReadTest extends ODataCommon {
             TResponse response = ExtRoleUtils.get(token, cellName, testExtRoleName, "'" + relationName + "'",
                     "'" + relationBoxName + "'", HttpStatus.SC_OK);
 
-            String location = UrlUtils.cellCtlWithoutSingleQuote(cellName,
-                    ExtRole.EDM_TYPE_NAME,
-                    "ExtRole='" + testExtRoleName + "',_Relation.Name='" + relationName + "',_Relation._Box.Name='"
-                            + relationBoxName + "'");
-
             // レスポンスボディーのチェック
             Map<String, Object> additional = new HashMap<String, Object>();
             additional.put("ExtRole", testExtRoleName);
             additional.put("_Relation.Name", relationName);
             additional.put("_Relation._Box.Name", relationBoxName);
-            ODataCommon.checkResponseBody(response.bodyAsJson(), location, EXT_ROLE_TYPE, additional);
+            ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(),
+                    EXT_ROLE_TYPE, additional);
         } finally {
             CellCtlUtils.deleteExtRole(cellName, testExtRoleName, relationName, relationBoxName);
             CellCtlUtils.deleteRelation(cellName, relationName, relationBoxName);
