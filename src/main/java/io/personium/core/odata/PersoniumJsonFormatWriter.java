@@ -225,7 +225,7 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
      * @param oe OEntity
      * @return EntityRelId
      */
-    public static String getEntityRelId(OEntity oe) {
+    public String getEntityRelId(OEntity oe) {
         return getEntityRelId(oe.getEntitySet(), oe.getEntityKey());
     }
 
@@ -235,8 +235,9 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
      * @param entityKey エンティティキー
      * @return EntityRelId
      */
-    public static String getEntityRelId(EdmEntitySet entitySet, OEntityKey entityKey) {
-        String key = AbstractODataResource.replaceDummyKeyToNull(entityKey.toKeyString());
+    public String getEntityRelId(EdmEntitySet entitySet, OEntityKey entityKey) {
+        OEntityKey convertedKey = AbstractODataResource.convertToUrlEncodeKey(entitySet, entityKey);
+        String key = AbstractODataResource.replaceDummyKeyToNull(convertedKey.toKeyString());
         return entitySet.getName() + key;
     }
 

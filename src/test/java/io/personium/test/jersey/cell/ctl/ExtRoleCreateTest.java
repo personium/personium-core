@@ -16,6 +16,9 @@
  */
 package io.personium.test.jersey.cell.ctl;
 
+import static org.junit.Assert.fail;
+
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,6 +65,8 @@ public class ExtRoleCreateTest extends ODataCommon {
         try {
             CellCtlUtils.createRelation(cellName, relationName, relationBoxName);
             createExtRole(relationName, relationBoxName);
+        } catch (Exception e) {
+            fail("Exception occurred.");
         } finally {
             CellCtlUtils.deleteExtRole(cellName, EXTROLE_PATH_DEFAULT, relationName, relationBoxName);
             CellCtlUtils.deleteRelation(cellName, relationName, relationBoxName);
@@ -77,6 +82,8 @@ public class ExtRoleCreateTest extends ODataCommon {
         try {
             CellCtlUtils.createRelation(cellName, relationName);
             createExtRole(relationName, null);
+        } catch (Exception e) {
+            fail("Exception occurred.");
         } finally {
             CellCtlUtils.deleteExtRole(cellName, EXTROLE_PATH_DEFAULT, relationName);
             CellCtlUtils.deleteRelation(cellName, relationName);
@@ -329,8 +336,10 @@ public class ExtRoleCreateTest extends ODataCommon {
      * 指定されたリレーション名にリンクされたExtRole情報を作成する.
      * @param relationName リレーション名
      * @param relationBoxName リレーションボックス名
+     * @throws Exception exception
      */
-    private void createExtRole(String relationName, String relationBoxName) {
+    private void createExtRole(String relationName, String relationBoxName) throws Exception {
+        String encodedExtRoleUrl = URLEncoder.encode(EXTROLE_PATH_DEFAULT, "utf-8");
         TResponse response = createExtRole(EXTROLE_PATH_DEFAULT, relationName, relationBoxName);
 
         response.statusCode(HttpStatus.SC_CREATED);
@@ -339,7 +348,7 @@ public class ExtRoleCreateTest extends ODataCommon {
         String location = UrlUtils.cellCtlWithoutSingleQuote(
                 "testcell1",
                 "ExtRole",
-                "ExtRole=" + CellCtlUtils.addSingleQuarto(EXTROLE_PATH_DEFAULT)
+                "ExtRole=" + CellCtlUtils.addSingleQuarto(encodedExtRoleUrl)
                         + ",_Relation.Name=" + CellCtlUtils.addSingleQuarto(relationName)
                         + ",_Relation._Box.Name=" + CellCtlUtils.addSingleQuarto(relationBoxName));
 
@@ -350,7 +359,7 @@ public class ExtRoleCreateTest extends ODataCommon {
         additional.put("ExtRole", EXTROLE_PATH_DEFAULT);
         additional.put("_Relation.Name", relationName);
         additional.put("_Relation._Box.Name", relationBoxName);
-        ODataCommon.checkResponseBody(response.bodyAsJson(), location, EXT_ROLE_TYPE, additional);
+        ODataCommon.checkResponseBody(response.bodyAsJson(), response.getLocationHeader(), EXT_ROLE_TYPE, additional);
     }
 
     /**
