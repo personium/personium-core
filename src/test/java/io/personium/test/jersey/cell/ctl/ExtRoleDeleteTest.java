@@ -177,12 +177,12 @@ public class ExtRoleDeleteTest extends ODataCommon {
             LinksUtils.createLinksExtRole(cellName, PersoniumCoreUtils.encodeUrlComp(extRoleName),
                     "relation", null, Role.EDM_TYPE_NAME, roleName, null, token, HttpStatus.SC_NO_CONTENT);
 
-            ExtRoleUtils.delete(token, cellName, extRoleName, "'relation'", "null", HttpStatus.SC_NO_CONTENT);
+            ExtRoleUtils.delete(cellName, extRoleName, "relation", null, token, HttpStatus.SC_NO_CONTENT);
         } finally {
             LinksUtils.deleteLinksExtRole(cellName, PersoniumCoreUtils.encodeUrlComp(extRoleName),
                     "relation", null, Role.EDM_TYPE_NAME, roleName, null, token, -1);
             RoleUtils.delete(cellName, token, roleName, boxName, -1);
-            ExtRoleUtils.delete(token, cellName, extRoleName, "'relation'", "null", -1);
+            ExtRoleUtils.delete(cellName, extRoleName, "relation", null, token, -1);
             RelationUtils.delete(cellName, token, "relation", null, -1);
         }
     }

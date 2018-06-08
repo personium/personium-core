@@ -197,20 +197,22 @@ public class ExtRoleUtils {
 
     /**
      * ExtRoleの削除.
-     * @param token トークン
      * @param cellName セル名
-     * @param extRoleName 外部ロール名
+     * @param extRoleUrl 外部ロール名
      * @param relationName 結びつく関係名
      * @param relationBoxName 結びつくボックス名
+     * @param token トークン
      * @param code レスポンスコード
      */
-    public static void delete(final String token, final String cellName, final String extRoleName,
-            final String relationName, final String relationBoxName, final int code) {
+    public static void delete(String cellName, String extRoleUrl,
+            String relationName, String relationBoxName, String token, int code) {
+        String relationNameStr = "'" + relationName + "'";
+        String relationBoxNameStr = relationBoxName == null ? "null" : "'" + relationBoxName + "'"; // CHECKSTYLE IGNORE
         Http.request("cell/extRole/extRole-delete.txt")
                 .with("cellPath", cellName)
-                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(extRoleName))
-                .with("relationName", relationName)
-                .with("relationBoxName", relationBoxName)
+                .with("extRoleName", PersoniumCoreUtils.encodeUrlComp(extRoleUrl))
+                .with("relationName", relationNameStr)
+                .with("relationBoxName", relationBoxNameStr)
                 .with("token", token)
                 .returns()
                 .statusCode(code);

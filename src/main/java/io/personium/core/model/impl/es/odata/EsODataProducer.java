@@ -930,16 +930,18 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 // 2階層目のNTKPが存在する場合、2階層目のNTKPのエンティティ一覧を取得する
                 PersoniumSearchHit[] nestNtkpSearchResults = null;
                 Map<String, String> nestNtkpValueMap = new HashMap<String, String>();
+                String linkedEntityType = null;
+                String linkedPropName = null;
                 if (propName.startsWith("_")) {
                     HashMap<String, String> tmpntkp = AbstractODataResource.convertNTKP(propName);
-                    entityType = tmpntkp.get("entityType");
-                    propName = tmpntkp.get("propName");
-                    ntkpAccessor = this.getAccessorForEntitySet(entityType);
+                    linkedEntityType = tmpntkp.get("entityType");
+                    linkedPropName = tmpntkp.get("propName");
+                    ntkpAccessor = this.getAccessorForEntitySet(linkedEntityType);
                     nestNtkpSearchResults = ntkpAccessor.search(searchQuery).getHits().getHits();
                     for (PersoniumSearchHit nestNtkpSearchResult : nestNtkpSearchResults) {
                         String linkId = nestNtkpSearchResult.getId();
                         String linkNtkpValue = ((Map<String, Object>) nestNtkpSearchResult.getSource().get(
-                                OEntityDocHandler.KEY_STATIC_FIELDS)).get(propName).toString();
+                                OEntityDocHandler.KEY_STATIC_FIELDS)).get(linkedPropName).toString();
                         nestNtkpValueMap.put(linkId, linkNtkpValue);
                     }
                 }
@@ -950,8 +952,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                     Map<String, Object> linkFields = (Map<String, Object>) ntkpSearchResult.getSource().get(
                             OEntityDocHandler.KEY_LINK);
                     String linkNtkpValue = null;
-                    if (linkFields.containsKey(entityType)) {
-                        linkNtkpValue = nestNtkpValueMap.get(linkFields.get(entityType));
+                    if (linkedEntityType != null) {
+                        linkNtkpValue = nestNtkpValueMap.get(linkFields.get(linkedEntityType));
                     } else {
                         Map<String, Object> staticFields = (Map<String, Object>) ntkpSearchResult.getSource().get(
                                 OEntityDocHandler.KEY_STATIC_FIELDS);
