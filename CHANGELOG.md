@@ -1,3 +1,8 @@
+## 1.6.11
+BUG FIXES:
+* URI returned by response is not URL-encoded.([#214](https://github.com/personium/personium-core/issues/214))
+* "_Relation._Box.Name" can not be acquired normally by ExtRole list retrieval.([#220](https://github.com/personium/personium-core/issues/220))
+
 ## 1.6.10
 IMPROVEMENTS:
 * Implement box export pre-function.([#182](https://github.com/personium/personium-core/issues/182), [#185](https://github.com/personium/personium-core/issues/185), [#188](https://github.com/personium/personium-core/issues/188))
