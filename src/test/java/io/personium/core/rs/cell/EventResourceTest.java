@@ -131,8 +131,8 @@ public class EventResourceTest {
      * リクエストボディに空JSONを指定した場合にエラーとなること.
      * @throws Throwable throwable occurred in test
      */
-    @Test(expected = PersoniumCoreException.class)
-    public void validateEventProperties_Error_body_is_empty() throws Throwable {
+    @Test
+    public void validateEventProperties_Normal_body_is_empty() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
         DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
@@ -158,25 +158,33 @@ public class EventResourceTest {
         // --------------------
         // Run method
         // --------------------
+        PersoniumEvent event;
         try {
             EventResource resource = new EventResource(null, accessContext, davRsCmp);
             Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
             Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
             method2.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
+            event = (PersoniumEvent) method1.invoke(resource, reader);
             method2.invoke(resource, event);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertEquals(null, event.getType());
+        assertEquals(null, event.getObject());
+        assertEquals(null, event.getInfo());
     }
 
     /**
      * リクエストボディのTypeがない場合にエラーとなること.
      * @throws Throwable throwable occurred in test
      */
-    @Test(expected = PersoniumCoreException.class)
-    public void validateEventProperties_Error_Type_is_null() throws Throwable {
+    @Test
+    public void validateEventProperties_Normal_Type_is_null() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
         DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
@@ -203,17 +211,23 @@ public class EventResourceTest {
         // --------------------
         // Run method
         // --------------------
+        PersoniumEvent event;
         try {
             EventResource resource = new EventResource(null, accessContext, davRsCmp);
             Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
             Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
             method2.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
+            event = (PersoniumEvent) method1.invoke(resource, reader);
             method2.invoke(resource, event);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertEquals(null, event.getType());
     }
 
     /**
@@ -496,8 +510,8 @@ public class EventResourceTest {
      * リクエストボディのObjectがない場合にエラーとなること.
      * @throws Throwable throwable occurred in test
      */
-    @Test(expected = PersoniumCoreException.class)
-    public void validateEventProperties_Error_Object_is_null() throws Throwable {
+    @Test
+    public void validateEventProperties_Normal_Object_is_null() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
         DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
@@ -524,17 +538,23 @@ public class EventResourceTest {
         // --------------------
         // Run method
         // --------------------
+        PersoniumEvent event;
         try {
             EventResource resource = new EventResource(null, accessContext, davRsCmp);
             Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
             Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
             method2.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
+            event = (PersoniumEvent) method1.invoke(resource, reader);
             method2.invoke(resource, event);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertEquals(null, event.getObject());
     }
 
     /**
@@ -685,8 +705,8 @@ public class EventResourceTest {
      * リクエストボディのInfoがない場合にエラーとなること.
      * @throws Throwable throwable occurred in test
      */
-    @Test(expected = PersoniumCoreException.class)
-    public void validateEventProperties_Error_Info_is_null() throws Throwable {
+    @Test
+    public void validateEventProperties_Normal_Info_is_null() throws Throwable {
         AccessContext accessContext = mock(AccessContext.class);
         DavRsCmp davRsCmp = mock(DavRsCmp.class);
 
@@ -713,17 +733,23 @@ public class EventResourceTest {
         // --------------------
         // Run method
         // --------------------
+        PersoniumEvent event;
         try {
             EventResource resource = new EventResource(null, accessContext, davRsCmp);
             Method method1 = EventResource.class.getDeclaredMethod("getRequestBody", Reader.class);
             method1.setAccessible(true);
             Method method2 = EventResource.class.getDeclaredMethod("validateEventProperties", PersoniumEvent.class);
             method2.setAccessible(true);
-            PersoniumEvent event = (PersoniumEvent) method1.invoke(resource, reader);
+            event = (PersoniumEvent) method1.invoke(resource, reader);
             method2.invoke(resource, event);
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertEquals(null, event.getInfo());
     }
 
     /**

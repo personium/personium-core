@@ -204,7 +204,9 @@ class TimerRuleManager {
         builder.append('.');
         builder.append(object);
         builder.append('.');
-        builder.append(info);
+        if (info != null) {
+            builder.append(info);
+        }
         builder.append('.');
         builder.append(cellId);
         builder.append('.');
