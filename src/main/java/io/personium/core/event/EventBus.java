@@ -61,10 +61,10 @@ public final class EventBus {
      * Start EventBus.
      */
     public static void start() {
+        EventFactory.createEventPublisher();
+
         // RuleManager
         RuleManager.getInstance();
-
-        EventFactory.createEventPublisher();
 
         // create thread pool.
         int threadNumber = PersoniumUnitConfig.getEventProcThreadNum();
@@ -95,13 +95,13 @@ public final class EventBus {
             pool.shutdownNow();
         }
 
-        EventFactory.closeEventPublisher();
-
         // shutdown RuleManager.
         RuleManager rman = RuleManager.getInstance();
         if (rman != null) {
             rman.shutdown();
         }
+
+        EventFactory.closeEventPublisher();
     }
 
 }
