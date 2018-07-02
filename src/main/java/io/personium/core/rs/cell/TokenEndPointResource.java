@@ -35,6 +35,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -84,7 +85,6 @@ import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.UriUtils;
 import io.personium.plugin.base.Plugin;
 import io.personium.plugin.base.PluginException;
-import io.personium.plugin.base.auth.AuthConst;
 import io.personium.plugin.base.auth.AuthPlugin;
 import io.personium.plugin.base.auth.AuthenticatedIdentity;
 
@@ -131,8 +131,8 @@ public class TokenEndPointResource {
      * @param clientId One of query parameters
      * @param clientSecret One of query parameters
      * @param pCookie One of query parameters
-     * @param idToken One of query parameters
      * @param host Host header
+     * @param formParams Body parameters
      * @return JAX-RS Response Object
      */
     @POST
@@ -149,8 +149,8 @@ public class TokenEndPointResource {
             @FormParam(Key.CLIENT_ID) final String clientId,
             @FormParam(Key.CLIENT_SECRET) final String clientSecret,
             @FormParam("p_cookie") final String pCookie,
-            @FormParam(Key.ID_TOKEN) final String idToken,
-            @HeaderParam(HttpHeaders.HOST) final String host) {
+            @HeaderParam(HttpHeaders.HOST) final String host,
+            MultivaluedMap<String, String> formParams) {
 
         // Accept unit local scheme url.
         String target = UriUtils.convertSchemeFromLocalUnitToHttp(
@@ -200,7 +200,7 @@ public class TokenEndPointResource {
             return receiveCode(target, pOwner, schema, host, code);
         } else {
             // Call Auth Plugins
-            return this.callAuthPlugins(grantType, idToken, target, pOwner,
+            return this.callAuthPlugins(grantType, formParams, target, pOwner,
                     schema, host);
         }
     }
@@ -274,7 +274,7 @@ public class TokenEndPointResource {
     /**
      * call Auth Plugins.
      * @param grantType
-     * @param idToken
+     * @param params
      * @param target
      * @param owner
      * @param schema
@@ -282,7 +282,7 @@ public class TokenEndPointResource {
      * @param host
      * @return Response
      */
-    private Response callAuthPlugins(String grantType, String idToken,
+    private Response callAuthPlugins(String grantType, MultivaluedMap<String, String> params,
             String target, String owner, String schema, String host) {
         // Plugin manager.
         PluginManager pm = PersoniumCoreApplication.getPluginManager();
@@ -296,19 +296,17 @@ public class TokenEndPointResource {
 
         AuthenticatedIdentity ai = null;
         // Invoke the plug-in function.
-        Map<String, String> body = new HashMap<String, String>();
-        body.put(AuthConst.KEY_TOKEN, idToken);
+        Map<String, List<String>> body = new HashMap<String, List<String>>();
+        if (params != null) {
+            for (String key : params.keySet()) {
+                body.put(key, params.get(key));
+            }
+        }
         Object plugin = (Plugin) pi.getObj();
         try {
             ai = ((AuthPlugin) plugin).authenticate(body);
-
         } catch (PluginException pe) {
-            PersoniumCoreAuthnException pcae = PersoniumCoreAuthnException.mapFrom(pe);
-            if (pcae != null) {
-                throw pcae;
-            }
-            throw PersoniumCoreAuthnException.Plugin.PLUGIN_DEFINED_CLIENT_ERROR.reason(pe);
-
+            throw PersoniumCoreException.create(pe);
         } catch (Exception e) {
             // Unexpected exception throwed from "Plugin", create default PersoniumCoreAuthException
             // and set reason from catched Exception.
@@ -316,32 +314,32 @@ public class TokenEndPointResource {
         }
 
         if (ai == null) {
-            throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
+            throw PersoniumCoreException.Plugin.PLUGIN_AUTHN_FAILED;
         }
-        String account = ai.getAccountName();
-        String oidc = ai.getAttributes(AuthConst.KEY_OIDC_TYPE);
-        if (account == null || oidc == null) {
-            throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
+        String accountName = ai.getAccountName();
+        String accountType = ai.getAccountType();
+        if (accountName == null || accountType == null) {
+            throw PersoniumCoreAuthnException.Plugin.PLUGIN_AUTHN_FAILED;
         }
 
         // If the Account shown in IdToken does not exist in cell.
-        OEntityWrapper idTokenUserOew = cell.getAccount(account);
+        OEntityWrapper idTokenUserOew = cell.getAccount(accountName);
         if (idTokenUserOew == null) {
             // アカウントの存在確認に悪用されないように、失敗の旨のみのエラー応答
-            PersoniumCoreLog.OIDC.NO_SUCH_ACCOUNT.params(account).writeLog();
-            throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
+            PersoniumCoreLog.OIDC.NO_SUCH_ACCOUNT.params(accountName).writeLog();
+            throw PersoniumCoreAuthnException.Plugin.PLUGIN_AUTHN_FAILED;
         }
 
         // Confirm if OidC is included in Type when there is Account.
-        if (!AuthUtils.getAccountType(idTokenUserOew).contains(oidc)) {
+        if (!AuthUtils.getAccountType(idTokenUserOew).contains(accountType)) {
             // アカウントの存在確認に悪用されないように、失敗の旨のみのエラー応答
-            PersoniumCoreLog.OIDC.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(oidc,
-                    account).writeLog();
-            throw PersoniumCoreAuthnException.OIDC_AUTHN_FAILED;
+            PersoniumCoreLog.OIDC.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(accountType,
+                    accountName).writeLog();
+            throw PersoniumCoreAuthnException.Plugin.PLUGIN_AUTHN_FAILED;
         }
 
         // When processing is normally completed, issue a token.
-        return this.issueToken(target, owner, host, schema, account);
+        return this.issueToken(target, owner, host, schema, accountName);
     }
 
     /**

@@ -16,9 +16,10 @@
  */
 package io.personium.core.plugin;
 
-import io.personium.plugin.base.auth.AuthPlugin;
-
 import java.util.ArrayList;
+import java.util.List;
+
+import io.personium.plugin.base.auth.AuthPlugin;
 
 /**
  * Plugin Load.
@@ -48,8 +49,8 @@ public class PluginManager {
      * @param type String
      * @return pi PluginInfo
      */
-    public ArrayList<PluginInfo> getPluginsByType(String type) {
-        ArrayList<PluginInfo> typeList = new ArrayList<PluginInfo>();
+    public List<PluginInfo> getPluginsByType(String type) {
+        List<PluginInfo> typeList = new ArrayList<PluginInfo>();
         for (int i = 0; i < pl.getPlugins().size(); i++) {
             PluginInfo pi = pl.getPlugins().get(i);
             if (type.endsWith(pi.getType())) {

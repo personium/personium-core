@@ -27,6 +27,7 @@ import org.apache.http.HttpStatus;
 
 import io.personium.core.exceptions.ODataErrorMessage;
 import io.personium.core.utils.EscapeControlCode;
+import io.personium.plugin.base.PluginException;
 import io.personium.plugin.base.PluginMessageUtils.Severity;
 
 /**
@@ -952,20 +953,21 @@ public class PersoniumCoreException extends RuntimeException {
      * Pluginエラー.
      */
     public static class Plugin {
-        /**
-         * プラグイン作者が定義したエラー.
-         */
-        public static final PersoniumCoreException PLUGIN_DEFINED_CLIENT_ERROR = create("PR400-PL-0001");
+        // "PL-0001" is used only with create(PluginException).
+//        /**
+//         * プラグイン作者が定義したエラー.
+//         */
+//        public static final PersoniumCoreException PLUGIN_DEFINED_ERROR = create("PL-0001");
 
         /**
-         * プラグイン作者が定義したエラー.
+         * プラグイン認証失敗.
          */
-        public static final PersoniumCoreException PLUGIN_DEFINED_SERVER_ERROR = create("PR500-PL-0001");
+        public static final PersoniumCoreException PLUGIN_AUTHN_FAILED = create("PR400-PL-0001");
 
         /**
          * プラグイン内部でキャッチされず、外に出てきてしまった非チェック例外に対応.
          */
-        public static final PersoniumCoreException UNEXPECTED_ERROR = create("PR500-PL-0002");
+        public static final PersoniumCoreException UNEXPECTED_ERROR = create("PR500-PL-0001");
 
     }
 
@@ -1110,6 +1112,19 @@ public class PersoniumCoreException extends RuntimeException {
         String message = PersoniumCoreMessageUtils.getMessage(code);
 
         return new PersoniumCoreException(code, severity, message, statusCode);
+    }
+
+    /**
+     * Factory method.
+     * @param pluginException PluginException
+     * @return PersoniumCoreException
+     */
+    public static PersoniumCoreException create(PluginException pluginException) {
+        int statusCode = pluginException.getStatusCode();
+        Severity severity = decideSeverity(statusCode);
+        String message = PersoniumCoreMessageUtils.getMessage("PL-0001");
+        message = MessageFormat.format(message, pluginException.getMessage());
+        return new PersoniumCoreException("PL-0001", severity, message, statusCode);
     }
 
     /**

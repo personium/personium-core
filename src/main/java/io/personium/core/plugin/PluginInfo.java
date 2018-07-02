@@ -21,7 +21,7 @@ import io.personium.plugin.base.Plugin;
 /**
  * plugin Info Class.
  */
-public class PluginInfo implements Plugin {
+public class PluginInfo {
     private Object obj;
     private String type;
     private String name;
@@ -46,14 +46,6 @@ public class PluginInfo implements Plugin {
     }
 
     /**
-     * set Object.
-     * @param obj Object
-     */
-    public void setObj(Object obj) {
-        this.obj = obj;
-    }
-
-    /**
      * get Name.
      * @return name String
      */
@@ -62,26 +54,10 @@ public class PluginInfo implements Plugin {
     }
 
     /**
-     * set Name.
-     * @param name String
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
      * get Type.
      * @return type String
      */
     public String getType() {
         return type;
-    }
-
-    /**
-     * set Type.
-     * @param type String
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 }

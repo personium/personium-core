@@ -31,6 +31,11 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.plugin.PluginInfo;
+import io.personium.core.plugin.PluginManager;
+import io.personium.core.rs.PersoniumCoreApplication;
+import io.personium.plugin.base.auth.AuthConst;
+import io.personium.plugin.base.auth.AuthPlugin;
 
 /**
  * 認証関連のユーティリティ.
@@ -71,30 +76,44 @@ public final class AuthUtils {
     }
 
     /**
-     * パスワードのバリデートチェックをする.
+     * Perform hashing of the password.
+     * Validate the password before hashing.
      * @param pCredHeader pCredHeader
      * @param entitySetName entitySetName
-     * @return Hash文字列化されたパスワード
+     * @return hashing password
      */
-    public static String checkValidatePassword(final String pCredHeader, String entitySetName) {
-        if (Account.EDM_TYPE_NAME.equals(entitySetName)) {
-            if (pCredHeader != null) {
-                if (pCredHeader.length() >= MIN_PASSWORD_LENGTH
-                        && pCredHeader.length() <= MAX_PASSWORD_LENGTH) {
-                    String regex = "^[a-zA-Z0-9-_]{0,}$";
-                    Pattern pattern = Pattern.compile(regex);
-                    Matcher m = pattern.matcher(pCredHeader);
-                    if (!m.find()) {
-                        throw PersoniumCoreException.Auth.PASSWORD_INVALID;
-                    }
-                } else {
-                    throw PersoniumCoreException.Auth.PASSWORD_INVALID;
-                }
-            }
-            String hPassStr = AuthUtils.hashPassword(pCredHeader);
-            return hPassStr;
+    public static String hashPassword(String pCredHeader, String entitySetName) {
+        if (!Account.EDM_TYPE_NAME.equals(entitySetName)) {
+            return null;
         }
-        return null;
+        validatePassword(pCredHeader);
+        String hPassStr = AuthUtils.hashPassword(pCredHeader);
+        return hPassStr;
+    }
+
+    /**
+     * Validate account type.
+     * @param oEntityWrapper EntityWrapper
+     * @param entitySetName entitySetName
+     */
+    public static void validateAccountType(OEntityWrapper oEntityWrapper, String entitySetName) {
+        if (!Account.EDM_TYPE_NAME.equals(entitySetName)) {
+            return;
+        }
+        String accountType =  (String) oEntityWrapper.getProperty(Account.P_TYPE.getName()).getValue();
+        if (Account.TYPE_VALUE_BASIC.equals(accountType)) {
+            return;
+        }
+        // Does it match the AccountType added in AuthPlugin.
+        PluginManager pluginManager = PersoniumCoreApplication.getPluginManager();
+        List<PluginInfo> pluginInfoList = pluginManager.getPluginsByType(AuthConst.PLUGIN_TYPE);
+        for (PluginInfo pluginInfo : pluginInfoList) {
+            AuthPlugin plugin = (AuthPlugin) pluginInfo.getObj();
+            if (accountType.equals(plugin.getAccountType())) {
+                return;
+            }
+        }
+        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Account.P_TYPE.getName());
     }
 
     /**
@@ -118,12 +137,23 @@ public final class AuthUtils {
     }
 
     /**
-     * isAccountTypeOidcGoogle.
-     * @param oew oew
-     * @return List<String>
-    */
-    public static boolean isAccountTypeOidcGoogle(OEntityWrapper oew) {
-        return getAccountType(oew).contains(Account.TYPE_VALUE_OIDC_GOOGLE);
+     * Validate password.
+     * @param pCredHeader pCredHeader
+     */
+    private static void validatePassword(String pCredHeader) {
+        if (pCredHeader == null) {
+            return;
+        }
+        if (pCredHeader.length() >= MIN_PASSWORD_LENGTH
+                && pCredHeader.length() <= MAX_PASSWORD_LENGTH) {
+            String regex = "^[a-zA-Z0-9-_]{0,}$";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher m = pattern.matcher(pCredHeader);
+            if (!m.find()) {
+                throw PersoniumCoreException.Auth.PASSWORD_INVALID;
+            }
+        } else {
+            throw PersoniumCoreException.Auth.PASSWORD_INVALID;
+        }
     }
-
 }

@@ -101,7 +101,8 @@ public final class CellCtlResource extends ODataResource {
     @Override
     public void beforeCreate(final OEntityWrapper oEntityWrapper) {
         String entitySetName = oEntityWrapper.getEntitySet().getName();
-        String hPassStr = AuthUtils.checkValidatePassword(pCredHeader, entitySetName);
+        AuthUtils.validateAccountType(oEntityWrapper, entitySetName);
+        String hPassStr = AuthUtils.hashPassword(pCredHeader, entitySetName);
         if (hPassStr != null) {
             oEntityWrapper.put("HashedCredential", hPassStr);
         }
@@ -110,7 +111,8 @@ public final class CellCtlResource extends ODataResource {
     @Override
     public void beforeUpdate(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
         String entitySetName = oEntityWrapper.getEntitySet().getName();
-        String hPassStr = AuthUtils.checkValidatePassword(pCredHeader, entitySetName);
+        AuthUtils.validateAccountType(oEntityWrapper, entitySetName);
+        String hPassStr = AuthUtils.hashPassword(pCredHeader, entitySetName);
         if (hPassStr != null) {
             oEntityWrapper.put("HashedCredential", hPassStr);
         }

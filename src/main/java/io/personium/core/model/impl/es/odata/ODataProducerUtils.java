@@ -226,7 +226,7 @@ public final class ODataProducerUtils {
      */
     public static void createRequestPassword(EntitySetDocHandler oedhNew, String dcCredHeader) {
         // 更新前処理(Hash文字列化したパスワードを取得)
-        String hPassStr = AuthUtils.checkValidatePassword(dcCredHeader, oedhNew.getType());
+        String hPassStr = AuthUtils.hashPassword(dcCredHeader, oedhNew.getType());
         // 変更するパスワードをHashedCredentialへ上書きする
         Map<String, Object> hiddenFields = oedhNew.getHiddenFields();
         // X-Personium-Credentialの値をHashedCredentialのキーへputする

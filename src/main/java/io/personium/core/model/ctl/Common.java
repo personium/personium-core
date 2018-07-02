@@ -172,10 +172,6 @@ public class Common {
      * ID項目に対するp:Formatの定義.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_ID = new ArrayList<EdmAnnotation<?>>();
-    /**
-     * AccountType項目に対するp:Formatの定義.
-     */
-    public static final List<EdmAnnotation<?>> P_FORMAT_ACCOUNT_TYPE = new ArrayList<EdmAnnotation<?>>();
 
     /**
      * DC名前空間.
@@ -221,7 +217,6 @@ public class Common {
         P_FORMAT_MULTIPLICITY.add(createFormatMultiplicityAnnotation());
         P_FORMAT_ID.add(createFormatIdAnnotation());
         P_FORMAT_RELATION_NAME.add(createFormatRelationNameAnnotation());
-        P_FORMAT_ACCOUNT_TYPE.add(createFormatAccountTypeAnnotation());
     }
 
     /**
@@ -292,16 +287,5 @@ public class Common {
         return new EdmAnnotationAttribute(
                 P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
                 P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_ID + "')");
-    }
-
-    /**
-     * Account Type 項目に対するp:FormatのAnnotationを返却.
-     * @return EdmAnnotation
-     */
-    private static EdmAnnotation<?> createFormatAccountTypeAnnotation() {
-        return new EdmAnnotationAttribute(
-                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
-                P_FORMAT, P_FORMAT_PATTERN_USUSST + "('" + Account.TYPE_VALUE_BASIC + "', '"
-                + Account.TYPE_VALUE_OIDC_GOOGLE + "')");
     }
 }

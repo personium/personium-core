@@ -21,8 +21,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.jar.JarFile;
 import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 /**
@@ -69,7 +69,7 @@ public class PluginFactory {
             try {
                 // get class
                 URL url = file.getCanonicalFile().toURI().toURL();
-                ucl = new URLClassLoader(new URL[] {url});
+                ucl = new URLClassLoader(new URL[] {url}, getClass().getClassLoader());
 
                 System.out.println(ucl.getURLs().toString());
                 Class<?> clazz = ucl.loadClass(cname);
