@@ -119,21 +119,21 @@ public class EventResource {
 
         // Type
         obj = body.get("Type");
-        if (!(obj instanceof String)) {
+        if (obj != null && !(obj instanceof String)) {
             throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("Type");
         }
         String type = (String) body.get("Type");
 
         // Object
         obj = body.get("Object");
-        if (!(obj instanceof String)) {
+        if (obj != null && !(obj instanceof String)) {
             throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("Object");
         }
         String object = (String) body.get("Object");
 
         // Info
         obj = body.get("Info");
-        if (!(obj instanceof String)) {
+        if (obj != null && !(obj instanceof String)) {
             throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("Info");
         }
         String info = (String) body.get("Info");
@@ -155,21 +155,15 @@ public class EventResource {
      */
     private void validateEventProperties(final PersoniumEvent event) {
         String type = event.getType();
-        if (type == null) {
-            throw PersoniumCoreException.Event.INPUT_REQUIRED_FIELD_MISSING.params("Type");
-        } else if (!PersoniumEvent.validateType(type)) {
+        if (type != null && !PersoniumEvent.validateType(type)) {
             throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("Type");
         }
         String object = event.getObject();
-        if (object == null) {
-            throw PersoniumCoreException.Event.INPUT_REQUIRED_FIELD_MISSING.params("Object");
-        } else if (!PersoniumEvent.validateObject(object)) {
+        if (object != null && !PersoniumEvent.validateObject(object)) {
             throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("Object");
         }
         String info = event.getInfo();
-        if (info == null) {
-            throw PersoniumCoreException.Event.INPUT_REQUIRED_FIELD_MISSING.params("Info");
-        } else if (!PersoniumEvent.validateInfo(info)) {
+        if (info != null && !PersoniumEvent.validateInfo(info)) {
             throw PersoniumCoreException.Event.REQUEST_FIELD_FORMAT_ERROR.params("Info");
         }
     }

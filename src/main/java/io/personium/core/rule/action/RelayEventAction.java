@@ -44,6 +44,9 @@ public class RelayEventAction extends RelayAction {
     @SuppressWarnings({ "unchecked" })
     protected JSONObject createEvent(PersoniumEvent event) {
         String type = event.getType();
+        if (type == null) {
+            type = "";
+        }
         if (!type.startsWith("relay.")) {
             if (event.getExternal()) {
                 type = "relay.ext." + type;

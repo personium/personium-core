@@ -313,7 +313,6 @@ public final class CellCtlResource extends ODataResource {
 
         // type: timer.periodic or timer.oneshot -> external: false
         //                                       -> object: decimal number
-        //                                       -> info: required
         if (PersoniumEventType.timerPeriodic().equals(type) || PersoniumEventType.timerOneshot().equals(type)) {
             // external: false
             if (external) {
@@ -322,10 +321,6 @@ public final class CellCtlResource extends ODataResource {
             // object: > 0
             if (object == null || !ODataUtils.validateTime(object)) {
                 return Rule.P_OBJECT.getName();
-            }
-            // info: required
-            if (info == null) {
-                return Rule.P_INFO.getName();
             }
         } else if (boxBound.booleanValue()) {
             // boxbound
