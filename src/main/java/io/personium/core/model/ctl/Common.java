@@ -301,7 +301,6 @@ public class Common {
     private static EdmAnnotation<?> createFormatAccountTypeAnnotation() {
         return new EdmAnnotationAttribute(
                 P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
-                P_FORMAT, P_FORMAT_PATTERN_USUSST + "('" + Account.TYPE_VALUE_BASIC + "', '"
-                + Account.TYPE_VALUE_OIDC_GOOGLE + "')");
+                P_FORMAT, P_FORMAT_PATTERN_USUSST);
     }
 }

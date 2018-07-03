@@ -18,6 +18,22 @@ package io.personium.test.plugin;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.http.HttpStatus;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+
+import com.sun.jersey.test.framework.JerseyTest;
+
 import io.personium.core.plugin.PluginInfo;
 import io.personium.core.plugin.PluginManager;
 import io.personium.plugin.base.PluginException;
@@ -31,20 +47,6 @@ import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
-
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.http.HttpStatus;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * Pluginクラスのテスト.
@@ -67,8 +69,7 @@ public class PluginTest extends JerseyTest {
     /**
      * properties file path.
      */
-    public static final String OAUTH_PROPERTIES_FILE
-        = "/src/test/resources/oauth/oauth.properties";
+    public static final String OAUTH_PROPERTIES_FILE = "/src/test/resources/oauth/oauth.properties";
 
     /** google oidc. **/
     public static final String OIDC_GOOGLE = "oidc:google";
@@ -166,10 +167,10 @@ public class PluginTest extends JerseyTest {
         // プラグインjarがディレクトリに存在する場合
         PluginManager pm = new PluginManager();
         if (pm.size() > 0) {
-            ArrayList<PluginInfo> pl = pm.getPluginsByType(AuthConst.TYPE_AUTH);
+            List<PluginInfo> pl = pm.getPluginsByType(AuthConst.PLUGIN_TYPE);
             for (int i = 0; i < pl.size(); i++) {
                 PluginInfo pi = (PluginInfo) pl.get(i);
-                if (pi.getType().equals(AuthConst.TYPE_AUTH)) {
+                if (pi.getType().equals(AuthConst.PLUGIN_TYPE)) {
                     bFind = true;
                 }
             }
@@ -191,9 +192,7 @@ public class PluginTest extends JerseyTest {
             PluginInfo pi = pm.getPluginsByGrantType(GOOGLE_GRANT_TYPE);
 
             // Map設定
-            Map<String, String> body = new HashMap<String, String>();
-            // debug message
-            body.put(AuthConst.KEY_MESSAGE, "");
+            Map<String, List<String>> body = new HashMap<String, List<String>>();
 
             // idTokenの設定
             Properties properties = getIdTokenProperty();
@@ -203,7 +202,7 @@ public class PluginTest extends JerseyTest {
             if (idToken != null && account != null) {
                 try {
                     // Plugin
-                    body.put(AuthConst.KEY_TOKEN, idToken);
+                    body.put("id_token", Arrays.asList(idToken));
                     AuthPlugin ap = (AuthPlugin) pi.getObj();
                     AuthenticatedIdentity ai = ap.authenticate(body);
 
@@ -212,7 +211,7 @@ public class PluginTest extends JerseyTest {
                         String accountName = ai.getAccountName();
                         if (accountName != null) {
                             if (account.equals(accountName)) {
-                                String oidcType = ai.getAttributes(AuthConst.KEY_OIDC_TYPE);
+                                String oidcType = ai.getAccountType();
                                 System.out.println(
                                 "OK authenticate account = " + accountName + " oidcType=" + oidcType);
                             }
@@ -224,7 +223,6 @@ public class PluginTest extends JerseyTest {
                     }
                 } catch (PluginException pe) {
                     System.out.println(pe);
-                    System.out.println(pe.getType());
                     assertFalse(true);
                 } catch (Exception e) {
                     System.out.println(e);

@@ -16,9 +16,9 @@
  */
 package io.personium.core.plugin;
 
-import io.personium.core.PersoniumUnitConfig;
-
 import java.util.ArrayList;
+
+import io.personium.core.PersoniumUnitConfig;
 
 /**
  * Plugin Load.
@@ -50,14 +50,6 @@ public class PluginList {
      */
     public ArrayList<PluginInfo> getPlugins() {
         return this.plugins;
-    }
-
-    /**
-     * setPlugins.
-     * @param plugins ArrayList
-     */
-    public void setPlugins(ArrayList<PluginInfo> plugins) {
-        this.plugins = plugins;
     }
 
 }

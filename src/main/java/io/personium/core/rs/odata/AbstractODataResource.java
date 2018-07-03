@@ -21,10 +21,8 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -695,8 +693,6 @@ public abstract class AbstractODataResource {
                     validatePropertySchemaUri(propName, op);
                 } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_CELL_URL)) {
                     validatePropertyCellUrl(propName, op);
-                } else if (pFormat.startsWith(Common.P_FORMAT_PATTERN_USUSST)) {
-                    validatePropertyUsusst(propName, op, pFormat);
                 }
             }
         }
@@ -835,49 +831,6 @@ public abstract class AbstractODataResource {
     protected void validatePropertyCellUrl(String propName, OProperty<?> op) {
         if (!ODataUtils.isValidCellUrl(op.getValue().toString())) {
             throw PersoniumCoreException.OData.CELL_URL_FORMAT_ERROR.params(propName);
-        }
-    }
-
-    /**
-     * プロパティ項目の値を、1つ以上のスペース区切り文字列にマッチするかチェックする.
-     * @param propName プロパティ名
-     * @param op OProperty
-     * @param pFormat pFormatの値
-     */
-    protected void validatePropertyUsusst(String propName, OProperty<?> op, String pFormat) {
-        // pFormatから候補をリストとして抽出.
-        Pattern formatPattern = Pattern.compile(Common.P_FORMAT_PATTERN_USUSST + "\\((.+)\\)");
-        Matcher formatMatcher = formatPattern.matcher(pFormat);
-        formatMatcher.matches();
-        pFormat = formatMatcher.group(1);
-
-        String[] allowedTokens = pFormat.split(", ");
-        for (int i = 0; i < allowedTokens.length; i++) {
-            //remove single quotations.
-            allowedTokens[i] = allowedTokens[i].replaceAll("\'(.+)\'", "$1");
-        }
-        List<String> allowedTokenList = Arrays.asList(allowedTokens);
-
-        // 検証される文字列を配列にする
-        String value = op.getValue().toString();
-        if (value.indexOf("  ") > -1) {
-            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
-           }
-        String[] tokens = value.split(" ");
-        Set<String> overlapChk = new HashSet<>();
-
-        // 検証される文字列をループして全てマッチするか確認する
-        // 1回でもマッチしないものがあったら、例外を投げる
-        for (String token : tokens) {
-            if (!allowedTokenList.contains(token)) {
-                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
-               }
-            //重複チェック
-            if (overlapChk.contains(token)) {
-                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
-               } else {
-                   overlapChk.add(token);
-               }
         }
     }
 

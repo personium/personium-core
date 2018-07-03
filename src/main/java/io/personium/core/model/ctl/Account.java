@@ -32,21 +32,6 @@ public class Account {
      * Type値 basic.
      */
     public static final String TYPE_VALUE_BASIC = "basic";
-    /**
-     * Type値 oidc:google.
-     */
-    public static final String TYPE_VALUE_OIDC_GOOGLE = "oidc:google";
-
-    /**
-     * 対応するID providerが増えた場合は追加する
-     */
-
-    /**
-     * 有効なType値の配列.
-     */
-    public static final String[] SUPPORTED_TYPE_VALUES = new String[] {
-        TYPE_VALUE_BASIC, TYPE_VALUE_OIDC_GOOGLE
-    };
 
     /**
      * Edm EntityType名.
