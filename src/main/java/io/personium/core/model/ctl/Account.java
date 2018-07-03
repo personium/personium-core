@@ -59,7 +59,7 @@ public class Account {
      * Typeプロパティの定義体.
      */
     public static final EdmProperty.Builder P_TYPE = EdmProperty.newBuilder("Type").setType(EdmSimpleType.STRING)
-            .setDefaultValue(TYPE_VALUE_BASIC);
+            .setDefaultValue(TYPE_VALUE_BASIC).setAnnotations(Common.P_FORMAT_ACCOUNT_TYPE);
 
     /**
      * Cellプロパティの定義体.

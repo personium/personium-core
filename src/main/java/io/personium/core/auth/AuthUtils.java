@@ -19,6 +19,7 @@ package io.personium.core.auth;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -100,20 +101,31 @@ public final class AuthUtils {
         if (!Account.EDM_TYPE_NAME.equals(entitySetName)) {
             return;
         }
-        String accountType =  (String) oEntityWrapper.getProperty(Account.P_TYPE.getName()).getValue();
-        if (Account.TYPE_VALUE_BASIC.equals(accountType)) {
-            return;
-        }
+
+        // List of allowed types.
+        List<String> allowedTypeList = new ArrayList<String>();
+        allowedTypeList.add(Account.TYPE_VALUE_BASIC);
         // Does it match the AccountType added in AuthPlugin.
         PluginManager pluginManager = PersoniumCoreApplication.getPluginManager();
         List<PluginInfo> pluginInfoList = pluginManager.getPluginsByType(AuthConst.PLUGIN_TYPE);
         for (PluginInfo pluginInfo : pluginInfoList) {
             AuthPlugin plugin = (AuthPlugin) pluginInfo.getObj();
-            if (accountType.equals(plugin.getAccountType())) {
-                return;
-            }
+            allowedTypeList.add(plugin.getAccountType());
         }
-        throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Account.P_TYPE.getName());
+
+        // Check if all specified types match the allowed types.
+        String type = (String) oEntityWrapper.getProperty(Account.P_TYPE.getName()).getValue();
+        String[] accountTypes = type.split(" ");
+        if (accountTypes == null || accountTypes.length <= 0) {
+            throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Account.P_TYPE.getName());
+        }
+        for (String accountType : accountTypes) {
+            if (!allowedTypeList.contains(accountType)) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(Account.P_TYPE.getName());
+            }
+            // Remove to avoid duplication.
+            allowedTypeList.remove(accountType);
+        }
     }
 
     /**
