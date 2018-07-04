@@ -1,3 +1,11 @@
+## 1.6.12
+BUG FIXES:
+* It is necessary to modify the plugin mechanism.([#224](https://github.com/personium/personium-core/issues/224))
+* System does not shutdown cleanly.([#226](https://github.com/personium/personium-core/issues/226))
+
+IMPROVEMENTS:
+* Change EventInfo in Timer Rule from required to optional.([#225](https://github.com/personium/personium-core/issues/225))
+
 ## 1.6.11
 BUG FIXES:
 * URI returned by response is not URL-encoded.([#214](https://github.com/personium/personium-core/issues/214))
