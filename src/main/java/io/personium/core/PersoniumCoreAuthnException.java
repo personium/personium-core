@@ -31,6 +31,7 @@ import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.auth.OAuth2Helper.Scheme;
 import io.personium.core.utils.EscapeControlCode;
 import io.personium.plugin.base.PluginMessageUtils.Severity;
+import io.personium.plugin.base.auth.AuthPluginException;
 
 /**
  * ログメッセージ作成クラス.
@@ -245,6 +246,23 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
         String message = PersoniumCoreMessageUtils.getMessage(code);
 
         return new PersoniumCoreAuthnException(code, severity, message, statusCode, error, null);
+    }
+
+    /**
+     * Factory method.
+     * @param authPluginException AuthPluginException
+     * @return PersoniumCoreAuthnException
+     */
+    public static PersoniumCoreAuthnException create(AuthPluginException authPluginException) {
+        int statusCode = authPluginException.getStatusCode();
+        Severity severity = decideSeverity(statusCode);
+        StringBuilder builder = new StringBuilder();
+        builder.append("PR").append(statusCode).append("-PA-0001");
+        String errorCode = builder.toString();
+        String message = PersoniumCoreMessageUtils.getMessage(errorCode);
+        message = MessageFormat.format(message, authPluginException.getMessage());
+        String oAuthError = authPluginException.getOAuthError();
+        return new PersoniumCoreAuthnException(errorCode, severity, message, statusCode, oAuthError, null);
     }
 
     /**
