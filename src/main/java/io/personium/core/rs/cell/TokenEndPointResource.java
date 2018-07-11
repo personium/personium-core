@@ -84,8 +84,8 @@ import io.personium.core.plugin.PluginManager;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.UriUtils;
 import io.personium.plugin.base.Plugin;
-import io.personium.plugin.base.PluginException;
 import io.personium.plugin.base.auth.AuthPlugin;
+import io.personium.plugin.base.auth.AuthPluginException;
 import io.personium.plugin.base.auth.AuthenticatedIdentity;
 
 /**
@@ -305,8 +305,8 @@ public class TokenEndPointResource {
         Object plugin = (Plugin) pi.getObj();
         try {
             ai = ((AuthPlugin) plugin).authenticate(body);
-        } catch (PluginException pe) {
-            throw PersoniumCoreException.create(pe);
+        } catch (AuthPluginException ape) {
+            throw PersoniumCoreAuthnException.create(ape);
         } catch (Exception e) {
             // Unexpected exception throwed from "Plugin", create default PersoniumCoreAuthException
             // and set reason from catched Exception.
@@ -314,12 +314,12 @@ public class TokenEndPointResource {
         }
 
         if (ai == null) {
-            throw PersoniumCoreException.Plugin.PLUGIN_AUTHN_FAILED;
+            throw PersoniumCoreAuthnException.AUTHN_FAILED;
         }
         String accountName = ai.getAccountName();
         String accountType = ai.getAccountType();
         if (accountName == null || accountType == null) {
-            throw PersoniumCoreAuthnException.Plugin.PLUGIN_AUTHN_FAILED;
+            throw PersoniumCoreAuthnException.AUTHN_FAILED;
         }
 
         // If the Account shown in IdToken does not exist in cell.
@@ -327,7 +327,7 @@ public class TokenEndPointResource {
         if (idTokenUserOew == null) {
             // アカウントの存在確認に悪用されないように、失敗の旨のみのエラー応答
             PersoniumCoreLog.OIDC.NO_SUCH_ACCOUNT.params(accountName).writeLog();
-            throw PersoniumCoreAuthnException.Plugin.PLUGIN_AUTHN_FAILED;
+            throw PersoniumCoreAuthnException.AUTHN_FAILED;
         }
 
         // Confirm if OidC is included in Type when there is Account.
@@ -335,7 +335,7 @@ public class TokenEndPointResource {
             // アカウントの存在確認に悪用されないように、失敗の旨のみのエラー応答
             PersoniumCoreLog.OIDC.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(accountType,
                     accountName).writeLog();
-            throw PersoniumCoreAuthnException.Plugin.PLUGIN_AUTHN_FAILED;
+            throw PersoniumCoreAuthnException.AUTHN_FAILED;
         }
 
         // When processing is normally completed, issue a token.

@@ -570,12 +570,14 @@ public class DavRsCmp {
             Element element = WebDAVModelHelper.createElement(qname);
             element.setTextContent(dCmp.getCellStatus());
             ret.setPropertyOk(element);
+        } else if (DavCmp.TYPE_NULL.equals(type)) {
+            // If TYPE_NULL, not display anything.
+            ret.getHref().remove(href);
         } else {
             // Collection Resource
             Resourcetype colRt = of.createResourcetype();
             colRt.setCollection(of.createCollection());
             ret.setPropertyOk(colRt);
-
         }
 
         // Processing ACL
