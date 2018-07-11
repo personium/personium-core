@@ -1,3 +1,7 @@
+## 1.6.13
+IMPROVEMENTS:
+* Make PluginException correspond to PersoniumCoreAuthnException.([#231](https://github.com/personium/personium-core/issues/231))
+
 ## 1.6.12
 BUG FIXES:
 * It is necessary to modify the plugin mechanism.([#224](https://github.com/personium/personium-core/issues/224))
