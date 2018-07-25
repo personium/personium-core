@@ -496,7 +496,7 @@ public class DavCmpFsImpl implements DavCmp {
             } catch (ParseException e) {
                 throw PersoniumCoreException.Dav.XML_ERROR.reason(e);
             }
-            // Not register the value of xml: base in Elasticsearch. TODO これでいいのか？
+            // Not register the value of xml: base in Elasticsearch.
             aclJson.remove(KEY_ACL_BASE);
             this.metaFile.setAcl(aclJson);
             this.metaFile.save();
@@ -1186,7 +1186,7 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     static final String KEY_SCHEMA = "Schema";
-    static final String KEY_ACL_BASE = "@base";
+    static final String KEY_ACL_BASE = "@xml.base";
     static final String ACL_RELATIVE_PATH_FORMAT = "../%s/%s";
 
     /**
