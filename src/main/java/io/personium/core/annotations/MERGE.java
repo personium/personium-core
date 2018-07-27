@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import javax.ws.rs.HttpMethod;
 
 /**
- * MERGEメソッドの JaxRS アノテーション.
+ * The JaxRS annotation of the MERGE method.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
