@@ -38,7 +38,6 @@ import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.StreamingOutput;
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -329,21 +328,21 @@ public class DavCmpFsImpl implements DavCmp {
         this.name = fsDir.getName();
         this.acl = this.translateAcl(this.metaFile.getAcl());
 
-        @SuppressWarnings("unchecked")
-        Map<String, String> props = (Map<String, String>) this.metaFile.getProperties();
-        if (props != null) {
-            for (Map.Entry<String, String> entry : props.entrySet()) {
-                String key = entry.getKey();
-                String val = entry.getValue();
-                int idx = key.indexOf(PROP_KEY_SEPARATOR);
-                String elementName = key.substring(0, idx);
-                String namespace = key.substring(idx + 1);
-                QName keyQName = new QName(namespace, elementName);
+        // TODO Interim correspondence.(For security reasons)
+//        @SuppressWarnings("unchecked")
+//        Map<String, String> props = (Map<String, String>) this.metaFile.getProperties();
+//        if (props != null) {
+//            for (Map.Entry<String, String> entry : props.entrySet()) {
+//                String key = entry.getKey();
+//                String val = entry.getValue();
+//                int idx = key.indexOf(PROP_KEY_SEPARATOR);
+//                String elementName = key.substring(0, idx);
+//                String namespace = key.substring(idx + 1);
+//                QName keyQName = new QName(namespace, elementName);
 
-                Element element = parseProp(val);
-                String elementNameSpace = element.getNamespaceURI();
+//                Element element = parseProp(val);
+//                String elementNameSpace = element.getNamespaceURI();
 
-                // TODO Interim correspondence.(For security reasons)
 //                // ownerRepresentativeAccountsの取り出し
 //                if (Key.PROP_KEY_OWNER_REPRESENTIVE_ACCOUNTS.equals(keyQName)) {
 //                    NodeList accountNodeList = element.getElementsByTagNameNS(elementNameSpace,
@@ -352,8 +351,8 @@ public class DavCmpFsImpl implements DavCmp {
 //                        this.ownerRepresentativeAccounts.add(accountNodeList.item(i).getTextContent().trim());
 //                    }
 //                }
-            }
-        }
+//            }
+//        }
     }
 
 
