@@ -412,6 +412,38 @@ public class CellUtils {
     }
 
     /**
+     * Set property.
+     * @param cellName cell name
+     * @param property property string. ex:<p:foo>bar</p:foo>
+     * @param token token
+     * @param code expected response code
+     * @return response
+     */
+    public static TResponse proppatchSet(String cellName, String property, String token, int code) {
+        return Http.request("cell/proppatch-set.txt")
+                .with("cellName", cellName)
+                .with("property", property)
+                .with("token", token)
+                .returns().debug().statusCode(code);
+    }
+
+    /**
+     * Remove property.
+     * @param cellName cell name
+     * @param property property string. ex:<p:foo/>
+     * @param token token
+     * @param code expected response code
+     * @return response
+     */
+    public static TResponse proppatchRemove(String cellName, String property, String token, int code) {
+        return Http.request("cell/proppatch-remove.txt")
+                .with("cellName", cellName)
+                .with("property", property)
+                .with("token", token)
+                .returns().debug().statusCode(code);
+    }
+
+    /**
      * eventのPROPPATCHを行うユーティリティ.
      * @param cell cell
      * @param token 認証トークン
@@ -419,7 +451,7 @@ public class CellUtils {
      * @param values 設定値
      * @return レスポンス
      */
-    public static TResponse proppatch(String cell, String token, int code, String... values) {
+    public static TResponse proppatchEvent(String cell, String token, int code, String... values) {
         // PROPPATCH設定実行
         TResponse tresponse = Http.request("cell/event-proppacth.txt")
                 .with("cellPath", cell)

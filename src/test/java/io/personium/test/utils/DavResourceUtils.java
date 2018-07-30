@@ -310,7 +310,7 @@ public class DavResourceUtils {
      */
     public static TResponse setProppatch(String url, String token, int code, String... values) {
         // PROPPATCH設定実行
-        TResponse tresponse = Http.request("cell/proppatch-set.txt").with("path", url).with("token", token)
+        TResponse tresponse = Http.request("cell/proppatch-set-author.txt").with("path", url).with("token", token)
                 .with("author1", values[0]).with("hoge", values[1]).returns();
         tresponse.statusCode(code);
         return tresponse;
@@ -368,7 +368,7 @@ public class DavResourceUtils {
      */
     public static TResponse resetProppatch(String url, String token) {
         // プロパティの削除
-        TResponse tresponse = Http.request("cell/proppatch-remove.txt").with("path", url).with("token", token)
+        TResponse tresponse = Http.request("cell/proppatch-remove-author.txt").with("path", url).with("token", token)
                 .returns();
         tresponse.statusCode(HttpStatus.SC_MULTI_STATUS);
         return tresponse;
@@ -1132,6 +1132,24 @@ public class DavResourceUtils {
                 .returns()
                 .debug()
                 .statusCode(code);
+    }
+
+    /**
+     * Delete webdav file.
+     * @param cellName Cell name
+     * @param boxName Box name
+     * @param path Path after box name
+     * @param token Token
+     * @param code Expected response code
+     * @return API response
+     */
+    public static TResponse deleteWebDavFile(String cellName, String boxName, String path, String token, int code) {
+        return Http.request("box/dav-delete.txt")
+                .with("cellPath", cellName)
+                .with("box", boxName)
+                .with("path", path)
+                .with("token", token)
+                .returns().debug().statusCode(code);
     }
 
     /**

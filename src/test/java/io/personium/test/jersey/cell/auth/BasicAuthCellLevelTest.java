@@ -27,7 +27,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -268,7 +267,6 @@ public class BasicAuthCellLevelTest extends JerseyTest {
      * @throws PersoniumException リクエスト失敗
      */
     @Test
-    @Ignore // UUT promotion setting API invalidation.
     public final void Basic認証ーproppatchの操作() throws PersoniumException {
         // 401エラーとなること
         TResponse res = CellUtils.proppatchWithAnyAuthSchema(cellName, authorization, HttpStatus.SC_UNAUTHORIZED,
