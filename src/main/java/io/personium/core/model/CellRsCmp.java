@@ -31,10 +31,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.xml.sax.SAXException;
 
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
@@ -48,6 +46,8 @@ public class CellRsCmp extends DavRsCmp {
 
     /** Name of property in which the URL of the relay destination is described. */
     private static final String RELAY_HTML_URL = "relayhtmlurl";
+    /** Name of property in which the URL of the authorization html. */
+    private static final String AUTHORIZATION_HTML_URL = "authorizationhtmlurl";
 
     Cell cell;
     AccessContext accessContext;
@@ -180,13 +180,45 @@ public class CellRsCmp extends DavRsCmp {
         relayHtmlUrl = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), relayHtmlUrl);
 
         // Validate relayHtmlUrl.
-        validateRelayHtmlUrl(relayHtmlUrl);
+        validateRequestHtmlUrl(relayHtmlUrl, RELAY_HTML_URL);
 
-        HttpGet req = new HttpGet(relayHtmlUrl);
+        // GET html.
+        return requestGetHtml(relayHtmlUrl);
+    }
+
+    /**
+     * Request http get to AuthorizationHtmlUrl.
+     * @return Http response
+     */
+    public HttpResponse requestGetAuthorizationHtml() {
+        // Get authorizationhtmlurl property.
+        String authorizationHtmlUrl;
+        try {
+            authorizationHtmlUrl = getDavCmp().getProperty(AUTHORIZATION_HTML_URL, "urn:x-personium:xmlns");
+        } catch (IOException | SAXException e1) {
+            throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(AUTHORIZATION_HTML_URL);
+        }
+
+        // Convert personium-localunit and personium-localcell.
+        authorizationHtmlUrl = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), authorizationHtmlUrl);
+        authorizationHtmlUrl = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), authorizationHtmlUrl);
+
+        // Validate relayHtmlUrl.
+        validateRequestHtmlUrl(authorizationHtmlUrl, AUTHORIZATION_HTML_URL);
+
+        // GET html.
+        return requestGetHtml(authorizationHtmlUrl);
+    }
+
+    /**
+     * Request http get to HtmlUrl.
+     * @param requestUrl request url
+     * @return Http response
+     */
+    private HttpResponse requestGetHtml(String requestUrl) {
+        HttpGet req = new HttpGet(requestUrl);
         // set headers
         req.addHeader(HttpHeaders.ACCEPT, MediaType.TEXT_HTML);
-        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VERSION, PersoniumUnitConfig.getCoreVersion());
-        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CELLURL, cell.getUrl());
 
         // GET html.
         HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
@@ -194,36 +226,37 @@ public class CellRsCmp extends DavRsCmp {
         try {
             res = client.execute(req);
         } catch (ClientProtocolException e) {
-            throw PersoniumCoreException.UI.INVALID_HTTP_RESPONSE.params(relayHtmlUrl).reason(e);
+            throw PersoniumCoreException.UI.INVALID_HTTP_RESPONSE.params(requestUrl).reason(e);
         } catch (IOException e) {
-            throw PersoniumCoreException.UI.CONNECTION_FAILED.params(relayHtmlUrl).reason(e);
+            throw PersoniumCoreException.UI.CONNECTION_FAILED.params(requestUrl).reason(e);
         }
 
         // Check response media type.
         Header contentType = res.getFirstHeader(HttpHeaders.CONTENT_TYPE);
         if (!MediaType.TEXT_HTML.equals(contentType.getValue())) {
-            throw PersoniumCoreException.NetWork.UNEXPECTED_RESPONSE.params(relayHtmlUrl, MediaType.TEXT_HTML);
+            throw PersoniumCoreException.NetWork.UNEXPECTED_RESPONSE.params(requestUrl, MediaType.TEXT_HTML);
         }
 
         return res;
     }
 
     /**
-     * Validate relayhtmlurl.
-     * @param relayHtmlUrl target url
+     * Validate htmlurl.
+     * @param requestUrl request url
+     * @param propertyName request url property name
      */
-    private void validateRelayHtmlUrl(String relayHtmlUrl) {
-        if (StringUtils.isEmpty(relayHtmlUrl)) {
-            throw PersoniumCoreException.UI.NOT_CONFIGURED_PROPERTY.params(RELAY_HTML_URL);
+    private void validateRequestHtmlUrl(String requestUrl, String propertyName) {
+        if (StringUtils.isEmpty(requestUrl)) {
+            throw PersoniumCoreException.UI.NOT_CONFIGURED_PROPERTY.params(propertyName);
         }
         try {
-            URL url = new URL(relayHtmlUrl);
+            URL url = new URL(requestUrl);
             String protocol = url.getProtocol();
             if (!protocol.equals("http") && !protocol.equals("https")) {
-                throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(RELAY_HTML_URL);
+                throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(propertyName);
             }
         } catch (MalformedURLException e) {
-            throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(RELAY_HTML_URL);
+            throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(propertyName);
         }
     }
 
