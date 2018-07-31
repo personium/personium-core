@@ -18,6 +18,9 @@ package io.personium.core.rs.cell;
 
 import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_AN_HOUR;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -51,6 +54,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.edm.EdmEntitySet;
 import org.slf4j.Logger;
@@ -83,7 +87,7 @@ import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
-import io.personium.core.model.DavRsCmp;
+import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.impl.es.EsModel;
@@ -109,7 +113,7 @@ public class AuthzEndPointResource {
     static Logger log = LoggerFactory.getLogger(AuthzEndPointResource.class);
 
     private final Cell cell;
-    private final DavRsCmp davRsCmp;
+    private final CellRsCmp cellRsCmp;
 
     /**
      * ログインフォーム_Javascriptソースファイル.
@@ -139,11 +143,11 @@ public class AuthzEndPointResource {
     /**
      * コンストラクタ.
      * @param cell Cell
-     * @param davRsCmp davRsCmp
+     * @param cellRsCmp cellRsCmp
      */
-    public AuthzEndPointResource(final Cell cell, final DavRsCmp davRsCmp) {
+    public AuthzEndPointResource(final Cell cell, final CellRsCmp cellRsCmp) {
         this.cell = cell;
-        this.davRsCmp = davRsCmp;
+        this.cellRsCmp = cellRsCmp;
     }
 
     /**
@@ -523,40 +527,54 @@ public class AuthzEndPointResource {
     private String createForm(String clientId, String redirectUriStr, String message, String state,
             String responseType, String pTarget, String pOwner) {
 
-        List<Object> paramsList = new ArrayList<Object>();
+        try {
+            HttpResponse response = cellRsCmp.requestGetAuthorizationHtml();
+            StringBuilder builder = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent(), CharEncoding.UTF_8))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    builder.append(line);
+                }
+            }
+            return builder.toString();
+        } catch (PersoniumCoreException | IOException e) {
+            // If processing fails, return system default html.
+            List<Object> paramsList = new ArrayList<Object>();
 
-        // 末尾"/"の有無対応
-        if (!"".equals(clientId) && !clientId.endsWith("/")) {
-            clientId = clientId + "/";
+            // 末尾"/"の有無対応
+            if (!"".equals(clientId) && !clientId.endsWith("/")) {
+                clientId = clientId + "/";
+            }
+
+            // タイトル
+            paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
+            // アプリセルのprofile.json
+            paramsList.add(clientId + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
+            // データセルのprofile.json
+            paramsList.add(cell.getUrl() + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
+            // タイトル
+            paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
+            // 呼び出し先
+            paramsList.add(cell.getUrl() + "__authz");
+            // メッセージ表示領域
+            paramsList.add(message);
+            // hidden項目
+            paramsList.add(state);
+            paramsList.add(responseType);
+            paramsList.add(pTarget != null ? pTarget : ""); // CHECKSTYLE IGNORE
+            paramsList.add(pOwner != null ? pOwner : ""); // CHECKSTYLE IGNORE
+            paramsList.add(clientId);
+            paramsList.add(redirectUriStr);
+            paramsList.add(AuthResourceUtils.getJavascript(jsFileName));
+
+            Object[] params = paramsList.toArray();
+
+            String html = PersoniumCoreUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
+            html = MessageFormat.format(html, params);
+
+            return html;
         }
-
-        // タイトル
-        paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
-        // アプリセルのprofile.json
-        paramsList.add(clientId + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
-        // データセルのprofile.json
-        paramsList.add(cell.getUrl() + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
-        // タイトル
-        paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
-        // 呼び出し先
-        paramsList.add(cell.getUrl() + "__authz");
-        // メッセージ表示領域
-        paramsList.add(message);
-        // hidden項目
-        paramsList.add(state);
-        paramsList.add(responseType);
-        paramsList.add(pTarget != null ? pTarget : ""); // CHECKSTYLE IGNORE
-        paramsList.add(pOwner != null ? pOwner : ""); // CHECKSTYLE IGNORE
-        paramsList.add(clientId);
-        paramsList.add(redirectUriStr);
-        paramsList.add(AuthResourceUtils.getJavascript(jsFileName));
-
-        Object[] params = paramsList.toArray();
-
-        String html = PersoniumCoreUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
-        html = MessageFormat.format(html, params);
-
-        return html;
     }
 
     /**
@@ -648,7 +666,7 @@ public class AuthzEndPointResource {
 
         if (Key.TRUE_STR.equals(pOwner)) {
             // ユニット昇格権限設定のチェック
-            if (!this.davRsCmp.checkOwnerRepresentativeAccounts(username)) {
+            if (!this.cellRsCmp.checkOwnerRepresentativeAccounts(username)) {
                 return returnErrorMessage(clientId, redirectUriStr, passFormMsg, state, pTarget, pOwner);
             }
             // セルのオーナーが未設定のセルに対しては昇格させない。
@@ -821,7 +839,7 @@ public class AuthzEndPointResource {
                     return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
                 }
                 // ユニット昇格権限設定のチェック
-                if (!this.davRsCmp.checkOwnerRepresentativeAccounts(token.getSubject())) {
+                if (!this.cellRsCmp.checkOwnerRepresentativeAccounts(token.getSubject())) {
                     return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
                 }
                 // セルのオーナーが未設定のセルに対しては昇格させない。
