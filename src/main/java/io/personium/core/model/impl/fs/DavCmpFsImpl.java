@@ -57,7 +57,6 @@ import org.json.simple.parser.ParseException;
 import org.odata4j.producer.CountResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -368,23 +367,23 @@ public class DavCmpFsImpl implements DavCmp {
         }
     }
 
-    private Element parseProp(String value) {
-        // valをDOMでElement化
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = null;
-        Document doc = null;
-        try {
-            builder = factory.newDocumentBuilder();
-            ByteArrayInputStream is = new ByteArrayInputStream(value.getBytes(CharEncoding.UTF_8));
-            doc = builder.parse(is);
-        } catch (Exception e1) {
-            throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e1);
-        }
-        Element e = doc.getDocumentElement();
-        return e;
-    }
-
+    // TODO Interim correspondence.(For security reasons)
+//    private Element parseProp(String value) {
+//        // valをDOMでElement化
+//        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//        factory.setNamespaceAware(true);
+//        DocumentBuilder builder = null;
+//        Document doc = null;
+//        try {
+//            builder = factory.newDocumentBuilder();
+//            ByteArrayInputStream is = new ByteArrayInputStream(value.getBytes(CharEncoding.UTF_8));
+//            doc = builder.parse(is);
+//        } catch (Exception e1) {
+//            throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e1);
+//        }
+//        Element e = doc.getDocumentElement();
+//        return e;
+//    }
 
     /*
      * proppatch メソッドへの対応. 保存の方式 key = namespaceUri + "@" + localName Value =
