@@ -27,7 +27,6 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.w3c.dom.Element;
@@ -596,7 +595,6 @@ public class AclTest extends AbstractCase {
      * CellレベルACL設定後のPROPPATCHの確認.
      */
     @Test
-    @Ignore // UUT promotion setting API invalidation.
     public final void CellレベルACL設定後のPROPPATCHの確認() {
 
         try {
@@ -1787,11 +1785,11 @@ public class AclTest extends AbstractCase {
 
     private void eventAclTest(List<String> account) {
         // PROPPACTH Event
-        CellUtils.proppatch(TEST_CELL1, account.get(0), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
-        CellUtils.proppatch(TEST_CELL1, account.get(1), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
-        CellUtils.proppatch(TEST_CELL1, account.get(3), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
-        CellUtils.proppatch(TEST_CELL1, account.get(10), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
-        CellUtils.proppatch(TEST_CELL1, account.get(13), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
+        CellUtils.proppatchEvent(TEST_CELL1, account.get(0), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
+        CellUtils.proppatchEvent(TEST_CELL1, account.get(1), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
+        CellUtils.proppatchEvent(TEST_CELL1, account.get(3), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
+        CellUtils.proppatchEvent(TEST_CELL1, account.get(10), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
+        CellUtils.proppatchEvent(TEST_CELL1, account.get(13), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
 
         // POST Event
         String jsonBody = "{\"Type\": \"TYPE\", \"Object\": \"OBJECT\", \"Info\": \"INFO\"}";

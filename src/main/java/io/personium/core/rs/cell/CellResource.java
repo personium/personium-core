@@ -16,6 +16,9 @@
  */
 package io.personium.core.rs.cell;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,9 +32,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.wink.webdav.WebDAVMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,17 +142,36 @@ public class CellResource {
      */
     /**
      * handler for GET Method.
+     * @param httpHeaders Request headers
      * @return JAX-RS Response Object
      */
     @GET
-    public Response getSvcDoc() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb.append("<cell xmlns=\"urn:x-personium:xmlns\">");
-        sb.append("<uuid>" + this.cell.getId() + "</uuid>");
-        sb.append("<ctl>" + this.cell.getUrl() + "__ctl/" + "</ctl>");
-        sb.append("</cell>");
-        return Response.ok().entity(sb.toString()).build();
+    public Response getSvcDoc(@Context HttpHeaders httpHeaders) {
+        if (httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_XML_TYPE)) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            sb.append("<cell xmlns=\"urn:x-personium:xmlns\">");
+            sb.append("<uuid>" + this.cell.getId() + "</uuid>");
+            sb.append("<ctl>" + this.cell.getUrl() + "__ctl/" + "</ctl>");
+            sb.append("</cell>");
+            return Response.ok().entity(sb.toString()).build();
+        } else {
+            HttpResponse res = cellRsCmp.requestGetRelayHtml();
+            int statusCode = res.getStatusLine().getStatusCode();
+            HttpEntity entity = res.getEntity();
+            StreamingOutput streamingOutput = new StreamingOutput() {
+                @Override
+                public void write(final OutputStream os) throws IOException {
+                    try (InputStream in = entity.getContent()) {
+                        int chr;
+                        while ((chr = in.read()) != -1) {
+                            os.write(chr);
+                        }
+                    }
+                }
+            };
+            return Response.status(statusCode).entity(streamingOutput).build();
+        }
     }
 
     /**
@@ -396,31 +422,30 @@ public class CellResource {
                 CellPrivilege.ACL_READ);
     }
 
-    // TODO Interim correspondence.(For security reasons)
-//    /**
-//     * PROPPATCHメソッドの処理.
-//     * @param requestBodyXml Request Body
-//     * @return JAX-RS Response
-//     */
-//    @WebDAVMethod.PROPPATCH
-//    public Response proppatch(final Reader requestBodyXml) {
-//        AccessContext ac = this.cellRsCmp.getAccessContext();
-//        // トークンの有効性チェック
-//        // トークンがINVALIDでもACL設定でPrivilegeがallに設定されているとアクセスを許可する必要があるのでこのタイミングでチェック
-//        ac.updateBasicAuthenticationStateForResource(null);
-//        if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
-//            ac.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
-//        } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
-//            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(),
-//                    this.cellRsCmp.getAcceptableAuthScheme());
-//        }
-//
-//        // アクセス制御 CellレベルPROPPATCHはユニットユーザのみ可能とする
-//        if (!ac.isUnitUserToken()) {
-//            throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
-//        }
-//        return this.cellRsCmp.doProppatch(requestBodyXml);
-//    }
+    /**
+     * PROPPATCHメソッドの処理.
+     * @param requestBodyXml Request Body
+     * @return JAX-RS Response
+     */
+    @WebDAVMethod.PROPPATCH
+    public Response proppatch(final Reader requestBodyXml) {
+        AccessContext ac = this.cellRsCmp.getAccessContext();
+        // トークンの有効性チェック
+        // トークンがINVALIDでもACL設定でPrivilegeがallに設定されているとアクセスを許可する必要があるのでこのタイミングでチェック
+        ac.updateBasicAuthenticationStateForResource(null);
+        if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
+            ac.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
+        } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
+            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(),
+                    this.cellRsCmp.getAcceptableAuthScheme());
+        }
+
+        // アクセス制御 CellレベルPROPPATCHはユニットユーザのみ可能とする
+        if (!ac.isUnitUserToken()) {
+            throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
+        }
+        return this.cellRsCmp.doProppatch(requestBodyXml);
+    }
 
     /**
      * ACLメソッドの処理.

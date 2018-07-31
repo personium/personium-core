@@ -1,4 +1,4 @@
-PROPPATCH /${cellName} HTTP/1.1
+PROPPATCH /${path} HTTP/1.1
 Host: ?
 Content-Length: ?
 Connection: close
@@ -8,10 +8,12 @@ Authorization: Bearer ${token}
 
 <?xml version="1.0" encoding="utf-8" ?>
 <D:propertyupdate xmlns:D="DAV:"
-    xmlns:p="urn:x-personium:xmlns">
+    xmlns:p="urn:x-personium:xmlns"
+    xmlns:Z="http://www.w3.com/standards/z39.50/">
     <D:set>
         <D:prop>
-            ${property}
+            <Z:Author>${author1}</Z:Author>
+            <p:hoge>${hoge}</p:hoge>
         </D:prop>
     </D:set>
 </D:propertyupdate>

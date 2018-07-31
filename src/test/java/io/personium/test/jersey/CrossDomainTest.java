@@ -22,6 +22,8 @@ import static org.junit.Assert.assertNotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.MediaType;
+
 import org.apache.http.HttpStatus;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -270,9 +272,10 @@ public class CrossDomainTest extends JerseyTest {
     @Test
     public final void CellサービスドキュメントにGETを指定してXHR2ヘッダーのALLOW_ORIGINのみ返却されること() {
         TResponse response =
-                Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers.txt")
+                Http.request("crossdomain/xhr2-preflight-no-access-control-allow-headers-accept-headers.txt")
                         .with("path", "/testcell1")
                         .with("token", PersoniumUnitConfig.getMasterToken())
+                        .with("accept", MediaType.APPLICATION_XML)
                         .returns()
                         .statusCode(HttpStatus.SC_OK)
                         .debug();
