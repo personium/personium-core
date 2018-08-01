@@ -1,3 +1,8 @@
+## 1.6.14
+IMPROVEMENTS:
+* GET against Cell root URL should return HomeApp HTML.([#234](https://github.com/personium/personium-core/issues/234))
+* GET against authorization endpoint should return relayed HTML content from preconfigured remote URL.([#235](https://github.com/personium/personium-core/issues/235))
+
 ## 1.6.13
 IMPROVEMENTS:
 * Make PluginException correspond to PersoniumCoreAuthnException.([#231](https://github.com/personium/personium-core/issues/231))
