@@ -17,8 +17,8 @@
 package io.personium.core.model;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
 
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
@@ -175,6 +176,10 @@ public class CellRsCmp extends DavRsCmp {
             throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(RELAY_HTML_URL);
         }
 
+        if (StringUtils.isEmpty(relayHtmlUrl)) {
+            relayHtmlUrl = PersoniumUnitConfig.getRelayhtmlurlDefault();
+        }
+
         // Convert personium-localunit and personium-localcell.
         relayHtmlUrl = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), relayHtmlUrl);
         relayHtmlUrl = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), relayHtmlUrl);
@@ -197,6 +202,10 @@ public class CellRsCmp extends DavRsCmp {
             authorizationHtmlUrl = getDavCmp().getProperty(AUTHORIZATION_HTML_URL, "urn:x-personium:xmlns");
         } catch (IOException | SAXException e1) {
             throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(AUTHORIZATION_HTML_URL);
+        }
+
+        if (StringUtils.isEmpty(authorizationHtmlUrl)) {
+            authorizationHtmlUrl = PersoniumUnitConfig.getAuthorizationhtmlurlDefault();
         }
 
         // Convert personium-localunit and personium-localcell.
@@ -250,12 +259,12 @@ public class CellRsCmp extends DavRsCmp {
             throw PersoniumCoreException.UI.NOT_CONFIGURED_PROPERTY.params(propertyName);
         }
         try {
-            URL url = new URL(requestUrl);
-            String protocol = url.getProtocol();
-            if (!protocol.equals("http") && !protocol.equals("https")) {
+            URI uri = new URI(requestUrl);
+            String scheme = uri.getScheme();
+            if (!scheme.equals("http") && !scheme.equals("https")) {
                 throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(propertyName);
             }
-        } catch (MalformedURLException e) {
+        } catch (URISyntaxException e) {
             throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(propertyName);
         }
     }
