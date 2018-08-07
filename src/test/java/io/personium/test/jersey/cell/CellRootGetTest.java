@@ -26,16 +26,17 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpStatus;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.CellUtils;
@@ -46,20 +47,43 @@ import io.personium.test.utils.TResponse;
 /**
  * GET Cell root url tests.
  */
-@RunWith(PersoniumIntegTestRunner.class)
 @Category({Integration.class})
 public class CellRootGetTest extends AbstractCase {
 
     /** Relay html file name. */
     private static final String RELAY_HTML_NAME = "test.html";
+    /** Relay html2 file name. */
+    private static final String RELAY_HTML2_NAME = "test2.html";
     /** Relay html file contents. */
     private static final String RELAY_HTML_BODY = "<html><body>This is test html.</body></html>";
+    /** Relay html2 file contents. */
+    private static final String RELAY_HTML2_BODY = "<html><body>This is test2 html.</body></html>";
+
+    /** Default value of relayhtmlurl. */
+    private static String relayhtmlurlDefault;
 
     /**
      * Constructor.
      */
     public CellRootGetTest() {
         super("io.personium.core.rs");
+    }
+
+    /**
+     * Befor class.
+     */
+    @BeforeClass
+    public static void beforClass() {
+        relayhtmlurlDefault = PersoniumUnitConfig.get(PersoniumUnitConfig.Cell.RELAYHTMLURL_DEFAULT);
+    }
+
+    /**
+     * After class.
+     */
+    @AfterClass
+    public static void afterClass() {
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.RELAYHTMLURL_DEFAULT,
+                relayhtmlurlDefault != null ? relayhtmlurlDefault : ""); // CHECKSTYLE IGNORE
     }
 
     /**
@@ -89,15 +113,57 @@ public class CellRootGetTest extends AbstractCase {
     /**
      * Normal test.
      * Get html.
+     * Default relayhtml set.
+     * Property relayhtml not set.
      * relayhtmlurl:"http:"
      */
     @Test
-    public void normal_get_html_url() {
+    public void normal_get_html_default_set_property_not_set() {
         String relayhtmlurl = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
                 + Setup.TEST_BOX1 + "/" + RELAY_HTML_NAME;
         String aclPath = Setup.TEST_CELL1 + "/" + Setup.TEST_BOX1 + "/" + RELAY_HTML_NAME;
         try {
             // SetUp.
+            PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.RELAYHTMLURL_DEFAULT, relayhtmlurl);
+            DavResourceUtils.createWebDAVFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, RELAY_HTML_NAME,
+                    MediaType.TEXT_HTML, MASTER_TOKEN_NAME, RELAY_HTML_BODY,
+                    HttpStatus.SC_CREATED);
+            DavResourceUtils.setACLPrivilegeAllForAllUser(
+                    Setup.TEST_CELL1, MASTER_TOKEN_NAME, HttpStatus.SC_OK,
+                    aclPath, OAuth2Helper.SchemaLevel.NONE);
+
+            // Exec.
+            TResponse res = Http.request("cell/cell-root-get.txt")
+                    .with("cell", Setup.TEST_CELL1)
+                    .with("accept", MediaType.TEXT_HTML)
+                    .returns().debug().statusCode(HttpStatus.SC_OK);
+
+            assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is(MediaType.TEXT_HTML));
+            assertThat(res.getBody(), is(RELAY_HTML_BODY));
+        } finally {
+            // Remove.
+            DavResourceUtils.deleteWebDavFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, RELAY_HTML_NAME,
+                    MASTER_TOKEN_NAME, -1);
+        }
+    }
+
+    /**
+     * Normal test.
+     * Get html.
+     * Default relayhtml not set.
+     * Property relayhtml set.
+     * relayhtmlurl:"http:"
+     */
+    @Test
+    public void normal_get_html_default_not_set_property_set() {
+        String relayhtmlurl = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
+                + Setup.TEST_BOX1 + "/" + RELAY_HTML_NAME;
+        String aclPath = Setup.TEST_CELL1 + "/" + Setup.TEST_BOX1 + "/" + RELAY_HTML_NAME;
+        try {
+            // SetUp.
+            PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.RELAYHTMLURL_DEFAULT, "");
             DavResourceUtils.createWebDAVFile(
                     Setup.TEST_CELL1, Setup.TEST_BOX1, RELAY_HTML_NAME,
                     MediaType.TEXT_HTML, MASTER_TOKEN_NAME, RELAY_HTML_BODY,
@@ -128,6 +194,85 @@ public class CellRootGetTest extends AbstractCase {
                     Setup.TEST_CELL1, Setup.TEST_BOX1, RELAY_HTML_NAME,
                     MASTER_TOKEN_NAME, -1);
         }
+    }
+
+    /**
+     * Normal test.
+     * Get html.
+     * Default relayhtml set.
+     * Property relayhtml set.
+     * relayhtmlurl:"http:"
+     */
+    @Test
+    public void normal_get_html_default_set_property_set() {
+        String relayhtmlurl1 = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
+                + Setup.TEST_BOX1 + "/" + RELAY_HTML_NAME;
+        String aclPath1 = Setup.TEST_CELL1 + "/" + Setup.TEST_BOX1 + "/" + RELAY_HTML_NAME;
+        String relayhtmlurl2 = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
+                + Setup.TEST_BOX1 + "/" + RELAY_HTML2_NAME;
+        String aclPath2 = Setup.TEST_CELL1 + "/" + Setup.TEST_BOX1 + "/" + RELAY_HTML2_NAME;
+        try {
+            // SetUp.
+            PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.RELAYHTMLURL_DEFAULT, relayhtmlurl1);
+            DavResourceUtils.createWebDAVFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, RELAY_HTML_NAME,
+                    MediaType.TEXT_HTML, MASTER_TOKEN_NAME, RELAY_HTML_BODY,
+                    HttpStatus.SC_CREATED);
+            DavResourceUtils.setACLPrivilegeAllForAllUser(
+                    Setup.TEST_CELL1, MASTER_TOKEN_NAME, HttpStatus.SC_OK,
+                    aclPath1, OAuth2Helper.SchemaLevel.NONE);
+            DavResourceUtils.createWebDAVFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, RELAY_HTML2_NAME,
+                    MediaType.TEXT_HTML, MASTER_TOKEN_NAME, RELAY_HTML2_BODY,
+                    HttpStatus.SC_CREATED);
+            DavResourceUtils.setACLPrivilegeAllForAllUser(
+                    Setup.TEST_CELL1, MASTER_TOKEN_NAME, HttpStatus.SC_OK,
+                    aclPath2, OAuth2Helper.SchemaLevel.NONE);
+            CellUtils.proppatchSet(
+                    Setup.TEST_CELL1,
+                    "<p:relayhtmlurl>" + relayhtmlurl2 + "</p:relayhtmlurl>",
+                    MASTER_TOKEN_NAME, HttpStatus.SC_MULTI_STATUS);
+
+            // Exec.
+            TResponse res = Http.request("cell/cell-root-get.txt")
+                    .with("cell", Setup.TEST_CELL1)
+                    .with("accept", MediaType.TEXT_HTML)
+                    .returns().debug().statusCode(HttpStatus.SC_OK);
+
+            assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is(MediaType.TEXT_HTML));
+            assertThat(res.getBody(), is(RELAY_HTML2_BODY));
+        } finally {
+            // Remove.
+            CellUtils.proppatchRemove(
+                    Setup.TEST_CELL1,
+                    "<p:relayhtmlurl/>",
+                    MASTER_TOKEN_NAME, -1);
+            DavResourceUtils.deleteWebDavFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, RELAY_HTML_NAME,
+                    MASTER_TOKEN_NAME, -1);
+            DavResourceUtils.deleteWebDavFile(
+                    Setup.TEST_CELL1, Setup.TEST_BOX1, RELAY_HTML2_NAME,
+                    MASTER_TOKEN_NAME, -1);
+        }
+    }
+
+    /**
+     * Error test.
+     * Get html.
+     * Default relayhtml not set.
+     * Property relayhtml not set.
+     */
+    @Test
+    public void error_get_html_default_not_set_property_not_set() {
+        PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.RELAYHTMLURL_DEFAULT, "");
+        // Exec.
+        TResponse res = Http.request("cell/cell-root-get.txt")
+                .with("cell", Setup.TEST_CELL1)
+                .with("accept", MediaType.TEXT_HTML)
+                .returns().debug().statusCode(HttpStatus.SC_PRECONDITION_FAILED);
+
+        PersoniumCoreException exception = PersoniumCoreException.UI.NOT_CONFIGURED_PROPERTY.params("relayhtmlurl");
+        checkErrorResponse(res.bodyAsJson(), exception.getCode(), exception.getMessage());
     }
 
     /**
@@ -216,23 +361,6 @@ public class CellRootGetTest extends AbstractCase {
                     Setup.TEST_CELL1, Setup.TEST_BOX1, RELAY_HTML_NAME,
                     MASTER_TOKEN_NAME, -1);
         }
-    }
-
-    /**
-     * Error test.
-     * Get html.
-     * relayhtmlurl:none
-     */
-    @Test
-    public void error_get_html_relayhtmlurl_not_set() {
-        // Exec.
-        TResponse res = Http.request("cell/cell-root-get.txt")
-                .with("cell", Setup.TEST_CELL1)
-                .with("accept", MediaType.TEXT_HTML)
-                .returns().debug().statusCode(HttpStatus.SC_PRECONDITION_FAILED);
-
-        PersoniumCoreException exception = PersoniumCoreException.UI.NOT_CONFIGURED_PROPERTY.params("relayhtmlurl");
-        checkErrorResponse(res.bodyAsJson(), exception.getCode(), exception.getMessage());
     }
 
     /**
