@@ -1411,7 +1411,7 @@ public class ConcurrentDavRequestTest extends JerseyTest {
         return Http.request("box/acl-all.txt")
                 .with("cell", CELL_NAME)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("colname", colName)
+                .with("resourcePath", colName)
                 .with("box", Setup.TEST_BOX1)
                 .with("level", "")
                 .with("roleBaseUrl", UrlUtils.roleResource(CELL_NAME, null, ""));

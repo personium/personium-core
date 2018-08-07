@@ -128,12 +128,12 @@ public class UriUtils {
         // cellUrl: http://host/cell/
 
         if (localCellUrl == null || !localCellUrl.startsWith(SCHEME_LOCALCELL)) {
-            return null;
+            return localCellUrl;
         }
 
         String[] parts = localCellUrl.split(":/", 2);
         if (parts.length != 2) {
-            return null;
+            return localCellUrl;
         }
 
         return new StringBuilder(cellUrl).append(parts[1]).toString();

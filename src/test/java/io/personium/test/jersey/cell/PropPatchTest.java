@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.http.HttpStatus;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.w3c.dom.Element;
@@ -45,7 +44,6 @@ import io.personium.test.utils.TResponse;
  * CellレベルPROPPATCHのテスト.
  */
 @Category({Unit.class, Integration.class, Regression.class })
-@Ignore // UUT promotion setting API invalidation.
 public class PropPatchTest extends JerseyTest {
 
     static final String TEST_CELL1 = "testcell1";

@@ -17,6 +17,7 @@
 
 package io.personium.core.model;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
@@ -26,6 +27,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.wink.webdav.model.Multistatus;
 import org.apache.wink.webdav.model.Propertyupdate;
+import org.xml.sax.SAXException;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.jaxb.Acl;
@@ -91,6 +93,16 @@ public interface DavCmp {
      * @return acl
      */
     Acl getAcl();
+
+    /**
+     * Get property.
+     * @param propertyName property name
+     * @param propertyNamespace property namespace
+     * @return property property value
+     * @throws IOException If any IO errors occur
+     * @throws SAXException If any parse errors occur
+     */
+    String getProperty(String propertyName, String propertyNamespace) throws IOException, SAXException;
 
     /**
      * @return properties
