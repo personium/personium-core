@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -43,7 +44,7 @@ public class ExtRoleLinkTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public ExtRoleLinkTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

@@ -28,11 +28,11 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.box.odatacol.UserDataListFilterTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -47,7 +47,7 @@ import io.personium.test.utils.UserDataUtils;
 /**
  * 認証のテスト.
  */
-public class AuthTestCommon extends JerseyTest {
+public class AuthTestCommon extends PersoniumTest {
 
     static final String TEST_CELL1 = Setup.TEST_CELL1;
     static final String TEST_CELL2 = Setup.TEST_CELL2;
@@ -82,7 +82,7 @@ public class AuthTestCommon extends JerseyTest {
      * コンストラクタ.
      */
     public AuthTestCommon() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

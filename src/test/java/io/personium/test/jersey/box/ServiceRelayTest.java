@@ -29,26 +29,27 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * サービス実行のリレーテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Integration.class, Regression.class })
-public class ServiceRelayTest extends JerseyTest {
+public class ServiceRelayTest extends PersoniumTest {
     /**
      * コンストラクタ.
      */
     public ServiceRelayTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /** リクエスト情報をそのままJSON文字列で返却するJSソース. */

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.plugin;
+package io.personium.test.jersey.plugin;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -32,10 +32,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.core.plugin.PluginInfo;
 import io.personium.core.plugin.PluginManager;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.plugin.base.PluginException;
 import io.personium.plugin.base.auth.AuthConst;
 import io.personium.plugin.base.auth.AuthPlugin;
@@ -45,6 +44,7 @@ import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
 
@@ -53,7 +53,7 @@ import io.personium.test.utils.Http;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class PluginTest extends JerseyTest {
+public class PluginTest extends PersoniumTest {
     private String name;
 
     /**
@@ -107,7 +107,7 @@ public class PluginTest extends JerseyTest {
       * コンストラクタ.
       */
      public PluginTest() {
-         super("io.persoium.core.rs");
+         super(new PersoniumCoreApplication());
      }
 
     /**

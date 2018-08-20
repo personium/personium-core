@@ -32,6 +32,7 @@ import org.odata4j.edm.EdmSimpleType;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Common;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.ODataUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -72,7 +73,7 @@ public class UserDataComplexPropertyDateTimeTest extends AbstractUserDataTest {
      * コンストラクタ.
      */
     public UserDataComplexPropertyDateTimeTest() {
-        super();
+        super(new PersoniumCoreApplication());
     }
 
     /**

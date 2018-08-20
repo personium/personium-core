@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
@@ -29,11 +28,10 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.WebAppDescriptor;
-
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -56,26 +54,11 @@ import io.personium.test.utils.ResourceUtils;
 @Category({Unit.class, Integration.class, Regression.class })
 public class BoxUrlTest extends ODataCommon {
 
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("javax.ws.rs.Application",
-                "io.personium.core.rs.PersoniumCoreApplication");
-        INIT_PARAMS.put("com.sun.jersey.config.feature.DisableWADL",
-                "true");
-
-    }
-
     /**
      * コンストラクタ.
      */
     public BoxUrlTest() {
-        super(new WebAppDescriptor.Builder(INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**

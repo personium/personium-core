@@ -19,7 +19,6 @@ package io.personium.test.jersey.box;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,9 +30,11 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.progress.ProgressInfo;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -42,29 +43,19 @@ import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * MKCOLのテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class })
-public class CollectionLimitTest extends JerseyTest {
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages", "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
+public class CollectionLimitTest extends PersoniumTest {
 
     /**
      * コンストラクタ.
      */
     public CollectionLimitTest() {
-        super(new WebAppDescriptor.Builder(CollectionLimitTest.INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     static final String ACL_AUTH_TEST_SETTING_FILE = "box/acl-authtest.txt";

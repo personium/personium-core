@@ -46,7 +46,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 
 import io.personium.common.auth.token.AbstractOAuth2Token;
@@ -62,6 +61,7 @@ import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.lock.LockManager;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.rs.cell.AuthResourceUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -71,6 +71,7 @@ import io.personium.test.jersey.PersoniumException;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
@@ -88,7 +89,7 @@ import io.personium.test.utils.TResponse;
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
 @SuppressWarnings("restriction")
-public class ImplicitFlowTest extends JerseyTest {
+public class ImplicitFlowTest extends PersoniumTest {
 
     private static final String MAX_AGE = "maxAge";
     private static final String SESSION_ID = OAuth2Helper.Key.SESSION_ID;
@@ -116,7 +117,7 @@ public class ImplicitFlowTest extends JerseyTest {
      * コンストラクタ.
      */
     public ImplicitFlowTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

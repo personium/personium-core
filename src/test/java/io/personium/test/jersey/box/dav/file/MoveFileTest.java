@@ -33,10 +33,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -45,6 +44,7 @@ import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.DavResourceUtils;
@@ -55,7 +55,7 @@ import io.personium.test.utils.TResponse;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class MoveFileTest extends JerseyTest {
+public class MoveFileTest extends PersoniumTest {
     private static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
     private static final String CELL_NAME = "testcell1";
     private static final String BOX_NAME = "box1";
@@ -66,7 +66,7 @@ public class MoveFileTest extends JerseyTest {
      * コンストラクタ.
      */
     public MoveFileTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     private void checkPropfindResponse(final String expectedUrl, TResponse res, boolean isExists) {

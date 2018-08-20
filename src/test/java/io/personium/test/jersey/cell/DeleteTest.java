@@ -37,6 +37,7 @@ import org.junit.experimental.categories.Category;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -86,7 +87,7 @@ public class DeleteTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public DeleteTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

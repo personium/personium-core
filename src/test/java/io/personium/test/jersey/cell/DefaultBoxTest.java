@@ -25,21 +25,22 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.model.Box;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * UnitUserでCellをCRUDするテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class DefaultBoxTest extends JerseyTest {
+public class DefaultBoxTest extends PersoniumTest {
 
     private static final String CELL_NAME = "createCell1";
     private static final String COL_NAME = "createCol";
@@ -49,7 +50,7 @@ public class DefaultBoxTest extends JerseyTest {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public DefaultBoxTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

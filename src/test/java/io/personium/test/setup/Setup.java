@@ -45,6 +45,7 @@ import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
@@ -147,7 +148,7 @@ public class Setup extends AbstractCase {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public Setup() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
         // アカウント生成
         List<AccountConfig> accounts = new ArrayList<AccountConfig>();
         for (int i = 0; i < NUM_ACCOUNTS; i++) {

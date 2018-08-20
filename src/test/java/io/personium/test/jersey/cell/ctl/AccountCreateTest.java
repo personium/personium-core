@@ -30,13 +30,14 @@ import org.junit.experimental.categories.Category;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.ODataUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
@@ -53,7 +54,7 @@ public class AccountCreateTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public AccountCreateTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

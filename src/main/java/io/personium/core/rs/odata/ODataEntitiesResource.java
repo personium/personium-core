@@ -52,7 +52,6 @@ import org.odata4j.producer.EntityResponse;
 import org.odata4j.producer.InlineCount;
 import org.odata4j.producer.QueryInfo;
 
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.WriteAPI;
@@ -62,6 +61,8 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.odata.PersoniumFormatWriterFactory;
+import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * ODataのEntitiesリソース( id 指定がなくentitySetが指定されたURL）を扱うJAX-RSリソース.
@@ -117,7 +118,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
 
         FormatWriter<EntitiesResponse> fw = PersoniumFormatWriterFactory.getFormatWriter(EntitiesResponse.class,
                 acceptableMediaTypes, null, callback);
-        UriInfo uriInfo2 = PersoniumCoreUtils.createUriInfo(uriInfo, 1);
+        UriInfo uriInfo2 = UriUtils.createUriInfo(uriInfo, 1);
 
         fw.write(uriInfo2, sw, resp);
         String entity = null;
@@ -193,7 +194,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
 
-        UriInfo resUriInfo = PersoniumCoreUtils.createUriInfo(uriInfo, 1);
+        UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
 
         // Entityの作成を Producerに依頼
         EntityResponse res = this.createEntity(reader, this.odataResource);
@@ -282,7 +283,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         // アクセス制御
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.POST
                 ).build();

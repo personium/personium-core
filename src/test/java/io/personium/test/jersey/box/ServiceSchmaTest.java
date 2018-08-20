@@ -46,11 +46,13 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.AssociationEndUtils;
 import io.personium.test.utils.BoxUtils;
@@ -60,32 +62,19 @@ import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * $metadata/$metadataのテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class ServiceSchmaTest extends JerseyTest {
-
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
+public class ServiceSchmaTest extends PersoniumTest {
 
     /**
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public ServiceSchmaTest() {
-        super(new WebAppDescriptor.Builder(ServiceSchmaTest.INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**

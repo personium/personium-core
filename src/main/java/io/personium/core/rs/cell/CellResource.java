@@ -59,6 +59,7 @@ import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.lock.UnitUserLockManager;
 import io.personium.core.rs.box.BoxResource;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * JAX-RS Resource handling Cell Level Api.
@@ -468,7 +469,7 @@ public class CellResource {
     public Response options() {
         // アクセス制御
         this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.SOCIAL_READ);
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.POST,
                 PersoniumCoreUtils.HttpMethod.PROPFIND
                 ).build();

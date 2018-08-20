@@ -39,13 +39,14 @@ import org.w3c.dom.NodeList;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
@@ -72,7 +73,7 @@ public class UpdateTest extends AbstractCase {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public UpdateTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

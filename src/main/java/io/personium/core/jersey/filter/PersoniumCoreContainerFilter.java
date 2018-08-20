@@ -45,6 +45,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumReadDeleteModeManager;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.lock.CellLockManager;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * 本アプリのリクエスト及びレスポンスに対してかけるフィルター.
@@ -64,13 +65,6 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     @Context
     private HttpServletRequest httpServletRequest;
 
-    /**
-     * @param httpServletRequest HttpServletRequest
-     */
-    public void setHttpServletRequest(final HttpServletRequest httpServletRequest) {
-        this.httpServletRequest = httpServletRequest;
-    }
-
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String method = requestContext.getMethod();
@@ -80,7 +74,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
 
         // リクエストの時間をセッションに保存する
         long requestTime = System.currentTimeMillis();
-        this.httpServletRequest.setAttribute("requestTime", requestTime);
+        requestContext.setProperty("requestTime", requestTime);
 
         overrideMethod(requestContext);
         overrideHeaders(requestContext);
@@ -92,7 +86,8 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
 
         // PCSの動作モードがReadDeleteOnlyモードの場合は、参照系リクエストのみ許可する
         // 許可されていない場合は例外を発生させてExceptionMapperにて処理する
-        PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(requestContext.getMethod(), requestContext.getUriInfo().getPathSegments());
+        PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(
+                requestContext.getMethod(), requestContext.getUriInfo().getPathSegments());
     }
 
 //    /**
@@ -129,7 +124,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
             throws IOException {
-        String cellId = (String) httpServletRequest.getAttribute("cellId");
+        String cellId = (String) requestContext.getProperty("cellId");
         if (cellId != null) {
             CellLockManager.decrementReferenceCount(cellId);
         }
@@ -137,7 +132,8 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         // 全てのレスポンスに共通するヘッダを追加する
         addResponseHeaders(requestContext.getHeaders(), responseContext);
         // レスポンスログを出力
-        responseLog(responseContext.getStatus());
+        Long requestTime = (Long) requestContext.getProperty("requestTime");
+        responseLog(requestTime, responseContext.getStatus());
     }
 
 //    /**
@@ -318,7 +314,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     private void checkOptionsMethod(String method, MultivaluedMap<String, String> headers) {
         String authValue = headers.getFirst(org.apache.http.HttpHeaders.AUTHORIZATION);
         if (authValue == null && HttpMethod.OPTIONS.equals(method)) {
-            Response res = PersoniumCoreUtils.responseBuilderForOptions(
+            Response res = ResourceUtils.responseBuilderForOptions(
                     HttpMethod.GET,
                     HttpMethod.POST,
                     HttpMethod.PUT,
@@ -401,7 +397,8 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
      * @param requestHeaders
      * @param response
      */
-    private void addResponseHeaders(MultivaluedMap<String, String> requestHeaders, ContainerResponseContext responseContext) {
+    private void addResponseHeaders(
+            MultivaluedMap<String, String> requestHeaders, ContainerResponseContext responseContext) {
         MultivaluedMap<String, Object> responseHeaders = responseContext.getHeaders();
 
         // X-Personium-Version
@@ -410,7 +407,8 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         // CORS
         if (requestHeaders.getFirst(HttpHeaders.ORIGIN) != null) {
             // Access-Control-Allow-Origin
-            responseHeaders.putSingle(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, requestHeaders.getFirst(HttpHeaders.ORIGIN));
+            responseHeaders.putSingle(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
+                    requestHeaders.getFirst(HttpHeaders.ORIGIN));
             responseHeaders.putSingle(HttpHeaders.ACCESS_CONTROLE_ALLOW_CREDENTIALS, true);
             responseHeaders.putSingle(HttpHeaders.ACCESS_CONTROL_MAX_AGE, ONE_DAY_SECONDS);
 
@@ -424,7 +422,8 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
             String exposeValue = HttpHeaders.X_PERSONIUM_VERSION;
             if (responseHeaders.containsKey(HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS)) {
                 StringBuilder builder = new StringBuilder();
-                builder.append(exposeValue).append(",").append(responseHeaders.getFirst(HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS));
+                builder.append(exposeValue).append(",").append(
+                        responseHeaders.getFirst(HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS));
                 exposeValue = builder.toString();
             }
             responseHeaders.putSingle(HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS, exposeValue);
@@ -445,7 +444,9 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         sb.append(" ");
         sb.append(requestUri);
         sb.append(" ");
-        sb.append(this.httpServletRequest.getRemoteAddr());
+        if (httpServletRequest != null) {
+            sb.append(httpServletRequest.getRemoteAddr());
+        }
         log.info(sb.toString());
     }
 
@@ -469,7 +470,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
      * レスポンスログ出力.
      * @param response
      */
-    private void responseLog(int responseStatus) {
+    private void responseLog(Long requestTime, int responseStatus) {
         StringBuilder sb = new StringBuilder();
         sb.append("[" + PersoniumUnitConfig.getCoreVersion() + "] " + "Completed. ");
         sb.append(responseStatus);
@@ -478,7 +479,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         // レスポンスの時間を記録する
         long responseTime = System.currentTimeMillis();
         // セッションからリクエストの時間を取り出す
-        long requestTime = (Long) this.httpServletRequest.getAttribute("requestTime");
+//        long requestTime = (Long) this.httpServletRequest.getAttribute("requestTime");
         // レスポンスとリクエストの時間差を出力する
         sb.append((responseTime - requestTime) + "ms");
         log.info(sb.toString());

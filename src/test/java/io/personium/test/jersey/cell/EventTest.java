@@ -31,6 +31,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -55,7 +56,7 @@ public class EventTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public EventTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

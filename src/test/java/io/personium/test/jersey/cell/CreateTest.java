@@ -31,12 +31,13 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import io.personium.core.model.Cell;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 
 /**
@@ -52,7 +53,7 @@ public class CreateTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public CreateTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

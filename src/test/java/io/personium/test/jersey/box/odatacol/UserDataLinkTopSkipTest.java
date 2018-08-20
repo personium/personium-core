@@ -19,8 +19,6 @@ package io.personium.test.jersey.box.odatacol;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
@@ -34,10 +32,12 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AssociationEndUtils;
@@ -48,8 +48,6 @@ import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * ユーザODataの$links取得で、$top・$skipクエリを指定した場合のテスト.
@@ -57,16 +55,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
 // 本テストでは1回につき25件のユーザODataを作成する。IT以降のテストの時間短縮のため、コミットビルドでのみ動作するようにしている。
-public class UserDataLinkTopSkipTest extends JerseyTest {
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages", "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
+public class UserDataLinkTopSkipTest extends PersoniumTest {
 
     private static final String MASTER_TOKEN_NAME = Setup.MASTER_TOKEN_NAME;
 
@@ -74,7 +63,7 @@ public class UserDataLinkTopSkipTest extends JerseyTest {
      * コンストラクタ.
      */
     public UserDataLinkTopSkipTest() {
-        super(new WebAppDescriptor.Builder(UserDataLinkTopSkipTest.INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     private String toEntityTypeName = "toEntity";

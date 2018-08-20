@@ -34,6 +34,7 @@ import org.junit.experimental.categories.Category;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.jersey.AbstractCase;
@@ -66,7 +67,7 @@ public class CellRootGetTest extends AbstractCase {
      * Constructor.
      */
     public CellRootGetTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

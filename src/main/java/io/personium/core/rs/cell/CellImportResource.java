@@ -34,7 +34,6 @@ import org.apache.commons.io.Charsets;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.WriteAPI;
@@ -143,7 +142,7 @@ public class CellImportResource {
     public Response options() {
         // Check the authority required for execution.
         cellRsCmp.checkAccessContext(cellRsCmp.getAccessContext(), CellPrivilege.ROOT);
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.POST
                 ).build();

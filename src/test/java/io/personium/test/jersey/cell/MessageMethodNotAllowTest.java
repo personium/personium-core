@@ -32,14 +32,15 @@ import org.junit.runner.RunWith;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
+import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
@@ -56,7 +57,7 @@ public class MessageMethodNotAllowTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public MessageMethodNotAllowTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

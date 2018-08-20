@@ -39,22 +39,23 @@ import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.lock.Lock;
 import io.personium.core.model.lock.LockManager;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * OData系APIへの同時リクエストテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class ConcurrentODataRequestTest extends JerseyTest {
+public class ConcurrentODataRequestTest extends PersoniumTest {
     private static final String CELL_NAME = "testcell1";
     private static final String BOX_NAME = "box1";
     private static final String NEW_ROLE_NAME = "roleForConcurrentTest";
@@ -73,7 +74,7 @@ public class ConcurrentODataRequestTest extends JerseyTest {
      * コンストラクタ.
      */
     public ConcurrentODataRequestTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

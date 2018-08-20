@@ -96,6 +96,7 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.FacadeResource;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * ImplicitFlow認証処理を司るJAX-RSリソース.
@@ -1230,6 +1231,6 @@ public class AuthzEndPointResource {
      */
     @OPTIONS
     public Response options() {
-        return PersoniumCoreUtils.responseBuilderForOptions(HttpMethod.POST, HttpMethod.GET).build();
+        return ResourceUtils.responseBuilderForOptions(HttpMethod.POST, HttpMethod.GET).build();
     }
 }

@@ -82,6 +82,7 @@ import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.plugin.PluginInfo;
 import io.personium.core.plugin.PluginManager;
 import io.personium.core.rs.PersoniumCoreApplication;
+import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 import io.personium.plugin.base.Plugin;
 import io.personium.plugin.base.auth.AuthPlugin;
@@ -793,7 +794,7 @@ public class TokenEndPointResource {
      */
     @OPTIONS
     public Response options() {
-        return PersoniumCoreUtils.responseBuilderForOptions(HttpMethod.POST)
+        return ResourceUtils.responseBuilderForOptions(HttpMethod.POST)
                 .build();
     }
 }

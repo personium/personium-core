@@ -24,6 +24,7 @@ import org.junit.experimental.categories.Category;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -47,7 +48,7 @@ public class ExtCellDeleteTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public ExtCellDeleteTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

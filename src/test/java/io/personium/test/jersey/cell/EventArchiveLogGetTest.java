@@ -38,14 +38,15 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumException;
-import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.Http;
@@ -74,7 +75,7 @@ public class EventArchiveLogGetTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public EventArchiveLogGetTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

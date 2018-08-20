@@ -28,6 +28,7 @@ import org.odata4j.core.ODataVersion;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -56,7 +57,7 @@ public class ExtRoleDeleteTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public ExtRoleDeleteTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

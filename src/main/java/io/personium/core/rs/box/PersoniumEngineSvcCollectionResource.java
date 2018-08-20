@@ -66,15 +66,15 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavMoveResource;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.impl.fs.DavCmpFsImpl;
-
-import io.personium.core.event.PersoniumEvent;
-import io.personium.core.event.PersoniumEventType;
-import io.personium.core.event.EventBus;
 import io.personium.core.utils.HttpClientFactory;
+import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
@@ -180,7 +180,7 @@ public class PersoniumEngineSvcCollectionResource {
     public Response options() {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.DELETE,
                 io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MOVE,
                 io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND,

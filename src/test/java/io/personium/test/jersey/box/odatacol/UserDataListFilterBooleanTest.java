@@ -29,12 +29,13 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
@@ -51,7 +52,7 @@ public class UserDataListFilterBooleanTest extends AbstractUserDataTest {
      * コンストラクタ.
      */
     public UserDataListFilterBooleanTest() {
-        super();
+        super(new PersoniumCoreApplication());
     }
 
     /**

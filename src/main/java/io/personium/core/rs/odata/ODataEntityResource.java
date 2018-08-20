@@ -62,6 +62,8 @@ import io.personium.core.model.ctl.SentMessage;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.PersoniumOptionsQueryParser;
+import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * ODataのEntityリソース(id指定されたURL)を扱うJAX-RS リソース.
@@ -189,7 +191,7 @@ public class ODataEntityResource extends AbstractODataResource {
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
 
-        UriInfo resUriInfo = PersoniumCoreUtils.createUriInfo(uriInfo, 1);
+        UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
 
         // $formatとAcceptヘッダの値から出力形式を決定
         MediaType contentType = decideOutputFormat(accept, format);
@@ -496,7 +498,7 @@ public class ODataEntityResource extends AbstractODataResource {
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
 
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.PUT,
                 PersoniumCoreUtils.HttpMethod.MERGE,

@@ -30,21 +30,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.model.lock.LockManager;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.rs.cell.TokenEndPointResource;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * 認証のテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class AuthAccountLockTest extends JerseyTest {
+public class AuthAccountLockTest extends PersoniumTest {
 
     static final String TEST_CELL1 = "testcell1";
     static final String TEST_CELL2 = "testcell2";
@@ -75,7 +76,7 @@ public class AuthAccountLockTest extends JerseyTest {
      * コンストラクタ.
      */
     public AuthAccountLockTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

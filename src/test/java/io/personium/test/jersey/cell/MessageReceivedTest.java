@@ -46,6 +46,7 @@ import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.ReceivedMessagePort;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -75,7 +76,7 @@ public class MessageReceivedTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public MessageReceivedTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

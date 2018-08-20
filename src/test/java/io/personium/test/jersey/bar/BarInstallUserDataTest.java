@@ -39,13 +39,15 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.progress.ProgressInfo;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AssociationEndUtils;
@@ -54,14 +56,13 @@ import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * ユーザデータ向けのbarファイルインストール用テスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class BarInstallUserDataTest extends JerseyTest {
+public class BarInstallUserDataTest extends PersoniumTest {
 
     private static final String INSTALL_TARGET = "installBox";
     private static final String REQ_CONTENT_TYPE = "application/zip";
@@ -82,7 +83,7 @@ public class BarInstallUserDataTest extends JerseyTest {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public BarInstallUserDataTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

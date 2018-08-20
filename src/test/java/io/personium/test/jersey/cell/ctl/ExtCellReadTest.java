@@ -22,6 +22,7 @@ import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -44,7 +45,7 @@ public class ExtCellReadTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public ExtCellReadTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

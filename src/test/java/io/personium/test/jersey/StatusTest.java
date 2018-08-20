@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.unit.core.UrlUtils;
 
 /**
@@ -34,7 +35,7 @@ public class StatusTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public StatusTest() {
-        super("io.personium");
+        super(new PersoniumCoreApplication());
     }
 
     /**
