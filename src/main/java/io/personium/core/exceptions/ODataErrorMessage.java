@@ -28,13 +28,16 @@ import javax.xml.bind.annotation.XmlType;
  * ODataのエラーメッセージ.
  * JAXBオブジェクトなので、JAX-RSに渡されると、Acceptヘッダに合わせて適宜XML/JSON変形されて返される.
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "error")
 public final class ODataErrorMessage {
     /**
      * デフォルト言語タグ.
      */
     public static final String DEFAULT_LANG_TAG = Locale.ENGLISH.toLanguageTag();
+    @XmlElement(name = "code")
     String code;
+    @XmlElement(name = "message")
     Message message;
     /**
      * デフォルトコンストラクタ.
@@ -65,43 +68,15 @@ public final class ODataErrorMessage {
         this.code = paramCode;
         this.message = new Message(DEFAULT_LANG_TAG, messageValue);
     }
-    /**
-     * @return the code
-     */
-    @XmlElement(name = "code")
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * @param code the code to set
-     */
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    /**
-     * @return the message
-     */
-    @XmlElement(name = "message")
-    public Message getMessage() {
-        return message;
-    }
-
-    /**
-     * setMessage.
-     * @param message String
-     */
-    public void setMessage(final String message) {
-        this.message = new Message(DEFAULT_LANG_TAG, message);
-    }
 
     /**
      */
     @XmlAccessorType(XmlAccessType.PROPERTY)
     @XmlType(name = "message", propOrder = { "lang", "value" })
     static final class Message {
+        @XmlElement(name = "lang")
         String lang;
+        @XmlElement(name = "value")
         String value;
         /**
          * デフォルトコンストラクタ.
@@ -112,14 +87,6 @@ public final class ODataErrorMessage {
         Message(String lang, String value) {
             this.lang = lang;
             this.value = value;
-        }
-        @XmlElement(name = "lang")
-        String getLang() {
-            return this.lang;
-        }
-        @XmlElement(name = "value")
-        String getValue() {
-            return this.value;
         }
     }
 }
