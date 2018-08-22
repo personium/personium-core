@@ -27,7 +27,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -183,8 +182,6 @@ public class PropertyListTest extends ODataCommon {
      * DefaultValueに制御コードを含むPropertyを一覧取得して_レスポンスボディがエスケープされて返却されること.
      * @throws DaoException レスポンスボディのパースに失敗
      */
-    // TODO jax-rs?jersey?のアップデートにより通らなくなった。一旦未実施とする。
-    @Ignore
     @Test
     public final void DefaultValueに制御コードを含むPropertyを一覧取得して_レスポンスボディがエスケープされて返却されること() throws DaoException {
         String locationUrl = UrlUtils.property(Setup.TEST_CELL1, Setup.TEST_BOX1, Setup.TEST_ODATA, PROPERTY_NAME,

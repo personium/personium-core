@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.spy.memcached.internal.CheckedOperationTimeoutException;
-
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.edm.EdmDataServices;
@@ -48,8 +46,8 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.response.PersoniumGetResponse;
 import io.personium.common.es.response.PersoniumSearchHit;
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.ctl.AssociationEnd;
@@ -70,12 +68,13 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyDocHandler;
 import io.personium.core.model.impl.es.doc.UserDataDocHandler;
 import io.personium.core.model.impl.es.doc.UserDataLinkDocHandler;
-import io.personium.core.odata.PersoniumEdmxFormatParser;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.odata.PersoniumEdmxFormatParser;
 import io.personium.core.rs.odata.BulkRequest;
 import io.personium.core.rs.odata.ODataBatchResource.NavigationPropertyBulkContext;
 import io.personium.core.rs.odata.ODataBatchResource.NavigationPropertyLinkType;
 import io.personium.core.utils.EscapeControlCode;
+import net.spy.memcached.internal.CheckedOperationTimeoutException;
 
 /**
  * ユーザデータのODataサービスむけODataProvider.
@@ -278,7 +277,13 @@ public class UserDataODataProducer extends EsODataProducer {
         cache.put("propertyAliasMap", getPropertyAliasMap());
         cache.put("entityTypeMap", getEntityTypeMap());
         StringWriter w = new StringWriter();
-        EdmxFormatWriter.write(this.metadata, w);
+        try {
+            EdmxFormatWriter.write(this.metadata, w);
+        } catch (Exception e) {
+            // If Exception(WstxIOException), control code(\u0000)
+            // If a control code is included, it is not cached (because escape/unescape is required)
+            return null;
+        }
 
         // 制御コードが含まれていた場合は、キャッシュしない(エスケープ・アンエスケープの必要があるため)
         if (EscapeControlCode.isContainsControlChar(w.toString())) {

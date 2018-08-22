@@ -26,7 +26,6 @@ import org.apache.http.HttpStatus;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -76,8 +75,6 @@ public class PropertyListViaNPTest extends ODataCommon {
     /**
      * DefaultValueに制御コードを含むPropertyをNP経由で一覧取得した場合_レスポンスボディがエスケープされて返却されること.
      */
-    // TODO jax-rs?jersey?のアップデートにより通らなくなった。一旦未実施とする。
-    @Ignore
     @Test
     public final void DefaultValueに制御コードを含むPropertyをNP経由で一覧取得した場合_レスポンスボディがエスケープされて返却されること() {
         String locationUrl =
