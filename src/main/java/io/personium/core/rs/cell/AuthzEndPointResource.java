@@ -489,10 +489,9 @@ public class AuthzEndPointResource {
 
     private Response returnErrorMessageCodeGrant(String clientId, String redirectUriStr, String massage,
             String state, String pTarget, String pOwner) {
-        ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+        ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
         return rb.entity(this.createForm(clientId, redirectUriStr, massage, state,
-                OAuth2Helper.ResponseType.CODE, pTarget, pOwner))
-                .header("Content-Type", "text/html; charset=UTF-8").build();
+                OAuth2Helper.ResponseType.CODE, pTarget, pOwner)).build();
     }
 
     private void checkPTarget(final String pTarget) {
@@ -603,10 +602,9 @@ public class AuthzEndPointResource {
         // ユーザIDとパスワードが一方でも未指定の場合、ログインエラーを返却する
         boolean passCheck = true;
         if (username == null || password == null || "".equals(username) || "".equals(password)) {
-            ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+            ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
             return rb.entity(this.createForm(clientId, redirectUriStr, noIdPassMsg, state,
-                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
-                    .header("Content-Type", "text/html; charset=UTF-8").build();
+                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
         }
 
         OEntityWrapper oew = cell.getAccount(username);
@@ -615,10 +613,9 @@ public class AuthzEndPointResource {
             String missIdPassMsg = PersoniumCoreMessageUtils.getMessage(resCode);
             log.info("MessageCode : " + resCode);
             log.info("responseMessage : " + missIdPassMsg);
-            ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+            ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
             return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state,
-                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
-                    .header("Content-Type", "text/html; charset=UTF-8").build();
+                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
         }
         // 最終ログイン時刻を更新するために、UUIDをクラス変数にひかえておく
         accountId = (String) oew.getUuid();
@@ -634,10 +631,9 @@ public class AuthzEndPointResource {
                 String accountLockMsg = PersoniumCoreMessageUtils.getMessage(resCode);
                 log.info("MessageCode : " + resCode);
                 log.info("responseMessage : " + accountLockMsg);
-                ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+                ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, accountLockMsg, state,
-                        OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
-                        .header("Content-Type", "text/html; charset=UTF-8").build();
+                        OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
             }
 
             // ユーザIDとパスワードのチェック
@@ -649,10 +645,9 @@ public class AuthzEndPointResource {
                 String missIdPassMsg = PersoniumCoreMessageUtils.getMessage(resCode);
                 log.info("MessageCode : " + resCode);
                 log.info("responseMessage : " + missIdPassMsg);
-                ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+                ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state,
-                        OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
-                        .header("Content-Type", "text/html; charset=UTF-8").build();
+                        OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
             }
         } catch (PersoniumCoreException e) {
             return this.returnErrorRedirect(redirectUriStr, e.getMessage(),
@@ -964,10 +959,9 @@ public class AuthzEndPointResource {
                     cookieRefreshToken, pTarget, OAuth2Helper.Key.TRUE_STR, state, pOwner);
         } else {
             // ユーザID・パスワード・assertion・cookieが未指定の場合、フォーム送信
-            ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+            ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
             return rb.entity(this.createForm(clientId, redirectUriStr, passFormMsg, state,
-                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
-                    .header("Content-Type", "text/html; charset=UTF-8").build();
+                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
         }
     }
 
@@ -1104,10 +1098,9 @@ public class AuthzEndPointResource {
      */
     private Response returnErrorMessage(String clientId, String redirectUriStr, String massage,
             String state, String pTarget, String pOwner) {
-        ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+        ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
         return rb.entity(this.createForm(clientId, redirectUriStr, massage, state,
-                OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
-                .header("Content-Type", "text/html; charset=UTF-8").build();
+                OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
     }
 
     /**

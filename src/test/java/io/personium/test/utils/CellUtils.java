@@ -653,6 +653,7 @@ public class CellUtils {
                 "Basic " + PersoniumCoreUtils.createBasicAuthzHeader(schemaCellUrl, schemaAuthenticatedToken);
 
         HashMap<String, String> requestheaders = new HashMap<String, String>();
+        requestheaders.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
         requestheaders.put(HttpHeaders.AUTHORIZATION, authorization);
 
         String body = String.format("grant_type=password&username=%s&password=%s", account, password);
