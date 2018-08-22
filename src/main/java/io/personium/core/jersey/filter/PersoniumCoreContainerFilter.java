@@ -90,37 +90,6 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
                 requestContext.getMethod(), requestContext.getUriInfo().getPathSegments());
     }
 
-//    /**
-//     * リクエスト全体に対してかけるフィルター.
-//     * @param request フィルタ前リクエスト
-//     * @return フィルタ後リクエスト
-//     */
-//    @Override
-//    public ContainerRequest filter(ContainerRequest request) {
-//        requestLog(request);
-//
-//        // リクエストの時間を記録する
-//        long requestTime = System.currentTimeMillis();
-//        // リクエストの時間をセッションに保存する
-//        this.httpServletRequest.setAttribute("requestTime", requestTime);
-//
-//        methodOverride(request);
-//        headerOverride(request);
-//        uriOverride(request);
-//        responseOptionsMethod(request);
-//
-//        // リクエストヘッダーの不正値をチェックする
-//        checkRequestHeader(request);
-//
-//        // PersoniumCoreConfig.setUnitRootIfNotSet(this.httpServletRequest);
-//
-//        // PCSの動作モードがReadDeleteOnlyモードの場合は、参照系リクエストのみ許可する
-//        // 許可されていない場合は例外を発生させてExceptionMapperにて処理する
-//        PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(request.getMethod(), request.getPathSegments());
-//
-//        return request;
-//    }
-
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
             throws IOException {
@@ -136,26 +105,6 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         responseLog(requestTime, responseContext.getStatus());
     }
 
-//    /**
-//     * レスポンス全体に対してかけるフィルター.
-//     * @param request リクエスト
-//     * @param response フィルタ前レスポンス
-//     * @return フィルタ後レスポンス
-//     */
-//    @Override
-//    public ContainerResponse filter(final ContainerRequest request, final ContainerResponse response) {
-//        String cellId = (String) httpServletRequest.getAttribute("cellId");
-//        if (cellId != null) {
-//            CellLockManager.decrementReferenceCount(cellId);
-//        }
-//
-//        // 全てのレスポンスに共通するヘッダを追加する
-//        addResponseHeaders(request, response);
-//        // レスポンスログを出力
-//        responseLog(response);
-//        return response;
-//    }
-
     private void overrideMethod(ContainerRequestContext requestContext) {
         if (HttpMethod.POST.equalsIgnoreCase(requestContext.getMethod())) {
             String overrideMethod = requestContext.getHeaders().getFirst(
@@ -165,20 +114,6 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
             }
         }
     }
-
-//    /**
-//     * メソッドオーバーライド処理.
-//     * @param request 加工するリクエスト
-//     */
-//    private void methodOverride(final ContainerRequest request) {
-//        if (request.getMethod().equalsIgnoreCase(HttpMethod.POST)) {
-//            // メソッドオーバーライド
-//            String method = request.getRequestHeaders().getFirst(PersoniumCoreUtils.HttpHeaders.X_HTTP_METHOD_OVERRIDE);
-//            if (method != null && !method.isEmpty()) {
-//                request.setMethod(method);
-//            }
-//        }
-//    }
 
     private void overrideHeaders(ContainerRequestContext requestContext) {
         List<String> overrideHeaderList = requestContext.getHeaders().get(PersoniumCoreUtils.HttpHeaders.X_OVERRIDE);
@@ -195,57 +130,16 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
             String overrideKey = overrideHeader.substring(0, idx).trim();
             String overrideValue = overrideHeader.substring(idx + 1).trim();
 
-//            List<String> vl = headers.get(key);
-//            if (vl == null) {
             List<String> overrideValueList = new ArrayList<String>();
-//            }
             overrideValueList.add(overrideValue);
             requestContext.getHeaders().merge(overrideKey, overrideValueList,
                     (value, newValue) -> {
+                        value.clear();
                         value.addAll(newValue);
                         return value;
                     });
         }
     }
-
-//    /**
-//     * ヘッダオーバーライド処理.
-//     * @param request 加工するリクエスト
-//     */
-//    private void headerOverride(final ContainerRequest request) {
-//        // ヘッダオーバーライド
-//        List<String> overrideHeaderList = request.getRequestHeaders().get(PersoniumCoreUtils.HttpHeaders.X_OVERRIDE);
-//        if (overrideHeaderList == null) {
-//            return;
-//        }
-//        InBoundHeaders headers = new InBoundHeaders();
-//        MultivaluedMap<String, String> originalHeaders = request.getRequestHeaders();
-//        if (originalHeaders instanceof InBoundHeaders) {
-//            headers = (InBoundHeaders) originalHeaders;
-//        }
-//
-//        InBoundHeaders overrideHeaders = new InBoundHeaders();
-//        for (String overrideHeader : overrideHeaderList) {
-//            int idx = overrideHeader.indexOf(":");
-//            // :がなかったり先頭にある場合は不正ヘッダなので無視
-//            if (idx < 1) {
-//                continue;
-//            }
-//            String key = overrideHeader.substring(0, idx).trim();
-//            String value = overrideHeader.substring(idx + 1).trim();
-//
-//            List<String> vl = overrideHeaders.get(key);
-//            if (vl == null) {
-//                vl = new ArrayList<String>();
-//            }
-//            vl.add(value);
-//            overrideHeaders.put(key, vl);
-//        }
-//        for (Entry<String, List<String>> entry : overrideHeaders.entrySet()) {
-//            headers.put(entry.getKey(), entry.getValue());
-//        }
-//        request.setHeaders(headers);
-//    }
 
     private void overrideUri(ContainerRequestContext requestContext) {
         MultivaluedMap<String, String> headers = requestContext.getHeaders();
@@ -275,37 +169,6 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         }
         requestContext.setRequestUri(baseUriBuilder.build(), requestUriBuilder.build());
     }
-
-//    /**
-//     * Uriのオーバーライド処理.
-//     * @param request 加工するリクエスト
-//     */
-//    private void uriOverride(final ContainerRequest request) {
-//        String xForwardedProto = request.getHeaderValue(PersoniumCoreUtils.HttpHeaders.X_FORWARDED_PROTO);
-//        String xForwardedHost = request.getHeaderValue(PersoniumCoreUtils.HttpHeaders.X_FORWARDED_HOST);
-//        String xForwardedPath = request.getHeaderValue(PersoniumCoreUtils.HttpHeaders.X_FORWARDED_PATH);
-//
-//        UriBuilder bub = request.getBaseUriBuilder();
-//        UriBuilder rub = request.getRequestUriBuilder();
-//
-//        if (xForwardedProto != null) {
-//            bub.scheme(xForwardedProto);
-//            rub.scheme(xForwardedProto);
-//        }
-//        if (xForwardedHost != null) {
-//            bub.host(xForwardedHost);
-//            rub.host(xForwardedHost);
-//        }
-//        if (xForwardedPath != null) {
-//            bub.replacePath("/");
-//            // クエリを含んでいる場合は、クエリを削除してリクエストパスに設定する
-//            if (xForwardedPath.contains("?")) {
-//                xForwardedPath = xForwardedPath.substring(0, xForwardedPath.indexOf("?"));
-//            }
-//            rub.replacePath(xForwardedPath);
-//        }
-//        request.setUris(bub.build(), rub.build());
-//    }
 
     /**
      * 認証なしOPTIONメソッドのチェック.
@@ -359,36 +222,6 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
             }
         }
     }
-
-//    /**
-//     * リクエストヘッダーの値をチェックする.
-//     * 現在は、Acceptヘッダーのみ(US-ASCII文字以外かどうか)をチェックする
-//     * @param request フィルター前リクエスト
-//     */
-//    private void checkRequestHeader(ContainerRequest request) {
-//        // ヘッダーのキー名に全角文字が含まれる場合は、その文字を含めたキー名となるため、実際にはこの指定は無視される。
-//        // Jersey1.10では、Acceptヘッダーのキー名と値にUS-ASCII文字以外が含まれる場合に異常終了するため以下を対処
-//        // (Acceptを含む他のヘッダーにも同様の処理が行われるが、上記理由により動作上は問題ないと判断）
-//        // －キー名に含まれる場合は、その指定を無効（Accept:*/*)とする（Jerseryで組み込み済み）。
-//        // －値に含まれる場合は、400エラーとする。
-//        InBoundHeaders newHeaders = new InBoundHeaders();
-//        MultivaluedMap<String, String> headers = request.getRequestHeaders();
-//        for (String header : headers.keySet()) {
-//            if (header.contains(org.apache.http.HttpHeaders.ACCEPT)
-//                    && !acceptHeaderValueRegex.matcher(header).matches()) {
-//                continue;
-//            } else {
-//                newHeaders.put(header, request.getRequestHeader(header));
-//            }
-//        }
-//        request.setHeaders(newHeaders);
-//        String acceptValue = request.getHeaderValue(org.apache.http.HttpHeaders.ACCEPT);
-//        if (acceptValue != null && !acceptHeaderValueRegex.matcher(acceptValue).matches()) {
-//            PersoniumCoreException exception = PersoniumCoreException.OData.BAD_REQUEST_HEADER_VALUE.params(
-//                    org.apache.http.HttpHeaders.ACCEPT, acceptValue);
-//            throw exception;
-//        }
-//    }
 
     /**
      * 全てのレスポンスに共通するレスポンスヘッダーを追加する.
@@ -450,22 +283,6 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         log.info(sb.toString());
     }
 
-//    /**
-//     * リクエストログ出力.
-//     * @param request
-//     * @param response
-//     */
-//    private void requestLog(final ContainerRequest request) {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("[" + PersoniumUnitConfig.getCoreVersion() + "] " + "Started. ");
-//        sb.append(request.getMethod());
-//        sb.append(" ");
-//        sb.append(request.getRequestUri().toString());
-//        sb.append(" ");
-//        sb.append(this.httpServletRequest.getRemoteAddr());
-//        log.info(sb.toString());
-//    }
-
     /**
      * レスポンスログ出力.
      * @param response
@@ -478,8 +295,6 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
 
         // レスポンスの時間を記録する
         long responseTime = System.currentTimeMillis();
-        // セッションからリクエストの時間を取り出す
-//        long requestTime = (Long) this.httpServletRequest.getAttribute("requestTime");
         // レスポンスとリクエストの時間差を出力する
         sb.append((responseTime - requestTime) + "ms");
         log.info(sb.toString());

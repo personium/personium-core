@@ -107,14 +107,14 @@ public class CellResource {
 
         // If cell status is import failed, APIs other than import or token or BulkDeletion are not accepted.
         if (Cell.STATUS_IMPORT_ERROR.equals(cellCmp.getCellStatus())) {
-            String[] paths = httpServletRequest.getPathInfo().split("/");
-            // Since the Cell name is stored at the second, check the third value.
-            // ex.[, "testcell", "__token"]
-            if (paths.length <= 2) {
+            String[] paths = accessContext.getUriInfo().getPath().split("/");
+            // Since the Cell name is stored at the first, check the second value.
+            // ex.["testcell", "__token"]
+            if (paths.length <= 1) {
                 if (!HttpMethod.DELETE.equals(httpServletRequest.getMethod())) {
                     throw PersoniumCoreException.Common.CELL_STATUS_IMPORT_FAILED;
                 }
-            } else if (!"__import".equals(paths[2]) && !"__token".equals(paths[2])) {
+            } else if (!"__import".equals(paths[1]) && !"__token".equals(paths[1])) {
                 throw PersoniumCoreException.Common.CELL_STATUS_IMPORT_FAILED;
             }
         }

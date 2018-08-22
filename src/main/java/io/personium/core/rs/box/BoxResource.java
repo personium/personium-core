@@ -121,7 +121,7 @@ public class BoxResource {
             this.boxRsCmp = new BoxRsCmp(cellRsCmp, davCmp, this.accessContext, this.box);
         } else {
             //This box does not exist.
-            String reqPathInfo = request.getPathInfo();
+            String reqPathInfo = accessContext.getUriInfo().getPath();
             if (!reqPathInfo.endsWith("/")) {
                 reqPathInfo += "/";
             }
@@ -134,7 +134,6 @@ public class BoxResource {
                 throw PersoniumCoreException.Dav.BOX_NOT_FOUND.params(this.cell.getUrl() + boxName);
             }
         }
-
     }
 
 
