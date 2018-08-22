@@ -175,8 +175,6 @@ public final class ObjectIo {
         marshaller.setProperty(MarshallerProperties.JSON_ATTRIBUTE_PREFIX, "@");
         marshaller.setProperty(MarshallerProperties.NAMESPACE_PREFIX_MAPPER, nameSpaceToJsonMap);
         marshaller.marshal(instance, writer);
-//        JSONMarshaller m = jsonContext.createJSONMarshaller();
-//        m.marshallToJSON(instance, writer);
     }
     /**
      * @param <T> 戻り値としてほしいクラス
@@ -196,12 +194,5 @@ public final class ObjectIo {
 
         JAXBElement<T> object = unmarshaller.unmarshal(new StreamSource(reader), elementClass);
         return object.getValue();
-//        if (object instanceof JAXBElement) {
-//            object = ((JAXBElement<?>) object).getValue();
-//        }
-//        return (T) object;
-//        JSONUnmarshaller u = jsonContext.createJSONUnmarshaller();
-//        JAXBElement<T> object = u.unmarshalJAXBElementFromJSON(reader, elementClass);
-//        return object.getValue();
     }
 }
