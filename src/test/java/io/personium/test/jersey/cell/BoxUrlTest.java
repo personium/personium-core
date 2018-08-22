@@ -21,6 +21,8 @@ import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 
+import javax.ws.rs.core.MediaType;
+
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
@@ -1520,6 +1522,7 @@ public class BoxUrlTest extends ODataCommon {
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
         PersoniumResponse res = null;
         HashMap<String, String> requestheaders = new HashMap<String, String>();
+        requestheaders.put(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
 
         // クライアントシークレット取得
         String authBody = "grant_type=password&username=account1&password=password1&p_target="

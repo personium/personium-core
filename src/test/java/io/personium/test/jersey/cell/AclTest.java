@@ -1861,6 +1861,8 @@ public class AclTest extends AbstractCase {
             ExtCellUtils.delete(account.get(14), TEST_CELL1, extCellUrl2, HttpStatus.SC_FORBIDDEN);
         } finally {
             // テスト用セルの削除
+            ExtCellUtils.delete(TOKEN, TEST_CELL1, extCellUrl, -1);
+            ExtCellUtils.delete(TOKEN, TEST_CELL1, extCellUrl2, -1);
             CellUtils.delete(TOKEN, testCell1, -1);
             CellUtils.delete(TOKEN, testCell2, -1);
             CellUtils.delete(TOKEN, testCell3, -1);
