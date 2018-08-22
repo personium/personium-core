@@ -71,6 +71,7 @@ import org.odata4j.producer.EntityResponse;
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
+import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.ExtRole;
@@ -1110,7 +1111,7 @@ public abstract class AbstractODataResource {
      */
     public static OEntityKey convertToUrlEncodeKey(EdmEntitySet entitySet, OEntityKey entityKey) {
         // Responses that require URL encoding are ExtCell and ExtRole only.
-        if (ExtCell.EDM_TYPE_NAME.equals(entitySet.getName())) {
+        if (ExtCell.EDM_TYPE_NAME.equals(entitySet.getName()) || Account.EDM_TYPE_NAME.equals(entitySet.getName())) {
             String encoded;
             try {
                 encoded = URLEncoder.encode((String) entityKey.asSingleValue(), "utf-8");

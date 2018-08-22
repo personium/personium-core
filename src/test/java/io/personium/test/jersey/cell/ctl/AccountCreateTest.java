@@ -253,17 +253,14 @@ public class AccountCreateTest extends ODataCommon {
         String encodedtestAccountName = "abcde12345-_%21%24%2A%3D%5E%60%7B%7C%7D%7E.%40";
 
         String testAccountPass = "password";
-        String accLocHeader = null;
 
         try {
-            accLocHeader = createAccount(testAccountName, testAccountPass, HttpStatus.SC_CREATED);
+            createAccount(testAccountName, testAccountPass, HttpStatus.SC_CREATED);
             AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, encodedtestAccountName);
             AccountUtils.update(MASTER_TOKEN_NAME, cellName,
                     encodedtestAccountName, testAccountName, "password2", HttpStatus.SC_NO_CONTENT);
         } finally {
-            if (accLocHeader != null) {
-                AccountUtils.delete(cellName, MASTER_TOKEN_NAME, encodedtestAccountName, -1);
-            }
+            AccountUtils.delete(cellName, MASTER_TOKEN_NAME, encodedtestAccountName, -1);
         }
     }
 
