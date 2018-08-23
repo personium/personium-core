@@ -41,6 +41,8 @@ import io.personium.test.unit.core.UrlUtils;
  * Httpリクエストドキュメントを利用するユーティリティ.
  */
 public class CellUtils {
+    private static final long WAIT_TIME_BULK_DELETE = 1000L;
+
     private CellUtils() {
     }
 
@@ -350,7 +352,14 @@ public class CellUtils {
         PersoniumRequest request = PersoniumRequest.delete(UrlUtils.cellRoot(cellName));
         request.header(HttpHeaders.AUTHORIZATION, tokenWithAuthSchema)
                 .header("X-Personium-Recursive", "true");
-        return AbstractCase.request(request);
+        PersoniumResponse response = AbstractCase.request(request);
+        // Sleep 1 second for asynchronous processing.
+        try {
+            Thread.sleep(WAIT_TIME_BULK_DELETE);
+        } catch (InterruptedException e) {
+            System.out.println("");
+        }
+        return response;
     }
 
     /**
