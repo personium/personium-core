@@ -239,7 +239,11 @@ public final class TResponse {
             log.debug(body);
             this.bodyWriter.write(body);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("Response read error.", e);
+            // SocketInputStream.read may fail.
+            // It is necessary to investigate the cause, but do not throw exception as a provisional countermeasure.
+            this.bodyWriter.write("");
+//            throw new RuntimeException(e);
         } finally {
             try {
                 sReader.close();
