@@ -86,7 +86,7 @@ public class BoxResourceTest {
         PowerMockito.doReturn(boxCmp).when(ModelFactory.class, "boxCmp", anyObject());
         PowerMockito.whenNew(BoxRsCmp.class).withAnyArguments().thenReturn(null);
 
-        return spy(new BoxResource(cell, "boxName", null, null, null, null));
+        return spy(new BoxResource(cell, "boxName", null, null, null));
     }
 
     /**

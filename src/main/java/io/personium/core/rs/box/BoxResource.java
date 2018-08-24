@@ -95,11 +95,10 @@ public class BoxResource {
      * @param boxName Box Name
      * @param cellRsCmp cellRsCmp
      * @param accessContext AccessContextオブジェクト
-     * @param request HTTPリクエスト
      * @param jaxRsRequest JAX-RS用HTTPリクエスト
      */
     public BoxResource(final Cell cell, final String boxName, final AccessContext accessContext,
-            final CellRsCmp cellRsCmp, final HttpServletRequest request, Request jaxRsRequest) {
+            final CellRsCmp cellRsCmp, Request jaxRsRequest) {
         // 親はなし。パス名としてとりあえずboxNameをいれておく。
         this.cell = cell;
         this.boxName = boxName;

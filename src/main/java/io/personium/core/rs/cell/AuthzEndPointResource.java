@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.ws.rs.CookieParam;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
@@ -47,6 +46,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -198,40 +198,33 @@ public class AuthzEndPointResource {
      * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
      * </ul>
      * @param authzHeader Authorization ヘッダ
-     * @param pOwner フォームパラメタ
-     * @param username フォームパラメタ
-     * @param password フォームパラメタ
-     * @param pTarget フォームパラメタ
-     * @param assertion フォームパラメタ
-     * @param clientId フォームパラメタ
-     * @param responseType フォームパラメタ
-     * @param redirectUri フォームパラメタ
      * @param host Hostヘッダ
      * @param pCookie p_cookie
      * @param cookieRefreshToken クッキー
-     * @param keepLogin フォームパラメタ
-     * @param state フォームパラメタ
-     * @param isCancel Cancelフラグ
+     * @param formParams Body parameters
      * @param uriInfo コンテキスト
      * @return JAX-RS Response Object
      */
     @POST
     public final Response authPost(@HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,  // CHECKSTYLE IGNORE
-            @FormParam(Key.OWNER) final String pOwner,
-            @FormParam(Key.USERNAME) final String username,
-            @FormParam(Key.PASSWORD) final String password,
-            @FormParam(Key.TARGET) final String pTarget,
-            @FormParam(Key.ASSERTION) final String assertion,
-            @FormParam(Key.CLIENT_ID) final String clientId,
-            @FormParam(Key.RESPONSE_TYPE) final String responseType,
-            @FormParam(Key.REDIRECT_URI) final String redirectUri,
             @HeaderParam(HttpHeaders.HOST) final String host,
             @CookieParam(FacadeResource.P_COOKIE_KEY) final String pCookie,
             @CookieParam(Key.SESSION_ID) final String cookieRefreshToken,
-            @FormParam(Key.KEEPLOGIN) final String keepLogin,
-            @FormParam(Key.STATE) final String state,
-            @FormParam(Key.CANCEL_FLG) final String isCancel,
+            MultivaluedMap<String, String> formParams,
             @Context final UriInfo uriInfo) {
+        // Using @FormParam will cause a closed error on the library side in case of an incorrect body.
+        // Since we can not catch Exception, retrieve the value after receiving it with MultivaluedMap.
+        String pOwner = formParams.getFirst(Key.OWNER);
+        String username = formParams.getFirst(Key.USERNAME);
+        String password = formParams.getFirst(Key.PASSWORD);
+        String pTarget = formParams.getFirst(Key.TARGET);
+        String assertion = formParams.getFirst(Key.ASSERTION);
+        String clientId = formParams.getFirst(Key.CLIENT_ID);
+        String responseType = formParams.getFirst(Key.RESPONSE_TYPE);
+        String redirectUri = formParams.getFirst(Key.REDIRECT_URI);
+        String keepLogin = formParams.getFirst(Key.KEEPLOGIN);
+        String state = formParams.getFirst(Key.STATE);
+        String isCancel = formParams.getFirst(Key.CANCEL_FLG);
 
         return auth(pOwner, username, password, pTarget, assertion, clientId, responseType, redirectUri, host,
                 pCookie, cookieRefreshToken, keepLogin, state, isCancel, uriInfo);

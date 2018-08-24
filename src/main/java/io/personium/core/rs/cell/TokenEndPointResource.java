@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.OPTIONS;
@@ -121,17 +120,6 @@ public class TokenEndPointResource {
      * </ul>
      * @param uriInfo  URI information
      * @param authzHeader Authorization Header
-     * @param grantType  One of query parameters
-     * @param username One of query parameters
-     * @param password One of query parameters
-     * @param pTarget One of query parameters
-     * @param pOwner One of query parameters
-     * @param assertion One of query parameters
-     * @param refreshToken One of query parameters
-     * @param code One of query parameters
-     * @param clientId One of query parameters
-     * @param clientSecret One of query parameters
-     * @param pCookie One of query parameters
      * @param host Host header
      * @param formParams Body parameters
      * @return JAX-RS Response Object
@@ -139,19 +127,21 @@ public class TokenEndPointResource {
     @POST
     public final Response token(@Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,
-            @FormParam(Key.GRANT_TYPE) final String grantType,
-            @FormParam(Key.USERNAME) final String username,
-            @FormParam(Key.PASSWORD) final String password,
-            @FormParam(Key.TARGET) final String pTarget,
-            @FormParam(Key.OWNER) final String pOwner,
-            @FormParam(Key.ASSERTION) final String assertion,
-            @FormParam(Key.REFRESH_TOKEN) final String refreshToken,
-            @FormParam(Key.CODE) final String code,
-            @FormParam(Key.CLIENT_ID) final String clientId,
-            @FormParam(Key.CLIENT_SECRET) final String clientSecret,
-            @FormParam("p_cookie") final String pCookie,
             @HeaderParam(HttpHeaders.HOST) final String host,
             MultivaluedMap<String, String> formParams) {
+        // Using @FormParam will cause a closed error on the library side in case of an incorrect body.
+        // Since we can not catch Exception, retrieve the value after receiving it with MultivaluedMap.
+        String grantType = formParams.getFirst(Key.GRANT_TYPE);
+        String username = formParams.getFirst(Key.USERNAME);
+        String password = formParams.getFirst(Key.PASSWORD);
+        String pTarget = formParams.getFirst(Key.TARGET);
+        String pOwner = formParams.getFirst(Key.OWNER);
+        String assertion = formParams.getFirst(Key.ASSERTION);
+        String refreshToken = formParams.getFirst(Key.REFRESH_TOKEN);
+        String code = formParams.getFirst(Key.CODE);
+        String clientId = formParams.getFirst(Key.CLIENT_ID);
+        String clientSecret = formParams.getFirst(Key.CLIENT_SECRET);
+        String pCookie = formParams.getFirst("p_cookie");
 
         // Accept unit local scheme url.
         String target = UriUtils.convertSchemeFromLocalUnitToHttp(

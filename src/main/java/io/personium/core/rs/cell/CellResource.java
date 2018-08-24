@@ -339,15 +339,13 @@ public class CellResource {
 
     /**
      * デフォルトボックスへのアクセス.
-     * @param request HTPPサーブレットリクエスト
      * @param jaxRsRequest JAX-RS用HTTPリクエスト
      * @return BoxResource Object
      */
     @Path("__")
-    public BoxResource box(@Context final HttpServletRequest request,
-            @Context final Request jaxRsRequest) {
+    public BoxResource box(@Context final Request jaxRsRequest) {
         return new BoxResource(this.cell, Box.DEFAULT_BOX_NAME, this.accessContext,
-                this.cellRsCmp, request, jaxRsRequest);
+                this.cellRsCmp, jaxRsRequest);
     }
 
     /**
@@ -391,17 +389,15 @@ public class CellResource {
 
     /**
      * 次のパスをBoxResourceへ渡すメソッド.
-     * @param request HTPPサーブレットリクエスト
      * @param boxName Boxパス名
      * @param jaxRsRequest JAX-RS用HTTPリクエスト
      * @return BoxResource Object
      */
     @Path("{box: [^\\/]+}")
     public BoxResource box(
-            @Context final HttpServletRequest request,
             @PathParam("box") final String boxName,
             @Context final Request jaxRsRequest) {
-        return new BoxResource(this.cell, boxName, this.accessContext, this.cellRsCmp, request, jaxRsRequest);
+        return new BoxResource(this.cell, boxName, this.accessContext, this.cellRsCmp, jaxRsRequest);
     }
 
     /**
