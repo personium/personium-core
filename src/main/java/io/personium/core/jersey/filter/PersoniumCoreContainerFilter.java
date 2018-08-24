@@ -70,6 +70,13 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         String method = requestContext.getMethod();
         MultivaluedMap<String, String> headers = requestContext.getHeaders();
 
+        log.debug("Headers");
+        if (headers != null) {
+            for (String key : headers.keySet()) {
+                log.debug(key + ":" + headers.getFirst(key));
+            }
+        }
+
         requestLog(method, requestContext.getUriInfo().getRequestUri().toString());
 
         // リクエストの時間をセッションに保存する

@@ -908,6 +908,12 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException PRECONDITION_FAILED = create("PR412-MC-0001");
         /**
+         * Unsupported media type.
+         * No params.
+         */
+        public static final PersoniumCoreException UNSUPPORTED_MEDIA_TYPE_NO_PARAMS = create("PR415-MC-0001");
+
+        /**
          * メソッドが未実装のとき.
          */
         public static final PersoniumCoreException METHOD_NOT_IMPLEMENTED = create("PR501-MC-0001");

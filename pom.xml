@@ -356,14 +356,6 @@
 		</repository>
 	</repositories>
 
-	<distributionManagement>
-		<repository>
-			<id>personium.io</id>
-			<name>Personium Repository</name>
-			<url>http://personium.io/mvnrepo</url>
-		</repository>
-	</distributionManagement>
-
 	<build>
 		<finalName>${final.name}</finalName>
 		<resources>
