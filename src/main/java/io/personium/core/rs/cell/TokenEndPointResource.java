@@ -143,11 +143,6 @@ public class TokenEndPointResource {
         String clientSecret = formParams.getFirst(Key.CLIENT_SECRET);
         String pCookie = formParams.getFirst("p_cookie");
 
-        log.debug("FormParam");
-        for (String key : formParams.keySet()) {
-            log.debug(key + ":" + formParams.getFirst(key));
-        }
-
         // Accept unit local scheme url.
         String target = UriUtils.convertSchemeFromLocalUnitToHttp(
                 cell.getUnitUrl(), pTarget);
