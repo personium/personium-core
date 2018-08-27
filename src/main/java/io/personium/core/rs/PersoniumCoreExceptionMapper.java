@@ -105,8 +105,9 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
             return this.handlePersoniumCoreException(PersoniumCoreException.Misc.METHOD_NOT_ALLOWED);
         } else if (HttpStatus.SC_NOT_FOUND == res.getStatus()) {
             return this.handlePersoniumCoreException(PersoniumCoreException.Misc.NOT_FOUND);
+        } else if (HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE == res.getStatus()) {
+            return this.handlePersoniumCoreException(PersoniumCoreException.Misc.UNSUPPORTED_MEDIA_TYPE_NO_PARAMS);
         }
         return res;
     }
 }
-

@@ -16,15 +16,16 @@
  */
 package io.personium.core.jersey.filter;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerRequestFilter;
-import com.sun.jersey.spi.container.ContainerResponseFilter;
-import com.sun.jersey.spi.container.ResourceFilter;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.ext.Provider;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.annotations.WriteAPI;
 import io.personium.core.model.Cell;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.lock.CellLockManager;
@@ -32,42 +33,29 @@ import io.personium.core.model.lock.CellLockManager;
 /**
  * Filter for requests with @WriteAPI annotation set.
  */
-public class WriteMethodFilter implements ResourceFilter, ContainerRequestFilter  {
+@Provider
+@WriteAPI
+public class WriteMethodFilter implements ContainerRequestFilter  {
 
     /**
      * {@inheritDoc}
+     * <p>
+     * When the cell is locking write, make the corresponding method inoperable.
      */
     @Override
-    public ContainerRequestFilter getRequestFilter() {
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ContainerResponseFilter getResponseFilter() {
-        // do nothing.
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ContainerRequest filter(ContainerRequest request) {
+    public void filter(ContainerRequestContext requestContext) throws IOException {
         // Get cell name from URI.
-        String path = request.getPathSegments().get(0).getPath();
+        String path = requestContext.getUriInfo().getPathSegments().get(0).getPath();
         if ("__ctl".equals(path)) {
             // For __ctl it is UnitLevelAPI.
             // Get {name} from [Cell('{name}') or Cell(Name='{name}')].
-            path = request.getPathSegments().get(1).getPath();
+            path = requestContext.getUriInfo().getPathSegments().get(1).getPath();
             Pattern formatPattern = Pattern.compile("'(.+)'");
             Matcher formatMatcher = formatPattern.matcher(path);
             if (formatMatcher.find()) {
                 path = formatMatcher.group(1);
             } else {
-                return request;
+                return;
             }
         }
         String cellName = path;
@@ -79,6 +67,5 @@ public class WriteMethodFilter implements ResourceFilter, ContainerRequestFilter
                 throw PersoniumCoreException.Common.LOCK_WRITING_TO_CELL.params(lockStatus.getMessage());
             }
         }
-        return request;
     }
 }

@@ -454,5 +454,15 @@ public class AccessContextTest {
         public List<Object> getMatchedResources() {
             return null;
         }
+
+        @Override
+        public URI relativize(URI uri) {
+            return null;
+        }
+
+        @Override
+        public URI resolve(URI uri) {
+            return null;
+        }
     }
 }

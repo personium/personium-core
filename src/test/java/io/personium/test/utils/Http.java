@@ -47,8 +47,6 @@ import org.apache.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.core.header.OutBoundHeaders;
-
 import io.personium.test.PersoniumCoreTestConfig;
 import io.personium.test.unit.core.UrlUtils;
 
@@ -81,7 +79,6 @@ public class Http {
     InputStream is;
     Map<String, String> params;
     byte[] paraBody;
-    OutBoundHeaders headers = new OutBoundHeaders();
     URL url;
     Socket socket;
     InputStream sIn;

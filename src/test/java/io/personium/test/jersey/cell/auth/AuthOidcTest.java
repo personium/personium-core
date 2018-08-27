@@ -22,15 +22,15 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * OpenID Connect認証のテスト.
@@ -41,7 +41,7 @@ import com.sun.jersey.test.framework.JerseyTest;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class AuthOidcTest extends JerseyTest {
+public class AuthOidcTest extends PersoniumTest {
 
     static final String OIDC_PROVIDER_GOOGLE = "google";
     static final String TEST_CELL1 = "testcell1";
@@ -80,7 +80,7 @@ public class AuthOidcTest extends JerseyTest {
      * コンストラクタ.
      */
     public AuthOidcTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
     /**
      * 不正なIDTokenを指定し400エラーが返却されること.

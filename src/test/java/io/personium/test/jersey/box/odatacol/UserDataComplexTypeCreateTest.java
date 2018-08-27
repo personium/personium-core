@@ -32,10 +32,9 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
-import com.sun.jersey.test.framework.WebAppDescriptor;
-
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -60,21 +59,11 @@ import io.personium.test.utils.UserDataUtils;
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
 
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
-
     /**
      * コンストラクタ.
      */
     public UserDataComplexTypeCreateTest() {
-        super(new WebAppDescriptor.Builder(UserDataComplexTypeCreateTest.INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**

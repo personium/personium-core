@@ -21,23 +21,24 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * PROPFINDのContent-Lengthの有無に関するテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class PropfindContentLengthTest extends JerseyTest {
+public class PropfindContentLengthTest extends PersoniumTest {
 
     static final String DAVCOL_NAME = "setdavcol";
     static final String DAVFILE_NAME = "dav.txt";
@@ -52,7 +53,7 @@ public class PropfindContentLengthTest extends JerseyTest {
      * コンストラクタ.
      */
     public PropfindContentLengthTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

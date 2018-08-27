@@ -19,24 +19,20 @@ package io.personium.test.jersey;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpStatus;
+import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-
 import io.personium.common.utils.PersoniumCoreUtils.HttpHeaders;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.ctl.SentMessage;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -49,7 +45,7 @@ import io.personium.test.utils.TResponse;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class CrossDomainTest extends JerseyTest {
+public class CrossDomainTest extends PersoniumTest {
 
     static final String ORIGIN = "example.com";
     static final String TEST_CELL1 = "testcell1";
@@ -62,25 +58,11 @@ public class CrossDomainTest extends JerseyTest {
             + "  <allow-http-request-headers-from domain=\"*\" headers=\"*\"/>"
             + "</cross-domain-policy>";
 
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("javax.ws.rs.Application",
-                "io.personium.core.rs.PersoniumCoreApplication");
-        INIT_PARAMS.put("com.sun.jersey.config.feature.DisableWADL",
-                "true");
-    }
-
     /**
      * コンストラクタ.
      */
     public CrossDomainTest() {
-        super(new WebAppDescriptor.Builder(CrossDomainTest.INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**

@@ -59,6 +59,7 @@ import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.lock.UnitUserLockManager;
 import io.personium.core.rs.box.BoxResource;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * JAX-RS Resource handling Cell Level Api.
@@ -106,14 +107,14 @@ public class CellResource {
 
         // If cell status is import failed, APIs other than import or token or BulkDeletion are not accepted.
         if (Cell.STATUS_IMPORT_ERROR.equals(cellCmp.getCellStatus())) {
-            String[] paths = httpServletRequest.getPathInfo().split("/");
-            // Since the Cell name is stored at the second, check the third value.
-            // ex.[, "testcell", "__token"]
-            if (paths.length <= 2) {
+            String[] paths = accessContext.getUriInfo().getPath().split("/");
+            // Since the Cell name is stored at the first, check the second value.
+            // ex.["testcell", "__token"]
+            if (paths.length <= 1) {
                 if (!HttpMethod.DELETE.equals(httpServletRequest.getMethod())) {
                     throw PersoniumCoreException.Common.CELL_STATUS_IMPORT_FAILED;
                 }
-            } else if (!"__import".equals(paths[2]) && !"__token".equals(paths[2])) {
+            } else if (!"__import".equals(paths[1]) && !"__token".equals(paths[1])) {
                 throw PersoniumCoreException.Common.CELL_STATUS_IMPORT_FAILED;
             }
         }
@@ -338,15 +339,13 @@ public class CellResource {
 
     /**
      * デフォルトボックスへのアクセス.
-     * @param request HTPPサーブレットリクエスト
      * @param jaxRsRequest JAX-RS用HTTPリクエスト
      * @return BoxResource Object
      */
     @Path("__")
-    public BoxResource box(@Context final HttpServletRequest request,
-            @Context final Request jaxRsRequest) {
+    public BoxResource box(@Context final Request jaxRsRequest) {
         return new BoxResource(this.cell, Box.DEFAULT_BOX_NAME, this.accessContext,
-                this.cellRsCmp, request, jaxRsRequest);
+                this.cellRsCmp, jaxRsRequest);
     }
 
     /**
@@ -390,17 +389,15 @@ public class CellResource {
 
     /**
      * 次のパスをBoxResourceへ渡すメソッド.
-     * @param request HTPPサーブレットリクエスト
      * @param boxName Boxパス名
      * @param jaxRsRequest JAX-RS用HTTPリクエスト
      * @return BoxResource Object
      */
     @Path("{box: [^\\/]+}")
     public BoxResource box(
-            @Context final HttpServletRequest request,
             @PathParam("box") final String boxName,
             @Context final Request jaxRsRequest) {
-        return new BoxResource(this.cell, boxName, this.accessContext, this.cellRsCmp, request, jaxRsRequest);
+        return new BoxResource(this.cell, boxName, this.accessContext, this.cellRsCmp, jaxRsRequest);
     }
 
     /**
@@ -468,7 +465,7 @@ public class CellResource {
     public Response options() {
         // アクセス制御
         this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.SOCIAL_READ);
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.POST,
                 PersoniumCoreUtils.HttpMethod.PROPFIND
                 ).build();

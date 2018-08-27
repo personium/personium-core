@@ -25,24 +25,25 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * $bacth認証のテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class AuthBatchTest extends JerseyTest {
+public class AuthBatchTest extends PersoniumTest {
 
     static final String TEST_CELL1 = Setup.TEST_CELL1;
     static final String TEST_CELL2 = Setup.TEST_CELL2;
@@ -81,7 +82,7 @@ public class AuthBatchTest extends JerseyTest {
      * コンストラクタ.
      */
     public AuthBatchTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

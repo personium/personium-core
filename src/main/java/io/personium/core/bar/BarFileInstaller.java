@@ -554,12 +554,4 @@ public class BarFileInstaller {
         return oDataEntityResource;
     }
 
-    /**
-     * URIの取得.
-     * @return UriInfo
-     */
-    public UriInfo getUriInfo() {
-        return uriInfo;
-    }
-
 }

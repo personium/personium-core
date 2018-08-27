@@ -22,12 +22,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.Header;
@@ -38,8 +40,10 @@ import org.json.simple.JSONObject;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.odata4j.core.ODataConstants;
-
-import com.sun.jersey.test.framework.WebAppDescriptor;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Cell;
@@ -61,30 +65,12 @@ public class ODataCommon extends AbstractCase {
     /** DcResponseオブジェクト. */
     private PersoniumResponse res = null;
 
-    /** リクエスト送信先URLを取得するプロパティのキー. */
-    public static final String ERROR_RESPONSE_LANG_EN = "en";
-
     /**
-     * コンストラクタ.
+     * Constructor.
+     * @param application jax-rs application
      */
-    protected ODataCommon() {
-        super();
-    }
-
-    /**
-     * コンストラクタ.
-     * @param value テスト対象パッケージ文字列
-     */
-    public ODataCommon(final String value) {
-        super(value);
-    }
-
-    /**
-     * コンストラクタ.
-     * @param build WebAppDescriptor
-     */
-    public ODataCommon(WebAppDescriptor build) {
-        super(build);
+    public ODataCommon(Application application) {
+        super(application);
     }
 
     /**
@@ -216,37 +202,6 @@ public class ODataCommon extends AbstractCase {
     }
 
     /**
-     * 正常系のパターンのテスト(return DcResponse).
-     * @param req DcRequestオブジェクト
-     * @param name 作成するCellの名前
-     * @return res this.resオブジェクト
-     */
-    public PersoniumResponse domainNormalResponse(PersoniumRequest req, String name) {
-        req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", name);
-        req.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        this.res = request(req);
-        checkDomainSuccessResponse(res, MediaType.APPLICATION_JSON_TYPE);
-        return this.res;
-    }
-
-    /**
-     * 異常系のパターンのテスト.
-     * @param req DcRequestオブジェクト
-     * @param name 作成するCellの名前
-     * @param errKey エラーキー
-     * @param errValue エラー値
-     * @param errSc 期待するエラーステータスコード
-     */
-    public void domainErrResponse(PersoniumRequest req, String name, String errKey, String errValue, int errSc) {
-        req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN)
-                .addJsonBody("Name", name)
-                .addJsonBody(errKey, errValue);
-        req.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        this.res = request(req);
-        assertEquals(errSc, this.res.getStatusCode());
-    }
-
-    /**
      * Cellの一覧取得の正常系のテスト.
      * @param req DcRequestオブジェクト
      */
@@ -265,17 +220,6 @@ public class ODataCommon extends AbstractCase {
         this.res = request(req);
         String resContentType = res.getFirstHeader(HttpHeaders.CONTENT_TYPE);
         assertEquals(MediaType.APPLICATION_ATOM_XML, resContentType.split(";")[0]);
-    }
-
-    /**
-     * Domainの一覧取得の正常系のテスト.
-     * @param req DcRequestオブジェクト
-     */
-    public void domainListNormal(PersoniumRequest req) {
-        req.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
-        req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        this.res = request(req);
-        checkDomainListResponse(res, MediaType.APPLICATION_JSON_TYPE);
     }
 
     /**
@@ -455,23 +399,6 @@ public class ODataCommon extends AbstractCase {
 
         // レスポンスボディのチェック
         checkErrorResponse(res.bodyAsJson(), "PR400-OD-0007");
-    }
-
-    /**
-     * Cell名が不正のパターンの処理.
-     * @param req DcRequestオブジェクト
-     * @param name Cell名
-     * @return レスポンスオブジェクト
-     */
-    private void cellErrorInvalidName(PersoniumRequest req, String name) {
-        // Cellを作成
-        req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", name);
-        this.res = request(req);
-
-        // Cell作成のレスポンスチェック
-        // 400になることを確認
-        assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
-
     }
 
     /**
@@ -672,49 +599,6 @@ public class ODataCommon extends AbstractCase {
 
             // レスポンスボディのJsonもチェックが必要
             checkCellJson(response.bodyAsJson(), resHeaders[0].getValue());
-        } else if (contentType == MediaType.APPLICATION_ATOM_XML_TYPE) {
-            // ContentTypeのチェック
-            Header[] resContentTypeHeaders = response.getResponseHeaders(HttpHeaders.CONTENT_TYPE);
-            assertEquals(1, resContentTypeHeaders.length);
-            assertEquals(MediaType.APPLICATION_ATOM_XML, resContentTypeHeaders[0].getValue());
-
-            // レスポンスボディのチェック
-            checkCellXML(response.bodyAsXml());
-        }
-    }
-
-    /**
-     * 正常系のレスポンスチェック.
-     * @param response response
-     * @param contentType ContentType
-     */
-    private void checkDomainSuccessResponse(PersoniumResponse response, MediaType contentType) {
-        // Cell作成のレスポンスチェック
-        // 201になることを確認
-        assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
-        // LOCATIONヘッダを取得
-        // レスポンスヘッダにLOCATIONが含まれているかチェック
-        // LOCATIONヘッダが複数存在する場合もNGとする
-        Header[] resHeaders = response.getResponseHeaders(HttpHeaders.LOCATION);
-        assertEquals(1, resHeaders.length);
-
-        // DataServiceVersionのチェック
-        Header[] resDsvHeaders = response.getResponseHeaders(ODataConstants.Headers.DATA_SERVICE_VERSION);
-        assertEquals(1, resDsvHeaders.length);
-        assertEquals("2.0", resDsvHeaders[0].getValue());
-
-        // Etagがあることのチェック
-        Header[] resEtagHeaders = response.getResponseHeaders(HttpHeaders.ETAG);
-        assertEquals(1, resEtagHeaders.length);
-
-        if (contentType == MediaType.APPLICATION_JSON_TYPE) {
-            // ContentTypeのチェック
-            Header[] resContentTypeHeaders = response.getResponseHeaders(HttpHeaders.CONTENT_TYPE);
-            assertEquals(1, resContentTypeHeaders.length);
-            assertEquals(MediaType.APPLICATION_JSON, resContentTypeHeaders[0].getValue());
-
-            // レスポンスボディのJsonもチェックが必要
-            checkDomainJson(response.bodyAsJson(), resHeaders[0].getValue());
         } else if (contentType == MediaType.APPLICATION_ATOM_XML_TYPE) {
             // ContentTypeのチェック
             Header[] resContentTypeHeaders = response.getResponseHeaders(HttpHeaders.CONTENT_TYPE);
@@ -1305,4 +1189,253 @@ public class ODataCommon extends AbstractCase {
         return response.getResponseHeaders(HttpHeaders.ETAG)[0].getValue();
     }
 
+    /**
+     * Cell名が不正のパターンの処理.
+     * @param req DcRequestオブジェクト
+     * @param name Cell名
+     * @return レスポンスオブジェクト
+     */
+    private void cellErrorInvalidName(PersoniumRequest req, String name) {
+        // Cellを作成
+        req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN).addJsonBody("Name", name);
+        this.res = request(req);
+
+        // Cell作成のレスポンスチェック
+        // 400になることを確認
+        assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
+
+    }
+
+    /**
+     * CellのXML形式のフォーマットチェック.
+     * @param doc Documentオブジェクト
+     */
+    private void checkCellXML(final Document doc) {
+        checkCellResponse(doc);
+    }
+
+    /**
+     * CellのJson形式のフォーマットチェック.
+     * @param doc JSONObjectオブジェクト
+     * @param locationHeader LOCATIONヘッダ
+     */
+    private void checkCellJson(final JSONObject doc, final String locationHeader) {
+        checkCellResponse(doc, locationHeader);
+    }
+
+    /**
+     * CellのXML形式のフォーマットチェック.
+     * @param doc Documentオブジェクト
+     */
+    private void checkCellResponse(final Document doc) {
+        Node elm;
+
+        // id要素
+        elm = getElementByTagName(doc, "id");
+        assertNotNull(elm);
+        // id値が空かどうかチェック
+        assertTrue(elm.getTextContent().length() > 0);
+
+        // title要素
+        elm = getElementByTagName(doc, "title");
+        assertNotNull(elm);
+        // type属性が"text"かチェック
+        assertEquals("text", getAttributeValue(elm, "type"));
+
+        // updated要素
+        elm = getElementByTagName(doc, "updated");
+        assertNotNull(elm);
+        // updated要素の値が日付形式かどうかチェック
+        assertTrue(validISO8601a(elm.getTextContent()));
+
+        // Name要素の存在チェック
+        elm = getElementByTagName(doc, "Name");
+        assertNotNull(elm);
+
+        // link要素
+        elm = getElementByTagName(doc, "link");
+        assertNotNull(elm);
+        assertEquals("edit", getAttributeValue(elm, "rel"));
+        assertEquals("Cell", getAttributeValue(elm, "title"));
+        assertTrue(getAttributeValue(elm, "href").length() > 0);
+
+        // category要素
+        elm = getElementByTagName(doc, "category");
+        assertNotNull(elm);
+        assertEquals(TYPE_CELL, getAttributeValue(elm, "term"));
+        assertEquals("http://schemas.microsoft.com/ado/2007/08/dataservices/scheme", getAttributeValue(elm, "scheme"));
+
+        // content要素
+        elm = getElementByTagName(doc, "content");
+        assertNotNull(elm);
+        assertEquals("application/xml", getAttributeValue(elm, "type"));
+
+        // d:__id要素
+        elm = getElementByTagNameNS(doc, "__id", MS_DS);
+        assertNotNull(elm);
+        // id値が空かどうかチェック
+        assertTrue(elm.getTextContent().length() > 0);
+
+        // d:Name要素
+        elm = getElementByTagNameNS(doc, "Name", MS_DS);
+        assertNotNull(elm);
+        // name値が空かどうかチェック
+        assertTrue(elm.getTextContent().length() > 0);
+
+        // d:__published要素
+        elm = getElementByTagNameNS(doc, "__published", MS_DS);
+        assertNotNull(elm);
+        // __published要素の値が日付形式かどうかチェック
+        assertTrue(validISO8601b(elm.getTextContent()));
+        assertEquals("Edm.DateTime", getAttributeValueNS(elm, "type", MS_MD));
+
+        // d:__updated要素
+        elm = getElementByTagNameNS(doc, "__updated", MS_DS);
+        assertNotNull(elm);
+        // __updated要素の値が日付形式かどうかチェック
+        assertTrue(validISO8601b(elm.getTextContent()));
+        assertEquals("Edm.DateTime", getAttributeValueNS(elm, "type", MS_MD));
+    }
+
+    /**
+     * DOMから、指定した要素名のタグを取得する.
+     * @param doc Documentオブジェクト
+     * @param name 取得する要素名
+     * @return 取得したNodeオブジェクト（存在しない場合はnull)
+     */
+    private Node getElementByTagName(final Document doc, final String name) {
+        NodeList nl = doc.getElementsByTagName(name);
+        if (nl.getLength() > 0) {
+            return nl.item(0);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 名前空間を指定してDOMから要素を取得する.
+     * @param doc Documentオブジェクト
+     * @param name 取得する要素名
+     * @param ns 名前空間名
+     * @return 取得したNodeオブジェクト
+     */
+    private Node getElementByTagNameNS(final Document doc, final String name, final String ns) {
+        NodeList nl = doc.getElementsByTagNameNS(ns, name);
+        if (nl.getLength() > 0) {
+            return nl.item(0);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Node内の指定した属性値を取得する.
+     * @param node 対象となる要素(Nodeオブジェクト)
+     * @param name 取得する属性名
+     * @return 取得した属性値
+     */
+    private String getAttributeValue(final Node node, final String name) {
+        NamedNodeMap nnm = node.getAttributes();
+        Node attr = nnm.getNamedItem(name);
+        if (attr != null) {
+            return attr.getNodeValue();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * 名前空間を指定してNode内の指定した属性値を取得する.
+     * @param node 対象となる要素(Nodeオブジェクト)
+     * @param name 取得する属性名
+     * @param ns 名前空間名
+     * @return 取得した属性値
+     */
+    private String getAttributeValueNS(final Node node, final String name, final String ns) {
+        NamedNodeMap nnm = node.getAttributes();
+        Node attr = nnm.getNamedItemNS(ns, name);
+        if (attr != null) {
+            return attr.getNodeValue();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * 指定した文字列形式の日付が、日付形式なのかチェックする.
+     * @param src チェック対象の日付文字列
+     * @return true:日付形式、false：日付形式ではない
+     */
+    private Boolean validISO8601a(final String src) {
+        // FastDateFormat fastDateFormat =
+        // org.apache.commons.lang.time.DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT;
+        String[] patterns = {"yyyy-MM-dd'T'HH:mm:ss'Z'"};
+        try {
+            org.apache.commons.lang.time.DateUtils.parseDate(src, patterns);
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 指定した文字列形式の日付が、日付形式なのかチェックする.
+     * @param src チェック対象の日付文字列
+     * @return true:日付形式、false：日付形式ではない
+     */
+    private Boolean validISO8601b(final String src) {
+        String[] patterns = {"yyyy-MM-dd'T'HH:mm:ss.SSS"};
+        try {
+            org.apache.commons.lang.time.DateUtils.parseDate(src, patterns);
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * CellのJson形式のリストのフォーマットチェック.
+     * @param response DcResponseオブジェクト
+     * @param contentType レスポンスのContentType
+     */
+    private void checkCellListResponse(PersoniumResponse response, MediaType contentType) {
+
+        // Cell作成のレスポンスチェック
+        // 200になることを確認
+        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
+
+        // DataServiceVersionのチェック
+        Header[] resDsvHeaders = response.getResponseHeaders(ODataConstants.Headers.DATA_SERVICE_VERSION);
+        assertEquals(1, resDsvHeaders.length);
+        assertEquals("2.0", resDsvHeaders[0].getValue());
+
+        // ContentTypeのチェック
+        Header[] resContentTypeHeaders = response.getResponseHeaders(HttpHeaders.CONTENT_TYPE);
+        assertEquals(1, resContentTypeHeaders.length);
+        String value = resContentTypeHeaders[0].getValue();
+        String[] values = value.split(";");
+        assertEquals(contentType.toString(), values[0]);
+
+        if (contentType == MediaType.APPLICATION_JSON_TYPE) {
+            // レスポンスボディのJsonもチェックが必要
+            checkCellListResponse(response.bodyAsJson());
+
+        } else if (contentType == MediaType.APPLICATION_ATOM_XML_TYPE) {
+            // TODO レスポンスボディのチェック
+            fail("Not Implemented.");
+            // checkCellXML(response.bodyAsXml());
+        }
+    }
+
+    /**
+     * CellのJson形式のリストのフォーマットチェック.
+     * @param doc JSONObjectオブジェクト
+     */
+    private void checkCellListResponse(JSONObject doc) {
+        JSONArray arResults = (JSONArray) ((JSONObject) doc.get("d")).get("results");
+        for (Object obj : arResults) {
+            JSONObject results = (JSONObject) obj;
+            validateCellResponse(results, null);
+        }
+    }
 }

@@ -384,7 +384,7 @@ public class DavRsCmp {
         // AccessControl
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
 
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.PUT,
                 HttpMethod.DELETE,

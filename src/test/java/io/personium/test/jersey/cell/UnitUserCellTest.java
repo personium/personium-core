@@ -32,8 +32,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
@@ -42,12 +40,14 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Account;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.UriUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.cell.auth.AuthTestCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -65,7 +65,7 @@ import io.personium.test.utils.TResponse;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class UnitUserCellTest extends JerseyTest {
+public class UnitUserCellTest extends PersoniumTest {
 
     private static final String UNIT_USER_CELL = "UnitUserCell";
     private static final String UNIT_USER_ACCOUNT = "UnitUserName";
@@ -83,7 +83,7 @@ public class UnitUserCellTest extends JerseyTest {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public UnitUserCellTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

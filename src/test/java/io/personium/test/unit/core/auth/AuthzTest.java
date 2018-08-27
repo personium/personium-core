@@ -26,12 +26,11 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-
-import com.sun.jersey.api.client.ClientResponse.Status;
 
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Cell;

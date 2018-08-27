@@ -29,12 +29,13 @@ import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.box.odatacol.schema.complextype.ComplexTypeUtils;
 import io.personium.test.jersey.box.odatacol.schema.complextypeproperty.ComplexTypePropertyUtils;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
@@ -46,7 +47,6 @@ import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * UserODataのDouble型静的プロパティNP経由操作のテストクラス.
@@ -78,21 +78,11 @@ public class UserDataWithNPDeclaredDoublePropertyTest extends ODataCommon {
     /** テストコンプレックスタイププロパティ. */
     public static final String COMPLEXTYPE_PROPERTY = "complexTypeProperty";
 
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
-
     /**
      * コンストラクタ.
      */
     public UserDataWithNPDeclaredDoublePropertyTest() {
-        super(new WebAppDescriptor.Builder(INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**

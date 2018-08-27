@@ -45,6 +45,7 @@ import io.personium.core.model.DavMoveResource;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.jaxb.Acl;
 import io.personium.core.rs.odata.ODataResource;
+import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
@@ -152,7 +153,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
     public Response optionsRoot() {
         // アクセス制御
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.DELETE,
                 PersoniumCoreUtils.HttpMethod.MOVE,

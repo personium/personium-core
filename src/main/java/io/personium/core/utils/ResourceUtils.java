@@ -20,10 +20,15 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.regex.Pattern;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import io.personium.common.utils.PersoniumCoreUtils.HttpHeaders;
 import io.personium.core.PersoniumCoreException;
 
 /**
@@ -97,5 +102,20 @@ public class ResourceUtils {
             throw PersoniumCoreException.Event.X_PERSONIUM_REQUESTKEY_INVALID;
         }
         return requestKey;
+    }
+
+    /**
+     * OPTIONSメソッドに対する正常応答につかうResponseBuilderを作って返します.
+     * @param allowedMethods 許可されるHTTPメソッド文字列.
+     * @return ResponseBuilder
+     */
+    public static ResponseBuilder responseBuilderForOptions(String... allowedMethods) {
+        StringBuilder allowedMethodsBuilder = new StringBuilder(javax.ws.rs.HttpMethod.OPTIONS);
+        if (allowedMethods != null && allowedMethods.length > 0) {
+            allowedMethodsBuilder.append(", ");
+            allowedMethodsBuilder.append(StringUtils.join(allowedMethods, ", "));
+        }
+        return Response.ok().header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, allowedMethodsBuilder.toString())
+                .header(HttpHeaders.ALLOW, allowedMethodsBuilder.toString());
     }
 }

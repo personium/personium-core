@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Relation;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -58,7 +59,7 @@ public class BoxRelationLinkTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public BoxRelationLinkTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

@@ -22,13 +22,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.ws.rs.core.Application;
+
 import io.personium.client.ODataBatchResponseParser;
 import io.personium.client.ODataResponse;
 import io.personium.test.jersey.box.odatacol.AbstractUserDataTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.BatchUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * UserData $batchテスト用の抽象クラス.
@@ -41,16 +42,8 @@ public abstract class AbstractUserDataBatchTest extends AbstractUserDataTest {
     /**
      * constructor.
      */
-    public AbstractUserDataBatchTest() {
-        super();
-    }
-
-    /**
-     * constructor.
-     * @param descripter WebAppDescriptor
-     */
-    public AbstractUserDataBatchTest(WebAppDescriptor descripter) {
-        super(descripter);
+    public AbstractUserDataBatchTest(Application application) {
+        super(application);
     }
 
     /**

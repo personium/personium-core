@@ -29,11 +29,10 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -42,6 +41,7 @@ import io.personium.test.jersey.PersoniumException;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
@@ -56,7 +56,7 @@ import io.personium.test.utils.TResponse;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class MyPasswordTest extends JerseyTest {
+public class MyPasswordTest extends PersoniumTest {
 
     private static final String MASTER_TOKEN = AbstractCase.MASTER_TOKEN_NAME;
     private static final String UNIT_USER_CELL = "UnitUserCell";
@@ -65,7 +65,7 @@ public class MyPasswordTest extends JerseyTest {
      * コンストラクタ.
      */
     public MyPasswordTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

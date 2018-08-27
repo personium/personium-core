@@ -140,19 +140,22 @@ public class AccessContext {
     private List<Role> roles = new ArrayList<Role>();
     /** base uri. */
     private String baseUri;
+    /** uri info. */
+    private UriInfo uriInfo;
     /** Cause of invalid token. */
     private InvalidReason invalidReason;
     /** Role associated with unit user. */
     private String unitUserRole;
 
-    private AccessContext(String type, Cell cell, String baseUri) {
-        this(type, cell, baseUri, null);
+    private AccessContext(String type, Cell cell, String baseUri, UriInfo uriInfo) {
+        this(type, cell, baseUri, uriInfo, null);
     }
 
-    private AccessContext(String type, Cell cell, String baseUri, InvalidReason invalidReason) {
+    private AccessContext(String type, Cell cell, String baseUri, UriInfo uriInfo, InvalidReason invalidReason) {
         this.accessType = type;
         this.cell = cell;
         this.baseUri = baseUri;
+        this.uriInfo = uriInfo;
         this.invalidReason = invalidReason;
     }
 
@@ -173,13 +176,14 @@ public class AccessContext {
             Cell cell, String baseUri, String host, String xPersoniumUnitUser) {
         if (authzHeaderValue == null) {
             if (pCookiePeer == null || 0 == pCookiePeer.length()) {
-                return new AccessContext(TYPE_ANONYMOUS, cell, baseUri);
+                return new AccessContext(TYPE_ANONYMOUS, cell, baseUri, requestURIInfo);
             }
             // クッキー認証の場合
             // クッキー内の値を復号化した値を取得
             try {
                 if (null == pCookieAuthValue) {
-                    return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.cookieAuthError);
+                    return new AccessContext(
+                            TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
                 }
                 String decodedCookieValue = LocalToken.decode(pCookieAuthValue,
                         UnitLocalUnitUserToken.getIvBytes(
@@ -193,10 +197,12 @@ public class AccessContext {
                     return create(OAuth2Helper.Scheme.BEARER + " " + authToken,
                             requestURIInfo, null, null, cell, baseUri, host, xPersoniumUnitUser);
                 } else {
-                    return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.cookieAuthError);
+                    return new AccessContext(
+                            TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
                 }
             } catch (TokenParseException e) {
-                return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.cookieAuthError);
+                return new AccessContext(
+                        TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
             }
         }
 
@@ -206,13 +212,13 @@ public class AccessContext {
 
         if (authzHeaderValue.startsWith(OAuth2Helper.Scheme.BASIC)) {
             // Basic認証
-            return createBasicAuthz(authzHeaderValue, cell, baseUri);
+            return createBasicAuthz(authzHeaderValue, cell, baseUri, requestURIInfo);
 
         } else if (authzHeaderValue.startsWith(OAuth2Helper.Scheme.BEARER)) {
             // OAuth2.0認証
-            return createBearerAuthz(authzHeaderValue, cell, baseUri, host, xPersoniumUnitUser);
+            return createBearerAuthz(authzHeaderValue, cell, baseUri, requestURIInfo, host, xPersoniumUnitUser);
         }
-        return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.authenticationScheme);
+        return new AccessContext(TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.authenticationScheme);
     }
 
     /**
@@ -226,7 +232,7 @@ public class AccessContext {
    public static AccessContext createForWebSocket(
            String accessToken, Cell cell, String baseUri, String host) {
        String bearerAccessToken = OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + accessToken;
-       return createBearerAuthz(bearerAccessToken, cell, baseUri, host, null);
+       return createBearerAuthz(bearerAccessToken, cell, baseUri, null, host, null);
    }
 
     /**
@@ -292,6 +298,14 @@ public class AccessContext {
      */
     public String getBaseUri() {
         return baseUri;
+    }
+
+    /**
+     * Get uri info.
+     * @return uri info
+     */
+    public UriInfo getUriInfo() {
+        return uriInfo;
     }
 
     /**
@@ -601,18 +615,19 @@ public class AccessContext {
      * @param authzHeaderValue Authorizationヘッダの値
      * @param cell アクセスしているCell
      * @param baseUri アクセスしているbaseUri
+     * @param uriInfo uri info
      * @return 生成されたAccessContextオブジェクト
      */
-    private static AccessContext createBasicAuthz(String authzHeaderValue, Cell cell, String baseUri) {
+    private static AccessContext createBasicAuthz(String authzHeaderValue, Cell cell, String baseUri, UriInfo uriInfo) {
 
         // Unitコントロールへのアクセスの場合は、Basic認証不可
         if (cell == null) {
-            return new AccessContext(TYPE_INVALID, null, baseUri, InvalidReason.basicAuthError);
+            return new AccessContext(TYPE_INVALID, null, baseUri, uriInfo, InvalidReason.basicAuthError);
         }
 
         String[] idpw = PersoniumCoreUtils.parseBasicAuthzHeader(authzHeaderValue);
         if (idpw == null) {
-            return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.basicAuthFormat);
+            return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthFormat);
         }
 
         String username = idpw[0];
@@ -620,7 +635,7 @@ public class AccessContext {
 
         OEntityWrapper oew = cell.getAccount(username);
         if (oew == null) {
-            return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.basicAuthFormat);
+            return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthFormat);
         }
 
         // Accountのロックチェック
@@ -629,17 +644,17 @@ public class AccessContext {
         if (isLock) {
             // memcachedのロック時間を更新
             AuthResourceUtils.registAccountLock(accountId);
-            return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.basicAuthErrorInAccountLock);
+            return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthErrorInAccountLock);
         }
 
         boolean authnSuccess = cell.authenticateAccount(oew, password);
         if (!authnSuccess) {
             // memcachedにロックを作成
             AuthResourceUtils.registAccountLock(accountId);
-            return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.basicAuthError);
+            return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthError);
         }
         // 認証して成功なら
-        AccessContext ret = new AccessContext(TYPE_BASIC, cell, baseUri);
+        AccessContext ret = new AccessContext(TYPE_BASIC, cell, baseUri, uriInfo);
         ret.subject = username;
         // ロール情報を取得
         ret.roles = cell.getRoleListForAccount(username);
@@ -651,25 +666,26 @@ public class AccessContext {
      * @param authzHeaderValue Authorizationヘッダの値
      * @param cell アクセスしているCell
      * @param baseUri アクセスしているbaseUri
+     * @param uriInfo uri info
      * @param xPersoniumUnitUser X-Personium-UnitUserヘッダ
      * @return 生成されたAccessContextオブジェクト
      */
     private static AccessContext createBearerAuthz(String authzHeaderValue, Cell cell,
-            String baseUri, String host, String xPersoniumUnitUser) {
+            String baseUri, UriInfo uriInfo, String host, String xPersoniumUnitUser) {
         // Bearer
         // 認証トークンの値が[Bearer ]で開始していなければ不正なトークンと判断する
         if (!authzHeaderValue.startsWith(OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX)) {
-            return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.tokenParseError);
+            return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.tokenParseError);
         }
         String accessToken = authzHeaderValue.substring(OAuth2Helper.Scheme.BEARER.length() + 1);
         // マスタートークンの検出
         // マスタートークン指定で、X-Personium-UnitUserヘッダがなかった場合はマスタートークン扱い
         if (PersoniumUnitConfig.getMasterToken().equals(accessToken) && xPersoniumUnitUser == null) {
-            AccessContext ret = new AccessContext(TYPE_UNIT_MASTER, cell, baseUri);
+            AccessContext ret = new AccessContext(TYPE_UNIT_MASTER, cell, baseUri, uriInfo);
             return ret;
         } else if (PersoniumUnitConfig.getMasterToken().equals(accessToken) && xPersoniumUnitUser != null) {
             // X-Personium-UnitUserヘッダ指定だとマスターからユニットユーザトークンへの降格
-            AccessContext ret = new AccessContext(TYPE_UNIT_USER, cell, baseUri);
+            AccessContext ret = new AccessContext(TYPE_UNIT_USER, cell, baseUri, uriInfo);
             ret.subject = xPersoniumUnitUser;
             return ret;
         }
@@ -684,11 +700,11 @@ public class AccessContext {
         } catch (TokenParseException e) {
             // パースに失敗したので
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
-            return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.tokenParseError);
+            return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.tokenParseError);
         } catch (TokenDsigException e) {
             // 証明書検証に失敗したので
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
-            return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.tokenDsigError);
+            return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.tokenDsigError);
         } catch (TokenRootCrtException e) {
             // ルートCA証明書の設定エラー
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
@@ -698,15 +714,15 @@ public class AccessContext {
         // AccessTokenではない場合、すなわちリフレッシュトークン。
         if (!(tk instanceof IAccessToken) || tk instanceof TransCellRefreshToken) {
             // リフレッシュトークンでのアクセスは認めない。
-            return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.refreshToken);
+            return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.refreshToken);
         }
 
         // トークンの有効期限チェック
         if (tk.isExpired()) {
-            return new AccessContext(TYPE_INVALID, cell, baseUri, InvalidReason.expired);
+            return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.expired);
         }
 
-        AccessContext ret = new AccessContext(null, cell, baseUri);
+        AccessContext ret = new AccessContext(null, cell, baseUri, uriInfo);
         if (tk instanceof AccountAccessToken) {
             ret.accessType = TYPE_LOCAL;
             // ロール情報をとってくる。
@@ -761,7 +777,7 @@ public class AccessContext {
                     if (unitAdminRoleUrl.equals(roleUrl)) {
                         if (xPersoniumUnitUser == null) {
                             // If there is no X-Personium-UnitUser header, UnitAdmin
-                            ret = new AccessContext(TYPE_UNIT_ADMIN, cell, baseUri);
+                            ret = new AccessContext(TYPE_UNIT_ADMIN, cell, baseUri, uriInfo);
                         } else {
                             // If there is an X-Personium-UnitUser header, UnitUser
                             ret.subject = xPersoniumUnitUser;

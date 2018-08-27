@@ -42,18 +42,18 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.box.odatacol.schema.complextype.ComplexTypeUtils;
 import io.personium.test.jersey.box.odatacol.schema.complextypeproperty.ComplexTypePropertyUtils;
 import io.personium.test.setup.Setup;
@@ -74,12 +74,12 @@ import io.personium.test.utils.TestMethodUtils;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class CollectionTest extends JerseyTest {
+public class CollectionTest extends PersoniumTest {
     /**
      * コンストラクタ.
      */
     public CollectionTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     static final String ACL_AUTH_TEST_SETTING_FILE = "box/acl-authtest.txt";

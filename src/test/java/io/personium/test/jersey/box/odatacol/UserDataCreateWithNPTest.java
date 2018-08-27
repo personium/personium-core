@@ -32,19 +32,20 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AssociationEndUtils;
 import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
-import io.personium.test.utils.UserDataUtils;
 import io.personium.test.utils.TResponse;
+import io.personium.test.utils.UserDataUtils;
 
 /**
  * UserDataのNavigationProperty経由登録のテスト.
@@ -60,7 +61,7 @@ public class UserDataCreateWithNPTest extends AbstractUserDataTest {
      * コンストラクタ.
      */
     public UserDataCreateWithNPTest() {
-        super();
+        super(new PersoniumCoreApplication());
     }
 
     /**

@@ -21,15 +21,15 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.cell.ctl.CellCtlUtils;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -47,7 +47,7 @@ import io.personium.test.utils.RoleUtils;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class, Integration.class, Regression.class })
-public class AuthAccountUpdateTest extends JerseyTest {
+public class AuthAccountUpdateTest extends PersoniumTest {
 
     static final String TEST_CELL1 = Setup.TEST_CELL1;
 
@@ -55,7 +55,7 @@ public class AuthAccountUpdateTest extends JerseyTest {
      * コンストラクタ.
      */
     public AuthAccountUpdateTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

@@ -33,22 +33,23 @@ import org.w3c.dom.NodeList;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumUnitConfig.BinaryData;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * DAV File related tests.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class DavFileTest extends JerseyTest {
+public class DavFileTest extends PersoniumTest {
     private static final String CELL_NAME = "testcell1";
     private static final String TEST_BOX1 = "box1";
     private static final String FILE_NAME = "file1.txt";
@@ -59,7 +60,7 @@ public class DavFileTest extends JerseyTest {
      * constructor.
      */
     public DavFileTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

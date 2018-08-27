@@ -36,13 +36,13 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.annotations.ACL;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
-import io.personium.core.model.DavCmp;
-import io.personium.core.model.DavMoveResource;
-import io.personium.core.model.DavRsCmp;
-
 import io.personium.core.event.EventBus;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.event.PersoniumEventType;
+import io.personium.core.model.DavCmp;
+import io.personium.core.model.DavMoveResource;
+import io.personium.core.model.DavRsCmp;
+import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
@@ -231,7 +231,7 @@ public class DavFileResource {
     public Response options() {
         // Access Control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.PUT,
                 HttpMethod.DELETE,

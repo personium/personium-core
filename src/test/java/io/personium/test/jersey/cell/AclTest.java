@@ -32,8 +32,6 @@ import org.junit.experimental.categories.Category;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.sun.jersey.test.framework.WebAppDescriptor;
-
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
@@ -42,6 +40,7 @@ import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -74,16 +73,6 @@ import io.personium.test.utils.TestMethodUtils;
 @Category({Unit.class, Integration.class, Regression.class })
 public class AclTest extends AbstractCase {
 
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
-
     static final String TEST_CELL1 = Setup.TEST_CELL1;
     static final String TEST_ROLE1 = "role4";
     static final String TEST_ROLE2 = "role5";
@@ -93,7 +82,7 @@ public class AclTest extends AbstractCase {
      * コンストラクタ.
      */
     public AclTest() {
-        super(new WebAppDescriptor.Builder(INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**
@@ -1872,6 +1861,8 @@ public class AclTest extends AbstractCase {
             ExtCellUtils.delete(account.get(14), TEST_CELL1, extCellUrl2, HttpStatus.SC_FORBIDDEN);
         } finally {
             // テスト用セルの削除
+            ExtCellUtils.delete(TOKEN, TEST_CELL1, extCellUrl, -1);
+            ExtCellUtils.delete(TOKEN, TEST_CELL1, extCellUrl2, -1);
             CellUtils.delete(TOKEN, testCell1, -1);
             CellUtils.delete(TOKEN, testCell2, -1);
             CellUtils.delete(TOKEN, testCell3, -1);

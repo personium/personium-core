@@ -57,17 +57,20 @@ import io.personium.core.auth.Privilege;
 //@XmlType(name = "", propOrder = { "aces" })
 @XmlRootElement(namespace = "DAV:", name = "acl")
 public final class Acl {
-    /**
-     * xml:base.
-     */
+
+    static final String KEY_REQUIRE_SCHEMA_AUTHZ = "@requireSchemaAuthz";
+
+    /** xml:base. */
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace")
     String base;
 
-    /**
-     * p:requireSchemaAuthz.
-     */
+    /** p:requireSchemaAuthz. */
     @XmlAttribute(namespace = PersoniumCoreUtils.XmlConst.NS_PERSONIUM)
     String requireSchemaAuthz;
+
+    /** Aceタグ. */
+    @XmlElements({ @XmlElement(namespace = "DAV:", name = "ace", type = Ace.class) })
+    List<Ace> aces = new ArrayList<Ace>();
 
     /**
      * p:requireSchemaAuthz setter.
@@ -86,12 +89,6 @@ public final class Acl {
     }
 
     /**
-     * Aceタグ.
-     */
-    @XmlElements({ @XmlElement(namespace = "DAV:", name = "ace", type = Ace.class) })
-    List<Ace> aces;
-
-    /**
      * xml:base setter.
      * @param base baseUrl
      */
@@ -106,6 +103,7 @@ public final class Acl {
     public String getBase() {
         return base;
     }
+
     /**
      * Ace.
      * @return Ace Object
@@ -113,6 +111,7 @@ public final class Acl {
     public List<Ace> getAceList() {
         return aces;
     }
+
     /**
      * JSON化する.
      * @return Mapオブジェクト
@@ -128,7 +127,6 @@ public final class Acl {
             throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(e);
         }
     }
-    static final String KEY_REQUIRE_SCHEMA_AUTHZ = "@requireSchemaAuthz";
 
     /**
      * @param jsonString acl json
@@ -138,6 +136,9 @@ public final class Acl {
         StringReader sr = new StringReader(jsonString);
         try {
             Acl ret = ObjectIo.fromJson(sr, Acl.class);
+            if (ret == null) {
+                ret = new Acl();
+            }
             //  attr somehow not unmarshalled so manually fix the object
             JSONParser parser = new JSONParser();
             JSONObject j = (JSONObject) parser.parse(jsonString);

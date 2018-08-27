@@ -36,14 +36,15 @@ import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.model.ctl.ComplexType;
 import io.personium.core.model.ctl.Property;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DaoException;
+import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 
@@ -74,7 +75,7 @@ public class ComplexTypePropertyListTest extends ODataCommon {
      * コンストラクタ.
      */
     public ComplexTypePropertyListTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

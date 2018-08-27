@@ -24,13 +24,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.utils.Http;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * RoleResourceのテスト.
@@ -38,7 +39,7 @@ import com.sun.jersey.test.framework.JerseyTest;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class RoleResourceTest extends JerseyTest {
+public class RoleResourceTest extends PersoniumTest {
 
     private static String cellName = "testcell1";
 
@@ -46,7 +47,7 @@ public class RoleResourceTest extends JerseyTest {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public RoleResourceTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

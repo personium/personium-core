@@ -29,12 +29,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
@@ -44,7 +44,7 @@ import io.personium.test.utils.TResponse;
  * CellレベルPROPPATCHのテスト.
  */
 @Category({Unit.class, Integration.class, Regression.class })
-public class PropPatchTest extends JerseyTest {
+public class PropPatchTest extends PersoniumTest {
 
     static final String TEST_CELL1 = "testcell1";
     static final String DEPTH = "0";
@@ -53,7 +53,7 @@ public class PropPatchTest extends JerseyTest {
      * コンストラクタ.
      */
     public PropPatchTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

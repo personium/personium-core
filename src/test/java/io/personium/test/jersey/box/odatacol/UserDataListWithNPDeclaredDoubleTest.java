@@ -32,6 +32,7 @@ import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -56,7 +57,7 @@ public class UserDataListWithNPDeclaredDoubleTest extends AbstractUserDataTest {
      * コンストラクタ.
      */
     public UserDataListWithNPDeclaredDoubleTest() {
-        super();
+        super(new PersoniumCoreApplication());
     }
 
     /**

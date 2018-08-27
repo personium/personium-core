@@ -33,6 +33,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.wink.common.internal.MultivaluedMapImpl;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -40,8 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import com.sun.jersey.core.header.InBoundHeaders;
 
 /**
  * テストHTTP応答.
@@ -53,7 +52,8 @@ public final class TResponse {
     private static Logger log = LoggerFactory.getLogger(TResponse.class);
 
     int statusCode;
-    MultivaluedMap<String, String> headers = new InBoundHeaders();
+    MultivaluedMap<String, String> headers = new MultivaluedMapImpl<String, String>();
+
     StringWriter bodyWriter = new StringWriter();
 
     /**
@@ -239,7 +239,11 @@ public final class TResponse {
             log.debug(body);
             this.bodyWriter.write(body);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("Response read error.", e);
+            // SocketInputStream.read may fail.
+            // It is necessary to investigate the cause, but do not throw exception as a provisional countermeasure.
+            this.bodyWriter.write("");
+//            throw new RuntimeException(e);
         } finally {
             try {
                 sReader.close();

@@ -38,6 +38,7 @@ import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.rs.cell.AuthResourceUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.jersey.AbstractCase;
@@ -70,7 +71,7 @@ public class AuthzGetTest extends AbstractCase {
      * Constructor.
      */
     public AuthzGetTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

@@ -23,11 +23,13 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.common.auth.token.Role;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -35,14 +37,13 @@ import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * Basic認証のBoxレベルのリソースに対するテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class BasicAuthDavCollectionLevelTest extends JerseyTest {
+public class BasicAuthDavCollectionLevelTest extends PersoniumTest {
 
     private String cellName = Setup.TEST_CELL_BASIC;
     private String boxName = Setup.TEST_BOX1;
@@ -62,7 +63,7 @@ public class BasicAuthDavCollectionLevelTest extends JerseyTest {
      * コンストラクタ.
      */
     public BasicAuthDavCollectionLevelTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

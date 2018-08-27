@@ -30,12 +30,12 @@ import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
@@ -45,7 +45,7 @@ import io.personium.test.utils.Http;
  * トランスセルアクセストークンでのX509証明書検証テスト. IT/STのように、サーバとクライアントが分かれている場合は本テストは実施出来ないため、POMの設定で無効化
  */
 @RunWith(PersoniumIntegTestRunner.class)
-public class X509AuthTest extends JerseyTest {
+public class X509AuthTest extends PersoniumTest {
 
     private static String folderPath = "x509/";
 
@@ -53,7 +53,7 @@ public class X509AuthTest extends JerseyTest {
      * コンストラクタ.
      */
     public X509AuthTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

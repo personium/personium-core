@@ -20,9 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.http.HttpStatus;
 import org.junit.After;
@@ -35,36 +33,25 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * PROPFINDのテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class DavNodePropFindTest extends JerseyTest {
-    // セル再帰的削除を使うための設定
-    // 現在の仕様では、filterを設定しないと参照ロックが残ってしまい、セルが削除できないため
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
+public class DavNodePropFindTest extends PersoniumTest {
 
     private static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
     private static final String CELL_NAME = "davTestCell";
@@ -75,7 +62,7 @@ public class DavNodePropFindTest extends JerseyTest {
      * PersoniumCoreContainerFilterクラスを設定しておく
      */
     public DavNodePropFindTest() {
-        super(new WebAppDescriptor.Builder(DavNodePropFindTest.INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
     /**
      * すべてのテストで必ず１度実行される処理.

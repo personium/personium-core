@@ -16,32 +16,18 @@
  */
 package io.personium.test.jersey;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.common.utils.PersoniumCoreUtils;
-import io.personium.core.jersey.filter.PersoniumCoreContainerFilter;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -49,24 +35,38 @@ import io.personium.test.setup.Setup;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.core.header.InBoundHeaders;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.WebApplication;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * OPTIONSメソッドに関するテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class OptionsMethodTest extends JerseyTest {
+public class OptionsMethodTest extends PersoniumTest {
 
     /**
      * Constructor.
      */
     public OptionsMethodTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
+        RuntimeDelegate.setInstance(new org.glassfish.jersey.internal.RuntimeDelegateImpl());
     }
+
+//    @Override
+//    protected Application configure() {
+//        return new PersoniumCoreApplication();
+//    }
+//    private WebAppDescriptor initApplication() {
+//        new WebAppDescriptor.Builder();
+//
+//        PersoniumCoreApplication application = new PersoniumCoreApplication();
+//        List<String> classList = new ArrayList<String>();
+//        for (Class<?> clazz : application.getClasses()) {
+////            builder.append(test.getPackage().getName());
+////            builder.append(".");
+//            classList.add(clazz.getName());
+//        }
+//        return classList;
+//    }
 
     /**
      * OPTIONSメソッドの実行.
@@ -99,63 +99,12 @@ public class OptionsMethodTest extends JerseyTest {
      */
     @Test
     public void 認証なしのOPTIONSメソッドがリクエストされた場合にpersoniumで受け付けている全メソッドが返却されること() throws URISyntaxException {
-        // 被テストオブジェクトを準備
-        PersoniumCoreContainerFilter containerFilter = new PersoniumCoreContainerFilter();
-        // ContainerRequiestを準備
-        WebApplication wa = mock(WebApplication.class);
-        InBoundHeaders headers = new InBoundHeaders();
-        // X-FORWARDED-* 系のヘッダ設定
-        String scheme = "https";
-        String host = "example.org";
-        headers.add(PersoniumCoreUtils.HttpHeaders.X_FORWARDED_PROTO, scheme);
-        headers.add(PersoniumCoreUtils.HttpHeaders.X_FORWARDED_HOST, host);
-        ContainerRequest request = new ContainerRequest(wa, HttpMethod.OPTIONS,
-                new URI("http://dc1.example.com/hoge"),
-                new URI("http://dc1.example.com/hoge/hoho"),
-                headers, null);
-        // HttpServletRequestのmockを準備
-        HttpServletRequest mockServletRequest = mock(HttpServletRequest.class);
-        when(mockServletRequest.getRequestURL()).thenReturn(new StringBuffer("http://dc1.example.com"));
-        ServletContext mockServletContext = mock(ServletContext.class);
-        when(mockServletContext.getContextPath()).thenReturn("");
-        when(mockServletRequest.getServletContext()).thenReturn(mockServletContext);
-        containerFilter.setHttpServletRequest(mockServletRequest);
-        try {
-            containerFilter.filter(request);
-        } catch (WebApplicationException e) {
-            Response response = e.getResponse();
-            assertEquals(response.getStatus(), HttpStatus.SC_OK);
-            MultivaluedMap<String, Object> meta = response.getMetadata();
-            List<Object> values = meta.get("Access-Control-Allow-Methods");
-            assertEquals(values.size(), 1);
-            String value = (String) values.get(0);
-            String[] methods = value.split(",");
-            Map<String, String> masterMethods = new HashMap<String, String>();
-            masterMethods.put(HttpMethod.OPTIONS, "");
-            masterMethods.put(HttpMethod.GET, "");
-            masterMethods.put(HttpMethod.POST, "");
-            masterMethods.put(HttpMethod.PUT, "");
-            masterMethods.put(HttpMethod.DELETE, "");
-            masterMethods.put(HttpMethod.HEAD, "");
-            masterMethods.put(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MERGE, "");
-            masterMethods.put(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MKCOL, "");
-            masterMethods.put(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.MOVE, "");
-            masterMethods.put(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND, "");
-            masterMethods.put(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPPATCH, "");
-            masterMethods.put(io.personium.common.utils.PersoniumCoreUtils.HttpMethod.ACL, "");
-            for (String method : methods) {
-                if (method.trim() == "") {
-                    continue;
-                }
-                String m = masterMethods.remove(method.trim());
-                if (m == null) {
-                    fail("Method " + method + " is not defined.");
-                }
-            }
-            if (!masterMethods.isEmpty()) {
-                fail("UnExcpected Error.");
-            }
-        }
+        TResponse response = Http.request("options-noauth.txt")
+                .with("path", "/")
+                .returns()
+                .statusCode(HttpStatus.SC_OK)
+                .debug();
+        assertTrue(checkResponse(response, "OPTIONS,GET,POST,PUT,DELETE,HEAD,MERGE,MKCOL,MOVE,PROPFIND,PROPPATCH,ACL"));
     }
 
     /**
