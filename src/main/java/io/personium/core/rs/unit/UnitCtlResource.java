@@ -60,12 +60,12 @@ public class UnitCtlResource extends ODataResource {
     static Logger log = LoggerFactory.getLogger(UnitCtlResource.class);
 
     /**
-     * beforeDelete時にCellの検索をした結果をafterDeleteで利用するためのキャッシュ.
+     *Cache to use the search result of Cell at beforeDelete with afterDelete.
      */
     Cell cell;
 
     /**
-     * コンストラクタ.
+     *constructor.
      * @param accessContext AccessContext
      * @param uriInfo UriInfo
      */
@@ -109,8 +109,8 @@ public class UnitCtlResource extends ODataResource {
     }
 
     /**
-     * 認証に使用できるAuth Schemeを取得する.
-     * @return 認証に使用できるAuth Scheme
+     *Obtain Auth Scheme that can be used for authentication.
+     *Autret Scheme that can be used for @return authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {
@@ -143,9 +143,9 @@ public class UnitCtlResource extends ODataResource {
     }
 
     /**
-     * 更新時に必要なチェック処理.
+     *Check processing required when updating.
      * @param oEntityWrapper OEntityWrapper
-     * @param oEntityKey 更新対象のentityKey
+     *@ param o EntityKey The entityKey to be updated
      */
     @Override
     public void beforeUpdate(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
@@ -157,7 +157,7 @@ public class UnitCtlResource extends ODataResource {
 
         OEntityWrapper oew = (OEntityWrapper) er.getEntity();
 
-        // エンティティごとのアクセス可否判断
+        //Determining accessibility for each entity
         this.checkAccessContextPerEntity(this.getAccessContext(), oew);
     }
 
@@ -168,14 +168,14 @@ public class UnitCtlResource extends ODataResource {
 
         OEntityWrapper oew = (OEntityWrapper) er.getEntity();
 
-        // エンティティごとのアクセス可否判断
+        //Determining accessibility for each entity
         this.checkAccessContextPerEntity(this.getAccessContext(), oew);
 
         if (Cell.EDM_TYPE_NAME.equals(entitySetName)) {
             String cellId = oew.getUuid();
             cell = ModelFactory.cell(cellId, uriInfo);
 
-            // Cell配下が空っぽじゃなければ409エラー
+            //409 error if Cell is not empty
             if (!cell.isEmpty()) {
                 throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
             }
@@ -187,7 +187,7 @@ public class UnitCtlResource extends ODataResource {
     @Override
     public void afterDelete(final String entitySetName, final OEntityKey oEntityKey) {
         if (Cell.EDM_TYPE_NAME.equals(entitySetName)) {
-            // Cell配下にイベントログが存在する場合は削除
+            //Delete event log if it exists under Cell
             String owner = cell.getOwner();
             try {
                 EventUtils.deleteEventLog(this.cell.getId(), owner);
@@ -212,8 +212,8 @@ public class UnitCtlResource extends ODataResource {
     }
 
     /**
-     * サービスメタデータリクエストに対応する.
-     * @return JAX-RS 応答オブジェクト
+     *Corresponds to the service metadata request.
+     *@return JAX-RS response object
      */
     @GET
     @Path("{first: \\$}metadata")
@@ -222,7 +222,7 @@ public class UnitCtlResource extends ODataResource {
     }
 
     /**
-     * OPTIONSメソッド.
+     *OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
@@ -254,33 +254,33 @@ public class UnitCtlResource extends ODataResource {
 
     @Override
     public Privilege getNecessaryReadPrivilege(String entitySetNameStr) {
-        // UnitレベルにはPrivilegeを設定できない仕様のためnullを返す。そもそもこの関数呼ぶことはない。
+        //Returns null because it is a specification that can not set Privilege for Unit level. There is no way to call this function in the first place.
         return null;
     }
 
     @Override
     public Privilege getNecessaryWritePrivilege(String entitySetNameStr) {
-        // UnitレベルにはPrivilegeを設定できない仕様のためnullを返す。そもそもこの関数呼ぶことはない。
+        //Returns null because it is a specification that can not set Privilege for Unit level. There is no way to call this function in the first place.
         return null;
     }
 
     @Override
     public Privilege getNecessaryOptionsPrivilege() {
-        // UnitレベルにはPrivilegeを設定できない仕様のためnullを返す。そもそもこの関数呼ぶことはない。
+        //Returns null because it is a specification that can not set Privilege for Unit level. There is no way to call this function in the first place.
         return null;
     }
 
     @Override
     public void setBasicAuthenticateEnableInBatchRequest(AccessContext ac) {
-        // UnitレベルAPIはバッチリクエストに対応していないため、ここでは何もしない
+        //The Unit level API does not support batch requests, so we do not do anything here
     }
 
     /**
      * Not Implemented. <br />
-     * 現状、$batchのアクセス制御でのみ必要なメソッドのため未実装. <br />
-     * アクセスコンテキストが$batchしてよい権限を持っているかを返す.
-     * @param ac アクセスコンテキスト
-     * @return true: アクセスコンテキストが$batchしてよい権限を持っている
+     *Currently unimplemented because it is only necessary for $ batch access control <br />
+     *Returns whether the access context has permission to $ batch.
+     *@ param ac access context
+     *@return true: The access context has permission to $ batch
      */
     @Override
     public boolean hasPrivilegeForBatch(AccessContext ac) {

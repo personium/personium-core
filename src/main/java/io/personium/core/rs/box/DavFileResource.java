@@ -139,7 +139,7 @@ public class DavFileResource {
     @DELETE
     public Response delete(@HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
         // Access Control
-        // DavFileResourceは必ず親(最上位はBox)を持つため、this.davRsCmp.getParent()の結果がnullになることはない
+        //The result of this.davRsCmp.getParent () is never null since DavFileResource always has a parent (the top is Box)
         this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
         ResponseBuilder rb = this.davRsCmp.getDavCmp().delete(ifMatch, false);
@@ -218,7 +218,7 @@ public class DavFileResource {
     public Response move(
             @Context HttpHeaders headers) {
         // Access Control against the move source
-        // DavFileResourceは必ず親(最上位はBox)を持つため、this.davRsCmp.getParent()の結果がnullになることはない
+        //The result of this.davRsCmp.getParent () is never null since DavFileResource always has a parent (the top is Box)
         this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }

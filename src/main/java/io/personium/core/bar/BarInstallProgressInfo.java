@@ -25,7 +25,7 @@ import org.json.simple.JSONObject;
 import io.personium.core.model.progress.ProgressInfo;
 
 /**
- * barインストール用非同期処理状況オブジェクト.
+ *bar Asynchronous processing status object for installation.
  */
 public class BarInstallProgressInfo implements ProgressInfo {
 
@@ -47,10 +47,10 @@ public class BarInstallProgressInfo implements ProgressInfo {
     private int lastPercent = 0;
 
     /**
-     * コンストラクタ.
-     * @param cellId Cellのuuid
-     * @param boxId Boxのuuid
-     * @param entryCount barファイル内のエントリ（ファイル）数
+     *constructor.
+     *@ param cellId uuid of Cell
+     *@ param boxId uuid of Box
+     *@ param entryCount bar Number of entries (files) in the file
      */
     public BarInstallProgressInfo(String cellId, String boxId, long entryCount) {
         this.cellId = cellId;
@@ -63,8 +63,8 @@ public class BarInstallProgressInfo implements ProgressInfo {
     }
 
     /**
-     * 進捗率を更新する.
-     * @param delta 処理済みのファイル数（増分）
+     *Update the progress rate.
+     *@ param delta Number of processed files (increment)
      */
     public void addDelta(long delta) {
         this.progressCount += delta;
@@ -72,15 +72,15 @@ public class BarInstallProgressInfo implements ProgressInfo {
     }
 
     /**
-     * 進捗率を内部イベントとして出力可能かどうかを判定する.
-     * 判定基準は以下のとおり.
+     *Whether or not the progress rate can be output as an internal event is judged.
+     *The judgment criteria are as follows.
      * <ul>
-     * <li>進捗率が10%帯を超えているかどうか</li>
+     *<li> Whether the progress rate exceeds 10% band </ li>
      * </ul>.
-     * @return 出力可能な場合はtrueを、それ以外はfalseを返す。
+     *@return Return true if output is possible, false otherwise.
      */
     public boolean isOutputEventBus() {
-       // TODO 10%単位での更新だと長時間更新されない場合があるため、一定時間経過でも更新するように修正
+       //TODO Updated in increments of 10% may not be updated for a long time, so it will be updated so that it will be updated even after a certain period of time
        if (this.progressInPercent - this.lastPercent > THRESHHOLD) {
            this.lastPercent = (this.progressInPercent / THRESHHOLD) * THRESHHOLD;
            return true;
@@ -175,8 +175,8 @@ public class BarInstallProgressInfo implements ProgressInfo {
     }
 
     /**
-     * 保存されているデータの内容をJSON形式で取得する.
-     * @return JSONオブジェクト.
+     *Acquires the contents of stored data in JSON format.
+     *@return JSON object.
      */
     @SuppressWarnings("unchecked")
     public JSONObject getJsonObject() {
@@ -199,8 +199,8 @@ public class BarInstallProgressInfo implements ProgressInfo {
     }
 
     /**
-     * 保存されているデータの内容をJSON文字列で取得する.
-     * @return JSON文字列
+     *Get the contents of stored data as JSON character string.
+     *@return JSON string
      */
     public String toString() {
         return getJsonObject().toJSONString();

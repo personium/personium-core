@@ -42,28 +42,28 @@ import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
- * データストア層の基本処理を実装した基底クラス.
+ *Base class that implements basic processing of the data store layer.
  */
 public class DataSourceAccessor {
     private EsIndex index;
     private EsType type;
     private String routingid;
 
-    /** ログ用オブジェクト. */
+    /** Object for logging.*/
     static Logger log = LoggerFactory.getLogger(DataSourceAccessor.class);
 
     /**
-     * コンストラクタ.
-     * @param index インデックス
+     *constructor.
+     *@ param index index
      */
     public DataSourceAccessor(EsIndex index) {
         this.index = index;
     }
 
     /**
-     * コンストラクタ.
-     * @param index インデックス
-     * @param name タイプ名
+     *constructor.
+     *@ param index index
+     *@ param name Type name
      * @param routingId routingID
      */
     protected DataSourceAccessor(EsIndex index, String name, String routingId) {
@@ -75,7 +75,7 @@ public class DataSourceAccessor {
     }
 
     /**
-     * Indexのゲッター.
+     *Getter of Index.
      * @return EsIndex
      */
     public EsIndex getIndex() {
@@ -83,25 +83,25 @@ public class DataSourceAccessor {
     }
 
     /**
-     * Typeを取得する.
-     * @return 応答
+     *Get Type.
+     *@return response
      */
     public String getType() {
         return this.type.getType();
     }
 
     /**
-     * ESへの検索時に使用するルーティングIDを取得する.
-     * @return ルーティングID
+     *Get the routing ID to use when searching for ES.
+     *@return routing ID
      */
     protected String getRoutingId() {
         return this.routingid;
     }
 
     /**
-     * ドキュメントの１件取得.
-     * @param id ドキュメントのID
-     * @return 応答
+     *Acquisition of one document.
+     *@ param id Document ID
+     *@return response
      */
     public PersoniumGetResponse get(final String id) {
         try {
@@ -112,9 +112,9 @@ public class DataSourceAccessor {
     }
 
     /**
-     * ドキュメント新規作成.
-     * @param data ドキュメント
-     * @return ES応答
+     *Create a new document.
+     *@ param data document
+     *@return ES response
      */
     @SuppressWarnings("rawtypes")
     public PersoniumIndexResponse create(final Map data) {
@@ -123,10 +123,10 @@ public class DataSourceAccessor {
     }
 
     /**
-     * ドキュメント新規作成.
+     *Create a new document.
      * @param id ID
-     * @param data ドキュメント
-     * @return ES応答
+     *@ param data document
+     *@return ES response
      */
     @SuppressWarnings({"rawtypes" })
     public PersoniumActionResponse createForDavNodeFile(final String id, final Map data) {
@@ -135,10 +135,10 @@ public class DataSourceAccessor {
     }
 
     /**
-     * ドキュメント新規作成.
+     *Create a new document.
      * @param id ID
-     * @param data ドキュメント
-     * @return ES応答
+     *@ param data document
+     *@return ES response
      */
     @SuppressWarnings({"rawtypes" })
     public PersoniumIndexResponse create(final String id, final Map data) {
@@ -160,11 +160,11 @@ public class DataSourceAccessor {
     }
 
     /**
-     * ドキュメント新規作成(Cell作成用).
+     *Create a new document (for Cell creation).
      * @param id ID
-     * @param data ドキュメント
-     * @param docHandler ドキュメントハンドラ
-     * @return ES応答
+     *@ param data document
+     *@ param docHandler document handler
+     *@return ES response
      */
     @SuppressWarnings({"rawtypes" })
     public PersoniumIndexResponse create(final String id, final Map data, final EntitySetDocHandler docHandler) {
@@ -186,11 +186,11 @@ public class DataSourceAccessor {
     }
 
     /**
-     * ドキュメント更新.
+     *Document update.
      * @param id ID
-     * @param data ドキュメント
-     * @param version version番号
-     * @return ES応答
+     *@ param data document
+     *@ param version version number
+     *@return ES response
      */
     @SuppressWarnings({"rawtypes" })
     public PersoniumIndexResponse update(final String id, final Map data, final long version) {
@@ -212,10 +212,10 @@ public class DataSourceAccessor {
     }
 
     /**
-     * ドキュメント更新.
+     *Document update.
      * @param id ID
-     * @param data ドキュメント
-     * @return ES応答
+     *@ param data document
+     *@return ES response
      */
     @SuppressWarnings("rawtypes")
     public PersoniumIndexResponse update(final String id, final Map data) {
@@ -223,9 +223,9 @@ public class DataSourceAccessor {
     }
 
     /**
-     * ドキュメントの件数を取得.
-     * @param query クエリ情報
-     * @return ES応答
+     *Get the number of documents.
+     *@ param query Query information
+     *@return ES response
      */
     public long count(final Map<String, Object> query) {
         Map<String, Object> requestQuery = null;
@@ -244,9 +244,9 @@ public class DataSourceAccessor {
     }
 
     /**
-     * ドキュメントを検索.
-     * @param query クエリ情報
-     * @return ES応答
+     *Search documents.
+     *@ param query Query information
+     *@return ES response
      */
     public PersoniumSearchResponse search(final Map<String, Object> query) {
         Map<String, Object> requestQuery = null;
@@ -267,10 +267,10 @@ public class DataSourceAccessor {
     }
 
     /**
-     * ドキュメントをマルチ検索.
-     * 本メソッド時使用時には取得件数(size)をクエリに指定して呼び出すこと
-     * @param queryList クエリ情報の一覧
-     * @return ES応答
+     *Multi-search documents.
+     *When using this method, call number by specifying the number of acquisitions (size) in the query
+     *@ param queryList List of query information
+     *@return ES response
      */
     public PersoniumMultiSearchResponse multiSearch(final List<Map<String, Object>> queryList) {
         try {
@@ -282,9 +282,9 @@ public class DataSourceAccessor {
     }
 
     /**
-     * ESのインデックスに対してドキュメントを検索する.
-     * @param query クエリ情報
-     * @return ES応答
+     *Search documents against the index of ES.
+     *@ param query Query information
+     *@return ES response
      */
     public PersoniumSearchResponse indexSearch(final Map<String, Object> query) {
         Map<String, Object> requestQuery = null;
@@ -308,7 +308,7 @@ public class DataSourceAccessor {
      * Delete a document.
      * @param docId Document id to delete
      * @param version The version of the document to delete
-     * @return 応答
+     *@return response
      */
     public PersoniumDeleteResponse delete(final String docId, final long version) {
         try {
@@ -322,11 +322,11 @@ public class DataSourceAccessor {
     }
 
     /**
-     * バルクでデータを登録する.<br />
-     * 更新、削除は未サポート.
-     * @param esBulkRequest ES用バルク登録ドキュメントリスト
+     *Register the data in bulk. <br />
+     *Update and delete are not supported yet.
+     *@ param esBulkRequest Bulk registration document list for ES
      * @param routingId routingId
-     * @return バルクレスポンス
+     *@return bulk response
      */
     public PersoniumBulkResponse bulkCreate(List<EsBulkRequest> esBulkRequest,
             String routingId) {
@@ -341,11 +341,11 @@ public class DataSourceAccessor {
     }
 
     /**
-     * バルクでデータを登録/更新する.<br />
-     * 削除は未サポート.
-     * @param esBulkRequest ES用バルク登録ドキュメントリスト
+     *Register / update data in bulk. <br />
+     *Deletion is not supported yet.
+     *@ param esBulkRequest Bulk registration document list for ES
      * @param routingId routingId
-     * @return バルクレスポンス
+     *@return bulk response
      */
     public PersoniumBulkResponse bulkUpdate(List<EsBulkRequest> esBulkRequest, String routingId) {
 
@@ -390,16 +390,16 @@ public class DataSourceAccessor {
     }
 
     /**
-     * インデックスに対して検索リクエストを実行する.
+     *Execute search request for index.
      * @param routingId routingId
-     * @param query 検索クエリ
-     * @return 検索結果
+     *@ param query search query
+     *@return Search results
      */
     public PersoniumSearchResponse searchForIndex(String routingId, Map<String, Object> query) {
         try {
             if (!query.containsKey("size")) {
                 try {
-                    // サイズの指定がない場合は、全件取得するようsizeを設定
+                    //When size is not specified, size is set so as to acquire all cases
                     query.put("size", 0);
                     PersoniumSearchResponse hit = this.index.search(routingId, query);
                     query.put("size", hit.getHits().getAllPages());
@@ -414,10 +414,10 @@ public class DataSourceAccessor {
     }
 
     /**
-     * インデックスに対してマルチ検索リクエストを実行する.
+     *Execute multi search request for index.
      * @param routingId routingId
-     * @param queryList 検索クエリ一覧
-     * @return 検索結果
+     *@ param queryList Search query list
+     *@return Search results
      */
     public PersoniumMultiSearchResponse multiSearchForIndex(String routingId, List<Map<String, Object>> queryList) {
         try {

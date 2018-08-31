@@ -81,27 +81,27 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.CtlSchema;
 
 /**
- * barインストール時に使用するEdmxのXML解析用パーサクラス.
+ *bar Edmx XML parser class for use when installing.
  */
 public class PersoniumEdmxFormatParser extends EdmxFormatParser {
 
     /**
-     * ログ用オブジェクト.
+     *Object for logging.
      */
     static Logger log = LoggerFactory.getLogger(PersoniumEdmxFormatParser.class);
 
     private final EdmDataServices.Builder dataServices = EdmDataServices.newBuilder();
 
     /**
-     * コンストラクタ.
+     *constructor.
      */
     public PersoniumEdmxFormatParser() {
     }
 
     /**
-     * Edmxの解析.
-     * @param reader 解析用EdmxのReaderオブジェクト
-     * @return EdmDataServices 解析したEdmxのJAXBオブジェクト
+     *Analysis of Edmx.
+     *@ param reader Reader object for Edmx for analysis
+     *@return EdmDataServices JAXB object of Edmx parsed
      */
     @Override
     public EdmDataServices parseMetadata(XMLEventReader2 reader) {
@@ -343,7 +343,7 @@ public class PersoniumEdmxFormatParser extends EdmxFormatParser {
             }
             if (isStartElement(event, EDM2006_ENTITYCONTAINER,
                     EDM2007_ENTITYCONTAINER, EDM2008_ENTITYCONTAINER, EDM2009_ENTITYCONTAINER)) {
-                // PMD指摘により、parseEdmEntityContainerの第2引数からschemaNamespaceを削除
+                //With PMD indication, delete schemaNamespace from second argument of parseEdmEntityContainer
                EdmEntityContainer.Builder edmEntityContainer =
                         parseEdmEntityContainer(reader, event.asStartElement());
                 edmEntityContainers.add(edmEntityContainer);
@@ -391,12 +391,12 @@ public class PersoniumEdmxFormatParser extends EdmxFormatParser {
                         EdmEntitySet.newBuilder().setName(getAttributeValueIfExists(event.asStartElement(), "Name"))
                         .setEntityTypeName(getAttributeValueIfExists(event.asStartElement(), "EntityType")));
             }
-            // PMD指摘により、parseEdmAssociationSetの第2引数からschemaNamespaceを削除
+            //By PMD indication, delete schemaNamespace from second argument of parseEdmAssociationSet
             if (isStartElement(event,
                     EDM2006_ASSOCIATIONSET, EDM2007_ASSOCIATIONSET, EDM2008_ASSOCIATIONSET, EDM2009_ASSOCIATIONSET)) {
                 edmAssociationSets.add(parseEdmAssociationSet(reader, event.asStartElement()));
             }
-            // PMD指摘により、parseEdmFunctionImportの第2引数からschemaNamespaceを削除
+            //With PMD indication, remove schemaNamespace from the second argument of parseEdmFunctionImport
             if (isStartElement(event,
                     EDM2006_FUNCTIONIMPORT, EDM2007_FUNCTIONIMPORT, EDM2008_FUNCTIONIMPORT, EDM2009_FUNCTIONIMPORT)) {
                 edmFunctionImports.add(parseEdmFunctionImport(reader, event.asStartElement()));

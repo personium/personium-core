@@ -44,7 +44,7 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- * プレーンなWebDAVコレクションに対応するJAX-RS Resource クラス.
+ *JAX-RS Resource class corresponding to plain WebDAV collection.
  */
 public class DavCollectionResource {
 
@@ -52,20 +52,20 @@ public class DavCollectionResource {
 
     /**
      * constructor.
-     * @param parent 親
-     * @param davCmp 部品
+     *@ param parent parent
+     *@ param davCmp parts
      */
     public DavCollectionResource(final DavRsCmp parent, final DavCmp davCmp) {
         this.davRsCmp = new DavRsCmp(parent, davCmp);
     }
 
     /**
-     * GETメソッドを処理してこのリソースを取得します.
+     *Process the GET method to get this resource.
      * @return JAX-RS Response Object
      */
     @GET
     public Response get() {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
 
         StringBuilder sb = new StringBuilder();
@@ -80,7 +80,7 @@ public class DavCollectionResource {
     @WriteAPI
     @WebDAVMethod.PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(
                 this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
         return this.davRsCmp.doProppatch(requestBodyXml);
@@ -133,10 +133,10 @@ public class DavCollectionResource {
     }
 
     /**
-     * 現在のリソースの一つ下位パスを担当するJax-RSリソースを返す.
-     * @param nextPath 一つ下のパス名
-     * @param request リクエスト
-     * @return 下位パスを担当するJax-RSリソースオブジェクト
+     *Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
+     *@ param nextPath path name one down
+     *@ param request request
+     *@return Jax-RS resource object responsible for subordinate path
      */
     @Path("{nextPath}")
     public Object nextPath(@PathParam("nextPath") final String nextPath,
@@ -150,32 +150,32 @@ public class DavCollectionResource {
      */
     @WebDAVMethod.MKCOL
     public Response mkcol() {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
         throw PersoniumCoreException.Dav.METHOD_NOT_ALLOWED;
     }
 
     /**
-     * ACLメソッドの処理. ACLの設定を行う.
-     * @param reader 設定XML
+     *Processing of ACL method Set ACL.
+     *@ param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
     @ACL
     public Response acl(final Reader reader) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
         return this.davRsCmp.doAcl(reader);
     }
 
     /**
-     * OPTIONSメソッド.
+     *OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
     public Response options() {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
 
         return ResourceUtils.responseBuilderForOptions(
@@ -191,16 +191,16 @@ public class DavCollectionResource {
     }
 
     /**
-     * MOVEメソッドの処理.
-     * @param headers ヘッダ情報
-     * @return JAX-RS応答オブジェクト
+     *Processing of the MOVE method.
+     *@ param headers header information
+     *@return JAX-RS response object
      */
     @WriteAPI
     @WebDAVMethod.MOVE
     public Response move(
             @Context HttpHeaders headers) {
-        // 移動元に対するアクセス制御(親の権限をチェックする)
-        // DavCollectionResourceは必ず親(最上位はBox)を持つため、this.davRsCmp.getParent()の結果がnullになることはない
+        //Access control to move source (check parent's authority)
+        //Since DavCollectionResource always has a parent (the top is a Box), the result of this.davRsCmp.getParent () will never be null
         this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }

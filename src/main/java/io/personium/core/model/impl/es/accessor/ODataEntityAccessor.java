@@ -19,14 +19,14 @@ package io.personium.core.model.impl.es.accessor;
 import io.personium.common.es.EsIndex;
 
 /**
- * ODataEntityのアクセス処理を実装したクラス.
+ *A class that implements access processing of ODataEntity.
  */
 public class ODataEntityAccessor extends AbstractEntitySetAccessor {
 
     /**
-     * コンストラクタ.
-     * @param index インデックス
-     * @param name タイプ名
+     *constructor.
+     *@ param index index
+     *@ param name Type name
      * @param routingId routingId
      */
     public ODataEntityAccessor(EsIndex index, String name, String routingId) {

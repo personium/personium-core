@@ -22,47 +22,47 @@ import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 /**
- * AccountのEdm 定義体.
+ *Edm definition of Account.
  */
 public class Account {
     private Account() {
     }
 
     /**
-     * Type値 basic.
+     *Type value basic.
      */
     public static final String TYPE_VALUE_BASIC = "basic";
 
     /**
-     * Edm EntityType名.
+     *Edm EntityType name.
      */
     public static final String EDM_TYPE_NAME = "Account";
 
     /**
-     * ReceivedMessageとのNavigationProperty名.
+     *NavigationProperty name with ReceivedMessage.
      */
     public static final String EDM_NPNAME_FOR_RECEIVED_MESSAGE = "_ReceivedMessageRead";
 
     /**
-     * Nameプロパティの定義体.
+     *Definition field of Name property.
      */
     public static final EdmProperty.Builder P_NAME = EdmProperty.newBuilder("Name").setType(EdmSimpleType.STRING)
             .setNullable(false).setAnnotations(Common.P_FORMAT_NAME_WITH_SIGN);
 
     /**
-     * LastAuthenticatedプロパティの定義体.
+     *LastAuthenticated property definition body.
      */
     public static final EdmProperty.Builder P_LAST_AUTHENTICATED = EdmProperty.newBuilder("LastAuthenticated")
             .setType(EdmSimpleType.DATETIME).setNullable(true).setDefaultValue("null");
 
     /**
-     * Typeプロパティの定義体.
+     *Definition of Type property.
      */
     public static final EdmProperty.Builder P_TYPE = EdmProperty.newBuilder("Type").setType(EdmSimpleType.STRING)
             .setDefaultValue(TYPE_VALUE_BASIC).setAnnotations(Common.P_FORMAT_ACCOUNT_TYPE);
 
     /**
-     * Cellプロパティの定義体.
+     *Definition of Cell property.
      */
     public static final EdmProperty.Builder P_CELL = EdmProperty.newBuilder("Cell").setType(EdmSimpleType.STRING)
             .setNullable(true).setDefaultValue("null");

@@ -44,7 +44,7 @@ import org.odata4j.core.Throwables;
 import org.odata4j.format.json.JsonWriter;
 
 /**
- * JsonWriterのラッパークラス.
+ *JsonWriter wrapper class.
  */
 public class PersoniumJsonWriter extends JsonWriter {
 
@@ -54,8 +54,8 @@ public class PersoniumJsonWriter extends JsonWriter {
     private final Writer writer;
 
     /**
-     * コンストラクタ.
-     * @param writer ライター
+     *constructor.
+     *@ param writer writer
      */
     public PersoniumJsonWriter(Writer writer) {
         super(writer);
@@ -63,8 +63,8 @@ public class PersoniumJsonWriter extends JsonWriter {
     }
 
     /**
-     * Double型のフィールド出力.
-     * @param value フィールド値
+     *Double type field output.
+     *@ param value field value
      */
     public void writeNumber(double value) {
         try {
@@ -75,20 +75,20 @@ public class PersoniumJsonWriter extends JsonWriter {
     }
 
     /**
-     * Double型の値を既定のフォーマットで整形する.
-     * 情報落ちの起こらない範囲で固定小数点数表現に変換する
-     * @param value 整形する値
-     * @return 整形結果
+     *Format Double value in default format.
+     *Convert to fixed-point representation in a range where information does not occur
+     *@ param value Value to be formatted
+     *@return shaping result
      */
     private String formatDoubleValue(double value) {
-        // 固定小数表現に変換した文字列を生成する
+        //Generate character string converted to fixed decimal representation
         DecimalFormat format = new DecimalFormat("#.#");
         format.setMaximumIntegerDigits(MAX_INTEGER_DIGITS);
         format.setMaximumFractionDigits(MAX_FRACTION_DIGITS);
         String fomattedValue = format.format(value);
 
-        // 固定小数表現に変換した文字列を一度Double型に変換して
-        // 情報落ちがある場合は元の値を返却する
+        //Convert the character string converted to fixed decimal representation to Double type once
+        //If there is information loss, return the original value
         String result = fomattedValue;
         if (value != Double.parseDouble(fomattedValue)) {
             result = Double.toString(value);

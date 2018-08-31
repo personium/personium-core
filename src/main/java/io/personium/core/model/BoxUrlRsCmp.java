@@ -23,16 +23,16 @@ import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
 
 /**
- * Box URL取得リソース オブジェクトから処理の委譲を受けてDav関連の永続化を除く処理を行うクラス.
+ *Box URL Class for performing processing excluding Dav related persistence by delegating processing from resource object.
  */
 public class BoxUrlRsCmp extends BoxRsCmp {
 
     /**
-     * コンストラクタ.
+     *constructor.
      * @param cellRsCmp CellRsCmp
      * @param davCmp DavCmp
      * @param accessContext AccessContext
-     * @param box ボックス
+     *@ param box box
      */
     public BoxUrlRsCmp(final CellRsCmp cellRsCmp, final DavCmp davCmp,
             final AccessContext accessContext, final Box box) {
@@ -90,8 +90,8 @@ public class BoxUrlRsCmp extends BoxRsCmp {
     }
 
     /**
-     * 認証に使用できるAuth Schemeを取得する.
-     * @return 認証に使用できるAuth Scheme
+     *Obtain Auth Scheme that can be used for authentication.
+     *Autret Scheme that can be used for @return authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {

@@ -39,7 +39,7 @@ import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- * Cell管理オブジェクトの ODataProducer.
+ *ODataProducer of the Cell management object.
  */
 public class CellCtlODataProducer extends EsODataProducer {
     Cell cell;
@@ -62,12 +62,12 @@ public class CellCtlODataProducer extends EsODataProducer {
         return edmDataServices.build();
     }
 
-    // スキーマ情報
+    //Schema information
     private static EdmDataServices.Builder edmDataServices = CtlSchema.getEdmDataServicesForCellCtl();
 
     @Override
     public DataSourceAccessor getAccessorForIndex(final String entitySetName) {
-        return null; // 必要時に実装すること
+        return null; //Implementation when necessary
     }
 
     @Override
@@ -91,7 +91,7 @@ public class CellCtlODataProducer extends EsODataProducer {
     }
 
     /**
-     * CellのIdを返すよう実装.
+     *Implemented to return Id of Cell.
      * @see io.personium.core.model.impl.es.odata.EsODataProducer#getCellId()
      * @return cell id
      */
@@ -108,21 +108,21 @@ public class CellCtlODataProducer extends EsODataProducer {
         if (!Box.EDM_TYPE_NAME.equals(entitySetName)) {
             return;
         }
-        // Boxの削除時のみ、Dav管理データを削除
-        // entitySetがBoxの場合のみの処理
+        //Delete Dav management data only when deleting Box
+        //Processing only when entitySet is Box
         EntityResponse er = this.getEntity(entitySetName, oEntityKey, new EntityQueryInfo.Builder().build());
 
         OEntityWrapper oew = (OEntityWrapper) er.getEntity();
 
         Box box = new Box(this.cell, oew);
 
-        // このBoxが存在するときのみBoxCmpが必要
+        //BoxCmp required only when this box exists
         BoxCmp davCmp = ModelFactory.boxCmp(box);
         if (!davCmp.isEmpty()) {
             throw PersoniumCoreException.OData.CONFLICT_HAS_RELATED;
         }
         davCmp.delete(null, false);
-        // BoxのCacheクリア
+        //Clear Cache of Box
         BoxCache.clear(oEntityKey.asSingleValue().toString(), this.cell);
     }
 
@@ -133,24 +133,24 @@ public class CellCtlODataProducer extends EsODataProducer {
         if (!Box.EDM_TYPE_NAME.equals(entitySetName)) {
             return;
         }
-        // BoxのCacheクリア
+        //Clear Cache of Box
         BoxCache.clear(oEntityKey.asSingleValue().toString(), this.cell);
     }
 
     /**
-     * 不正なLink情報のチェックを行う.
-     * @param sourceEntity ソース側Entity
-     * @param targetEntity ターゲット側Entity
+     *Check unauthorized Link information.
+     *@ param sourceEntity source side Entity
+     *@ param targetEntity Target side Entity
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceEntity, EntitySetDocHandler targetEntity) {
     }
 
     /**
-     * 不正なLink情報のチェックを行う.
-     * @param sourceDocHandler ソース側Entity
-     * @param entity ターゲット側Entity
-     * @param targetEntitySetName ターゲットのEntitySet名
+     *Check unauthorized Link information.
+     *@ param sourceDocHandler Source side Entity
+     *@ param entity Target side Entity
+     *@ param targetEntitySetName EntitySet name of the target
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceDocHandler, OEntity entity, String targetEntitySetName) {

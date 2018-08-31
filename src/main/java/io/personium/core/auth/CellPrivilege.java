@@ -34,39 +34,39 @@ public class CellPrivilege extends Privilege {
         super(name, accessType, parent);
     }
 
-    /** すべての権限. */
+    /** All authority.*/
     public static final CellPrivilege ROOT = new CellPrivilege("root", ACCESS_TYPE_ALL, null);
-    /** Account, Role, extRole グループ操作権限. */
+    /** Account, Role, extRole group operation authority.*/
     public static final CellPrivilege AUTH = new CellPrivilege("auth", ACCESS_TYPE_WRITE, ROOT);
-    /** AUTHグループ read権限. */
+    /** AUTH group read authority.*/
     public static final CellPrivilege AUTH_READ = new CellPrivilege("auth-read", ACCESS_TYPE_READ, AUTH);
-    /** ReceivedMessage, SentMessage グループ操作権限. */
+    /** ReceivedMessage, SentMessage group operation authority.*/
     public static final CellPrivilege MESSAGE = new CellPrivilege("message", ACCESS_TYPE_WRITE, ROOT);
-    /** MESSAGEグループ read権限. */
+    /** MESSAGE group read permission.*/
     public static final CellPrivilege MESSAGE_READ = new CellPrivilege("message-read", ACCESS_TYPE_READ, MESSAGE);
-    /** event, log グループ操作権限. */
+    /** event, log group operation authority.*/
     public static final CellPrivilege EVENT = new CellPrivilege("event", ACCESS_TYPE_WRITE, ROOT);
-    /** EVENTグループ read権限. */
+    /** EVENT group read permission.*/
     public static final CellPrivilege EVENT_READ = new CellPrivilege("event-read", ACCESS_TYPE_READ, EVENT);
-    /** log 操作権限. */
+    /** log Operation authority.*/
     public static final CellPrivilege LOG = new CellPrivilege("log", ACCESS_TYPE_WRITE, ROOT);
-    /** log read権限. */
+    /** log read authority.*/
     public static final CellPrivilege LOG_READ = new CellPrivilege("log-read", ACCESS_TYPE_READ, LOG);
-    /** relation, extCell グループ操作権限. */
+    /** relation, extCell group operation authority.*/
     public static final CellPrivilege SOCIAL = new CellPrivilege("social", ACCESS_TYPE_WRITE, ROOT);
-    /** SOCIALグループ read権限. */
+    /** SOCIAL group read permission.*/
     public static final CellPrivilege SOCIAL_READ = new CellPrivilege("social-read", ACCESS_TYPE_READ, SOCIAL);
-    /** Box グループ操作権限. */
+    /** Box group operation authority.*/
     public static final CellPrivilege BOX = new CellPrivilege("box", ACCESS_TYPE_WRITE, ROOT);
-    /** BOXグループ read権限. */
+    /** BOX group read permission.*/
     public static final CellPrivilege BOX_READ = new CellPrivilege("box-read", ACCESS_TYPE_READ, BOX);
-    /** BOXグループ bar-install権限. */
+    /** BOX group bar - install authority.*/
     public static final CellPrivilege BOX_BAR_INSTALL = new CellPrivilege("box-install", ACCESS_TYPE_WRITE, BOX);
-    /** ACL グループ操作権限. */
+    /** ACL group operation authority.*/
     public static final CellPrivilege ACL = new CellPrivilege("acl", ACCESS_TYPE_WRITE, ROOT);
-    /** ACLグループ read権限. */
+    /** ACL group read permission.*/
     public static final CellPrivilege ACL_READ = new CellPrivilege("acl-read", ACCESS_TYPE_READ, ACL);
-    /** PROPFIND権限. */
+    /** PROPFIND authority.*/
     public static final CellPrivilege PROPFIND = new CellPrivilege("propfind", ACCESS_TYPE_READ, ROOT);
     /** Rule operation privilege. */
     public static final CellPrivilege RULE = new CellPrivilege("rule", ACCESS_TYPE_WRITE, ROOT);
@@ -76,8 +76,8 @@ public class CellPrivilege extends Privilege {
     static Map<String, CellPrivilege> map = new HashMap<String, CellPrivilege>();
 
     /**
-     * CellレベルPrivilege一覧を取得する.
-     * @return CellレベルPrivilege一覧
+     *Cell Level Get Privilege list.
+     *@return Cell level Privilege list
      */
     public static Map<String, CellPrivilege> getPrivilegeMap() {
         return map;

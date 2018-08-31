@@ -60,7 +60,7 @@ import io.personium.core.model.jaxb.ObjectIo;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- * Box以下の存在しないパスを担当するJAX-RSリソース.
+ *A JAX-RS resource that is responsible for nonexistent paths below Box.
  */
 public class NullResource {
     static Logger log = LoggerFactory.getLogger(NullResource.class);
@@ -70,9 +70,9 @@ public class NullResource {
 
     /**
      * constructor.
-     * @param parent 親リソース
-     * @param davCmp バックエンド実装に依存する処理を受け持つ部品
-     * @param isParentNull 親がNullResourceかを判別する
+     *@ param parent parent resource
+     *@ param davCmp Parts responsible for processing dependent on backend implementation
+     *@ param isParentNull Determine if the parent is a NullResource
      */
     public NullResource(final DavRsCmp parent, final DavCmp davCmp, final boolean isParentNull) {
         this.davRsCmp = new DavRsCmp(parent, davCmp);
@@ -80,23 +80,23 @@ public class NullResource {
     }
 
     /**
-     * GETメソッドの処理. 404 Not Foundを返す.
-     * @return 404 Not Foundを表すJax-RS Response
+     *GET method processing 404 Not Found.
+     *@return 404 Jax-RS Response representing Not Found
      */
     @GET
     public final Response get() {
 
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
-     * このパスに新たなファイルを配置する.
-     * @param contentType Content-Typeヘッダ
-     * @param inputStream リクエストボディ
-     * @return Jax-RS Responseオブジェクトト
+     *Place a new file in this path.
+     *@ param contentType Content-Type header
+     *@ param inputStream request body
+     *@return Jax-RS Response object
      */
     @WriteAPI
     @PUT
@@ -104,10 +104,10 @@ public class NullResource {
             @HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             final InputStream inputStream) {
 
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
-        // 途中のパスが存在しないときは409エラー
+        //If there is no intermediate path 409 error
         /*
          * A PUT that would result in the creation of a resource without an
          * appropriately scoped parent collection MUST fail with a 409 (Conflict).
@@ -125,11 +125,11 @@ public class NullResource {
     }
 
     /**
-     * このパスに新たなCollectionを作成する.
-     * @param contentType Content-Type ヘッダ
-     * @param contentLength Content-Length ヘッダ
-     * @param transferEncoding Transfer-Encoding ヘッダ
-     * @param inputStream リクエストボディ
+     *Create a new Collection in this path.
+     *@ param contentType Content-Type header
+     *@ param contentLength Content-Length header
+     *@ param transferEncoding Transfer-Encoding header
+     *@ param inputStream request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -139,10 +139,10 @@ public class NullResource {
             @HeaderParam("Transfer-Encoding") final String transferEncoding,
             final InputStream inputStream) {
 
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
-        // 途中のパスが存在しないときは409エラー
+        //If there is no intermediate path 409 error
         /*
          * 409 (Conflict) - A collection cannot be made at the Request-URI until one or more intermediate collections
          * have been created.
@@ -155,12 +155,12 @@ public class NullResource {
             throw PersoniumCoreException.Dav.RESOURCE_NAME_INVALID;
         }
 
-        // リクエストが空なら素直にwebdavでコレクションを作成する
+        //If request is empty obediently create collection with webdav
         if (!ResourceUtils.hasApparentlyRequestBody(contentLength, transferEncoding)) {
             return this.davRsCmp.getDavCmp().mkcol(DavCmp.TYPE_COL_WEBDAV).build();
         }
 
-        // リクエストが空でない場合、パースして適切な拡張を行う。
+        //If the request is not empty, parse and do the appropriate extension.
         Mkcol mkcol = null;
         try {
             mkcol = ObjectIo.unmarshal(inputStream, Mkcol.class);
@@ -173,7 +173,7 @@ public class NullResource {
             colType = mkcol.getWebdavColType();
             log.debug(colType);
             Response response = this.davRsCmp.getDavCmp().mkcol(colType).build();
-            // ServiceCollectionの場合は、ServiceSource用のWebdavCollectionを生成する
+            //For ServiceCollection, create a WebdavCollection for ServiceSource
             if (colType.equals(DavCmp.TYPE_COL_SVC) && response.getStatus() == HttpStatus.SC_CREATED) {
                 this.davRsCmp.getDavCmp().loadAndCheckDavInconsistency();
                 DavCmp srcCmp = this.davRsCmp.getDavCmp().getChild(DavCmp.SERVICE_SRC_COLLECTION);
@@ -210,10 +210,10 @@ public class NullResource {
     }
 
     /**
-     * 現在のリソースの一つ下位パスを担当するJax-RSリソースを返す.
-     * @param nextPath 一つ下のパス名
-     * @param request リクエスト
-     * @return 下位パスを担当するJax-RSリソースオブジェクト
+     *Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
+     *@ param nextPath path name one down
+     *@ param request request
+     *@return Jax-RS resource object responsible for subordinate path
      */
     @Path("{nextPath}")
     public Object nextPath(@PathParam("nextPath") final String nextPath,
@@ -222,91 +222,91 @@ public class NullResource {
     }
 
     /**
-     * 404 NOT FOUNDを返す.
-     * @return Jax-RS 応答オブジェクト
+     *404 NOT FOUND is returned.
+     *@return Jax-RS response object
      */
     @DELETE
     public final Response delete() {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
-     * 404 NOT FOUNDを返す.
-     * @return Jax-RS 応答オブジェクト
+     *404 NOT FOUND is returned.
+     *@return Jax-RS response object
      */
     @POST
     public final Response post() {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
-     * 404 NOT FOUNDを返す.
-     * @return Jax-RS 応答オブジェクト
+     *404 NOT FOUND is returned.
+     *@return Jax-RS response object
      */
     @REPORT
     public final Response report() {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
-     * 404 NOT FOUNDを返す.
-     * @return Jax-RS 応答オブジェクト
+     *404 NOT FOUND is returned.
+     *@return Jax-RS response object
      */
     @WebDAVMethod.PROPFIND
     public final Response propfind() {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
-     * 404 NOT FOUNDを返す.
-     * @return Jax-RS 応答オブジェクト
+     *404 NOT FOUND is returned.
+     *@return Jax-RS response object
      */
     @WebDAVMethod.PROPPATCH
     public final Response proppatch() {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
-     * 404 NOT FOUNDを返す.
-     * @return Jax-RS 応答オブジェクト
+     *404 NOT FOUND is returned.
+     *@return Jax-RS response object
      */
     @ACL
     public final Response acl() {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
-     * 404 NOT FOUNDを返す.
-     * @return Jax-RS 応答オブジェクト
+     *404 NOT FOUND is returned.
+     *@return Jax-RS response object
      */
     @WebDAVMethod.MOVE
     public final Response move() {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
 
         throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(this.davRsCmp.getUrl());
     }
 
     /**
-     * OPTIONSメソッド.
+     *OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS

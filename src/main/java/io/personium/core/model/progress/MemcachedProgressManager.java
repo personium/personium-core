@@ -19,7 +19,7 @@ package io.personium.core.model.progress;
 import io.personium.core.utils.MemcachedClient;
 
 /**
- * 非同期処理状況をmemcachedへアクセスするためのクラス.
+ *Class for accessing memcached asynchronous processing status.
  */
 class MemcachedProgressManager extends ProgressManager {
 

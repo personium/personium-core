@@ -34,36 +34,36 @@ public final class BoxPrivilege extends Privilege {
         super(name, accessType, parent);
     }
 
-    /** すべての権限. */
+    /** All authority.*/
     public static final BoxPrivilege ALL = new BoxPrivilege("all", ACCESS_TYPE_ALL, CellPrivilege.ROOT);
-    /** リード権限. */
+    /** Read authority.*/
     public static final BoxPrivilege READ = new BoxPrivilege("read", ACCESS_TYPE_READ, ALL);
-    /** 属性リード権限.READ権限に含まれます. */
+    /** Attribute read authority, included in READ authority.*/
     public static final BoxPrivilege READ_PROPERTIES = new BoxPrivilege("read-properties", ACCESS_TYPE_READ, READ);
-    /** ACLリード権限. READ権限に含まれず、ALL権限にのみ含まれます. */
+    /** ACL read authority, not included in READ authority, it is included only in ALL authority.*/
     public static final BoxPrivilege READ_ACL = new BoxPrivilege("read-acl", ACCESS_TYPE_READ, ALL);
-    /** ライト権限.ALL権限に含まれます. */
+    /** Write permission, included in ALL authority.*/
     public static final BoxPrivilege WRITE = new BoxPrivilege("write", ACCESS_TYPE_WRITE, ALL);
-    /** ACLライト権限. WRITE権限に含まれまれず、ALLにのみ含まれます。 */
+    /** ACL write authority. Not included in WRITE authority, it is included only in ALL.*/
     public static final BoxPrivilege WRITE_ACL = new BoxPrivilege("write-acl", ACCESS_TYPE_WRITE, ALL);
-    /** BIND権限. WRITE権限に含まれます. */
+    /** BIND authority, included in WRITE authority.*/
     public static final BoxPrivilege BIND = new BoxPrivilege("bind", ACCESS_TYPE_WRITE, WRITE);
-    /** UNBIND権限. WRITE権限に含まれます. */
+    /** UNBIND authority. Included in WRITE authority.*/
     public static final BoxPrivilege UNBIND = new BoxPrivilege("unbind", ACCESS_TYPE_WRITE, WRITE);
-    /** 内容ライト権限. WRITE権限に含まれます. */
+    /** Contents Write permission, included in WRITE authority.*/
     public static final BoxPrivilege WRITE_CONTENT = new BoxPrivilege("write-content", ACCESS_TYPE_WRITE, WRITE);
-    /** 属性ライト権限. WRITE権限に含まれます. */
+    /** Attribute write authority, included in WRITE authority.*/
     public static final BoxPrivilege WRITE_PROPERTIES = new BoxPrivilege("write-properties", ACCESS_TYPE_WRITE, WRITE);
-    /** サービス実行権限.ALL権限に含まれます. */
+    /** Execute service authority, included in ALL authority.*/
     public static final BoxPrivilege EXEC = new BoxPrivilege("exec", ACCESS_TYPE_EXEC, ALL);
-    /** スキーマ変更権限.ALL権限に含まれます. */
+    /** Schema change authority. Included in ALL authority.*/
     public static final BoxPrivilege ALTER_SCHEMA = new BoxPrivilege("alter-schema", ACCESS_TYPE_WRITE, ALL);
 
     static Map<String, BoxPrivilege> map = new HashMap<String, BoxPrivilege>();
 
     /**
-     * BoxレベルPrivilege一覧を取得する.
-     * @return BoxレベルPrivilege一覧
+     *Box Level Get Privilege List.
+     *@return Box level Privilege list
      */
     public static Map<String, BoxPrivilege> getPrivilegeMap() {
         return map;

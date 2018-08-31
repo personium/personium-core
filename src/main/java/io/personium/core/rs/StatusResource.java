@@ -33,15 +33,15 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.EsModel;
 
 /**
- * StatusResourceに対応するJAX-RS Resource クラス.
+ *JAX-RS Resource class corresponding to StatusResource.
  */
 public class StatusResource {
     static Logger log = LoggerFactory.getLogger(StatusResource.class);
-    /** リクエスト送信先URLを取得するプロパティのキー. */
+    /** The property key to retrieve the request destination URL.*/
     public static final String PROP_TARGET_URL = "io.personium.test.target";
 
     /**
-     * GETメソッドに対する処理.
+     *Processing on the GET method.
      * @return JAS-RS Response
      */
     @SuppressWarnings("unchecked")
@@ -50,7 +50,7 @@ public class StatusResource {
     public Response get() {
         StringBuilder sb = new StringBuilder();
 
-        // プロパティ一覧
+        //Property list
         Properties props = PersoniumUnitConfig.getProperties();
         JSONObject responseJson = new JSONObject();
         JSONObject propertiesJson = new JSONObject();
@@ -60,7 +60,7 @@ public class StatusResource {
         }
         responseJson.put("properties", propertiesJson);
 
-        // Cell作成/削除
+        //Create / delete Cell
         //responseJson.put("service", checkServiceStatus());
 
         // ElasticSearch Health
@@ -74,12 +74,12 @@ public class StatusResource {
     }
 
     /**
-     * POSTメソッドに対する処理.
+     *Processing for the POST method.
      * @return JAS-RS Response
      */
     @POST
     public Response post() {
-        // プロパティリロード
+        //Property Reload
         PersoniumUnitConfig.reload();
         return Response.status(HttpStatus.SC_NO_CONTENT).build();
     }

@@ -66,7 +66,7 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * ODataのEntityリソース(id指定されたURL)を扱うJAX-RS リソース.
+ *A JAX-RS resource that handles the Entity resource (id specified URL) of OData.
  */
 public class ODataEntityResource extends AbstractODataResource {
 
@@ -100,15 +100,15 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * このリソースが担当する ODataリソースの OEntityIdオブジェクト.
-     * @return OEntityIdオブジェクト
+     *The OEntityId object of the OData resource this resource is responsible for.
+     *@return OEntityId object
      */
     public OEntityId getOEntityId() {
         return OEntityIds.create(getEntitySetName(), this.oEntityKey);
     }
 
     /**
-     * コンストラクタ.
+     *constructor.
      */
     public ODataEntityResource() {
         this.odataResource = null;
@@ -118,10 +118,10 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * コンストラクタ.
-     * @param odataResource 親リソースであるODataResource
+     *constructor.
+     *@ param odataResource ODataResource which is the parent resource
      * @param entitySetName EntitySet Name
-     * @param key キー文字列
+     *@ param key key string
      */
     public ODataEntityResource(final ODataResource odataResource, final String entitySetName, final String key) {
         this.odataResource = odataResource;
@@ -129,8 +129,8 @@ public class ODataEntityResource extends AbstractODataResource {
         setOdataProducer(this.odataResource.getODataProducer());
         setEntitySetName(entitySetName);
 
-        // 複合キー対応
-        // nullが指定されているとパースに失敗するため、null値が設定されている場合はダミーキーに置き換える
+        //Complex key correspondence
+        //If null is specified, parsing will fail, so if the null value is set it will be replaced with a dummy key
         this.keyString = AbstractODataResource.replaceNullToDummyKeyWithParenthesis(key);
 
         try {
@@ -170,13 +170,13 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * GETメソッドの処理.
+     *Processing of GET method.
      * @param uriInfo UriInfo
-     * @param accept Accept ヘッダ
-     * @param ifNoneMatch If-None-Match ヘッダ
-     * @param format $format パラメタ
-     * @param expand $expand パラメタ
-     * @param select $select パラメタ
+     *@ param accept Accept header
+     *@ param ifNoneMatch If-None-Match header
+     *@ param format $ format parameter
+     *@ param expand $ expand parameter
+     *@ param select $ select parameter
      * @return JAX-RSResponse
      */
     @GET
@@ -187,46 +187,46 @@ public class ODataEntityResource extends AbstractODataResource {
             @QueryParam("$format") String format,
             @QueryParam("$expand") String expand,
             @QueryParam("$select") String select) {
-        // アクセス制御
+        //Access control
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
 
         UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
 
-        // $formatとAcceptヘッダの値から出力形式を決定
+        //Determining the output format from the values ​​of $ format and Accept header
         MediaType contentType = decideOutputFormat(accept, format);
         String outputFormat = FORMAT_JSON;
         if (MediaType.APPLICATION_ATOM_XML_TYPE.equals(contentType)) {
             outputFormat = FORMAT_ATOM;
         }
 
-        // Entityの取得をProducerに依頼
+        //Ask Producer to acquire Entity
         EntityResponse entityResp = getEntity(expand, select, resUriInfo);
         String respStr = renderEntityResponse(resUriInfo, entityResp, outputFormat, null);
 
-        // 制御コードのエスケープ処理
+        //Escape processing of control code
         respStr = escapeResponsebody(respStr);
 
         ResponseBuilder rb = Response.ok().type(contentType);
         rb.header(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataVersion.V2.asString);
-        // ETagを正式実装するときに、返却する必要がある
+        //When ETag is formally implemented, it needs to be returned
         OEntity entity = entityResp.getEntity();
         String etag = null;
-        // 基本的にこのIF文に入る。
+        //Basically enter this IF statement.
         if (entity instanceof OEntityWrapper) {
             OEntityWrapper oew = (OEntityWrapper) entity;
 
-            // エンティティごとのアクセス可否判断
+            //Determining accessibility for each entity
             this.odataResource.checkAccessContextPerEntity(this.accessContext, oew);
 
             etag = oew.getEtag();
-            // 基本的にこのIF文に入る。
+            //Basically enter this IF statement.
             if (etag != null) {
-                // If-None-Matchヘッダの指定があるとき
+                //When the If-None-Match header is specified
                 if (ifNoneMatch != null && ifNoneMatch.equals(ODataResource.renderEtagHeader(etag))) {
                     return Response.notModified().build();
                 }
-                // ETagヘッダの付与
+                //Granting ETag header
                 rb.header(HttpHeaders.ETAG, ODataResource.renderEtagHeader(etag));
             }
         }
@@ -248,7 +248,7 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * Entityの取得をProducerに依頼.
+     *Ask Producer to acquire Entity.
      * @param expand expand
      * @param select select
      * @param resUriInfo UriInfo
@@ -286,7 +286,7 @@ public class ODataEntityResource extends AbstractODataResource {
         } catch (Exception e) {
             throw PersoniumCoreException.OData.EXPAND_PARSE_ERROR.reason(e);
         }
-        // $expandに指定されたプロパティ数の上限チェック
+        //Check upper limit of the number of properties specified for $ expand
         if (expands != null && expands.size() > PersoniumUnitConfig.getExpandPropertyMaxSizeForRetrieve()) {
             throw PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED;
         }
@@ -299,10 +299,10 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * PUT メソッドの処理.
-     * @param reader リクエストボディ
-     * @param accept Accept ヘッダ
-     * @param ifMatch If-Match ヘッダ
+     *Processing of PUT method.
+     *@ param reader request body
+     *@ param accept Accept header
+     *@ param ifMatch If-Match header
      * @return JAX-RSResponse
      */
     @WriteAPI
@@ -311,20 +311,20 @@ public class ODataEntityResource extends AbstractODataResource {
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
             @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
 
-        // メソッド実行可否チェック
+        //Method execution feasibility check
         checkNotAllowedMethod();
 
-        // アクセス制御
+        //Access control
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
 
         String etag;
 
-        // リクエストの更新をProducerに依頼
+        //Ask Producer to update the request
         OEntityWrapper oew = updateEntity(reader, ifMatch);
 
-        // 特に例外があがらなければ、レスポンスを返す。
-        // oewに新たに登録されたETagを返す
+        //If there are no exceptions, return a response.
+        //Return ETag newly registered in oew
         etag = oew.getEtag();
         Response res = Response.noContent()
                 .header(HttpHeaders.ETAG, ODataResource.renderEtagHeader(etag))
@@ -343,34 +343,34 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * リクエストの更新をProducerに依頼.
-     * @param reader リクエストボディ
+     *Ask Producer to update the request.
+     *@ param reader request body
      * @param ifMatch ifMatch
      * @return OEntityWrapper
      */
     OEntityWrapper updateEntity(Reader reader, final String ifMatch) {
-        // リクエストからOEntityWrapperを作成する.
+        //Create an OEntityWrapper from the request.
         OEntity oe = this.createRequestEntity(reader, this.oEntityKey);
         OEntityWrapper oew = new OEntityWrapper(null, oe, null);
 
-        // 必要ならばメタ情報をつける処理
+        //Process of attaching meta information if necessary
         this.odataResource.beforeUpdate(oew, this.oEntityKey);
 
-        // If-Matchヘッダで入力されたETagをMVCC用での衝突検知用にOEntityWrapperに設定する。
+        //Set the ETag entered in the If-Match header to OEntityWrapper for collision detection for MVCC.
         String etag = ODataResource.parseEtagHeader(ifMatch);
         oew.setEtag(etag);
 
-        // UPDATE処理をODataProducerに依頼。
-        // こちらでリソースの存在確認もしてもらう。
+        //Ask UPDATE processing to ODataProducer.
+        //We will also check the existence of resources here.
         getOdataProducer().updateEntity(getEntitySetName(), this.oEntityKey, oew);
         return oew;
     }
 
     /**
-     * MERGE メソッドの処理.
-     * @param reader リクエストボディ
-     * @param accept Accept ヘッダ
-     * @param ifMatch If-Match ヘッダ
+     *Processing of MERGE method.
+     *@ param reader request body
+     *@ param accept Accept header
+     *@ param ifMatch If-Match header
      * @return JAX-RSResponse
      */
     @WriteAPI
@@ -384,9 +384,9 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * DELETEメソッドの処理.
-     * @param accept Accept ヘッダ
-     * @param ifMatch If-Match ヘッダ
+     *Processing of DELETE method.
+     *@ param accept Accept header
+     *@ param ifMatch If-Match header
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -394,7 +394,7 @@ public class ODataEntityResource extends AbstractODataResource {
     public Response delete(
             @HeaderParam(HttpHeaders.ACCEPT) final String accept,
             @HeaderParam(HttpHeaders.IF_MATCH) final String ifMatch) {
-        // アクセス制御
+        //Access control
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
 
@@ -413,27 +413,27 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * Entityの削除をProducerに依頼.
+     *Ask Producer to delete Entity.
      * @param ifMatch
      */
     void deleteEntity(final String ifMatch) {
-        // 削除前処理
+        //Pre-deletion process
         this.odataResource.beforeDelete(getEntitySetName(), this.oEntityKey);
         String etag = ODataResource.parseEtagHeader(ifMatch);
 
-        // 削除処理
+        //Deletion processing
         PersoniumODataProducer op = this.getOdataProducer();
         op.deleteEntity(getEntitySetName(), this.oEntityKey, etag);
 
-        // 削除後処理
+        //Delete processing
         this.odataResource.afterDelete(getEntitySetName(), this.oEntityKey);
     }
 
     /**
-     * $links/{navProp} というパスの処理.
-     * ODataLinksResourceに処理を委譲.
+     *Processing the path $ links / {navProp}.
+     *Delegate processing to ODataLinksResource.
      * @param targetNavProp Navigation Property
-     * @return ODataLinksResource オブジェクト
+     *@return ODataLinksResource object
      */
     @Path("{first: \\$}links/{targetNavProp:.+?}")
     public ODataLinksResource links(@PathParam("targetNavProp") final String targetNavProp) {
@@ -442,11 +442,11 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * $links/{navProp}({targetKey})というパスの処理.
-     * ODataLinksResourceに処理を委譲.
-     * @param targetNavProp ターゲット NavigationPropert
-     * @param targetId ターゲットのID
-     * @return ODataLinksResourceオブジェクト
+     *Processing the path $ links / {navProp} ({targetKey}).
+     *Delegate processing to ODataLinksResource.
+     *@ param targetNavProp target NavigationPropert
+     *@ param targetId ID of the target
+     *@return ODataLinksResource object
      */
     @Path("{first: \\$}links/{targetNavProp:.+?}({targetId})")
     public ODataLinksResource link(@PathParam("targetNavProp") final String targetNavProp,
@@ -454,8 +454,8 @@ public class ODataEntityResource extends AbstractODataResource {
         OEntityKey targetEntityKey = null;
         try {
             if (targetId != null && !targetId.isEmpty()) {
-                // 複合キー対応
-                // nullが指定されているとパースに失敗するため、null値が設定されている場合はダミーキーに置き換える
+                //Complex key correspondence
+                //If null is specified, parsing will fail, so if the null value is set it will be replaced with a dummy key
                 String targetKey = AbstractODataResource.replaceNullToDummyKeyWithParenthesis(targetId);
                 targetEntityKey = OEntityKey.parse(targetKey);
             }
@@ -467,7 +467,7 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * {navProp:.+}というパスに対する処理を ODataPropertyResourceに飛ばす.
+     *Skip the processing on the path {navProp:. +} to ODataPropertyResource.
      * @param navProp Navigation Property
      * @return ODataPropertyResource Object
      */
@@ -477,9 +477,9 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * NavigationProperty経由はID指定は不可のため404とする.
+     *It is 404 because NavigationProperty can not specify ID.
      * @param navProp Navigation Property
-     * @param targetId ターゲットのID
+     *@ param targetId ID of the target
      * @return ODataPropertyResource Object
      */
     @Path("{navProp: _.+}({targetId})")
@@ -489,12 +489,12 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * OPTIONSメソッド.
+     *OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
     public Response options() {
-        // アクセス制御
+        //Access control
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
 
@@ -515,7 +515,7 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     * メソッド実行可否チェック.
+     *Method execution feasibility check.
      */
     protected void checkNotAllowedMethod() {
         if (ReceivedMessage.EDM_TYPE_NAME.equals(getEntitySetName())

@@ -29,11 +29,11 @@ import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- * CellのDocHandler.
+ *DocHandler of Cell.
  */
 public class CellDocHandler extends OEntityDocHandler {
     /**
-     * elasticsearchのACL設定情報を保存するJSONキー.
+     *A JSON key that stores ACL configuration information for elasticsearch.
      */
     public static final String KEY_ACL_FIELDS = "a";
 
@@ -41,14 +41,14 @@ public class CellDocHandler extends OEntityDocHandler {
     static Logger log = LoggerFactory.getLogger(CellDocHandler.class);
 
     /**
-     * @return ACL設定情報
+     *@return ACL setting information
      */
     public Map<String, JSONObject> getAclFields() {
         return aclFields;
     }
 
     /**
-     * @param aclFields ACL設定情報
+     *@ param aclFields ACL setting information
      */
     public void setAclFields(Map<String, JSONObject> aclFields) {
         this.aclFields = aclFields;
@@ -79,7 +79,7 @@ public class CellDocHandler extends OEntityDocHandler {
      * Constructor.
      * @param type type
      * @param oEntity OEntityWrapper
-     * @param metadata スキーマ情報
+     *@ param metadata schema information
      */
     public CellDocHandler(String type, OEntityWrapper oEntity, EdmDataServices metadata) {
         super(type, oEntity, metadata);
@@ -100,8 +100,8 @@ public class CellDocHandler extends OEntityDocHandler {
     }
 
     /**
-     * Map形式のSourceをパースして自身にマッピングする.
-     * @param source Map形式のマッピング用情報
+     *Parse Source in Map format and map to itself.
+     *@ param source mapping format information for mapping
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -111,14 +111,14 @@ public class CellDocHandler extends OEntityDocHandler {
     }
 
     /**
-     * DocumentのSourceをMap形式で取得する.
-     * @return CellDocumentのHash値
+     *Get Source of Map as Map format.
+     *@return Hash value of CellDocument
      */
     @Override
     public Map<String, Object> getSource() {
         Map<String, Object> ret = super.getSource();
         ret.put(KEY_ACL_FIELDS, this.aclFields);
-        // 以下はプロップパッチ情報のため、付与する
+        //The following is given as prop patch information
         ret.put(KEY_DYNAMIC_FIELDS, this.dynamicFields);
         return ret;
     }

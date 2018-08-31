@@ -30,25 +30,25 @@ import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
 
 /**
- * PersoniumEngineSourceNullResourceを担当するJAX-RSリソース.
+ *JAX-RS resource responsible for PersoniumEngineSourceNullResource.
  */
 public class PersoniumEngineSourceNullResource extends NullResource {
 
     /**
      * constructor.
-     * @param parent 親リソース
-     * @param davCmp バックエンド実装に依存する処理を受け持つ部品
+     *@ param parent parent resource
+     *@ param davCmp Parts responsible for processing dependent on backend implementation
      */
     PersoniumEngineSourceNullResource(final DavRsCmp parent, final DavCmp davCmp) {
         super(parent, davCmp, false);
     }
 
     /**
-     * このパスに新たなCollectionを作成する.
-     * @param contentType Content-Type ヘッダ
-     * @param contentLength Content-Length ヘッダ
-     * @param transferEncoding Transfer-Encoding ヘッダ
-     * @param inputStream リクエストボディ
+     *Create a new Collection in this path.
+     *@ param contentType Content-Type header
+     *@ param contentLength Content-Length header
+     *@ param transferEncoding Transfer-Encoding header
+     *@ param inputStream request body
      * @return JAX-RS Response
      */
     @Override
@@ -57,7 +57,7 @@ public class PersoniumEngineSourceNullResource extends NullResource {
             @HeaderParam("Content-Length") final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding,
             final InputStream inputStream) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
         throw PersoniumCoreException.Dav.METHOD_NOT_ALLOWED;
     }

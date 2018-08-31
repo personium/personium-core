@@ -28,9 +28,9 @@ import org.odata4j.expression.EntitySimpleProperty;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- * LinkDocHandlerをバルクで扱うためのDocHandler.
- * EntitySetDocHandlerとしてアクセスするために必要な情報のみ元のLinkDocHandlerからコピーして保持する。
- * したがってこの用途で不要なメソッドは実装しない
+ *DocHandler for handling LinkDocHandler in bulk.
+ *Only the information necessary for accessing as EntitySetDocHandler is copied from the original LinkDocHandler and held.
+ *Therefore we do not implement unnecessary methods for this purpose
  */
 public class LinkDocHandlerForBulkRequest implements EntitySetDocHandler {
 
@@ -39,7 +39,7 @@ public class LinkDocHandlerForBulkRequest implements EntitySetDocHandler {
     private Map<String, Object> source;
 
     /**
-     * コンストラクタ.
+     *constructor.
      * @param srcHandler LinkDocHandler
      */
     public LinkDocHandlerForBulkRequest(LinkDocHandler srcHandler) {
@@ -63,7 +63,7 @@ public class LinkDocHandlerForBulkRequest implements EntitySetDocHandler {
         return this.source;
     }
 
-    // 以下は使用されないため実装しない
+    //The following are not used and are not implemented
 
     @Override
     public Long getVersion() {

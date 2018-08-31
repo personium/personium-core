@@ -22,14 +22,14 @@ import io.personium.common.es.response.PersoniumIndexResponse;
 import io.personium.core.model.impl.es.doc.LinkDocHandler;
 
 /**
- * ODataLink情報のアクセス処理を実装したクラス.
+ *Class that implements ODataLink information access processing.
  */
 public class ODataLinkAccessor extends DataSourceAccessor {
 
     /**
-     * コンストラクタ.
-     * @param index インデックス
-     * @param name タイプ名
+     *constructor.
+     *@ param index index
+     *@ param name Type name
      * @param routingId routingId
      */
     public ODataLinkAccessor(EsIndex index, String name, String routingId) {
@@ -37,10 +37,10 @@ public class ODataLinkAccessor extends DataSourceAccessor {
     }
 
     /**
-     * ODataLinkのデータ登録を行う.
-     * @param id 登録データのID
-     * @param docHandler 登録データ
-     * @return 登録結果
+     *Register ODataLink data.
+     *@ param id ID of registration data
+     *@ param docHandler registration data
+     *@return registration result
      */
     public PersoniumIndexResponse create(String id, LinkDocHandler docHandler) {
         docHandler.setId(id);
@@ -50,18 +50,18 @@ public class ODataLinkAccessor extends DataSourceAccessor {
 
     /**
      * Delete a document.
-     * @param docHandler 削除データ
-     * @return 応答
+     *@ param docHandler delete data
+     *@return response
      */
     public PersoniumDeleteResponse delete(final LinkDocHandler docHandler) {
         return this.delete(docHandler, -1);
     }
 
     /**
-     * ODataLinkのデータ削除を行う.
-     * @param docHandler 削除データ
-     * @param version バージョン情報
-     * @return 削除結果
+     *Delete ODataLink data.
+     *@ param docHandler delete data
+     *@ param version version information
+     *@return Deletion result
      */
     public PersoniumDeleteResponse delete(final LinkDocHandler docHandler, long version) {
         String id = docHandler.getId();

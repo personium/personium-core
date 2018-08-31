@@ -22,30 +22,30 @@ import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 /**
- * 外部アクセス のEdm 定義体.
+ *Edm definition body for external access.
  */
 public class ExtRole {
     private ExtRole() {
     }
     /**
-     * Edm EntityType名.
+     *Edm EntityType name.
      */
     public static final String EDM_TYPE_NAME = "ExtRole";
     /**
-     * ExtRole プロパティの定義体.
+     *ExtRole property definition body.
      */
     public static final EdmProperty.Builder P_EXT_ROLE = EdmProperty.newBuilder("ExtRole")
             .setAnnotations(Common.P_FORMAT_URI)
             .setType(EdmSimpleType.STRING).setNullable(false);
     /**
-     * _Relation.Name プロパティの定義体.
+     *_Relation.Name Property definition body.
      */
     public static final EdmProperty.Builder P_RELATION_NAME = EdmProperty.newBuilder("_Relation.Name")
             .setType(EdmSimpleType.STRING)
             .setAnnotations(Common.P_FORMAT_RELATION_NAME)
             .setNullable(false);
     /**
-     * _Relation._Box.Name プロパティの定義体.
+     *_Relation._ Box.Name Property definition body.
      */
     public static final EdmProperty.Builder P_RELATION_BOX_NAME = EdmProperty.newBuilder("_Relation._Box.Name")
             .setType(EdmSimpleType.STRING)

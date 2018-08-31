@@ -63,7 +63,7 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * Navigationプロパティを扱うリソース.
+ *Resource handling the Navigation property.
  * Jax-RS Resource.
  */
 public class ODataPropertyResource extends AbstractODataResource {
@@ -76,8 +76,8 @@ public class ODataPropertyResource extends AbstractODataResource {
     private final ODataResource odataResource;
 
     /**
-     * コンストラクタ.
-     * @param entityResource 親リソース
+     *constructor.
+     *@ param entityResource parent resource
      * @param targetNavProp Navigation Property
      */
     public ODataPropertyResource(
@@ -89,24 +89,24 @@ public class ODataPropertyResource extends AbstractODataResource {
         setOdataProducer(entityResource.getOdataProducer());
         this.accessContext = entityResource.getAccessContext();
         this.odataResource = entityResource.getOdataResource();
-        // Navigationプロパティのスキーマ上の存在確認
+        //Confirm existence of Navigation property on schema
         EdmEntitySet eSet = getOdataProducer().getMetadata().findEdmEntitySet(this.sourceEntityId.getEntitySetName());
         EdmNavigationProperty enp = eSet.getType().findNavigationProperty(this.targetNavProp);
         if (enp == null) {
             throw PersoniumCoreException.OData.NOT_SUCH_NAVPROP;
         }
-        // TargetのEntityKey, EdmEntitySetを準備
+        //Prepare EntityKey, EdmEntitySet of Target
         EdmEntityType tgtType = enp.getToRole().getType();
         this.targetEntitySet = getOdataProducer().getMetadata().findEdmEntitySet(tgtType.getName());
     }
 
     /**
-     * POST メソッドへの処理.
+     *Processing to the POST method.
      * @param uriInfo UriInfo
-     * @param accept アクセプトヘッダ
+     *@ param accept Accept header
      * @param requestKey X-Personium-RequestKey Header
-     * @param format $formatクエリ
-     * @param reader リクエストボディ
+     *@ param format $ format query
+     *@ param reader request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -117,7 +117,7 @@ public class ODataPropertyResource extends AbstractODataResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY) String requestKey,
             @DefaultValue(FORMAT_JSON) @QueryParam("$format") final String format,
             final Reader reader) {
-        // アクセス制御
+        //Access control
         this.checkWriteAccessContext();
 
         OEntityWrapper oew = createEntityFromInputStream(reader);
@@ -130,14 +130,14 @@ public class ODataPropertyResource extends AbstractODataResource {
         OEntity ent = res.getEntity();
         String etag = oew.getEtag();
 
-        // バージョンが更新された場合、etagを更新する
+        //When version is updated, update etag
         if (etag != null && ent instanceof OEntityWrapper) {
             ((OEntityWrapper) ent).setEtag(etag);
         }
 
-        // 現状は、ContentTypeはJSON固定
+        //Currently, ContentType is fixed to JSON
         MediaType outputFormat = this.decideOutputFormat(accept, format);
-        // Entity Responseをレンダー
+        //Render Entity Response
         List<MediaType> contentTypes = new ArrayList<MediaType>();
         contentTypes.add(outputFormat);
         UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 2);
@@ -145,7 +145,7 @@ public class ODataPropertyResource extends AbstractODataResource {
 
         String responseStr = renderEntityResponse(resUriInfo, res, format, contentTypes);
 
-        // 制御コードのエスケープ処理
+        //Escape processing of control code
         responseStr = escapeResponsebody(responseStr);
         ResponseBuilder rb = getPostResponseBuilder(ent, outputFormat, responseStr, resUriInfo, key);
         Response ret = rb.build();
@@ -175,9 +175,9 @@ public class ODataPropertyResource extends AbstractODataResource {
     }
 
     /**
-     * NavigationProperty経由で登録するEntityデータを入力ストリームから生成する.
-     * @param reader 入力ストリーム
-     * @return 入力ストリームから生成したOEntityWrapperオブジェクト
+     *Generate Entity data to be registered via NavigationProperty from the input stream.
+     *@ param reader input stream
+     *@return OEntityWrapper object generated from the input stream
      */
     OEntityWrapper createEntityFromInputStream(final Reader reader) {
         EdmEntityType edmEntityType = getOdataProducer().getMetadata()
@@ -190,50 +190,50 @@ public class ODataPropertyResource extends AbstractODataResource {
     }
 
     /**
-     * NavigationProperty経由で登録するEntityデータを入力ストリームから生成する.
-     * @param reader 入力ストリーム
-     * @return 入力ストリームから生成したOEntityWrapperオブジェクト
+     *Generate Entity data to be registered via NavigationProperty from the input stream.
+     *@ param reader input stream
+     *@return OEntityWrapper object generated from the input stream
      */
     OEntityWrapper createEntityFromInputStream(
             final Reader reader,
             EdmEntityType sourceEdmEntityType,
             OEntityKey sourceEntityKey,
             String targetEntitySetName) {
-        // 主キーのバリデート
+        //Primary key validation
         validatePrimaryKey(sourceEntityKey, sourceEdmEntityType);
 
-        // 登録すべきOEntityを作成
+        //Create OEntity to register
         setEntitySetName(targetEntitySetName);
         OEntity newEnt = createRequestEntity(reader, null);
 
-        // ラッパにくるむ. POSTでIf-Match等 ETagを受け取ることはないのでetagはnull。
+        //Wrapped in a trumpet. Since POST never receives ETags such as If-Match Etag is null.
         String uuid = PersoniumUUID.randomUUID();
         OEntityWrapper oew = new OEntityWrapper(uuid, newEnt, null);
         return oew;
     }
 
     /**
-     * NavigationProperty経由でEntityを登録する.
-     * @param oew 登録用OEntityWrapperオブジェクト
-     * @return 登録した内容から生成したEntityレスポンス
+     *Register Entity via NavigationProperty.
+     *@ param oew OEntityWrapper object for registration
+     *@return Entity response generated from registered content
      */
     EntityResponse createEntity(OEntityWrapper oew) {
-        // 必要ならばメタ情報をつける処理
+        //Process of attaching meta information if necessary
         this.sourceOData.beforeCreate(oew);
 
-        // Entityの作成を Producerに依頼.この中であわせて、存在確認もしてもらう。
+        //Ask Producer to create an Entity. In addition to this, we also ask for existence confirmation.
         EntityResponse res = getOdataProducer().createEntity(getEntitySetName(), oew);
         return res;
     }
 
     /**
-     * NavPropに対するGETメソッドによる検索処理.
+     *Search processing by GET method for NavProp.
      * @param uriInfo UriInfo
-     * @param accept Acceptヘッダ
+     *@ param accept Accept header
      * @param requestKey X-Personium-RequestKey Header
-     * @param callback ?? なんだこれは？JSONP?
-     * @param skipToken ?? なんだこれは？
-     * @param q 全文検索パラメタ
+     *@ param callback ?? What is this? JSONP?
+     *@ param skipToken ?? What is this?
+     *@ param q full-text search parameter
      * @return JAX-RS Response
      */
     @GET
@@ -246,14 +246,14 @@ public class ODataPropertyResource extends AbstractODataResource {
             @QueryParam("$callback") final String callback,
             @QueryParam("$skiptoken") final String skipToken,
             @QueryParam("q") final String q) {
-        // アクセス制御
+        //Access control
         this.checkReadAccessContext();
 
-        // queryのパース
+        //Parsing of query
         UriInfo uriInfo2 = UriUtils.createUriInfo(uriInfo, 2);
         QueryInfo queryInfo = ODataEntitiesResource.queryInfo(uriInfo);
 
-        // NavigationProperty経由の一覧取得を実行する
+        //Execute list acquisition via NavigationProperty
         BaseResponse response = getOdataProducer().getNavProperty(
                 this.sourceEntityId.getEntitySetName(),
                 this.sourceEntityId.getEntityKey(),
@@ -261,17 +261,17 @@ public class ODataPropertyResource extends AbstractODataResource {
                 queryInfo);
 
         StringWriter sw = new StringWriter();
-        // TODO 制限事項でAcceptは無視してJSONで返却するため固定でJSONを指定する.
+        //It ignores Accept with TODO restrictions and returns it with JSON, so it specifies JSON as fixed.
         List<MediaType> acceptableMediaTypes = new ArrayList<MediaType>();
         acceptableMediaTypes.add(MediaType.APPLICATION_JSON_TYPE);
-        // TODO 制限事項でQueryは無視するため固定でnullを指定する.
+        //Since TODO restrictions ignore Query, it is fixed and null is specified.
         FormatWriter<EntitiesResponse> fw = PersoniumFormatWriterFactory.getFormatWriter(EntitiesResponse.class,
                 acceptableMediaTypes, null, callback);
 
         fw.write(uriInfo2, sw, (EntitiesResponse) response);
 
         String entity = sw.toString();
-        // 制御コードのエスケープ処理
+        //Escape processing of control code
         entity = escapeResponsebody(entity);
 
         ODataVersion version = ODataVersion.V2;
@@ -303,12 +303,12 @@ public class ODataPropertyResource extends AbstractODataResource {
     }
 
     /**
-     * OPTIONSメソッド.
+     *OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
     public Response options() {
-        // アクセス制御
+        //Access control
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryOptionsPrivilege());
         return ResourceUtils.responseBuilderForOptions(
@@ -318,8 +318,8 @@ public class ODataPropertyResource extends AbstractODataResource {
     }
 
     private void checkWriteAccessContext() {
-        // アクセス制御
-        // TODO BOXレベルの場合に同じ処理が2回走る。無駄なのでcheckAccessContextにPrivilegeを配列で渡す等の工夫が必要
+        //Access control
+        //The same process runs twice for TODO BOX level. Since it is useless, we need ingenuity such as passing Privilege as an array to checkAccessContext
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryWritePrivilege(this.sourceEntityId.getEntitySetName()));
         this.odataResource.checkAccessContext(this.accessContext,
@@ -327,8 +327,8 @@ public class ODataPropertyResource extends AbstractODataResource {
     }
 
     private void checkReadAccessContext() {
-        // アクセス制御
-        // TODO BOXレベルの場合に同じ処理が2回走る。無駄なのでcheckAccessContextにPrivilegeを配列で渡す等の工夫が必要
+        //Access control
+        //The same process runs twice for TODO BOX level. Since it is useless, we need ingenuity such as passing Privilege as an array to checkAccessContext
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryReadPrivilege(this.sourceEntityId.getEntitySetName()));
         this.odataResource.checkAccessContext(this.accessContext,

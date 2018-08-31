@@ -44,13 +44,13 @@ import org.odata4j.format.json.JsonWriter;
 import org.odata4j.producer.EntitiesResponse;
 
 /**
- * JsonFeedFormatWriterのラッパークラス.
+ *Wrapper class of JsonFeedFormatWriter.
  */
 public class PersoniumJsonFeedFormatWriter extends PersoniumJsonFormatWriter<EntitiesResponse> {
 
     /**
-     * コンストラクタ.
-     * @param jsonpCallback コールバック
+     *constructor.
+     *@ param jsonpCallback callback
      */
     public PersoniumJsonFeedFormatWriter(String jsonpCallback) {
         super(jsonpCallback);

@@ -24,28 +24,28 @@ import java.util.Properties;
 
 
 /**
- * ログメッセージ作成クラス.
+ *Log message creation class.
  */
 public abstract class PersoniumCoreMessageUtils {
     /**
-     * ログレベルの設定を保持する.
+     *Holds the log level setting.
      */
     private static final Properties LOG_LEVEL_PROP;
     /**
-     * ログメッセージの設定を保持する.
+     *Holds the setting of the log message.
      */
     private static final Properties LOG_MSG_PROP;
 
     /**
-     * ログレベル設定のキー.
-     * 後ろにメッセージコードをつけるのでドットまで定義
-     * 例）io.personium.core.loglevel.PR400-OD-0001
+     *Key of log level setting.
+     *Define up to the dot since you attach a message code to the back
+     *Example) io.personium.core.loglevel.PR400 - OD - 0001
      */
     public static final String LOG_LEVEL = PersoniumUnitConfig.KEY_ROOT + "loglevel.";
 
     /**
-     * ログメッセージ設定のキー.
-     * 後ろにメッセージコードをつけるのでドットまで定義
+     *Key of log message setting.
+     *Define up to the dot since you attach a message code to the back
      */
     public static final String LOG_MESSAGE = PersoniumUnitConfig.KEY_ROOT + "msg.";
 
@@ -74,15 +74,15 @@ public abstract class PersoniumCoreMessageUtils {
     }
 
     /**
-     * コンストラクタ.
+     *constructor.
      */
     private PersoniumCoreMessageUtils() {
     }
 
     /**
-     * 設定ファイルからログレベルの取得.
-     * @param code メッセージコード
-     * @return ログレベル
+     *Acquire log level from configuration file.
+     *@ param code Message code
+     *@return log level
      */
     public static Severity getSeverity(String code) {
         String logLevel = LOG_LEVEL_PROP.getProperty(LOG_LEVEL + code);
@@ -100,14 +100,14 @@ public abstract class PersoniumCoreMessageUtils {
     }
 
     /**
-     * 設定ファイルからメッセージの取得.
-     * @param code メッセージコード
-     * @return メッセージ
+     *Retrieve messages from the configuration file.
+     *@ param code Message code
+     *@return message
      */
     public static String getMessage(String code) {
         String msg = LOG_MSG_PROP.getProperty(LOG_MESSAGE + code);
         if (msg == null) {
-            // ログが定義されていなかったら例外
+            //Exception if log is not defined
             throw new RuntimeException("message undefined for code=[" + code + "].");
         }
         return msg;

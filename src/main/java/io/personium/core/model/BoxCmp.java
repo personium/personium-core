@@ -17,7 +17,7 @@
 package io.personium.core.model;
 
 /**
- * Boxに対応する部品のインターフェース.
+ *Interface of parts corresponding to Box.
  */
 public interface BoxCmp extends DavCmp {
 

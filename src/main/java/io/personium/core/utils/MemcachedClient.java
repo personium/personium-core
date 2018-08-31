@@ -31,10 +31,10 @@ import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultConnectionFactory;
 
 /**
- * 本アプリでのMemcachedアクセスを司るClient.
- * オープンソースのMemcachedClientをラップしており、将来予見されるライブラリ変更のインパクトを本クラス内に収める.
- * Memcachedクライアントのコネクション確立には時間的なコストがかかるためこのクラスのクラス変数にClientを保持しておき、
- * サーバ起動時にコネクション確立し、そのままコネクションを維持する。
+ *Client that administers Memcached access with this application.
+ *It wraps an open source MemcachedClient, and the impact of future library changes is within this class.
+ *Because establishing connection of Memcached client takes time, keep Client in class variable of this class,
+ *Establish connection at server startup and maintain connection as it is.
  */
 public class MemcachedClient implements CacheClient {
     static volatile boolean isReportError = false;
@@ -43,7 +43,7 @@ public class MemcachedClient implements CacheClient {
     private MemcachedClient(String host, String port, long opTimeout) {
         try {
             ConnectionFactoryBuilder cfb = new ConnectionFactoryBuilder(new DefaultConnectionFactory());
-            // memcached のタイムアウト時間を設定
+            //Set memcached timeout time
             cfb.setOpTimeout(opTimeout);
 
             List<InetSocketAddress> addrs = new ArrayList<InetSocketAddress>();
@@ -64,11 +64,11 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     * 指定キーのキャッシュを取得.
-     * @param <T> 取得する型
-     * @param key キャッシュキー
-     * @param clazz 取得する型、 型に問題があるときはClassCastExcetpion発生
-     * @return キャッシュされたオブジェクト / null キャッシュが存在しないとき
+     *Get the cache of the specified key.
+     *@ param <T> Type to get
+     *@ param key Cache key
+     *@ param clazz ClassCastExcetpion occurred when there is a type or type problem to get
+     *@return When cached object / null cache does not exist
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -86,11 +86,11 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     * 指定キーでオブジェクトを一定の有効期限のみキャッシュします.
-     * @param key キャッシュのキー
-     * @param expiresIn 有効期間
-     * @param object キャッシュすべきオブジェクト
-     * @return 処理成功時はTrue/失敗時はFalseを返す.
+     *Cache objects only for a certain expiration date with the specified key.
+     *@ param key Key of the cache
+     *@ param expiresIn lifetime
+     *@ param object Object to cache
+     *@return Returns True on successful processing / False on failure.
      */
     public Boolean add(String key, int expiresIn, Object object) {
         try {
@@ -107,21 +107,21 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     * 指定キーでオブジェクトをキャッシュします.
-     * @param key キャッシュのキー
-     * @param object キャッシュすべきオブジェクト
-     * @return 処理成功時はTrue/失敗時はFalseを返す.
+     *Cache the object with the specified key.
+     *@ param key Key of the cache
+     *@ param object Object to cache
+     *@return Returns True on successful processing / False on failure.
      */
     public Boolean add(String key, Object object) {
         return this.add(key, 0, object);
     }
 
     /**
-     * 指定キーでオブジェクトを一定の有効期限のみキャッシュします.
-     * @param key キャッシュのキー
-     * @param expiresIn 有効期間
-     * @param object キャッシュすべきオブジェクト
-     * @return 処理成功時はTrue/失敗時はFalseを返す.
+     *Cache objects only for a certain expiration date with the specified key.
+     *@ param key Key of the cache
+     *@ param expiresIn lifetime
+     *@ param object Object to cache
+     *@return Returns True on successful processing / False on failure.
      */
     @Override
     public Boolean put(String key, int expiresIn, Object object) {
@@ -146,7 +146,7 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     * キャッシュをすべてクリアします.
+     *Clear all caches.
      */
     public void clear() {
         try {
@@ -162,8 +162,8 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     * 指定キーのキャッシュを削除.
-     * @param key キャッシュキー
+     *Deletion of specified key cache.
+     *@ param key Cache key
      */
     @Override
     public void delete(String key) {
@@ -180,10 +180,10 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     * 指定したキーのオブジェクトを新規作成する.
-     * @param key キャッシュキー
-     * @param initValue 初期値
-     * @return 作成に成功した場合または既に存在する場合はtrue, 失敗した場合はfalseを返す
+     *Create a new object with the specified key.
+     *@ param key Cache key
+     *@ param initValue Initial value
+     *@return Returns true if creation succeeded or already exists, false if it fails
      */
     public Boolean createLongValue(String key, long initValue) {
         try {
@@ -196,13 +196,13 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     * 指定キーの値を返す.
-     * @param key キャッシュキー
-     * @return 指定キーの値
+     *Returns the value of the specified key.
+     *@ param key Cache key
+     *@return Specified key value
      */
     public long getLongValue(String key) {
         try {
-            // 増分0でインクリメントすることで現在の設定値を取得する
+            //Acquire the current set value by incrementing with increment 0
             return this.spyClient.incr(key, 0);
         } catch (RuntimeException e) {
             log.info(e.getMessage(), e);
@@ -211,9 +211,9 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     * 指定キーの値をインクリメント.
-     * @param key キャッシュキー
-     * @return インクリメント後の値
+     *Increment the value of the specified key.
+     *@ param key Cache key
+     *@return Value after increment
      */
     public long incrementLongValue(String key) {
         try {
@@ -225,9 +225,9 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     * 指定キーの値をデクリメント.
-     * @param key キャッシュキー
-     * @return デクリメント後の値
+     *Decrement the value of the specified key.
+     *@ param key Cache key
+     *@return Value after decrementing
      */
     public long decrementLongValue(String key) {
         try {
@@ -243,8 +243,8 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     * 指定キーの値を削除する.
-     * @param key キャッシュキー
+     *Delete the value of the specified key.
+     *@ param key Cache key
      */
     public void deleteLongValue(String key) {
         delete(key);
@@ -265,30 +265,30 @@ public class MemcachedClient implements CacheClient {
         }
     }
     /**
-     * キャッシュに用いるクライアント.
+     *Client to use for caching.
      */
     static MemcachedClient cacheClient;
     /**
-     * ロックに用いるクライアント.
+     *Client to use for lock.
      */
     static MemcachedClient lockClient;
 
     /**
-     * @return キャッシュに用いるクライアント.
+     *@return Client used for caching.
      */
     public static final MemcachedClient getCacheClient() {
         return cacheClient;
     }
 
     /**
-     * @return ロックに用いるクライアント.
+     *@return Client to use for locking.
      */
     public static final MemcachedClient getLockClient() {
         return lockClient;
     }
 
     /**
-     * isReportErrorの値の判定と、ログ出力を行う.
+     *Determine the value of isReportError and output log.
      */
     public static final void reportError() {
         if (isReportError) {
@@ -300,13 +300,13 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     * Memcachedクライアント用のExceptionクラス.
+     *Exception class for Memcached client.
      */
     @SuppressWarnings("serial")
     public static class MemcachedClientException extends RuntimeException {
         /**
-         * コンストラクタ.
-         * @param cause 根本例外
+         *constructor.
+         *@ param cause root exception
          */
         public MemcachedClientException(Throwable cause) {
             super(cause);

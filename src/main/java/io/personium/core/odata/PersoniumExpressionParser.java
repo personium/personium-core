@@ -77,8 +77,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PersoniumExpressionParserクラス.
- * OData4jのライブラリのソースよりコピー
+ *PersoniumExpressionParser class.
+ *Copy from OData4j library source
  */
 public class PersoniumExpressionParser {
 
@@ -132,9 +132,9 @@ public class PersoniumExpressionParser {
 
     /**
      * tokenizer.
-     * OData4jのtokenizerでは、'_'を含むとエラーとしているため独自に定義
+     *OData4j's tokenizer defines its own as it contains errors as including _
      * @param value value
-     * @return トークン
+     *@return token
      */
     public static List<Token> tokenize(String value) {
         List<Token> rt = new ArrayList<Token>();
@@ -194,9 +194,9 @@ public class PersoniumExpressionParser {
     }
 
     /**
-     * orderbyのパース.
-     * @param value orderbyの値
-     * @return パース結果
+     *Perth in orderby.
+     *@ param value orderby value
+     *@return Perth result
      */
     public static List<OrderByExpression> parseOrderBy(String value) {
         List<Token> tokens = tokenize(value);
@@ -218,9 +218,9 @@ public class PersoniumExpressionParser {
     }
 
     /**
-     * filterのパース.
-     * @param value filterの値
-     * @return パース結果
+     *Parse of filter.
+     *Value of @ param value filter
+     *@return Perth result
      */
     public static CommonExpression parse(String value) {
         List<Token> tokens = tokenize(value);
@@ -235,9 +235,9 @@ public class PersoniumExpressionParser {
     }
 
     /**
-     * selectのパース.
-     * @param value selectの値
-     * @return パース結果
+     *A parse of select.
+     *@ param value Value of select
+     *@return Perth result
      */
     public static List<EntitySimpleProperty> parseExpand(String value) {
         List<Token> tokens = tokenize(value);
@@ -258,9 +258,9 @@ public class PersoniumExpressionParser {
     }
 
     /**
-     * expandのパース.
-     * @param value expandの値
-     * @return パース結果
+     *Parsing expand.
+     *@ param value The value of expand
+     *@return Perth result
      */
     public static List<EntitySimpleProperty> parseExpandQuery(String value) {
         List<Token> tokens = tokenize(value);
@@ -286,7 +286,7 @@ public class PersoniumExpressionParser {
 
     /**
      * dumpTokens.
-     * @param tokens tokenリスト
+     *@ param tokens token list
      */
     public static void dumpTokens(List<Token> tokens) {
         for (Token t : tokens) {
@@ -298,8 +298,8 @@ public class PersoniumExpressionParser {
 
     /**
      * processParentheses.
-     * @param tokens tokenリスト
-     * @return tokenリスト
+     *@ param tokens token list
+     *@return token list
      */
     public static List<Token> processParentheses(List<Token> tokens) {
 
@@ -1110,7 +1110,7 @@ public class PersoniumExpressionParser {
     }
 
     /**
-     * Tokenクラス.
+     *Token class.
      */
     public static class Token {
 
@@ -1120,7 +1120,7 @@ public class PersoniumExpressionParser {
         private final String value;
 
         /**
-         * コンストラクタ.
+         *constructor.
          * @param type type
          * @param value value
          */
@@ -1136,7 +1136,7 @@ public class PersoniumExpressionParser {
     }
 
     /**
-     * ExpressionTokenクラス.
+     *ExpressionToken class.
      */
     private static class ExpressionToken extends Token {
 

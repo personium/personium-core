@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import javax.ws.rs.HttpMethod;
 
 /**
- * PATCHメソッドの JaxRS アノテーション.
+ *JaxRS annotation of PATCH method.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

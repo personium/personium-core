@@ -39,23 +39,23 @@ import io.personium.core.model.impl.es.doc.ComplexTypePropertyDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyDocHandler;
 
 /**
- * EntityType内の Property数制限数をチェックするためのメソッドを実装しているクラス.
+ *A class that implements a method for checking the limit number of Property in EntityType.
  */
 public class PropertyLimitChecker {
 
     static Logger log = LoggerFactory.getLogger(PropertyLimitChecker.class);
 
     /**
-     * 制限チェックでエラーが発生した場合の通知オブジェクト.
+     *Notification object when an error occurs in restriction check.
      */
     public static class CheckError {
         String entityTypeName;
         String message;
 
         /**
-         * コンストラクタ.
-         * @param entityTypeName EntityType名
-         * @param message エラー詳細
+         *constructor.
+         *@ param entityTypeName EntityType name
+         *@ param message Error Details
          */
         public CheckError(String entityTypeName, String message) {
             this.entityTypeName = entityTypeName;
@@ -63,16 +63,16 @@ public class PropertyLimitChecker {
         }
 
         /**
-         * EntityType名を返す.
-         * @return EntityType名
+         *Returns the EntityType name.
+         *@return EntityType name
          */
         public String getEntityTypeName() {
             return entityTypeName;
         }
 
         /**
-         * エラーメッセージを返す.
-         * @return エラーメッセージ
+         *It returns an error message.
+         *@ return error message
          */
         public String getMessage() {
             return message;
@@ -80,7 +80,7 @@ public class PropertyLimitChecker {
     }
 
     /**
-     * 内部例外クラス.
+     *Internal exception class.
      */
     @SuppressWarnings("serial")
     static class PropertyLimitException extends Exception {
@@ -88,17 +88,17 @@ public class PropertyLimitChecker {
         private String entityTypeName = null;
 
         /**
-         * コンストラクタ.
-         * @param message メッセージ
+         *constructor.
+         *@ param message Message
          */
         PropertyLimitException(String message) {
             super(message);
         }
 
         /**
-         * コンストラクタ.
-         * @param entityTypeName EntityType名
-         * @param message メッセージ
+         *constructor.
+         *@ param entityTypeName EntityType name
+         *@ param message Message
          */
         PropertyLimitException(String entityTypeName, String message) {
             super(message);
@@ -106,16 +106,16 @@ public class PropertyLimitChecker {
         }
 
         /**
-         * EntityType名を返す.
-         * @return EntityType名
+         *Returns the EntityType name.
+         *@return EntityType name
          */
         public String getEntityTypeName() {
             return entityTypeName;
         }
 
         /**
-         * EntityType名を設定する.
-         * @param entityTypeName EntityType名
+         *Set the EntityType name.
+         *@ param entityTypeName EntityType name
          */
         public void setEntityTypeName(String entityTypeName) {
             this.entityTypeName = entityTypeName;
@@ -123,13 +123,13 @@ public class PropertyLimitChecker {
     }
 
     /**
-     * EntityTypeの階層の深さが制限を超えた場合の例外.
+     *Exception when the hierarchy depth of EntityType exceeds the limit.
      */
     @SuppressWarnings("serial")
     static class EntityTypeDepthExceedException extends PropertyLimitException {
         /**
          * constructor.
-         * @param message メッセージ
+         *@ param message Message
          */
         EntityTypeDepthExceedException(String message) {
             super(message);
@@ -163,17 +163,17 @@ public class PropertyLimitChecker {
 
     /**
      * constructor.
-     * @param metadata UserDataのメタデータ（プロパティ更新前)
-     * @param entityTypeName 追加対象のEntityType名
-     * @param dynamicPropCount 追加されるDynamicProperty数
+     *@ param metadata UserData metadata (before property update)
+     *@ param entityTypeName EntityType name to be added
+     *@ param dynamicPropCount Number of DynamicProperty added
      */
     public PropertyLimitChecker(final EdmDataServices metadata,
             final String entityTypeName, final int dynamicPropCount) {
         this();
-        // 引数で受け取る metadataは更新前のものなので、追加後のメタデータを作成する必要がある。
+        //Since the metadata received as an argument is the one before updating, it is necessary to create the metadata after the addition.
         Builder builder = EdmDataServices.newBuilder(metadata);
 
-        // 追加対象数分、ダミーでプロパティをスキーマ情報に追加する
+        //Add properties to schema information with dummy for the number of addition targets
         String dummyKey = "dummy" + System.currentTimeMillis();
         for (int i = 0; i < dynamicPropCount; i++) {
             EdmEntityType.Builder entityTypeBuilder = builder
@@ -183,25 +183,25 @@ public class PropertyLimitChecker {
                     .setType(EdmSimpleType.getSimple("Edm.String"));
             entityTypeBuilder.addProperties(propertyBuilder);
         }
-        // 変更後のメタデータを作成
+        //Create changed metadata
         this.metadata = builder.build();
     }
 
     /**
      * constructor.
-     * @param metadata UserDataのメタデータ（プロパティ更新前)
-     * @param propHandler 追加するプロパティのハンドラ
+     *@ param metadata UserData metadata (before property update)
+     *@ param propHandler Handler for properties to add
      */
     public PropertyLimitChecker(final EdmDataServices metadata, PropertyDocHandler propHandler) {
         this();
 
-        // 引数で受け取る metadataは更新前のものなので、追加後のメタデータを作成する必要がある。
+        //Since the metadata received as an argument is the one before updating, it is necessary to create the metadata after the addition.
         Builder builder = EdmDataServices.newBuilder(metadata);
 
-        // ここで新規Property, ComplexTypeProperty等を追加
+        //Here, new Property, ComplexTypeProperty etc. are added
         final String dummyPropertyKey = "DUMMY" + System.currentTimeMillis();
         if (propHandler instanceof ComplexTypePropertyDocHandler) {
-            // ComplexTypePropertyDocHandlerの場合の処理
+            //Processing in the case of ComplexTypePropertyDocHandler
             EdmComplexType.Builder complexTypeBuilder = builder
                     .findEdmComplexType(UserDataODataProducer.USER_ODATA_NAMESPACE + "." + propHandler
                     .getEntityTypeName());
@@ -239,13 +239,13 @@ public class PropertyLimitChecker {
             }
         }
 
-        // 変更後のメタデータを作成
+        //Create changed metadata
         this.metadata = builder.build();
     }
 
     /**
-     * プロパティ数、階層制限値をチェックする.
-     * @return エラー情報のリスト
+     *Check the number of properties and the hierarchy limit value.
+     *@return List of error information
      */
     public List<PropertyLimitChecker.CheckError> checkPropertyLimits() {
 
@@ -261,15 +261,15 @@ public class PropertyLimitChecker {
             checkPropertyLimitsForEntityTypeInternal(result, target);
         }
 
-        // EntityTypeに関連づいていない ComplexType内のプロパティ数の制限チェック
+        //Check limit on number of properties in ComplexType not related to EntityType
         Iterator<EdmComplexType> complexTypeIter = metadata.getComplexTypes().iterator();
-        // 全 ComplexTypeに対してチェックする。(効率的に行うのであれば、先に EntityType側のチェックを行い、未チェックの ComplexTypeのみ実施する方法もあり)
+        //Check against all ComplexType. (If it is done efficiently, there is also a method of checking the EntityType side first and implementing only uncompleted ComplexType)
         while (complexTypeIter.hasNext()) {
             int simplePropCount = 0;
             int complexPropCount = 0;
             EdmComplexType complexType = complexTypeIter.next();
             for (EdmProperty prop : complexType.getProperties()) {
-                // 予約語プロパティの除外
+                //Exclude reserved word properties
                 if (prop.getName().startsWith("_")) {
                     continue;
                 }
@@ -298,9 +298,9 @@ public class PropertyLimitChecker {
     }
 
     /**
-     * 指定されたエンティティタイプのプロパティ数をチェックする.
-     * @param entityTypeName エンティティタイプ名
-     * @return エラー情報のリスト
+     *Check the number of properties for the specified entity type.
+     *@ param entityTypeName Entity type name
+     *@return List of error information
      */
     public List<PropertyLimitChecker.CheckError> checkPropertyLimits(String entityTypeName) {
         List<PropertyLimitChecker.CheckError> result = new ArrayList<PropertyLimitChecker.CheckError>();
@@ -313,12 +313,12 @@ public class PropertyLimitChecker {
     private void checkPropertyLimitsForEntityTypeInternal(
             List<PropertyLimitChecker.CheckError> result, EdmEntityType target) {
         try {
-            // 予約語プロパティは内部で除外される。
+            //Reserved word properties are internally excluded.
             int totalProps = checkPropetyLimitPerLayer(0, target.getName(), target.getProperties());
 
-            // 全体プロパティ数チェック
+            //Check the total number of properties
             if (maxPropertyLimitInEntityType < totalProps) {
-                // 制限値を超えた。
+                //The limit value has been exceeded.
                 String message = String.format("Total property count exceeds the limit[%d].",
                         maxPropertyLimitInEntityType);
                 log.info(message);
@@ -333,12 +333,12 @@ public class PropertyLimitChecker {
     }
 
     /**
-     * 階層レベルでのプロパティ制限数チェックルーチン.
-     * @param depth 階層の深さ（第一階層は0, 第二階層は 1,....)
-     * @param entityTypeName EntityType名
-     * @param properties EntityType内のプロパティ
-     * @return 対象EntityType配下の全プロパティ数
-     * @throws PropertyLimitException プロパティ数の制限を超えたことを通知する例外
+     *Property limit check routine at hierarchical level.
+     *@ param depth Depth of hierarchy (0 for the first hierarchy, 1 for the second hierarchy, ....)
+     *@ param entityTypeName EntityType name
+     *@ param properties Property in EntityType
+     *@return Total number of properties under EntityType
+     *@throws PropertyLimitException exception notifying that the number of properties limit has been exceeded
      */
     private int checkPropetyLimitPerLayer(int depth, String entityTypeName, Enumerable<EdmProperty> properties)
             throws PropertyLimitException {
@@ -346,8 +346,8 @@ public class PropertyLimitChecker {
         log.debug(String.format("Checking [%s]  Depth[%d]", entityTypeName, depth));
 
         if (maxDepth <= depth) {
-            // 実際にはここは通らないはず。
-            // ここに来る前に、Property, ComplexTypePropertyの制限値が 0となるチェックが必ず走るため。
+            //Actually this should not pass.
+            //Before coming here, the check that Property, ComplexTypeProperty's limit value becomes 0 surely runs.
             String message = String.format("Hiearchy depth exceeds the limit[%d].", maxDepth);
             log.info(message);
             throw new EntityTypeDepthExceedException(message);
@@ -356,7 +356,7 @@ public class PropertyLimitChecker {
         int simplePropCount = 0;
         int complexPropCount = 0;
         for (EdmProperty prop : properties) {
-            // 予約語プロパティの除外
+            //Exclude reserved word properties
             if (prop.getName().startsWith("_")) {
                 continue;
             }
@@ -367,23 +367,23 @@ public class PropertyLimitChecker {
             }
         }
 
-        // 階層毎のプロパティ数制限値のチェック
+        //Check property limit for each hierarchy
         int currentSimplePropLimits = simplePropertyLimits[depth];
         if (currentSimplePropLimits < 0) {
-            // １階層目の特殊処理。そもそも１階層目の Limitが "*" と指定された場合 -1がsimplePropertyLimits[0]に
-            // 代入されている。これをmaxPropertyLimitsInEntityTypeとして認識し、かつ現行の complexPropertyの
-            // 数を勘案した制限値を計算しておく。
+            //Special processing at the first level. In the first place, when Limit of the first layer is specified as "*" -1 becomes simplePropertyLimits [0]
+            //It has been substituted. Recognize this as maxPropertyLimitsInEntityType, and make sure that the current complexProperty
+            //Calculate the limit value taking the number into account.
             currentSimplePropLimits = maxPropertyLimitInEntityType - complexPropCount;
         }
 
         if (currentSimplePropLimits < simplePropCount) {
-            // 制限値を超えた。
+            //The limit value has been exceeded.
             String message = String.format("Property count exceeds the limit[%d].", simplePropertyLimits[depth]);
             log.info(message);
             throw new PropertyLimitException(entityTypeName, message);
         }
         if (complexPropertyLimits[depth] < complexPropCount) {
-            // 制限値を超えた。
+            //The limit value has been exceeded.
             String message = String.format("ComplexTypeProperty count exceeds the limit[%d].",
                     complexPropertyLimits[depth]);
             log.info(message);
@@ -394,7 +394,7 @@ public class PropertyLimitChecker {
         depth++;
         for (EdmProperty prop : properties) {
             if (!prop.getType().isSimple()) {
-                // 子階層へ処理を進める。SimpleTypeの場合は対象外
+                //Advance processing to child hierarchy. Not applicable for SimpleType
                 String complexTypeName = prop.getType().getFullyQualifiedTypeName();
                 EdmComplexType edmComplexType = metadata.findEdmComplexType(complexTypeName);
                 if (null != edmComplexType) {
@@ -406,7 +406,7 @@ public class PropertyLimitChecker {
                 }
             }
         }
-        // 子階層を含めた総プロパティ数を返す。
+        //Returns the total number of properties including child hierarchy.
         return simplePropCount + complexPropCount + totalPropCountOfChildren;
     }
 

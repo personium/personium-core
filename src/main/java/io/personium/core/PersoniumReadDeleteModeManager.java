@@ -27,14 +27,14 @@ import javax.ws.rs.core.PathSegment;
 import io.personium.core.model.lock.ReadDeleteModeLockManager;
 
 /**
- * PCSの動作モードを参照するクラス.
+ *Class referring to PCS operation mode.
  */
 public class PersoniumReadDeleteModeManager {
     private PersoniumReadDeleteModeManager() {
     }
 
     /**
-     * ReadDeleteOnlyモード時の許可メソッド.
+     *Authorization method in ReadDeleteOnly mode.
      */
     static final Set<String> ACCEPT_METHODS = new HashSet<String>(
             Arrays.asList(
@@ -48,12 +48,12 @@ public class PersoniumReadDeleteModeManager {
             );
 
     /**
-     * ReadDeleteOnlyモード中の実行可能メソッドかを確認する.
-     * @param method リクエストメソッド
-     * @return boolean true:許可メソッド false:非許可メソッド
+     *Check whether it is an executable method in ReadDeleteOnly mode.
+     *@ param method Request method
+     *@return boolean true: authorization method false: unauthorized method
      */
     public static boolean isAllowedMethod(String method) {
-        // ReadDeleteOnlyモードでなければ処理を許可する
+        //If it is not in the ReadDeleteOnly mode, processing is permitted
         if (!ReadDeleteModeLockManager.isReadDeleteOnlyMode()) {
             return true;
         }
@@ -66,29 +66,29 @@ public class PersoniumReadDeleteModeManager {
     }
 
     /**
-     * PCSの動作モードがReadDeleteOnlyモードの場合は、参照系リクエストのみ許可する.
-     * 許可されていない場合は例外を発生させてExceptionMapperにて処理する.
-     * @param method リクエストメソッド
-     * @param pathSegment パスセグメント
+     *When the operation mode of the PCS is the ReadDeleteOnly mode, only the reference system request is permitted.
+     *If it is not permitted, raise an exception and process it with ExceptionMapper.
+     *@ param method Request method
+     *@ param pathSegment path segment
      */
     public static void checkReadDeleteOnlyMode(String method, List<PathSegment> pathSegment) {
-        // ReadDeleteOnlyモードでなければ処理を許可する
+        //If it is not in the ReadDeleteOnly mode, processing is permitted
         if (!ReadDeleteModeLockManager.isReadDeleteOnlyMode()) {
             return;
         }
 
-        // 認証処理はPOSTメソッドだが書き込みは行わないので例外として許可する
+        //Authentication processing is a POST method but does not write, so it is allowed as an exception
         if (isAuthPath(pathSegment)) {
             return;
         }
 
-        // $batchはPOSTメソッドだが参照と削除のリクエストも実行可能であるため
-        // $batch内部で書き込み系処理をエラーとする
+        //Since $ batch is a POST method but requests for reference and deletion can also be executed
+        //Write batch processing as error within $ batch
         if (isBatchPath(pathSegment)) {
             return;
         }
 
-        // ReadDeleteOnlyモード時に、許可メソッドであれば処理を許可する
+        //In the ReadDeleteOnly mode, if it is an enabled method, processing is permitted
         if (ACCEPT_METHODS.contains(method)) {
             return;
         }
@@ -105,7 +105,7 @@ public class PersoniumReadDeleteModeManager {
     }
 
     private static boolean isAuthPath(List<PathSegment> pathSegment) {
-        // 認証のパスは/cell名/__token または /cell名/__authz のためサイズを2とする
+        //Since the authentication path is / cell name / __ token or / cell name / __ authz, set the size to 2
         if (pathSegment.size() == 2) {
             String lastPath = pathSegment.get(1).getPath();
             if ("__token".equals(lastPath) || "__authz".equals(lastPath)) {

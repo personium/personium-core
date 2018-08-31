@@ -25,81 +25,81 @@ import io.personium.common.es.response.PersoniumSearchResponse;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
- * ODataEntitySetに対するアクセッサーのインターフェースクラス.
+ *The interface class of the accessor for ODataEntitySet.
  */
 public interface EntitySetAccessor {
 
     /**
-     * ドキュメントを取得する.
-     * @param id ドキュメントのID
-     * @return 応答
+     *Get a document.
+     *@ param id Document ID
+     *@return response
      */
     PersoniumGetResponse get(String id);
 
     /**
-     * UUIDでデータ登録を行う.
-     * @param docHandler 登録データ
-     * @return 登録結果
+     *Perform data registration with UUID.
+     *@ param docHandler registration data
+     *@return registration result
      */
     PersoniumIndexResponse create(EntitySetDocHandler docHandler);
 
     /**
-     * ID指定ありでデータ登録を行う.
-     * @param id 登録ID
-     * @param docHandler 登録データ
-     * @return 登録結果
+     *Register data with ID specified.
+     *@ param id Registration ID
+     *@ param docHandler registration data
+     *@return registration result
      */
     PersoniumIndexResponse create(String id, EntitySetDocHandler docHandler);
 
     /**
-     * バージョン指定ありでデータ更新を行う.
-     * @param id 更新データのID
-     * @param docHandler 登録データ
-     * @param version バージョン情報
-     * @return 更新結果
+     *Perform data update with version specification.
+     *@ param id ID of update data
+     *@ param docHandler registration data
+     *@ param version version information
+     *@return Update result
      */
     PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler, long version);
 
     /**
-     * データ更新を行う.
-     * @param id 更新データのID
-     * @param docHandler 登録データ
-     * @return 更新結果
+     *Perform data update.
+     *@ param id ID of update data
+     *@ param docHandler registration data
+     *@return Update result
      */
     PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler);
 
     /**
-     * データ削除を行う.
-     * @param docHandler 削除データ
-     * @return 削除結果
+     *Perform data deletion.
+     *@ param docHandler delete data
+     *@return Deletion result
      */
     PersoniumDeleteResponse delete(EntitySetDocHandler docHandler);
 
     /**
-     * ドキュメントの件数を取得.
-     * @param query クエリ情報
-     * @return ES応答
+     *Get the number of documents.
+     *@ param query Query information
+     *@return ES response
      */
     long count(Map<String, Object> query);
 
     /**
-     * ドキュメントを検索.
-     * @param query クエリ情報
-     * @return ES応答
+     *Search documents.
+     *@ param query Query information
+     *@return ES response
      */
     PersoniumSearchResponse search(Map<String, Object> query);
 
     /**
-     * データ削除を行う.
-     * @param docHandler 削除データ
-     * @param version バージョン
-     * @return 削除結果
+     *Perform data deletion.
+     *@ param docHandler delete data
+     *@ param version version
+     *@return Deletion result
      */
     PersoniumDeleteResponse delete(EntitySetDocHandler docHandler, long version);
 
     /**
-     * Typeを取得する.
-     * @return 応答
+     *Get Type.
+     *@return response
      */
     String getType();
 

@@ -49,10 +49,10 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * ODataSvcResourceを担当するJAX-RSリソース.
+ *JAX-RS resource in charge of ODataSvcResource.
  */
 public final class ODataSvcCollectionResource extends ODataResource {
-    // DavCollectionResourceとしての機能を使うためこれをWRAPしておく。
+    //WRAP this to use the function as DavCollectionResource.
     DavRsCmp davRsCmp;
 
     /**
@@ -69,11 +69,11 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     * PROPFINDの処理.
-     * @param requestBodyXml リクエストボディ
-     * @param depth Depthヘッダ
-     * @param contentLength Content-Length ヘッダ
-     * @param transferEncoding Transfer-Encoding ヘッダ
+     *Processing of PROPFIND.
+     *@ param requestBodyXml request body
+     *@ param depth Depth header
+     *@ param contentLength Content-Length header
+     *@ param transferEncoding Transfer-Encoding header
      * @return JAX-RS Response
      */
     @WebDAVMethod.PROPFIND
@@ -89,14 +89,14 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     * PROPPATCHの処理.
-     * @param requestBodyXml リクエストボディ
+     *Processing of PROPPATCH.
+     *@ param requestBodyXml request body
      * @return JAX-RS Response
      */
     @WriteAPI
     @WebDAVMethod.PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
-        // アクセス制御
+        //Access control
         this.checkAccessContext(
                 this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
 
@@ -104,14 +104,14 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     * ACLメソッドの処理. ACLの設定を行う.
-     * @param reader 設定XML
+     *Processing of ACL method Set ACL.
+     *@ param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
     @ACL
     public Response acl(final Reader reader) {
-        // アクセス制御
+        //Access control
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE_ACL);
         return this.davRsCmp.getDavCmp().acl(reader).build();
     }
@@ -145,13 +145,13 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     * OPTIONSメソッド.
+     *OPTIONS method.
      * @return JAX-RS Response
      */
     @Override
     @OPTIONS
     public Response optionsRoot() {
-        // アクセス制御
+        //Access control
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
@@ -164,15 +164,15 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     * MOVEメソッドの処理.
-     * @param headers ヘッダ情報
-     * @return JAX-RS応答オブジェクト
+     *Processing of the MOVE method.
+     *@ param headers header information
+     *@return JAX-RS response object
      */
     @WriteAPI
     @WebDAVMethod.MOVE
     public Response move(
             @Context HttpHeaders headers) {
-        // 移動元に対するアクセス制御(親の権限をチェックする)
+        //Access control to move source (check parent's authority)
         this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }
@@ -183,8 +183,8 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     * 認証に使用できるAuth Schemeを取得する.
-     * @return 認証に使用できるAuth Scheme
+     *Obtain Auth Scheme that can be used for authentication.
+     *Autret Scheme that can be used for @return authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {
@@ -192,9 +192,9 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     * アクセスコンテキストが$batchしてよい権限を持っているかを返す.
-     * @param ac アクセスコンテキスト
-     * @return true: アクセスコンテキストが$batchしてよい権限を持っている
+     *Returns whether the access context has permission to $ batch.
+     *@ param ac access context
+     *@return true: The access context has permission to $ batch
      */
     @Override
     public boolean hasPrivilegeForBatch(AccessContext ac) {
@@ -221,16 +221,16 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     * basic認証できるかチェックする.
-     * @param ac アクセスコンテキスト
+     *basic Check if authentication can be done.
+     *@ param ac access context
      */
     public void setBasicAuthenticateEnableInBatchRequest(AccessContext ac) {
         ac.updateBasicAuthenticationStateForResource(this.davRsCmp.getBox());
     }
 
     /**
-     * サービスメタデータリクエストに対応する.
-     * @return JAX-RS 応答オブジェクト
+     *Corresponds to the service metadata request.
+     *@return JAX-RS response object
      */
     @Path("{first: \\$}metadata")
     public ODataSvcSchemaResource metadata() {

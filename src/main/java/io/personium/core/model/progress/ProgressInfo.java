@@ -19,36 +19,36 @@ package io.personium.core.model.progress;
 import org.json.simple.JSONObject;
 
 /**
- * 非同期処理状況のためのインターフェース定義.
+ *Interface definition for asynchronous processing situations.
  */
 public interface ProgressInfo {
 
     /**
-     * 処理状況（ステータス）.
+     *Processing status (status).
      */
     enum STATUS {
-        /** 処理中. */
+        /** processing.*/
         PROCESSING("installation in progress"),
-        /** 処理完了（正常終了）. **/
+        /** Processing completed (normal termination).*/
         COMPLETED("ready"),
-        /** 処理完了（異常終了）. */
+        /** Processing complete (abnormal termination).*/
         FAILED("installation failed"),
-        /** キャンセル完了. */
-        CANCELLED("installation cancelled"); // 未使用
+        /** Cancellation complete.*/
+        CANCELLED("installation cancelled"); //unused
 
         private String message;
 
         /**
-         * コンストラクタ.
-         * @param message メッセージ
+         *constructor.
+         *@ param message Message
          */
         STATUS(String message) {
             this.message = message;
         }
 
         /**
-         * 各Enum値に対応したメッセージを取得する.
-         * @return メッセージ
+         *A message corresponding to each Enum value is obtained.
+         *@return message
          */
         public String value() {
             return message;
@@ -56,8 +56,8 @@ public interface ProgressInfo {
     }
 
     /**
-     * 保存されているデータの内容をJSON形式で取得する.
-     * @return JSONオブジェクト.
+     *Acquires the contents of stored data in JSON format.
+     *@return JSON object.
      */
     JSONObject getJsonObject();
 }

@@ -145,40 +145,40 @@ public class Common {
     public static final String SYSUTCDATETIME = "SYSUTCDATETIME()";
 
     /**
-     * Name項目に対するp:Formatの定義.
+     *Definition of p: Format for Name field.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_NAME = new ArrayList<EdmAnnotation<?>>();
     /**
-     * 半角記号を許容する項目に対するp:Formatの定義.
+     *Definition of p: Format for items that allow single-byte symbols.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_NAME_WITH_SIGN = new ArrayList<EdmAnnotation<?>>();
     /**
-     * RelationのName項目に対するp:Formatの定義.
+     *Definition of p: Format for Relation Name field.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_RELATION_NAME = new ArrayList<EdmAnnotation<?>>();
     /**
-     * p:FormatのURI定義.
+     *URI definition of p: Format.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_URI = new ArrayList<EdmAnnotation<?>>();
     /**
-     * p:FormatのCell URL定義.
+     *Cell URL definition of p: Format.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_CELL_URL = new ArrayList<EdmAnnotation<?>>();
     /**
-     * Multiplicity項目に対するp:Formatの定義.
+     *Definition of p: Format for Multiplicity item.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_MULTIPLICITY = new ArrayList<EdmAnnotation<?>>();
     /**
-     * ID項目に対するp:Formatの定義.
+     *Definition of p: Format for ID item.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_ID = new ArrayList<EdmAnnotation<?>>();
     /**
-     * AccountType項目に対するp:Formatの定義.
+     *Definition of p: Format for AccountType item.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_ACCOUNT_TYPE = new ArrayList<EdmAnnotation<?>>();
 
     /**
-     * DC名前空間.
+     *DC namespace.
      */
     public static final PrefixedNamespace P_NAMESPACE = new PrefixedNamespace(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
             PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
@@ -225,7 +225,7 @@ public class Common {
     }
 
     /**
-     * Name項目に対するp:FormatのAnnotationを返却.
+     *Return p: Format Annotation for Name item.
      * @return EdmAnnotation
      */
     private static EdmAnnotation<?> createFormatNameAnnotation() {
@@ -235,7 +235,7 @@ public class Common {
     }
 
     /**
-     * Name項目に対するp:FormatのAnnotationを返却.
+     *Return p: Format Annotation for Name item.
      * @return EdmAnnotation
      */
     private static EdmAnnotation<?> createFormatNameWithSignAnnotation() {
@@ -245,7 +245,7 @@ public class Common {
     }
 
     /**
-     * RelationのName項目に対するp:FormatのAnnotationを返却.
+     *Return p: Format Annotation for Relation Name item.
      * @return EdmAnnotation
      */
     private static EdmAnnotation<?> createFormatRelationNameAnnotation() {
@@ -255,7 +255,7 @@ public class Common {
     }
 
     /**
-     * p:FormatのURIのAnnotationを返却.
+     *Return Annotation of URI of p: Format.
      * @return EdmAnnotation
      */
     private static EdmAnnotation<?> createFormatUriAnnotation() {
@@ -265,7 +265,7 @@ public class Common {
     }
 
     /**
-     * p:FormatのCell URLのAnnotationを返却.
+     *Return Annotation of Cell URL of p: Format.
      * @return EdmAnnotation
      */
     private static EdmAnnotation<?> createFormatCellUrlAnnotation() {
@@ -275,7 +275,7 @@ public class Common {
     }
 
     /**
-     * p:FormatのMultiplicityのAnnotationを返却.
+     *Return Annotation of Multiplicity of p: Format.
      * @return EdmAnnotation
      */
     private static EdmAnnotation<?> createFormatMultiplicityAnnotation() {
@@ -285,7 +285,7 @@ public class Common {
     }
 
     /**
-     * ID項目に対するp:FormatのAnnotationを返却.
+     *Return p: Format Annotation for ID item.
      * @return EdmAnnotation
      */
     private static EdmAnnotation<?> createFormatIdAnnotation() {
@@ -295,7 +295,7 @@ public class Common {
     }
 
     /**
-     * Account Type 項目に対するp:FormatのAnnotationを返却.
+     *Return p: Format Annotation for Account Type item.
      * @return EdmAnnotation
      */
     private static EdmAnnotation<?> createFormatAccountTypeAnnotation() {

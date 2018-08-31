@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- * ElasticSearchのバックエンドを操作するクラス群.
+ *A group of classes that manipulate the ElasticSearch backend.
  */
 package io.personium.core.model.impl.es;
 

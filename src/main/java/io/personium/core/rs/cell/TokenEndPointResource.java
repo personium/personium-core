@@ -99,7 +99,7 @@ public class TokenEndPointResource {
     private final DavRsCmp davRsCmp;
     private boolean issueCookie = false;
     private UriInfo requestURIInfo;
-    // パスワード認証時に使用するAccountのUUID。パスワード認証後に最終ログイン時刻の更新に使用する。
+    //The UUID of the Account used for password authentication. It is used to update the last login time after password authentication.
     private String accountId;
 
     /**
@@ -115,8 +115,8 @@ public class TokenEndPointResource {
     /**
      * OAuth2.0 Token Endpoint. <h2>Issue some kinds of tokens.</h2>
      * <ul>
-     * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
-     * <li>scopeがなければCellLocalを発行する。</li>
+     *<li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
+     *<li> Issue CellLocal if scope does not exist. </ li>
      * </ul>
      * @param uriInfo  URI information
      * @param authzHeader Authorization Header
@@ -146,7 +146,7 @@ public class TokenEndPointResource {
         // Accept unit local scheme url.
         String target = UriUtils.convertSchemeFromLocalUnitToHttp(
                 cell.getUnitUrl(), pTarget);
-        // p_target がURLでない場合はヘッダInjectionの脆弱性を産んでしまう。(改行コードが入っているなど)
+        //If p_target is not a URL, it creates a vulnerability of header injection. (Such as a line feed code is included)
         target = this.checkPTarget(target);
 
         if (null != pTarget) {
@@ -157,28 +157,28 @@ public class TokenEndPointResource {
         }
 
         String schema = null;
-        // まずはClient認証したいのかを確認
-        // ScopeもauthzHeaderもclientIdもない場合はClient認証しないとみなす。
+        //First, check if you want to authenticate Client
+        //If neither Scope nor authzHeader nor clientId exists, it is assumed that Client authentication is not performed.
         if (clientId != null || authzHeader != null) {
             schema = this.clientAuth(clientId, clientSecret, authzHeader);
         }
 
         if (OAuth2Helper.GrantType.PASSWORD.equals(grantType)) {
-            // 通常のパスワード認証
+            //Regular password authentication
             Response response = this.handlePassword(target, pOwner, host,
                     schema, username, password);
 
-            // パスワード認証が成功した場合はアカウントの最終ログイン時刻を更新する
-            // パスワード認証が成功した場合のみ、ここを通る(handlePassword内でエラーが発生すると、例外がthrowされる)
+            //When the password authentication succeeds, the last login time of the account is updated
+            //It passes only here if password authentication succeeds (exceptions will be thrown if an error occurs in handlePassword)
             if (PersoniumUnitConfig.getAccountLastAuthenticatedEnable()) {
-                // Accountのスキーマ情報を取得する
+                //Obtain schema information of Account
                 PersoniumODataProducer producer = ModelFactory.ODataCtl
                         .cellCtl(cell);
                 EdmEntitySet esetAccount = producer.getMetadata()
                         .getEdmEntitySet(Account.EDM_TYPE_NAME);
                 OEntityKey originalKey = OEntityKey.parse("('" + username
                         + "')");
-                // 最終ログイン時刻の変更をProducerに依頼(このメソッド内でロックを取得・解放)
+                //Ask Producer to change the last login time (Get / release lock within this method)
                 producer.updateLastAuthenticated(esetAccount, originalKey,
                         accountId);
             }
@@ -196,11 +196,11 @@ public class TokenEndPointResource {
         }
     }
 
-    // TODO 仮実装
+    //TODO temporary implementation
     private Response receiveCode(final String target, String owner, String schema,
             final String host, final String code) {
         if (code == null) {
-            // codeが未設定の場合、パースエラーとみなす
+            //If code is not set, it is regarded as a parse error
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
         }
         if (schema == null) {
@@ -219,15 +219,15 @@ public class TokenEndPointResource {
         try {
             token = (CellLocalAccessToken) AbstractOAuth2Token.parse(code, cell.getUrl(), host);
         } catch (TokenParseException e) {
-            // パースに失敗したので
+            //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl()).reason(e);
         } catch (TokenDsigException e) {
-            // 証明書検証に失敗したので
+            //Because certificate validation failed
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
             throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID.realm(this.cell.getUrl());
         } catch (TokenRootCrtException e) {
-            // ルートCA証明書の設定エラー
+            //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
             throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
         }
@@ -243,7 +243,7 @@ public class TokenEndPointResource {
 
         long issuedAt = new Date().getTime();
 
-        // 受け取ったTokenから AccessTokenとRefreshTokenを再生成
+        //Regenerate AccessToken and RefreshToken from the received Token
         CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt, cell.getUrl(), token.getSubject(), schema);
         IAccessToken aToken = null;
         if (target == null) {
@@ -316,14 +316,14 @@ public class TokenEndPointResource {
         // If the Account shown in IdToken does not exist in cell.
         OEntityWrapper idTokenUserOew = cell.getAccount(accountName);
         if (idTokenUserOew == null) {
-            // アカウントの存在確認に悪用されないように、失敗の旨のみのエラー応答
+            //In order not to be abused in checking the existence of the account, an error response only for failure
             PersoniumCoreLog.OIDC.NO_SUCH_ACCOUNT.params(accountName).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED;
         }
 
         // Confirm if OidC is included in Type when there is Account.
         if (!AuthUtils.getAccountType(idTokenUserOew).contains(accountType)) {
-            // アカウントの存在確認に悪用されないように、失敗の旨のみのエラー応答
+            //In order not to be abused in checking the existence of the account, an error response only for failure
             PersoniumCoreLog.OIDC.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(accountType,
                     accountName).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED;
@@ -345,12 +345,12 @@ public class TokenEndPointResource {
                     target = target + "/";
                 }
                 if (target.contains("\n") || target.contains("\r")) {
-                    // p_targetがURLでない場合はエラー
+                    //Error when p_target is not a URL
                     throw PersoniumCoreAuthnException.INVALID_TARGET
                             .realm(this.cell.getUrl());
                 }
             } catch (MalformedURLException e) {
-                // p_targetがURLでない場合はエラー
+                //Error when p_target is not a URL
                 throw PersoniumCoreAuthnException.INVALID_TARGET
                         .realm(this.cell.getUrl());
             }
@@ -359,11 +359,11 @@ public class TokenEndPointResource {
     }
 
     /**
-     * クライアント認証処理.
+     *Client authentication processing.
      * @param clientId
      * @param clientSecret
      * @param authzHeader
-     * @return null： Client認証に失敗した場合。
+     *@return null: Client authentication failed.
      */
     private String clientAuth(final String clientId, final String clientSecret,
             final String authzHeader) {
@@ -373,12 +373,12 @@ public class TokenEndPointResource {
             pw = "";
         }
 
-        // authzHeaderのパース
+        //Parsing authzHeader
         if (authzHeader != null) {
             String[] idpw = PersoniumCoreUtils
                     .parseBasicAuthzHeader(authzHeader);
             if (idpw != null) {
-                // authzHeaderの指定を優先
+                //Specify authzHeader first
                 id = idpw[0];
                 pw = idpw[1];
             } else {
@@ -387,108 +387,108 @@ public class TokenEndPointResource {
             }
         }
 
-        // pwのチェック
-        // ・PWはSAMLトークンなので、これをパースする。
+        //Check pw
+        //· Since PW is a SAML token, it is parsed.
         TransCellAccessToken tcToken = null;
         try {
             tcToken = TransCellAccessToken.parse(pw);
         } catch (TokenParseException e) {
-            // パースの失敗
+            //Perth failure
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage())
                     .writeLog();
             throw PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.realm(
                     cell.getUrl()).reason(e);
         } catch (TokenDsigException e) {
-            // 署名検証エラー
+            //Signature validation error
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage())
                     .writeLog();
             throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID
                     .realm(this.cell.getUrl());
         } catch (TokenRootCrtException e) {
-            // ルートCA証明書の設定エラー
+            //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(
                     e.getMessage()).writeLog();
             throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
         }
 
-        // ・有効期限チェック
+        //· Expiration date check
         if (tcToken.isExpired()) {
             throw PersoniumCoreAuthnException.CLIENT_SECRET_EXPIRED.realm(cell
                     .getUrl());
         }
 
-        // ・IssuerがIDと等しいことを確認
+        //· Confirm that Issuer is equal to ID
         if (!id.equals(tcToken.getIssuer())) {
             throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH
                     .realm(cell.getUrl());
         }
 
-        // トークンのターゲットが自分でない場合はエラー応答
+        //If the target of the token is not yourself, an error response
         if (!tcToken.getTarget().equals(cell.getUrl())) {
             throw PersoniumCoreAuthnException.CLIENT_SECRET_TARGET_WRONG
                     .realm(cell.getUrl());
         }
 
-        // ロールが特殊(confidential)な値だったら#cを付与
+        //Give # c if the role is a confidential value
         String confidentialRoleUrl = String.format(
                 OAuth2Helper.Key.CONFIDENTIAL_ROLE_URL_FORMAT,
                 tcToken.getIssuer(), Box.DEFAULT_BOX_NAME);
         for (Role role : tcToken.getRoles()) {
             if (confidentialRoleUrl.equals(role.createUrl())) {
-                // 認証成功。
+                //Successful authentication.
                 return id + OAuth2Helper.Key.CONFIDENTIAL_MARKER;
             }
         }
-        // 認証成功。
+        //Successful authentication.
         return id;
     }
 
     private Response receiveSaml2(final String target, final String owner,
             final String schema, final String assertion) {
         if (Key.TRUE_STR.equals(owner)) {
-            // トークン認証でのユニットユーザ昇格はさせない
+            //Do not promote unit user in token authentication
             throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER
                     .realm(this.cell.getUrl());
         }
 
-        // assertionのnullチェック
+        //Assertion null check
         if (assertion == null) {
-            // assertionが未設定の場合、パースエラーとみなす
+            //If assertion is not set, it is regarded as a parse error
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell
                     .getUrl());
         }
 
-        // まずはパースする
+        //First to parse
         TransCellAccessToken tcToken = null;
         try {
             tcToken = TransCellAccessToken.parse(assertion);
         } catch (TokenParseException e) {
-            // パース失敗時
+            //When parsing fails
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage())
                     .writeLog();
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell
                     .getUrl());
         } catch (TokenDsigException e) {
-            // 署名検証でエラー
+            //Error in signature verification
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage())
                     .writeLog();
             throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID
                     .realm(this.cell.getUrl());
         } catch (TokenRootCrtException e) {
-            // ルートCA証明書の設定エラー
+            //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(
                     e.getMessage()).writeLog();
             throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
         }
 
-        // Tokenの検証
-        // 1．有効期限チェック
+        //Verification of Token
+        //1. Expiration check
         if (tcToken.isExpired()) {
             throw PersoniumCoreAuthnException.TOKEN_EXPIRED.realm(this.cell
                     .getUrl());
         }
 
-        // トークンのターゲットが自分でない場合はエラー応答
+        //If the target of the token is not yourself, an error response
         try {
             if (!(AuthResourceUtils.checkTargetUrl(this.cell, tcToken))) {
                 throw PersoniumCoreAuthnException.TOKEN_TARGET_WRONG.realm(
@@ -499,26 +499,26 @@ public class TokenEndPointResource {
                     this.cell.getUrl()).params(tcToken.getTarget());
         }
 
-        // 認証は成功 -------------------------------
+        //Authentication is successful -------------------------------
 
-        // 認証できた情報をもとにリフレッシュトークンを作成
+        //Create a refresh token based on the authentication information
         long issuedAt = new Date().getTime();
         TransCellRefreshToken rToken = new TransCellRefreshToken(
-                tcToken.getId(), // IDは受領SAMLのものを保存
+                tcToken.getId(), //Save ID of received SAML
                 issuedAt, cell.getUrl(), tcToken.getSubject(),
-                tcToken.getIssuer(), // 受領SAMLのものを保存
-                tcToken.getRoles(), // 受領SAMLのものを保存
+                tcToken.getIssuer(), //Save receipt of SAML's
+                tcToken.getRoles(), //Save receipt of SAML's
                 schema);
 
-        // CELLに依頼してTC発行元のロールから自分のところのロールを決定する。
+        //Ask CELL to decide the role of you from the role of TC issuer.
         List<Role> rolesHere = cell.getRoleListHere(tcToken);
 
-        // TODO schema は指定のものをつかっていい？
-        // TODO schema認証は必要。
+        //Can I use the specified one for TODO schema?
+        //TODO schema authentication is necessary.
         String schemaVerified = schema;
 
-        // 認証トークン発行処理
-        // ターゲットは自由に決めてよい。
+        //Authentication token issue processing
+        //The target can be freely decided.
         IAccessToken aToken = null;
         if (target == null) {
             aToken = new CellLocalAccessToken(issuedAt, cell.getUrl(),
@@ -543,7 +543,7 @@ public class TokenEndPointResource {
     private Response receiveRefresh(final String target, String owner, String schema,
             final String host, final String refreshToken) {
         if (refreshToken == null) {
-            // refreshTokenが未設定の場合、パースエラーとみなす
+            //If refreshToken is not set, it is regarded as a parse error
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
         }
 
@@ -551,15 +551,15 @@ public class TokenEndPointResource {
         try {
             token = AbstractOAuth2Token.parse(refreshToken, cell.getUrl(), host);
         } catch (TokenParseException e) {
-            // パースに失敗したので
+            //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl()).reason(e);
         } catch (TokenDsigException e) {
-            // 証明書検証に失敗したので
+            //Because certificate validation failed
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
             throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID.realm(this.cell.getUrl());
         } catch (TokenRootCrtException e) {
-            // ルートCA証明書の設定エラー
+            //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
             throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
         }
@@ -576,27 +576,27 @@ public class TokenEndPointResource {
         long issuedAt = new Date().getTime();
 
         if (Key.TRUE_STR.equals(owner)) {
-            // 自分セルリフレッシュの場合のみ昇格できる。
+            //You can be promoted only for your own cell refresh.
             if (token.getClass() != CellLocalRefreshToken.class) {
                 throw PersoniumCoreAuthnException.TC_ACCESS_REPRESENTING_OWNER.realm(this.cell.getUrl());
             }
-            // ユニット昇格権限設定のチェック
+            //Check unit escalation privilege setting
             if (!this.davRsCmp.checkOwnerRepresentativeAccounts(token.getSubject())) {
                 throw PersoniumCoreAuthnException.NOT_ALLOWED_REPRESENT_OWNER.realm(this.cell.getUrl());
             }
-            // セルのオーナーが未設定のセルに対しては昇格させない。
+            //Do not promote cells for which the owner of the cell is not set.
             if (cell.getOwner() == null) {
                 throw PersoniumCoreAuthnException.NO_CELL_OWNER.realm(this.cell.getUrl());
             }
 
-            // uluut発行処理
+            //uluut issuance processing
             UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt,
                     UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
                     cell.getOwner(), host);
 
             return this.responseAuthSuccess(uluut, null);
         } else {
-            // 受け取ったRefresh Tokenから AccessTokenとRefreshTokenを再生成
+            //Regenerate AccessToken and RefreshToken from received Refresh Token
             IRefreshToken rToken = (IRefreshToken) token;
             rToken = rToken.refreshRefreshToken(issuedAt);
 
@@ -606,7 +606,7 @@ public class TokenEndPointResource {
                 List<Role> roleList = cell.getRoleListForAccount(subject);
                 aToken = rToken.refreshAccessToken(issuedAt, target, cell.getUrl(), roleList, schema);
             } else {
-                // CELLに依頼してトークン発行元のロールから自分のところのロールを決定する。
+                //Ask CELL to determine the role of you from the role of the token issuer.
                 List<Role> rolesHere = cell.getRoleListHere((IExtRoleContainingToken) rToken);
                 aToken = rToken.refreshAccessToken(issuedAt, target, cell.getUrl(), rolesHere, schema);
             }
@@ -642,31 +642,31 @@ public class TokenEndPointResource {
 
         if (issueCookie) {
             String tokenString = accessToken.toTokenString();
-            // p_cookie_peerとして、ランダムなUUIDを設定する
+            //Set random UUID as p_cookie_peer
             String pCookiePeer = UUID.randomUUID().toString();
             String cookieValue = pCookiePeer + "\t" + tokenString;
-            // ヘッダに返却するp_cookie値は、暗号化する
+            //The p_cookie value to return to the header is encrypted
             String encodedCookieValue = LocalToken.encode(cookieValue,
                     UnitLocalUnitUserToken.getIvBytes(AccessContext
                             .getCookieCryptKey(requestURIInfo.getBaseUri())));
-            // Cookieのバージョン(0)を指定
+            //Specify cookie version (0)
             int version = 0;
             String path = getCookiePath();
 
-            // Cookieを作成し、レスポンスヘッダに返却する
+            //Create a cookie and return it to the response header
             Cookie cookie = new Cookie("p_cookie", encodedCookieValue, path,
                     requestURIInfo.getBaseUri().getHost(), version);
             rb.cookie(new NewCookie(cookie, "", -1, PersoniumUnitConfig
                     .isHttps()));
-            // レスポンスボディの"p_cookie_peer"を返却する
+            //Return "p_cookie_peer" of the response body
             resp.put("p_cookie_peer", pCookiePeer);
         }
         return rb.entity(resp.toJSONString()).build();
     }
 
     /**
-     * Cookieに設定するパスを作成する.
-     * @return Cookieに設定するパス
+     *Create a path to set as a cookie.
+     *@return Path to set for cookie
      */
     private String getCookiePath() {
         String cellUrl = cell.getUrl();
@@ -683,7 +683,7 @@ public class TokenEndPointResource {
             final String host, final String schema, final String username,
             final String password) {
 
-        // パスワードのCheck処理
+        //Password check processing
         if (username == null) {
             throw PersoniumCoreAuthnException.REQUIRED_PARAM_MISSING.realm(
                     this.cell.getUrl()).params(Key.USERNAME);
@@ -698,22 +698,22 @@ public class TokenEndPointResource {
                     .getUrl());
         }
 
-        // Typeの値確認
+        //Confirmation of Type value
         if (!AuthUtils.isAccountTypeBasic(oew)) {
-            // アカウントの存在確認に悪用されないように、失敗の旨のみのエラー応答
+            //In order not to be abused in checking the existence of the account, an error response only for failure
             PersoniumCoreLog.Auth.UNSUPPORTED_ACCOUNT_GRANT_TYPE.params(
                     Account.TYPE_VALUE_BASIC, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell
                     .getUrl());
         }
 
-        // 最終ログイン時刻を更新するために、UUIDをクラス変数にひかえておく
+        //In order to update the last login time, keep UUID in class variable
         accountId = (String) oew.getUuid();
 
-        // ロックのチェック
+        //Check lock
         Boolean isLock = AuthResourceUtils.isLockedAccount(accountId);
         if (isLock) {
-            // memcachedのロック時間を更新
+            //Update lock time of memcached
             AuthResourceUtils.registAccountLock(accountId);
             throw PersoniumCoreAuthnException.ACCOUNT_LOCK_ERROR
                     .realm(this.cell.getUrl());
@@ -722,7 +722,7 @@ public class TokenEndPointResource {
         boolean authSuccess = cell.authenticateAccount(oew, password);
 
         if (!authSuccess) {
-            // memcachedにロックを作成
+            //Make lock on memcached
             AuthResourceUtils.registAccountLock(accountId);
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell
                     .getUrl());
@@ -736,18 +736,18 @@ public class TokenEndPointResource {
         long issuedAt = new Date().getTime();
 
         if (Key.TRUE_STR.equals(owner)) {
-            // ユニット昇格権限設定のチェック
+            //Check unit escalation privilege setting
             if (!this.davRsCmp.checkOwnerRepresentativeAccounts(username)) {
                 throw PersoniumCoreAuthnException.NOT_ALLOWED_REPRESENT_OWNER
                         .realm(this.cell.getUrl());
             }
-            // セルのオーナーが未設定のセルに対しては昇格させない。
+            //Do not promote cells for which the owner of the cell is not set.
             if (cell.getOwner() == null) {
                 throw PersoniumCoreAuthnException.NO_CELL_OWNER.realm(this.cell
                         .getUrl());
             }
 
-            // uluut発行処理
+            //uluut issuance processing
             UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(issuedAt,
                     UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR
                             * MILLISECS_IN_AN_HOUR, cell.getOwner(), host);
@@ -758,7 +758,7 @@ public class TokenEndPointResource {
                 CellLocalRefreshToken.REFRESH_TOKEN_EXPIRES_HOUR
                         * MILLISECS_IN_AN_HOUR, cell.getUrl(), username, schema);
 
-        // レスポンスをつくる。
+        //Create a response.
         if (target == null) {
             AccountAccessToken localToken = new AccountAccessToken(issuedAt,
                     AccountAccessToken.ACCESS_TOKEN_EXPIRES_HOUR
@@ -766,8 +766,8 @@ public class TokenEndPointResource {
                     schema);
             return this.responseAuthSuccess(localToken, rToken);
         } else {
-            // TODO SCHEMAがURLであることのチェック
-            // TODO TARGETがURLであることのチェック
+            //Check that TODO SCHEMA is URL
+            //Check that TODO TARGET is URL
 
             List<Role> roleList = cell.getRoleListForAccount(username);
 

@@ -28,205 +28,205 @@ import org.odata4j.expression.EntitySimpleProperty;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- * ElasticSearchのドキュメントを生成するHandler.
+ *Handler to generate ElasticSearch document.
  */
 public interface EntitySetDocHandler extends EsDocHandler {
 
     /**
-     * typeのゲッター.
+     *Getter of type.
      * @return type
      */
     String getType();
 
     /**
-     * CellIDのゲッター.
+     *CellID getter.
      * @return cellId
      */
     String getCellId();
 
     /**
-     * BoxIDのゲッター.
+     *Getter of Box ID.
      * @return boxId
      */
     String getBoxId();
 
     /**
-     * NodeIDのゲッター.
+     *Getter of NodeID.
      * @return nodeId
      */
     String getNodeId();
 
     /**
-     * EntityTypeIDのゲッター.
+     *Getter of EntityTypeID.
      * @return entityTypeId
      */
     String getEntityTypeId();
 
     /**
-     * StaticFieldsのゲッター.
+     *Getter of StaticFields.
      * @return StaticFields
      */
     Map<String, Object> getStaticFields();
 
     /**
-     * DynamicFieldsのゲッター.
+     *Getter of Dynamic Fields.
      * @return DynamicFields
      */
     Map<String, Object> getDynamicFields();
 
     /**
-     * AclFieldsのゲッター.
+     *Getlter of AclFields.
      * @return ManyToOnelinkId
      */
     Map<String, JSONObject> getAclFields();
 
     /**
-     * HiddenFieldsのゲッター.
+     *Getter of Hidden Fields.
      * @return HiddenFields
      */
     Map<String, Object> getHiddenFields();
 
     /**
-     * ManyToOnelinkIdのゲッター.
+     *Getter of ManyToOnelinkId.
      * @return ManyToOnelinkId
      */
     Map<String, Object> getManyToOnelinkId();
 
     /**
-     * StaticFieldsの文字列表現を返す.
+     *Returns a string representation of StaticFields.
      * @return StaticFields
      */
     String getStaticFieldsString();
 
     /**
-     * DynamicFieldsの文字列表現を返す.
+     *Returns a string representation of DynamicFields.
      * @return DynamicFields
      */
     String getDynamicFieldsString();
 
     /**
-     * HiddenFieldsの文字列表現を返す.
+     *Returns a string representation of HiddenFields.
      * @return HiddenFields
      */
     String getHiddenFieldsString();
 
     /**
-     * ManyToOnelinkIdの文字列表現を返す.
+     *Returns a string representation of ManyToOnelinkId.
      * @return ManyToOnelinkId
      */
     String getManyToOnelinkIdString();
 
     /**
-     * Publishedのゲッター.
+     *Published getter.
      * @return Published
      */
     Long getPublished();
 
     /**
-     * Updatedのゲッター.
+     *Updated getter.
      * @return Updated
      */
     Long getUpdated();
 
     /**
-     * UnitUserNameのゲッター.
-     * @return UnitUser名
+     *Getter of UnitUserName.
+     *@return UnitUser name
      */
     String getUnitUserName();
 
     /**
-     * Cellへのアクセス時にUnitUser名を設定する.
-     * @param hiddenFieldsMap hiddenFieldsのマップオブジェクト
+     *Set UnitUser name when accessing Cell.
+     *@ param hiddenFieldsMap map object of hiddenFields
      */
     void resolveUnitUserName(Map<String, Object> hiddenFieldsMap);
 
     /**
-     * Idのセッター.
-     * @param id elasticsearchのID
+     *Id's setter.
+     *@ param id ID of elasticsearch
      */
     void setId(String id);
 
     /**
-     * staticFieldsのセッター.
+     *A setter of staticFields.
      * @param staticFields staticFields
      */
     void setStaticFields(Map<String, Object> staticFields);
 
     /**
-     * cellIdのセッター.
-     * @param cellId CellのID
+     *CellId's setter.
+     *@ param cellId Cell ID
      */
     void setCellId(String cellId);
 
     /**
-     * boxIdのセッター.
-     * @param boxId BoxのID
+     *Setter of boxId.
+     *@ param boxId Box ID
      */
     void setBoxId(String boxId);
 
     /**
-     * nodeIdのセッター.
-     * @param nodeId nodeのID
+     *Setter of nodeId.
+     *@ param nodeId ID of node
      */
     void setNodeId(String nodeId);
 
     /**
-     * entityTypeIdのセッター.
-     * @param entityTypeId entityTypeのID
+     *Setter of entityTypeId.
+     *@ param entityTypeId ID of entityType
      */
     void setEntityTypeId(String entityTypeId);
 
     /**
-     * typeのセッター.
+     *Type setter.
      * @param type type
      */
     void setType(String type);
 
     /**
-     * versionのセッター.
+     *Version setter.
      * @param version version
      */
     void setVersion(Long version);
 
     /**
-     * HiddenFieldsのセッター.
+     *HiddenFields setter.
      * @param hiddenFields hiddenFields
      */
     void setHiddenFields(Map<String, Object> hiddenFields);
 
     /**
-     * linksのセッター.
-     * @param links links情報
+     *The setters of links.
+     *@ param links links information
      */
     void setManyToOnelinkId(Map<String, Object> links);
 
     /**
-     * Publishedのセッター.
-     * @param published published情報
+     *Published setter.
+     *@ param published published information
      */
     void setPublished(Long published);
 
     /**
-     * Updatedのセッター.
-     * @param updated updated情報
+     *Updated setter.
+     *@ param updated updated information
      */
     void setUpdated(Long updated);
 
     /**
-     * dynamicFieldsのセッター.
-     * @param dynamicFields Dynamic Field の Map
+     *The setter of dynamicFields.
+     *@ param dynamicFields Map of Dynamic Field
      */
     void setDynamicFields(Map<String, Object> dynamicFields);
 
     /**
-     * OEntityを作成する.
+     *Create OEntity.
      * @param eSet EdmEntitySet
      * @return OEntityWrapper
      */
     OEntityWrapper createOEntity(EdmEntitySet eSet);
 
     /**
-     * OEntityを作成する.
+     *Create OEntity.
      * @param eSet EdmEntitySet
      * @param metadata metadata
      * @param relatedEntitiesList relatedEntitiesList
@@ -237,11 +237,11 @@ public interface EntitySetDocHandler extends EsDocHandler {
             Map<String, List<OEntity>> relatedEntitiesList);
 
     /**
-     * OEntityを作成する.
+     *Create OEntity.
      * @param eSet EdmEntitySet
      * @param metadata metadata
      * @param relatedEntitiesList relatedEntitiesList
-     * @param selectQuery $selectクエリ
+     *@ param selectQuery $ select query
      * @return OEntityWrapper
      */
     OEntityWrapper createOEntity(EdmEntitySet eSet,
@@ -250,14 +250,14 @@ public interface EntitySetDocHandler extends EsDocHandler {
             List<EntitySimpleProperty> selectQuery);
 
     /**
-     * ETagを生成する.
+     *Generate ETag.
      * @return ETag
      */
     String createEtag();
 
     /**
-     * 静的プロパティをAlias名からプロパティ名に変更する.
-     * @param metadata スキーマ情報
+     *Change the static property from Alias ​​name to property name.
+     *@ param metadata schema information
      */
     void convertAliasToName(EdmDataServices metadata);
 }

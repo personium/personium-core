@@ -28,12 +28,12 @@ import io.personium.core.model.impl.es.odata.PropertyAlias;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- * ComplexTypeプロパティのDocHandler.
+ *DocHandler of ComplexType property.
  */
 public class ComplexTypePropertyDocHandler extends PropertyDocHandler implements EntitySetDocHandler {
 
     /**
-     * コンストラクタ.
+     *constructor.
      */
     public ComplexTypePropertyDocHandler() {
         propertyAliasMap = null;
@@ -41,10 +41,10 @@ public class ComplexTypePropertyDocHandler extends PropertyDocHandler implements
     }
 
     /**
-     * OEntityWrapperから IDのないDocHandlerをつくるConstructor.
-     * @param type ESのtype名
+     *Constructor that creates DocHandler without ID from OEntityWrapper.
+     *@param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     * @param metadata スキーマ情報
+     *@ param metadata schema information
      */
     public ComplexTypePropertyDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         propertyAliasMap = null;
@@ -54,12 +54,12 @@ public class ComplexTypePropertyDocHandler extends PropertyDocHandler implements
     }
 
     /**
-     * コンストラクタ.
-     * @param cellId セルID
-     * @param boxId ボックスID
-     * @param nodeId ノードID
-     * @param entityTypeId 紐付くエンティティタイプのID
-     * @param source 静的プロパティフィールド
+     *constructor.
+     *@ param cellId Cell ID
+     *@ param boxId Box ID
+     *@ param nodeId node ID
+     *@ param entityTypeId ID of the associated entity type
+     *@ param source static property field
      */
     public ComplexTypePropertyDocHandler(String cellId,
             String boxId,
@@ -75,8 +75,8 @@ public class ComplexTypePropertyDocHandler extends PropertyDocHandler implements
     }
 
     /**
-     * ES/MySQL登録用データを取得する.
-     * @return 登録用データ
+     *Acquire ES / MySQL registration data.
+     *@return Registration data
      */
     @Override
     public Map<String, Object> getSource() {
@@ -92,8 +92,8 @@ public class ComplexTypePropertyDocHandler extends PropertyDocHandler implements
     }
 
     /**
-     * ComplexType名を返却する.
-     * @return ComplexType名
+     *Return ComplexType name.
+     *@return ComplexType name
      */
     @Override
     public String getEntityTypeName() {

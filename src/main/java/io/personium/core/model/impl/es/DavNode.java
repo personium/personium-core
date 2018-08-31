@@ -28,7 +28,7 @@ import io.personium.common.es.EsBulkRequest;
 import io.personium.core.PersoniumCoreException;
 
 /**
- * DavのNodeデータを扱うクラス.
+ *Class dealing with Dav's Node data.
  */
 public class DavNode implements EsBulkRequest {
 
@@ -45,38 +45,38 @@ public class DavNode implements EsBulkRequest {
     Map<String, Object> file;
     private BulkRequestType requestType = BulkRequestType.INDEX;
 
-    /** ES上のDavNode格納においてCellの内部IDを保存するJSONキー. */
+    /** JSON key to store the Cell's internal ID in DavNode storage on ES.*/
     public static final String KEY_CELL_ID = "c";
 
-    /** ES上のDavNode格納においてBoxの内部IDを保存するJSONキー. */
+    /** JSON key to store Box's internal ID in DavNode storage on ES.*/
     public static final String KEY_BOX_ID = "b";
 
-    /** ES上のDavNode格納においてノードのタイプを保存するJSONキー. */
+    /** JSON key that stores the type of node in DavNode storage on ES.*/
     public static final String KEY_NODE_TYPE = "t";
 
-    /** ES上のDavNode格納において親ノードのIDを保存するJSONキー. */
+    /** JSON key to store ID of parent node in DavNode storage on ES.*/
     public static final String KEY_PARENT = "s";
 
-    /** ES上のDavNode格納において子ノードのリストを保存するJSONキー. */
+    /** JSON key to store the list of child nodes in DavNode storage on ES.*/
     public static final String KEY_CHILDREN = "o";
 
-    /** ES上のDavNode格納においてACLを保存するJSONキー. */
+    /** JSON key to store ACL in DavNode storage on ES.*/
     public static final String KEY_ACL = "a";
 
-    /** ES上のDavNode格納においてPROPSを保存するJSONキー. */
+    /** JSON key to store PROPS in DavNode storage on ES.*/
     public static final String KEY_PROPS = "d";
 
-    /** ES上のDavNode格納において作成日時を保存するJSONキー. */
+    /** JSON key to save creation date and time in DavNode storage on ES.*/
     public static final String KEY_PUBLISHED = "p";
 
-    /** ES上のDavNode格納において更新日時を保存するJSONキー. */
+    /** JSON key that saves update date and time in DavNode storage on ES.*/
     public static final String KEY_UPDATED = "u";
 
-    /** ES上のDavNode格納においてファイルを保存するJSONキー. */
+    /** JSON key to save the file in DavNode storage on ES.*/
     public static final String KEY_FILE = "f";
 
     /**
-     * コンストラクタ.
+     *constructor.
      */
     public DavNode() {
         long date = new Date().getTime();
@@ -94,10 +94,10 @@ public class DavNode implements EsBulkRequest {
     }
 
     /**
-     * コンストラクタ.
-     * @param cellId セルID
-     * @param boxId ボックスID
-     * @param nodeType ノードタイプ
+     *constructor.
+     *@ param cellId Cell ID
+     *@ param boxId Box ID
+     *@ param nodeType Node type
      */
     public DavNode(String cellId, String boxId, String nodeType) {
         long date = new Date().getTime();
@@ -115,9 +115,9 @@ public class DavNode implements EsBulkRequest {
     }
 
     /**
-     * コンストラクタ.
+     *constructor.
      * @param id ID
-     * @param jsonStr ソース
+     *@ param jsonStr source
      * @return DavNode
      */
     @SuppressWarnings("unchecked")
@@ -130,7 +130,7 @@ public class DavNode implements EsBulkRequest {
         try {
             source = (JSONObject) parser.parse(jsonStr);
         } catch (ParseException e) {
-            // ESのJSONが壊れている状態。
+            //JSON of ES is broken.
             throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e);
         }
         DavNode davNode = new DavNode();
@@ -308,7 +308,7 @@ public class DavNode implements EsBulkRequest {
     }
 
     /**
-     * JSONオブジェクトに変換してDavNodeの情報を返却する.
+     *Convert to JSON object and return DavNode information.
      * @return JSONObject
      */
     @SuppressWarnings("unchecked")
@@ -340,9 +340,9 @@ public class DavNode implements EsBulkRequest {
     }
 
     /**
-     * リクストの種別（INDEX / DELETE)を設定する. <br />
-     * 既存の処理への影響を考慮して、デフォルト値は INDEX にしておく。
-     * @param request リクエスト種別
+     *Set the type of the request (INDEX / DELETE) <br />
+     *In consideration of the influence on existing processing, the default value is set to INDEX.
+     *@ param request Request type
      */
     public void setRequestType(BulkRequestType request) {
         this.requestType = request;

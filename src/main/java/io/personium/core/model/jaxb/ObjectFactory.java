@@ -19,39 +19,39 @@ package io.personium.core.model.jaxb;
 import javax.xml.bind.annotation.XmlRegistry;
 
 /**
- * このパッケージを管轄するJAXBのObjectFactory.
- * org.apache.wink.webdav.model.ObjectFactoryを継承しているため、
- * このクラスに定義されたファクトリメソッドのほかにWebDav系の様々なファクトリメソッドも提供される。
+ *JAXB's ObjectFactory jurisdiction over this package.
+ *Because it inherits org.apache.wink.webdav.model.ObjectFactory,
+ *In addition to the factory method defined for this class, various factory methods of the WebDav system are also provided.
  */
 @XmlRegistry
 public final class ObjectFactory extends org.apache.wink.webdav.model.ObjectFactory {
 
     /**
-     * Mkcol オブジェクトを生成.
-     * @return JAXB用オブジェクト
+     *Generate Mkcol object.
+     *@return Object for JAXB
      */
     public Mkcol createMkcol() {
         return new Mkcol();
     }
 
     /**
-     * MkcolResponse オブジェクトを生成.
-     * @return JAXB用オブジェクト
+     *Generate MkcolResponse object.
+     *@return Object for JAXB
      */
     public MkcolResponse createMkcolResponse() {
         return new MkcolResponse();
     }
 
     /**
-     * ValidResourcetype オブジェクトを生成.
-     * @return JAXB用オブジェクト
+     *Generate a ValidResourcetype object.
+     *@return Object for JAXB
      */
     public ValidResourcetype createValidResourceType() {
         return new ValidResourcetype();
     }
     /**
-     * Acl オブジェクトを生成.
-     * @return JAXB用オブジェクト
+     *Generate Acl object.
+     *@return Object for JAXB
      */
     public Acl createAcl() {
         return new Acl();

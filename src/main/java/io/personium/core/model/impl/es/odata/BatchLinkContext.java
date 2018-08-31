@@ -19,7 +19,7 @@ package io.personium.core.model.impl.es.odata;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
- * ユーザODataの$batch内のリンク情報を保持するためのクラス.
+ *Class for holding link information in $ batch of user OData.
  */
 public class BatchLinkContext {
 
@@ -36,47 +36,47 @@ public class BatchLinkContext {
     }
 
     /**
-     * ソース側のDocHandlerを取得する.
-     * @return ソース側のDocHandler
+     *Get the source DocHandler.
+     *@return Source side DocHandler
      */
     EntitySetDocHandler getSourceDocHandler() {
         return sourceDocHandler;
     }
 
     /**
-     * ターゲット側のEntityType名を取得する.
-     * @return ターゲット側のEntityType名
+     *Get the EntityType name of the target side.
+     *@return EntityType name on target side
      */
     String getTargetEntityTypeName() {
         return targetEntityTypeName;
     }
 
     /**
-     * ターゲット側のEntityTypeIDを取得する.
-     * @return ターゲット側のEntityTypeID
+     *Get the EntityTypeID of the target side.
+     *@return EntityTypeID of target side
      */
     String getTargetEntityTypeId() {
         return targetEntityTypeId;
     }
 
     /**
-     * これから登録する件数（DBに登録済み件数+リクエスト内の解析済み件数）.
-     * @return これから登録する件数
+     *The number of items to be registered (number of registered items in DB + number of analyzed items in request).
+     *@return Number of items to register
      */
     long getRegistCount() {
         return this.existsCount + this.requestCount;
     }
 
     /**
-     * DBに登録済みの件数を設定する.
-     * @param existsCount DBに登録済みの件数
+     *Set the number of items registered in the DB.
+     *@ param existsCount Number registered in DB
      */
     void setExistsCount(long existsCount) {
         this.existsCount = existsCount;
     }
 
     /**
-     * リクエスト内の解析済み件数をインクリメントする.
+     *Increment the number of analyzed items in the request.
      */
     void incrementRegistCount() {
         this.requestCount++;

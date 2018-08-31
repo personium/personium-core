@@ -62,7 +62,7 @@ import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.core.rs.odata.ODataResource;
 
 /**
- * PersoniumJsonFormatWriterクラス.
+ *PersoniumJsonFormatWriter class.
  * @param <T>
  */
 public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
@@ -73,8 +73,8 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
     protected static final String RESULTS_PROPERTY = "results";
 
     /**
-     * コンストラクタ.
-     * @param jsonpCallback コールバック
+     *constructor.
+     *@ param jsonpCallback callback
      */
     public PersoniumJsonFormatWriter(String jsonpCallback) {
         super(jsonpCallback);
@@ -115,7 +115,7 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
 
             jw.writeName("uri");
             jw.writeString(absId);
-            // etagを返却する
+            //Return etag
             jw.writeSeparator();
             jw.writeName("etag");
             jw.writeString(etag);
@@ -191,15 +191,15 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
     }
 
     /**
-     * Collectionに対する応答データ作成.
+     *Create response data for Collection.
      * @param jw JsonWriter
-     * @param type コレクションタイプ
+     *@ param type Collection type
      * @param coll OCollection
      */
     @SuppressWarnings("rawtypes")
     @Override
     protected void writeCollection(JsonWriter jw, EdmCollectionType type, OCollection<? extends OObject> coll) {
-        // Ocollectionの応答データ作成時に[results]が追加されてしまうためオーバーライド
+        //Since [results] is added when creating Ocollection response data, override
         jw.startArray();
         boolean isFirst = true;
         Iterator<? extends OObject> iter = coll.iterator();
@@ -221,7 +221,7 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
     }
 
     /**
-     * EntityRelIdを返却する.
+     *Return EntityRelId.
      * @param oe OEntity
      * @return EntityRelId
      */
@@ -230,9 +230,9 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
     }
 
     /**
-     * EntityRelIdを返却する.
-     * @param entitySet エンティティセット
-     * @param entityKey エンティティキー
+     *Return EntityRelId.
+     *@ param entitySet entity set
+     *@ param entityKey entity key
      * @return EntityRelId
      */
     public String getEntityRelId(EdmEntitySet entitySet, OEntityKey entityKey) {
@@ -242,10 +242,10 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
     }
 
     /**
-     * JSONのフィールド値をデータ型に合わせて出力する.
-     * @param jw 出力先ライター
-     * @param type フィールドのデータ型
-     * @param pvalue フィールド値
+     *Output the JSON field value according to the data type.
+     *@ param jw Output destination writer
+     *Data type of @ param type field
+     *@ param pvalue field value
      */
     @Override
     protected void writeValue(JsonWriter jw, EdmType type, Object pvalue) {

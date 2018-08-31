@@ -31,18 +31,18 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 
 /**
- * UserDataのelasticsearchクエリハンドラー.
+ *UserData elasticsearch query handler.
  */
 public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHandler {
     /**
-     * Property/ComplexTypePropertyとAliasのマッピングデータ.
+     *Property / ComplexTypeProperty and Alias ​​mapping data.
      */
     private Map<String, PropertyAlias> propertyAliasMap;
 
     /**
-     * コンストラクタ.
-     * @param entityType エンティティタイプ
-     * @param map プロパティ名とAliasのMap
+     *constructor.
+     *@ param entityType entity type
+     *@ param map property name and Map of Alias
      */
     public UserDataQueryHandler(EdmEntityType entityType, Map<String, PropertyAlias> map) {
         super(entityType);
@@ -56,16 +56,16 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
             throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
 
-        // ソート対象のプロパティスキーマを取得する
+        //Acquire the property schema to be sorted
         String name = ((EntitySimpleProperty) expr.getExpression()).getPropertyName();
         EdmProperty edmProperty = this.entityType.findProperty(name);
 
-        // プロパティが存在しない場合はソート条件に追加しない
+        //If the property does not exist, do not add it to the sort condition
         if (edmProperty == null) {
             return;
         }
 
-        // 配列に対するソート指定時はエラーとする
+        //An error occurs when sorting on an array is specified
         if (CollectionKind.List.equals(edmProperty.getCollectionKind())) {
             throw PersoniumCoreException.OData.CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY;
         }
@@ -73,7 +73,7 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
         if (!isUntouched(name, edmProperty)) {
             super.visit(expr);
         } else {
-            // 文字列の場合
+            //In the case of a character string
             String key = getSearchKey(expr.getExpression(), true);
             String orderOption = getOrderOption(expr.getDirection());
             Map<String, Object> orderByValue = null;
@@ -84,7 +84,7 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
 
     @Override
     protected String getSearchKey(CommonExpression expr, Boolean isUntouched) {
-        // 検索キーとして設定を行う
+        //Set as search key
         String name = ((EntitySimpleProperty) expr).getPropertyName();
         EdmProperty edmProperty = this.entityType.findProperty(name);
 
@@ -95,17 +95,17 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
             return OEntityDocHandler.KEY_UPDATED;
         }
 
-        // s.フィールドフィールドを検索する
+        //s. Search field fields
         String fieldPrefix = OEntityDocHandler.KEY_STATIC_FIELDS;
 
-        // キー名をAliasに変換する
+        //Convert key name to Alias
         String key = "Name='" + name + "',_EntityType.Name='" + this.entityType.getName() + "'";
         String keyName = getAlias(key, this.entityType.getName());
         if (keyName == null) {
             keyName = name;
         }
 
-        // 型によってサフィックス（検索対象フィールド）変更する
+        //Change suffix (search target field) depending on type
         String suffix = getSuffix(edmProperty);
 
         if (isUntouched) {
@@ -116,10 +116,10 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
     }
 
     /**
-     * untouchedフィールドを使用すべき項目かどうかを判定する.
-     * @param name プロパティ名
-     * @param edmProperty プロパティのスキーマ情報
-     * @return untouchedフィールドを使用すべき場合はtrue、そうでない場合はfalse
+     *It is determined whether the untouched field should be used.
+     *@ param name property name
+     *@ param edmProperty property schema information
+     *true if the untretched field should be used, false otherwise
      */
     private boolean isUntouched(String name, EdmProperty edmProperty) {
         if (Common.P_ID.getName().equals(name)
@@ -154,10 +154,10 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
     }
 
     /**
-     * プロパティのAlias名をマッピングデータから取得する.
-     * @param key マッピングデータの検索キー
-     * @param propertyName プロパティ名
-     * @return Alias名
+     *Get the property's Alias ​​name from the mapping data.
+     *@ param key Search key for mapping data
+     *@ param propertyName property name
+     *@return Alias ​​name
      */
     private String getAlias(String key, String propertyName) {
         if (propertyName.startsWith("_")) {

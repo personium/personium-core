@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 非同期処理状況をインメモリでアクセスするためのクラス.
+ *Class for accessing asynchronous processing status in-memory.
  */
 class InProcessProgressManager extends ProgressManager {
     Map<String, Object> inProcessProgress = new HashMap<String, Object>();

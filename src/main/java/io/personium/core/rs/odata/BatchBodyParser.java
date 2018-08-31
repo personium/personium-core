@@ -36,55 +36,55 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
- * BatchBodyParserクラス.
+ *BatchBodyParser class.
  */
 public class BatchBodyParser {
 
     private String collectionUri = null;
 
-    // BoundaryParserクラスでリクエストを解析した際に有効な$topの指定値を加算する
+    //Add the valid value of $ top when analyzing the request in the BoundaryParser class
     private int bulkTopCount = 0;
 
     /**
-     * $batchのリクエストボディをパースする.
-     * @param boundary バウンダリ文字列
-     * @param reader リクエストボディ
+     *Parsing the request body of $ batch.
+     *@ param boundary Boundary string
+     *@ param reader request body
      * @param requestUriParam baseUri
-     * @return BatchBodyPartのリスト
+     *@return BatchBodyPart list
      */
     public List<BatchBodyPart> parse(String boundary, Reader reader, String requestUriParam) {
-        // TODO リクエストが１万件を超える場合エラーとする
+        //If the number of TODO requests exceeds 10,000, an error occurs
 
         this.collectionUri = requestUriParam.split("/\\$batch")[0];
 
         BufferedReader br = new BufferedReader(reader);
-        // ボディを取得する
+        //Getting the body
         StringBuilder body;
         try {
             body = getBatchBody(br);
         } catch (IOException e) {
-            // IOExceptionは重大障害
+            //IOException is a serious failure
             throw PersoniumCoreException.Server.UNKNOWN_ERROR.reason(e);
         }
 
         if (!body.toString().startsWith("--" + boundary + "\n")) {
-            // リクエストボディの先頭が「--バウンダリー文字列」で始まっていなければエラーとする
+            //If the beginning of the request body does not begin with "- boundary character string", it is regarded as an error
             throw PersoniumCoreException.OData.BATCH_BODY_PARSE_ERROR;
         }
         if (!body.toString().trim().endsWith("--" + boundary + "--")) {
-            // リクエストボディの最後が「--バウンダリー文字列--」で終わっていなければエラーとする
+            //If the end of the request body does not end with "- boundary string -", it is regarded as an error
             throw PersoniumCoreException.OData.BATCH_BODY_PARSE_ERROR;
         }
 
-        // 個々のリクエストを取得する
+        //Retrieve individual requests
         List<BatchBodyPart> requests = getRequests(body.toString(), boundary);
         return requests;
     }
 
     /**
-     * $batchのリクエストボディを取得する.
-     * @param br リクエストボディ
-     * @return リクエストボディ（StringBuilder）
+     *Get the request body of $ batch.
+     *@ param br Request body
+     *@return request body (StringBuilder)
      * @throws IOException
      */
     private StringBuilder getBatchBody(BufferedReader br) throws IOException {
@@ -101,14 +101,14 @@ public class BatchBodyParser {
     }
 
     /**
-     * $batchのリクエストボディから個々のリクエストを取得し、リストで返却する.
-     * @param body $batchのリクエストボディ
-     * @param boundaryStr バウンダリ文字列
-     * @return BatchBodyPartのリスト
+     *Get individual requests from $ batch 's request body and return them in the list.
+     *@ param body $ batch request body
+     *@ param boundaryStr Boundary string
+     *@return BatchBodyPart list
      */
     private List<BatchBodyPart> getRequests(String body, String boundaryStr) {
         List<BatchBodyPart> requests = new ArrayList<BatchBodyPart>();
-        // ボディをboundaryで分割する
+        //Split body by boundary
         String[] arrBoundary = splitBoundary(body, boundaryStr);
         for (String boundaryBody : arrBoundary) {
             if (!boundaryBody.equals("")) {
@@ -124,7 +124,7 @@ public class BatchBodyParser {
     }
 
     /**
-     * バウンダリの中身のパーサ.
+     *The parser of the contents of the boundary.
      */
     class BoundaryParser {
 
@@ -133,8 +133,8 @@ public class BatchBodyParser {
         private String boundaryStr = null;
 
         /**
-         * コンストラクタ.
-         * @param boundary バウンダリ文字列
+         *constructor.
+         *@ param boundary Boundary string
          */
         BoundaryParser(BoundaryParser boundary, String boundaryStr) {
             this.parent = boundary;
@@ -142,42 +142,42 @@ public class BatchBodyParser {
         }
 
         /**
-         * バウンダリの中を解析する.
-         * @param boundaryBody バウンダリのボディパート
-         * @return BatchBodyPartのリスト
+         *Analyze the inside of the boundary.
+         *@ param boundary Body Body part of the boundary
+         *@return BatchBodyPart list
          */
         List<BatchBodyPart> parse(String boundaryBody) {
 
             List<BatchBodyPart> requests = new ArrayList<BatchBodyPart>();
 
-            // 行で分割
+            //Split by line
             List<String> bodyLines = Arrays.asList(boundaryBody.split("\n"));
 
-            // コンテントタイプを取得
+            //Get content type
             String type = getContentType(bodyLines);
             if (type == null) {
-                // Content-Typeの指定がない
+                //There is no specification of Content-Type
                 throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE);
             }
 
-            // ボディを取得
+            //Get the body
             String boundaryBodyPart = getBoundaryBody(bodyLines, this.headers.size());
 
             if (type.equals("application/http")) {
-                // リクエストの処理
+                //Handling requests
                 requests.add(getRequest(boundaryBodyPart));
             } else if (type.startsWith("multipart/mixed")) {
-                // changesetの処理
+                //Processing changeset
 
-                // changesetのネスト指定
+                //Nesting of changeset
                 if (this.parent != null) {
                     throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_CHANGESET_NEST_ERROR;
                 }
 
-                // changesetのバウンダリ文字列を取得
+                //Retrieve changeset's boundary string
                 String changeset = getBoundaryStr(type);
 
-                // ボディをboundaryで分割する
+                //Split body by boundary
                 List<BatchBodyPart> changesetRequests = new ArrayList<BatchBodyPart>();
                 String[] arrChangeset = splitBoundary(boundaryBodyPart, changeset);
                 for (String changesetBody : arrChangeset) {
@@ -187,14 +187,14 @@ public class BatchBodyParser {
                     }
                 }
 
-                // changeset始端フラグの設定
+                //changeset Setting start flag
                 changesetRequests.get(0).setbChangesetStart(true);
-                // changeset終端フラグの設定
+                //changeset Set termination flag
                 changesetRequests.get(changesetRequests.size() - 1).setChangesetEnd(true);
 
                 requests.addAll(changesetRequests);
             } else {
-                // Content-Typeが不正
+                //Content-Type is invalid
                 throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE);
             }
 
@@ -203,21 +203,21 @@ public class BatchBodyParser {
         }
 
         /**
-         * バウンダリの中からリクエストを取得しBatchBodyPart型で返却する.
-         * @param bodyPart バウンダリのボディパート
+         *Get the request from the boundary and return it with BatchBodyPart type.
+         *@ param bodyPart Body part of the boundary
          * @return BatchBodyPart
          */
         private BatchBodyPart getRequest(String bodyPart) {
 
-            // リクエストの形
+            //Form of request
             // ---------
-            // HTTPヘッダ
-            // ：
-            // 空行
-            // {メソッド} {リクエストの相対パス}
-            // {リクエストヘッダ}
-            // 空行
-            // {リクエストボディ}
+            //HTTP header
+            //:
+            //Blank line
+            //{Method} {Relative path of request}
+            //{Request header}
+            //Blank line
+            //{Request body}
             // ---------
 
             List<String> lines = Arrays.asList(bodyPart.split("\n"));
@@ -225,7 +225,7 @@ public class BatchBodyParser {
             Map<String, String> requestHeaders = getHeaders(partHeaders);
 
             BatchBodyPart batchBodyPart = new BatchBodyPart(requestHeaders);
-            // requestLineは、「{メソッド} {リクエストの相対パス}」
+            //requestLine is "{method} {relative path of request}"
             String requestLine = lines.get(0);
             String method = getMethod(requestLine);
             batchBodyPart.setHttpMethod(method);
@@ -235,8 +235,8 @@ public class BatchBodyParser {
             String requestQuery = getQuery(requestUri);
 
             if (requestPath.indexOf("/") > 0) {
-                // $links、NP経由系のリクエストはクエリが未サポートのため指定があった場合はエラーとする
-                // TODO 取得のリクエストの制限が解除された場合はクエリを許可すること
+                //$ links, NP-based requests are errors as queries are not supported and there is specification
+                //Allow query if TODO acquisition request limit is canceled
                 if (!requestQuery.equals("")) {
                     throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
                 }
@@ -247,7 +247,7 @@ public class BatchBodyParser {
                         .compile("^([^\\(]*)\\('([^']*)'\\)\\/_([^\\(]*)(\\('([^')]*)'\\))?$");
                 Matcher npMatcher = npPathPattern.matcher(requestPath);
                 if (linkMatcher.find()) {
-                    // $linksリクエスト
+                    //$ links request
                     batchBodyPart.setIsLinksRequest(true);
                     batchBodyPart.setSourceEntitySetName(linkMatcher.replaceAll("$1"));
                     batchBodyPart.setSourceEntityKey(linkMatcher.replaceAll("$2"));
@@ -255,7 +255,7 @@ public class BatchBodyParser {
                     batchBodyPart.setTargetEntityKey(linkMatcher.replaceAll("$5"));
                     batchBodyPart.setUri(collectionUri + "/" + requestUri);
                 } else if (npMatcher.find()) {
-                    // NavigationPropertyあり
+                    //NavigationProperty Available
                     batchBodyPart.setNavigationProperty(requestPath);
                     String targetNvProName = batchBodyPart.getTargetNavigationProperty();
                     batchBodyPart.setTargetEntitySetName(npMatcher.replaceAll("$3"));
@@ -268,18 +268,18 @@ public class BatchBodyParser {
                 Matcher reqMatcher = reqPattern.matcher(requestPath);
                 if (reqMatcher.find()) {
                     String targetID = reqMatcher.replaceAll("$2");
-                    // メソッドとパスの整合性をチェックする
+                    //Check method and path integrity
                     if (HttpMethod.POST.equals(method)) {
-                        // POSTの場合_ターゲットのIDが指定されていればエラーとする
+                        //POST _ If an ID of the target is specified, it is an error
                         if (null != targetID && !"".equals(targetID)) {
                             throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
                         }
                     } else if (!HttpMethod.GET.equals(method)
                             && (null == targetID || "".equals(targetID))) {
-                        // POST,GET以外の場合_ターゲットのIDが指定されていなければエラーとする
+                        //In cases other than POST and GET _ If an ID of the target is not specified, an error is made
                         throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
                     }
-                    // GETの場合_一件取得・一覧取得の両方があるため、ターゲットのIDの有無はチェックしない
+                    //In the case of GET _ Since there is both one acquisition and list acquisition, the presence or absence of the target ID is not checked
                 } else {
                     throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_PATH_ERROR.params(requestLine);
                 }
@@ -288,12 +288,12 @@ public class BatchBodyParser {
             batchBodyPart.setEntity(getBoundaryBody(lines, requestHeaders.size() + 1));
             batchBodyPart.setChangesetStr(getChangesetStr());
 
-            // GETメソッド以外でクエリが指定された場合は指定を無視する
+            //Ignore designation when query is specified except for GET method
             if (HttpMethod.GET.equals(method)) {
                 batchBodyPart.setRequestQuery(requestQuery);
                 Integer top = null;
-                // $batchリクエスト全体の$top指定値の合計をチェックするために、$topの値だけを取得している
-                // 各クエリの値のエラーはリクエスト送信時にチェックするため、ここでは例外は無視している
+                //In order to check the sum of the $ top specified values ​​of the $ batch request as a whole, only the value of $ top is acquired
+                //We ignore the exception here as we will check the errors of the values ​​of each query at the time of sending the request
                 try {
                     top = QueryParser.parseTopQuery(UriComponent.decodeQuery(requestQuery, true).getFirst("$top"));
                 } catch (PersoniumCoreException e) {
@@ -311,7 +311,7 @@ public class BatchBodyParser {
             String changesetStr = null;
 
             if (this.parent != null) {
-                // changesetの処理の場合
+                //In case of changeset processing
                 return this.boundaryStr;
             }
 
@@ -319,9 +319,9 @@ public class BatchBodyParser {
         }
 
         /**
-         * ヘッダをセットし、コンテントタイプを返却する.
-         * @param bodyLines バウンダリの中身
-         * @return コンテントタイプ
+         *Set the header and return the content type.
+         *@ param bodyLines Boundary contents
+         *@return Content type
          */
         private String getContentType(List<String> bodyLines) {
             Map<String, String> map = getHeaders(bodyLines);
@@ -330,9 +330,9 @@ public class BatchBodyParser {
         }
 
         /**
-         * ボディパートの中からヘッダを取得する.
-         * @param bodyLines ボディパート
-         * @return ヘッダ
+         *A header is acquired from the body part.
+         *@ param bodyLines body part
+         *@return header
          */
         private Map<String, String> getHeaders(List<String> bodyLines) {
             Map<String, String> map = new HashMap<String, String>();
@@ -349,9 +349,9 @@ public class BatchBodyParser {
         }
 
         /**
-         * HTTPメソッドを取得する.
-         * @param line {メソッド} {パス} *
-         * @return HTTPメソッドの文字列
+         *Get the HTTP method.
+         *@ param line {method} {path} *
+         *@return HTTP method string
          */
         private String getMethod(String line) {
             Pattern pattern = Pattern.compile("(^[A-Z]+)[\\s]+([^\\s]+).*");
@@ -359,7 +359,7 @@ public class BatchBodyParser {
 
             String method = m.replaceAll("$1");
 
-            // 受付可能なメソッドかどうかチェックする
+            //Check if it is an acceptable method
             if (!HttpMethod.POST.equals(method) && !HttpMethod.GET.equals(method) && !HttpMethod.PUT.equals(method)
                     && !HttpMethod.DELETE.equals(method)) {
                 throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_METHOD_ERROR.params(method);
@@ -368,9 +368,9 @@ public class BatchBodyParser {
         }
 
         /**
-         * リクエストのURIパスを取得する.
-         * @param line {メソッド} {URIパス} *
-         * @return リクエストのURIパス
+         *Get the URI path of the request.
+         *@ param line {method} {URI path} *
+         *@return Request URI path
          */
         private String getUri(String line) {
             Pattern pattern = Pattern.compile("(^[A-Z]+)[\\s]+([^\\s]+).*");
@@ -380,9 +380,9 @@ public class BatchBodyParser {
         }
 
         /**
-         * リクエストの相対パスを取得する.
-         * @param line {メソッド} {パス} *
-         * @return リクエストの相対パス
+         *Get the relative path of the request.
+         *@ param line {method} {path} *
+         *Relative path of @return request
          */
         private String getPath(String line) {
             String[] path = line.split("\\?");
@@ -390,9 +390,9 @@ public class BatchBodyParser {
         }
 
         /**
-         * リクエストの相対パスを取得する.
-         * @param line {メソッド} {パス} *
-         * @return リクエストの相対パス
+         *Get the relative path of the request.
+         *@ param line {method} {path} *
+         *Relative path of @return request
          */
         private String getQuery(String line) {
             String[] path = line.split("\\?", 2);
@@ -403,10 +403,10 @@ public class BatchBodyParser {
         }
 
         /**
-         * バウンダリのボディパートからボディを取得する.
-         * @param bodyLines ボディパート
-         * @param headersize ヘッダのサイズ
-         * @return ボディ
+         *Get the body from the body part of the boundary.
+         *@ param bodyLines body part
+         *@ param headersize Header size
+         *@return body
          */
         private String getBoundaryBody(List<String> bodyLines, int headersize) {
             StringBuilder boundaryBody = new StringBuilder();
@@ -421,16 +421,16 @@ public class BatchBodyParser {
         }
 
         /**
-         * バウンダリ文字列を取得する.
-         * @param contentType Content-Typeの値
-         * @return バウンダリ文字列
+         *Get the boundary character string.
+         *@ param contentType Value of Content-Type
+         *@return Boundary string
          */
         private String getBoundaryStr(String contentType) {
             String boundary = null;
 
             Pattern pattern = Pattern.compile(".+boundary=(.+)");
             Matcher m = pattern.matcher(contentType);
-            // バウンダリの指定が無い
+            //There is no boundary designation
             if (!m.matches()) {
                 throw PersoniumCoreException.OData.BATCH_BODY_FORMAT_HEADER_ERROR.params(HttpHeaders.CONTENT_TYPE);
             }
@@ -440,8 +440,8 @@ public class BatchBodyParser {
         }
 
         /**
-         * バルクリクエスト全体で指定された$top数をチェックする.
-         * バルクリクエスト全体で$topの合計値が1万以上の場合は400エラーを返却する
+         *Check the $ top number specified in the bulk request as a whole.
+         *If the total value of $ top in the bulk request as a whole is more than 10,000 it will return 400 error
          * @param query
          */
         private void checkTopCount(int query) {

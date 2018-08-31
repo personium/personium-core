@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * D:ace タグに対応するJAXBオブジェクト.
+ *D: JAXB object corresponding to ace tag.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(namespace = "DAV:", name = "ace", propOrder = {"principal", "grant" })

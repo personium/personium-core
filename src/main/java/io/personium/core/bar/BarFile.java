@@ -320,19 +320,19 @@ public class BarFile implements Closeable {
      * <p>
      * <pre>
      * -------------------------
-     * ├─META_DIR
-     * │  ├─MANIFEST_JSON
-     * │  ├─RELATIONS_JSON
-     * │  ├─ROLES_JSON
-     * │  ├─EXTROLES_JSON
-     * │  ├─RULES_JSON
-     * │  ├─LINKS_JSON
-     * │  └─ROOTPROPS_XML
-     * │
-     * └─CONTENTS_DIR
-     *     ├─...
-     *     ├─...
-     *     └─...
+     *├─META_DIR
+     *│ ├─MANIFEST_JSON
+     *│ ├─RELATIONS_JSON
+     *│ ├─ROLES_JSON
+     *│ ├─EXTROLES_JSON
+     *│ ├─ RULES _ JSON
+     *│ ├─ LINKS_JSON
+     *│ └─ROOTPROPS_XML
+     *│
+     *└─CONTENTS_DIR
+     *├─ ...
+     *├─ ...
+     *└ ─ ...
      * -------------------------
      * </pre>
      * @param fs FileSystem class of target zip file

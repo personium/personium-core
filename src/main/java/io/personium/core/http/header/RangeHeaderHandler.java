@@ -22,52 +22,52 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Rangeリクエストヘッダを処理する. RangeHeaderHandler.parse()でRangeヘッダフィールドの値をパースして利用する。
- * 返却値はisValid()で有効なヘッダ指定かチェックして利用する。無効で合った場合ヘッダ指定を無視すべき。
- * また有効であった場合もでisSatisfiable()でRangeの開始指定が正常なbyte-range-specが存在しない場合は416レスポンスを返却すべき.
- * 処理すべきbyte-range-specが存在した場合、getByteRangeSpecCount()で有効なbyte-range-specの数を取得し、
- * getFirstBytePos()、getLastBytePos()、getContentLength()、makeContentRangeHeaderField()でレスポンス生成に必要な情報を得る。
+ *Range Process the request header RangeHeaderHandler.parse () parses the value of the Range header field and uses it.
+ *The returned value is used by checking whether it is a valid header specification with isValid (). If invalid, header specification should be ignored.
+ *Also when it is valid and isSatisfiable (), if there is no byte-range-spec in which the Range start specification is normal, 416 response should be returned.
+ *If byte-range-spec to be processed exists, getByteRangeSpecCount () acquires the number of valid byte-range-spec,
+ *Get necessary information for response generation with getFirstBytePos (), getLastBytePos (), getContentLength (), makeContentRangeHeaderField ().
  */
 public class RangeHeaderHandler {
 
-    // 用語
+    //the term
     /**
      * bytes-unit.
      */
     public static final String BYTES_UNIT = "bytes";
 
-    // RFCに定義は無いが、apacheが上限13個までの実装になっていたので合わせた
+    //There is no definition in RFC, but since apache has been implemented with a maximum of 13 implementations, it is combined
     static final int BYTE_RANGE_SPEC_MAX = 13;
-    // Rangeヘッダフィールドの文字列
+    //String of Range header field
     private String rangeHeaderField = "";
-    // range-byte-specを管理
+    //Manage range-byte-spec
     private List<ByteRangeSpec> byteRangeSpecList = new ArrayList<ByteRangeSpec>();;
 
-    // Rangeヘッダの有効無効を管理
+    //Manage validity and invalidity of Range header
     private boolean valid = false;
 
     /**
-     * コンストラクタ.
+     *constructor.
      */
     private RangeHeaderHandler(String rangeHeader) {
         this.rangeHeaderField = rangeHeader;
     }
 
     /**
-     * Rangeヘッダの値と対象ファイルのサイズを渡しパースして、本クラスのオブジェクトを生成.
-     * @param rangeHeader Rangeヘッダの値（ex. bytes=500-600,601-999）
-     * @param entitySize Range指定対象のファイルサイズ
-     * @return 本クラスのオブジェクト
+     *Pass the value of the Range header and the size of the target file and parse it to generate an object of this class.
+     *@ param rangeHeader Range header value (ex. bytes = 500 - 600, 601 - 999)
+     *@ param entitySize Range File size to be specified
+     *@return Object of this class
      */
     public static final RangeHeaderHandler parse(final String rangeHeader, final long entitySize) {
         RangeHeaderHandler range = new RangeHeaderHandler(rangeHeader);
 
-        // Range ヘッダ指定なければ無視
+        //Ignore if Range header is not specified
         if (rangeHeader == null) {
             return range;
         }
 
-        // byte-range-set 部分の抽出
+        //Extraction of byte-range-set part
         String regexByteRangesSpecifier = "^bytes\\s*=\\s*(.+)$";
         Pattern pByteRangesSpecifier = Pattern.compile(regexByteRangesSpecifier);
         Matcher mByteRangesSpecifier = pByteRangesSpecifier.matcher(rangeHeader);
@@ -75,15 +75,15 @@ public class RangeHeaderHandler {
             return range;
         }
 
-        // byte-range-spec が複数ある可能性があるのでパース
+        //Because there is a possibility that there are multiple byte-range-specs,
         String[] byteRangeSpecArray = mByteRangesSpecifier.group(1).split(",");
 
-        // byte-range-spec が上限を超えている場合はRangeヘッダ無効
+        //When the byte-range-spec exceeds the upper limit, the Range header invalid
         if (byteRangeSpecArray.length > BYTE_RANGE_SPEC_MAX) {
             return range;
         }
 
-        // 各byte-range-specのパース処理
+        //Parse processing of each byte-range-spec
         List<ByteRangeSpec> byteRangeSpecList = new ArrayList<ByteRangeSpec>();
         for (String byteRangeSpec : byteRangeSpecArray) {
             ByteRangeSpec brs = ByteRangeSpec.parse(byteRangeSpec, entitySize);
@@ -102,16 +102,16 @@ public class RangeHeaderHandler {
     }
 
     /**
-     * Rangeヘッダフィールドの文字列を返す.
-     * @return Rangeヘッダフィールド
+     *Returns the character string of the Range header field.
+     *@return Range header field
      */
     public String getRangeHeaderField() {
         return this.rangeHeaderField;
     }
 
     /**
-     * Rangeヘッダが有効かどうかを返す. 有効なRange指定がなかった場合falseを返す。
-     * @return true 有効
+     *Range Returns whether the header is valid, or false if there is no valid Range specification.
+     *@return true Enabled
      */
     public boolean isValid() {
         return this.valid;
@@ -121,15 +121,15 @@ public class RangeHeaderHandler {
     }
 
     /**
-     * Rangeヘッダで指定されているbyte-range-specの数を返す.
-     * @return Rangeの数
+     *Returns the number of byte-range-specs specified in the Range header.
+     *Number of @return Ranges
      */
     public int getByteRangeSpecCount() {
         return this.byteRangeSpecList.size();
     }
 
     /**
-     * ファイルの範囲内におさまっているbyte-range-specが存在するかチェック. RFC曰くファイルのbyte-range-specが一つでもファイル内に収まっているものがあれば206で返す.
+     *Check if a byte-range-spec that is within the range of the file exists. If there is any byte-range-spec in the file that is within the file, return it with 206.
      * @return bool
      */
     public boolean isSatisfiable() {
@@ -144,8 +144,8 @@ public class RangeHeaderHandler {
     }
 
     /**
-     * 有効なByteRangeSpecのリストを返却.
-     * @return 有効なByteRangeSpecのリスト
+     *Return a list of valid ByteRangeSpec.
+     *@return List of valid ByteRangeSpec
      */
     public List<ByteRangeSpec> getByteRangeSpecList() {
         return this.byteRangeSpecList;

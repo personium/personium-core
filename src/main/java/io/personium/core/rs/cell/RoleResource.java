@@ -39,7 +39,7 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ModelFactory;
 
 /**
- * ロールエンドポイント用JAX-RS Resource.
+ *JAX-RS Resource for roll end point.
  */
 public class RoleResource {
 
@@ -58,16 +58,16 @@ public class RoleResource {
     }
 
     /**
-     * Roleリソースのルート.
-     * Boxの一覧を返す。
-     * @param authzHeader Authorization ヘッダ
+     *Role Root of the resource.
+     *Returns a list of Box.
+     *@ param authzHeader Authorization header
      * @return JAX-RS Response Object
      */
 //    @Path("")
     @GET
     public final Response list(
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.AUTH_READ);
         EntitiesResponse er = op.getEntities(Box.EDM_TYPE_NAME, null);
         List<OEntity> loe = er.getEntities();
@@ -84,9 +84,9 @@ public class RoleResource {
         return Response.ok().entity(sb.toString()).build();
     }
     /**
-     * Box単位のRoleリソースのルート.
-     * Boxに紐付いたロール一覧を返す。
-     * Box名として__を指定されたときは、Cellレベルのロールとみなす。
+     *Route of Role resource in Box units.
+     *Returns the role list associated with Box.
+     *When __ is specified as a Box name, it is regarded as a cell level role.
      * @param boxName boxName
      * @param authzHeader authzHeader
      * @return JAXRS Response
@@ -96,11 +96,11 @@ public class RoleResource {
     public final Response cellRole(
             @PathParam("box") String boxName,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.AUTH_READ);
-        // BoxパスがCell Levelであれば、Cell レベルロールを検索して一覧で返す。
+        //If the Box path is Cell Level, search the Cell level role and return it as a list.
         if (BOX_PATH_CELL_LEVEL.equals(boxName)) {
-            // TODO Bodyの生成
+            //Generation of TODO Body
 //            EntitiesResponse er = this.op.getEntities(Role.EDM_TYPE_NAME, null);
             return Response.ok().entity(boxName).build();
         }
@@ -109,7 +109,7 @@ public class RoleResource {
 //            EntitiesResponse rolesEr = (EntitiesResponse) op.getNavProperty(Role.EDM_TYPE_NAME,
 //                    OEntityKey.create(boxName),
 //                    "_role",  null);
-            // TODO Bodyの生成
+            //Generation of TODO Body
             return Response.ok().entity(boxName).build();
         } catch (PersoniumCoreException pce) {
             if (PersoniumCoreException.OData.NO_SUCH_ENTITY == pce) {
@@ -130,11 +130,11 @@ public class RoleResource {
             @PathParam("box") String boxName,
             @PathParam("role") String role,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.AUTH_READ);
-        // BoxパスがCell Levelであれば、Cell レベルロールという扱い。
+        //If the Box pass is Cell Level, it is handled as Cell Level Roll.
         if (BOX_PATH_CELL_LEVEL.equals(boxName)) {
-            // TODO Bodyの生成
+            //Generation of TODO Body
 //            EntitiesResponse er = this.op.getEntities(Role.EDM_TYPE_NAME, null);
             return Response.ok().entity(boxName).build();
         }

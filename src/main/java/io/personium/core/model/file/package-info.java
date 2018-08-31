@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- * DavFileの読み込みを行うために利用するクラス群.
+ *Classes used to load DavFile.
  */
 package io.personium.core.model.file;
 

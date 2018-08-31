@@ -22,7 +22,7 @@ import io.personium.common.es.EsBulkRequest;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
- * BatchCreateRequestクラス.
+ *BatchCreateRequest class.
  */
 public class BulkRequest implements EsBulkRequest {
 
@@ -32,13 +32,13 @@ public class BulkRequest implements EsBulkRequest {
     private Exception error;
 
     /**
-     * コンストラクタ.
+     *constructor.
      */
     public BulkRequest() {
     }
 
     /**
-     * コンストラクタ.
+     *constructor.
      * @param bodyPart BatchBodyPart
      */
     public BulkRequest(BatchBodyPart bodyPart) {
@@ -46,15 +46,15 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     * 登録先のタイプを取得する.
-     * @return Type名
+     *Get the type of registration destination.
+     *@return Type Name
      */
     public String getType() {
         return docHandler.getType();
     }
 
     /**
-     * 登録データのIDを取得する.
+     *Get the ID of the registration data.
      * @return ID
      */
     public String getId() {
@@ -62,15 +62,15 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     * 登録データを取得する.
-     * @return 登録データのHashMap
+     *Acquire registration data.
+     *@return HashMap of registered data
      */
     public Map<String, Object> getSource() {
         return docHandler.getSource();
     }
 
     /**
-     * BodyPartのゲッター.
+     *Getter of BodyPart.
      * @return BatchBodyPart
      */
     public BatchBodyPart getBodyPart() {
@@ -78,7 +78,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     * bodyPartのセッター.
+     *Setter of bodyPart.
      * @param bodyPart BatchBodyPart
      */
     public void setBodyPart(BatchBodyPart bodyPart) {
@@ -86,7 +86,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     * EntitySetNameのゲッター.
+     *Getter of EntitySetName.
      * @return EntitySetName
      */
     public String getEntitySetName() {
@@ -94,7 +94,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     * EntitySetNameのセッター.
+     *Setter of EntitySetName.
      * @param entitySetName EntitySetName
      */
     public void setEntitySetName(String entitySetName) {
@@ -102,7 +102,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     * DocHandlerのゲッター.
+     *Docherand getter.
      * @return EntitySetDocHandler
      */
     public EntitySetDocHandler getDocHandler() {
@@ -110,7 +110,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     * DocHandlerのセッター.
+     *DocHandler's setter.
      * @param docHandler EntitySetDocHandler
      */
     public void setDocHandler(EntitySetDocHandler docHandler) {
@@ -118,7 +118,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     * Errorのゲッター.
+     *Getter of Error.
      * @return Exception
      */
     public Exception getError() {
@@ -126,7 +126,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     * Errorのセッター.
+     *Error setter.
      * @param error Exception
      */
     public void setError(Exception error) {

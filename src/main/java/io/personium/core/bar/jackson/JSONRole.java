@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * barファイル内のRole定義用JSONファイル読み込み用Mapping定義クラス.
+ *Mapping definition class for reading JSON file for Role definition in bar file.
  */
 public class JSONRole implements IJSONMappedObject {
 
@@ -43,7 +43,7 @@ public class JSONRole implements IJSONMappedObject {
     }
 
     /**
-     * Nameプロパティの取得.
+     *Get Name property.
      * @return Name
      */
     public String getName() {
@@ -51,7 +51,7 @@ public class JSONRole implements IJSONMappedObject {
     }
 
     /**
-     * Nameプロパティの設定.
+     *Set Name property.
      * @param name Name.
      */
     public void setName(String name) {

@@ -25,13 +25,13 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * D:acl タグに対応するJAXBオブジェクト.
+ *D: JAXB object corresponding to the acl tag.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(namespace = "DAV:", name = "grant")
 public final class Grant {
     /**
-     * privilegesタグ.
+     *privileges tag.
      */
     @XmlElements({ @XmlElement(namespace = "DAV:", name = "privilege", type = Privilege.class) })
     List<Privilege> privileges;

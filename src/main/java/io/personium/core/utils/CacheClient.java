@@ -17,31 +17,31 @@
 package io.personium.core.utils;
 
 /**
- * Cache操作用のインタフェースクラス.
+ *Interface class for Cache operations.
  */
 public interface CacheClient {
 
     /**
-     * 指定キーのキャッシュを取得.
-     * @param <T> 取得する型
-     * @param key キャッシュキー
-     * @param clazz 取得する型、 型に問題があるときはClassCastExcetpion発生
-     * @return キャッシュされたオブジェクト / null キャッシュが存在しないとき
+     *Get the cache of the specified key.
+     *@ param <T> Type to get
+     *@ param key Cache key
+     *@ param clazz ClassCastExcetpion occurred when there is a type or type problem to get
+     *@return When cached object / null cache does not exist
      */
     <T> T get(String key, Class<T> clazz);
 
     /**
-     * 指定キーでオブジェクトを一定の有効期限のみキャッシュします.
-     * @param key キャッシュのキー
-     * @param expiresIn 有効期間
-     * @param object キャッシュすべきオブジェクト
-     * @return 処理成功時はTrue/失敗時はFalseを返す.
+     *Cache objects only for a certain expiration date with the specified key.
+     *@ param key Key of the cache
+     *@ param expiresIn lifetime
+     *@ param object Object to cache
+     *@return Returns True on successful processing / False on failure.
      */
     Boolean put(String key, int expiresIn, Object object);
 
     /**
-     * 指定キーのキャッシュを削除.
-     * @param key キャッシュキー
+     *Deletion of specified key cache.
+     *@ param key Cache key
      */
     void delete(String key);
 

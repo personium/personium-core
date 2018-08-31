@@ -82,8 +82,8 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
     }
 
     /**
-     * Cellをロックする.
-     * @return 自ノードのロック
+     *Lock Cell.
+     *@return Lock of own node
      */
     @Override
     public Lock lock() {

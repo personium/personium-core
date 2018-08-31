@@ -31,7 +31,7 @@ import io.personium.core.http.header.ByteRangeSpec;
 import io.personium.core.http.header.RangeHeaderHandler;
 
 /**
- * Davファイルの内容を Responseに返却する際に利用する StreamingOutputクラス. 内部的には、読み込み専用にハードリンクを作成し、出力完了後に削除する。
+ *StreamingOutput class to use when returning the contents of the Dav file to Response Internally create a hard link for reading only and delete it after completion of output.
  */
 public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFile {
 
@@ -39,13 +39,13 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
     private long fileSize = 0;
 
     /**
-     * コンストラクタ.
-     * @param fileFullPath 読み込むファイルのフルパス
-     * @param fileSize 読み込むファイルのサイズ
+     *constructor.
+     *@ param fileFullPath Full path of the file to read
+     *@ param fileSize Size of the file to read
      * @param range RangeHeader
      * @param cellId Cell ID
      * @param encryptionType encryption type
-     * @throws BinaryDataNotFoundException ファイルが存在しない場合.
+     *@throws BinaryDataNotFoundException if the file does not exist.
      */
     public StreamingOutputForDavFileWithRange(final String fileFullPath,
             final long fileSize,
@@ -60,7 +60,7 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
     @Override
     public void write(OutputStream output) throws IOException, WebApplicationException {
         try {
-            // MultiPartには対応しないため1個目のbyte-renge-setだけ処理する。
+            //Because it does not correspond to MultiPart, it processes only the first byte-renge-set.
             int rangeIndex = 0;
             List<ByteRangeSpec> brss = range.getByteRangeSpecList();
             final ByteRangeSpec brs = brss.get(rangeIndex);
@@ -68,13 +68,13 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
             int chr;
             long first = brs.getFirstBytePos();
             long last = brs.getLastBytePos();
-            // Rangeの先頭まで読み飛ばし
+            //Skip to the beginning of Range
             if (hardLinkInput.skip(first) != first) {
                 PersoniumCoreLog.Dav.FILE_TOO_SHORT
                         .params("skip failed", fileSize, range.getRangeHeaderField()).writeLog();
                 throw PersoniumCoreException.Dav.FS_INCONSISTENCY_FOUND;
             }
-            // Rangeの終端まで返却
+            //Return to the end of Range
             for (long pos = first; pos < last + 1; pos++) {
                 chr = hardLinkInput.read();
                 if (chr == -1) {

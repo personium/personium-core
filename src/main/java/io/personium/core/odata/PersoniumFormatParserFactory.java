@@ -44,7 +44,7 @@ import org.odata4j.format.FormatType;
 import org.odata4j.format.Settings;
 
 /**
- * ODataのFormatParserFactory.
+ *FormatParserFactory of OData.
  */
 public class PersoniumFormatParserFactory {
 
@@ -59,11 +59,11 @@ public class PersoniumFormatParserFactory {
     }
 
     /**
-     * FormatParserを取得する.
-     * @param <T> クラス
-     * @param targetType パース対象タイプ
-     * @param type 変換フォーマット
-     * @param settings セッティング
+     *Get FormatParser.
+     *@ param <T> class
+     *@ param targetType Parse object type
+     *@ param type conversion format
+     *@ param settings setting
      * @return FormatParser
      */
     @SuppressWarnings("unchecked")
@@ -74,11 +74,11 @@ public class PersoniumFormatParserFactory {
     }
 
     /**
-     * FormatParserを取得する.
-     * @param <T> クラス
-     * @param targetType パース対象タイプ
-     * @param contentType 変換フォーマット
-     * @param settings セッティング
+     *Get FormatParser.
+     *@ param <T> class
+     *@ param targetType Parse object type
+     *@ param contentType conversion format
+     *@ param settings setting
      * @return FormatParser
      */
     public static <T> FormatParser<T> getParser(Class<T> targetType, MediaType contentType, Settings settings) {
@@ -87,7 +87,7 @@ public class PersoniumFormatParserFactory {
     }
 
     /**
-     * JSONパーサー群.
+     *JSON parser group.
      */
     public static class JsonParsers implements FormatParsers {
 

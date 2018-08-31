@@ -17,7 +17,7 @@
 package io.personium.core.model;
 
 /**
- * Cellに対応する部品のインターフェース.
+ *Interface of parts corresponding to Cell.
  */
 public interface CellCmp extends DavCmp {
 

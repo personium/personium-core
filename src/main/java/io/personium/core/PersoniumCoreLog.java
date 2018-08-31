@@ -24,228 +24,228 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ログメッセージ作成クラス.
+ *Log message creation class.
  */
 public final class PersoniumCoreLog {
 
     static Logger log = LoggerFactory.getLogger(PersoniumCoreLog.class);
 
     /**
-     * OData関連.
+     *OData related.
      */
     public static class OData {
         /**
-         * 主キーでの検索で1件のみ取得できるはずの場所で2件以上のデータが返ってきた.
-         * {0}：ヒット件数
+         *More than 2 pieces of data came back at places where only one case should be obtained by searching with the primary key.
+         *{0}: Number of hits
          */
         public static final PersoniumCoreLog FOUND_MULTIPLE_RECORDS = create("PL-OD-0001");
         /**
-         * バルクデータ登録で異常.
+         *Abnormal in bulk data registration.
          */
         public static final PersoniumCoreLog BULK_INSERT_FAIL = create("PL-OD-0002");
         /**
-         * プロパティ名の重複を検出した.
+         *Duplicate property name was detected.
          */
         public static final PersoniumCoreLog DUPLICATED_PROPERTY_NAME = create("PL-OD-0003");
     }
 
     /**
-     * WebDAV関連.
+     *WebDAV related.
      */
     public static class Dav {
         /**
-         * Roleが見つからなかったとき.
-         * {0}：詳細メッセージ
+         *When Role was not found.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog ROLE_NOT_FOUND = create("PL-DV-0001");
         /**
-         * Rangeヘッダ指定誤り.
-         * {0}：詳細メッセージ
+         *Range header specification error.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog REQUESTED_RANGE_NOT_SATISFIABLE = create("PL-DV-0002");
         /**
-         * Rangeヘッダ指定のファイル読み飛ばし失敗.
+         *Failed skipping of file specified by Range header.
          */
         public static final PersoniumCoreLog FILE_TOO_SHORT = create("PL-DV-0003");
         /**
-         * バイナリデータの削除に失敗.
-         * {0}:バイナリデータのUUID
+         *Failure to delete binary data.
+         *{0}: UUID of binary data
          */
         public static final PersoniumCoreLog FILE_DELETE_FAIL = create("PL-DV-0004");
     }
 
     /**
-     * 認証関連.
+     *Authentication related.
      */
     public static class Auth {
         /**
-         * トークンのパースに失敗した時.
-         * {0}：詳細メッセージ
+         *When failing to parse the token.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog TOKEN_PARSE_ERROR = create("PL-AU-0001");
         /**
-         * トークンの署名検証エラー.
-         * {0}：詳細メッセージ
+         *Signature validation error on token.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog TOKEN_DISG_ERROR = create("PL-AU-0002");
         /**
-         * ルートCA証明書設定エラー.
-         * {0}：詳細メッセージ
+         *Root CA certificate configuration error.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog ROOT_CA_CRT_SETTING_ERROR = create("PL-AU-0003");
         /**
-         * 最終ログイン時刻の更新時にAccountが存在しない場合.
-         * {0}：詳細メッセージ
+         *Account does not exist when updating last login time.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog ACCOUNT_ALREADY_DELETED = create("PL-AU-0004");
         /**
-         * 対応するアカウントが存在したが、指定されたGrantTypeに対応していない.
-         * {0}：詳細メッセージ
+         *Corresponding account existed, but it does not correspond to the specified GrantType.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog UNSUPPORTED_ACCOUNT_GRANT_TYPE = create("PL-AU-0005");
     }
 
     /**
-     * OIDC認証関連.
+     *OIDC authentication related.
      */
     public static class OIDC {
         /**
-         * 対応するアカウントが存在しない.
-         * {0}：詳細メッセージ
+         *The corresponding account does not exist.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog NO_SUCH_ACCOUNT = create("PL-OI-0001");
         /**
-         * 対応するアカウントが存在したが、指定されたGrantTypeに対応していない.
-         * {0}：詳細メッセージ
+         *Corresponding account existed, but it does not correspond to the specified GrantType.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog UNSUPPORTED_ACCOUNT_GRANT_TYPE = create("PL-OI-0002");
         /**
-         * リクエストユーザーとIDTokenのユーザーが一致しない.
-         * {0}：詳細メッセージ
+         *Request user and IDToken user do not match.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog INVALID_ACCOUNT = create("PL-OI-0003");
         /** .
-         * IssuerがGoogleではない
-         * {0}：詳細メッセージ
+         *Issuer is not Google
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog INVALID_ISSUER = create("PL-OI-0004");
     }
 
     /**
-     * サーバ内部エラー.
-     * サーバ側の障害やバグにより処理を続行できないときに投げる. 問題の原因を表すようなものとする。 基本的にののカテゴリの例外発生時にはWARN以上のログ出力となる
+     *Server internal error.
+     *Throw when a process can not be continued due to a server side failure or bug, which is to indicate the cause of the problem. Basically, when exceptions occur in category of WARN or more log output
      */
     public static class Server {
         /**
-         * Adsへマスタデータ作成に失敗.
-         * {0}：詳細メッセージ
+         *Failed to create master data for Ads.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog DATA_STORE_ENTITY_CREATE_FAIL = create("PL-SV-0001");
         /**
-         * Adsへマスタデータ更新に失敗.
-         * {0}：詳細メッセージ
+         *Failed to update master data to Ads.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog DATA_STORE_ENTITY_UPDATE_FAIL = create("PL-SV-0002");
         /**
-         * Adsへマスタデータ削除に失敗.
-         * {0}：詳細メッセージ
+         *Failed to delete master data to Ads.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog DATA_STORE_ENTITY_DELETE_FAIL = create("PL-SV-0003");
         /**
-         * memcachedのポート番号フォーマットエラー.
-         * {0}：詳細メッセージ
+         *Memcached port number format error.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog MEMCACHED_PORT_FORMAT_ERROR = create("PL-SV-0004");
         /**
-         * memcachedへの接続に失敗.
-         * {0}:ホスト名
-         * {1}:ポート名
-         * {2}:詳細メッセージ
+         *Failed to connect to memcached.
+         *{0}: host name
+         *{1}: Port name
+         *{2}: Detailed message
          */
         public static final PersoniumCoreLog MEMCACHED_CONNECTO_FAIL = create("PL-SV-0005");
         /**
-         * memcachedへのcache設定失敗.
-         * {0}:詳細メッセージ
+         *Cache setting to memcached failed.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog MEMCACHED_SET_FAIL = create("PL-SV-0006");
         /**
-         * memcachedへのcacheクリアー失敗.
-         * {0}:詳細メッセージ
+         *Clear cache to memcached failed.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog MEMCACHED_CLEAR_FAIL = create("PL-SV-0007");
         /**
-         * memcachedへのcache削除失敗.
-         * {0}:詳細メッセージ
+         *Failed to delete memcached cache.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog MEMCACHED_DELETE_FAIL = create("PL-SV-0008");
         /**
-         * AdsへBulkでのマスタデータ作成に失敗.
-         * {0}:詳細メッセージ
+         *Failed to create master data in Bulk to Ads.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog DATA_STORE_ENTITY_BULK_CREATE_FAIL = create("PL-SV-0009");
         /**
-         * RDBへの接続失敗.
-         * {0}:詳細メッセージ
+         *Failed to connect to RDB.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog RDB_CONNECT_FAIL = create("PL-SV-0010");
         /**
-         * SQL実行エラー.
-         * {0}:詳細メッセージ
+         *SQL execution error.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog EXECUTE_QUERY_SQL_FAIL = create("PL-SV-0011");
         /**
-         * RDBとの切断失敗.
-         * {0}:詳細メッセージ
+         *Failure to disconnect with RDB.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog RDB_DISCONNECT_FAIL = create("PL-SV-0012");
         /**
-         * ADSへの接続失敗.
-         * {0}:詳細メッセージ
+         *Connection to ADS failed.
+         *{0}: Detailed message
          */
         public static final PersoniumCoreLog ADS_CONNECTION_ERROR = create("PL-SV-0013");
         /**
-         * ElasticSearchのインデックスが存在しない.
-         * {0}:インデックス名
+         *ElasticSearch's index does not exist.
+         *{0}: index name
          */
         public static final PersoniumCoreLog ES_INDEX_NOT_EXIST = create("PL-SV-0014");
         /**
-         * Adsの作成に失敗.
-         * {0}:インデックス名
+         *Failed to create Ads.
+         *{0}: index name
          */
         public static final PersoniumCoreLog FAILED_TO_CREATE_ADS = create("PL-SV-0015");
         /**
-         * JDBCに対して実行するSQL文をログに出力.
-         * {0}:実行したSQL文
+         *Output the SQL statement executed to JDBC to the log.
+         *{0}: Executed SQL statement
          */
         public static final PersoniumCoreLog JDBC_EXEC_SQL = create("PL-SV-0016");
         /**
-         * サーバ起動失敗.
+         *Server startup failure.
          */
         public static final PersoniumCoreLog FAILED_TO_START_SERVER = create("PL-SV-0017");
         /**
-         * JDBCに対して実行するユーザODataのSQL実行をログに出力.
-         * {0}:DB名
-         * {1}:テーブル名
+         *Log the SQL execution of the user OData executed against JDBC.
+         *{0}: DB name
+         *{1}: Table name
          * {2}:id
-         * {3}:タイプ
-         * {4}:Cellのid
-         * {5}:Boxのid
-         * {6}:Nodeのid
-         * {7}:EntityTypeのid
+         *{3}: Type
+         *{4}: Cell id
+         *{5}: Box id
+         *{6}: Node id
+         *{7}: id of EntityType
          */
         public static final PersoniumCoreLog JDBC_USER_ODATA_SQL = create("PL-SV-0018");
         /**
-         * ReferenceOnlyロックを設定した.
-         * {0}:キー名
+         *I set the ReferenceOnly lock.
+         *{0}: Key name
          */
         public static final PersoniumCoreLog SET_REFERENCE_ONLY_LOCK = create("PL-SV-0019");
         /**
-         * Adsエラー時のリペア用ログの書込みに失敗.
+         *Failed to write repair log at Ads error.
          */
         public static final PersoniumCoreLog WRITE_ADS_FAILURE_LOG_ERROR = create("PL-SV-0020");
         /**
-         * Adsエラー時のリペア用ログに書込む情報.
-         * {0}:ログ情報
+         *Information to write to the repair log at the time of Ads error.
+         *{0}: log information
          */
         public static final PersoniumCoreLog WRITE_ADS_FAILURE_LOG_INFO = create("PL-SV-0021");
     }
@@ -255,47 +255,47 @@ public final class PersoniumCoreLog {
      */
     public static class Es {
         /**
-         * ESへの接続が完了した.
-         * {0}:接続ノードアドレス
+         *Connection to ES has been completed.
+         *{0}: connection node address
          */
         public static final PersoniumCoreLog CONNECTED = create("PL-ES-0001");
         /**
-         * ESへのリクエストが完了した.
-         * {0}:インデックス名
-         * {1}:タイプ名
-         * {2}:ノード名
-         * {3}:リクエストクエリ
-         * {4}:ESへのリクエストタイプ
-         * {3}と{4}の出力順は逆になる
+         *Request to ES has been completed.
+         *{0}: index name
+         *{1}: Type name
+         *{2}: Node name
+         *{3}: Request query
+         *{4}: Request type to ES
+         *The output order of {3} and {4} is reversed
          */
         public static final PersoniumCoreLog AFTER_REQUEST = create("PL-ES-0002");
         /**
-         * インデックスを作成.
-         * {0}:インデックス名
+         *Create an index.
+         *{0}: index name
          */
         public static final PersoniumCoreLog CREATING_INDEX = create("PL-ES-0003");
         /**
-         * ESへの登録リクエストが完了した.
-         * {0}:インデックス名
-         * {1}:タイプ名
-         * {2}:ノード名
-         * {3}:ESへのリクエストタイプ
-         * {4}:リクエストクエリ
+         *The registration request to ES has been completed.
+         *{0}: index name
+         *{1}: Type name
+         *{2}: Node name
+         *{3}: Request type to ES
+         *{4}: Request query
          */
         public static final PersoniumCoreLog AFTER_CREATE = create("PL-ES-0004");
         /**
-         * ESへの登録リクエストが完了した.
-         * {0}:リクエストクエリ
+         *The registration request to ES has been completed.
+         *{0}: Request query
          */
         public static final PersoniumCoreLog AFTER_CREATE_BODY = create("PL-ES-0005");
     }
 
     /**
-     * その他エラー.
+     *Other error.
      */
     public static class Misc {
         /**
-         * 到達し得ないソース等の原因不明のエラー.
+         *Unknown error such as source which can not be reached.
          */
         public static final PersoniumCoreLog UNREACHABLE_CODE_ERROR = create("PL-MC-0001");
     }
@@ -306,8 +306,8 @@ public final class PersoniumCoreLog {
     Throwable reason;
 
     /**
-     * インナークラスを強制的にロードする.
-     * エラー分類のインナークラスが追加になったらここに追加すること.
+     *Force load inner class.
+     *Add an inner class of error classification here if it is added.
      */
     public static void loadConfig() {
         new OData();
@@ -317,9 +317,9 @@ public final class PersoniumCoreLog {
     }
 
     /**
-     * コンストラクタ.
-     * @param severityエラーレベル
-     * @param message エラーメッセージ
+     *constructor.
+     *@ param severity error level
+     *@ param message error message
      */
     PersoniumCoreLog(final String code,
             final Severity severity,
@@ -330,62 +330,62 @@ public final class PersoniumCoreLog {
     }
 
     /**
-     * ファクトリーメソッド.
-     * @param code エラーコード
+     *Factory method.
+     *@ param code error code
      * @return PersoniumCoreLog
      */
     public static PersoniumCoreLog create(String code) {
-        // ログレベルの取得
+        //Acquire log level
         Severity severity = PersoniumCoreMessageUtils.getSeverity(code);
         if (severity == null) {
-            // 設定ファイルで省略されていたらウォーニング扱いとする。
+            //If it is omitted in the setting file, it is treated as a warning.
             severity = Severity.WARN;
         }
 
-        // ログメッセージの取得
+        //Obtaining log messages
         String message = PersoniumCoreMessageUtils.getMessage(code);
 
         return new PersoniumCoreLog(code, severity, message);
     }
 
     /**
-     * エラーコードを返却する.
-     * @return エラーコード
+     *Return error code.
+     *@ return error code
      */
     public String getCode() {
         return this.code;
     }
 
     /**
-     * メッセージをパラメタ置換したものを作成して返します. エラーメッセージ上の {1} {2} 等の表現がパラメタ置換用キーワードです。
-     * @param params 付加メッセージ
+     *It creates and returns a message with a parameter substitution, and the expression of {1} {2} etc. on the error message is a keyword for parameter substitution.
+     *@ param params Additional message
      * @return PersoniumCoreLog
      */
     public PersoniumCoreLog params(final Object... params) {
-        // 置換メッセージ作成
+        //Replacement message creation
         String ms = MessageFormat.format(this.message, params);
-        // メッセージ置換クローンを作成
+        //Create a message replacement clone
         PersoniumCoreLog ret = new PersoniumCoreLog(this.code, this.severity, ms);
         return ret;
     }
 
     /**
-     * 原因例外を追加したものを作成して返します.
-     * @param t 原因例外
+     *Cause Create and return an exception added.
+     *@ param t cause exception
      * @return PersoniumCoreException
      */
     public PersoniumCoreLog reason(final Throwable t) {
-        // クローンを作成して
+        //Make a clone
         PersoniumCoreLog ret = new PersoniumCoreLog(this.code, this.severity, this.message);
-        // 原因のExceptionをセット
+        //Set cause Exception
         ret.reason = t;
         return ret;
     }
 
     /**
-     * ログの出力.
-     * ログの出力時にログ出力元のクラス名、メソッド名、行数を表示する。
-     * 出力例）
+     *Log output.
+     *When outputting the log, display the class name, method name, and the number of lines of the log output source.
+     *Output example)
      * 2012-09-09 11:23:47.029 [main] [INFO ] CoreLog [io.personium.core.CoreLogTest#test:22] - JSON Parse Error.
      */
     public void writeLog() {

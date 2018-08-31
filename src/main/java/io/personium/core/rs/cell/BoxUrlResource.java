@@ -38,7 +38,7 @@ import io.personium.core.model.ModelFactory;
 import io.personium.core.utils.ODataUtils;
 
 /**
- * BoxURL取得用JAX-RS Resource.
+ *JOX-RS Resource for obtaining Box URL.
  */
 public class BoxUrlResource {
 
@@ -58,9 +58,9 @@ public class BoxUrlResource {
     }
 
     /**
-     * BoxURL取得のエンドポイント .
-     * @param querySchema 取得対象のBoxのスキーマURL
-     * @return BoxUrlResourceオブジェクト
+     *Box URL acquisition end point.
+     *@ param querySchema Schema URL of the Box to be acquired
+     *@return BoxUrlResource object
      */
     @SuppressWarnings("unchecked")
     @GET
@@ -68,15 +68,15 @@ public class BoxUrlResource {
 
         String schema = querySchema;
         if (schema == null) {
-            // スキーマパラメタが存在しない場合は、認証トークンからスキーマ情報を取得する
+            //If the schema parameter does not exist, the schema information is acquired from the authentication token
             schema = this.accessContext.getSchema();
 
-            // トークンのスキーマがConfidentialClientの場合は、#cを削除してボックスを取得する
+            //If the schema of the token is ConfidentialClient, remove the # c and get the box
             if (schema != null && schema.endsWith(OAuth2Helper.Key.CONFIDENTIAL_MARKER)) {
                 schema = schema.replaceAll(OAuth2Helper.Key.CONFIDENTIAL_MARKER, "");
             }
         } else {
-            // クエリ指定がある場合は、schemaのチェックをおこなう
+            //If there is a query specification, check schema
             if (!ODataUtils.isValidSchemaUri(querySchema)) {
                 throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("schema", querySchema);
             }
@@ -86,13 +86,13 @@ public class BoxUrlResource {
         if (schema == null || schema.length() == 0) {
             box = this.cellRsCmp.getBox();
         } else {
-            // スキーマ情報からBoxを取得する
+            //Acquire Box from schema information
             box = this.cellRsCmp.getCell().getBoxForSchema(schema);
         }
 
-        // Boxが存在しない場合も権限エラーを返却する
+        //If there is no Box also return authorization error
         if (box == null) {
-            // Basic認証が許可されているかのチェック
+            //Check if basic authentication is permitted
             this.accessContext.updateBasicAuthenticationStateForResource(null);
             if (AccessContext.TYPE_INVALID.equals(accessContext.getType())) {
                 accessContext.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
@@ -102,7 +102,7 @@ public class BoxUrlResource {
 
         // TODO Should the order of box acquisition and check processing be reversed?
         // Only when it is necessary to acquire ACL of box, obtain box and check.
-        // 認証トークンの有効性チェック（有効期限の切れているトークンなど）
+        //Validity check of the authentication token (such as tokens that have expired)
         DavCmp davCmp = ModelFactory.boxCmp(box);
         DavRsCmp boxUrlRsCmp = new BoxUrlRsCmp(this.cellRsCmp, davCmp, this.accessContext, box);
         boxUrlRsCmp.checkAccessContext(this.accessContext, BoxPrivilege.READ);
@@ -111,7 +111,7 @@ public class BoxUrlResource {
         JSONObject responseBody = new JSONObject();
         responseBody.put(BOX_URL_KEY_NAME, box.getUrl());
 
-        // レスポンスを返却する
+        //Return response
         return Response.status(HttpStatus.SC_OK)
                 .header(PersoniumCoreUtils.HttpHeaders.ACCESS_CONTROLE_EXPOSE_HEADERS, HttpHeaders.LOCATION)
                 .header(HttpHeaders.LOCATION, box.getUrl())

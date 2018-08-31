@@ -99,7 +99,7 @@ import io.personium.core.rs.FacadeResource;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- * ImplicitFlow認証処理を司るJAX-RSリソース.
+ *ImplicitFlow JAX-RS resource responsible for authentication processing.
  */
 public class AuthzEndPointResource {
 
@@ -108,7 +108,7 @@ public class AuthzEndPointResource {
     private static final String PROFILE_JSON_NAME = "/profile.json";
 
     /**
-     * ログ.
+     *log.
      */
     static Logger log = LoggerFactory.getLogger(AuthzEndPointResource.class);
 
@@ -116,32 +116,32 @@ public class AuthzEndPointResource {
     private final CellRsCmp cellRsCmp;
 
     /**
-     * ログインフォーム_Javascriptソースファイル.
+     *Login form _ Javascript source file.
      */
     private final String jsFileName = "ajax.js";
 
     /**
-     * ログインフォーム_初期表示メッセージ.
+     *Login form _ Initial display message.
      */
     private final String passFormMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0002");
 
     /**
-     * ログインフォーム_ユーザID・パスワード未入力のメッセージ.
+     *Login form _ User ID · Password not yet entered.
      */
     private final String noIdPassMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0003");
 
     /**
-     * Cookie認証失敗時のメッセージ.
+     *Message when cookie authentication failed.
      */
     private final String missCookieMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0005");
 
     /**
-     * パスワード認証時に使用するAccountのUUID。パスワード認証後に最終ログイン時刻の更新に使用する.
+     *The UUID of the Account used for password authentication. It is used to update the last login time after password authentication.
      */
     private String accountId;
 
     /**
-     * コンストラクタ.
+     *constructor.
      * @param cell Cell
      * @param cellRsCmp cellRsCmp
      */
@@ -151,24 +151,24 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * 認証のエンドポイント. <h2>トークンの発行しわけ</h2>
+     *Authentication endpoint. <H2> Issuance of token </ h2>
      * <ul>
-     * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
+     *<li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
      * </ul>
-     * @param authzHeader Authorization ヘッダ
-     * @param pTarget クエリパラメタ
-     * @param pOwner クエリパラメタ
-     * @param assertion クエリパラメタ
-     * @param clientId クエリパラメタ
-     * @param responseType クエリパラメタ
-     * @param redirectUri クエリパラメタ
-     * @param host Hostヘッダ
+     *@ param authzHeader Authorization header
+     *@ param pTarget query parameter
+     *@ param pOwner query parameter
+     *@ param assertion query parameter
+     *@ param clientId query parameter
+     *@ param responseType query parameter
+     *@ param redirectUri query parameter
+     *@ param host Host header
      * @param pCookie p_cookie
-     * @param cookieRefreshToken クッキー
-     * @param keepLogin クエリパラメタ
-     * @param state クエリパラメタ
-     * @param isCancel Cancelフラグ
-     * @param uriInfo コンテキスト
+     *@ param cookieRefreshToken cookie
+     *@ param keepLogin query parameter
+     *@ param state query parameter
+     *@ param isCancel Cancel flag
+     *@ param uriInfo context
      * @return JAX-RS Response Object
      */
     @GET
@@ -193,16 +193,16 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * 認証のエンドポイント. <h2>トークンの発行しわけ</h2>
+     *Authentication endpoint. <H2> Issuance of token </ h2>
      * <ul>
-     * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
+     *<li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
      * </ul>
-     * @param authzHeader Authorization ヘッダ
-     * @param host Hostヘッダ
+     *@ param authzHeader Authorization header
+     *@ param host Host header
      * @param pCookie p_cookie
-     * @param cookieRefreshToken クッキー
+     *@ param cookieRefreshToken cookie
      * @param formParams Body parameters
-     * @param uriInfo コンテキスト
+     *@ param uriInfo context
      * @return JAX-RS Response Object
      */
     @POST
@@ -251,7 +251,7 @@ public class AuthzEndPointResource {
         if (redirectUri == null || "".equals(redirectUri)) {
             return this.returnErrorRedirect(cell.getUrl() + "__html/error", "PR400-AZ-0003");
         } else {
-            // 末尾"/"の有無対応
+            //Presence / absence of trailing "/"
             if (!redirectUri.endsWith("/")) {
                 normalizedRedirectUri = redirectUri + "/";
             }
@@ -264,15 +264,15 @@ public class AuthzEndPointResource {
             }
         }
 
-        // 認可処理
-        // clientIdで指定されたセルURLをスキーマに持つBoxが存在するかチェック
+        //Authorization processing
+        //Check if there is a Box with the cell URL specified by clientId in the schema
         //
         if (!checkAuthorization(normalizedClientId)) {
             log.debug(PersoniumCoreMessageUtils.getMessage("PS-ER-0003"));
             return this.returnErrorRedirect(cell.getUrl() + "__html/error", "PS-ER-0003");
         }
 
-        // clientIdとredirectUriパラメタチェック
+        //clientId and redirectUri parameter check
         try {
             this.checkImplicitParam(normalizedClientId, normalizedRedirectUri, uriInfo.getBaseUri());
         } catch (PersoniumCoreException e) {
@@ -280,7 +280,7 @@ public class AuthzEndPointResource {
             if ((username == null && password == null) //NOPMD -To maintain readability
                     && (assertion == null || "".equals(assertion))
                     && cookieRefreshToken == null) {
-                // ユーザID・パスワード・assertion・cookieが未指定の場合、フォーム送信
+                //If user ID, password, assertion, cookie are not specified, send form
                 throw e;
             } else {
                 return this.returnErrorRedirect(cell.getUrl() + "__html/error", e.getCode());
@@ -288,16 +288,16 @@ public class AuthzEndPointResource {
         }
 
         if ("1".equals(isCancel)) {
-            // redirect_uriへリダイレクト
+            //Redirect to redirect_uri
             return this.returnErrorRedirect(redirectUri, OAuth2Helper.Error.UNAUTHORIZED_CLIENT,
                     PersoniumCoreMessageUtils.getMessage("PR401-AZ-0001"), state, "PR401-AZ-0001");
         }
 
         String schema = clientId;
 
-        // response_Typeの値チェック
+        //Check value of response_Type
         if (responseType == null) {
-            // redirect_uriへリダイレクト
+            //Redirect to redirect_uri
             return this.returnErrorRedirect(redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
                     OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0004");
         } else if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
@@ -312,7 +312,7 @@ public class AuthzEndPointResource {
         }
     }
 
-    // TODO CodeFlow関連は仮実装
+    //TODO CodeFlow association is temporary implementation
     private Response handleCodeFlow(
             final String redirectUriStr,
             final String clientId,
@@ -328,7 +328,7 @@ public class AuthzEndPointResource {
             final String state,
             final String pOwner,
             UriInfo uriInfo) {
-        // p_target がURLでない場合はヘッダInjectionの脆弱性を産んでしまう。(改行コードが入っているなど)
+        //If p_target is not a URL, it creates a vulnerability of header injection. (Such as a line feed code is included)
         try {
             this.checkPTarget(pTarget);
         } catch (PersoniumCoreAuthnException e) {
@@ -336,23 +336,23 @@ public class AuthzEndPointResource {
                     e.getMessage(), state, "code");
         }
 
-        // パスワード認証・トランスセルトークン認証・cookie認証の切り分け
+        //Password authentication · Transcel token authentication · Cookie authentication separation
         if (username != null || password != null) {
-            // TODO まだ未実装のためエラーを返す
+            //TODO Return error because it is not yet implemented
             return this.returnErrorRedirectCodeGrant(redirectUriStr, OAuth2Helper.Error.UNSUPPORTED_GRANT_TYPE,
                     OAuth2Helper.Error.UNSUPPORTED_GRANT_TYPE, state, "PR400-AZ-0007");
-         // TODO 必要？
+         //Do you need TODO?
 //        } else if (cookieRefreshToken != null) {
-//            // cookieの指定がある場合
-//            // cookie認証の場合、keepLoginは常にtrueとして動作する
+//// if cookie is specified
+//// For cookie authentication, keepLogin always works as true
 //            return handleCookieRefreshToken(redirectUriStr, clientId, host,
 //                    cookieRefreshToken, OAuth2Helper.Key.TRUE_STR, state, pOwner);
         } else if (pCookie != null) {
             return handlePCookie(redirectUriStr, clientId, host,
                     pCookie, OAuth2Helper.Key.TRUE_STR, state, pOwner, uriInfo);
         } else {
-            // TODO まだ未実装のためエラーを返す
-//            // ユーザID・パスワード・assertion・cookieが未指定の場合、フォーム送信
+            //TODO Return error because it is not yet implemented
+//// If user ID, password, assertion, cookie are not specified, send form
 //            ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
 //                    return rb.entity(createForm(clientId, redirectUriStr, passFormMsg, state,
 //            OAuth2Helper.ResponseType.CODE, pTarget, pOwner))
@@ -370,8 +370,8 @@ public class AuthzEndPointResource {
             final String state,
             final String pOwner,
             UriInfo uriInfo) {
-        // クッキー認証の場合
-        // クッキー内の値を復号化した値を取得
+        //Cookie authentication
+        //Get decrypted value of cookie value
         CellLocalRefreshToken rToken;
         CellLocalAccessToken aToken;
         try {
@@ -379,7 +379,7 @@ public class AuthzEndPointResource {
                     UnitLocalUnitUserToken.getIvBytes(
                             AccessContext.getCookieCryptKey(uriInfo.getBaseUri())));
             int separatorIndex = decodedCookieValue.indexOf("\t");
-            // クッキー内の情報から authorizationHeader相当のトークンを取得
+            //Obtain authorizationHeader equivalent token from information in cookie
             String authToken = decodedCookieValue.substring(separatorIndex + 1);
 
             AbstractOAuth2Token token = AbstractOAuth2Token.parse(authToken, cell.getUrl(), host);
@@ -388,7 +388,7 @@ public class AuthzEndPointResource {
                 return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
             }
 
-            // トークンの有効期限チェック
+            //Checking the validity of tokens
             if (token.isExpired()) {
                 return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
             }
@@ -396,24 +396,24 @@ public class AuthzEndPointResource {
             long issuedAt = new Date().getTime();
 
             rToken = new CellLocalRefreshToken(issuedAt, token.getIssuer(), token.getSubject(), clientId);
-            // 受け取ったTokenから AccessTokenを再生成
+            //Regenerate AccessToken from received Token
             List<Role> roleList = cell.getRoleListForAccount(token.getSubject());
             aToken = new CellLocalAccessToken(issuedAt, token.getIssuer(), token.getSubject(), roleList, clientId);
         } catch (TokenParseException e) {
-            // パースに失敗したので
+            //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
             return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
         } catch (TokenDsigException e) {
-            // 証明書検証に失敗したので
+            //Because certificate validation failed
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
             return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
         } catch (TokenRootCrtException e) {
-            // ルートCA証明書の設定エラー
+            //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
             return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
         }
-        // Cookieでの認証成功
-        // 303でレスポンスし、Locationヘッダを返却
+        //Cookie authentication successful
+        //Respond with 303 and return Location header
         try {
             return returnSuccessRedirect(redirectUriStr, aToken.toCodeString(),
                     rToken.toTokenString(), keepLogin, state);
@@ -424,26 +424,26 @@ public class AuthzEndPointResource {
 
     private Response returnSuccessRedirect(String redirectUriStr, String code,
             String refreshToken, String keepLogin, String state) throws MalformedURLException {
-        // 302でレスポンスし、Locationヘッダを返却
+        //Respond with 302 and return the Location header
         ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
         rb.header(HttpHeaders.LOCATION, redirectUriStr + getConnectionCode(redirectUriStr)
                 + "code" + "=" + code
                 + "&" + OAuth2Helper.Key.STATE + "=" + state);
-        // レスポンスの返却
+        //Returning the response
 
-        // 認証を行うセルでのみ有効なcookieを返却する
+        //Return a cookie that is valid only in the cell to be authenticated
         URL cellUrl = new URL(cell.getUrl());
         NewCookie cookies = null;
         Cookie cookie = new Cookie(OAuth2Helper.Key.SESSION_ID, refreshToken, cellUrl.getPath(), null);
         if (code != null) {
-            // リフレッシュトークンの有効期限と同じSSLのみで使用出来るCookieを作成
-            // 実行環境がhttpsの場合のみ、secureフラグを立てる
+            //Create a cookie that can be used only with the same SSL as the expiration date of the refresh token
+            //Only when the execution environment is https, set the secure flag
             if (OAuth2Helper.Key.TRUE_STR.equals(keepLogin)) {
-                // Cookieの有効期限を24時間に設定
+                //Set cookie expiration time to 24 hours
                 cookies = new NewCookie(cookie, "", COOKIE_MAX_AGE, PersoniumUnitConfig.isHttps());
             } else {
-                // Cookieの有効期限を設定しない
+                //Do not set cookie expiration date
                 cookies = new NewCookie(cookie, "", -1, PersoniumUnitConfig.isHttps());
             }
         } else {
@@ -454,10 +454,10 @@ public class AuthzEndPointResource {
 
     private Response returnErrorRedirectCodeGrant(String redirectUri, String error,
             String errorDesp, String state, String code) {
-        // 303でレスポンスし、Locationヘッダを返却
+        //Respond with 303 and return Location header
         ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
-        // Locationヘッダに付加するフラグメント情報をURLエンコードする
+        //URL encode the fragment information to be added to the Location header
         StringBuilder sbuf = new StringBuilder();
         sbuf.append(redirectUri)
             .append(getConnectionCode(redirectUri))
@@ -472,11 +472,11 @@ public class AuthzEndPointResource {
             sbuf.append("&" + OAuth2Helper.Key.CODE + "=");
             sbuf.append(URLEncoder.encode(code, "utf-8"));
         } catch (UnsupportedEncodingException e) {
-            // エンコード種別は固定でutf-8にしているので、ここに来ることはありえない
+            //Since the encoding type is fixed and set to utf-8, it is impossible to come here
             log.warn("Failed to URLencode, fragmentInfo of Location header.");
         }
         rb.header(HttpHeaders.LOCATION, sbuf.toString());
-        // レスポンスの返却
+        //Returning the response
         return rb.entity("").build();
     }
 
@@ -496,21 +496,21 @@ public class AuthzEndPointResource {
                     target = target + "/";
                 }
                 if (target.contains("\n") || target.contains("\r")) {
-                    // p_targetがURLでない場合はエラー
+                    //Error when p_target is not a URL
                     throw PersoniumCoreAuthnException.INVALID_TARGET;
                 }
             } catch (MalformedURLException e) {
-                // p_targetがURLでない場合はエラー
+                //Error when p_target is not a URL
                 throw PersoniumCoreAuthnException.INVALID_TARGET;
             }
         }
     }
 
     /**
-     * ImplicitFlowパスワード認証フォーム.
+     *ImplicitFlow Password authentication form.
      * @param clientId clientId
      * @param redirectUriStr redirectUriStr
-     * @param message メッセージ表示領域に出力する文字列
+     *@ param message String to be output to message display area
      * @param state state
      * @param dcTraget dcTraget
      * @param pOwner pOwner
@@ -534,24 +534,24 @@ public class AuthzEndPointResource {
             // If processing fails, return system default html.
             List<Object> paramsList = new ArrayList<Object>();
 
-            // 末尾"/"の有無対応
+            //Presence / absence of trailing "/"
             if (!"".equals(clientId) && !clientId.endsWith("/")) {
                 clientId = clientId + "/";
             }
 
-            // タイトル
+            //title
             paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
-            // アプリセルのprofile.json
+            //Ansel's profile.json
             paramsList.add(clientId + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
-            // データセルのprofile.json
+            //Data cell profile.json
             paramsList.add(cell.getUrl() + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
-            // タイトル
+            //title
             paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
-            // 呼び出し先
+            //Callee
             paramsList.add(cell.getUrl() + "__authz");
-            // メッセージ表示領域
+            //Message display area
             paramsList.add(message);
-            // hidden項目
+            //hidden item
             paramsList.add(state);
             paramsList.add(responseType);
             paramsList.add(pTarget != null ? pTarget : ""); // CHECKSTYLE IGNORE
@@ -570,7 +570,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * ImplicitFlow時のパスワード認証処理.
+     *Password authentication processing at ImplicitFlow.
      * @param pTarget
      * @param redirectUriStr
      * @param clientId
@@ -592,7 +592,7 @@ public class AuthzEndPointResource {
             final String pOwner,
             final String host) {
 
-        // ユーザIDとパスワードが一方でも未指定の場合、ログインエラーを返却する
+        //If both user ID and password are unspecified, return login error
         boolean passCheck = true;
         if (username == null || password == null || "".equals(username) || "".equals(password)) {
             ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
@@ -610,15 +610,15 @@ public class AuthzEndPointResource {
             return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state,
                     OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
         }
-        // 最終ログイン時刻を更新するために、UUIDをクラス変数にひかえておく
+        //In order to update the last login time, keep UUID in class variable
         accountId = (String) oew.getUuid();
 
-        // ロックのチェック
+        //Check lock
         Boolean isLock = true;
         try {
             isLock = AuthResourceUtils.isLockedAccount(accountId);
             if (isLock) {
-                // memcachedのロック時間を更新
+                //Update lock time of memcached
                 AuthResourceUtils.registAccountLock(accountId);
                 String resCode = "PS-AU-0006";
                 String accountLockMsg = PersoniumCoreMessageUtils.getMessage(resCode);
@@ -629,10 +629,10 @@ public class AuthzEndPointResource {
                         OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
             }
 
-            // ユーザIDとパスワードのチェック
+            //Check user ID and password
             passCheck = cell.authenticateAccount(oew, password);
             if (!passCheck) {
-                // memcachedにロックを作成
+                //Make lock on memcached
                 AuthResourceUtils.registAccountLock(accountId);
                 String resCode = "PS-AU-0004";
                 String missIdPassMsg = PersoniumCoreMessageUtils.getMessage(resCode);
@@ -653,44 +653,44 @@ public class AuthzEndPointResource {
         AbstractOAuth2Token localToken = null;
 
         if (Key.TRUE_STR.equals(pOwner)) {
-            // ユニット昇格権限設定のチェック
+            //Check unit escalation privilege setting
             if (!this.cellRsCmp.checkOwnerRepresentativeAccounts(username)) {
                 return returnErrorMessage(clientId, redirectUriStr, passFormMsg, state, pTarget, pOwner);
             }
-            // セルのオーナーが未設定のセルに対しては昇格させない。
+            //Do not promote cells for which the owner of the cell is not set.
             if (cell.getOwner() == null) {
                 return returnErrorMessage(clientId, redirectUriStr, passFormMsg, state, pTarget, pOwner);
             }
 
-            // uluut発行処理
+            //uluut issuance processing
             localToken = new UnitLocalUnitUserToken(
                     issuedAt, UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
                     cell.getOwner(), host);
 
         }
 
-        // リフレッシュトークンの生成
+        //Generate Refresh Token
         CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt,
                 CellLocalRefreshToken.REFRESH_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
                 cell.getUrl(), username, schema);
-        // 303でレスポンスし、Locationヘッダを返却
+        //Respond with 303 and return Location header
         try {
             if (localToken != null) {
-                // ULUUTの返却
+                //Returning ULUUT
                 UnitLocalUnitUserToken aToken = (UnitLocalUnitUserToken) localToken;
                 return returnSuccessRedirect(redirectUriStr, aToken.toTokenString(), aToken.expiresIn(),
                         null, null, state);
             } else {
-                // レスポンスをつくる。
+                //Create a response.
                 if (pTarget == null || "".equals(pTarget)) {
-                    // セルローカルトークンの返却
+                    //Returning cell local token
                     AccountAccessToken aToken = new AccountAccessToken(issuedAt,
                             AccountAccessToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR, cell.getUrl(),
                             username, schema);
                     return returnSuccessRedirect(redirectUriStr, aToken.toTokenString(), aToken.expiresIn(),
                             rToken.toTokenString(), keepLogin, state);
                 } else {
-                    // トランスセルトークンの返却
+                    //Returning transcell token
                     List<Role> roleList = cell.getRoleListForAccount(username);
                     TransCellAccessToken tcToken = new TransCellAccessToken(cell.getUrl(),
                             cell.getUrl() + "#" + username, pTarget, roleList, schema);
@@ -704,7 +704,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * ImplicitFlow時のトランスセルトークン認証処理.
+     *Transcel token authentication processing at ImplicitFlow.
      * @param redirectUriStr
      * @param clientId
      * @param cookieRefreshToken
@@ -720,35 +720,35 @@ public class AuthzEndPointResource {
             final String schema,
             final String state) {
 
-        // まずはパースする
+        //First to parse
         TransCellAccessToken tcToken = null;
         try {
             tcToken = TransCellAccessToken.parse(assertion);
         } catch (TokenParseException e) {
-            // パース失敗時
+            //When parsing fails
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
             return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.ACCESS_DENIED,
                     OAuth2Helper.Error.ACCESS_DENIED, state, "PR401-AZ-0002");
         } catch (TokenDsigException e) {
-            // 署名検証でエラー
+            //Error in signature verification
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
             return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.ACCESS_DENIED,
                     OAuth2Helper.Error.ACCESS_DENIED, state, "PR401-AZ-0002");
         } catch (TokenRootCrtException e) {
-            // ルートCA証明書の設定エラー
+            //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
             return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.ACCESS_DENIED,
                     OAuth2Helper.Error.ACCESS_DENIED, state, "PR401-AZ-0002");
         }
 
-        // Tokenの検証
-        // 1．有効期限チェック
+        //Verification of Token
+        //1. Expiration check
         if (tcToken.isExpired()) {
             return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.ACCESS_DENIED,
                     OAuth2Helper.Error.ACCESS_DENIED, state, "PR401-AZ-0002");
         }
 
-        // トークンのターゲットが自分でない場合はエラー応答
+        //If the target of the token is not yourself, an error response
         try {
             if (!(AuthResourceUtils.checkTargetUrl(this.cell, tcToken))) {
                 return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.ACCESS_DENIED,
@@ -760,17 +760,17 @@ public class AuthzEndPointResource {
                     OAuth2Helper.Error.ACCESS_DENIED, state, "PR401-AZ-0002");
         }
 
-        // 認証は成功 -------------------------------
+        //Authentication is successful -------------------------------
 
         long issuedAt = new Date().getTime();
 
-        // CELLに依頼してTC発行元のロールから自分のところのロールを決定する。
+        //Ask CELL to decide the role of you from the role of TC issuer.
         List<Role> rolesHere = cell.getRoleListHere(tcToken);
 
         String schemaVerified = schema;
 
-        // 認証トークン発行処理
-        // ターゲットは自由に決めてよい。
+        //Authentication token issue processing
+        //The target can be freely decided.
         IAccessToken aToken = null;
         if (pTarget == null || "".equals(pTarget)) {
             aToken = new CellLocalAccessToken(issuedAt, cell.getUrl(), tcToken.getSubject(), rolesHere, schemaVerified);
@@ -778,8 +778,8 @@ public class AuthzEndPointResource {
             aToken = new TransCellAccessToken(UUID.randomUUID().toString(), issuedAt, cell.getUrl(),
                     tcToken.getSubject(), pTarget, rolesHere, schemaVerified);
         }
-        // トランスセルトークンでの認証成功
-        // 303でレスポンスし、Locationヘッダを返却
+        //Successful authentication with transcell token
+        //Respond with 303 and return Location header
         try {
             return returnSuccessRedirect(redirectUriStr, aToken.toTokenString(), aToken.expiresIn(),
                     null, keepLogin, state);
@@ -789,7 +789,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * ImplicitFlow時のcookie認証処理.
+     *Cookie authentication processing at ImplicitFlow.
      * @param redirectUriStr
      * @param clientId
      * @param host
@@ -814,7 +814,7 @@ public class AuthzEndPointResource {
                 return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
             }
 
-            // リフレッシュトークンの有効期限チェック
+            //Refresh token expiration check
             if (token.isRefreshExpired()) {
                 return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
             }
@@ -822,25 +822,25 @@ public class AuthzEndPointResource {
             long issuedAt = new Date().getTime();
 
             if (Key.TRUE_STR.equals(pOwner)) {
-                // 自分セルリフレッシュの場合のみ昇格できる。
+                //You can be promoted only for your own cell refresh.
                 if (token.getClass() != CellLocalRefreshToken.class) {
                     return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
                 }
-                // ユニット昇格権限設定のチェック
+                //Check unit escalation privilege setting
                 if (!this.cellRsCmp.checkOwnerRepresentativeAccounts(token.getSubject())) {
                     return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
                 }
-                // セルのオーナーが未設定のセルに対しては昇格させない。
+                //Do not promote cells for which the owner of the cell is not set.
                 if (cell.getOwner() == null) {
                     return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
                 }
 
-                // uluut発行処理
+                //uluut issuance processing
                 UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(
                         issuedAt, UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
                         cell.getOwner(), host);
-                // Cookieでの認証成功
-                // 303でレスポンスし、Locationヘッダを返却
+                //Cookie authentication successful
+                //Respond with 303 and return Location header
                 try {
                     return returnSuccessRedirect(redirectUriStr, uluut.toTokenString(), uluut.expiresIn(),
                             null, keepLogin, state);
@@ -848,7 +848,7 @@ public class AuthzEndPointResource {
                     return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
                 }
             } else {
-                // 受け取ったRefresh Tokenから AccessTokenとRefreshTokenを再生成
+                //Regenerate AccessToken and RefreshToken from received Refresh Token
                 rToken = (IRefreshToken) token;
                 rToken = rToken.refreshRefreshToken(issuedAt);
 
@@ -857,27 +857,27 @@ public class AuthzEndPointResource {
                     List<Role> roleList = cell.getRoleListForAccount(subject);
                     aToken = rToken.refreshAccessToken(issuedAt, pTarget, cell.getUrl(), roleList);
                 } else {
-                    // CELLに依頼してトークン発行元のロールから自分のところのロールを決定する。
+                    //Ask CELL to determine the role of you from the role of the token issuer.
                     List<Role> rolesHere = cell.getRoleListHere((IExtRoleContainingToken) rToken);
                     aToken = rToken.refreshAccessToken(issuedAt, pTarget, cell.getUrl(), rolesHere);
                 }
             }
 
         } catch (TokenParseException e) {
-            // パースに失敗したので
+            //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
             return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
         } catch (TokenDsigException e) {
-            // 証明書検証に失敗したので
+            //Because certificate validation failed
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
             return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
         } catch (TokenRootCrtException e) {
-            // ルートCA証明書の設定エラー
+            //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
             return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
         }
-        // Cookieでの認証成功
-        // 303でレスポンスし、Locationヘッダを返却
+        //Cookie authentication successful
+        //Respond with 303 and return Location header
         try {
             return returnSuccessRedirect(redirectUriStr, aToken.toTokenString(), aToken.expiresIn(),
                     rToken.toTokenString(), keepLogin, state);
@@ -887,7 +887,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * ImplicitFlowによる認証処理ハンドリング.
+     *Authentication processing handling by ImplicitFlow.
      * @param redirectUriStr
      * @param clientId
      * @param host
@@ -915,43 +915,43 @@ public class AuthzEndPointResource {
             final String state,
             final String pOwner) {
 
-        // p_target がURLでない場合はヘッダInjectionの脆弱性を産んでしまう。(改行コードが入っているなど)
+        //If p_target is not a URL, it creates a vulnerability of header injection. (Such as a line feed code is included)
         try {
             this.checkPTarget(pTarget);
         } catch (PersoniumCoreAuthnException e) {
             return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.INVALID_REQUEST,
                     e.getMessage(), state, "code");
         }
-        // TODO ボックスの存在チェック⇒ある場合：トークン返却、ない場合：ボックス作成（権限チェック⇒Boxインポート実行）
-        // ただし、Boxインポートが実装されるまではエラーを返す
+        //TODO box existence check ⇒ In some cases: Return token, if not: Create box (authorization check ⇒ Box import execution)
+        //However, it returns an error until Box import is implemented
 
-        // パスワード認証・トランスセルトークン認証・cookie認証の切り分け
+        //Password authentication · Transcel token authentication · Cookie authentication separation
         if (username != null || password != null) {
-            // ユーザID・パスワードのどちらかに設定がある場合
+            //When there is a setting in either user ID or password
             Response response = this.handleImplicitFlowPassWord(pTarget, redirectUriStr, clientId,
                     username, password, keepLogin, state, pOwner, host);
 
             if (PersoniumUnitConfig.getAccountLastAuthenticatedEnable()
                     && isSuccessAuthorization(response)) {
-                // Accountのスキーマ情報を取得する
+                //Obtain schema information of Account
                 PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(cell);
                 EdmEntitySet esetAccount = producer.getMetadata().getEdmEntitySet(Account.EDM_TYPE_NAME);
                 OEntityKey originalKey = OEntityKey.parse("('" + username + "')");
-                // 最終ログイン時刻の変更をProducerに依頼(このメソッド内でロックを取得・解放)
+                //Ask Producer to change the last login time (Get / release lock within this method)
                 producer.updateLastAuthenticated(esetAccount, originalKey, accountId);
             }
             return response;
         } else if (assertion != null && !"".equals(assertion)) {
-            // assertionの指定がある場合
+            //When assertion is specified
             return this.handleImplicitFlowTcToken(redirectUriStr, clientId, assertion, pTarget, keepLogin, schema,
                     state);
         } else if (cookieRefreshToken != null) {
-            // cookieの指定がある場合
-            // cookie認証の場合、keepLoginは常にtrueとして動作する
+            //When cookie is specified
+            //For cookie authentication, keepLogin always works as true
             return this.handleImplicitFlowcookie(redirectUriStr, clientId, host,
                     cookieRefreshToken, pTarget, OAuth2Helper.Key.TRUE_STR, state, pOwner);
         } else {
-            // ユーザID・パスワード・assertion・cookieが未指定の場合、フォーム送信
+            //If user ID, password, assertion, cookie are not specified, send form
             ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
             return rb.entity(this.createForm(clientId, redirectUriStr, passFormMsg, state,
                     OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
@@ -959,22 +959,22 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * ImplicitFlowでのパスワード認証が成功したかどうかを判定する.
-     * @param response 認証レスポンス
-     * @return true: 認証成功 false:認証失敗
+     *It is determined whether password authentication in ImplicitFlow was successful.
+     *@ param response Authentication response
+     *@return true: Authentication success false: Authentication failure
      */
     protected boolean isSuccessAuthorization(Response response) {
-        // レスポンスコードが303以外の場合は、画面遷移しないエラーとみなす
+        //When the response code is other than 303, it is regarded as an error that the screen transition does not occur
         if (Status.SEE_OTHER.getStatusCode() != response.getStatus()) {
             return false;
         }
 
-        // Locationヘッダに指定されたURLのフラグメントにエラー情報があるかをチェックする
+        //It checks whether there is error information in the fragment of the URL specified in the Location header
         String locationStr = (String) response.getMetadata().getFirst(HttpHeaders.LOCATION);
         try {
             URI uri = new URI(locationStr);
             String fragment = uri.getFragment();
-            // フラグメントがない場合はAPIのI/Fエラーとみなす
+            //When there is no fragment, it is regarded as an I / F error of the API
             if (null == fragment) {
                 return false;
             }
@@ -991,7 +991,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * ImplicitFlowでの認証後、Redirectを実行する.
+     *After authenticating with ImplicitFlow, execute Redirect.
      * @param redirectUriStr
      * @param localTokenStr
      * @param localTokenExpiresIn
@@ -1004,7 +1004,7 @@ public class AuthzEndPointResource {
     private Response returnSuccessRedirect(String redirectUriStr, String localTokenStr,
             int localTokenExpiresIn, String refreshTokenStr,
             String keepLogin, String state) throws MalformedURLException {
-        // 303でレスポンスし、Locationヘッダを返却
+        //Respond with 303 and return Location header
         ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
         rb.header(HttpHeaders.LOCATION, redirectUriStr + "#"
@@ -1013,20 +1013,20 @@ public class AuthzEndPointResource {
                 + OAuth2Helper.Scheme.BEARER
                 + "&" + OAuth2Helper.Key.EXPIRES_IN + "=" + localTokenExpiresIn
                 + "&" + OAuth2Helper.Key.STATE + "=" + state);
-        // レスポンスの返却
+        //Returning the response
 
-        // 認証を行うセルでのみ有効なcookieを返却する
+        //Return a cookie that is valid only in the cell to be authenticated
         URL cellUrl = new URL(cell.getUrl());
         NewCookie cookies = null;
         Cookie cookie = new Cookie(OAuth2Helper.Key.SESSION_ID, refreshTokenStr, cellUrl.getPath(), null);
         if (refreshTokenStr != null) {
-            // リフレッシュトークンの有効期限と同じSSLのみで使用出来るCookieを作成
-            // 実行環境がhttpsの場合のみ、secureフラグを立てる
+            //Create a cookie that can be used only with the same SSL as the expiration date of the refresh token
+            //Only when the execution environment is https, set the secure flag
             if (OAuth2Helper.Key.TRUE_STR.equals(keepLogin)) {
-                // Cookieの有効期限を24時間に設定
+                //Set cookie expiration time to 24 hours
                 cookies = new NewCookie(cookie, "", COOKIE_MAX_AGE, PersoniumUnitConfig.isHttps());
             } else {
-                // Cookieの有効期限を設定しない
+                //Do not set cookie expiration date
                 cookies = new NewCookie(cookie, "", -1, PersoniumUnitConfig.isHttps());
             }
         } else {
@@ -1036,33 +1036,33 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * ImplicitFlowでの認証時のエラーのうち以下の状況で、ユーザが設定したredirect_uriへのRedirectを実行する. １．response_typeが不正・未指定 ２
+     *Of the errors during authentication with ImplicitFlow, execute Redirect to redirect_uri set by the user in the following situation. Invalid / unspecified response_type 2
      * @param state
      * @return
      * @throws MalformedURLException
      */
     private Response returnErrorRedirect(String redirectUri, String code) {
-        // 303でレスポンスし、Locationヘッダを返却
+        //Respond with 303 and return Location header
         ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
         rb.header(HttpHeaders.LOCATION, redirectUri + getConnectionCode(redirectUri)
                 + OAuth2Helper.Key.CODE + "=" + code);
-        // レスポンスの返却
+        //Returning the response
         return rb.entity("").build();
     }
 
     /**
-     * ImplicitFlowでの認証時のエラーのうち以下の状況で、ユーザが設定したredirect_uriへのRedirectを実行する. １．response_typeが不正・未指定 ２
+     *Of the errors during authentication with ImplicitFlow, execute Redirect to redirect_uri set by the user in the following situation. Invalid / unspecified response_type 2
      * @param state
      * @return
      * @throws MalformedURLException
      */
     private Response returnErrorRedirect(String redirectUri, String error,
             String errorDesp, String state, String code) {
-        // 302でレスポンスし、Locationヘッダを返却
+        //Respond with 302 and return the Location header
         ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
-        // Locationヘッダに付加するフラグメント情報をURLエンコードする
+        //URL encode the fragment information to be added to the Location header
         StringBuilder sbuf = new StringBuilder(redirectUri + "#" + OAuth2Helper.Key.ERROR + "=");
         try {
             sbuf.append(URLEncoder.encode(error, "utf-8"));
@@ -1073,16 +1073,16 @@ public class AuthzEndPointResource {
             sbuf.append("&" + OAuth2Helper.Key.CODE + "=");
             sbuf.append(URLEncoder.encode(code, "utf-8"));
         } catch (UnsupportedEncodingException e) {
-            // エンコード種別は固定でutf-8にしているので、ここに来ることはありえない
+            //Since the encoding type is fixed and set to utf-8, it is impossible to come here
             log.warn("Failed to URLencode, fragmentInfo of Location header.");
         }
         rb.header(HttpHeaders.LOCATION, sbuf.toString());
-        // レスポンスの返却
+        //Returning the response
         return rb.entity("").build();
     }
 
     /**
-     * ImplicitFlow_cookieでの認証時のエラー処理.
+     *Error handling during authentication with ImplicitFlow_cookie.
      * @param clientId
      * @param redirectUriStr
      * @param state TODO
@@ -1097,14 +1097,14 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * 認可処理 clientIdで指定されたセルURLをスキーマに持つBoxが存在するかチェック.
-     * @param clientId アプリセルURL
-     * @return true：認可成功 false:認可失敗
+     *Authorization processing It is checked whether there is a Box whose schema is the cell URL specified by clientId.
+     *@ param clientId App Store URL
+     *@return true: authorization success false: authorization failure
      */
     private boolean checkAuthorization(final String clientId) {
         EntitySetAccessor boxAcceccor = EsModel.box(this.cell);
 
-        // {filter={and={filters=[{term={c=【CellID】}}, {term={s.Schema.untouched=【clientID】}}]}}}
+        //{filter = {and = {filters = [{term = {c = 【CellID】}}, {term = {s.Schema.untouched = = [clientID]}}]}}}
         Map<String, Object> query1 = new HashMap<String, Object>();
         Map<String, Object> term1 = new HashMap<String, Object>();
         Map<String, Object> query2 = new HashMap<String, Object>();
@@ -1142,14 +1142,14 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * ImplicitFlow認証時のパラメータチェック.
+     *Parameter check at ImplicitFlow authentication time.
      * @param clientId
      * @param redirectUri
      * @param baseUri
      */
     private void checkImplicitParam(String clientId, String redirectUri, URI baseUri) {
         if (redirectUri == null || clientId == null) {
-            // TODO 一方がnullの場合はエラー。メッセージ変更の必要あり
+            //TODO Error if one is null. Message change required
             throw PersoniumCoreAuthnException.INVALID_TARGET;
         }
 
@@ -1173,25 +1173,25 @@ public class AuthzEndPointResource {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
         }
 
-        // baseurlのパスを取得する
+        //Get baseurl's path
         String bPath = baseUri.getPath();
 
-        // client_idとredirect_uriのパスからbaseUriのパスを削除する
+        //Deletes the path of baseUri from the path of client_id and redirect_uri
         String cPath = objClientId.getPath().substring(bPath.length());
         String rPath = objRedirectUri.getPath().substring(bPath.length());
 
-        // client_idとredirect_uriのパスを/で分割
+        //split the path of client_id and redirect_uri with /
         String[] cPaths = StringUtils.split(cPath, "/");
         String[] rPaths = StringUtils.split(rPath, "/");
 
-        // client_idとredirect_uriを比較し、セルが異なる場合は認証エラー
-        // セルのURLまでの比較
+        //Compare client_id and redirect_uri, and if the cells are different, an authentication error
+        //Comparison of cell URLs
         if (!objClientId.getAuthority().equals(objRedirectUri.getAuthority())
                 || !cPaths[0].equals(rPaths[0])) {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_REDIRECT_INVALID;
         }
 
-        // client_idとリクエストされたCellの名前を比較し、セルが同じ場合はエラー
+        //Compare the client_id with the name of the requested cell, and an error if the cells are the same
         if (cPaths[0].equals(this.cell.getName())) {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
         }
@@ -1212,7 +1212,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * OPTIONSメソッド.
+     *OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS

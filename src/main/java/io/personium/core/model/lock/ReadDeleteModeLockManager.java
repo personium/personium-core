@@ -20,18 +20,18 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- * PCSの動作モードを参照するクラス.
+ *Class referring to PCS operation mode.
  */
 public abstract class ReadDeleteModeLockManager extends LockManager {
 
     /**
-     * PCSの動作モード(ReadDeleteOnlyModeのmemcached上の格納キー).
+     *PCS operation mode (storage key on memcached of ReadDeleteOnlyMode).
      */
     private static final String LOCK_KEY = "PcsReadDeleteMode";
 
     /**
-     * PCSの動作モードの状態確認.
-     * @return TRUE：ReadDeleteOnlyモード状態／FALSE：通常状態
+     *Confirmation of PCS operation mode status.
+     *@return TRUE: ReadDeleteOnly mode state / FALSE: normal state
      */
     public static boolean isReadDeleteOnlyMode() {
         try {

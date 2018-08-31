@@ -37,14 +37,14 @@ import io.personium.core.utils.ODataUtils;
 
 
 /**
- * $filterクエリの検索条件に指定するプロパティのデータ型と検索条件の値として指定されたデータ型の整合性を検証するクラス.
+ *$ filter Class that validates the consistency of the data type of the property specified in the search condition of the query and the data type specified as the value of the search condition.
  */
 public class FilterConditionValidator {
 
     private static Map<EdmSimpleType<?>, AbstractValidator> validatorMap;
 
     /**
-     * データ型検証用クラスの初期化.
+     *Initialization of data type verification class.
      */
     static {
         validatorMap = new HashMap<EdmSimpleType<?>, AbstractValidator>();
@@ -60,26 +60,26 @@ public class FilterConditionValidator {
     }
 
     /**
-     * $filterクエリの検索条件に指定するプロパティのデータ型と検索条件の値として指定されたデータ型の整合性を検証する.
+     *$ filter Verify the consistency of the data type of the property specified in the search condition of the query and the data type specified as the value of the search condition.
      * <ul>
      * <li>StringLiteral</li>
-     * <li>IntegralLiteral、Int64Literal</li>
+     *<li> IntegralLiteral, Int64Literal </ li>
      * <li>DoubleLiteral</li>
      * </ul>
-     * なお、"1.0f" や "1.0m" などの表記（それぞれSingleLiteral、DecimalLiteral）はパースエラーとする。
-     * @param edmProperty $filterの検索条件に指定されたプロパティ
-     * @param searchValue $filterの検索条件の値
+     *The notation such as "1.0 f" or "1.0 m" (SingleLiteral, DecimalLiteral respectively) is a parse error.
+     *@ param edmProperty Property specified in search condition of $ filter
+     *@ param searchValue Value of search condition for $ filter
      */
     static void validateFilterOpCondition(EdmProperty edmProperty, CommonExpression searchValue) {
-        // 比較演算子（lt/le/ge/gt）共通で許容するデータ： 文字列／整数値／実数値
-        // 真偽値やNULLは大小比較ができないため、許容しない。
+        //Comparison operator (lt / le / ge / gt) Commonly allowable data: string / integer value / real number
+        //Boolean values ​​and NULL can not be compared because they can not be compared in magnitude.
         if (searchValue instanceof BooleanLiteral
                 || searchValue instanceof NullLiteral) {
             throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
 
-        // スキーマ定義されているプロパティのデータ型として検索条件の値が評価できることを検証する。
-        // ただし、スキーマ定義されていない場合は、検証できないので除外する。
+        //Verify that the value of the search condition can be evaluated as the data type of the schema defined property.
+        //However, if the schema is not defined, it can not be verified and is excluded.
         if (edmProperty != null) {
             AbstractValidator validator = validatorMap.get(edmProperty.getType());
             if (null == validator) {
@@ -90,21 +90,21 @@ public class FilterConditionValidator {
     }
 
     /**
-     * $filterクエリのEq演算子における検索条件に指定するプロパティのデータ型と検索条件の値として指定されたデータ型の整合性を検証する.
+     *$ filter Verify the consistency of the data type specified in the search condition in the Eq operator of the query and the data type specified as the value of the search condition.
      * <ul>
      * <li>StringLiteral</li>
-     * <li>IntegralLiteral、Int64Literal</li>
+     *<li> IntegralLiteral, Int64Literal </ li>
      * <li>DoubleLiteral</li>
      * <li>BooleanLiteral</li>
      * <li>NullLiteral</li>
      * </ul>
-     * なお、"1.0f" や "1.0m" などの表記（それぞれSingleLiteral、DecimalLiteral）はパースエラーとする。
-     * @param edmProperty $filterの検索条件に指定されたプロパティ
-     * @param searchValue $filterの検索条件の値
+     *The notation such as "1.0 f" or "1.0 m" (SingleLiteral, DecimalLiteral respectively) is a parse error.
+     *@ param edmProperty Property specified in search condition of $ filter
+     *@ param searchValue Value of search condition for $ filter
      */
     static void validateFilterEqCondition(EdmProperty edmProperty, CommonExpression searchValue) {
-        // スキーマ定義されているプロパティのデータ型として検索条件の値が評価できることを検証する。
-        // ただし、スキーマ定義されていない場合は、検証できないので除外する。
+        //Verify that the value of the search condition can be evaluated as the data type of the schema defined property.
+        //However, if the schema is not defined, it can not be verified and is excluded.
         if (edmProperty != null) {
             AbstractValidator validator = validatorMap.get(edmProperty.getType());
             if (null == validator) {
@@ -115,21 +115,21 @@ public class FilterConditionValidator {
     }
 
     /**
-     * $filterクエリの関数に指定するプロパティのデータ型と値として指定されたデータ型の整合性を検証する.
+     *$ filter Verify the consistency of the data type specified for the query function and the data type specified as the value.
      * <ul>
      * <li>StringLiteral</li>
      * </ul>
-     * @param edmProperty $filterの関数に指定されたプロパティ
-     * @param searchValue $filterの関数に指定された値
+     *@ param edmProperty Property specified for the function of $ filter
+     *@ param searchValue The value specified for the function of $ filter
      */
     static void validateFilterFuncCondition(EdmProperty edmProperty, CommonExpression searchValue) {
-        // 関数（substringof/startswith）共通で許容するデータ： 文字列
+        //Function (substringof / startswith) Commonly allowable data: Character string
         if (!(searchValue instanceof StringLiteral)) {
             throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(edmProperty.getName());
         }
 
-        // スキーマ定義されているプロパティのデータ型として検索条件の値が評価できることを検証する。
-        // ただし、スキーマ定義されていない場合は、検証できないので除外する。
+        //Verify that the value of the search condition can be evaluated as the data type of the schema defined property.
+        //However, if the schema is not defined, it can not be verified and is excluded.
         if (edmProperty != null
                 && !EdmSimpleType.STRING.getFullyQualifiedTypeName().equals(
                         edmProperty.getType().getFullyQualifiedTypeName())) {
@@ -139,19 +139,19 @@ public class FilterConditionValidator {
 
 
     /**
-     * 検索条件に指定された各データ型の型検証クラスととりまとめる抽象クラス.
+     *The type verification class of each data type specified in the search condition and the abstract class to be compiled.
      */
     interface AbstractValidator {
         /**
-         * 検索条件に指定されたプロパティのデータ型と検索条件値のデータとの不整合を検証する.
-         * @param searchValue 検索条件値
-         * @param propertyName 検索対象のプロパティ名
+         *Verify the inconsistency between the data type of the property specified in the search condition and the data of the search condition value.
+         *@ param searchValue Search condition value
+         *@ param propertyName Property name to search for
          */
         void validate(CommonExpression searchValue, String propertyName);
     }
 
     /**
-     * 検索条件に指定されたEdm.String型の型検証クラス.
+     *The type validation class of Edm.String type specified in the search condition.
      */
     static class StringValidator implements AbstractValidator {
         @Override
@@ -165,7 +165,7 @@ public class FilterConditionValidator {
     }
 
     /**
-     * 検索条件に指定されたEdm.Boolean型の型検証クラス.
+     *Type validation class of Edm.Boolean type specified in search condition.
      */
     static class BooleanValidator implements AbstractValidator {
         @Override
@@ -179,12 +179,12 @@ public class FilterConditionValidator {
     }
 
     /**
-     * 検索条件に指定されたEdm.Int32型の型検証クラス.
+     *A type validation class of Edm.Int32 type specified in the search condition.
      */
     static class Int32Validator implements AbstractValidator {
         @Override
         public void validate(CommonExpression searchValue, String propertyName) {
-            long value = 0L; // odata4jのInt64Literal#gerValueがlong型の値を返すためvalueはlong型とした。
+            long value = 0L; //Since Int64Literal # gerValue of odata4j returns a long type value, value is of type long.
             if (searchValue instanceof IntegralLiteral) {
                 value = ((IntegralLiteral) searchValue).getValue();
             } else if (searchValue instanceof Int64Literal) {
@@ -195,7 +195,7 @@ public class FilterConditionValidator {
                 throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
             }
 
-            // 値の範囲チェック
+            //Value range check
             if (value > Integer.MAX_VALUE || value < Integer.MIN_VALUE) {
                 throw PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params(propertyName);
             }
@@ -203,7 +203,7 @@ public class FilterConditionValidator {
     }
 
     /**
-     * 検索条件に指定されたEdm.Double型の型検証クラス.
+     *The type validation class of Edm.Double type specified in the search condition.
      */
     static class DoubleValidator implements AbstractValidator {
         @Override
@@ -219,12 +219,12 @@ public class FilterConditionValidator {
     }
 
     /**
-     * 検索条件に指定されたEdm.Single型の型検証クラス.
+     *Type validation class of Edm.Single type specified in search condition.
      */
     static class SingleValidator implements AbstractValidator {
         @Override
         public void validate(CommonExpression searchValue, String propertyName) {
-            double value = 0D; // odata4jのDoubleLiteral#gerValueがdouble型の値を返すためvalueはdouble型とした。
+            double value = 0D; //Since DoubleLiteral # gerValue of odata4j returns a double type value, value is of type double.
             if (searchValue instanceof IntegralLiteral) {
                 value = ((IntegralLiteral) searchValue).getValue();
             } else if (searchValue instanceof Int64Literal) {
@@ -237,7 +237,7 @@ public class FilterConditionValidator {
                 throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
             }
 
-            // 値の範囲チェック
+            //Value range check
             if (!ODataUtils.validateSingle(String.valueOf(value))) {
                 throw PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params(propertyName);
             }
@@ -245,12 +245,12 @@ public class FilterConditionValidator {
     }
 
     /**
-     * 検索条件に指定されたEdm.DateTime型の型検証クラス.
+     *The type validation class of Edm.DateTime type specified in the search condition.
      */
     static class DateTimeValidator implements AbstractValidator {
         @Override
         public void validate(CommonExpression searchValue, String propertyName) {
-            long value = 0L; // odata4jのInt64Literal#gerValueがlong型の値を返すためvalueはlong型とした。
+            long value = 0L; //Since Int64Literal # gerValue of odata4j returns a long type value, value is of type long.
             if (searchValue instanceof IntegralLiteral) {
                 value = ((IntegralLiteral) searchValue).getValue();
             } else if (searchValue instanceof Int64Literal) {
@@ -265,7 +265,7 @@ public class FilterConditionValidator {
                 throw PersoniumCoreException.OData.OPERATOR_AND_OPERAND_TYPE_MISMATCHED.params(propertyName);
             }
 
-            // 値の範囲チェック
+            //Value range check
             if (value > ODataUtils.DATETIME_MAX || value < ODataUtils.DATETIME_MIN) {
                 throw PersoniumCoreException.OData.UNSUPPORTED_OPERAND_FORMAT.params(propertyName);
             }

@@ -21,7 +21,7 @@ import javax.xml.namespace.QName;
 import io.personium.common.utils.PersoniumCoreUtils;
 
 /**
- * OAuth2まわりのユーティリティ.
+ *A utility around OAuth 2.
  * The OAuth 2.0 Authorization Protocol
  * http://tools.ietf.org/html/draft-ietf-oauth-v2-27
  * The OAuth 2.0 Authorization Protocol: Bearer Tokens
@@ -34,21 +34,21 @@ public final class OAuth2Helper {
     }
 
     /**
-     * OAuth2のVersion.
+     *Version of OAuth 2.
      */
     public static final String VERSION = "Draft 27";
 
     /**
-     * SAML Assertionを表すURN.
+     *URN representing SAML Assertion.
      */
     public static final String URN_SAML_ASSERTION = "urn:oasis:names:tc:SAML:2.0:assertion";
     /**
-     * SAML Formatを表すURN.
+     *URN representing SAML Format.
      */
     public static final String SAML_FORMAT = "urn:oasis:names:tc:SAML:2.0:nameid-format:entity";
 
     /**
-     * OAuth2 で扱う Authorization Scheme に関するリテラル.
+     *Literal on Authorization Scheme handled by OAuth 2.
      */
     public static class Scheme {
         /**
@@ -60,13 +60,13 @@ public final class OAuth2Helper {
          */
         public static final String BASIC = "Basic";
         /**
-         * Bearer形式の場合のCredentialsのプレフィックス.
+         *Credentials prefix for Bearer format.
          */
         public static final String BEARER_CREDENTIALS_PREFIX = "Bearer ";
     }
 
     /**
-     * OAuth2 のエラーに関するリテラル.
+     *Literal on OAuth 2 error.
      */
     public static class Error {
         /**
@@ -130,7 +130,7 @@ public final class OAuth2Helper {
     }
 
     /**
-     * OAuth2 の Grant Type に関するリテラル.
+     *Literal on Grant Type of OAuth 2.
      */
     public static class GrantType {
         /**
@@ -161,7 +161,7 @@ public final class OAuth2Helper {
     }
 
     /**
-     * OAuth2 の Response Type に関するリテラル.
+     *Literal on Response Type of OAuth 2.
      */
     public static class ResponseType {
         /**
@@ -173,7 +173,7 @@ public final class OAuth2Helper {
     }
 
     /**
-     * OAuth2 の 各種キー・パラメタ に関するリテラル.
+     *Literal on various key parameters of OAuth 2.
      */
     public static class Key {
         /**
@@ -209,7 +209,7 @@ public final class OAuth2Helper {
          */
         public static final String KEEPLOGIN = "keeplogin";
         /**
-         * Cancelフラグ.
+         *Cancel flag.
          */
         public static final String CANCEL_FLG = "cancel_flg";
         /**
@@ -286,11 +286,11 @@ public final class OAuth2Helper {
          */
         public static final String CONFIDENTIAL_MARKER = "#c";
         /**
-         * ConfidentialRole名.
+         *Confidential Role name.
          */
         public static final String CONFIDENTIAL_ROLE_NAME = "confidentialClient";
         /**
-         * ConfidentialRoleのリソースURLのフォーマット.
+         *ConfidentialRole resource URL format.
          */
         public static final String CONFIDENTIAL_ROLE_URL_FORMAT = "%s__role/%s/" + CONFIDENTIAL_ROLE_NAME;
         /**
@@ -340,14 +340,14 @@ public final class OAuth2Helper {
     }
 
     /**
-     * リソースに応じて許可するAuthSchemeの種別.
+     *The type of AuthScheme allowed according to the resource.
      */
     public enum AcceptableAuthScheme {
-        /** Basicのみを許可する. */
+        /** Allow only Basic.*/
         BASIC,
-        /** Bearerのみを許可する. */
+        /** Only allow Bearer.*/
         BEARER,
-        /** 全てのAuthSchemeを許可する. */
+        /** Allow all AuthScheme.*/
         ALL
     }
 }

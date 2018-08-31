@@ -103,11 +103,11 @@ public class PersoniumJsonFormatParser {
     private String entitySetName;
     /** entityKey. */
     private OEntityKey entityKey;
-    /** リクエスト時の時刻. */
+    /** Time of request.*/
     private long currentTimeMillis = System.currentTimeMillis();
 
     /**
-     * ODataVersionのゲッター.
+     *Getter of ODataVersion.
      * @return ODataVersion
      */
     public ODataVersion getVersion() {
@@ -115,7 +115,7 @@ public class PersoniumJsonFormatParser {
     }
 
     /**
-     * Metadataのゲッター.
+     *Getader of Metadata.
      * @return EdmDataServices
      */
     public EdmDataServices getMetadata() {
@@ -123,15 +123,15 @@ public class PersoniumJsonFormatParser {
     }
 
     /**
-     * Metadataのセッター.
-     * @param metadata スキーマ情報
+     *Metadata's setter.
+     *@ param metadata schema information
      */
     public void setMetadata(EdmDataServices metadata) {
         this.metadata = metadata;
     }
 
     /**
-     * entitySetNameのゲッター.
+     *Getter of entitySetName.
      * @return String
      */
     public String getEntitySetName() {
@@ -139,7 +139,7 @@ public class PersoniumJsonFormatParser {
     }
 
     /**
-     * entityKeyのゲッター.
+     *Getter of entityKey.
      * @return OEntityKey
      */
     public OEntityKey getEntityKey() {
@@ -147,8 +147,8 @@ public class PersoniumJsonFormatParser {
     }
 
     /**
-     * コンストラクタ.
-     * @param settings セッティング情報
+     *constructor.
+     *@ param settings setting information
      */
     protected PersoniumJsonFormatParser(Settings settings) {
         if (settings != null) {
@@ -161,7 +161,7 @@ public class PersoniumJsonFormatParser {
     }
 
     /**
-     * ネストデータオブジェクト.
+     *Nested data object.
      */
     static class JsonObjectPropertyValue {
         OComplexObject complexObject;
@@ -170,7 +170,7 @@ public class PersoniumJsonFormatParser {
     }
 
     /**
-     * JsonEntryをパースする.
+     *Parsing JsonEntry.
      * @param ees EdmEntitySet
      * @param jsr JsonStreamReader
      * @return JsonEntry
@@ -201,12 +201,12 @@ public class PersoniumJsonFormatParser {
     }
 
     /**
-     * OEntityへ変換する.
-     * @param entitySet エンティティセット
-     * @param entityType エンティティタイプ
-     * @param key キー
-     * @param properties プロパティ
-     * @param links リンク情報
+     *Convert to OEntity.
+     *@ param entitySet entity set
+     *@ param entityType entity type
+     *@ param key
+     *@ param properties
+     *@ param links link information
      * @return OEntity
      */
     private OEntity toOEntity(EdmEntitySet entitySet,
@@ -245,7 +245,7 @@ public class PersoniumJsonFormatParser {
             // scalar property
             EdmProperty ep = entry.getEntityType().findProperty(name);
             if (ep == null) {
-                // OpenEntityTypeの場合は、プロパティを追加する
+                //For OpenEntityType, add properties
                 NamespacedAnnotation<?> openType = findAnnotation(ees.getType(), null, Edm.EntityType.OpenType);
                 if (openType != null && openType.getValue() == "true") {
                     Object propValue = null;
@@ -255,7 +255,7 @@ public class PersoniumJsonFormatParser {
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(name).reason(e);
                     }
 
-                    // 型によって登録するEntityPropertyを変更する
+                    //Change EntityProperty to register by type
                     if (propValue instanceof Boolean) {
                         entry.properties.add(JsonTypeConverter.parse(name, (EdmSimpleType<?>) EdmSimpleType.BOOLEAN,
                                 propValue.toString()));
@@ -276,7 +276,7 @@ public class PersoniumJsonFormatParser {
                             + entry.getEntityType().getName());
                 }
             } else {
-                // StaticPropertyの値チェック
+                //StaticProperty value check
                 String propValue = event.asEndProperty().getValue();
                 if (propValue != null) {
                     EdmType type = ep.getType();
@@ -303,36 +303,36 @@ public class PersoniumJsonFormatParser {
                     }
                 }
                 if (ep.getType().isSimple()) {
-                    // シンプル型（文字列や数値など）であればプロパティに追加する
+                    //If it is a simple type (character string, number, etc.), it is added to the property
                     entry.properties.add(JsonTypeConverter.parse(name, (EdmSimpleType<?>) ep.getType(), propValue));
                 } else {
                     if (propValue == null) {
-                        // ComplexType型で、値がnullの場合はエラーにしない
+                        //If ComplexType type and value is null, do not set it to error
                         entry.properties.add(JsonTypeConverter.parse(name,
                                 (EdmSimpleType<?>) EdmSimpleType.STRING, null));
                     } else {
-                        // ComplexType型で、ComplexType型以外の値が指定された場合("aaa")はエラーとする
+                        //If ComplexType type and a value other than ComplexType type is specified ("aaa"), it is an error
                         throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(name);
                     }
                 }
             }
         } else if (event.isStartObject()) {
-            // JSONオブジェクトの場合は値を取得する
+            //In case of JSON object, get value
             JsonObjectPropertyValue val = getValue(event, ees, name, jsr, entry);
 
             if (val.complexObject != null) {
-                // ComplexTypeデータであればプロパティに追加する
+                //If it is ComplexType data, it is added to the property
                 entry.properties.add(OProperties.complex(name, (EdmComplexType) val.complexObject.getType(),
                         val.complexObject.getProperties()));
             } else {
-                // ComplexTypeデータ以外はエラーとする
+                //Make errors other than ComplexType data
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(name);
             }
         } else if (event.isStartArray()) {
-            // 配列オブジェクトの場合
+            //For array objects
             JsonObjectPropertyValue val = new JsonObjectPropertyValue();
 
-            // スキーマ定義が存在してCollectionKindがNoneでなければ、配列としてパースする
+            //If the schema definition exists and CollectionKind is not None, parse it as an array
             EdmProperty eprop = entry.getEntityType().findProperty(name);
             if (null != eprop && eprop.getCollectionKind() != CollectionKind.NONE) {
                 val.collectionType = new EdmCollectionType(eprop.getCollectionKind(), eprop.getType());
@@ -341,7 +341,7 @@ public class PersoniumJsonFormatParser {
                 val.collection = cfp.parseCollection(jsr);
             }
 
-            // パースに成功した場合は、プロパティに追加する
+            //If parsing succeeds, add it to the property
             if (val.collectionType != null && val.collection != null) {
                 entry.properties.add(OProperties.collection(name, val.collectionType, val.collection));
             } else {
@@ -354,10 +354,10 @@ public class PersoniumJsonFormatParser {
     }
 
     /**
-     * JSONオブジェクトの値を取得する.
+     *Get the value of the JSON object.
      * @param event JsonEvent
-     * @param ees エンティティセット型
-     * @param name プロパティ名
+     *@ param ees entity set type
+     *@ param name property name
      * @param jsr JsonStreamReader
      * @param entry JsonEntry
      * @return JsonObjectPropertyValue
@@ -373,23 +373,23 @@ public class PersoniumJsonFormatParser {
         event = jsr.nextEvent();
         ensureStartProperty(event);
 
-        // ComplexObjectであればエンティティタイプ定義からプロパティ定義を取得する
+        //If it is a ComplexObject, it acquires the property definition from the entity type definition
         EdmProperty eprop = entry.getEntityType().findProperty(name);
 
         if (eprop == null) {
-            // プロパティがスキーマ定義上に存在しなければエラーとする
+            //If the property does not exist on the schema definition, it is set as an error
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(name);
         } else {
-            // スキーマ定義からComplexType定義を取得する
+            //Get ComplexType definition from schema definition
             EdmComplexType ct = metadata.findEdmComplexType(eprop.getType().getFullyQualifiedTypeName());
 
             if (null != ct) {
-                // ComplexTypeが存在する場合は、パースを実施してComplexTypeObjectを取得する
+                //If there is a ComplexType, execute a parse and acquire a ComplexTypeObject
                 Settings s = new Settings(version, metadata, entitySetName, entityKey, null, false, ct);
                 PersoniumJsonComplexObjectFormatParser cofp = new PersoniumJsonComplexObjectFormatParser(s);
                 rt.complexObject = cofp.parseSingleObject(jsr, event);
             } else {
-                // ComplexTypeがスキーマ定義上に存在しなければエラーとする
+                //If ComplexType does not exist on the schema definition, it is regarded as an error
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(name);
             }
         }
@@ -399,10 +399,10 @@ public class PersoniumJsonFormatParser {
     }
 
     /**
-     * 指定したアノテーションを取得する.
+     *Gets the specified annotation.
      * @param type EdmType
-     * @param namespaceUri 名前空間
-     * @param localName 取得対象名
+     *@ param namespaceUri namespace
+     *@ param localName Name of acquisition target
      * @return namespaceUri
      */
     private NamespacedAnnotation<?> findAnnotation(EdmType type, String namespaceUri, String localName) {
@@ -471,7 +471,7 @@ public class PersoniumJsonFormatParser {
     }
 
     /**
-     * 現在時刻を取得する.
+     *Get the current time.
      * @return the currentTimeMillis
      */
     public long getCurrentTimeMillis() {

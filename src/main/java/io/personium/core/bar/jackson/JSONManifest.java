@@ -68,7 +68,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     * bar_versionプロパティの取得.
+     *Get bar_version property.
      * @return barVersion
      */
     public String getBarVersion() {
@@ -76,7 +76,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     * bar_versionプロパティの設定.
+     *Setting the bar_version property.
      * @param barVersion barVersion.
      */
     public void setBarVersion(String barVersion) {
@@ -84,7 +84,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     * box_versionプロパティの取得.
+     *Get box_version property.
      * @return boxVersion
      */
     public String getBoxVersion() {
@@ -92,7 +92,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     * box_versionプロパティの設定.
+     *Set the box_version property.
      * @param boxVersion boxVersion.
      */
     public void setBoxVersion(String boxVersion) {
@@ -100,7 +100,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     * DefaultPathプロパティの取得.
+     *Get DefaultPath property.
      * @return defaultPath
      */
     public String getOldDefaultPath() {
@@ -108,7 +108,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     * DefaultPathプロパティの設定.
+     *Setting of the DefaultPath property.
      * @param oldDefaultPath oldDefaultPath.
      */
     public void setOldDefaultPath(String oldDefaultPath) {
@@ -116,7 +116,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     * default_pathプロパティの取得.
+     *Get default_path property.
      * @return defaultPath
      */
     public String getDefaultPath() {
@@ -124,7 +124,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     * default_pathプロパティの設定.
+     *Setting the default_path property.
      * @param defaultPath defaultPath.
      */
     public void setDefaultPath(String defaultPath) {
@@ -132,7 +132,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     * schemaプロパティの取得.
+     *Get the schema property.
      * @return schema
      */
     public String getSchema() {
@@ -140,7 +140,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     * schemaプロパティの設定.
+     *Setting the schema property.
      * @param schema schema.
      */
     public void setSchema(String schema) {
@@ -148,12 +148,12 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     * schemaの値チェック.
-     * @return true:バリデートOK、false:バリデートNG
+     *Check the value of schema.
+     *@return true: Validate OK, false: Validate NG
      */
     public boolean checkSchema() {
-        // schemaの値がnull、またはURL形式でない場合はエラーを返却する。
-        // box schemaの末尾/の必須を緩和することを見越してisValidSchemaUriを使わない
+        //If the value of schema is null or not in URL format, return error.
+        //Do not use isValidSchemaUri in anticipation of easing the requirement at the end of the box schema
         if (this.getSchema() == null
                 || !(ODataUtils.isValidUri(this.getSchema()))) {
             return false;

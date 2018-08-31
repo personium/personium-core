@@ -22,15 +22,15 @@ import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 /**
- * ユーザデータのスキーマを扱うEntityTypeの一つである、EntityType（紛らわしいがこれは名前）のEdm 定義体.
- * 紛らわしいが、EntityTypeを定義するためのEntityTypeということ。
+ *Edm definition of EntityType (misleading but this is a name) which is one of EntityType handling the schema of user data.
+ *Although confusing, it is EntityType for defining EntityType.
  */
 public class Property {
     private Property() {
     }
 
     /**
-     * Edm EntityType名.
+     *Edm EntityType name.
      */
     public static final String EDM_TYPE_NAME = "Property";
 
@@ -39,60 +39,60 @@ public class Property {
      */
     public static final String COLLECTION_KIND_NONE = "None";
     /**
-     * Nameプロパティの定義体.
+     *Definition field of Name property.
      */
     public static final EdmProperty.Builder P_NAME = EdmProperty.newBuilder("Name").setType(EdmSimpleType.STRING)
             .setNullable(false)
             .setAnnotations(Common.P_FORMAT_NAME);
     /**
-     * _EntityType/Nameプロパティの定義体.
+     *_EntityType / Name Definition of property.
      */
     public static final EdmProperty.Builder P_ENTITYTYPE_NAME = EdmProperty.newBuilder("_EntityType.Name")
             .setType(EdmSimpleType.STRING)
             .setNullable(false)
             .setAnnotations(Common.P_FORMAT_NAME);
     /**
-     * Typeプロパティの定義体.
+     *Definition of Type property.
      */
     public static final EdmProperty.Builder P_TYPE = EdmProperty.newBuilder("Type")
             .setType(EdmSimpleType.STRING)
             .setNullable(false);
     /**
-     * Nullableプロパティの定義体.
+     *Definition of Nullable property.
      */
     public static final EdmProperty.Builder P_NULLABLE = EdmProperty.newBuilder("Nullable")
             .setDefaultValue("true")
             .setNullable(false)
             .setType(EdmSimpleType.BOOLEAN);
     /**
-     * DefaultValueプロパティの定義体.
+     *Default body of the DefaultValue property.
      */
     public static final EdmProperty.Builder P_DEFAULT_VALUE = EdmProperty.newBuilder("DefaultValue")
             .setNullable(true)
             .setType(EdmSimpleType.STRING);
     /**
-     * CollectionKindプロパティの定義体.
+     *The definition body of the CollectionKind property.
      */
     public static final EdmProperty.Builder P_COLLECTION_KIND = EdmProperty.newBuilder("CollectionKind")
             .setNullable(true)
             .setType(EdmSimpleType.STRING)
             .setDefaultValue(COLLECTION_KIND_NONE);
     /**
-     * IsKeyプロパティの定義体.
+     *IsKey property definition body.
      */
     public static final EdmProperty.Builder P_IS_KEY = EdmProperty.newBuilder("IsKey")
             .setNullable(false)
             .setType(EdmSimpleType.BOOLEAN)
             .setDefaultValue("false");
     /**
-     * UniqueKeyプロパティの定義体.
+     *UniqueKey Property definition body.
      */
     public static final EdmProperty.Builder P_UNIQUE_KEY = EdmProperty.newBuilder("UniqueKey")
             .setNullable(true)
             .setType(EdmSimpleType.STRING)
             .setAnnotations(Common.P_FORMAT_NAME);
     /**
-     * IsDeclaredプロパティの定義体.
+     *IsDeclared property definition body.
      */
     public static final EdmProperty.Builder P_IS_DECLARED = EdmProperty.newBuilder("IsDeclared")
             .setNullable(true)

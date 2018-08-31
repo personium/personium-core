@@ -25,14 +25,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * ODataのエラーメッセージ.
- * JAXBオブジェクトなので、JAX-RSに渡されると、Acceptヘッダに合わせて適宜XML/JSON変形されて返される.
+ *OData error message.
+ *Since it is a JAXB object, when it is passed to JAX-RS, XML / JSON transformation is performed appropriately according to Accept header and it is returned.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "error")
 public final class ODataErrorMessage {
     /**
-     * デフォルト言語タグ.
+     *Default language tag.
      */
     public static final String DEFAULT_LANG_TAG = Locale.ENGLISH.toLanguageTag();
     @XmlElement(name = "code")
@@ -40,17 +40,17 @@ public final class ODataErrorMessage {
     @XmlElement(name = "message")
     Message message;
     /**
-     * デフォルトコンストラクタ.
-     * これがないとJAXBとして困る
+     *Default constructor.
+     *Without this, I am in trouble as JAXB
      */
     public ODataErrorMessage() {
     }
 
     /**
-     * コンストラクタ.
-     * @param paramCode コード
-     * @param messageLang メッセージの言語タグ RFC4646 / RFC 5646?
-     * @param messageValue メッセージ
+     *constructor.
+     *@ param paramCode code
+     *@ param messageLang message language tag RFC 4646 / RFC 5646?
+     *@ param messageValue message
      */
     public ODataErrorMessage(final String paramCode,
             final String messageLang,
@@ -59,9 +59,9 @@ public final class ODataErrorMessage {
         this.message = new Message(messageLang, messageValue);
     }
     /**
-     * コンストラクタ.
-     * @param paramCode コード
-     * @param messageValue メッセージ
+     *constructor.
+     *@ param paramCode code
+     *@ param messageValue message
      */
     public ODataErrorMessage(final String paramCode,
             final String messageValue) {
@@ -79,8 +79,8 @@ public final class ODataErrorMessage {
         @XmlElement(name = "value")
         String value;
         /**
-         * デフォルトコンストラクタ.
-         * これがないとJAXBとして困る
+         *Default constructor.
+         *Without this, I am in trouble as JAXB
          */
         Message() {
         }
