@@ -25,8 +25,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
@@ -36,11 +34,13 @@ import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.Box;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
@@ -57,7 +57,7 @@ import io.personium.test.utils.UserDataUtils;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class SchemaAuthTest extends JerseyTest {
+public class SchemaAuthTest extends PersoniumTest {
 
     static final String TEST_CELL1 = "testcell1";
     static final String TEST_CELL2 = "testcell2";
@@ -75,7 +75,7 @@ public class SchemaAuthTest extends JerseyTest {
      * コンストラクタ.
      */
     public SchemaAuthTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**
@@ -638,11 +638,9 @@ public class SchemaAuthTest extends JerseyTest {
             aTokenStr = (String) refreshRes.bodyAsJson().get(OAuth2Helper.Key.ACCESS_TOKEN);
         } finally {
             // コレクションの削除（testbox03はスキーマと、トークンのスキーマが一致するため削除可能）
-            DavResourceUtils.deleteCollection(userCell, boxWithHttpSchemaUrl, colName, MASTER_TOKEN,
-                    HttpStatus.SC_NO_CONTENT);
+            DavResourceUtils.deleteCollection(userCell, boxWithHttpSchemaUrl, colName, MASTER_TOKEN, -1);
             // コレクションの削除（testbox05はスキーマと、トークンのスキーマが一致するため削除可能）
-            DavResourceUtils.deleteCollection(userCell, boxWithLocalUnitSchemaUrl, colName, MASTER_TOKEN,
-                    HttpStatus.SC_NO_CONTENT);
+            DavResourceUtils.deleteCollection(userCell, boxWithLocalUnitSchemaUrl, colName, MASTER_TOKEN, -1);
 
             // RoleとAccountの$linksの削除
 //            ResourceUtils.linkAccountRollDelete(userCell, MASTER_TOKEN, user, boxWithHttpSchemaUrl, role);
@@ -656,8 +654,8 @@ public class SchemaAuthTest extends JerseyTest {
             BoxUtils.delete(userCell, MASTER_TOKEN, boxWithLocalUnitSchemaUrl);
 
             // Accountの削除
-            AccountUtils.delete(schemaCell, MASTER_TOKEN, user, HttpStatus.SC_NO_CONTENT);
-            AccountUtils.delete(userCell, MASTER_TOKEN, user, HttpStatus.SC_NO_CONTENT);
+            AccountUtils.delete(schemaCell, MASTER_TOKEN, user, -1);
+            AccountUtils.delete(userCell, MASTER_TOKEN, user, -1);
 
             // セルの削除
             CellUtils.delete(MASTER_TOKEN, schemaCell, -1);

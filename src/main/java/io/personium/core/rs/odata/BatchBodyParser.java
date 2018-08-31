@@ -30,9 +30,10 @@ import java.util.regex.Pattern;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import io.personium.core.PersoniumUnitConfig;
+import org.glassfish.jersey.uri.UriComponent;
+
 import io.personium.core.PersoniumCoreException;
-import com.sun.jersey.api.uri.UriComponent;
+import io.personium.core.PersoniumUnitConfig;
 
 /**
  * BatchBodyParserクラス.

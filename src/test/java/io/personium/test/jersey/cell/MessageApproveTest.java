@@ -48,6 +48,7 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -78,7 +79,7 @@ public class MessageApproveTest extends ODataCommon {
      * コンストラクタ.
      */
     public MessageApproveTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

@@ -16,6 +16,9 @@
  */
 package io.personium.test.jersey.cell.ctl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 import org.junit.After;
@@ -26,6 +29,7 @@ import org.odata4j.core.ODataConstants;
 import org.odata4j.core.ODataVersion;
 
 import io.personium.core.model.lock.LockManager;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -35,9 +39,6 @@ import io.personium.test.jersey.cell.auth.AuthTestCommon;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * Accountの作成のIT.
@@ -70,7 +71,7 @@ public class AccountUpdateTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public AccountUpdateTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

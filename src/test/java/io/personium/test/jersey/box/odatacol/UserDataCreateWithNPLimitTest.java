@@ -18,9 +18,6 @@ package io.personium.test.jersey.box.odatacol;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpStatus;
@@ -34,15 +31,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.AssociationEndUtils;
 import io.personium.test.utils.BoxUtils;
@@ -59,15 +55,7 @@ import io.personium.test.utils.UserDataUtils;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
-public class UserDataCreateWithNPLimitTest extends JerseyTest {
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages", "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
+public class UserDataCreateWithNPLimitTest extends PersoniumTest {
 
     String masterToken = Setup.MASTER_TOKEN_NAME;
     String cellName = "userDataListWithNpLimitTestCell";
@@ -93,7 +81,7 @@ public class UserDataCreateWithNPLimitTest extends JerseyTest {
      * コンストラクタ.
      */
     public UserDataCreateWithNPLimitTest() {
-        super(new WebAppDescriptor.Builder(UserDataCreateWithNPLimitTest.INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**

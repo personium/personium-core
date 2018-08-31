@@ -30,13 +30,14 @@ import org.junit.experimental.categories.Category;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.ODataUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
@@ -53,7 +54,7 @@ public class AccountCreateTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public AccountCreateTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**
@@ -252,17 +253,14 @@ public class AccountCreateTest extends ODataCommon {
         String encodedtestAccountName = "abcde12345-_%21%24%2A%3D%5E%60%7B%7C%7D%7E.%40";
 
         String testAccountPass = "password";
-        String accLocHeader = null;
 
         try {
-            accLocHeader = createAccount(testAccountName, testAccountPass, HttpStatus.SC_CREATED);
+            createAccount(testAccountName, testAccountPass, HttpStatus.SC_CREATED);
             AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, encodedtestAccountName);
             AccountUtils.update(MASTER_TOKEN_NAME, cellName,
                     encodedtestAccountName, testAccountName, "password2", HttpStatus.SC_NO_CONTENT);
         } finally {
-            if (accLocHeader != null) {
-                AccountUtils.delete(cellName, MASTER_TOKEN_NAME, encodedtestAccountName, -1);
-            }
+            AccountUtils.delete(cellName, MASTER_TOKEN_NAME, encodedtestAccountName, -1);
         }
     }
 

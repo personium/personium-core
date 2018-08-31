@@ -27,13 +27,14 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
+import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.AbstractUserDataTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -52,7 +53,7 @@ public class PropertyDeleteTest extends AbstractUserDataTest {
      * コンストラクタ.
      */
     public PropertyDeleteTest() {
-        super();
+        super(new PersoniumCoreApplication());
     }
 
     /**

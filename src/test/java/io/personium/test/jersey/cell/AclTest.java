@@ -27,13 +27,10 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
@@ -43,6 +40,7 @@ import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.ExtCell;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -75,16 +73,6 @@ import io.personium.test.utils.TestMethodUtils;
 @Category({Unit.class, Integration.class, Regression.class })
 public class AclTest extends AbstractCase {
 
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
-
     static final String TEST_CELL1 = Setup.TEST_CELL1;
     static final String TEST_ROLE1 = "role4";
     static final String TEST_ROLE2 = "role5";
@@ -94,7 +82,7 @@ public class AclTest extends AbstractCase {
      * コンストラクタ.
      */
     public AclTest() {
-        super(new WebAppDescriptor.Builder(INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**
@@ -596,7 +584,6 @@ public class AclTest extends AbstractCase {
      * CellレベルACL設定後のPROPPATCHの確認.
      */
     @Test
-    @Ignore // UUT promotion setting API invalidation.
     public final void CellレベルACL設定後のPROPPATCHの確認() {
 
         try {
@@ -1787,11 +1774,11 @@ public class AclTest extends AbstractCase {
 
     private void eventAclTest(List<String> account) {
         // PROPPACTH Event
-        CellUtils.proppatch(TEST_CELL1, account.get(0), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
-        CellUtils.proppatch(TEST_CELL1, account.get(1), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
-        CellUtils.proppatch(TEST_CELL1, account.get(3), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
-        CellUtils.proppatch(TEST_CELL1, account.get(10), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
-        CellUtils.proppatch(TEST_CELL1, account.get(13), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
+        CellUtils.proppatchEvent(TEST_CELL1, account.get(0), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
+        CellUtils.proppatchEvent(TEST_CELL1, account.get(1), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
+        CellUtils.proppatchEvent(TEST_CELL1, account.get(3), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
+        CellUtils.proppatchEvent(TEST_CELL1, account.get(10), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
+        CellUtils.proppatchEvent(TEST_CELL1, account.get(13), HttpStatus.SC_NOT_IMPLEMENTED, "hoge", "huga");
 
         // POST Event
         String jsonBody = "{\"Type\": \"TYPE\", \"Object\": \"OBJECT\", \"Info\": \"INFO\"}";
@@ -1874,6 +1861,8 @@ public class AclTest extends AbstractCase {
             ExtCellUtils.delete(account.get(14), TEST_CELL1, extCellUrl2, HttpStatus.SC_FORBIDDEN);
         } finally {
             // テスト用セルの削除
+            ExtCellUtils.delete(TOKEN, TEST_CELL1, extCellUrl, -1);
+            ExtCellUtils.delete(TOKEN, TEST_CELL1, extCellUrl2, -1);
             CellUtils.delete(TOKEN, testCell1, -1);
             CellUtils.delete(TOKEN, testCell2, -1);
             CellUtils.delete(TOKEN, testCell3, -1);

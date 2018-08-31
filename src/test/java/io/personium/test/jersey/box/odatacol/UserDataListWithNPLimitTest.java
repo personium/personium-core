@@ -18,9 +18,6 @@ package io.personium.test.jersey.box.odatacol;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpStatus;
@@ -32,10 +29,12 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.AssociationEndUtils;
 import io.personium.test.utils.BoxUtils;
@@ -44,8 +43,6 @@ import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * UserDataのNavigationProperty経由一覧のテスト.
@@ -53,15 +50,7 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
-public class UserDataListWithNPLimitTest extends JerseyTest {
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages", "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
+public class UserDataListWithNPLimitTest extends PersoniumTest {
 
     String masterToken = Setup.MASTER_TOKEN_NAME;
 
@@ -69,7 +58,7 @@ public class UserDataListWithNPLimitTest extends JerseyTest {
      * コンストラクタ.
      */
     public UserDataListWithNPLimitTest() {
-        super(new WebAppDescriptor.Builder(UserDataListWithNPLimitTest.INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**

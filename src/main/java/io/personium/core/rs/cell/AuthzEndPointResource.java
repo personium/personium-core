@@ -18,6 +18,9 @@ package io.personium.core.rs.cell;
 
 import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_AN_HOUR;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -33,7 +36,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.ws.rs.CookieParam;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
@@ -44,19 +46,20 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.edm.EdmEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.jersey.api.client.ClientResponse.Status;
 
 import io.personium.common.auth.token.AbstractOAuth2Token;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
@@ -83,7 +86,7 @@ import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
-import io.personium.core.model.DavRsCmp;
+import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.impl.es.EsModel;
@@ -93,6 +96,7 @@ import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.FacadeResource;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * ImplicitFlow認証処理を司るJAX-RSリソース.
@@ -109,7 +113,7 @@ public class AuthzEndPointResource {
     static Logger log = LoggerFactory.getLogger(AuthzEndPointResource.class);
 
     private final Cell cell;
-    private final DavRsCmp davRsCmp;
+    private final CellRsCmp cellRsCmp;
 
     /**
      * ログインフォーム_Javascriptソースファイル.
@@ -139,11 +143,11 @@ public class AuthzEndPointResource {
     /**
      * コンストラクタ.
      * @param cell Cell
-     * @param davRsCmp davRsCmp
+     * @param cellRsCmp cellRsCmp
      */
-    public AuthzEndPointResource(final Cell cell, final DavRsCmp davRsCmp) {
+    public AuthzEndPointResource(final Cell cell, final CellRsCmp cellRsCmp) {
         this.cell = cell;
-        this.davRsCmp = davRsCmp;
+        this.cellRsCmp = cellRsCmp;
     }
 
     /**
@@ -194,40 +198,33 @@ public class AuthzEndPointResource {
      * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
      * </ul>
      * @param authzHeader Authorization ヘッダ
-     * @param pOwner フォームパラメタ
-     * @param username フォームパラメタ
-     * @param password フォームパラメタ
-     * @param pTarget フォームパラメタ
-     * @param assertion フォームパラメタ
-     * @param clientId フォームパラメタ
-     * @param responseType フォームパラメタ
-     * @param redirectUri フォームパラメタ
      * @param host Hostヘッダ
      * @param pCookie p_cookie
      * @param cookieRefreshToken クッキー
-     * @param keepLogin フォームパラメタ
-     * @param state フォームパラメタ
-     * @param isCancel Cancelフラグ
+     * @param formParams Body parameters
      * @param uriInfo コンテキスト
      * @return JAX-RS Response Object
      */
     @POST
     public final Response authPost(@HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,  // CHECKSTYLE IGNORE
-            @FormParam(Key.OWNER) final String pOwner,
-            @FormParam(Key.USERNAME) final String username,
-            @FormParam(Key.PASSWORD) final String password,
-            @FormParam(Key.TARGET) final String pTarget,
-            @FormParam(Key.ASSERTION) final String assertion,
-            @FormParam(Key.CLIENT_ID) final String clientId,
-            @FormParam(Key.RESPONSE_TYPE) final String responseType,
-            @FormParam(Key.REDIRECT_URI) final String redirectUri,
             @HeaderParam(HttpHeaders.HOST) final String host,
             @CookieParam(FacadeResource.P_COOKIE_KEY) final String pCookie,
             @CookieParam(Key.SESSION_ID) final String cookieRefreshToken,
-            @FormParam(Key.KEEPLOGIN) final String keepLogin,
-            @FormParam(Key.STATE) final String state,
-            @FormParam(Key.CANCEL_FLG) final String isCancel,
+            MultivaluedMap<String, String> formParams,
             @Context final UriInfo uriInfo) {
+        // Using @FormParam will cause a closed error on the library side in case of an incorrect body.
+        // Since we can not catch Exception, retrieve the value after receiving it with MultivaluedMap.
+        String pOwner = formParams.getFirst(Key.OWNER);
+        String username = formParams.getFirst(Key.USERNAME);
+        String password = formParams.getFirst(Key.PASSWORD);
+        String pTarget = formParams.getFirst(Key.TARGET);
+        String assertion = formParams.getFirst(Key.ASSERTION);
+        String clientId = formParams.getFirst(Key.CLIENT_ID);
+        String responseType = formParams.getFirst(Key.RESPONSE_TYPE);
+        String redirectUri = formParams.getFirst(Key.REDIRECT_URI);
+        String keepLogin = formParams.getFirst(Key.KEEPLOGIN);
+        String state = formParams.getFirst(Key.STATE);
+        String isCancel = formParams.getFirst(Key.CANCEL_FLG);
 
         return auth(pOwner, username, password, pTarget, assertion, clientId, responseType, redirectUri, host,
                 pCookie, cookieRefreshToken, keepLogin, state, isCancel, uriInfo);
@@ -485,10 +482,9 @@ public class AuthzEndPointResource {
 
     private Response returnErrorMessageCodeGrant(String clientId, String redirectUriStr, String massage,
             String state, String pTarget, String pOwner) {
-        ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+        ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
         return rb.entity(this.createForm(clientId, redirectUriStr, massage, state,
-                OAuth2Helper.ResponseType.CODE, pTarget, pOwner))
-                .header("Content-Type", "text/html; charset=UTF-8").build();
+                OAuth2Helper.ResponseType.CODE, pTarget, pOwner)).build();
     }
 
     private void checkPTarget(final String pTarget) {
@@ -523,40 +519,54 @@ public class AuthzEndPointResource {
     private String createForm(String clientId, String redirectUriStr, String message, String state,
             String responseType, String pTarget, String pOwner) {
 
-        List<Object> paramsList = new ArrayList<Object>();
+        try {
+            HttpResponse response = cellRsCmp.requestGetAuthorizationHtml();
+            StringBuilder builder = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(response.getEntity().getContent(), CharEncoding.UTF_8))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    builder.append(line);
+                }
+            }
+            return builder.toString();
+        } catch (PersoniumCoreException | IOException e) {
+            // If processing fails, return system default html.
+            List<Object> paramsList = new ArrayList<Object>();
 
-        // 末尾"/"の有無対応
-        if (!"".equals(clientId) && !clientId.endsWith("/")) {
-            clientId = clientId + "/";
+            // 末尾"/"の有無対応
+            if (!"".equals(clientId) && !clientId.endsWith("/")) {
+                clientId = clientId + "/";
+            }
+
+            // タイトル
+            paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
+            // アプリセルのprofile.json
+            paramsList.add(clientId + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
+            // データセルのprofile.json
+            paramsList.add(cell.getUrl() + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
+            // タイトル
+            paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
+            // 呼び出し先
+            paramsList.add(cell.getUrl() + "__authz");
+            // メッセージ表示領域
+            paramsList.add(message);
+            // hidden項目
+            paramsList.add(state);
+            paramsList.add(responseType);
+            paramsList.add(pTarget != null ? pTarget : ""); // CHECKSTYLE IGNORE
+            paramsList.add(pOwner != null ? pOwner : ""); // CHECKSTYLE IGNORE
+            paramsList.add(clientId);
+            paramsList.add(redirectUriStr);
+            paramsList.add(AuthResourceUtils.getJavascript(jsFileName));
+
+            Object[] params = paramsList.toArray();
+
+            String html = PersoniumCoreUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
+            html = MessageFormat.format(html, params);
+
+            return html;
         }
-
-        // タイトル
-        paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
-        // アプリセルのprofile.json
-        paramsList.add(clientId + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
-        // データセルのprofile.json
-        paramsList.add(cell.getUrl() + Box.DEFAULT_BOX_NAME + PROFILE_JSON_NAME);
-        // タイトル
-        paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
-        // 呼び出し先
-        paramsList.add(cell.getUrl() + "__authz");
-        // メッセージ表示領域
-        paramsList.add(message);
-        // hidden項目
-        paramsList.add(state);
-        paramsList.add(responseType);
-        paramsList.add(pTarget != null ? pTarget : ""); // CHECKSTYLE IGNORE
-        paramsList.add(pOwner != null ? pOwner : ""); // CHECKSTYLE IGNORE
-        paramsList.add(clientId);
-        paramsList.add(redirectUriStr);
-        paramsList.add(AuthResourceUtils.getJavascript(jsFileName));
-
-        Object[] params = paramsList.toArray();
-
-        String html = PersoniumCoreUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
-        html = MessageFormat.format(html, params);
-
-        return html;
     }
 
     /**
@@ -585,10 +595,9 @@ public class AuthzEndPointResource {
         // ユーザIDとパスワードが一方でも未指定の場合、ログインエラーを返却する
         boolean passCheck = true;
         if (username == null || password == null || "".equals(username) || "".equals(password)) {
-            ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+            ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
             return rb.entity(this.createForm(clientId, redirectUriStr, noIdPassMsg, state,
-                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
-                    .header("Content-Type", "text/html; charset=UTF-8").build();
+                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
         }
 
         OEntityWrapper oew = cell.getAccount(username);
@@ -597,10 +606,9 @@ public class AuthzEndPointResource {
             String missIdPassMsg = PersoniumCoreMessageUtils.getMessage(resCode);
             log.info("MessageCode : " + resCode);
             log.info("responseMessage : " + missIdPassMsg);
-            ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+            ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
             return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state,
-                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
-                    .header("Content-Type", "text/html; charset=UTF-8").build();
+                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
         }
         // 最終ログイン時刻を更新するために、UUIDをクラス変数にひかえておく
         accountId = (String) oew.getUuid();
@@ -616,10 +624,9 @@ public class AuthzEndPointResource {
                 String accountLockMsg = PersoniumCoreMessageUtils.getMessage(resCode);
                 log.info("MessageCode : " + resCode);
                 log.info("responseMessage : " + accountLockMsg);
-                ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+                ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, accountLockMsg, state,
-                        OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
-                        .header("Content-Type", "text/html; charset=UTF-8").build();
+                        OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
             }
 
             // ユーザIDとパスワードのチェック
@@ -631,10 +638,9 @@ public class AuthzEndPointResource {
                 String missIdPassMsg = PersoniumCoreMessageUtils.getMessage(resCode);
                 log.info("MessageCode : " + resCode);
                 log.info("responseMessage : " + missIdPassMsg);
-                ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+                ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state,
-                        OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
-                        .header("Content-Type", "text/html; charset=UTF-8").build();
+                        OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
             }
         } catch (PersoniumCoreException e) {
             return this.returnErrorRedirect(redirectUriStr, e.getMessage(),
@@ -648,7 +654,7 @@ public class AuthzEndPointResource {
 
         if (Key.TRUE_STR.equals(pOwner)) {
             // ユニット昇格権限設定のチェック
-            if (!this.davRsCmp.checkOwnerRepresentativeAccounts(username)) {
+            if (!this.cellRsCmp.checkOwnerRepresentativeAccounts(username)) {
                 return returnErrorMessage(clientId, redirectUriStr, passFormMsg, state, pTarget, pOwner);
             }
             // セルのオーナーが未設定のセルに対しては昇格させない。
@@ -821,7 +827,7 @@ public class AuthzEndPointResource {
                     return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
                 }
                 // ユニット昇格権限設定のチェック
-                if (!this.davRsCmp.checkOwnerRepresentativeAccounts(token.getSubject())) {
+                if (!this.cellRsCmp.checkOwnerRepresentativeAccounts(token.getSubject())) {
                     return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
                 }
                 // セルのオーナーが未設定のセルに対しては昇格させない。
@@ -946,10 +952,9 @@ public class AuthzEndPointResource {
                     cookieRefreshToken, pTarget, OAuth2Helper.Key.TRUE_STR, state, pOwner);
         } else {
             // ユーザID・パスワード・assertion・cookieが未指定の場合、フォーム送信
-            ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+            ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
             return rb.entity(this.createForm(clientId, redirectUriStr, passFormMsg, state,
-                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
-                    .header("Content-Type", "text/html; charset=UTF-8").build();
+                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
         }
     }
 
@@ -1086,10 +1091,9 @@ public class AuthzEndPointResource {
      */
     private Response returnErrorMessage(String clientId, String redirectUriStr, String massage,
             String state, String pTarget, String pOwner) {
-        ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
+        ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
         return rb.entity(this.createForm(clientId, redirectUriStr, massage, state,
-                OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner))
-                .header("Content-Type", "text/html; charset=UTF-8").build();
+                OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
     }
 
     /**
@@ -1213,6 +1217,6 @@ public class AuthzEndPointResource {
      */
     @OPTIONS
     public Response options() {
-        return PersoniumCoreUtils.responseBuilderForOptions(HttpMethod.POST, HttpMethod.GET).build();
+        return ResourceUtils.responseBuilderForOptions(HttpMethod.POST, HttpMethod.GET).build();
     }
 }

@@ -41,9 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
@@ -58,6 +55,7 @@ import io.personium.core.model.ctl.Property;
 import io.personium.core.model.ctl.Relation;
 import io.personium.core.model.ctl.Role;
 import io.personium.core.model.progress.ProgressInfo;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -65,6 +63,7 @@ import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.cell.ctl.CellCtlUtils;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -88,7 +87,7 @@ import io.personium.test.utils.UserDataUtils;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class BarInstallTest extends JerseyTest {
+public class BarInstallTest extends PersoniumTest {
     /**
      * ログ用オブジェクト.
      */
@@ -132,22 +131,11 @@ public class BarInstallTest extends JerseyTest {
 
     private static final String SCHEMA_URL = "https://fqdn/testcell1/";
 
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
-
     /**
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public BarInstallTest() {
-        super(new WebAppDescriptor.Builder(BarInstallTest.INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**

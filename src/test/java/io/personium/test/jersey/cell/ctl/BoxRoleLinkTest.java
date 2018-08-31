@@ -28,16 +28,16 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
@@ -53,7 +53,7 @@ import io.personium.test.utils.TResponse;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class BoxRoleLinkTest extends JerseyTest {
+public class BoxRoleLinkTest extends PersoniumTest {
 
     private static final String CELL_NAME = "testcell1";
     private static final String ENTITY_SET_BOX = "Box";
@@ -70,7 +70,7 @@ public class BoxRoleLinkTest extends JerseyTest {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public BoxRoleLinkTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

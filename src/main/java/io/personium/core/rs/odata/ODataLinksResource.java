@@ -57,7 +57,6 @@ import org.odata4j.producer.exceptions.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
@@ -67,6 +66,8 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.ReceivedMessage;
 import io.personium.core.model.impl.es.odata.EsODataProducer;
 import io.personium.core.odata.PersoniumFormatWriterFactory;
+import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * ODataの$linksを扱う JAX-RS Resource.
@@ -132,7 +133,7 @@ public final class ODataLinksResource {
         }
         log.debug("POSTING $LINK");
         OEntityId newTargetEntity =
-                parseRequestUri(PersoniumCoreUtils.createUriInfo(uriInfo, NUM_LEVELS_FROM_SVC_ROOT), reqBody);
+                parseRequestUri(UriUtils.createUriInfo(uriInfo, NUM_LEVELS_FROM_SVC_ROOT), reqBody);
 
         // URLで指定したリンク先オブジェクトとBodyに指定したオブジェクトが等しいかをチェックする
         Pattern p = Pattern.compile("(.+)/([^/]+)$");
@@ -345,7 +346,7 @@ public final class ODataLinksResource {
 
         StringWriter sw = new StringWriter();
         // context.getRequest().getAcceptableMediaTypes()
-        UriInfo uriInfo2 = PersoniumCoreUtils.createUriInfo(uriInfo, NUM_LEVELS_FROM_SVC_ROOT);
+        UriInfo uriInfo2 = UriUtils.createUriInfo(uriInfo, NUM_LEVELS_FROM_SVC_ROOT);
         String serviceRootUri = uriInfo2.getBaseUri().toASCIIString();
         String contentType;
 
@@ -408,7 +409,7 @@ public final class ODataLinksResource {
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryOptionsPrivilege());
 
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.DELETE,
                 HttpMethod.PUT,

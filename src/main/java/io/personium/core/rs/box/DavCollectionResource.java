@@ -41,6 +41,7 @@ import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavMoveResource;
 import io.personium.core.model.DavRsCmp;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * プレーンなWebDAVコレクションに対応するJAX-RS Resource クラス.
@@ -177,7 +178,7 @@ public class DavCollectionResource {
         // アクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
 
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.PUT,
                 HttpMethod.DELETE,

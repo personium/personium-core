@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpHeaders;
@@ -31,8 +32,6 @@ import org.apache.http.HttpStatus;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.odata4j.edm.EdmSimpleType;
-
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumUnitConfig;
@@ -60,17 +59,10 @@ public abstract class AbstractUserDataTest extends AbstractCase {
 
     /**
      * コンストラクタ.
+     * @param application jax-rs application
      */
-    public AbstractUserDataTest() {
-        super("io.personium.core.rs");
-    }
-
-    /**
-     * コンストラクタ.
-     * @param build WebAppDescriptor
-     */
-    public AbstractUserDataTest(WebAppDescriptor build) {
-        super(build);
+    public AbstractUserDataTest(Application application) {
+        super(application);
     }
 
     /**

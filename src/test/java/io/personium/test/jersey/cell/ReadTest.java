@@ -39,6 +39,7 @@ import org.odata4j.core.ODataConstants;
 import org.odata4j.core.ODataVersion;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -65,7 +66,7 @@ public class ReadTest extends AbstractCase {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public ReadTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
         this.responseHeaderMap = new HashMap<String, String>();
         for (int i = 0; i < RESPONSE_HEADERS.length; i++) {
             this.responseHeaderMap.put(RESPONSE_HEADERS[i], RESPONSE_HEADER_VALUES[i]);

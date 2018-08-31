@@ -276,6 +276,11 @@ public class BarInstallTestUtils {
 
         long startTime = System.currentTimeMillis();
         while (true) {
+            try {
+                Thread.sleep(BAR_INSTALL_SLEEP_TIME);
+            } catch (InterruptedException e) {
+                log.info("Interrupted: " + e.getMessage());
+            }
             response = ODataCommon.getOdataResource(location);
             if (HttpStatus.SC_OK == response.getStatusCode()) {
                 bodyJson = (JSONObject) ((JSONObject) response.bodyAsJson());
@@ -288,11 +293,6 @@ public class BarInstallTestUtils {
             }
             if (System.currentTimeMillis() - startTime > BAR_INSTALL_TIMEOUT) {
                 fail("Failed to bar file install: takes too much time. [" + BAR_INSTALL_TIMEOUT + "millis]");
-            }
-            try {
-                Thread.sleep(BAR_INSTALL_SLEEP_TIME);
-            } catch (InterruptedException e) {
-                log.info("Interrupted: " + e.getMessage());
             }
         }
 

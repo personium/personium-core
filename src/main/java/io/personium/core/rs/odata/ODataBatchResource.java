@@ -56,7 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.es.util.PersoniumUUID;
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumReadDeleteModeManager;
@@ -71,6 +70,7 @@ import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumFormatWriterFactory;
 import io.personium.core.rs.PersoniumCoreExceptionMapper;
+import io.personium.core.utils.UriUtils;
 
 /**
  * ODataBatchResourceクラス.
@@ -652,7 +652,7 @@ public class ODataBatchResource extends AbstractODataResource {
         // Entity Responseをレンダー
         List<MediaType> contentTypes = new ArrayList<MediaType>();
         contentTypes.add(outputFormat);
-        UriInfo resUriInfo = PersoniumCoreUtils.createUriInfo(uriInfo, 1);
+        UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
         String key = AbstractODataResource.replaceDummyKeyToNull(ent.getEntityKey().toKeyString());
         String responseStr = renderEntityResponse(resUriInfo, npBulkContext.getEntityResponse(), "json",
                 contentTypes);
@@ -1103,7 +1103,7 @@ public class ODataBatchResource extends AbstractODataResource {
                 }
 
                 // ボディ情報
-                UriInfo resUriInfo = PersoniumCoreUtils.createUriInfo(uriInfo, 1);
+                UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
                 String format = AbstractODataResource.FORMAT_JSON;
                 List<MediaType> contentTypes = new ArrayList<MediaType>();
                 contentTypes.add(MediaType.APPLICATION_JSON_TYPE);
@@ -1172,7 +1172,7 @@ public class ODataBatchResource extends AbstractODataResource {
             res.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
             res.setHeader(ODataConstants.Headers.DATA_SERVICE_VERSION, "2.0");
             // レスポンスボディ
-            UriInfo resUriInfo = PersoniumCoreUtils.createUriInfo(uriInfo, 1);
+            UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
             StringWriter sw = new StringWriter();
             // TODO 制限事項でAcceptは無視してJSONで返却するため固定でJSONを指定する.
             List<MediaType> acceptableMediaTypes = new ArrayList<MediaType>();
@@ -1180,7 +1180,7 @@ public class ODataBatchResource extends AbstractODataResource {
             // TODO 制限事項でQueryは無視するため固定でnullを指定する.
             FormatWriter<EntitiesResponse> fw = PersoniumFormatWriterFactory.getFormatWriter(EntitiesResponse.class,
                     acceptableMediaTypes, null, null);
-            UriInfo uriInfo2 = PersoniumCoreUtils.createUriInfo(resUriInfo, 1);
+            UriInfo uriInfo2 = UriUtils.createUriInfo(resUriInfo, 1);
 
             fw.write(uriInfo2, sw, entitiesResp);
             String entity = sw.toString();
@@ -1220,7 +1220,7 @@ public class ODataBatchResource extends AbstractODataResource {
             res.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
             res.setHeader(ODataConstants.Headers.DATA_SERVICE_VERSION, "2.0");
             // レスポンスボディ
-            UriInfo resUriInfo = PersoniumCoreUtils.createUriInfo(uriInfo, 1);
+            UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
             // TODO 現状は、ContentTypeはJSON固定
             String format = AbstractODataResource.FORMAT_JSON;
             List<MediaType> contentTypes = new ArrayList<MediaType>();
@@ -1324,7 +1324,7 @@ public class ODataBatchResource extends AbstractODataResource {
             OEntityId sourceEntityId = OEntityIds.create(bodyPart.getEntitySetName(), oeKey);
 
             StringReader requestReader = new StringReader(bodyPart.getEntity());
-            OEntityId targetEntityId = ODataLinksResource.parseRequestUri(PersoniumCoreUtils.createUriInfo(uriInfo, 1),
+            OEntityId targetEntityId = ODataLinksResource.parseRequestUri(UriUtils.createUriInfo(uriInfo, 1),
                     requestReader, bodyPart.getEntitySetName(), this.odataResource.metadata);
 
             this.odataResource.getODataProducer().createLink(sourceEntityId, bodyPart.getTargetEntitySetName(),

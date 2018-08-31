@@ -34,6 +34,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * PersoniumEngineSourceCollectionResourceを担当するJAX-RSリソース.
@@ -111,7 +112,7 @@ public class PersoniumEngineSourceCollection {
     public Response options() {
         // 移動元に対するアクセス制御
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND
                 ).build();
     }

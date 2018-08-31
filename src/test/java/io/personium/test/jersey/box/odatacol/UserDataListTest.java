@@ -19,6 +19,7 @@ package io.personium.test.jersey.box.odatacol;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,19 +35,18 @@ import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
-
-import java.util.Arrays;
 
 /**
  * UserData一覧のテスト.
@@ -62,7 +62,7 @@ public class UserDataListTest extends AbstractUserDataTest {
      * コンストラクタ.
      */
     public UserDataListTest() {
-        super();
+        super(new PersoniumCoreApplication());
     }
 
     /**

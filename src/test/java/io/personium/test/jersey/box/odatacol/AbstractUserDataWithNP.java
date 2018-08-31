@@ -30,6 +30,7 @@ import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
@@ -102,7 +103,7 @@ public class AbstractUserDataWithNP extends AbstractUserDataTest {
      * コンストラクタ.
      */
     public AbstractUserDataWithNP() {
-        super();
+        super(new PersoniumCoreApplication());
         colName = ODATA_COLLECTION;
     }
 

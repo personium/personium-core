@@ -41,6 +41,8 @@ import io.personium.test.unit.core.UrlUtils;
  * Httpリクエストドキュメントを利用するユーティリティ.
  */
 public class CellUtils {
+    private static final long WAIT_TIME_BULK_DELETE = 1000L;
+
     private CellUtils() {
     }
 
@@ -350,7 +352,14 @@ public class CellUtils {
         PersoniumRequest request = PersoniumRequest.delete(UrlUtils.cellRoot(cellName));
         request.header(HttpHeaders.AUTHORIZATION, tokenWithAuthSchema)
                 .header("X-Personium-Recursive", "true");
-        return AbstractCase.request(request);
+        PersoniumResponse response = AbstractCase.request(request);
+        // Sleep 1 second for asynchronous processing.
+        try {
+            Thread.sleep(WAIT_TIME_BULK_DELETE);
+        } catch (InterruptedException e) {
+            System.out.println("");
+        }
+        return response;
     }
 
     /**
@@ -412,6 +421,38 @@ public class CellUtils {
     }
 
     /**
+     * Set property.
+     * @param cellName cell name
+     * @param property property string. ex:<p:foo>bar</p:foo>
+     * @param token token
+     * @param code expected response code
+     * @return response
+     */
+    public static TResponse proppatchSet(String cellName, String property, String token, int code) {
+        return Http.request("cell/proppatch-set.txt")
+                .with("cellName", cellName)
+                .with("property", property)
+                .with("token", token)
+                .returns().debug().statusCode(code);
+    }
+
+    /**
+     * Remove property.
+     * @param cellName cell name
+     * @param property property string. ex:<p:foo/>
+     * @param token token
+     * @param code expected response code
+     * @return response
+     */
+    public static TResponse proppatchRemove(String cellName, String property, String token, int code) {
+        return Http.request("cell/proppatch-remove.txt")
+                .with("cellName", cellName)
+                .with("property", property)
+                .with("token", token)
+                .returns().debug().statusCode(code);
+    }
+
+    /**
      * eventのPROPPATCHを行うユーティリティ.
      * @param cell cell
      * @param token 認証トークン
@@ -419,7 +460,7 @@ public class CellUtils {
      * @param values 設定値
      * @return レスポンス
      */
-    public static TResponse proppatch(String cell, String token, int code, String... values) {
+    public static TResponse proppatchEvent(String cell, String token, int code, String... values) {
         // PROPPATCH設定実行
         TResponse tresponse = Http.request("cell/event-proppacth.txt")
                 .with("cellPath", cell)
@@ -621,6 +662,7 @@ public class CellUtils {
                 "Basic " + PersoniumCoreUtils.createBasicAuthzHeader(schemaCellUrl, schemaAuthenticatedToken);
 
         HashMap<String, String> requestheaders = new HashMap<String, String>();
+        requestheaders.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
         requestheaders.put(HttpHeaders.AUTHORIZATION, authorization);
 
         String body = String.format("grant_type=password&username=%s&password=%s", account, password);

@@ -26,6 +26,7 @@ import org.junit.experimental.categories.Category;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Relation;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -50,7 +51,7 @@ public class RelationUpdateTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public RelationUpdateTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

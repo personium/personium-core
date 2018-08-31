@@ -33,7 +33,6 @@ import org.odata4j.core.OEntity;
 import org.odata4j.core.OProperty;
 import org.odata4j.producer.EntityResponse;
 
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.Message;
@@ -79,7 +78,7 @@ public class ODataMessageResource extends AbstractODataResource {
     protected Response createMessage(UriInfo uriInfo, Reader reader, String operation) {
 
         // response用URLに__ctlを追加する
-        UriInfo resUriInfo = PersoniumCoreUtils.createUriInfo(uriInfo, 2, "__ctl");
+        UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 2, "__ctl");
 
         EntityResponse res = createEntity(reader, messageResource);
 

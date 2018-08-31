@@ -26,26 +26,27 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
 
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
+import org.eclipse.persistence.jaxb.MarshallerProperties;
+import org.eclipse.persistence.jaxb.UnmarshallerProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import com.sun.jersey.api.json.JSONConfiguration;
-import com.sun.jersey.api.json.JSONJAXBContext;
-import com.sun.jersey.api.json.JSONMarshaller;
-import com.sun.jersey.api.json.JSONUnmarshaller;
 
 /**
  * JAXBを簡単に使うためのユーティリティクラス.
  */
 public final class ObjectIo {
     private static JAXBContext context = null;
-    private static JSONJAXBContext jsonContext = null;
+    private static JAXBContext jsonContext = null;
+    private static Map<String, String> nameSpaceToJsonMap = new HashMap<String, String>();
 
     /**
      * コンストラクタ.
@@ -58,11 +59,11 @@ public final class ObjectIo {
         try {
             // io.personium.core.model.jaxb パッケージのcontextを作成
             context = JAXBContext.newInstance(ObjectIo.class.getPackage().getName());
-            Map<String, String> ns2json = new HashMap<String, String>();
-            ns2json.put("DAV:", "D");
-
-            jsonContext = new JSONJAXBContext(JSONConfiguration.mapped().xml2JsonNs(ns2json).build(),
-                    ObjectIo.class.getPackage().getName());
+            // Use org.eclipse.persistence.jaxb (MOXy).
+            jsonContext = JAXBContextFactory.createContext(ObjectIo.class.getPackage().getName(),
+                    ObjectIo.class.getClassLoader());
+            nameSpaceToJsonMap.put("DAV:", "D");
+            nameSpaceToJsonMap.put("p:", "p");
         } catch (JAXBException e) {
             throw new RuntimeException(e);
         }
@@ -166,10 +167,14 @@ public final class ObjectIo {
      * @throws IOException IO上の問題があったとき投げられる例外
      * @throws JAXBException JAXB上の問題があったとき投げられる例外
      */
-    public static void toJson(
-            final Object instance, final Writer writer) throws IOException, JAXBException {
-        JSONMarshaller m = jsonContext.createJSONMarshaller();
-        m.marshallToJSON(instance, writer);
+    public static void toJson(Object instance, Writer writer) throws IOException, JAXBException {
+
+        Marshaller marshaller = jsonContext.createMarshaller();
+        marshaller.setProperty(MarshallerProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
+        marshaller.setProperty(MarshallerProperties.JSON_INCLUDE_ROOT, false);
+        marshaller.setProperty(MarshallerProperties.JSON_ATTRIBUTE_PREFIX, "@");
+        marshaller.setProperty(MarshallerProperties.NAMESPACE_PREFIX_MAPPER, nameSpaceToJsonMap);
+        marshaller.marshal(instance, writer);
     }
     /**
      * @param <T> 戻り値としてほしいクラス
@@ -179,9 +184,15 @@ public final class ObjectIo {
      * @throws IOException IO上の問題があったとき投げられる例外
      * @throws JAXBException JAXB上の問題があったとき投げられる例外
      */
-    public static <T> T fromJson(final Reader reader, final Class<T> elementClass) throws IOException, JAXBException {
-        JSONUnmarshaller u = jsonContext.createJSONUnmarshaller();
-        JAXBElement<T> object = u.unmarshalJAXBElementFromJSON(reader, elementClass);
+    public static <T> T fromJson(Reader reader, Class<T> elementClass) throws IOException, JAXBException {
+
+        Unmarshaller unmarshaller = jsonContext.createUnmarshaller();
+        unmarshaller.setProperty(UnmarshallerProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
+        unmarshaller.setProperty(UnmarshallerProperties.JSON_INCLUDE_ROOT, false);
+        unmarshaller.setProperty(UnmarshallerProperties.JSON_ATTRIBUTE_PREFIX, "@");
+        unmarshaller.setProperty(UnmarshallerProperties.JSON_NAMESPACE_PREFIX_MAPPER, nameSpaceToJsonMap);
+
+        JAXBElement<T> object = unmarshaller.unmarshal(new StreamSource(reader), elementClass);
         return object.getValue();
     }
 }

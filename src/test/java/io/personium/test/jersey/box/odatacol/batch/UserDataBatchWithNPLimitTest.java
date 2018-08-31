@@ -26,9 +26,6 @@ import static io.personium.test.utils.BatchUtils.retrievePostBody;
 import static io.personium.test.utils.BatchUtils.retrievePostResBody;
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
@@ -44,10 +41,11 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AssociationEndUtils;
@@ -58,7 +56,6 @@ import io.personium.test.utils.EntityTypeUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * UserData $batchのNavigationProperty経由登録の上限値テスト. たくさんデータを登録するので、「Integration.class, Regression.class」では動作しない。
@@ -66,14 +63,6 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class })
 public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages", "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
 
     String masterToken = Setup.MASTER_TOKEN_NAME;
     String cellName = "userDataBatchWithNPLimitTestCell";
@@ -100,7 +89,7 @@ public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
      * コンストラクタ.
      */
     public UserDataBatchWithNPLimitTest() {
-        super(new WebAppDescriptor.Builder(UserDataBatchWithNPLimitTest.INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**

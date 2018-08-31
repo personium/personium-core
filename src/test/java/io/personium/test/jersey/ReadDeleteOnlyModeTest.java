@@ -31,14 +31,13 @@ import static io.personium.test.utils.BatchUtils.retrievePutBody;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.ws.rs.HttpMethod;
 
 import org.apache.http.HttpStatus;
+import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -46,41 +45,26 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.lock.LockManager;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.core.utils.MemcachedClient;
 import io.personium.test.categories.Integration;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.TResponse;
 import io.personium.test.utils.UserDataUtils;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
 
 /**
  * ReadDeleteOnlyModeに関するテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Integration.class })
-public class ReadDeleteOnlyModeTest extends JerseyTest {
-
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("javax.ws.rs.Application",
-                "io.personium.core.rs.PersoniumCoreApplication");
-        INIT_PARAMS.put("com.sun.jersey.config.feature.DisableWADL",
-                "true");
-    }
+public class ReadDeleteOnlyModeTest extends PersoniumTest {
 
     /**
      * コンストラクタ.
      */
     public ReadDeleteOnlyModeTest() {
-        super(new WebAppDescriptor.Builder(ReadDeleteOnlyModeTest.INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**

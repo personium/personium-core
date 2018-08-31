@@ -16,6 +16,9 @@
  */
 package io.personium.core.rs.cell;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,9 +32,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.wink.webdav.WebDAVMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +59,7 @@ import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.lock.UnitUserLockManager;
 import io.personium.core.rs.box.BoxResource;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * JAX-RS Resource handling Cell Level Api.
@@ -99,14 +107,14 @@ public class CellResource {
 
         // If cell status is import failed, APIs other than import or token or BulkDeletion are not accepted.
         if (Cell.STATUS_IMPORT_ERROR.equals(cellCmp.getCellStatus())) {
-            String[] paths = httpServletRequest.getPathInfo().split("/");
-            // Since the Cell name is stored at the second, check the third value.
-            // ex.[, "testcell", "__token"]
-            if (paths.length <= 2) {
+            String[] paths = accessContext.getUriInfo().getPath().split("/");
+            // Since the Cell name is stored at the first, check the second value.
+            // ex.["testcell", "__token"]
+            if (paths.length <= 1) {
                 if (!HttpMethod.DELETE.equals(httpServletRequest.getMethod())) {
                     throw PersoniumCoreException.Common.CELL_STATUS_IMPORT_FAILED;
                 }
-            } else if (!"__import".equals(paths[2]) && !"__token".equals(paths[2])) {
+            } else if (!"__import".equals(paths[1]) && !"__token".equals(paths[1])) {
                 throw PersoniumCoreException.Common.CELL_STATUS_IMPORT_FAILED;
             }
         }
@@ -135,17 +143,36 @@ public class CellResource {
      */
     /**
      * handler for GET Method.
+     * @param httpHeaders Request headers
      * @return JAX-RS Response Object
      */
     @GET
-    public Response getSvcDoc() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb.append("<cell xmlns=\"urn:x-personium:xmlns\">");
-        sb.append("<uuid>" + this.cell.getId() + "</uuid>");
-        sb.append("<ctl>" + this.cell.getUrl() + "__ctl/" + "</ctl>");
-        sb.append("</cell>");
-        return Response.ok().entity(sb.toString()).build();
+    public Response getSvcDoc(@Context HttpHeaders httpHeaders) {
+        if (httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_XML_TYPE)) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            sb.append("<cell xmlns=\"urn:x-personium:xmlns\">");
+            sb.append("<uuid>" + this.cell.getId() + "</uuid>");
+            sb.append("<ctl>" + this.cell.getUrl() + "__ctl/" + "</ctl>");
+            sb.append("</cell>");
+            return Response.ok().entity(sb.toString()).build();
+        } else {
+            HttpResponse res = cellRsCmp.requestGetRelayHtml();
+            int statusCode = res.getStatusLine().getStatusCode();
+            HttpEntity entity = res.getEntity();
+            StreamingOutput streamingOutput = new StreamingOutput() {
+                @Override
+                public void write(final OutputStream os) throws IOException {
+                    try (InputStream in = entity.getContent()) {
+                        int chr;
+                        while ((chr = in.read()) != -1) {
+                            os.write(chr);
+                        }
+                    }
+                }
+            };
+            return Response.status(statusCode).entity(streamingOutput).build();
+        }
     }
 
     /**
@@ -312,15 +339,13 @@ public class CellResource {
 
     /**
      * デフォルトボックスへのアクセス.
-     * @param request HTPPサーブレットリクエスト
      * @param jaxRsRequest JAX-RS用HTTPリクエスト
      * @return BoxResource Object
      */
     @Path("__")
-    public BoxResource box(@Context final HttpServletRequest request,
-            @Context final Request jaxRsRequest) {
+    public BoxResource box(@Context final Request jaxRsRequest) {
         return new BoxResource(this.cell, Box.DEFAULT_BOX_NAME, this.accessContext,
-                this.cellRsCmp, request, jaxRsRequest);
+                this.cellRsCmp, jaxRsRequest);
     }
 
     /**
@@ -364,17 +389,15 @@ public class CellResource {
 
     /**
      * 次のパスをBoxResourceへ渡すメソッド.
-     * @param request HTPPサーブレットリクエスト
      * @param boxName Boxパス名
      * @param jaxRsRequest JAX-RS用HTTPリクエスト
      * @return BoxResource Object
      */
     @Path("{box: [^\\/]+}")
     public BoxResource box(
-            @Context final HttpServletRequest request,
             @PathParam("box") final String boxName,
             @Context final Request jaxRsRequest) {
-        return new BoxResource(this.cell, boxName, this.accessContext, this.cellRsCmp, request, jaxRsRequest);
+        return new BoxResource(this.cell, boxName, this.accessContext, this.cellRsCmp, jaxRsRequest);
     }
 
     /**
@@ -396,31 +419,30 @@ public class CellResource {
                 CellPrivilege.ACL_READ);
     }
 
-    // TODO Interim correspondence.(For security reasons)
-//    /**
-//     * PROPPATCHメソッドの処理.
-//     * @param requestBodyXml Request Body
-//     * @return JAX-RS Response
-//     */
-//    @WebDAVMethod.PROPPATCH
-//    public Response proppatch(final Reader requestBodyXml) {
-//        AccessContext ac = this.cellRsCmp.getAccessContext();
-//        // トークンの有効性チェック
-//        // トークンがINVALIDでもACL設定でPrivilegeがallに設定されているとアクセスを許可する必要があるのでこのタイミングでチェック
-//        ac.updateBasicAuthenticationStateForResource(null);
-//        if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
-//            ac.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
-//        } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
-//            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(),
-//                    this.cellRsCmp.getAcceptableAuthScheme());
-//        }
-//
-//        // アクセス制御 CellレベルPROPPATCHはユニットユーザのみ可能とする
-//        if (!ac.isUnitUserToken()) {
-//            throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
-//        }
-//        return this.cellRsCmp.doProppatch(requestBodyXml);
-//    }
+    /**
+     * PROPPATCHメソッドの処理.
+     * @param requestBodyXml Request Body
+     * @return JAX-RS Response
+     */
+    @WebDAVMethod.PROPPATCH
+    public Response proppatch(final Reader requestBodyXml) {
+        AccessContext ac = this.cellRsCmp.getAccessContext();
+        // トークンの有効性チェック
+        // トークンがINVALIDでもACL設定でPrivilegeがallに設定されているとアクセスを許可する必要があるのでこのタイミングでチェック
+        ac.updateBasicAuthenticationStateForResource(null);
+        if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
+            ac.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
+        } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
+            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(),
+                    this.cellRsCmp.getAcceptableAuthScheme());
+        }
+
+        // アクセス制御 CellレベルPROPPATCHはユニットユーザのみ可能とする
+        if (!ac.isUnitUserToken()) {
+            throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
+        }
+        return this.cellRsCmp.doProppatch(requestBodyXml);
+    }
 
     /**
      * ACLメソッドの処理.
@@ -443,7 +465,7 @@ public class CellResource {
     public Response options() {
         // アクセス制御
         this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.SOCIAL_READ);
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.POST,
                 PersoniumCoreUtils.HttpMethod.PROPFIND
                 ).build();

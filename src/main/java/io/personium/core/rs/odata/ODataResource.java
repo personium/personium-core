@@ -44,14 +44,15 @@ import org.odata4j.format.xml.EdmxFormatWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
-import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.OEntityWrapper;
+import io.personium.core.odata.PersoniumODataProducer;
+import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * OData のサービスを提供する JAX-RS Resource リソースのルート. Unit制御 ・ Cell制御 ・ User OData Schema・ User ODataの４種の用途で使う.
@@ -151,7 +152,7 @@ public abstract class ODataResource extends ODataCtlResource {
     public Response optionsRoot() {
         // アクセス制御
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET
                 ).build();
     }
@@ -161,7 +162,7 @@ public abstract class ODataResource extends ODataCtlResource {
      * @return JAX-RS Response
      */
     protected Response doGetOptionsMetadata() {
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET
                 ).build();
     }
@@ -199,7 +200,7 @@ public abstract class ODataResource extends ODataCtlResource {
         FormatWriter<EdmDataServices> fw = FormatWriterFactory.getFormatWriter(EdmDataServices.class,
                 acceptableMediaTypes, format, "");
 
-        fw.write(PersoniumCoreUtils.createUriInfo(uriInfo, 0), w, this.metadata);
+        fw.write(UriUtils.createUriInfo(uriInfo, 0), w, this.metadata);
 
         return Response.ok(w.toString(), fw.getContentType())
                 .header(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataConstants.DATA_SERVICE_VERSION_HEADER)

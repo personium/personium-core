@@ -34,22 +34,23 @@ import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.Role;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.TransCellRefreshToken;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.ResourceUtils;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * トークンのテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class TokenTest extends JerseyTest {
+public class TokenTest extends PersoniumTest {
     static final String TEST_CELL1 = "testcell1";
     static final String TEST_CELL2 = "testcell2";
     static final String TEST_APP_CELL1 = "schema1";
@@ -63,7 +64,7 @@ public class TokenTest extends JerseyTest {
      * コンストラクタ.
      */
     public TokenTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

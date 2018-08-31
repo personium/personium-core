@@ -34,13 +34,14 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
+import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.DavResourceUtils;
@@ -59,7 +60,7 @@ public class UserDataBatchDynamicPropertyTest extends AbstractUserDataBatchTest 
      * コンストラクタ.
      */
     public UserDataBatchDynamicPropertyTest() {
-        super();
+        super(new PersoniumCoreApplication());
     }
 
     /**

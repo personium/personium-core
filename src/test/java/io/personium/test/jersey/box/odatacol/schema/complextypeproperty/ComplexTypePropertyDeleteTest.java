@@ -27,13 +27,14 @@ import org.junit.runner.RunWith;
 import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.core.model.ctl.ComplexType;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
+import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.box.odatacol.AbstractUserDataTest;
 import io.personium.test.jersey.box.odatacol.UserDataComplexTypeUtils;
 import io.personium.test.jersey.box.odatacol.schema.property.PropertyUtils;
@@ -60,7 +61,7 @@ public class ComplexTypePropertyDeleteTest extends AbstractUserDataTest {
      * コンストラクタ.
      */
     public ComplexTypePropertyDeleteTest() {
-        super();
+        super(new PersoniumCoreApplication());
     }
 
     /**

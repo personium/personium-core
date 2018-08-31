@@ -31,30 +31,31 @@ import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreMessageUtils;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.DaoException;
 import io.personium.test.jersey.PersoniumException;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumRestAdapter;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * Test for Error Page.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class ErrorPageTest extends JerseyTest {
+public class ErrorPageTest extends PersoniumTest {
 
     /**
      * constructor.
      */
     public ErrorPageTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

@@ -23,21 +23,22 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.Http;
-import com.sun.jersey.test.framework.JerseyTest;
 
 /**
  * MKCOLのテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class DavValidateTest extends JerseyTest {
+public class DavValidateTest extends PersoniumTest {
     ArrayList<String> validNames;
     private static final String CELL_NAME = "testcell1";
     private static final String FILE_BODY = "testFileBody";
@@ -46,7 +47,7 @@ public class DavValidateTest extends JerseyTest {
      * コンストラクタ.
      */
     public DavValidateTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
         validNames = new ArrayList<String>();
         //validNames.add("a%5c"); // %5C は リクエストを投げる事ができなかったため、手動でのみ確認
         validNames.add("a%20");

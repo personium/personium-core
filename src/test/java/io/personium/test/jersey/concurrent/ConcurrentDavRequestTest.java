@@ -36,14 +36,13 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
@@ -57,7 +56,7 @@ import io.personium.test.utils.TResponse;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class ConcurrentDavRequestTest extends JerseyTest {
+public class ConcurrentDavRequestTest extends PersoniumTest {
     private static final String CELL_NAME = "testcell1";
     private static final String COL_NAME = "colForConcurrencyTest";
     private static final String FILE_NAME = "fileForConcurrencyTest.txt";
@@ -67,22 +66,11 @@ public class ConcurrentDavRequestTest extends JerseyTest {
     /** ログオブジェクト. */
     static Log log = LogFactory.getLog(ConcurrentDavRequestTest.class);;
 
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
-
     /**
      * コンストラクタ.
      */
     public ConcurrentDavRequestTest() {
-        super(new WebAppDescriptor.Builder(INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**
@@ -1411,7 +1399,7 @@ public class ConcurrentDavRequestTest extends JerseyTest {
         return Http.request("box/acl-all.txt")
                 .with("cell", CELL_NAME)
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("colname", colName)
+                .with("resourcePath", colName)
                 .with("box", Setup.TEST_BOX1)
                 .with("level", "")
                 .with("roleBaseUrl", UrlUtils.roleResource(CELL_NAME, null, ""));

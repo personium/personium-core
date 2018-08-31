@@ -37,6 +37,7 @@ import io.personium.core.auth.CellPrivilege;
 import io.personium.core.model.CellSnapshotCellRsCmp;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * JAX-RS Resource handling Cell Snapshot Api.
@@ -144,7 +145,7 @@ public class CellSnapshotDavFileResource {
         checkFileExists();
         // Access Control
         davRsCmp.getParent().checkAccessContext(davRsCmp.getAccessContext(), CellPrivilege.ROOT);
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.PUT,
                 HttpMethod.DELETE,

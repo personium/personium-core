@@ -846,6 +846,32 @@ public class PersoniumCoreException extends RuntimeException {
     }
 
     /**
+     * UI.
+     */
+    public static class UI {
+        /**
+         * The corresponding property does not exist.<p>
+         * Property [{0}] not configured.
+         */
+        public static final PersoniumCoreException NOT_CONFIGURED_PROPERTY = create("PR412-UI-0001");
+        /**
+         * The property being set is not http(s).<p>
+         * Property settings error. [{0}] should be normalized URL with http(s), personium-localunit and personium-localcell scheme. // CHECKSTYLE IGNORE - To maintain readability
+         */
+        public static final PersoniumCoreException PROPERTY_NOT_URL = create("PR412-UI-0002");
+        /**
+         * Invalid HTTP response was returned.<p>
+         * Invalid HTTP response was returned from {0}.
+         */
+        public static final PersoniumCoreException INVALID_HTTP_RESPONSE = create("PR500-UI-0001");
+        /**
+         * Connection failed.<p>
+         * Could not connect to {0}.
+         */
+        public static final PersoniumCoreException CONNECTION_FAILED = create("PR500-UI-0002");
+    }
+
+    /**
      * その他エラー.
      */
     public static class Misc {
@@ -881,6 +907,12 @@ public class PersoniumCoreException extends RuntimeException {
          * ヘッダの前提条件指定が満たされていないとき.
          */
         public static final PersoniumCoreException PRECONDITION_FAILED = create("PR412-MC-0001");
+        /**
+         * Unsupported media type.
+         * No params.
+         */
+        public static final PersoniumCoreException UNSUPPORTED_MEDIA_TYPE_NO_PARAMS = create("PR415-MC-0001");
+
         /**
          * メソッドが未実装のとき.
          */

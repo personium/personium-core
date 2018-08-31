@@ -29,9 +29,10 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Performance;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.box.odatacol.AbstractUserDataTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.Http;
@@ -51,7 +52,7 @@ public class UserDataListPerformanceTest extends AbstractUserDataTest {
      * コンストラクタ.
      */
     public UserDataListPerformanceTest() {
-        super();
+        super(new PersoniumCoreApplication());
     }
 
     /**

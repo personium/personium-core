@@ -27,14 +27,12 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.core.auth.OAuth2Helper;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -42,6 +40,7 @@ import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumException;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumResponse;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.bar.BarInstallTestUtils;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -58,7 +57,7 @@ import io.personium.test.utils.TResponse;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class BasicAuthCellLevelTest extends JerseyTest {
+public class BasicAuthCellLevelTest extends PersoniumTest {
 
     private String cellName = Setup.TEST_CELL_BASIC;
     private String userName = "account4";
@@ -70,7 +69,7 @@ public class BasicAuthCellLevelTest extends JerseyTest {
      * コンストラクタ.
      */
     public BasicAuthCellLevelTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**
@@ -268,7 +267,6 @@ public class BasicAuthCellLevelTest extends JerseyTest {
      * @throws PersoniumException リクエスト失敗
      */
     @Test
-    @Ignore // UUT promotion setting API invalidation.
     public final void Basic認証ーproppatchの操作() throws PersoniumException {
         // 401エラーとなること
         TResponse res = CellUtils.proppatchWithAnyAuthSchema(cellName, authorization, HttpStatus.SC_UNAUTHORIZED,

@@ -23,6 +23,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -45,7 +46,7 @@ public class UserDataCreateLinkTest extends AbstractUserDataTest {
      * コンストラクタ.
      */
     public UserDataCreateLinkTest() {
-        super();
+        super(new PersoniumCoreApplication());
     }
 
     /**

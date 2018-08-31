@@ -34,8 +34,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
@@ -48,11 +46,13 @@ import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Relation;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.jersey.box.acl.jaxb.Acl;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
@@ -96,7 +96,7 @@ import io.personium.test.utils.TResponse;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class AuthTest extends JerseyTest {
+public class AuthTest extends PersoniumTest {
 
     static final String TEST_CELL1 = Setup.TEST_CELL1;
     static final String TEST_CELL2 = Setup.TEST_CELL2;
@@ -128,7 +128,7 @@ public class AuthTest extends JerseyTest {
      * コンストラクタ.
      */
     public AuthTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

@@ -21,6 +21,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.core.model.ctl.Relation;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -28,6 +30,7 @@ import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
+import io.personium.test.utils.LinksUtils;
 import io.personium.test.utils.TResponse;
 
 /**
@@ -43,7 +46,7 @@ public class ExtRoleLinkTest extends ODataCommon {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public ExtRoleLinkTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**
@@ -88,17 +91,9 @@ public class ExtRoleLinkTest extends ODataCommon {
             CellCtlUtils.createRelation(testCellName, relationName, relationBoxName);
             CellCtlUtils.createExtRole(testCellName, testExtRoleName, relationName, relationBoxName);
 
-            String testExtRoleUrl = extRoleUrl(testCellName,
-                    relationBoxName, relationName, PersoniumCoreUtils.encodeUrlComp(testExtRoleName));
-
-            // $links作成
-            Http.request("cell/link.txt")
-                .with("method", "DELETE")
-                .with("path", testExtRoleUrl)
-                .with("naviPro", "_Relation")
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .returns()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+            LinksUtils.deleteLinksExtRole(testCellName, PersoniumCoreUtils.encodeUrlComp(testExtRoleName),
+                    relationName, relationBoxName, Relation.EDM_TYPE_NAME, relationName, relationBoxName,
+                    AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_BAD_REQUEST);
         } finally {
             CellCtlUtils.deleteExtRole(testCellName, testExtRoleName, relationName, relationBoxName);
             CellCtlUtils.deleteRelation(testCellName, relationName, relationBoxName);
@@ -120,9 +115,8 @@ public class ExtRoleLinkTest extends ODataCommon {
             String testExtRoleUrl = extRoleUrl(testCellName,
                     relationBoxName, relationName, PersoniumCoreUtils.encodeUrlComp(testExtRoleName));
 
-            // $links作成
-            Http.request("cell/link.txt")
-                .with("method", "GET")
+            // $links取得
+            Http.request("cell/link-list.txt")
                 .with("path", testExtRoleUrl)
                 .with("naviPro", "_Relation")
                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
@@ -130,98 +124,6 @@ public class ExtRoleLinkTest extends ODataCommon {
                 .statusCode(HttpStatus.SC_OK);
 
             // TODO 取得した値のチェック（取得した値がなんかおかしい）
-        } finally {
-            CellCtlUtils.deleteExtRole(testCellName, testExtRoleName, relationName, relationBoxName);
-            CellCtlUtils.deleteRelation(testCellName, relationName, relationBoxName);
-        }
-    }
-
-    /**
-     * Relationと_ExtRoleのlinkを作成すると400エラーを返却すること.
-     */
-    @Test
-    public final void Relationと_ExtRoleのlinkを作成すると400エラーを返却すること() {
-        String relationName = "testrelation";
-        String relationBoxName = "box1";
-
-        try {
-            CellCtlUtils.createRelation(testCellName, relationName, relationBoxName);
-            CellCtlUtils.createExtRole(testCellName, testExtRoleName, relationName, relationBoxName);
-
-            String testRelationUrl = String.format("%s/__ctl/Relation(Name='%s',_Box.Name='%s')",
-                    testCellName, relationName, relationBoxName);
-
-            // $links作成
-            Http.request("cell/link.txt")
-                .with("method", "POST")
-                .with("path", testRelationUrl)
-                .with("naviPro", "_ExtRole")
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("url", testRelationUrl)
-                .returns()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
-        } finally {
-            CellCtlUtils.deleteExtRole(testCellName, testExtRoleName, relationName, relationBoxName);
-            CellCtlUtils.deleteRelation(testCellName, relationName, relationBoxName);
-        }
-    }
-
-    /**
-     * Relationと_ExtRoleのlinkを削除すると400エラーを返却すること.
-     */
-    @Test
-    public final void Relationと_ExtRoleのlinkを削除すると400エラーを返却すること() {
-        String relationName = "testrelation";
-        String relationBoxName = "box1";
-
-        try {
-            CellCtlUtils.createRelation(testCellName, relationName, relationBoxName);
-            CellCtlUtils.createExtRole(testCellName, testExtRoleName, relationName, relationBoxName);
-
-            String testRelationUrl = String.format("%s/__ctl/Relation(Name='%s',_Box.Name='%s')",
-                    testCellName, relationName, relationBoxName);
-
-            // $links作成
-            Http.request("cell/link.txt")
-                .with("method", "DELETE")
-                .with("path", testRelationUrl)
-                .with("naviPro", "_ExtRole")
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("body", "\\{\\\"Name\\\":\\\"" + testExtRoleName + "\\\"\\}")
-                .returns()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
-        } finally {
-            CellCtlUtils.deleteExtRole(testCellName, testExtRoleName, relationName, relationBoxName);
-            CellCtlUtils.deleteRelation(testCellName, relationName, relationBoxName);
-        }
-    }
-
-    /**
-     * RelationとlinkしているExtRoleを取得できること.
-     */
-    @Test
-    public final void RelationとlinkしているExtRoleを取得できること() {
-        String relationName = "testrelation";
-        String relationBoxName = "box1";
-
-        try {
-            CellCtlUtils.createRelation(testCellName, relationName, relationBoxName);
-            CellCtlUtils.createExtRole(testCellName, testExtRoleName, relationName, relationBoxName);
-
-            String testRelationUrl = String.format("%s/__ctl/Relation(Name='%s',_Box.Name='%s')",
-                    testCellName, relationName, relationBoxName);
-
-            // $links作成
-            Http.request("cell/link.txt")
-                .with("method", "GET")
-                .with("path", testRelationUrl)
-                .with("naviPro", "_ExtRole")
-                 .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("body", "\\{\\\"Name\\\":\\\"" + testExtRoleName + "\\\"\\}")
-                .returns()
-                .statusCode(HttpStatus.SC_OK);
-
-            // TODO 取得した値のチェック
         } finally {
             CellCtlUtils.deleteExtRole(testCellName, testExtRoleName, relationName, relationBoxName);
             CellCtlUtils.deleteRelation(testCellName, relationName, relationBoxName);

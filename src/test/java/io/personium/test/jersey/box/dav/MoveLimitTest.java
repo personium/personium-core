@@ -16,8 +16,7 @@
  */
 package io.personium.test.jersey.box.dav;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.fest.assertions.Assertions.assertThat;
 
 import javax.ws.rs.core.MediaType;
 
@@ -27,32 +26,30 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumIntegTestRunner;
 import io.personium.test.jersey.PersoniumRequest;
 import io.personium.test.jersey.PersoniumResponse;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.ODataCommon;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.TResponse;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-
-import static org.fest.assertions.Assertions.assertThat;
 
 /**
  * MOVEの最大値に関するテスト.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class MoveLimitTest extends JerseyTest {
+public class MoveLimitTest extends PersoniumTest {
     private static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
     private static final String CELL_NAME = "MoveFileLimitTestCell";
     private static final String BOX_NAME = "box1";
@@ -61,21 +58,11 @@ public class MoveLimitTest extends JerseyTest {
     private static final String DST_RESOURCE_PREFIX = "dst";
     private static final String FILE_BODY = "testFileBody";
 
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
-
     /**
      * コンストラクタ.
      */
     public MoveLimitTest() {
-        super(new WebAppDescriptor.Builder(INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**

@@ -23,7 +23,6 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -55,9 +54,8 @@ public class ErrorHtmlResource {
             @Context final UriInfo uriInfo) {
 
         // エラーHTMLの返却
-        ResponseBuilder rb = Response.ok().type(MediaType.TEXT_HTML);
-        return rb.entity(this.htmlForCode(code))
-                .header("Content-Type", "text/html; charset=UTF-8").build();
+        ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
+        return rb.entity(this.htmlForCode(code)).build();
     }
 
     /**

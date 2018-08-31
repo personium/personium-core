@@ -24,14 +24,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.sun.jersey.test.framework.JerseyTest;
-
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.RoleUtils;
@@ -42,7 +42,7 @@ import io.personium.test.utils.TResponse;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class BoxRoleViaNPTest extends JerseyTest {
+public class BoxRoleViaNPTest extends PersoniumTest {
 
     private static final String CELL_NAME = Setup.TEST_CELL1;
     static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
@@ -51,7 +51,7 @@ public class BoxRoleViaNPTest extends JerseyTest {
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
      */
     public BoxRoleViaNPTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

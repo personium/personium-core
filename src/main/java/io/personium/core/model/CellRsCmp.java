@@ -16,16 +16,39 @@
  */
 package io.personium.core.model;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.xml.sax.SAXException;
+
 import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
+import io.personium.core.utils.HttpClientFactory;
+import io.personium.core.utils.UriUtils;
 
 /**
  * JaxRS Resource オブジェクトから処理の委譲を受けてDav関連の永続化を除く処理を行うクラス.
  */
 public class CellRsCmp extends DavRsCmp {
+
+    /** Name of property in which the URL of the relay destination is described. */
+    private static final String RELAY_HTML_URL = "relayhtmlurl";
+    /** Name of property in which the URL of the authorization html. */
+    private static final String AUTHORIZATION_HTML_URL = "authorizationhtmlurl";
 
     Cell cell;
     AccessContext accessContext;
@@ -137,6 +160,112 @@ public class CellRsCmp extends DavRsCmp {
                         ac.getRealm(), getAcceptableAuthScheme());
             }
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+        }
+    }
+
+    /**
+     * Request http get to RelayHtmlUrl.
+     * @return Http response
+     */
+    public HttpResponse requestGetRelayHtml() {
+        // Get relayhtmlurl property.
+        String relayHtmlUrl;
+        try {
+            relayHtmlUrl = getDavCmp().getProperty(RELAY_HTML_URL, "urn:x-personium:xmlns");
+        } catch (IOException | SAXException e1) {
+            throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(RELAY_HTML_URL);
+        }
+
+        if (StringUtils.isEmpty(relayHtmlUrl)) {
+            relayHtmlUrl = PersoniumUnitConfig.getRelayhtmlurlDefault();
+        }
+
+        // Convert personium-localunit and personium-localcell.
+        relayHtmlUrl = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), relayHtmlUrl);
+        relayHtmlUrl = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), relayHtmlUrl);
+
+        // Validate relayHtmlUrl.
+        validateRequestHtmlUrl(relayHtmlUrl, RELAY_HTML_URL);
+
+        // GET html.
+        return requestGetHtml(relayHtmlUrl);
+    }
+
+    /**
+     * Request http get to AuthorizationHtmlUrl.
+     * @return Http response
+     */
+    public HttpResponse requestGetAuthorizationHtml() {
+        // Get authorizationhtmlurl property.
+        String authorizationHtmlUrl;
+        try {
+            authorizationHtmlUrl = getDavCmp().getProperty(AUTHORIZATION_HTML_URL, "urn:x-personium:xmlns");
+        } catch (IOException | SAXException e1) {
+            throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(AUTHORIZATION_HTML_URL);
+        }
+
+        if (StringUtils.isEmpty(authorizationHtmlUrl)) {
+            authorizationHtmlUrl = PersoniumUnitConfig.getAuthorizationhtmlurlDefault();
+        }
+
+        // Convert personium-localunit and personium-localcell.
+        authorizationHtmlUrl = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), authorizationHtmlUrl);
+        authorizationHtmlUrl = UriUtils.convertSchemeFromLocalCellToHttp(cell.getUrl(), authorizationHtmlUrl);
+
+        // Validate relayHtmlUrl.
+        validateRequestHtmlUrl(authorizationHtmlUrl, AUTHORIZATION_HTML_URL);
+
+        // GET html.
+        return requestGetHtml(authorizationHtmlUrl);
+    }
+
+    /**
+     * Request http get to HtmlUrl.
+     * @param requestUrl request url
+     * @return Http response
+     */
+    private HttpResponse requestGetHtml(String requestUrl) {
+        HttpGet req = new HttpGet(requestUrl);
+        // set headers
+        req.addHeader(HttpHeaders.ACCEPT, MediaType.TEXT_HTML);
+
+        // GET html.
+        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
+        HttpResponse res;
+        try {
+            res = client.execute(req);
+        } catch (ClientProtocolException e) {
+            throw PersoniumCoreException.UI.INVALID_HTTP_RESPONSE.params(requestUrl).reason(e);
+        } catch (IOException e) {
+            throw PersoniumCoreException.UI.CONNECTION_FAILED.params(requestUrl).reason(e);
+        }
+
+        // Check response media type.
+        Header contentType = res.getFirstHeader(HttpHeaders.CONTENT_TYPE);
+        if (!MediaType.TEXT_HTML.equals(contentType.getValue())) {
+            throw PersoniumCoreException.NetWork.UNEXPECTED_RESPONSE.params(requestUrl, MediaType.TEXT_HTML);
+        }
+
+        return res;
+    }
+
+    /**
+     * Validate htmlurl.
+     * @param requestUrl request url
+     * @param propertyName request url property name
+     */
+    private void validateRequestHtmlUrl(String requestUrl, String propertyName) {
+        if (StringUtils.isEmpty(requestUrl)) {
+            throw PersoniumCoreException.UI.NOT_CONFIGURED_PROPERTY.params(propertyName);
+        }
+        try {
+            URI uri = new URI(requestUrl);
+            String scheme = uri.getScheme();
+            if (!scheme.equals("http") && !scheme.equals("https")) {
+                throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(propertyName);
+            }
+        } catch (URISyntaxException e) {
+            throw PersoniumCoreException.UI.PROPERTY_NOT_URL.params(propertyName);
         }
     }
 

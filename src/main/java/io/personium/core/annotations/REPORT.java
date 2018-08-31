@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import javax.ws.rs.HttpMethod;
 
 /**
- * The JaxRS annotation of the REPORT method.
+ * REPORTメソッドの JaxRS アノテーション.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

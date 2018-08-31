@@ -44,7 +44,6 @@ import org.odata4j.producer.CountResponse;
 import org.odata4j.producer.ODataProducer;
 import org.odata4j.producer.QueryInfo;
 
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
@@ -137,7 +136,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
             StringWriter w = new StringWriter();
             AtomServiceDocumentFormatWriter fw = new AtomServiceDocumentFormatWriter();
-            fw.write(PersoniumCoreUtils.createUriInfo(uriInfo, 0), w, edmDataServices);
+            fw.write(UriUtils.createUriInfo(uriInfo, 0), w, edmDataServices);
 
             return Response.ok(w.toString(), fw.getContentType())
                     .header(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataConstants.DATA_SERVICE_VERSION_HEADER)

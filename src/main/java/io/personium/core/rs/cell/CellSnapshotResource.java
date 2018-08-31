@@ -34,6 +34,7 @@ import io.personium.core.model.CellSnapshotCellCmp;
 import io.personium.core.model.CellSnapshotCellRsCmp;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.ModelFactory;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * JAX-RS Resource handling Cell Snapshot Api.
@@ -92,7 +93,7 @@ public class CellSnapshotResource {
     public Response options() {
         // Access Control
         cellSnapshotCellRsCmp.checkAccessContext(cellSnapshotCellRsCmp.getAccessContext(), CellPrivilege.ROOT);
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND
                 ).build();
     }

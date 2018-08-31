@@ -27,6 +27,7 @@ import org.odata4j.core.ODataVersion;
 import org.odata4j.edm.EdmMultiplicity;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
@@ -50,7 +51,7 @@ public class AssociationEndDeleteTest extends AbstractCase {
      * コンストラクタ.
      */
     public AssociationEndDeleteTest() {
-        super("io.personium.core.rs");
+        super(new PersoniumCoreApplication());
     }
 
     /**

@@ -282,6 +282,16 @@ public class DavMetadataFile {
     }
 
     /**
+     * Get property.
+     * @param key Property key
+     * @return property value
+     */
+    public String getProperty(String key) {
+        JSONObject props = (JSONObject) this.json.get(KEY_PROPS);
+        return (String) props.get(key);
+    }
+
+    /**
      * @return the properties
      */
     public JSONObject getProperties() {

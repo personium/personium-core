@@ -14,91 +14,85 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- //XMLHttpRequestオブジェクト生成
-  function createHttpRequest(){
-
-    //Win ie用
-    if(window.ActiveXObject){
+//Create XMLHttpRequest Object.
+function createHttpRequest() {
+    //Win IE
+    if(window.ActiveXObject) {
         try {
-            //MSXML2以降用
+            //MSXML2 or later
             return new ActiveXObject("Msxml2.XMLHTTP");
         } catch (e) {
             try {
-                //旧MSXML用
+                //MSXML
                 return new ActiveXObject("Microsoft.XMLHTTP");
             } catch (e2) {
                 return null;
             }
          }
-    } else if(window.XMLHttpRequest){
-        //Win ie以外のXMLHttpRequestオブジェクト実装ブラウザ用
+    } else if(window.XMLHttpRequest) {
+        //Other than Win IE
         return new XMLHttpRequest();
     } else {
         return null;
     }
-  }
+}
 
-  //ファイルにアクセスし受信内容を確認します
-  function requestFile(method , appFileName , dataFileName , async )
-  {
-    //XMLHttpRequestオブジェクト生成
+//Access the file and check the received contents.
+function requestFile(method , appFileName , dataFileName , async ) {
+    //Create XMLHttpRequest Object
     var apphttpoj = createHttpRequest();
     var datahttpoj = createHttpRequest();
 
-    //open メソッド
+    //Open method
     apphttpoj.open( method , appFileName , async );
     datahttpoj.open( method , dataFileName , async );
 
-    //受信時に起動するイベント
+    //Events to be activated upon reception
     apphttpoj.onreadystatechange = function() {
-
-      //readyState値は4で受信完了
-      if (apphttpoj.readyState==4) {
-        //コールバック
-        app_on_loaded(apphttpoj);
-      }
+        //4:Message received
+        if (apphttpoj.readyState==4) {
+            //Callback
+            app_on_loaded(apphttpoj);
+        }
     };
     datahttpoj.onreadystatechange = function() {
-
-        //readyState値は4で受信完了
+        //4:Message received
         if (datahttpoj.readyState==4) {
-          //コールバック
-          data_on_loaded(datahttpoj);
+            //Callback
+            data_on_loaded(datahttpoj);
         }
-      };
+    };
 
-    //send メソッド
+    //Send method
     apphttpoj.send(null);
     datahttpoj.send(null);
-  }
+}
 
-  //コールバック関数 ( 受信時に実行されます )
-  function app_on_loaded(oj)
-  {
-        //レスポンスを取得
-        var res  = oj.responseText;
+//Callback method.
+function app_on_loaded(oj) {
+    //Get response
+    var res  = oj.responseText;
 
-        var data= JSON.parse(res || "null");
-        //ページで表示
-        document.getElementById("logo").src = data.Image;
-        document.getElementById("appName").textContent = data.DisplayName;
-        document.getElementById("description").textContent = data.Description;
-  }
+    var data= JSON.parse(res || "null");
+    //Display html
+    document.getElementById("logo").src = data.Image;
+    document.getElementById("appName").textContent = data.DisplayName;
+    document.getElementById("description").textContent = data.Description;
+}
 
-  //コールバック関数 ( 受信時に実行されます )
-  function data_on_loaded(oj)
-  {
-        //レスポンスを取得
-        var res  = oj.responseText;
+//Callback method.
+function data_on_loaded(oj) {
+    //Get response
+    var res  = oj.responseText;
 
-        var data= JSON.parse(res || "null");
-        //ページで表示
-        document.getElementById("userimg").src = data.Image;
-        document.getElementById("dataUserName").textContent = data.DisplayName;
-  }
+    var data= JSON.parse(res || "null");
+    //Display html
+    document.getElementById("userimg").src = data.Image;
+    document.getElementById("dataUserName").textContent = data.DisplayName;
+}
 
-  // キャンセルボタン
-  function onCancel() {
-      document.getElementById("cancel_flg").value = "1";
-      document.form.submit();
-  }
+// Cancel button.
+function onCancel() {
+    document.getElementById("cancel_flg").value = "1";
+    document.form.submit();
+}

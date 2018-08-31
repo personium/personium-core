@@ -47,6 +47,7 @@ import org.odata4j.producer.resources.ODataBatchProvider;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.CompareJSON;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
@@ -75,7 +76,7 @@ public class UserDataBatchTest extends AbstractUserDataBatchTest {
      * コンストラクタ.
      */
     public UserDataBatchTest() {
-        super();
+        super(new PersoniumCoreApplication());
     }
 
     /**

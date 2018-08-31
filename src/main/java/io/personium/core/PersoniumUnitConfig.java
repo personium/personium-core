@@ -76,6 +76,16 @@ public class PersoniumUnitConfig {
     public static final String PLUGIN_PATH = KEY_ROOT + "plugin.path";
 
     /**
+     * Cell configurations.
+     */
+    public static final class Cell {
+        /** Default value of relayhtmlurl. */
+        public static final String RELAYHTMLURL_DEFAULT = KEY_ROOT + "cell.relayhtmlurl.default";
+        /** Default value of authorizationhtmlurl. */
+        public static final String AUTHORIZATIONHTMLURL_DEFAULT = KEY_ROOT + "cell.authorizationhtmlurl.default";
+    }
+
+    /**
      * OData廻りの設定.
      */
     public static final class OData {
@@ -110,7 +120,7 @@ public class PersoniumUnitConfig {
         public static final String SKIP_MAX_NUM = KEY_ROOT + "odata.query.skip.maxnum";
 
         /** 一覧取得時のデフォルト返却件数. */
-        public static final String TOP_DEFAULT_NUM = KEY_ROOT + "odata.query.top.defaultnum";
+        public static final String TOP_DEFAULT = KEY_ROOT + "odata.query.top.default";
 
         /** $expandのプロパティの最大値数（一覧取得時）. */
         public static final String EXPAND_PROPERTY_MAX_NUM_LIST = KEY_ROOT + "odata.query.expand.property.maxnum.list";
@@ -692,6 +702,22 @@ public class PersoniumUnitConfig {
     }
 
     /**
+     * Get default value of relayhtmlurl.
+     * @return Default value of relayhtmlurl
+     */
+    public static String getRelayhtmlurlDefault() {
+        return get(Cell.RELAYHTMLURL_DEFAULT);
+    }
+
+    /**
+     * Get default value of authorizationhtmlurl.
+     * @return Default value of authorizationhtmlurl
+     */
+    public static String getAuthorizationhtmlurlDefault() {
+        return get(Cell.AUTHORIZATIONHTMLURL_DEFAULT);
+    }
+
+    /**
      * @return $batch処理を行う際のリクエスト最大件数.
      */
     public static String getOdataBatchBulkRequestMaxSize() {
@@ -809,7 +835,7 @@ public class PersoniumUnitConfig {
      * @return 一覧取得時のデフォルト返却件数.
      */
     public static int getTopQueryDefaultSize() {
-        return Integer.parseInt(get(OData.TOP_DEFAULT_NUM));
+        return Integer.parseInt(get(OData.TOP_DEFAULT));
     }
 
     /**

@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.glassfish.jersey.uri.UriComponent;
 import org.odata4j.expression.BoolCommonExpression;
 import org.odata4j.expression.EntitySimpleProperty;
 import org.odata4j.expression.OrderByExpression;
@@ -29,11 +30,10 @@ import org.odata4j.producer.InlineCount;
 import org.odata4j.producer.QueryInfo;
 import org.odata4j.producer.resources.OptionsQueryParser;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Common;
 import io.personium.core.odata.PersoniumOptionsQueryParser;
-import com.sun.jersey.api.uri.UriComponent;
 
 /**
  * クエリをパースして値を返却するクラス.

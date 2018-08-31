@@ -59,6 +59,8 @@ import io.personium.core.auth.AccessContext;
 import io.personium.core.event.PersoniumEventType;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.odata.PersoniumFormatWriterFactory;
+import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * Navigationプロパティを扱うリソース.
@@ -138,7 +140,7 @@ public class ODataPropertyResource extends AbstractODataResource {
         // Entity Responseをレンダー
         List<MediaType> contentTypes = new ArrayList<MediaType>();
         contentTypes.add(outputFormat);
-        UriInfo resUriInfo = PersoniumCoreUtils.createUriInfo(uriInfo, 2);
+        UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 2);
         String key = AbstractODataResource.replaceDummyKeyToNull(ent.getEntityKey().toKeyString());
 
         String responseStr = renderEntityResponse(resUriInfo, res, format, contentTypes);
@@ -248,7 +250,7 @@ public class ODataPropertyResource extends AbstractODataResource {
         this.checkReadAccessContext();
 
         // queryのパース
-        UriInfo uriInfo2 = PersoniumCoreUtils.createUriInfo(uriInfo, 2);
+        UriInfo uriInfo2 = UriUtils.createUriInfo(uriInfo, 2);
         QueryInfo queryInfo = ODataEntitiesResource.queryInfo(uriInfo);
 
         // NavigationProperty経由の一覧取得を実行する
@@ -309,7 +311,7 @@ public class ODataPropertyResource extends AbstractODataResource {
         // アクセス制御
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryOptionsPrivilege());
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.POST
                 ).build();

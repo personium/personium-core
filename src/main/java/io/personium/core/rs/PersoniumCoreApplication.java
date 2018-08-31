@@ -26,6 +26,8 @@ import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.utils.PersoniumThread;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.jersey.filter.PersoniumCoreContainerFilter;
+import io.personium.core.jersey.filter.WriteMethodFilter;
 import io.personium.core.model.file.DataCryptor;
 import io.personium.core.plugin.PluginManager;
 
@@ -72,12 +74,9 @@ public class PersoniumCoreApplication extends Application {
     public final Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<Class<?>>();
         classes.add(PersoniumCoreExceptionMapper.class);
-        // classes.add(UnitCtlResource.class);
-        // classes.add(CellResource.class);
+        classes.add(PersoniumCoreContainerFilter.class);
+        classes.add(WriteMethodFilter.class);
         classes.add(FacadeResource.class);
-        // classes.add(CellCtlResource.class);
-        // classes.add(BoxResource.class);
-
         return classes;
     }
 

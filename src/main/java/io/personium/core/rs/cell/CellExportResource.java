@@ -33,7 +33,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.CellPrivilege;
@@ -137,7 +136,7 @@ public class CellExportResource {
     public Response options() {
         // Check the authority required for execution.
         cellRsCmp.checkAccessContext(cellRsCmp.getAccessContext(), CellPrivilege.ROOT);
-        return PersoniumCoreUtils.responseBuilderForOptions(
+        return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET,
                 HttpMethod.POST
                 ).build();

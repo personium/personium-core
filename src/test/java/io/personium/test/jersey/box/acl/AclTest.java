@@ -32,19 +32,18 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
-
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.model.ctl.Role;
+import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
@@ -64,17 +63,7 @@ import io.personium.test.utils.TestMethodUtils;
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({Unit.class, Integration.class, Regression.class })
-public class AclTest extends JerseyTest {
-
-    private static final Map<String, String> INIT_PARAMS = new HashMap<String, String>();
-    static {
-        INIT_PARAMS.put("com.sun.jersey.config.property.packages",
-                "io.personium.core.rs");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerRequestFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-        INIT_PARAMS.put("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "io.personium.core.jersey.filter.PersoniumCoreContainerFilter");
-    }
+public class AclTest extends PersoniumTest {
 
     static final String TEST_CELL1 = "testcell1";
     static final String TEST_ROLE1 = "role4";
@@ -90,7 +79,7 @@ public class AclTest extends JerseyTest {
      * コンストラクタ.
      */
     public AclTest() {
-        super(new WebAppDescriptor.Builder(INIT_PARAMS).build());
+        super(new PersoniumCoreApplication());
     }
 
     /**

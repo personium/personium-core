@@ -23,6 +23,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -37,12 +38,13 @@ import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.StreamingOutput;
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.wink.webdav.model.Multistatus;
 import org.apache.wink.webdav.model.ObjectFactory;
@@ -55,9 +57,8 @@ import org.json.simple.parser.ParseException;
 import org.odata4j.producer.CountResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import io.personium.common.auth.token.Role;
 import io.personium.common.es.response.PersoniumGetResponse;
@@ -68,7 +69,6 @@ import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
-import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.http.header.ByteRangeSpec;
 import io.personium.core.http.header.RangeHeaderHandler;
 import io.personium.core.model.Box;
@@ -100,6 +100,9 @@ import io.personium.core.odata.PersoniumODataProducer;
  * DavCmp implementation using FileSystem.
  */
 public class DavCmpFsImpl implements DavCmp {
+    /** property key separator. ex:name@namespace. */
+    private static final String PROP_KEY_SEPARATOR = "@";
+
     String fsPath;
     File fsDir;
 
@@ -324,29 +327,31 @@ public class DavCmpFsImpl implements DavCmp {
         this.name = fsDir.getName();
         this.acl = this.translateAcl(this.metaFile.getAcl());
 
-        @SuppressWarnings("unchecked")
-        Map<String, String> props = (Map<String, String>) this.metaFile.getProperties();
-        if (props != null) {
-            for (Map.Entry<String, String> entry : props.entrySet()) {
-                String key = entry.getKey();
-                String val = entry.getValue();
-                int idx = key.indexOf("@");
-                String elementName = key.substring(0, idx);
-                String namespace = key.substring(idx + 1);
-                QName keyQName = new QName(namespace, elementName);
+        // TODO Interim correspondence.(For security reasons)
+//        @SuppressWarnings("unchecked")
+//        Map<String, String> props = (Map<String, String>) this.metaFile.getProperties();
+//        if (props != null) {
+//            for (Map.Entry<String, String> entry : props.entrySet()) {
+//                String key = entry.getKey();
+//                String val = entry.getValue();
+//                int idx = key.indexOf(PROP_KEY_SEPARATOR);
+//                String elementName = key.substring(0, idx);
+//                String namespace = key.substring(idx + 1);
+//                QName keyQName = new QName(namespace, elementName);
 
-                Element element = parseProp(val);
-                String elementNameSpace = element.getNamespaceURI();
-                // ownerRepresentativeAccountsの取り出し
-                if (Key.PROP_KEY_OWNER_REPRESENTIVE_ACCOUNTS.equals(keyQName)) {
-                    NodeList accountNodeList = element.getElementsByTagNameNS(elementNameSpace,
-                            Key.PROP_KEY_OWNER_REPRESENTIVE_ACCOUNT.getLocalPart());
-                    for (int i = 0; i < accountNodeList.getLength(); i++) {
-                        this.ownerRepresentativeAccounts.add(accountNodeList.item(i).getTextContent().trim());
-                    }
-                }
-            }
-        }
+//                Element element = parseProp(val);
+//                String elementNameSpace = element.getNamespaceURI();
+
+//                // ownerRepresentativeAccountsの取り出し
+//                if (Key.PROP_KEY_OWNER_REPRESENTIVE_ACCOUNTS.equals(keyQName)) {
+//                    NodeList accountNodeList = element.getElementsByTagNameNS(elementNameSpace,
+//                            Key.PROP_KEY_OWNER_REPRESENTIVE_ACCOUNT.getLocalPart());
+//                    for (int i = 0; i < accountNodeList.getLength(); i++) {
+//                        this.ownerRepresentativeAccounts.add(accountNodeList.item(i).getTextContent().trim());
+//                    }
+//                }
+//            }
+//        }
     }
 
 
@@ -362,23 +367,23 @@ public class DavCmpFsImpl implements DavCmp {
         }
     }
 
-    private Element parseProp(String value) {
-        // valをDOMでElement化
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = null;
-        Document doc = null;
-        try {
-            builder = factory.newDocumentBuilder();
-            ByteArrayInputStream is = new ByteArrayInputStream(value.getBytes(CharEncoding.UTF_8));
-            doc = builder.parse(is);
-        } catch (Exception e1) {
-            throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e1);
-        }
-        Element e = doc.getDocumentElement();
-        return e;
-    }
-
+    // TODO Interim correspondence.(For security reasons)
+//    private Element parseProp(String value) {
+//        // valをDOMでElement化
+//        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//        factory.setNamespaceAware(true);
+//        DocumentBuilder builder = null;
+//        Document doc = null;
+//        try {
+//            builder = factory.newDocumentBuilder();
+//            ByteArrayInputStream is = new ByteArrayInputStream(value.getBytes(CharEncoding.UTF_8));
+//            doc = builder.parse(is);
+//        } catch (Exception e1) {
+//            throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND.reason(e1);
+//        }
+//        Element e = doc.getDocumentElement();
+//        return e;
+//    }
 
     /*
      * proppatch メソッドへの対応. 保存の方式 key = namespaceUri + "@" + localName Value =
@@ -414,7 +419,7 @@ public class DavCmpFsImpl implements DavCmp {
                 List<Element> lpe = prop.getAny();
                 for (Element elem : lpe) {
                     res.setProperty(elem, HttpStatus.SC_OK);
-                    String key = elem.getLocalName() + "@" + elem.getNamespaceURI();
+                    String key = elem.getLocalName() + PROP_KEY_SEPARATOR + elem.getNamespaceURI();
                     String value = PersoniumCoreUtils.nodeToString(elem);
                     log.debug("key: " + key);
                     log.debug("val: " + value);
@@ -430,7 +435,7 @@ public class DavCmpFsImpl implements DavCmp {
                 List<Element> lpe = prop.getAny();
                 for (Element elem : lpe) {
 
-                    String key = elem.getLocalName() + "@" + elem.getNamespaceURI();
+                    String key = elem.getLocalName() + PROP_KEY_SEPARATOR + elem.getNamespaceURI();
                     String v = (String) propsJson.get(key);
                     log.debug("Removing key: " + key);
                     if (v == null) {
@@ -496,7 +501,7 @@ public class DavCmpFsImpl implements DavCmp {
             } catch (ParseException e) {
                 throw PersoniumCoreException.Dav.XML_ERROR.reason(e);
             }
-            // Not register the value of xml: base in Elasticsearch. TODO これでいいのか？
+            // Not register the value of xml: base in Elasticsearch.
             aclJson.remove(KEY_ACL_BASE);
             this.metaFile.setAcl(aclJson);
             this.metaFile.save();
@@ -1186,7 +1191,7 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     static final String KEY_SCHEMA = "Schema";
-    static final String KEY_ACL_BASE = "@base";
+    static final String KEY_ACL_BASE = "@xml.base";
     static final String ACL_RELATIVE_PATH_FORMAT = "../%s/%s";
 
     /**
@@ -1307,6 +1312,30 @@ public class DavCmpFsImpl implements DavCmp {
     @Override
     public String getId() {
         return this.metaFile.getNodeId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getProperty(String propertyName, String propertyNamespace) throws IOException, SAXException {
+        String key = propertyName + PROP_KEY_SEPARATOR + propertyNamespace;
+        String propertyXml = metaFile.getProperty(key);
+        if (StringUtils.isEmpty(propertyXml)) {
+            return propertyXml;
+        }
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        Element element;
+        try {
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            ByteArrayInputStream is = new ByteArrayInputStream(propertyXml.getBytes(CharEncoding.UTF_8));
+            element = builder.parse(is).getDocumentElement();
+        } catch (ParserConfigurationException | UnsupportedEncodingException e) {
+            // Usually, this exception does not occur.
+            throw PersoniumCoreException.Server.UNKNOWN_ERROR;
+        }
+        return element.getFirstChild().getNodeValue();
     }
 
     @Override
