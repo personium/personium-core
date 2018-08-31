@@ -3,7 +3,7 @@
 	<groupId>io.personium</groupId>
 	<artifactId>personium-core</artifactId>
 	<packaging>war</packaging>
-	<version>1.6.13</version>
+	<version>1.6.15</version>
 	<name>personium-core Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<licenses>
@@ -18,6 +18,7 @@
 		<final.name>personium-core</final.name>
 		<java.source.version>1.8</java.source.version>
 		<java.target.version>1.8</java.target.version>
+		<jersey.version>2.27</jersey.version>
 		<logback.version>1.2.3</logback.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<httpclient.version>4.5.5</httpclient.version>
@@ -35,7 +36,7 @@
 		<dependency>
 			<groupId>io.personium</groupId>
 			<artifactId>personium-lib-common</artifactId>
-			<version>1.4.13</version>
+			<version>1.4.14</version>
 		</dependency>
 		<dependency>
 			<groupId>io.personium</groupId>
@@ -67,18 +68,46 @@
 		<dependency>
 			<groupId>org.apache.wink</groupId>
 			<artifactId>wink-webdav</artifactId>
-			<version>1.1.3-incubating</version>
+			<version>1.4</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-jaxrs_1.1_spec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.jersey.jersey-test-framework</groupId>
-			<artifactId>jersey-test-framework-grizzly2</artifactId>
-			<version>1.19</version>
+			<groupId>org.glassfish.jersey.test-framework.providers</groupId>
+			<artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+			<version>2.25.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-bundle</artifactId>
-			<version>1.10</version>
+			<groupId>org.glassfish.jersey.test-framework</groupId>
+			<artifactId>jersey-test-framework-core</artifactId>
+			<version>2.25.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-grizzly2-servlet</artifactId>
+			<version>2.25.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.inject</groupId>
+			<artifactId>jersey-hk2</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-moxy</artifactId>
+			<version>${jersey.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -152,6 +181,10 @@
 					<groupId>org.eclipse.persistence</groupId>
 					<artifactId>eclipselink</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>javax.ws.rs</groupId>
+					<artifactId>jsr311-api</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -223,6 +256,11 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
@@ -317,6 +355,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
+
 	<build>
 		<finalName>${final.name}</finalName>
 		<resources>
