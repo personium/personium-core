@@ -115,8 +115,8 @@ public class TokenEndPointResource {
     /**
      * OAuth2.0 Token Endpoint. <h2>Issue some kinds of tokens.</h2>
      * <ul>
-     *<li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
-     *<li> Issue CellLocal if scope does not exist. </ li>
+     * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
+     * <li> Issue CellLocal if scope does not exist. </ li>
      * </ul>
      * @param uriInfo  URI information
      * @param authzHeader Authorization Header
@@ -359,11 +359,11 @@ public class TokenEndPointResource {
     }
 
     /**
-     *Client authentication processing.
+     * Client authentication processing.
      * @param clientId
      * @param clientSecret
      * @param authzHeader
-     *@return null: Client authentication failed.
+     * @return null: Client authentication failed.
      */
     private String clientAuth(final String clientId, final String clientSecret,
             final String authzHeader) {
@@ -665,8 +665,8 @@ public class TokenEndPointResource {
     }
 
     /**
-     *Create a path to set as a cookie.
-     *@return Path to set for cookie
+     * Create a path to set as a cookie.
+     * @return Path to set for cookie
      */
     private String getCookiePath() {
         String cellUrl = cell.getUrl();

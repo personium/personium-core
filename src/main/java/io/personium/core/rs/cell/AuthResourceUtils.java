@@ -33,7 +33,7 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.lock.AccountLockManager;
 
 /**
- *A utility class that defines methods that are generic to use in resource classes.
+ * A utility class that defines methods that are generic to use in resource classes.
  */
 public class AuthResourceUtils {
     static Logger log = LoggerFactory.getLogger(AuthResourceUtils.class);
@@ -45,9 +45,9 @@ public class AuthResourceUtils {
     }
 
     /**
-     *JS source loading utility.
-     *@ param fileName JS source file name
-     *@return String JS source
+     * JS source loading utility.
+     * @ param fileName JS source file name
+     * @return String JS source
      */
     public static String getJavascript(String fileName) {
 
@@ -103,10 +103,10 @@ public class AuthResourceUtils {
     }
 
     /**
-     *Check whether the target of the transcell token and cell are equal.
-     *@ param cell target cell
-     *@ param tcToken Transcel token
-     *@return boolean Returns true if the target of the token is cell
+     * Check whether the target of the transcell token and cell are equal.
+     * @ param cell target cell
+     * @ param tcToken Transcel token
+     * @return boolean Returns true if the target of the token is cell
      * @throws MalformedURLException MalformedURLException
      */
     protected static boolean checkTargetUrl(Cell cell, TransCellAccessToken tcToken) throws MalformedURLException {
@@ -130,17 +130,17 @@ public class AuthResourceUtils {
     }
 
     /**
-     *Process to check if an Account lock exists.
-     *@ param accountId account ID
-     *Returns true if @return lock exists
+     * Process to check if an Account lock exists.
+     * @ param accountId account ID
+     * Returns true if @return lock exists
      */
     public static Boolean isLockedAccount(String accountId) {
         return AccountLockManager.hasLockObject(accountId);
     }
 
     /**
-     *Register Account lock.
-     *@ param accountId account ID
+     * Register Account lock.
+     * @ param accountId account ID
      */
     public static void registAccountLock(String accountId) {
         AccountLockManager.registAccountLockObjct(accountId);

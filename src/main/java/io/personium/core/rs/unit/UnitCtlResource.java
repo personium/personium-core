@@ -60,12 +60,12 @@ public class UnitCtlResource extends ODataResource {
     static Logger log = LoggerFactory.getLogger(UnitCtlResource.class);
 
     /**
-     *Cache to use the search result of Cell at beforeDelete with afterDelete.
+     * Cache to use the search result of Cell at beforeDelete with afterDelete.
      */
     Cell cell;
 
     /**
-     *constructor.
+     * constructor.
      * @param accessContext AccessContext
      * @param uriInfo UriInfo
      */
@@ -109,8 +109,8 @@ public class UnitCtlResource extends ODataResource {
     }
 
     /**
-     *Obtain Auth Scheme that can be used for authentication.
-     *Autret Scheme that can be used for @return authentication
+     * Obtain Auth Scheme that can be used for authentication.
+     * Autret Scheme that can be used for @return authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {
@@ -143,9 +143,9 @@ public class UnitCtlResource extends ODataResource {
     }
 
     /**
-     *Check processing required when updating.
+     * Check processing required when updating.
      * @param oEntityWrapper OEntityWrapper
-     *@ param o EntityKey The entityKey to be updated
+     * @ param o EntityKey The entityKey to be updated
      */
     @Override
     public void beforeUpdate(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
@@ -212,8 +212,8 @@ public class UnitCtlResource extends ODataResource {
     }
 
     /**
-     *Corresponds to the service metadata request.
-     *@return JAX-RS response object
+     * Corresponds to the service metadata request.
+     * @return JAX-RS response object
      */
     @GET
     @Path("{first: \\$}metadata")
@@ -222,7 +222,7 @@ public class UnitCtlResource extends ODataResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
@@ -277,10 +277,10 @@ public class UnitCtlResource extends ODataResource {
 
     /**
      * Not Implemented. <br />
-     *Currently unimplemented because it is only necessary for $ batch access control <br />
-     *Returns whether the access context has permission to $ batch.
-     *@ param ac access context
-     *@return true: The access context has permission to $ batch
+     * Currently unimplemented because it is only necessary for $ batch access control <br />
+     * Returns whether the access context has permission to $ batch.
+     * @ param ac access context
+     * @return true: The access context has permission to $ batch
      */
     @Override
     public boolean hasPrivilegeForBatch(AccessContext ac) {

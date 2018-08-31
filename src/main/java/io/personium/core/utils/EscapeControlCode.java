@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *Class for escaping control code.
+ * Class for escaping control code.
  */
 public class EscapeControlCode {
 
@@ -31,9 +31,9 @@ public class EscapeControlCode {
     }
 
     /**
-     *Escape control code.
-     *@ param input String to be escaped
-     *@return String escaping control code
+     * Escape control code.
+     * @ param input String to be escaped
+     * @return String escaping control code
      */
     public static String escape(String input) {
         String unicodePattern = "[\u0000-\u001F\u007F]";
@@ -50,9 +50,9 @@ public class EscapeControlCode {
     }
 
     /**
-     *And determines whether or not a control code is included.
-     *@ param input judgment character string
-     *@return true: Contains the control code false: contains no control code
+     * And determines whether or not a control code is included.
+     * @ param input judgment character string
+     * @return true: Contains the control code false: contains no control code
      */
     public static boolean isContainsControlChar(String input) {
         String unicodePattern = "[\u0000-\u001F\u007F]";
@@ -65,9 +65,9 @@ public class EscapeControlCode {
     }
 
     /**
-     *Converts a character string to a Unicode character.
-     *@ param convertString String to be converted
-     *@return Unicode character
+     * Converts a character string to a Unicode character.
+     * @ param convertString String to be converted
+     * @return Unicode character
      */
     private static String convertToUnicode(String convertString) {
         StringBuilder sb = new StringBuilder();

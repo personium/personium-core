@@ -98,13 +98,13 @@ import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 
 /**
- *Converts the query including $ filter of OData to JSON based QueryDSL of ES.
- *$ filter is converted to BoolCommonExpression in Oata4J.
- *OData 4J adopts Visitor pattern for evaluation of Expression,
- *This class implements ExpressionVisitor to act as Visitor here.
- *After getting Visit, if you getSource () this object,
- *You can get the JSON that should be passed to the SearchRequest of the ES.
- *For queries not supported by Personium.io, throw an exception.
+ * Converts the query including $ filter of OData to JSON based QueryDSL of ES.
+ * $ filter is converted to BoolCommonExpression in Oata4J.
+ * OData 4J adopts Visitor pattern for evaluation of Expression,
+ * This class implements ExpressionVisitor to act as Visitor here.
+ * After getting Visit, if you getSource () this object,
+ * You can get the JSON that should be passed to the SearchRequest of the ES.
+ * For queries not supported by Personium.io, throw an exception.
  */
 public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     private static final int DEFAULT_TOP_VALUE = PersoniumUnitConfig.getTopQueryDefaultSize();
@@ -114,21 +114,21 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     Stack<Map<String, Object>> stack = new Stack<Map<String, Object>>();
     Map<String, Object> orderBy;
     /**
-     *SORT_ASC Ascending order.
+     * SORT_ASC Ascending order.
      */
     public static final String SORT_ASC = "asc";
     /**
-     *SORT_DESC Descending order.
+     * SORT_DESC Descending order.
      */
     public static final String SORT_DESC = "desc";
 
     /**
-     *log.
+     * log.
      */
     static Logger log = LoggerFactory.getLogger(EsQueryHandler.class);
 
     /**
-     *constructor.
+     * constructor.
      */
     public EsQueryHandler() {
         this.source = new HashMap<String, Object>();
@@ -138,10 +138,10 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *Constructor 2.
-     *Processes $ filter, $ skip, $ top, $ orderby, $ select.
-     *$ expand is not supported.
-     *@ param entityType entity type
+     * Constructor 2.
+     * Processes $ filter, $ skip, $ top, $ orderby, $ select.
+     * $ expand is not supported.
+     * @ param entityType entity type
      */
     public EsQueryHandler(EdmEntityType entityType) {
         this.source = new HashMap<String, Object>();
@@ -149,9 +149,9 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *Initialization.
-     *@ param queryInfo QueryInfo of OData 4 j.
-     *@ param implicitConds Implicit search condition.
+     * Initialization.
+     * @ param queryInfo QueryInfo of OData 4 j.
+     * @ param implicitConds Implicit search condition.
      */
     public void initialize(QueryInfo queryInfo, List<Map<String, Object>> implicitConds) {
         List<Map<String, Object>> filters = new ArrayList<Map<String, Object>>();
@@ -210,7 +210,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *@ param top $ top value
+     * @ param top $ top value
      */
     public void setTop(Integer top) {
         if (top != null) {
@@ -221,7 +221,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *@ param skip The value of $ skip
+     * @ param skip The value of $ skip
      */
     public void setSkip(Integer skip) {
         if (skip != null) {
@@ -230,7 +230,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *@ param orderBy value of $ orderBy
+     * @ param orderBy value of $ orderBy
      */
     public void setOrderBy(List<OrderByExpression> orderBy) {
         if (orderBy != null) {
@@ -248,15 +248,15 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *@ param selects $ select value
+     * @ param selects $ select value
      */
     public void setSelect(List<EntitySimpleProperty> selects) {
         getSelectQuery(this.source, selects);
     }
 
     /**
-     *Assemble a query for ES search from the value of $ select.
-     *@ param baseSource Map containing input values
+     * Assemble a query for ES search from the value of $ select.
+     * @ param baseSource Map containing input values
      * @param selects $select
      */
     public void getSelectQuery(Map<String, Object> baseSource,
@@ -296,9 +296,9 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *Get the field name.
-     *@ param prop Property name
-     *@return field name
+     * Get the field name.
+     * @ param prop Property name
+     * @return field name
      */
     protected String getFieldName(String prop) {
         String fieldName = OEntityDocHandler.KEY_STATIC_FIELDS + "." + prop;
@@ -306,8 +306,8 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *Get search query.
-     *@ return search query.
+     * Get search query.
+     * @ return search query.
      */
     public Map<String, Object> getSource() {
         log.debug(this.source.toString());
@@ -315,21 +315,21 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *Common processing before left side processing.
+     * Common processing before left side processing.
      */
     @Override
     public void beforeDescend() {
     }
 
     /**
-     *Common processing after processing on left side and right side.
+     * Common processing after processing on left side and right side.
      */
     @Override
     public void afterDescend() {
     }
 
     /**
-     *Common processing before left side processing, right side processing after processing.
+     * Common processing before left side processing, right side processing after processing.
      */
     @Override
     public void betweenDescend() {
@@ -357,9 +357,9 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *Get $ orderby option.
-     *@ param option odata 4 j options
-     *@return optionValue Obtained options
+     * Get $ orderby option.
+     * @ param option odata 4 j options
+     * @return optionValue Obtained options
      */
     public String getOrderOption(Direction option) {
         String optionValue;
@@ -409,7 +409,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *Visit at exact match search.
+     * Visit at exact match search.
      * @param expr EqExpression
      */
     @Override
@@ -443,13 +443,13 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *Gets the schema definition of the key specified in the search condition.
-     *An error occurs in the following cases
+     * Gets the schema definition of the key specified in the search condition.
+     * An error occurs in the following cases
      * <ul>
-     *<li> When __ metadata is specified </ li>
-     *<li> When an undefined Property is specified </ li>
-     *<li> If a name that does not follow Proprety's naming convention is specified <br />
-     *(Since the above can not be registered as Property, it is regarded as a format error because the schema definition can not be acquired.) </ Li>
+     * <li> When __ metadata is specified </ li>
+     * <li> When an undefined Property is specified </ li>
+     * <li> If a name that does not follow Proprety's naming convention is specified <br />
+     * (Since the above can not be registered as Property, it is regarded as a format error because the schema definition can not be acquired.) </ Li>
      * </ul>
      * @param searchKey
      * @return EdmProperty
@@ -464,9 +464,9 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *Return search string of elasticsearch.
+     * Return search string of elasticsearch.
      * @param expr CommonExpression
-     *@return search string of elasticsearch
+     * @return search string of elasticsearch
      */
     private Object getSearchValue(CommonExpression expr) {
         if (expr instanceof IntegralLiteral) {
@@ -495,19 +495,19 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *Return the search key of elasticsearch.
+     * Return the search key of elasticsearch.
      * @param expr CommonExpression
-     *Search key for @return elasticsearch
+     * Search key for @return elasticsearch
      */
     private String getSearchKey(CommonExpression expr) {
         return getSearchKey(expr, false);
     }
 
     /**
-     *Return the search key of elasticsearch.
+     * Return the search key of elasticsearch.
      * @param expr CommonExpression
      * @param isUntouched isUntouched
-     *Search key for @return elasticsearch
+     * Search key for @return elasticsearch
      */
     protected String getSearchKey(CommonExpression expr, Boolean isUntouched) {
         //Set as search key
@@ -567,7 +567,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *Visit of EntitySimpleProperty.
+     * Visit of EntitySimpleProperty.
      * @param expr EntitySimpleProperty
      */
     @Override
@@ -809,7 +809,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     *String visit.
+     * String visit.
      * @param expr StringLiteral
      */
     @Override

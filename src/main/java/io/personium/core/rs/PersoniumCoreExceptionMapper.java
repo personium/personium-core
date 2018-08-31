@@ -32,7 +32,7 @@ import io.personium.core.exceptions.ODataErrorMessage;
 import io.personium.plugin.base.PluginMessageUtils.Severity;
 
 /**
- *Exception mapper for this application. Perform log output and error response output in an appropriate form.
+ * Exception mapper for this application. Perform log output and error response output in an appropriate form.
  */
 @Provider
 public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Exception> {
@@ -50,8 +50,8 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
             return this.handleWebApplicationException((WebApplicationException) exception);
         }
         /*
-         *Handling exceptions other than PersoniumCoreException. However, when WebApplicationException or its subclass is thrown,
-         *It was processed by the JAX-RS layer and it seems not to come here. (This is true in Jersey)
+         * Handling exceptions other than PersoniumCoreException. However, when WebApplicationException or its subclass is thrown,
+         * It was processed by the JAX-RS layer and it seems not to come here. (This is true in Jersey)
          */
         //Log output
         //Since Unknown Exception occurs in various cases, it makes ID of a random number so that log becomes unique.
@@ -70,7 +70,7 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
     }
 
     /*
-     *Handling of PersoniumCoreException.
+     * Handling of PersoniumCoreException.
      */
     private Response handlePersoniumCoreException(final PersoniumCoreException pce) {
         Severity sv = pce.getSeverity();
@@ -97,7 +97,7 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
     }
 
     /*
-     *Handling of PersoniumCoreException.
+     * Handling of PersoniumCoreException.
      */
     private Response handleWebApplicationException(final WebApplicationException webappException) {
         Response res = webappException.getResponse();

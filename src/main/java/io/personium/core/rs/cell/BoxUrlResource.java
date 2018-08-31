@@ -38,7 +38,7 @@ import io.personium.core.model.ModelFactory;
 import io.personium.core.utils.ODataUtils;
 
 /**
- *JOX-RS Resource for obtaining Box URL.
+ * JOX-RS Resource for obtaining Box URL.
  */
 public class BoxUrlResource {
 
@@ -58,9 +58,9 @@ public class BoxUrlResource {
     }
 
     /**
-     *Box URL acquisition end point.
-     *@ param querySchema Schema URL of the Box to be acquired
-     *@return BoxUrlResource object
+     * Box URL acquisition end point.
+     * @ param querySchema Schema URL of the Box to be acquired
+     * @return BoxUrlResource object
      */
     @SuppressWarnings("unchecked")
     @GET

@@ -202,8 +202,8 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Get Map <key, DavCmpEsImpl> of the collection defined in the bar file.
-     *@return collection MapDavCmpEsImpl object
+     * Get Map <key, DavCmpEsImpl> of the collection defined in the bar file.
+     * @return collection MapDavCmpEsImpl object
      */
     private Map<String, DavCmp> getCollections(Map<String, DavCmp> davCollectionMap, String colType) {
         Map<String, DavCmp> map = new HashMap<String, DavCmp>();
@@ -327,8 +327,8 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Register the link information defined in 10_odatarelations.json to the ES.
-     *@ param mappedObject Object read from JSON file
+     * Register the link information defined in 10_odatarelations.json to the ES.
+     * @ param mappedObject Object read from JSON file
      */
     private void createUserdataLink(JSONUserDataLink mappedObject, PersoniumODataProducer producer) {
         OEntityId sourceEntity = null;
@@ -371,9 +371,9 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Get the type of entry under 90_contents of the bar file.
-     *@ param entryName bar File entry name
-     *@return entry type
+     * Get the type of entry under 90_contents of the bar file.
+     * @ param entryName bar File entry name
+     * @return entry type
      */
     private int getEntryType(String entryName) {
 
@@ -475,9 +475,9 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *bar / 90_contents / {OdataCol_name} is checked to see if it is a correct definition.
-     *@ param entryName entry name (collection name)
-     *@ param odataCollectionMap Collection's Map object
+     * bar / 90_contents / {OdataCol_name} is checked to see if it is a correct definition.
+     * @ param entryName entry name (collection name)
+     * @ param odataCollectionMap Collection's Map object
      */
     private void isValidODataCollectionContents(String entryName) {
 
@@ -554,8 +554,8 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Returns the file name extension.
-     *@ param filename file name
+     * Returns the file name extension.
+     * @ param filename file name
      */
     private String getFileExtension(String filename) {
         String extension = "";
@@ -567,9 +567,9 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Get Map <key, DavCmpEsImpl> of the collection defined in the bar file.
-     *@ param entryName entry name
-     *@return collection MapDavCmpEsImpl object
+     * Get Map <key, DavCmpEsImpl> of the collection defined in the bar file.
+     * @ param entryName entry name
+     * @return collection MapDavCmpEsImpl object
      */
     private DavCmp getCollection(String entryName) {
         int pos = entryName.lastIndexOf("/");
@@ -581,10 +581,10 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Analyzes 00_ $ metadata_xml to register the user schema.
-     *@ param entryName entry name
-     *@ param pathInZip input Path
-     *@ param davCmp Collection Operation object
+     * Analyzes 00_ $ metadata_xml to register the user schema.
+     * @ param entryName entry name
+     * @ param pathInZip input Path
+     * @ param davCmp Collection Operation object
      */
     private void registUserSchema(String entryName, Path pathInZip, DavCmp davCmp) {
         EdmDataServices metadata = null;
@@ -622,9 +622,9 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Register ComplexType / ComplexTypeProperty defined in Edmx.
-     *@ param metadata Edmx metadata
-     *@ param davCmp Collection Operation object
+     * Register ComplexType / ComplexTypeProperty defined in Edmx.
+     * @ param metadata Edmx metadata
+     * @ param davCmp Collection Operation object
      */
     @SuppressWarnings("unchecked")
     private void createComplexTypes(EdmDataServices metadata, DavCmp davCmp) {
@@ -658,9 +658,9 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Register EntityType / Property defined in Edmx.
-     *@ param metadata Edmx metadata
-     *@ param davCmp Collection Operation object
+     * Register EntityType / Property defined in Edmx.
+     * @ param metadata Edmx metadata
+     * @ param davCmp Collection Operation object
      */
     @SuppressWarnings("unchecked")
     private void createEntityTypes(EdmDataServices metadata, DavCmp davCmp) {
@@ -696,9 +696,9 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Register Property / ComplexTypeProperty defined in Edmx.
-     *@ param entity EntityType / ComplexType object in which the Property to be registered is defined
-     *@ param producer OData producer
+     * Register Property / ComplexTypeProperty defined in Edmx.
+     * @ param entity EntityType / ComplexType object in which the Property to be registered is defined
+     * @ param producer OData producer
      */
     @SuppressWarnings("unchecked")
     private void createProperties(EdmStructuralType entity, PersoniumODataProducer producer) {
@@ -748,9 +748,9 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Register AssociationEnd and link information defined in Edmx.
-     *@ param metadata Edmx metadata
-     *@ param davCmp Collection Operation object
+     * Register AssociationEnd and link information defined in Edmx.
+     * @ param metadata Edmx metadata
+     * @ param davCmp Collection Operation object
      */
     private void createAssociations(EdmDataServices metadata, DavCmp davCmp) {
         Iterable<EdmAssociation> associations = metadata.getAssociations();
@@ -791,11 +791,11 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Register the AssociationEnd passed as an argument.
-     *@ param producer Entity PersoniumODataProcucer object for registration
-     *@ param userMetadata User defined schema object
-     *@ param associationEnd AssociationEnd object for registration
-     *@ param associationEndName AssociationEnd name
+     * Register the AssociationEnd passed as an argument.
+     * @ param producer Entity PersoniumODataProcucer object for registration
+     * @ param userMetadata User defined schema object
+     * @ param associationEnd AssociationEnd object for registration
+     * @ param associationEndName AssociationEnd name
      */
     @SuppressWarnings("unchecked")
     private void createAssociationEnd(PersoniumODataProducer producer,
@@ -813,10 +813,10 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Divides the input string ("entity type name: role name") with a colon and returns the character string after the colon.
-     *Throws an exception if the colon is not included in the string.
-     *@ param sourceRoleName The name of the source role ("entity type name: role name")
-     *@return Actual role name
+     * Divides the input string ("entity type name: role name") with a colon and returns the character string after the colon.
+     * Throws an exception if the colon is not included in the string.
+     * @ param sourceRoleName The name of the source role ("entity type name: role name")
+     * @return Actual role name
      */
     private String getRealRoleName(String sourceRoleName) {
         String[] tokens = sourceRoleName.split(":");
@@ -830,10 +830,10 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Reads data of 10_odatarelations.json and generates Link information of user data.
-     *@ param entryName Target file name
-     *@ param pathInZip input Path
-     *@return Link information of user data
+     * Reads data of 10_odatarelations.json and generates Link information of user data.
+     * @ param entryName Target file name
+     * @ param pathInZip input Path
+     * @return Link information of user data
      */
     private JSONUserDataLinks registJsonLinksUserdata(String entryName, Path pathInZip) {
         ObjectMapper mapper = new ObjectMapper();
@@ -865,9 +865,9 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Validation of 10_odatarelations.json.
-     *@ param jsonName JSON filename
-     *@ param userDataLink read JSON object
+     * Validation of 10_odatarelations.json.
+     * @ param jsonName JSON filename
+     * @ param userDataLink read JSON object
      */
     private void userDataLinksJsonValidate(JSONUserDataLink userDataLink) {
         if (userDataLink.getFromType() == null) {
@@ -966,8 +966,8 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Register the WebDAV file.
-     *@ param entryName bar File entry name
+     * Register the WebDAV file.
+     * @ param entryName bar File entry name
      * @param pathInZip Path
      */
     private void registWebDavFile(String entryName, Path pathInZip) {
@@ -1073,21 +1073,21 @@ public class BarFileContentsInstallVisitor implements FileVisitor<Path> {
     }
 
     /**
-     *Output of Http response message.
-     *@ param isError Specify true on error, false otherwise.
-     *@ param code Message code (message code defined in personium-messages.properties)
-     *@ param path Processing target resource path (ex. /bar/meta/roles.json)
+     * Output of Http response message.
+     * @ param isError Specify true on error, false otherwise.
+     * @ param code Message code (message code defined in personium-messages.properties)
+     * @ param path Processing target resource path (ex. /bar/meta/roles.json)
      */
     private void writeOutputStream(boolean isError, String code, String path) {
         writeOutputStream(isError, code, path, "");
     }
 
     /**
-     *bar File output of installation log details.
-     *@ param isError Specify true on error, false otherwise.
-     *@ param code Message code (message code defined in personium-messages.properties)
-     *@ param path Processing target resource path (ex. /bar/meta/roles.json)
-     *@ param detail Detailed information on processing failure (PL-BI-2xxx)
+     * bar File output of installation log details.
+     * @ param isError Specify true on error, false otherwise.
+     * @ param code Message code (message code defined in personium-messages.properties)
+     * @ param path Processing target resource path (ex. /bar/meta/roles.json)
+     * @ param detail Detailed information on processing failure (PL-BI-2xxx)
      */
     private void writeOutputStream(boolean isError, String code, String path, String detail) {
         String message = PersoniumCoreMessageUtils.getMessage(code);

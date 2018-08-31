@@ -71,7 +71,7 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- *JAX-RS Resource for event log.
+ * JAX-RS Resource for event log.
  */
 public class LogResource {
 
@@ -101,7 +101,7 @@ public class LogResource {
     }
 
     /**
-     *Get the list of the current event log files.
+     * Get the list of the current event log files.
      * @return JAX-RS Response Object
      */
     @Path(CURRENT_COLLECTION)
@@ -112,12 +112,12 @@ public class LogResource {
     }
 
     /**
-     *Obtain a list of archive event log files.
+     * Obtain a list of archive event log files.
      * @param requestBodyXml Request Body
-     *@ param uriInfo request URL information
-     *@ param contentLength contentlength Content of header
-     *@ param transferEncoding Contents of Transfer-Encoding header
-     *@ param depth Depth header content
+     * @ param uriInfo request URL information
+     * @ param contentLength contentlength Content of header
+     * @ param transferEncoding Contents of Transfer-Encoding header
+     * @ param depth Depth header content
      * @return JAX-RS Response Object
      */
     @Path(ARCHIVE_COLLECTION)
@@ -205,7 +205,7 @@ public class LogResource {
     }
 
     /**
-     *Create a response of PROPFIND.
+     * Create a response of PROPFIND.
      */
     org.apache.wink.webdav.model.Response createPropfindResponse(long created, long updated, String href, Long size) {
         //Add href
@@ -250,9 +250,9 @@ public class LogResource {
     }
 
     /**
-     *Get event log file.
-     *@ param ifNoneMatch If-None-Match header
-     *@ param logCollection Collection name
+     * Get event log file.
+     * @ param ifNoneMatch If-None-Match header
+     * @ param logCollection Collection name
      * @param fileName fileName
      * @return JAXRS Response
      */
@@ -338,8 +338,8 @@ public class LogResource {
     }
 
     /**
-     *Acquire an empty response to be returned when there is no event log.
-     *@return empty response
+     * Acquire an empty response to be returned when there is no event log.
+     * @return empty response
      */
     private Response getEmptyResponse() {
         //Returning the response
@@ -352,8 +352,8 @@ public class LogResource {
     }
 
     /**
-     *Delete log file.
-     *@return response
+     * Delete log file.
+     * @return response
      */
     @Path("{logCollection}/{filename}")
     @WriteAPI
@@ -363,9 +363,9 @@ public class LogResource {
     }
 
     /**
-     *Collection name check of event log.
-     *@ param collectionName Collection name ("current" or "archive")
-     *@return true: correct, false: error
+     * Collection name check of event log.
+     * @ param collectionName Collection name ("current" or "archive")
+     * @return true: correct, false: error
      */
     protected boolean isValidLogCollection(String collectionName) {
         return CURRENT_COLLECTION.equals(collectionName)
@@ -373,14 +373,14 @@ public class LogResource {
     }
 
     /**
-     *File name check of event log.
+     * File name check of event log.
      * <ul>
-     *<li> current: "default.log" fixed
-     *<li> archive: File name starting with "default.log." (404 if there is no actual file, but here only the file name check)
+     * <li> current: "default.log" fixed
+     * <li> archive: File name starting with "default.log." (404 if there is no actual file, but here only the file name check)
      * </ul>
-     *@ param collectionName Collection name ("current" or "archive")
-     *@ param fileName File name ("default.log" or "default.log. *")
-     *@return true: correct, false: error
+     * @ param collectionName Collection name ("current" or "archive")
+     * @ param fileName File name ("default.log" or "default.log. *")
+     * @return true: correct, false: error
      */
     protected boolean isValidLogFile(String collectionName, String fileName) {
         if (CURRENT_COLLECTION.equals(collectionName)) {

@@ -37,14 +37,14 @@ import io.personium.core.utils.ODataUtils;
 
 
 /**
- *$ filter Class that validates the consistency of the data type of the property specified in the search condition of the query and the data type specified as the value of the search condition.
+ * $ filter Class that validates the consistency of the data type of the property specified in the search condition of the query and the data type specified as the value of the search condition.
  */
 public class FilterConditionValidator {
 
     private static Map<EdmSimpleType<?>, AbstractValidator> validatorMap;
 
     /**
-     *Initialization of data type verification class.
+     * Initialization of data type verification class.
      */
     static {
         validatorMap = new HashMap<EdmSimpleType<?>, AbstractValidator>();
@@ -60,15 +60,15 @@ public class FilterConditionValidator {
     }
 
     /**
-     *$ filter Verify the consistency of the data type of the property specified in the search condition of the query and the data type specified as the value of the search condition.
+     * $ filter Verify the consistency of the data type of the property specified in the search condition of the query and the data type specified as the value of the search condition.
      * <ul>
      * <li>StringLiteral</li>
-     *<li> IntegralLiteral, Int64Literal </ li>
+     * <li> IntegralLiteral, Int64Literal </ li>
      * <li>DoubleLiteral</li>
      * </ul>
-     *The notation such as "1.0 f" or "1.0 m" (SingleLiteral, DecimalLiteral respectively) is a parse error.
-     *@ param edmProperty Property specified in search condition of $ filter
-     *@ param searchValue Value of search condition for $ filter
+     * The notation such as "1.0 f" or "1.0 m" (SingleLiteral, DecimalLiteral respectively) is a parse error.
+     * @ param edmProperty Property specified in search condition of $ filter
+     * @ param searchValue Value of search condition for $ filter
      */
     static void validateFilterOpCondition(EdmProperty edmProperty, CommonExpression searchValue) {
         //Comparison operator (lt / le / ge / gt) Commonly allowable data: string / integer value / real number
@@ -90,17 +90,17 @@ public class FilterConditionValidator {
     }
 
     /**
-     *$ filter Verify the consistency of the data type specified in the search condition in the Eq operator of the query and the data type specified as the value of the search condition.
+     * $ filter Verify the consistency of the data type specified in the search condition in the Eq operator of the query and the data type specified as the value of the search condition.
      * <ul>
      * <li>StringLiteral</li>
-     *<li> IntegralLiteral, Int64Literal </ li>
+     * <li> IntegralLiteral, Int64Literal </ li>
      * <li>DoubleLiteral</li>
      * <li>BooleanLiteral</li>
      * <li>NullLiteral</li>
      * </ul>
-     *The notation such as "1.0 f" or "1.0 m" (SingleLiteral, DecimalLiteral respectively) is a parse error.
-     *@ param edmProperty Property specified in search condition of $ filter
-     *@ param searchValue Value of search condition for $ filter
+     * The notation such as "1.0 f" or "1.0 m" (SingleLiteral, DecimalLiteral respectively) is a parse error.
+     * @ param edmProperty Property specified in search condition of $ filter
+     * @ param searchValue Value of search condition for $ filter
      */
     static void validateFilterEqCondition(EdmProperty edmProperty, CommonExpression searchValue) {
         //Verify that the value of the search condition can be evaluated as the data type of the schema defined property.
@@ -115,12 +115,12 @@ public class FilterConditionValidator {
     }
 
     /**
-     *$ filter Verify the consistency of the data type specified for the query function and the data type specified as the value.
+     * $ filter Verify the consistency of the data type specified for the query function and the data type specified as the value.
      * <ul>
      * <li>StringLiteral</li>
      * </ul>
-     *@ param edmProperty Property specified for the function of $ filter
-     *@ param searchValue The value specified for the function of $ filter
+     * @ param edmProperty Property specified for the function of $ filter
+     * @ param searchValue The value specified for the function of $ filter
      */
     static void validateFilterFuncCondition(EdmProperty edmProperty, CommonExpression searchValue) {
         //Function (substringof / startswith) Commonly allowable data: Character string
@@ -139,19 +139,19 @@ public class FilterConditionValidator {
 
 
     /**
-     *The type verification class of each data type specified in the search condition and the abstract class to be compiled.
+     * The type verification class of each data type specified in the search condition and the abstract class to be compiled.
      */
     interface AbstractValidator {
         /**
-         *Verify the inconsistency between the data type of the property specified in the search condition and the data of the search condition value.
-         *@ param searchValue Search condition value
-         *@ param propertyName Property name to search for
+         * Verify the inconsistency between the data type of the property specified in the search condition and the data of the search condition value.
+         * @ param searchValue Search condition value
+         * @ param propertyName Property name to search for
          */
         void validate(CommonExpression searchValue, String propertyName);
     }
 
     /**
-     *The type validation class of Edm.String type specified in the search condition.
+     * The type validation class of Edm.String type specified in the search condition.
      */
     static class StringValidator implements AbstractValidator {
         @Override
@@ -165,7 +165,7 @@ public class FilterConditionValidator {
     }
 
     /**
-     *Type validation class of Edm.Boolean type specified in search condition.
+     * Type validation class of Edm.Boolean type specified in search condition.
      */
     static class BooleanValidator implements AbstractValidator {
         @Override
@@ -179,7 +179,7 @@ public class FilterConditionValidator {
     }
 
     /**
-     *A type validation class of Edm.Int32 type specified in the search condition.
+     * A type validation class of Edm.Int32 type specified in the search condition.
      */
     static class Int32Validator implements AbstractValidator {
         @Override
@@ -203,7 +203,7 @@ public class FilterConditionValidator {
     }
 
     /**
-     *The type validation class of Edm.Double type specified in the search condition.
+     * The type validation class of Edm.Double type specified in the search condition.
      */
     static class DoubleValidator implements AbstractValidator {
         @Override
@@ -219,7 +219,7 @@ public class FilterConditionValidator {
     }
 
     /**
-     *Type validation class of Edm.Single type specified in search condition.
+     * Type validation class of Edm.Single type specified in search condition.
      */
     static class SingleValidator implements AbstractValidator {
         @Override
@@ -245,7 +245,7 @@ public class FilterConditionValidator {
     }
 
     /**
-     *The type validation class of Edm.DateTime type specified in the search condition.
+     * The type validation class of Edm.DateTime type specified in the search condition.
      */
     static class DateTimeValidator implements AbstractValidator {
         @Override

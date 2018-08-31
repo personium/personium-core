@@ -23,16 +23,16 @@ import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
 
 /**
- *Box URL Class for performing processing excluding Dav related persistence by delegating processing from resource object.
+ * Box URL Class for performing processing excluding Dav related persistence by delegating processing from resource object.
  */
 public class BoxUrlRsCmp extends BoxRsCmp {
 
     /**
-     *constructor.
+     * constructor.
      * @param cellRsCmp CellRsCmp
      * @param davCmp DavCmp
      * @param accessContext AccessContext
-     *@ param box box
+     * @ param box box
      */
     public BoxUrlRsCmp(final CellRsCmp cellRsCmp, final DavCmp davCmp,
             final AccessContext accessContext, final Box box) {
@@ -90,8 +90,8 @@ public class BoxUrlRsCmp extends BoxRsCmp {
     }
 
     /**
-     *Obtain Auth Scheme that can be used for authentication.
-     *Autret Scheme that can be used for @return authentication
+     * Obtain Auth Scheme that can be used for authentication.
+     * Autret Scheme that can be used for @return authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {

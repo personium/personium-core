@@ -30,14 +30,14 @@ import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 
 /**
- *A class that implements Cell access processing.
+ * A class that implements Cell access processing.
  */
 public class CellAccessor extends AbstractEntitySetAccessor {
 
     /**
-     *constructor.
-     *@ param index index
-     *@ param name Type name
+     * constructor.
+     * @ param index index
+     * @ param name Type name
      * @param routingId routingId
      */
     public CellAccessor(EsIndex index, String name, String routingId) {
@@ -45,11 +45,11 @@ public class CellAccessor extends AbstractEntitySetAccessor {
     }
 
     /**
-     *Return the number of DavFiles under the cell.
+     * Return the number of DavFiles under the cell.
      * TODO It will be deleted in response to core issue #71.
-     *@ param cellId Cell ID to delete
-     *@ param unitUserName unit user name
-     *@return Number of DavFiles under cell
+     * @ param cellId Cell ID to delete
+     * @ param unitUserName unit user name
+     * @return Number of DavFiles under cell
      */
     public long getDavFileTotalCount(String cellId, String unitUserName) {
         //CellAccessor obtains unit user's accessor for access to ad index
@@ -64,13 +64,13 @@ public class CellAccessor extends AbstractEntitySetAccessor {
     }
 
     /**
-     *Return the DavFileID list under the cell.
+     * Return the DavFileID list under the cell.
      * TODO It will be deleted in response to core issue #71.
-     *@ param cellId Cell ID to delete
-     *@ param unitUserName unit user name
-     *@ param size Number of acquisitions
-     *@ param from acquisition start position
-     *@return Number of DavFiles under cell
+     * @ param cellId Cell ID to delete
+     * @ param unitUserName unit user name
+     * @ param size Number of acquisitions
+     * @ param from acquisition start position
+     * @return Number of DavFiles under cell
      */
     public List<String> getDavFileIdList(String cellId, String unitUserName, int size, int from) {
         //CellAccessor obtains unit user's accessor for access to ad index

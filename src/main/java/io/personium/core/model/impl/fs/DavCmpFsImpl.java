@@ -237,8 +237,8 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     *Returns the level of schema authentication.
-     *@return schema authentication level
+     * Returns the level of schema authentication.
+     * @return schema authentication level
      */
     public String getConfidentialLevel() {
         if (acl == null) {
@@ -248,16 +248,16 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     *Return unit permission permission user setting.
-     *@return unit promotion permission user setting
+     * Return unit permission permission user setting.
+     * @return unit promotion permission user setting
      */
     public List<String> getOwnerRepresentativeAccounts() {
         return this.ownerRepresentativeAccounts;
     }
 
     /**
-     *Lock Box.
-     *@return Lock of own node
+     * Lock Box.
+     * @return Lock of own node
      */
     public Lock lock() {
         log.debug("lock:" + LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_DAV, null, this.box.getId(), null));
@@ -356,8 +356,8 @@ public class DavCmpFsImpl implements DavCmp {
 
 
     /**
-     *Update Dav's management data information <br />
-     *If there is no management data, it is an error.
+     * Update Dav's management data information <br />
+     * If there is no management data, it is an error.
      */
     public final void loadAndCheckDavInconsistency() {
         load();
@@ -386,7 +386,7 @@ public class DavCmpFsImpl implements DavCmp {
 //    }
 
     /*
-     *Support for the proppatch method. Save method key = namespaceUri + "@" + localName Value =
+     * Support for the proppatch method. Save method key = namespaceUri + "@" + localName Value =
      * inner XML String
      */
     @Override
@@ -718,14 +718,14 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     *File response processing.
+     * File response processing.
      * @param sout
-     *StreamingOut object
+     * StreamingOut object
      * @param fileSize
-     *file size
+     * file size
      * @param contentType
-     *Content type
-     *@return response
+     * Content type
+     * @return response
      */
     public ResponseBuilder davFileResponse(final StreamingOutput sout, long fileSize, String contentType) {
         return javax.ws.rs.core.Response.ok(sout).header(HttpHeaders.CONTENT_LENGTH, fileSize)
@@ -733,14 +733,14 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     *File response processing.
+     * File response processing.
      * @param sout
-     *StreamingOut object
+     * StreamingOut object
      * @param contentType
-     *Content type
+     * Content type
      * @param range
      *            RangeHeaderHandler
-     *@return response
+     * @return response
      */
     private ResponseBuilder davFileResponseForRange(final StreamingOutput sout, String contentType,
             final RangeHeaderHandler range) {
@@ -1017,8 +1017,8 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     *Creates and returns an instance of an accessor of binary data.
-     *@return instance of accessor
+     * Creates and returns an instance of an accessor of binary data.
+     * @return instance of accessor
      */
     protected BinaryDataAccessor getBinaryDataAccessor() {
         String owner = cell.getOwner();
@@ -1091,12 +1091,12 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     *Get role resource URL from role ID.
-     *Replace jsonObj's role ID with role resource URL
+     * Get role resource URL from role ID.
+     * Replace jsonObj's role ID with role resource URL
      * @param jsonObj
-     *JSON after ID replacement
+     * JSON after ID replacement
      * @param baseUrlStr
-     *xml: base value
+     * xml: base value
      */
     private Acl roleIdToName(Object jsonObj, String baseUrlStr) {
         Acl ret = Acl.fromJson(((JSONObject) jsonObj).toJSONString());
@@ -1127,7 +1127,7 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     *Generate an xml: base value in the ACL of PROPFIND.
+     * Generate an xml: base value in the ACL of PROPFIND.
      * @return
      */
     private String createBaseUrlStr() {
@@ -1147,11 +1147,11 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     *Formatting RoleResorceUrl according to xml: base.
+     * Formatting RoleResorceUrl according to xml: base.
      * @param baseUrlStr
-     *Value of xml: base
+     * Value of xml: base
      * @param roleResourceUrlStr
-     *Role resource URL
+     * Role resource URL
      * @return
      */
     private String baseUrlToRoleResourceUrl(String baseUrlStr, String roleResourceUrlStr) {
@@ -1241,10 +1241,10 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     *Search Es with BoxId.
+     * Search Es with BoxId.
      * @param cellObj Cell
-     *@ param boxId Box Id
-     *@return Search results
+     * @ param boxId Box Id
+     * @return Search results
      */
     public static Map<String, Object> searchBox(final Cell cellObj, final String boxId) {
 

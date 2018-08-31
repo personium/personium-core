@@ -65,7 +65,7 @@ public final class CellCtlResource extends ODataResource {
     /**
      * constructor.
      * @param accessContext AccessContext
-     *@ param pCredHeader X-Personium-Credential header
+     * @ param pCredHeader X-Personium-Credential header
      * @param davRsCmp davRsCmp
      */
     public CellCtlResource(final AccessContext accessContext, final String pCredHeader, DavRsCmp davRsCmp) {
@@ -81,8 +81,8 @@ public final class CellCtlResource extends ODataResource {
     }
 
     /**
-     *Obtain Auth Scheme that can be used for authentication.
-     *Autret Scheme that can be used for @return authentication
+     * Obtain Auth Scheme that can be used for authentication.
+     * Autret Scheme that can be used for @return authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {
@@ -119,8 +119,8 @@ public final class CellCtlResource extends ODataResource {
     }
 
     /**
-     *Corresponds to the service metadata request.
-     *@return JAX-RS response object
+     * Corresponds to the service metadata request.
+     * @return JAX-RS response object
      */
     @GET
     @Path("{first: \\$}metadata")
@@ -129,7 +129,7 @@ public final class CellCtlResource extends ODataResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
@@ -201,10 +201,10 @@ public final class CellCtlResource extends ODataResource {
 
     /**
      * Not Implemented. <br />
-     *Currently unimplemented because it is only necessary for $ batch access control <br />
-     *Returns whether the access context has permission to $ batch.
-     *@ param ac access context
-     *@return true: The access context has permission to $ batch
+     * Currently unimplemented because it is only necessary for $ batch access control <br />
+     * Returns whether the access context has permission to $ batch.
+     * @ param ac access context
+     * @return true: The access context has permission to $ batch
      */
     @Override
     public boolean hasPrivilegeForBatch(AccessContext ac) {

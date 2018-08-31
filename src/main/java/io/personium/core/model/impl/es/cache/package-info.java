@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- *A group of classes that manipulate the ElasticSearch backend.
+ * A group of classes that manipulate the ElasticSearch backend.
  */
 package io.personium.core.model.impl.es.cache;
 

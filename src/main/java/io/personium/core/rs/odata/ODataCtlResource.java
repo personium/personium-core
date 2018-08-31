@@ -28,53 +28,53 @@ import io.personium.core.model.ctl.Relation;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- *Preprocessing and postprocessing for ODataResource.
+ * Preprocessing and postprocessing for ODataResource.
  */
 public class ODataCtlResource {
     /**
-     *Preprocessing process.
-     *@ param o EntityWrapper OEntityWrapper object
+     * Preprocessing process.
+     * @ param o EntityWrapper OEntityWrapper object
      */
     public void beforeCreate(final OEntityWrapper oEntityWrapper) {
     }
 
     /**
-     *Pre-update processing.
-     *@ param o EntityWrapper OEntityWrapper object
-     *@ param o EntityKey The entityKey to delete
+     * Pre-update processing.
+     * @ param o EntityWrapper OEntityWrapper object
+     * @ param o EntityKey The entityKey to delete
      */
     public void beforeUpdate(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
     }
 
     /**
-     *Partial update preprocessing.
-     *@ param o EntityWrapper OEntityWrapper object
-     *@ param o EntityKey The entityKey to delete
+     * Partial update preprocessing.
+     * @ param o EntityWrapper OEntityWrapper object
+     * @ param o EntityKey The entityKey to delete
      */
     public void beforeMerge(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
         beforeUpdate(oEntityWrapper, oEntityKey);
     }
 
     /**
-     *Pre-deletion process.
-     *@ param entitySetName entitySet name
-     *@ param o EntityKey The entityKey to delete
+     * Pre-deletion process.
+     * @ param entitySetName entitySet name
+     * @ param o EntityKey The entityKey to delete
      */
     public void beforeDelete(final String entitySetName, final OEntityKey oEntityKey) {
     }
 
     /**
-     *Processing after deletion.
-     *@ param entitySetName entitySet name
-     *@ param o EntityKey The entityKey to delete
+     * Processing after deletion.
+     * @ param entitySetName entitySet name
+     * @ param o EntityKey The entityKey to delete
      */
     public void afterDelete(final String entitySetName, final OEntityKey oEntityKey) {
     }
 
     /**
-     *Link registration preprocessing.
-     *@ param sourceEntity Linked entity
-     *@ param targetNavProp Navigation property to be linked
+     * Link registration preprocessing.
+     * @ param sourceEntity Linked entity
+     * @ param targetNavProp Navigation property to be linked
      */
     public void beforeLinkCreate(OEntityId sourceEntity, String targetNavProp) {
         //$ Links specification of ExtRole and _Relation is not allowed (Relation: ExtRole is 1: N relation)
@@ -82,17 +82,17 @@ public class ODataCtlResource {
     }
 
     /**
-     *Link acquisition preprocessing.
-     *@ param sourceEntity Linked entity
-     *@ param targetNavProp Navigation property to be linked
+     * Link acquisition preprocessing.
+     * @ param sourceEntity Linked entity
+     * @ param targetNavProp Navigation property to be linked
      */
     public void beforeLinkGet(OEntityId sourceEntity, String targetNavProp) {
     }
 
     /**
-     *Link deletion preprocessing.
-     *@ param sourceEntity Linked entity
-     *@ param targetNavProp Navigation property to be linked
+     * Link deletion preprocessing.
+     * @ param sourceEntity Linked entity
+     * @ param targetNavProp Navigation property to be linked
      */
     public void beforeLinkDelete(OEntityId sourceEntity, String targetNavProp) {
         //$ Links specification of ExtRole and _Relation is not allowed (Relation: ExtRole is 1: N relation)
@@ -100,9 +100,9 @@ public class ODataCtlResource {
     }
 
     /**
-     *Check processing other than p: Format.
+     * Check processing other than p: Format.
      * @param entitySetName target entityset name
-     *@ param props property list
+     * @ param props property list
      */
     public void validate(String entitySetName, List<OProperty<?>> props) {
     }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- *Classes used to load DavFile.
+ * Classes used to load DavFile.
  */
 package io.personium.core.model.file;
 

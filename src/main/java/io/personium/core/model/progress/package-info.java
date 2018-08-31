@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- *Classes providing asynchronous processing mechanisms.
+ * Classes providing asynchronous processing mechanisms.
  */
 package io.personium.core.model.progress;
 

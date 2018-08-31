@@ -94,8 +94,8 @@ public class BoxResource {
      * @param cell CELL Object
      * @param boxName Box Name
      * @param cellRsCmp cellRsCmp
-     *@ param accessContext AccessContext object
-     *@ param jaxRsRequest HTTP request for JAX-RS
+     * @ param accessContext AccessContext object
+     * @ param jaxRsRequest HTTP request for JAX-RS
      */
     public BoxResource(final Cell cell, final String boxName, final AccessContext accessContext,
             final CellRsCmp cellRsCmp, Request jaxRsRequest) {
@@ -137,10 +137,10 @@ public class BoxResource {
 
 
     /**
-     *Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
-     *@ param nextPath path name one down
-     *@ param request request
-     *@return Jax-RS resource object responsible for subordinate path
+     * Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
+     * @ param nextPath path name one down
+     * @ param request request
+     * @return Jax-RS resource object responsible for subordinate path
      */
     @Path("{nextPath}")
     public Object nextPath(@PathParam("nextPath") final String nextPath,
@@ -230,8 +230,8 @@ public class BoxResource {
     }
 
     /**
-     *box Creates a response if the installation is not running or if it was executed but the cache expired.
-     *@return JSON object for response
+     * box Creates a response if the installation is not running or if it was executed but the cache expired.
+     * @return JSON object for response
      */
     @SuppressWarnings("unchecked")
     private JSONObject createNotRequestedResponse() {
@@ -247,8 +247,8 @@ public class BoxResource {
     }
 
     /**
-     *box Creates a response if the installation is not running or if it was executed but the cache expired.
-     *@return JSON object for response
+     * box Creates a response if the installation is not running or if it was executed but the cache expired.
+     * @return JSON object for response
      */
     @SuppressWarnings("unchecked")
     private JSONObject createResponse(JSONObject values) {
@@ -291,7 +291,7 @@ public class BoxResource {
     }
 
     /**
-     *Processing of the PROPFIND method.
+     * Processing of the PROPFIND method.
      * @param requestBodyXml Request Body
      * @param depth Depth Header
      * @param contentLength Content-Length Header
@@ -310,7 +310,7 @@ public class BoxResource {
     }
 
     /**
-     *Processing of the PROPPATCH method.
+     * Processing of the PROPPATCH method.
      * @param requestBodyXml Request Body
      * @return JAX-RS Response
      */
@@ -323,7 +323,7 @@ public class BoxResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
@@ -332,8 +332,8 @@ public class BoxResource {
     }
 
     /**
-     *Processing of ACL method Set ACL.
-     *@ param reader configuration XML
+     * Processing of ACL method Set ACL.
+     * @ param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -345,12 +345,12 @@ public class BoxResource {
     }
 
     /**
-     *Processing of MKCOL method.
+     * Processing of MKCOL method.
      * @param uriInfo UriInfo
      * @param pCredHeader dcCredHeader
-     *@ param contentType Value of Content-Type header
-     *@ param contentLength Value of the Content-Length header
-     *@ param inStream InputStream of Http request
+     * @ param contentType Value of Content-Type header
+     * @ param contentLength Value of the Content-Length header
+     * @ param inStream InputStream of Http request
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -420,9 +420,9 @@ public class BoxResource {
     }
 
     /**
-     *Processing of the MOVE method.
-     *@ param headers header information
-     *@return JAX-RS response object
+     * Processing of the MOVE method.
+     * @ param headers header information
+     * @return JAX-RS response object
      */
     @WebDAVMethod.MOVE
     public Response move(

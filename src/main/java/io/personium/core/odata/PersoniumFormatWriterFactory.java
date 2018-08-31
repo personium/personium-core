@@ -66,12 +66,12 @@ import org.odata4j.producer.PropertyResponse;
 import org.odata4j.producer.exceptions.NotImplementedException;
 
 /**
- *Wrapper class for FormatWriterFactory.
+ * Wrapper class for FormatWriterFactory.
  */
 public class PersoniumFormatWriterFactory {
 
     /**
-     *interface.
+     * interface.
      */
     private interface FormatWriters {
 
@@ -98,13 +98,13 @@ public class PersoniumFormatWriterFactory {
     }
 
     /**
-     *Getter of format writer.
-     *@ param <T> type
-     *@ param targetType Type of format writer
-     *@ param acceptTypes accept type
-     *@ param format Format
-     *@ param callback callback
-     *@return format writer
+     * Getter of format writer.
+     * @ param <T> type
+     * @ param targetType Type of format writer
+     * @ param acceptTypes accept type
+     * @ param format Format
+     * @ param callback callback
+     * @return format writer
      */
     @SuppressWarnings("unchecked")
     public static <T> FormatWriter<T> getFormatWriter(Class<T> targetType,
@@ -183,15 +183,15 @@ public class PersoniumFormatWriterFactory {
     }
 
     /**
-     *Format writer for JSON.
+     * Format writer for JSON.
      */
     public static class JsonWriters implements FormatWriters {
 
         private final String callback;
 
         /**
-         *constructor.
-         *@ param callback callback
+         * constructor.
+         * @ param callback callback
          */
         public JsonWriters(String callback) {
             this.callback = callback;
@@ -244,7 +244,7 @@ public class PersoniumFormatWriterFactory {
     }
 
     /**
-     *Format writer for ATOM.
+     * Format writer for ATOM.
      */
     public static class AtomWriters implements FormatWriters {
 

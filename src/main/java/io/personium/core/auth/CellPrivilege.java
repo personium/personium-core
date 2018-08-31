@@ -76,8 +76,8 @@ public class CellPrivilege extends Privilege {
     static Map<String, CellPrivilege> map = new HashMap<String, CellPrivilege>();
 
     /**
-     *Cell Level Get Privilege list.
-     *@return Cell level Privilege list
+     * Cell Level Get Privilege list.
+     * @return Cell level Privilege list
      */
     public static Map<String, CellPrivilege> getPrivilegeMap() {
         return map;

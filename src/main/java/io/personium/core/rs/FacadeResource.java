@@ -41,27 +41,27 @@ import io.personium.core.rs.unit.UnitCtlResource;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- *Jax - RS Resource which will be the entrance of all requests.
- *Here, acquisition of URL information and acquisition of Authorization header are performed,
- *These information is passed to the sub-resources.
+ * Jax - RS Resource which will be the entrance of all requests.
+ * Here, acquisition of URL information and acquisition of Authorization header are performed,
+ * These information is passed to the sub-resources.
  */
 @Path("")
 public class FacadeResource {
 
     /**
-     *For cookie authentication, the key of the information embedded in the cookie.
+     * For cookie authentication, the key of the information embedded in the cookie.
      */
     public static final String P_COOKIE_KEY = "p_cookie";
     /**
-     *The key specified in the query parameter during cookie authentication.
+     * The key specified in the query parameter during cookie authentication.
      */
     public static final String COOKIE_PEER_QUERY_KEY = "p_cookie_peer";
 
     /**
-     *@ param cookieAuthValue The value specified for the p_cookie key in the cookie
-     *@ param cookiePeer p_cookie_peer Value specified in the query
-     *@ param authzHeaderValue Authorization header
-     *@ param host Host header
+     * @ param cookieAuthValue The value specified for the p_cookie key in the cookie
+     * @ param cookiePeer p_cookie_peer Value specified in the query
+     * @ param authzHeaderValue Authorization header
+     * @ param host Host header
      * @param uriInfo UriInfo
      * @param xPersoniumUnitUser X-Personium-UnitUser header
      * @param xPersoniumRequestKey X-Personium-RequestKey header
@@ -69,7 +69,7 @@ public class FacadeResource {
      * @param xPersoniumRuleChain X-Personium-RuleChain header
      * @param xPersoniumVia X-Personium-Via header
      * @param httpServletRequest HttpServletRequest
-     *@return CellResource object or Response object
+     * @return CellResource object or Response object
      */
     @Path("{path1}")
     public final Object facade(
@@ -107,13 +107,13 @@ public class FacadeResource {
     }
 
     /**
-     *@ param cookieAuthValue The value specified for the p_cookie key in the cookie
-     *@ param cookiePeer p_cookie_peer Value specified in the query
-     *@ param authzHeaderValue Authorization header
-     *@ param host Host header
-     *@ param xPersoniumUnitUser header
+     * @ param cookieAuthValue The value specified for the p_cookie key in the cookie
+     * @ param cookiePeer p_cookie_peer Value specified in the query
+     * @ param authzHeaderValue Authorization header
+     * @ param host Host header
+     * @ param xPersoniumUnitUser header
      * @param uriInfo UriInfo
-     *@return UnitCtlResource object
+     * @return UnitCtlResource object
      */
     @Path("__ctl")
     public final UnitCtlResource ctl(
@@ -130,11 +130,11 @@ public class FacadeResource {
     }
 
     /**
-     *@ param authzHeaderValue Authorization header
-     *@ param host Host header
-     *@ param xPersoniumUnitUser header
+     * @ param authzHeaderValue Authorization header
+     * @ param host Host header
+     * @ param xPersoniumUnitUser header
      * @param uriInfo UriInfo
-     *@return UnitCtlResource object
+     * @return UnitCtlResource object
      */
     @Path("__status")
     public final StatusResource status(
@@ -148,8 +148,8 @@ public class FacadeResource {
     static final String CROSSDOMAIN_XML = PersoniumCoreUtils.readStringResource("crossdomain.xml", CharEncoding.UTF_8);
 
     /**
-     *Returns Crossdomain.xml.
-     *@return String of Crossdomain.xml.
+     * Returns Crossdomain.xml.
+     * @return String of Crossdomain.xml.
      */
     @Path("crossdomain.xml")
     @Produces(MediaType.APPLICATION_XML)

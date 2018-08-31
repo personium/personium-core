@@ -22,30 +22,30 @@ import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 /**
- *Edm definition body for external access.
+ * Edm definition body for external access.
  */
 public class ExtRole {
     private ExtRole() {
     }
     /**
-     *Edm EntityType name.
+     * Edm EntityType name.
      */
     public static final String EDM_TYPE_NAME = "ExtRole";
     /**
-     *ExtRole property definition body.
+     * ExtRole property definition body.
      */
     public static final EdmProperty.Builder P_EXT_ROLE = EdmProperty.newBuilder("ExtRole")
             .setAnnotations(Common.P_FORMAT_URI)
             .setType(EdmSimpleType.STRING).setNullable(false);
     /**
-     *_Relation.Name Property definition body.
+     * _Relation.Name Property definition body.
      */
     public static final EdmProperty.Builder P_RELATION_NAME = EdmProperty.newBuilder("_Relation.Name")
             .setType(EdmSimpleType.STRING)
             .setAnnotations(Common.P_FORMAT_RELATION_NAME)
             .setNullable(false);
     /**
-     *_Relation._ Box.Name Property definition body.
+     * _Relation._ Box.Name Property definition body.
      */
     public static final EdmProperty.Builder P_RELATION_BOX_NAME = EdmProperty.newBuilder("_Relation._Box.Name")
             .setType(EdmSimpleType.STRING)

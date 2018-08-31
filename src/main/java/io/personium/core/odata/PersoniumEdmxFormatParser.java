@@ -81,27 +81,27 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.model.ctl.CtlSchema;
 
 /**
- *bar Edmx XML parser class for use when installing.
+ * bar Edmx XML parser class for use when installing.
  */
 public class PersoniumEdmxFormatParser extends EdmxFormatParser {
 
     /**
-     *Object for logging.
+     * Object for logging.
      */
     static Logger log = LoggerFactory.getLogger(PersoniumEdmxFormatParser.class);
 
     private final EdmDataServices.Builder dataServices = EdmDataServices.newBuilder();
 
     /**
-     *constructor.
+     * constructor.
      */
     public PersoniumEdmxFormatParser() {
     }
 
     /**
-     *Analysis of Edmx.
-     *@ param reader Reader object for Edmx for analysis
-     *@return EdmDataServices JAXB object of Edmx parsed
+     * Analysis of Edmx.
+     * @ param reader Reader object for Edmx for analysis
+     * @return EdmDataServices JAXB object of Edmx parsed
      */
     @Override
     public EdmDataServices parseMetadata(XMLEventReader2 reader) {

@@ -22,18 +22,18 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *D: JAXB object corresponding to principal tag.
+ * D: JAXB object corresponding to principal tag.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(namespace = "DAV:", name = "principal")
 public final class Principal {
     /**
-     *D: href tag.
+     * D: href tag.
      */
     @XmlElement(namespace = "DAV:", name = "href")
     String href;
     /**
-     *D: all tag.
+     * D: all tag.
      */
     @XmlElement(namespace = "DAV:", name = "all")
     String all;

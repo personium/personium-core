@@ -28,12 +28,12 @@ import io.personium.core.model.impl.es.odata.PropertyAlias;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- *DocHandler of ComplexType property.
+ * DocHandler of ComplexType property.
  */
 public class ComplexTypePropertyDocHandler extends PropertyDocHandler implements EntitySetDocHandler {
 
     /**
-     *constructor.
+     * constructor.
      */
     public ComplexTypePropertyDocHandler() {
         propertyAliasMap = null;
@@ -41,10 +41,10 @@ public class ComplexTypePropertyDocHandler extends PropertyDocHandler implements
     }
 
     /**
-     *Constructor that creates DocHandler without ID from OEntityWrapper.
-     *@param type ES type name
+     * Constructor that creates DocHandler without ID from OEntityWrapper.
+     * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     *@ param metadata schema information
+     * @ param metadata schema information
      */
     public ComplexTypePropertyDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         propertyAliasMap = null;
@@ -54,12 +54,12 @@ public class ComplexTypePropertyDocHandler extends PropertyDocHandler implements
     }
 
     /**
-     *constructor.
-     *@ param cellId Cell ID
-     *@ param boxId Box ID
-     *@ param nodeId node ID
-     *@ param entityTypeId ID of the associated entity type
-     *@ param source static property field
+     * constructor.
+     * @ param cellId Cell ID
+     * @ param boxId Box ID
+     * @ param nodeId node ID
+     * @ param entityTypeId ID of the associated entity type
+     * @ param source static property field
      */
     public ComplexTypePropertyDocHandler(String cellId,
             String boxId,
@@ -75,8 +75,8 @@ public class ComplexTypePropertyDocHandler extends PropertyDocHandler implements
     }
 
     /**
-     *Acquire ES / MySQL registration data.
-     *@return Registration data
+     * Acquire ES / MySQL registration data.
+     * @return Registration data
      */
     @Override
     public Map<String, Object> getSource() {
@@ -92,8 +92,8 @@ public class ComplexTypePropertyDocHandler extends PropertyDocHandler implements
     }
 
     /**
-     *Return ComplexType name.
-     *@return ComplexType name
+     * Return ComplexType name.
+     * @return ComplexType name
      */
     @Override
     public String getEntityTypeName() {

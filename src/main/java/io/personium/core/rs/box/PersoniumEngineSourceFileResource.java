@@ -28,22 +28,22 @@ import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
 
 /**
- *JAX-RS Resource class corresponding to Personium Engine source file resources.
+ * JAX-RS Resource class corresponding to Personium Engine source file resources.
  */
 public final class PersoniumEngineSourceFileResource extends DavFileResource {
 
     /**
      * constructor.
-     *@ param parent parent
-     *@ param davCmp parts
+     * @ param parent parent
+     * @ param davCmp parts
      */
     public PersoniumEngineSourceFileResource(final DavRsCmp parent, final DavCmp davCmp) {
         super(parent, davCmp);
     }
 
     /**
-     *Processing of ACL method Set ACL.
-     *@ param reader configuration XML
+     * Processing of ACL method Set ACL.
+     * @ param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI

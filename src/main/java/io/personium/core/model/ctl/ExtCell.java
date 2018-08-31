@@ -22,19 +22,19 @@ import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 /**
- *Edm definition of external Cell.
+ * Edm definition of external Cell.
  */
 public class ExtCell {
     private ExtCell() {
     }
 
     /**
-     *Edm EntityType name.
+     * Edm EntityType name.
      */
     public static final String EDM_TYPE_NAME = "ExtCell";
 
     /**
-     *Url property definition body.
+     * Url property definition body.
      */
     public static final EdmProperty.Builder P_URL = EdmProperty
             .newBuilder("Url")

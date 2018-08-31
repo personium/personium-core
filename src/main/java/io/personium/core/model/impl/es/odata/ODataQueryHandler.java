@@ -23,26 +23,26 @@ import org.odata4j.expression.EntitySimpleProperty;
 import org.odata4j.producer.QueryInfo;
 
 /**
- *OData's query handler.
+ * OData's query handler.
  */
 public interface ODataQueryHandler {
 
     /**
-     *Initialization.
-     *@ param queryInfo QueryInfo of OData 4 j.
-     *@ param implicitConds Implicit search condition.
+     * Initialization.
+     * @ param queryInfo QueryInfo of OData 4 j.
+     * @ param implicitConds Implicit search condition.
      */
     void initialize(QueryInfo queryInfo, List<Map<String, Object>> implicitConds);
 
     /**
-     *Get search query.
-     *@ return search query
+     * Get search query.
+     * @ return search query
      */
     Map<String, Object> getSource();
 
     /**
-     *Assemble a query for ES search from the value of $ select.
-     *@ param baseSource Map containing input values
+     * Assemble a query for ES search from the value of $ select.
+     * @ param baseSource Map containing input values
      * @param selects $select
      */
     void getSelectQuery(Map<String, Object> baseSource,

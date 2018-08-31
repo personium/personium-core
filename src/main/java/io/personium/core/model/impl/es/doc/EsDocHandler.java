@@ -19,7 +19,7 @@ package io.personium.core.model.impl.es.doc;
 import java.util.Map;
 
 /**
- *Handler to generate ElasticSearch document.
+ * Handler to generate ElasticSearch document.
  */
 public interface EsDocHandler {
     /**

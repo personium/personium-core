@@ -32,7 +32,7 @@ import io.personium.core.model.file.DataCryptor;
 import io.personium.core.plugin.PluginManager;
 
 /**
- *Personium-core / _cell _ / * JAX-RS Application responsible for URL below.
+ * Personium-core / _cell _ / * JAX-RS Application responsible for URL below.
  */
 public class PersoniumCoreApplication extends Application {
     private static PluginManager pm;

@@ -50,16 +50,16 @@ import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonStreamReader
 public class PersoniumJsonEntryFormatParser extends PersoniumJsonFormatParser implements FormatParser<Entry> {
 
     /**
-     *constructor.
-     *@ param settings setting
+     * constructor.
+     * @ param settings setting
      */
     public PersoniumJsonEntryFormatParser(Settings settings) {
         super(settings);
     }
 
     /**
-     *Perth of Entry.
-     *@ param reader Birth character
+     * Perth of Entry.
+     * @ param reader Birth character
      * @return Entry
      */
     @Override

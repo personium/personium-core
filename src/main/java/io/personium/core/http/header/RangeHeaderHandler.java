@@ -22,11 +22,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *Range Process the request header RangeHeaderHandler.parse () parses the value of the Range header field and uses it.
- *The returned value is used by checking whether it is a valid header specification with isValid (). If invalid, header specification should be ignored.
- *Also when it is valid and isSatisfiable (), if there is no byte-range-spec in which the Range start specification is normal, 416 response should be returned.
- *If byte-range-spec to be processed exists, getByteRangeSpecCount () acquires the number of valid byte-range-spec,
- *Get necessary information for response generation with getFirstBytePos (), getLastBytePos (), getContentLength (), makeContentRangeHeaderField ().
+ * Range Process the request header RangeHeaderHandler.parse () parses the value of the Range header field and uses it.
+ * The returned value is used by checking whether it is a valid header specification with isValid (). If invalid, header specification should be ignored.
+ * Also when it is valid and isSatisfiable (), if there is no byte-range-spec in which the Range start specification is normal, 416 response should be returned.
+ * If byte-range-spec to be processed exists, getByteRangeSpecCount () acquires the number of valid byte-range-spec,
+ * Get necessary information for response generation with getFirstBytePos (), getLastBytePos (), getContentLength (), makeContentRangeHeaderField ().
  */
 public class RangeHeaderHandler {
 
@@ -47,17 +47,17 @@ public class RangeHeaderHandler {
     private boolean valid = false;
 
     /**
-     *constructor.
+     * constructor.
      */
     private RangeHeaderHandler(String rangeHeader) {
         this.rangeHeaderField = rangeHeader;
     }
 
     /**
-     *Pass the value of the Range header and the size of the target file and parse it to generate an object of this class.
-     *@ param rangeHeader Range header value (ex. bytes = 500 - 600, 601 - 999)
-     *@ param entitySize Range File size to be specified
-     *@return Object of this class
+     * Pass the value of the Range header and the size of the target file and parse it to generate an object of this class.
+     * @ param rangeHeader Range header value (ex. bytes = 500 - 600, 601 - 999)
+     * @ param entitySize Range File size to be specified
+     * @return Object of this class
      */
     public static final RangeHeaderHandler parse(final String rangeHeader, final long entitySize) {
         RangeHeaderHandler range = new RangeHeaderHandler(rangeHeader);
@@ -102,16 +102,16 @@ public class RangeHeaderHandler {
     }
 
     /**
-     *Returns the character string of the Range header field.
-     *@return Range header field
+     * Returns the character string of the Range header field.
+     * @return Range header field
      */
     public String getRangeHeaderField() {
         return this.rangeHeaderField;
     }
 
     /**
-     *Range Returns whether the header is valid, or false if there is no valid Range specification.
-     *@return true Enabled
+     * Range Returns whether the header is valid, or false if there is no valid Range specification.
+     * @return true Enabled
      */
     public boolean isValid() {
         return this.valid;
@@ -121,15 +121,15 @@ public class RangeHeaderHandler {
     }
 
     /**
-     *Returns the number of byte-range-specs specified in the Range header.
-     *Number of @return Ranges
+     * Returns the number of byte-range-specs specified in the Range header.
+     * Number of @return Ranges
      */
     public int getByteRangeSpecCount() {
         return this.byteRangeSpecList.size();
     }
 
     /**
-     *Check if a byte-range-spec that is within the range of the file exists. If there is any byte-range-spec in the file that is within the file, return it with 206.
+     * Check if a byte-range-spec that is within the range of the file exists. If there is any byte-range-spec in the file that is within the file, return it with 206.
      * @return bool
      */
     public boolean isSatisfiable() {
@@ -144,8 +144,8 @@ public class RangeHeaderHandler {
     }
 
     /**
-     *Return a list of valid ByteRangeSpec.
-     *@return List of valid ByteRangeSpec
+     * Return a list of valid ByteRangeSpec.
+     * @return List of valid ByteRangeSpec
      */
     public List<ByteRangeSpec> getByteRangeSpecList() {
         return this.byteRangeSpecList;

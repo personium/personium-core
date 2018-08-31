@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- *A JAXB object corresponding to the valid-resourcetype tag.
+ * A JAXB object corresponding to the valid-resourcetype tag.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")

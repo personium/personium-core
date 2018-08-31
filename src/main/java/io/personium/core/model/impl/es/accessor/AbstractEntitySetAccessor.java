@@ -23,19 +23,19 @@ import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
- *Abstract class of access processing of ODataEntity.
+ * Abstract class of access processing of ODataEntity.
  */
 public abstract class AbstractEntitySetAccessor extends DataSourceAccessor implements EntitySetAccessor {
 
     /**
-     *The SQLState of the SQLException that occurs when registering data.
+     * The SQLState of the SQLException that occurs when registering data.
      */
     protected static final String MYSQL_BAD_TABLE_ERROR = "42S02";
 
     /**
-     *constructor.
-     *@ param index index
-     *@ param name Type name
+     * constructor.
+     * @ param index index
+     * @ param name Type name
      * @param routingId routingId
      */
     protected AbstractEntitySetAccessor(EsIndex index, String name, String routingId) {
@@ -43,9 +43,9 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     *Register data of ODataEntity with UUID.
-     *@ param docHandler registration data
-     *@return registration result
+     * Register data of ODataEntity with UUID.
+     * @ param docHandler registration data
+     * @return registration result
      */
     @Override
     public PersoniumIndexResponse create(final EntitySetDocHandler docHandler) {
@@ -54,10 +54,10 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     *Perform data registration of ODataEntity.
-     *@ param id ID of registration data
-     *@ param docHandler registration data
-     *@return registration result
+     * Perform data registration of ODataEntity.
+     * @ param id ID of registration data
+     * @ param docHandler registration data
+     * @return registration result
      */
     public PersoniumIndexResponse create(String id, EntitySetDocHandler docHandler) {
         docHandler.setId(id);
@@ -66,10 +66,10 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     *Data of Cell is updated.
-     *@ param id ID of update data
-     *@ param docHandler registration data
-     *@return Update result
+     * Data of Cell is updated.
+     * @ param id ID of update data
+     * @ param docHandler registration data
+     * @return Update result
      */
     @Override
     public PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler) {
@@ -77,11 +77,11 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     *Perform data update of ODataEntity with version specification.
-     *@ param id ID of update data
-     *@ param docHandler registration data
-     *@ param version version information
-     *@return Update result
+     * Perform data update of ODataEntity with version specification.
+     * @ param id ID of update data
+     * @ param docHandler registration data
+     * @ param version version information
+     * @return Update result
      */
     public PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler, long version) {
         PersoniumIndexResponse response = update(id, docHandler.getSource(), version);
@@ -89,9 +89,9 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     *Delete data of ODataEntity.
-     *@ param docHandler delete data
-     *@return Deletion result
+     * Delete data of ODataEntity.
+     * @ param docHandler delete data
+     * @return Deletion result
      */
     @Override
     public PersoniumDeleteResponse delete(final EntitySetDocHandler docHandler) {
@@ -99,10 +99,10 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     *Delete data of ODataEntity.
-     *@ param docHandler delete data
-     *@ param version version information
-     *@return Deletion result
+     * Delete data of ODataEntity.
+     * @ param docHandler delete data
+     * @ param version version information
+     * @return Deletion result
      */
     @Override
     public PersoniumDeleteResponse delete(EntitySetDocHandler docHandler, long version) {

@@ -19,28 +19,28 @@ package io.personium.core.model.lock;
 import java.io.Serializable;
 
 /**
- *Lock object.
+ * Lock object.
  */
 public class Lock implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     *Lock category to use when dealing with OData.
+     * Lock category to use when dealing with OData.
      */
     public static final String CATEGORY_ODATA = "odata";
 
     /**
-     *Lock category to use when dealing with Dav.
+     * Lock category to use when dealing with Dav.
      */
     public static final String CATEGORY_DAV = "dav";
 
     /**
-     *Lock category used when handling Cell.
+     * Lock category used when handling Cell.
      */
     public static final String CATEGORY_CELL = "Cell";
 
     /**
-     *Lock category that puts data access for each UnitUser temporarily into reference mode.
+     * Lock category that puts data access for each UnitUser temporarily into reference mode.
      */
     public static final String CATEGORY_REFERENCE_ONLY = "referenceOnly";
 
@@ -48,8 +48,8 @@ public class Lock implements Serializable {
     Long createdAt;
 
     /**
-     *Constructor (not disclosed).
-     *@ param key Key of lock
+     * Constructor (not disclosed).
+     * @ param key Key of lock
      */
     Lock(String fullKey, Long createdAt) {
         this.fullKey = fullKey;
@@ -57,7 +57,7 @@ public class Lock implements Serializable {
     }
 
     /**
-     *Release the lock.
+     * Release the lock.
      */
     public void release() {
         LockManager.releaseLock(this.fullKey);

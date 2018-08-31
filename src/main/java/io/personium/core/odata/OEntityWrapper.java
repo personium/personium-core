@@ -30,7 +30,7 @@ import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmType;
 
 /**
- *A class that made OEntity of OData 4J have the power to handle Etag information and original metadata.
+ * A class that made OEntity of OData 4J have the power to handle Etag information and original metadata.
  */
 public final class OEntityWrapper implements OEntity {
     String uuid;
@@ -40,9 +40,9 @@ public final class OEntityWrapper implements OEntity {
     Map<String, Object> manyToOneLinks = new HashMap<String, Object>();
 
     /**
-     *constructor.
+     * constructor.
      * @param uuid UUID
-     *@ param o Entity OEntity object
+     * @ param o Entity OEntity object
      * @param etag ETag
      */
     public OEntityWrapper(final String uuid, final OEntity oEntity, final String etag) {
@@ -51,24 +51,24 @@ public final class OEntityWrapper implements OEntity {
         this.etag = etag;
     }
     /**
-     *Specify the key to get your own metadata.
-     *@ param key Key of metadata
-     *@return metadata value
+     * Specify the key to get your own metadata.
+     * @ param key Key of metadata
+     * @return metadata value
      */
     public Object get(final String key) {
         return this.metadata.get(key);
     }
     /**
-     *Set up your own metadata.
-     *@ param key Key of metadata
-     *@ param val Value of metadata
+     * Set up your own metadata.
+     * @ param key Key of metadata
+     * @ param val Value of metadata
      */
     public void put(final String key, final Object val) {
         this.metadata.put(key, val);
     }
     /**
-     *We will retrieve all our own metadata.
-     *@return original metadata
+     * We will retrieve all our own metadata.
+     * @return original metadata
      */
     public Map<String, Object> getMetadata() {
         return this.metadata;
@@ -133,7 +133,7 @@ public final class OEntityWrapper implements OEntity {
     }
 
     /**
-     *@return Internal ID
+     * @return Internal ID
      */
     public String getUuid() {
         return uuid;
@@ -151,7 +151,7 @@ public final class OEntityWrapper implements OEntity {
         this.etag = etag;
     }
     /**
-     *Return Etag.
+     * Return Etag.
      * @return Etag
      */
     public String getEtag() {
@@ -159,16 +159,16 @@ public final class OEntityWrapper implements OEntity {
     }
 
     /**
-     *Configure links.
-     *@ param paramManyToOneLinks link information
+     * Configure links.
+     * @ param paramManyToOneLinks link information
      */
     public void setManyToOneLinks(final Map<String, Object> paramManyToOneLinks) {
         this.manyToOneLinks = paramManyToOneLinks;
     }
 
     /**
-     *Returns the UUID of link for the specified key.
-     *@ param key link key
+     * Returns the UUID of link for the specified key.
+     * @ param key link key
      * @return linkUUID
      */
     public String getLinkUuid(String key) {

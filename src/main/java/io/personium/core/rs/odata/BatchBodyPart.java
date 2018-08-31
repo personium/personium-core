@@ -19,7 +19,7 @@ package io.personium.core.rs.odata;
 import java.util.Map;
 
 /**
- *The OdataBatch class.
+ * The OdataBatch class.
  */
 public class BatchBodyPart {
     private String httpMethod = null;
@@ -47,7 +47,7 @@ public class BatchBodyPart {
     }
 
     /**
-     *Getter of HttpHeaders.
+     * Getter of HttpHeaders.
      * @return HttpHeaders
      */
     public Map<String, String> getHttpHeaders() {
@@ -55,23 +55,23 @@ public class BatchBodyPart {
     }
 
     /**
-     *Getter of request body.
-     *@return request body
+     * Getter of request body.
+     * @return request body
      */
     public String getEntity() {
         return this.body;
     }
 
     /**
-     *Request body setter.
-     *@ param bodyParam request body
+     * Request body setter.
+     * @ param bodyParam request body
      */
     public void setEntity(String bodyParam) {
         this.body = bodyParam;
     }
 
     /**
-     *Getter of uri.
+     * Getter of uri.
      * @return uri
      */
     public String getUri() {
@@ -79,7 +79,7 @@ public class BatchBodyPart {
     }
 
     /**
-     *uri's setter.
+     * uri's setter.
      * @param uri uri
      */
     public void setUri(String uri) {
@@ -96,7 +96,7 @@ public class BatchBodyPart {
     }
 
     /**
-     *Getter of HttpMethod.
+     * Getter of HttpMethod.
      * @return HttpMethod
      */
     public String getHttpMethod() {
@@ -104,7 +104,7 @@ public class BatchBodyPart {
     }
 
     /**
-     *HttpMethod's setter.
+     * HttpMethod's setter.
      * @param httpMethod HttpMethod
      */
     public void setHttpMethod(String httpMethod) {
@@ -112,8 +112,8 @@ public class BatchBodyPart {
     }
 
     /**
-     *Get the entity set name.
-     *@return entity set name
+     * Get the entity set name.
+     * @return entity set name
      */
     public String getEntitySetName() {
         if (hasNavigationProperty() || isLinksRequest) {
@@ -129,16 +129,16 @@ public class BatchBodyPart {
     }
 
     /**
-     *Set the entity set name.
-     *@ param entitySetName Entity set name
+     * Set the entity set name.
+     * @ param entitySetName Entity set name
      */
     public void setSourceEntitySetName(String entitySetName) {
         this.sourceEntitySetName = entitySetName;
     }
 
     /**
-     *Get the entity key.
-     *@return entity key
+     * Get the entity key.
+     * @return entity key
      */
     public String getEntityKeyWithParences() {
         if (hasNavigationProperty() || isLinksRequest) {
@@ -154,8 +154,8 @@ public class BatchBodyPart {
     }
 
     /**
-     *Get the entity key.
-     *@return entity key
+     * Get the entity key.
+     * @return entity key
      */
     public String getEntityKey() {
         if (hasNavigationProperty()) {
@@ -171,63 +171,63 @@ public class BatchBodyPart {
     }
 
     /**
-     *Set the entity key.
-     *@ param entityKey entity key
+     * Set the entity key.
+     * @ param entityKey entity key
      */
     public void setSourceEntityKey(String entityKey) {
         this.sourceEntitySetKey = entityKey;
     }
 
     /**
-     *It returns whether it is the beginning of changeset.
-     *@return true: beginning of changeset
+     * It returns whether it is the beginning of changeset.
+     * @return true: beginning of changeset
      */
     public Boolean isChangesetStart() {
         return bChangesetStart;
     }
 
     /**
-     *The setter of the beginning of the changeset.
-     *@ param flg true: beginning of changeset
+     * The setter of the beginning of the changeset.
+     * @ param flg true: beginning of changeset
      */
     public void setbChangesetStart(Boolean flg) {
         this.bChangesetStart = flg;
     }
 
     /**
-     *Return whether it is the end of changeset.
-     *@return true: end of changeset
+     * Return whether it is the end of changeset.
+     * @return true: end of changeset
      */
     public Boolean isChangesetEnd() {
         return bChangesetEnd;
     }
 
     /**
-     *The terminator flag setter of changeset.
-     *@ param flg true: termination of changeset
+     * The terminator flag setter of changeset.
+     * @ param flg true: termination of changeset
      */
     public void setChangesetEnd(Boolean flg) {
         this.bChangesetEnd = flg;
     }
 
     /**
-     *changeset String getter.
-     *@return changeset string
+     * changeset String getter.
+     * @return changeset string
      */
     public String getChangesetStr() {
         return changesetStr;
     }
 
     /**
-     *changeset String setter.
-     *@ param changesetStr changeset string
+     * changeset String setter.
+     * @ param changesetStr changeset string
      */
     public void setChangesetStr(String changesetStr) {
         this.changesetStr = changesetStr;
     }
 
     /**
-     *Set source / target information based on the path specified when registering via NavigationProperty.
+     * Set source / target information based on the path specified when registering via NavigationProperty.
      * @param requestPath requestPath
      */
     public void setNavigationProperty(String requestPath) {
@@ -240,7 +240,7 @@ public class BatchBodyPart {
     }
 
     /**
-     *Get the target EntitySet name to use when registering via NavigationProperty.
+     * Get the target EntitySet name to use when registering via NavigationProperty.
      * @return the targetEntitySetName
      */
     public String getTargetNavigationProperty() {
@@ -248,16 +248,16 @@ public class BatchBodyPart {
     }
 
     /**
-     *Returns whether this bulk request is about to register via NavigationProperty.
-     *@return Returns true when registering via NavigationProperty, false otherwise
+     * Returns whether this bulk request is about to register via NavigationProperty.
+     * @return Returns true when registering via NavigationProperty, false otherwise
      */
     public boolean hasNavigationProperty() {
         return this.targetNavigationProperty != null;
     }
 
     /**
-     *Return the URI up to the Collection.
-     *URI up to @return Collection
+     * Return the URI up to the Collection.
+     * URI up to @return Collection
      */
     public String getCollectionUri() {
         int index = this.uri.lastIndexOf('/');
@@ -265,64 +265,64 @@ public class BatchBodyPart {
     }
 
     /**
-     *Return whether this bulk request is about to register Links or not.
-     *@return Links Return true for registration, false otherwise
+     * Return whether this bulk request is about to register Links or not.
+     * @return Links Return true for registration, false otherwise
      */
     public Boolean isLinksRequest() {
         return isLinksRequest;
     }
 
     /**
-     *Sets whether this bulk request is trying to register Links.
-     *@ param isLinksRequest Links true for registration, false otherwise
+     * Sets whether this bulk request is trying to register Links.
+     * @ param isLinksRequest Links true for registration, false otherwise
      */
     public void setIsLinksRequest(Boolean isLinksRequest) {
         this.isLinksRequest = isLinksRequest;
     }
 
     /**
-     *$ links Get the EntitySet name of the destination.
-     *@return $ links destination EntitySet name
+     * $ links Get the EntitySet name of the destination.
+     * @return $ links destination EntitySet name
      */
     public String getTargetEntitySetName() {
         return targetEntitySetName;
     }
 
     /**
-     *$ links Set the EntitySet name of the destination.
-     *@ param entitySetName $ links destination EntitySet name
+     * $ links Set the EntitySet name of the destination.
+     * @ param entitySetName $ links destination EntitySet name
      */
     public void setTargetEntitySetName(String entitySetName) {
         this.targetEntitySetName = entitySetName;
     }
 
     /**
-     *$ links Get the Entity key of the destination.
-     *@return $ links destination Entity key
+     * $ links Get the Entity key of the destination.
+     * @return $ links destination Entity key
      */
     public String getTargetEntityKey() {
         return targetEntitySetKey;
     }
 
     /**
-     *$ links Set the Entity key of the destination.
-     *@ param entityKey $ links destination Entity key
+     * $ links Set the Entity key of the destination.
+     * @ param entityKey $ links destination Entity key
      */
     public void setTargetEntityKey(String entityKey) {
         this.targetEntitySetKey = entityKey;
     }
 
     /**
-     *Get a query for bulk requests.
-     *@return Query for bulk requests
+     * Get a query for bulk requests.
+     * @return Query for bulk requests
      */
     public String getRequestQuery() {
         return this.requestQuery;
     }
 
     /**
-     *Set up a bulk request query.
-     *@ param query query
+     * Set up a bulk request query.
+     * @ param query query
      */
     public void setRequestQuery(String query) {
         this.requestQuery = query;

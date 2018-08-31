@@ -36,7 +36,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
- *BatchBodyParser class.
+ * BatchBodyParser class.
  */
 public class BatchBodyParser {
 
@@ -46,11 +46,11 @@ public class BatchBodyParser {
     private int bulkTopCount = 0;
 
     /**
-     *Parsing the request body of $ batch.
-     *@ param boundary Boundary string
-     *@ param reader request body
+     * Parsing the request body of $ batch.
+     * @ param boundary Boundary string
+     * @ param reader request body
      * @param requestUriParam baseUri
-     *@return BatchBodyPart list
+     * @return BatchBodyPart list
      */
     public List<BatchBodyPart> parse(String boundary, Reader reader, String requestUriParam) {
         //If the number of TODO requests exceeds 10,000, an error occurs
@@ -82,9 +82,9 @@ public class BatchBodyParser {
     }
 
     /**
-     *Get the request body of $ batch.
-     *@ param br Request body
-     *@return request body (StringBuilder)
+     * Get the request body of $ batch.
+     * @ param br Request body
+     * @return request body (StringBuilder)
      * @throws IOException
      */
     private StringBuilder getBatchBody(BufferedReader br) throws IOException {
@@ -101,10 +101,10 @@ public class BatchBodyParser {
     }
 
     /**
-     *Get individual requests from $ batch 's request body and return them in the list.
-     *@ param body $ batch request body
-     *@ param boundaryStr Boundary string
-     *@return BatchBodyPart list
+     * Get individual requests from $ batch 's request body and return them in the list.
+     * @ param body $ batch request body
+     * @ param boundaryStr Boundary string
+     * @return BatchBodyPart list
      */
     private List<BatchBodyPart> getRequests(String body, String boundaryStr) {
         List<BatchBodyPart> requests = new ArrayList<BatchBodyPart>();
@@ -124,7 +124,7 @@ public class BatchBodyParser {
     }
 
     /**
-     *The parser of the contents of the boundary.
+     * The parser of the contents of the boundary.
      */
     class BoundaryParser {
 
@@ -133,8 +133,8 @@ public class BatchBodyParser {
         private String boundaryStr = null;
 
         /**
-         *constructor.
-         *@ param boundary Boundary string
+         * constructor.
+         * @ param boundary Boundary string
          */
         BoundaryParser(BoundaryParser boundary, String boundaryStr) {
             this.parent = boundary;
@@ -142,9 +142,9 @@ public class BatchBodyParser {
         }
 
         /**
-         *Analyze the inside of the boundary.
-         *@ param boundary Body Body part of the boundary
-         *@return BatchBodyPart list
+         * Analyze the inside of the boundary.
+         * @ param boundary Body Body part of the boundary
+         * @return BatchBodyPart list
          */
         List<BatchBodyPart> parse(String boundaryBody) {
 
@@ -203,8 +203,8 @@ public class BatchBodyParser {
         }
 
         /**
-         *Get the request from the boundary and return it with BatchBodyPart type.
-         *@ param bodyPart Body part of the boundary
+         * Get the request from the boundary and return it with BatchBodyPart type.
+         * @ param bodyPart Body part of the boundary
          * @return BatchBodyPart
          */
         private BatchBodyPart getRequest(String bodyPart) {
@@ -319,9 +319,9 @@ public class BatchBodyParser {
         }
 
         /**
-         *Set the header and return the content type.
-         *@ param bodyLines Boundary contents
-         *@return Content type
+         * Set the header and return the content type.
+         * @ param bodyLines Boundary contents
+         * @return Content type
          */
         private String getContentType(List<String> bodyLines) {
             Map<String, String> map = getHeaders(bodyLines);
@@ -330,9 +330,9 @@ public class BatchBodyParser {
         }
 
         /**
-         *A header is acquired from the body part.
-         *@ param bodyLines body part
-         *@return header
+         * A header is acquired from the body part.
+         * @ param bodyLines body part
+         * @return header
          */
         private Map<String, String> getHeaders(List<String> bodyLines) {
             Map<String, String> map = new HashMap<String, String>();
@@ -349,9 +349,9 @@ public class BatchBodyParser {
         }
 
         /**
-         *Get the HTTP method.
-         *@ param line {method} {path} *
-         *@return HTTP method string
+         * Get the HTTP method.
+         * @ param line {method} {path} *
+         * @return HTTP method string
          */
         private String getMethod(String line) {
             Pattern pattern = Pattern.compile("(^[A-Z]+)[\\s]+([^\\s]+).*");
@@ -368,9 +368,9 @@ public class BatchBodyParser {
         }
 
         /**
-         *Get the URI path of the request.
-         *@ param line {method} {URI path} *
-         *@return Request URI path
+         * Get the URI path of the request.
+         * @ param line {method} {URI path} *
+         * @return Request URI path
          */
         private String getUri(String line) {
             Pattern pattern = Pattern.compile("(^[A-Z]+)[\\s]+([^\\s]+).*");
@@ -380,9 +380,9 @@ public class BatchBodyParser {
         }
 
         /**
-         *Get the relative path of the request.
-         *@ param line {method} {path} *
-         *Relative path of @return request
+         * Get the relative path of the request.
+         * @ param line {method} {path} *
+         * Relative path of @return request
          */
         private String getPath(String line) {
             String[] path = line.split("\\?");
@@ -390,9 +390,9 @@ public class BatchBodyParser {
         }
 
         /**
-         *Get the relative path of the request.
-         *@ param line {method} {path} *
-         *Relative path of @return request
+         * Get the relative path of the request.
+         * @ param line {method} {path} *
+         * Relative path of @return request
          */
         private String getQuery(String line) {
             String[] path = line.split("\\?", 2);
@@ -403,10 +403,10 @@ public class BatchBodyParser {
         }
 
         /**
-         *Get the body from the body part of the boundary.
-         *@ param bodyLines body part
-         *@ param headersize Header size
-         *@return body
+         * Get the body from the body part of the boundary.
+         * @ param bodyLines body part
+         * @ param headersize Header size
+         * @return body
          */
         private String getBoundaryBody(List<String> bodyLines, int headersize) {
             StringBuilder boundaryBody = new StringBuilder();
@@ -421,9 +421,9 @@ public class BatchBodyParser {
         }
 
         /**
-         *Get the boundary character string.
-         *@ param contentType Value of Content-Type
-         *@return Boundary string
+         * Get the boundary character string.
+         * @ param contentType Value of Content-Type
+         * @return Boundary string
          */
         private String getBoundaryStr(String contentType) {
             String boundary = null;
@@ -440,8 +440,8 @@ public class BatchBodyParser {
         }
 
         /**
-         *Check the $ top number specified in the bulk request as a whole.
-         *If the total value of $ top in the bulk request as a whole is more than 10,000 it will return 400 error
+         * Check the $ top number specified in the bulk request as a whole.
+         * If the total value of $ top in the bulk request as a whole is more than 10,000 it will return 400 error
          * @param query
          */
         private void checkTopCount(int query) {

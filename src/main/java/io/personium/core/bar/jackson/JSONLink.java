@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *JSON file for $ links definition (70 _ $ links_ json) in bar file Mapping definition class for reading.
+ * JSON file for $ links definition (70 _ $ links_ json) in bar file Mapping definition class for reading.
  */
 public class JSONLink implements IJSONMappedObject {
 
@@ -42,15 +42,15 @@ public class JSONLink implements IJSONMappedObject {
     private Map<String, String> toName;
 
     /**
-     *Get FromType property.
-     *@return FromType name
+     * Get FromType property.
+     * @return FromType name
      */
     public String getFromType() {
         return this.fromType;
     }
 
     /**
-     *Set the FromType property.
+     * Set the FromType property.
      * @param fromType FromType.
      */
     public void setFromType(String fromType) {
@@ -58,7 +58,7 @@ public class JSONLink implements IJSONMappedObject {
     }
 
     /**
-     *Get FromName name property.
+     * Get FromName name property.
      * @return FromName
      */
     public Map<String, String> getFromName() {
@@ -66,7 +66,7 @@ public class JSONLink implements IJSONMappedObject {
     }
 
     /**
-     *Set FromName name property.
+     * Set FromName name property.
      * @param fromName FromName
      */
     public void setFromName(Map<String, String> fromName) {
@@ -74,15 +74,15 @@ public class JSONLink implements IJSONMappedObject {
     }
 
     /**
-     *Get ToType property.
-     *@return ToType name
+     * Get ToType property.
+     * @return ToType name
      */
     public String getToType() {
         return this.toType;
     }
 
     /**
-     *Set ToType property.
+     * Set ToType property.
      * @param toType ToType.
      */
     public void setToType(String toType) {
@@ -90,7 +90,7 @@ public class JSONLink implements IJSONMappedObject {
     }
 
     /**
-     *Get ToName name property.
+     * Get ToName name property.
      * @return ToName
      */
     public Map<String, String> getToName() {
@@ -98,7 +98,7 @@ public class JSONLink implements IJSONMappedObject {
     }
 
     /**
-     *Set ToName name property.
+     * Set ToName name property.
      * @param toName ToName
      */
     public void setToName(Map<String, String> toName) {
@@ -106,8 +106,8 @@ public class JSONLink implements IJSONMappedObject {
     }
 
     /**
-     *Get ToType property in NavigatioinProperty format.
-     *@return Names of ToType in NavigatioinProperty format
+     * Get ToType property in NavigatioinProperty format.
+     * @return Names of ToType in NavigatioinProperty format
      */
     public String getNavPropToType() {
         return "_" + this.toType;

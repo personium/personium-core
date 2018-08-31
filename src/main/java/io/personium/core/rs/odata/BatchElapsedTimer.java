@@ -24,7 +24,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.rs.odata.ODataBatchResource.BatchPriority;
 
 /**
- *Class for timeout control of Batch.
+ * Class for timeout control of Batch.
  */
 public class BatchElapsedTimer {
     private static Logger log = LoggerFactory.getLogger(BatchElapsedTimer.class);
@@ -38,7 +38,7 @@ public class BatchElapsedTimer {
     private long sleepInterval = PersoniumUnitConfig.getOdataBatchSleepIntervalInMillis();
 
     /**
-     *An enumeration type for specifying whether to sleep or not to give Lock to another process.
+     * An enumeration type for specifying whether to sleep or not to give Lock to another process.
      */
     public enum Lock {
         /** Sleep to give Lock to another process.*/
@@ -48,10 +48,10 @@ public class BatchElapsedTimer {
     }
 
     /**
-     *constructor.
-     *@ param startTimeInMillis Process start time.
-     *@ param elapseTimeToBreakInMillis Elapsed time to timeout.
-     *@ param priority Whether to sleep to give Lock to another process
+     * constructor.
+     * @ param startTimeInMillis Process start time.
+     * @ param elapseTimeToBreakInMillis Elapsed time to timeout.
+     * @ param priority Whether to sleep to give Lock to another process
      */
     public BatchElapsedTimer(long startTimeInMillis, long elapseTimeToBreakInMillis, BatchPriority priority) {
         breakTimeInMillis = startTimeInMillis + elapseTimeToBreakInMillis;
@@ -61,9 +61,9 @@ public class BatchElapsedTimer {
     }
 
     /**
-     *At the time of calling, it returns whether it is timeout or not.
-     *@ param mode Whether to sleep to give Lock to another process
-     *@return true: timeout time has passed. false: not timeout.
+     * At the time of calling, it returns whether it is timeout or not.
+     * @ param mode Whether to sleep to give Lock to another process
+     * @return true: timeout time has passed. false: not timeout.
      */
     public boolean shouldBreak(Lock mode) {
         long current = System.currentTimeMillis();
@@ -85,8 +85,8 @@ public class BatchElapsedTimer {
     }
 
     /**
-     *Get the timeout setting value.
-     *@return timeout setting value
+     * Get the timeout setting value.
+     * @return timeout setting value
      */
     public long getElapseTimeToBreak() {
         return elapseTimeToBreak;

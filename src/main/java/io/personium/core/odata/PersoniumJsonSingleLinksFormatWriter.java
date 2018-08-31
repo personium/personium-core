@@ -43,13 +43,13 @@ import org.odata4j.format.SingleLinks;
 import org.odata4j.format.json.JsonWriter;
 
 /**
- *Wrapper class for JsonEntryFormatWriter.
+ * Wrapper class for JsonEntryFormatWriter.
  */
 public class PersoniumJsonSingleLinksFormatWriter extends PersoniumJsonFormatWriter<SingleLinks> {
 
     /**
-     *constructor.
-     *@ param jsonpCallback callback
+     * constructor.
+     * @ param jsonpCallback callback
      */
     public PersoniumJsonSingleLinksFormatWriter(String jsonpCallback) {
         super(jsonpCallback);

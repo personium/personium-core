@@ -21,7 +21,7 @@ import javax.xml.namespace.QName;
 import io.personium.common.utils.PersoniumCoreUtils;
 
 /**
- *A utility around OAuth 2.
+ * A utility around OAuth 2.
  * The OAuth 2.0 Authorization Protocol
  * http://tools.ietf.org/html/draft-ietf-oauth-v2-27
  * The OAuth 2.0 Authorization Protocol: Bearer Tokens
@@ -34,21 +34,21 @@ public final class OAuth2Helper {
     }
 
     /**
-     *Version of OAuth 2.
+     * Version of OAuth 2.
      */
     public static final String VERSION = "Draft 27";
 
     /**
-     *URN representing SAML Assertion.
+     * URN representing SAML Assertion.
      */
     public static final String URN_SAML_ASSERTION = "urn:oasis:names:tc:SAML:2.0:assertion";
     /**
-     *URN representing SAML Format.
+     * URN representing SAML Format.
      */
     public static final String SAML_FORMAT = "urn:oasis:names:tc:SAML:2.0:nameid-format:entity";
 
     /**
-     *Literal on Authorization Scheme handled by OAuth 2.
+     * Literal on Authorization Scheme handled by OAuth 2.
      */
     public static class Scheme {
         /**
@@ -60,13 +60,13 @@ public final class OAuth2Helper {
          */
         public static final String BASIC = "Basic";
         /**
-         *Credentials prefix for Bearer format.
+         * Credentials prefix for Bearer format.
          */
         public static final String BEARER_CREDENTIALS_PREFIX = "Bearer ";
     }
 
     /**
-     *Literal on OAuth 2 error.
+     * Literal on OAuth 2 error.
      */
     public static class Error {
         /**
@@ -130,7 +130,7 @@ public final class OAuth2Helper {
     }
 
     /**
-     *Literal on Grant Type of OAuth 2.
+     * Literal on Grant Type of OAuth 2.
      */
     public static class GrantType {
         /**
@@ -161,7 +161,7 @@ public final class OAuth2Helper {
     }
 
     /**
-     *Literal on Response Type of OAuth 2.
+     * Literal on Response Type of OAuth 2.
      */
     public static class ResponseType {
         /**
@@ -173,7 +173,7 @@ public final class OAuth2Helper {
     }
 
     /**
-     *Literal on various key parameters of OAuth 2.
+     * Literal on various key parameters of OAuth 2.
      */
     public static class Key {
         /**
@@ -209,7 +209,7 @@ public final class OAuth2Helper {
          */
         public static final String KEEPLOGIN = "keeplogin";
         /**
-         *Cancel flag.
+         * Cancel flag.
          */
         public static final String CANCEL_FLG = "cancel_flg";
         /**
@@ -286,11 +286,11 @@ public final class OAuth2Helper {
          */
         public static final String CONFIDENTIAL_MARKER = "#c";
         /**
-         *Confidential Role name.
+         * Confidential Role name.
          */
         public static final String CONFIDENTIAL_ROLE_NAME = "confidentialClient";
         /**
-         *ConfidentialRole resource URL format.
+         * ConfidentialRole resource URL format.
          */
         public static final String CONFIDENTIAL_ROLE_URL_FORMAT = "%s__role/%s/" + CONFIDENTIAL_ROLE_NAME;
         /**
@@ -340,7 +340,7 @@ public final class OAuth2Helper {
     }
 
     /**
-     *The type of AuthScheme allowed according to the resource.
+     * The type of AuthScheme allowed according to the resource.
      */
     public enum AcceptableAuthScheme {
         /** Allow only Basic.*/

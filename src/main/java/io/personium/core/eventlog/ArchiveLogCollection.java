@@ -40,7 +40,7 @@ import io.personium.core.event.EventUtils;
 import io.personium.core.model.Cell;
 
 /**
- *Class for collection that stores archived log files.
+ * Class for collection that stores archived log files.
  */
 public class ArchiveLogCollection {
 
@@ -53,9 +53,9 @@ public class ArchiveLogCollection {
     private List<ArchiveLogFile> archivefileList = new ArrayList<ArchiveLogFile>();;
 
     /**
-     *constructor.
-     *@ param cell Cell object to which the collection belongs
-     *@ param uriInfo collection URL information
+     * constructor.
+     * @ param cell Cell object to which the collection belongs
+     * @ param uriInfo collection URL information
      */
     public ArchiveLogCollection(Cell cell, UriInfo uriInfo) {
         //The creation date and update date of the archive collection is the creation date of the cell
@@ -76,7 +76,7 @@ public class ArchiveLogCollection {
     }
 
     /**
-     *Get file information under collection.
+     * Get file information under collection.
      */
     public void createFileInformation() {
         File archiveDir = new File(this.directoryPath);
@@ -137,23 +137,23 @@ public class ArchiveLogCollection {
     }
 
     /**
-     *Return creation date and time.
-     *@return Created date and time
+     * Return creation date and time.
+     * @return Created date and time
      */
     public long getCreated() {
         return created;
     }
 
     /**
-     *Refresh date and time is returned.
-     *@return Update date and time
+     * Refresh date and time is returned.
+     * @return Update date and time
      */
     public long getUpdated() {
         return updated;
     }
 
     /**
-     *Return URL.
+     * Return URL.
      * @return URL
      */
     public String getUrl() {
@@ -161,7 +161,7 @@ public class ArchiveLogCollection {
     }
 
     /**
-     *Return the path to the directory.
+     * Return the path to the directory.
      * @return URL
      */
     public String getDirectoryPath() {
@@ -169,8 +169,8 @@ public class ArchiveLogCollection {
     }
 
     /**
-     *Return files under the collection.
-     *@return Archivefile list
+     * Return files under the collection.
+     * @return Archivefile list
      */
     public List<ArchiveLogFile> getArchivefileList() {
         return archivefileList;

@@ -46,7 +46,7 @@ import io.personium.core.model.progress.Progress;
 import io.personium.core.model.progress.ProgressManager;
 
 /**
- *Http Class for reading bar files from the request body.
+ * Http Class for reading bar files from the request body.
  */
 public class BarFileUtils {
 
@@ -65,11 +65,11 @@ public class BarFileUtils {
     }
 
     /**
-     *Get a composite key for FromName / ToName of 70 _ $ links.json.
-     *@ param type FromType / EntitySet name specified in ToName
-     *@ param names EntityKey name specified in FromName / ToName
-     *@ param boxName Box name
-     *@return EntityKey name to use when creating Entity
+     * Get a composite key for FromName / ToName of 70 _ $ links.json.
+     * @ param type FromType / EntitySet name specified in ToName
+     * @ param names EntityKey name specified in FromName / ToName
+     * @ param boxName Box name
+     * @return EntityKey name to use when creating Entity
      */
     static String getComplexKeyName(final String type, final Map<String, String> names, final String boxName) {
         String keyname = null;
@@ -89,13 +89,13 @@ public class BarFileUtils {
     }
 
     /**
-     *Validate the namespace of the ACL.
-     *At the same time, it converts to the role instance URL and converts the Base URL.
+     * Validate the namespace of the ACL.
+     * At the same time, it converts to the role instance URL and converts the Base URL.
      * @param element element
      * @param baseUrl baseUrl
      * @param cellName cellName
      * @param boxName boxName
-     *@return Generated Element node
+     * @return Generated Element node
      */
     static Element convertToRoleInstanceUrl(
             final Element element, final String baseUrl, final String cellName, final String boxName) {
@@ -118,11 +118,11 @@ public class BarFileUtils {
     }
 
     /**
-     *Replace the host information (scheme: // hostname /) of the URL described in the bar file with the information of the server being processed.
+     * Replace the host information (scheme: // hostname /) of the URL described in the bar file with the information of the server being processed.
      * @param baseUrl baseUrl
      * @param cellName cellName
      * @param boxName boxName
-     *@return Generated URL
+     * @return Generated URL
      */
     private static String getLocalUrl(String baseUrl, String cellName, String boxName) {
         StringBuilder builder = new StringBuilder();
@@ -135,9 +135,9 @@ public class BarFileUtils {
     }
 
     /**
-     *Get UnitUser name from Cell owner information.
-     *@ param owner owner information (URL)
-     *@return UnitUser name
+     * Get UnitUser name from Cell owner information.
+     * @ param owner owner information (URL)
+     * @return UnitUser name
      */
     static String getUnitUserName(final String owner) {
         String unitUserName = null;
@@ -150,13 +150,13 @@ public class BarFileUtils {
     }
 
     /**
-     *bar Read JSON file from file entry.
+     * bar Read JSON file from file entry.
      * @param <T> JSONMappedObject
-     *@ param inStream bar File entry's InputStream
+     * @ param inStream bar File entry's InputStream
      * @param entryName entryName
      * @param clazz clazz
-     *@return Object read from JSON file
-     *@ throws IOException Error loading JSON file
+     * @return Object read from JSON file
+     * @ throws IOException Error loading JSON file
      */
     static <T> T readJsonEntry(
             InputStream inStream, String entryName, Class<T> clazz) throws IOException {
@@ -182,12 +182,12 @@ public class BarFileUtils {
     }
 
     /**
-     *Output the installation processing status to EventBus as an internal event.
+     * Output the installation processing status to EventBus as an internal event.
      * @param event Personium event object
      * @param eventBus Personium event bus for sending event
-     *@ param code processing code (ex. PL - BI - 0000)
-     *@ param path bar Entry path in the file (in the case of Edmx, the path of OData)
-     *@ param message Output message
+     * @ param code processing code (ex. PL - BI - 0000)
+     * @ param path bar Entry path in the file (in the case of Edmx, the path of OData)
+     * @ param message Output message
      */
     static void outputEventBus(PersoniumEvent.Builder eventBuilder, EventBus eventBus, String code,
             String path, String message) {
@@ -202,11 +202,11 @@ public class BarFileUtils {
     }
 
     /**
-     *Output bar installation status to ProgressInfo.
-     *@ param isError Specify true on error, false otherwise.
+     * Output bar installation status to ProgressInfo.
+     * @ param isError Specify true on error, false otherwise.
      * @param progressInfo bar install progress
-     *@ param code processing code (ex. PL - BI - 0000)
-     *@ param message Output message
+     * @ param code processing code (ex. PL - BI - 0000)
+     * @ param message Output message
      */
     @SuppressWarnings("unchecked")
     static void writeToProgress(boolean isError, BarInstallProgressInfo progressInfo, String code, String message) {
@@ -225,8 +225,8 @@ public class BarFileUtils {
     }
 
     /**
-     *Output bar installation status to cache.
-     *@ param forceOutput Specify true to forcibly output, false otherwise
+     * Output bar installation status to cache.
+     * @ param forceOutput Specify true to forcibly output, false otherwise
      * @param progressInfo bar install progress
      */
     static void writeToProgressCache(boolean forceOutput, BarInstallProgressInfo progressInfo) {

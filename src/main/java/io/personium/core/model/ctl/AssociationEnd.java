@@ -22,18 +22,18 @@ import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 /**
- *An Edm definition body of Association which is one of EntityType handling the schema of user data.
+ * An Edm definition body of Association which is one of EntityType handling the schema of user data.
  */
 public class AssociationEnd {
     private AssociationEnd() {
     }
 
     /**
-     *Edm EntityType name.
+     * Edm EntityType name.
      */
     public static final String EDM_TYPE_NAME = "AssociationEnd";
     /**
-     *Definition field of Name property.
+     * Definition field of Name property.
      */
     public static final EdmProperty.Builder P_ASSOCIATION_NAME = EdmProperty.newBuilder("Name")
             .setType(EdmSimpleType.STRING)
@@ -41,7 +41,7 @@ public class AssociationEnd {
             .setAnnotations(Common.P_FORMAT_NAME);
 
     /**
-     *Definition of Multiplicity property.
+     * Definition of Multiplicity property.
      */
     public static final EdmProperty.Builder P_MULTIPLICITY = EdmProperty.newBuilder("Multiplicity")
             .setType(EdmSimpleType.STRING)
@@ -49,7 +49,7 @@ public class AssociationEnd {
             .setAnnotations(Common.P_FORMAT_MULTIPLICITY);
 
     /**
-     *_EntityType / Name Definition of property.
+     * _EntityType / Name Definition of property.
      */
     public static final EdmProperty.Builder P_ENTITYTYPE_NAME = EdmProperty.newBuilder("_EntityType.Name")
             .setType(EdmSimpleType.STRING)

@@ -19,12 +19,12 @@ package io.personium.core.model.progress;
 import org.json.simple.JSONObject;
 
 /**
- *Interface definition for asynchronous processing situations.
+ * Interface definition for asynchronous processing situations.
  */
 public interface ProgressInfo {
 
     /**
-     *Processing status (status).
+     * Processing status (status).
      */
     enum STATUS {
         /** processing.*/
@@ -39,16 +39,16 @@ public interface ProgressInfo {
         private String message;
 
         /**
-         *constructor.
-         *@ param message Message
+         * constructor.
+         * @ param message Message
          */
         STATUS(String message) {
             this.message = message;
         }
 
         /**
-         *A message corresponding to each Enum value is obtained.
-         *@return message
+         * A message corresponding to each Enum value is obtained.
+         * @return message
          */
         public String value() {
             return message;
@@ -56,8 +56,8 @@ public interface ProgressInfo {
     }
 
     /**
-     *Acquires the contents of stored data in JSON format.
-     *@return JSON object.
+     * Acquires the contents of stored data in JSON format.
+     * @return JSON object.
      */
     JSONObject getJsonObject();
 }

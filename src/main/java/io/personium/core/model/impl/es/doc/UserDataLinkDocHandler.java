@@ -21,20 +21,20 @@ import java.util.TreeMap;
 import io.personium.common.es.response.PersoniumSearchHit;
 
 /**
- *We deal with N: N links with ES. Links are stretched between two types. EsLinkHandler elh = new EsLinkHandler (type 1, type 2); Specify both keys to create a linked document.
- *Designate both keys and create a link document key. Specify the key of Type on one side to obtain the list of the other Type.
+ * We deal with N: N links with ES. Links are stretched between two types. EsLinkHandler elh = new EsLinkHandler (type 1, type 2); Specify both keys to create a linked document.
+ * Designate both keys and create a link document key. Specify the key of Type on one side to obtain the list of the other Type.
  */
 public class UserDataLinkDocHandler extends LinkDocHandler {
 
     /**
-     *constructor.
+     * constructor.
      */
     public UserDataLinkDocHandler() {
         super();
     }
 
     /**
-     *constructor.
+     * constructor.
      * @param srcHandler OEntityDocHandler
      * @param tgtHandler OEntityDocHandler
      */
@@ -60,8 +60,8 @@ public class UserDataLinkDocHandler extends LinkDocHandler {
     }
 
     /**
-     *constructor.
-     *@ param searchHit Search result
+     * constructor.
+     * @ param searchHit Search result
      */
     public UserDataLinkDocHandler(PersoniumSearchHit searchHit) {
         super(searchHit);

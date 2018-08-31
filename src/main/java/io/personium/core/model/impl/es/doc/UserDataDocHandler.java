@@ -44,7 +44,7 @@ import io.personium.core.model.impl.es.odata.PropertyAlias;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- *DocHandler of OEntity.
+ * DocHandler of OEntity.
  */
 public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDocHandler {
 
@@ -52,7 +52,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     private String entitySetName;
 
     /**
-     *constructor.
+     * constructor.
      */
     public UserDataDocHandler() {
         this.propertyAliasMap = null;
@@ -60,7 +60,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Constructor that creates an instance of UserDataDocHandler from the result of acquiring one ES.
+     * Constructor that creates an instance of UserDataDocHandler from the result of acquiring one ES.
      * @param getResponse .
      */
     public UserDataDocHandler(PersoniumGetResponse getResponse) {
@@ -70,7 +70,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Constructor that creates an instance of UserDataDocHandler from the search result of ES.
+     * Constructor that creates an instance of UserDataDocHandler from the search result of ES.
      * @param searchHit .
      */
     public UserDataDocHandler(PersoniumSearchHit searchHit) {
@@ -80,10 +80,10 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Constructor that creates DocHandler without ID from OEntityWrapper.
-     *@param type ES type name
+     * Constructor that creates DocHandler without ID from OEntityWrapper.
+     * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     *@ param metadata schema information
+     * @ param metadata schema information
      */
     public UserDataDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         initInstance(type, oEntityWrapper, metadata);
@@ -92,32 +92,32 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Returns the correspondence Map of property name and alias.
-     *@return Correspondence between property names and aliases Map
+     * Returns the correspondence Map of property name and alias.
+     * @return Correspondence between property names and aliases Map
      */
     public Map<String, PropertyAlias> getPropertyAliasMap() {
         return this.propertyAliasMap;
     }
 
     /**
-     *Set correspondence map of property name and alias.
-     *@ param value Correspondence between property name and alias Map
+     * Set correspondence map of property name and alias.
+     * @ param value Correspondence between property name and alias Map
      */
     public void setPropertyAliasMap(Map<String, PropertyAlias> value) {
         this.propertyAliasMap = value;
     }
 
     /**
-     *Returns the entity set name.
-     *@return entity set name
+     * Returns the entity set name.
+     * @return entity set name
      */
     public String getEntitySetName() {
         return this.entitySetName;
     }
 
     /**
-     *Set the entity set name.
-     *@ param name Entity set name
+     * Set the entity set name.
+     * @ param name Entity set name
      */
     public void setEntitySetName(String name) {
         this.entitySetName = name;
@@ -134,11 +134,11 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Get Alias ​​name from property name.
-     *To manipulate user data, override this method and convert it to Alias.
-     *@ param propertyName property name
-     *@ param typeName ComplexType name to which this property belongs
-     *@return Alias ​​name
+     * Get Alias ​​name from property name.
+     * To manipulate user data, override this method and convert it to Alias.
+     * @ param propertyName property name
+     * @ param typeName ComplexType name to which this property belongs
+     * @return Alias ​​name
      */
     @Override
     protected String resolveComplexTypeAlias(String propertyName, String typeName) {
@@ -234,11 +234,11 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Return a property value object converted to an appropriate type according to the property definition of the schema.
-     *In the case of user data, convert the Boolean type property value to a character string.
-     *@ param prop property object
-     *Property definition for @ param edmType schema
-     *@return Property value object converted to appropriate type
+     * Return a property value object converted to an appropriate type according to the property definition of the schema.
+     * In the case of user data, convert the Boolean type property value to a character string.
+     * @ param prop property object
+     * Property definition for @ param edmType schema
+     * @return Property value object converted to appropriate type
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -260,9 +260,9 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Convert the value of DynamicProperty.
-     *@ param key Key to be converted
-     *@ param value Value to convert
+     * Convert the value of DynamicProperty.
+     * @ param key Key to be converted
+     * @ param value Value to convert
      */
     public void convertDynamicPropertyValue(String key, Object value) {
         if (value != null && (value instanceof Boolean || value instanceof Double)) {
@@ -315,9 +315,9 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Parsing Link field.
-     *@ param source parse source information in the form of Map
-     *@return Link information
+     * Parsing Link field.
+     * @ param source parse source information in the form of Map
+     * @return Link information
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -345,11 +345,11 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Convert the property name stored in static field to Alias.
-     *@ param entity type to which the entityType property is attached (EntityType or ComplexType)
-     *@ param entity name to which the entityName property is attached
-     *@ param entrySet static map map object stored in field
-     *@ return static field map object
+     * Convert the property name stored in static field to Alias.
+     * @ param entity type to which the entityType property is attached (EntityType or ComplexType)
+     * @ param entity name to which the entityName property is attached
+     * @ param entrySet static map map object stored in field
+     * @ return static field map object
      */
     @SuppressWarnings("unchecked")
     private Map<String, Object> getStaticFieldMap(
@@ -395,10 +395,10 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Get the property's Alias ​​name from the mapping data.
-     *@ param key Search key for mapping data
-     *@ param propertyName property name
-     *@return Alias ​​name
+     * Get the property's Alias ​​name from the mapping data.
+     * @ param key Search key for mapping data
+     * @ param propertyName property name
+     * @return Alias ​​name
      */
     private String getAlias(String key, String propertyName) {
         if (propertyName.startsWith("_")) {
@@ -412,10 +412,10 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Get the ComplexType name specified in the type attribute value of the property from the mapping data.
-     *@ param key Search key for mapping data
-     *@ param propertyName property name
-     *@return ComplexType name
+     * Get the ComplexType name specified in the type attribute value of the property from the mapping data.
+     * @ param key Search key for mapping data
+     * @ param propertyName property name
+     * @return ComplexType name
      */
     private String getComplexTypeName(String key) {
         PropertyAlias alias = this.propertyAliasMap.get(key);

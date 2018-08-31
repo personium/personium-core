@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 /**
- *Event related classes.
+ * Event related classes.
  */
 package io.personium.core.event;

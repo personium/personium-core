@@ -44,7 +44,7 @@ import org.odata4j.core.Throwables;
 import org.odata4j.format.json.JsonWriter;
 
 /**
- *JsonWriter wrapper class.
+ * JsonWriter wrapper class.
  */
 public class PersoniumJsonWriter extends JsonWriter {
 
@@ -54,8 +54,8 @@ public class PersoniumJsonWriter extends JsonWriter {
     private final Writer writer;
 
     /**
-     *constructor.
-     *@ param writer writer
+     * constructor.
+     * @ param writer writer
      */
     public PersoniumJsonWriter(Writer writer) {
         super(writer);
@@ -63,8 +63,8 @@ public class PersoniumJsonWriter extends JsonWriter {
     }
 
     /**
-     *Double type field output.
-     *@ param value field value
+     * Double type field output.
+     * @ param value field value
      */
     public void writeNumber(double value) {
         try {
@@ -75,10 +75,10 @@ public class PersoniumJsonWriter extends JsonWriter {
     }
 
     /**
-     *Format Double value in default format.
-     *Convert to fixed-point representation in a range where information does not occur
-     *@ param value Value to be formatted
-     *@return shaping result
+     * Format Double value in default format.
+     * Convert to fixed-point representation in a range where information does not occur
+     * @ param value Value to be formatted
+     * @return shaping result
      */
     private String formatDoubleValue(double value) {
         //Generate character string converted to fixed decimal representation

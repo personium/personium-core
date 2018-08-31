@@ -44,7 +44,7 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- *JAX-RS Resource class corresponding to plain WebDAV collection.
+ * JAX-RS Resource class corresponding to plain WebDAV collection.
  */
 public class DavCollectionResource {
 
@@ -52,15 +52,15 @@ public class DavCollectionResource {
 
     /**
      * constructor.
-     *@ param parent parent
-     *@ param davCmp parts
+     * @ param parent parent
+     * @ param davCmp parts
      */
     public DavCollectionResource(final DavRsCmp parent, final DavCmp davCmp) {
         this.davRsCmp = new DavRsCmp(parent, davCmp);
     }
 
     /**
-     *Process the GET method to get this resource.
+     * Process the GET method to get this resource.
      * @return JAX-RS Response Object
      */
     @GET
@@ -133,10 +133,10 @@ public class DavCollectionResource {
     }
 
     /**
-     *Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
-     *@ param nextPath path name one down
-     *@ param request request
-     *@return Jax-RS resource object responsible for subordinate path
+     * Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
+     * @ param nextPath path name one down
+     * @ param request request
+     * @return Jax-RS resource object responsible for subordinate path
      */
     @Path("{nextPath}")
     public Object nextPath(@PathParam("nextPath") final String nextPath,
@@ -157,8 +157,8 @@ public class DavCollectionResource {
     }
 
     /**
-     *Processing of ACL method Set ACL.
-     *@ param reader configuration XML
+     * Processing of ACL method Set ACL.
+     * @ param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -170,7 +170,7 @@ public class DavCollectionResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
@@ -191,9 +191,9 @@ public class DavCollectionResource {
     }
 
     /**
-     *Processing of the MOVE method.
-     *@ param headers header information
-     *@return JAX-RS response object
+     * Processing of the MOVE method.
+     * @ param headers header information
+     * @return JAX-RS response object
      */
     @WriteAPI
     @WebDAVMethod.MOVE

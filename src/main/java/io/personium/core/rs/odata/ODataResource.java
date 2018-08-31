@@ -55,8 +55,8 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- *Route of JAX-RS Resource resource providing OData service Unit control · Cell control · User OData Schema · User OData It is used for 4 kinds of usage.
- *Create a subclass and give rootUrl and odataProducer in the constructor. This class finishes all processing that does not depend on back side implementation, such as schema checking.
+ * Route of JAX-RS Resource resource providing OData service Unit control · Cell control · User OData Schema · User OData It is used for 4 kinds of usage.
+ * Create a subclass and give rootUrl and odataProducer in the constructor. This class finishes all processing that does not depend on back side implementation, such as schema checking.
  */
 public abstract class ODataResource extends ODataCtlResource {
 
@@ -67,14 +67,14 @@ public abstract class ODataResource extends ODataCtlResource {
     AccessContext accessContext;
 
     /**
-     *log.
+     * log.
      */
     static Logger log = LoggerFactory.getLogger(ODataResource.class);
 
     /**
-     *constructor.
+     * constructor.
      * @param accessContext AccessContext
-     *@ param rootUrl root URL
+     * @ param rootUrl root URL
      * @param producer ODataProducer
      */
     public ODataResource(final AccessContext accessContext,
@@ -93,40 +93,40 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     *Check processing of authentication header.
+     * Check processing of authentication header.
      * @param ac accessContext
      * @param privilege Privilege
      */
     public abstract void checkAccessContext(AccessContext ac, Privilege privilege);
 
     /**
-     *Obtain Auth Scheme that can be used for authentication.
-     *Autret Scheme that can be used for @return authentication
+     * Obtain Auth Scheme that can be used for authentication.
+     * Autret Scheme that can be used for @return authentication
      */
     public abstract AcceptableAuthScheme getAcceptableAuthScheme();
 
     /**
-     *Access authority check processing for resources.
+     * Access authority check processing for resources.
      * @param ac accessContext
      * @param privilege privilege
-     *@return Accessibility
+     * @return Accessibility
      */
     public abstract boolean hasPrivilege(AccessContext ac, Privilege privilege);
 
     /**
-     *Schema authentication check processing.
+     * Schema authentication check processing.
      * @param ac accessContext
      */
     public abstract void checkSchemaAuth(AccessContext ac);
 
     /**
-     *Check processing for basic authentication (Batch request only).
+     * Check processing for basic authentication (Batch request only).
      * @param ac accessContext
      */
     public abstract void setBasicAuthenticateEnableInBatchRequest(AccessContext ac);
 
     /**
-     *Judgment on accessibility for each entity.
+     * Judgment on accessibility for each entity.
      * @param ac accessContext
      * @param oew OEntityWrapper
      */
@@ -135,16 +135,16 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     *Definition of additional search conditions by AccessContext, defined as necessary in subclass.
+     * Definition of additional search conditions by AccessContext, defined as necessary in subclass.
      * @param ac accessContext
-     *@return $ filter grammar?
+     * @return $ filter grammar?
      */
     public String defineAccessContextSearchContext(AccessContext ac) {
         return null;
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
@@ -158,7 +158,7 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     protected Response doGetOptionsMetadata() {
@@ -168,8 +168,8 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     *Perform $ batch processing.
-     *@return response
+     * Perform $ batch processing.
+     * @return response
      */
     @Path("{first: \\$}batch")
     public ODataBatchResource processBatch() {
@@ -177,7 +177,7 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     *Return the service document.
+     * Return the service document.
      * @param uriInfo UriInfo
      * @param format String
      * @param httpHeaders HttpHeaders
@@ -208,16 +208,16 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     *Get the metadata object.
-     *@return Metadata of type EdmDataServices
+     * Get the metadata object.
+     * @return Metadata of type EdmDataServices
      */
     public EdmDataServices getMetadataSource() {
         return this.metadata;
     }
 
     /**
-     *Corresponds to the service metadata request.
-     *@return JAX-RS response object
+     * Corresponds to the service metadata request.
+     * @return JAX-RS response object
      */
     protected Response doGetMetadata() {
 
@@ -229,8 +229,8 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     */ {entitySet} is processed.
-     *@ param entitySetName Path representing entitySet name
+     * 
+     * @ param entitySetName Path representing entitySet name
      * @param request Request
      * @return ODataEntitiesResource
      */
@@ -251,11 +251,11 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     */ {entitySet} ({key}) is processed.
-     *@ param entitySetName entitySet name
-     *@ param key key string
+     * 
+     * @ param entitySetName entitySet name
+     * @ param key key string
      * @param request Request
-     *@ return ODataEntityResource class object
+     * @ return ODataEntityResource class object
      */
     @Path("{entitySet}({key})")
     public ODataEntityResource entity(
@@ -280,7 +280,7 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     *Returns the RootURL of this OData service.
+     * Returns the RootURL of this OData service.
      * @return Root Url of this OData Service
      */
     public String getRootUrl() {
@@ -288,7 +288,7 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     *Returns the ODataProducer of this OData service.
+     * Returns the ODataProducer of this OData service.
      * @return ODataProducer of this OData Service
      */
     public PersoniumODataProducer getODataProducer() {
@@ -296,7 +296,7 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     *Retrieve the ETag value from the Etag header value.
+     * Retrieve the ETag value from the Etag header value.
      * @param etagHeaderValue etagHeaderValue
      * @return etag
      */
@@ -318,7 +318,7 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     *Generate Etag header value.
+     * Generate Etag header value.
      * @param etag etag
      * @return etagHeaderValue
      */
@@ -327,29 +327,29 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     *Returns the privileges required for reading from the level of the class to be processed and the entity set name.
-     *@ param entitySetNameStr target entity set
-     *Privileges required for @return processing
+     * Returns the privileges required for reading from the level of the class to be processed and the entity set name.
+     * @ param entitySetNameStr target entity set
+     * Privileges required for @return processing
      */
     public abstract Privilege getNecessaryReadPrivilege(String entitySetNameStr);
 
     /**
-     *Returns the authority required for writing from the level of the class to be processed and the entity set name.
-     *@ param entitySetNameStr target entity set
-     *Privileges required for @return processing
+     * Returns the authority required for writing from the level of the class to be processed and the entity set name.
+     * @ param entitySetNameStr target entity set
+     * Privileges required for @return processing
      */
     public abstract Privilege getNecessaryWritePrivilege(String entitySetNameStr);
 
     /**
-     *Returns the necessary authority for OPTIONS from the level of the class to be processed and the entity set name.
-     *Privileges required for @return processing
+     * Returns the necessary authority for OPTIONS from the level of the class to be processed and the entity set name.
+     * Privileges required for @return processing
      */
     public abstract Privilege getNecessaryOptionsPrivilege();
 
     /**
-     *Returns whether the access context has permission to $ batch.
-     *@ param ac access context
-     *@return true: The access context has permission to $ batch
+     * Returns whether the access context has permission to $ batch.
+     * @ param ac access context
+     * @return true: The access context has permission to $ batch
      */
     public abstract boolean hasPrivilegeForBatch(AccessContext ac);
 

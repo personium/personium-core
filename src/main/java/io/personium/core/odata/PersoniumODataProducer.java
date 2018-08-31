@@ -52,43 +52,43 @@ import io.personium.core.rs.odata.BulkRequest;
 import io.personium.core.rs.odata.ODataBatchResource.NavigationPropertyBulkContext;
 
 /**
- *ETag · ODataProducer corresponding to change of primary key.
+ * ETag · ODataProducer corresponding to change of primary key.
  */
 public interface PersoniumODataProducer extends ODataProducer {
     /**
-     *ETag · Entity update corresponding to primary key change.
+     * ETag · Entity update corresponding to primary key change.
      * @param entitySetName entitySetName
-     *@ param originalKey Key to be updated
-     *@ param o EntityWrapper data (including updated key)
+     * @ param originalKey Key to be updated
+     * @ param o EntityWrapper data (including updated key)
      */
     void updateEntity(String entitySetName, OEntityKey originalKey, OEntityWrapper oEntityWrapper);
 
     /**
-     *Account password change.
+     * Account password change.
      * @param entitySetName entitySetName
-     *@ param originalKey Key to be updated
+     * @ param originalKey Key to be updated
      * @param pCredHeader dcCredHeader
      */
     void updatePassword(EdmEntitySet entitySetName, OEntityKey originalKey, String pCredHeader);
 
     /**
-     *Change last login time of Account.
+     * Change last login time of Account.
      * @param entitySetName entitySetName
-     *@ param originalKey Key to be updated
-     *@ param accountId Account ID
+     * @ param originalKey Key to be updated
+     * @ param accountId Account ID
      */
     void updateLastAuthenticated(EdmEntitySet entitySetName, OEntityKey originalKey, String accountId);
 
     /**
-     *ETag · Entity MERGE for primary key change.
+     * ETag · Entity MERGE for primary key change.
      * @param entitySetName entitySetName
-     *@ param originalKey Key to be updated
-     *@ param o EntityWrapper data (including updated key)
+     * @ param originalKey Key to be updated
+     * @ param o EntityWrapper data (including updated key)
      */
     void mergeEntity(String entitySetName, OEntityKey originalKey, OEntityWrapper oEntityWrapper);
 
     /**
-     *Entity deletion corresponding to ETag.
+     * Entity deletion corresponding to ETag.
      * @param entitySetName entitySetName
      * @param entityKey entityKey
      * @param etag etag
@@ -96,31 +96,31 @@ public interface PersoniumODataProducer extends ODataProducer {
     void deleteEntity(String entitySetName, OEntityKey entityKey, String etag);
 
     /**
-     *EntitySetDocHandler is generated from EntitySet name and OEntity and acquired.
-     *@ param entitySetName EntitySet name
+     * EntitySetDocHandler is generated from EntitySet name and OEntity and acquired.
+     * @ param entitySetName EntitySet name
      * @param entity OEntity
      * @return EntitySetDocHandler
      */
     EntitySetDocHandler getEntitySetDocHandler(String entitySetName, OEntity entity);
 
     /**
-     *Update processing handler.
-     *@ param entitySetName Entity set name
+     * Update processing handler.
+     * @ param entitySetName Entity set name
      */
     void onChange(String entitySetName);
 
     /**
-     *Perform bulk registration.
-     *@ param metadata schema information
-     *@ param bulkRequests List of EntitySetDocHandler to register
-     *@ param cellId Cell ID
+     * Perform bulk registration.
+     * @ param metadata schema information
+     * @ param bulkRequests List of EntitySetDocHandler to register
+     * @ param cellId Cell ID
      * @return EntitiesResponse
      */
     List<EntityResponse> bulkCreateEntity(EdmDataServices metadata,
             LinkedHashMap<String, BulkRequest> bulkRequests, String cellId);
 
     /**
-     *Register the link after registering the entity via NP.
+     * Register the link after registering the entity via NP.
      * @param sourceEntity sourceEntity
      * @param targetNavProp targetNavProp
      * @param oew oew
@@ -131,17 +131,17 @@ public interface PersoniumODataProducer extends ODataProducer {
             OEntity oew, String entity);
 
     /**
-     *Register entities collectively via NavigationProperty.
-     *@ param npBulkContexts Context of bulk registration
-     *@ param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
+     * Register entities collectively via NavigationProperty.
+     * @ param npBulkContexts Context of bulk registration
+     * @ param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
      */
     void bulkCreateEntityViaNavigationProperty(List<NavigationPropertyBulkContext> npBulkContexts,
             LinkedHashMap<String, BulkRequest> npBulkRequests);
 
     /**
-     *Check the upper limit of the number of links when registering entities collectively via NavigationProperty.
-     *@ param npBulkContexts Context of bulk registration
-     *@ param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
+     * Check the upper limit of the number of links when registering entities collectively via NavigationProperty.
+     * @ param npBulkContexts Context of bulk registration
+     * @ param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
      */
     void checkLinksUpperLimitRecord(List<NavigationPropertyBulkContext> npBulkContexts,
             LinkedHashMap<String, BulkRequest> npBulkRequests);

@@ -32,7 +32,7 @@ import io.personium.common.utils.PersoniumCoreUtils.HttpHeaders;
 import io.personium.core.PersoniumCoreException;
 
 /**
- *A class that collects resource-related utility functions.
+ * A class that collects resource-related utility functions.
  */
 public class ResourceUtils {
 
@@ -43,8 +43,8 @@ public class ResourceUtils {
     }
 
     /**
-     *Get request body from Reader and make it JSONObject.
-     *@ param reader request body
+     * Get request body from Reader and make it JSONObject.
+     * @ param reader request body
      * @return JSONObject
      */
     public static JSONObject parseBodyAsJSON(Reader reader) {
@@ -68,11 +68,11 @@ public class ResourceUtils {
     }
 
     /**
-     *Check from the header information whether or not the request body exists <br />
-     ** In this method, the request body is not read, and the presence or absence of the request body is judged from the header information.
-     *@ param contentLength Value of the Content-Length header
-     *@ param transferEncoding Value of Transfer-Encoding header
-     *@return true: request body exists false: request body does not exist
+     * Check from the header information whether or not the request body exists <br />
+     * * In this method, the request body is not read, and the presence or absence of the request body is judged from the header information.
+     * @ param contentLength Value of the Content-Length header
+     * @ param transferEncoding Value of Transfer-Encoding header
+     * @return true: request body exists false: request body does not exist
      */
     public static boolean hasApparentlyRequestBody(Long contentLength, String transferEncoding) {
         //If the following is satisfied, it is judged that the request body exists
@@ -105,8 +105,8 @@ public class ResourceUtils {
     }
 
     /**
-     *It creates and returns a ResponseBuilder that handles the normal response to the OPTIONS method.
-     *@param allowedMethods Allowed HTTP method string.
+     * It creates and returns a ResponseBuilder that handles the normal response to the OPTIONS method.
+     * @param allowedMethods Allowed HTTP method string.
      * @return ResponseBuilder
      */
     public static ResponseBuilder responseBuilderForOptions(String... allowedMethods) {

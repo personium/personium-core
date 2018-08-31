@@ -29,11 +29,11 @@ import io.personium.common.es.response.PersoniumSearchHit;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- *DocHandler of Cell.
+ * DocHandler of Cell.
  */
 public class CellDocHandler extends OEntityDocHandler {
     /**
-     *A JSON key that stores ACL configuration information for elasticsearch.
+     * A JSON key that stores ACL configuration information for elasticsearch.
      */
     public static final String KEY_ACL_FIELDS = "a";
 
@@ -41,14 +41,14 @@ public class CellDocHandler extends OEntityDocHandler {
     static Logger log = LoggerFactory.getLogger(CellDocHandler.class);
 
     /**
-     *@return ACL setting information
+     * @return ACL setting information
      */
     public Map<String, JSONObject> getAclFields() {
         return aclFields;
     }
 
     /**
-     *@ param aclFields ACL setting information
+     * @ param aclFields ACL setting information
      */
     public void setAclFields(Map<String, JSONObject> aclFields) {
         this.aclFields = aclFields;
@@ -79,7 +79,7 @@ public class CellDocHandler extends OEntityDocHandler {
      * Constructor.
      * @param type type
      * @param oEntity OEntityWrapper
-     *@ param metadata schema information
+     * @ param metadata schema information
      */
     public CellDocHandler(String type, OEntityWrapper oEntity, EdmDataServices metadata) {
         super(type, oEntity, metadata);
@@ -100,8 +100,8 @@ public class CellDocHandler extends OEntityDocHandler {
     }
 
     /**
-     *Parse Source in Map format and map to itself.
-     *@ param source mapping format information for mapping
+     * Parse Source in Map format and map to itself.
+     * @ param source mapping format information for mapping
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -111,8 +111,8 @@ public class CellDocHandler extends OEntityDocHandler {
     }
 
     /**
-     *Get Source of Map as Map format.
-     *@return Hash value of CellDocument
+     * Get Source of Map as Map format.
+     * @return Hash value of CellDocument
      */
     @Override
     public Map<String, Object> getSource() {

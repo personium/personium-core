@@ -34,7 +34,7 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- *A class that holds configuration information, from which you can access the contents of personium-unit-config.properties on the classpath.
+ * A class that holds configuration information, from which you can access the contents of personium-unit-config.properties on the classpath.
  */
 public class PersoniumUnitConfig {
     private static final int DEFAULT_BATCH_TIMEOUT = 270000;
@@ -86,7 +86,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Setting around OData.
+     * Setting around OData.
      */
     public static final class OData {
         /** Maximum number of requests when doing $ batch processing.*/
@@ -131,7 +131,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Setting around Account.
+     * Setting around Account.
      */
     public static final class Account {
         /** Whether or not to update the last login time of Account at the time of successful password authentication (true: Update (default) false: Do not update).*/
@@ -139,7 +139,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Setting around Dav.
+     * Setting around Dav.
      */
     public static final class Dav {
         /** Maximum number of child elements of the collection.*/
@@ -150,7 +150,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Setting around Security.
+     * Setting around Security.
      */
     public static final class Security {
         /** The secret key used when encrypting the token.*/
@@ -164,7 +164,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Lock setting.
+     * Lock setting.
      */
     public static final class Lock {
         /** Type of Lock Tolerance: memcached*/
@@ -196,7 +196,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Elastic Search related settings.
+     * Elastic Search related settings.
      */
     public static final class ES {
         /** Elastic Search host configuration property key.*/
@@ -219,7 +219,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Setting of BinaryData.
+     * Setting of BinaryData.
      */
     public static final class BinaryData {
         /** Setting whether to delete physically when deleting files (true: physical deletion, false: logical deletion).*/
@@ -236,7 +236,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Blob setting.
+     * Blob setting.
      */
     public static final class BlobStore {
         /** Property key of root (URL, PATH) setting to store blob data when using Elastic Search.*/
@@ -244,7 +244,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Number of properties in user data, hierarchy limit setting.
+     * Number of properties in user data, hierarchy limit setting.
      */
     public static final class UserDataProperties {
         /** Maximum number limit of EntityType.*/
@@ -263,7 +263,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Event setting.
+     * Event setting.
      */
     public static final class Event {
         /** Storage directory of the latest event log file.*/
@@ -273,7 +273,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Setting around Cache.
+     * Setting around Cache.
      */
     public static final class Cache {
         /** Type of Cache Tolerance: none / memcached*/
@@ -302,7 +302,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Setting around Engine.
+     * Setting around Engine.
      */
     public static final class Engine {
         /** The Host key of the Engine.*/
@@ -316,7 +316,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Setting around X509.
+     * Setting around X509.
      */
     public static final class X509 {
         /** X509 Property key of the path setting where the root certificate is placed.*/
@@ -330,7 +330,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *bar file export / install related settings.
+     * bar file export / install related settings.
      */
     public static final class BAR {
         /** bar Property key of the maximum file size (MB) of the file.*/
@@ -414,14 +414,14 @@ public class PersoniumUnitConfig {
     private final Properties propsOverride = new Properties();
 
     /**
-     *A protected constructor.
+     * A protected constructor.
      */
     protected PersoniumUnitConfig() {
         this.doReload();
     }
 
     /**
-     *Reload the settings.
+     * Reload the settings.
      */
     private synchronized void doReload() {
         Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
@@ -473,7 +473,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Read the personium-unit-config-default.properties file.
+     * Read the personium-unit-config-default.properties file.
      * @return personium-unit-config-default.properties
      */
     protected Properties getUnitConfigDefaultProperties() {
@@ -495,7 +495,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Read the personium-unit-config.properties file.
+     * Read the personium-unit-config.properties file.
      * @return personium-unit-config.properties
      */
     protected Properties getPersoniumConfigProperties() {
@@ -524,8 +524,8 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Get personium-unit-config.properties in InputStream format.
-     *@ param configFilePath configuration file path
+     * Get personium-unit-config.properties in InputStream format.
+     * @ param configFilePath configuration file path
      * @return personium-unit-config.properties
      */
     protected InputStream getConfigFileInputStream(String configFilePath) {
@@ -552,52 +552,52 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Acquire setting value.
-     *@ param key
-     *@return setting value
+     * Acquire setting value.
+     * @ param key
+     * @return setting value
      */
     private String doGet(final String key) {
         return props.getProperty(key);
     }
 
     /**
-     *Setting value setting.
-     *@ param key
-     *@ param value value
+     * Setting value setting.
+     * @ param key
+     * @ param value value
      */
     private void doSet(final String key, final String value) {
         props.setProperty(key, value);
     }
 
     /**
-     *Get all the properties.
-     *@return property list object
+     * Get all the properties.
+     * @return property list object
      */
     public static Properties getProperties() {
         return singleton.props;
     }
 
     /**
-     *Key Specify the character string to acquire setting information.
-     *@ param key setting key
-     *@return setting value
+     * Key Specify the character string to acquire setting information.
+     * @ param key setting key
+     * @return setting value
      */
     public static String get(final String key) {
         return singleton.doGet(key);
     }
 
     /**
-     *Key Specify the character string and change the setting information.
-     *@ param key setting key
-     *@ param value value
+     * Key Specify the character string and change the setting information.
+     * @ param key setting key
+     * @ param value value
      */
     public static void set(final String key, final String value) {
         singleton.doSet(key, value);
     }
 
     /**
-     *Get the value of Core Version.
-     *@return Core Version value
+     * Get the value of Core Version.
+     * @return Core Version value
      */
     public static String getCoreVersion() {
         return get(CORE_VERSION);
@@ -628,22 +628,22 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Get the unit master token value.
-     *@ return Master token value
+     * Get the unit master token value.
+     * @ return Master token value
      */
     public static String getMasterToken() {
         return get(MASTER_TOKEN);
     }
 
     /**
-     *@return unit Host name to be certified as a user token issuer.
+     * @return unit Host name to be certified as a user token issuer.
      */
     public static String getUnitUserIssuers() {
         return get(UNIT_USER_ISSUERS);
     }
 
     /**
-     *@return scheme setting key for unit.
+     * @return scheme setting key for unit.
      */
     public static String getUnitScheme() {
         return get(UNIT_SCHEME);
@@ -672,7 +672,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *@return plugin's path setup key.
+     * @return plugin's path setup key.
      */
     public static String getPluginPath() {
         return get(PLUGIN_PATH);
@@ -718,7 +718,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *@return Maximum number of requests when doing $ batch processing.
+     * @return Maximum number of requests when doing $ batch processing.
      */
     public static String getOdataBatchBulkRequestMaxSize() {
 
@@ -730,7 +730,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *@return $ batch processing timeout time (ms)
+     * @return $ batch processing timeout time (ms)
      */
     public static long getOdataBatchRequestTimeoutInMillis() {
 
@@ -742,7 +742,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *@return $ sleep time for batch processing (ms)
+     * @return $ sleep time for batch processing (ms)
      */
     public static long getOdataBatchSleepInMillis() {
 
@@ -754,7 +754,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *@return $ sleep interval of batch processing (ms)
+     * @return $ sleep interval of batch processing (ms)
      */
     public static long getOdataBatchSleepIntervalInMillis() {
 
@@ -766,157 +766,157 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Get the maximum limit number of child elements of the collection.
-     *@return Maximum number of child elements of collection
+     * Get the maximum limit number of child elements of the collection.
+     * @return Maximum number of child elements of collection
      */
     public static int getMaxChildResourceCount() {
         return Integer.parseInt(get(Dav.COLLECTION_CHILDRESOURCE_MAX_NUM));
     }
 
     /**
-     *Get the maximum limit number of collection hierarchy.
-     *@return Maximum number of hierarchies in collection
+     * Get the maximum limit number of collection hierarchy.
+     * @return Maximum number of hierarchies in collection
      */
     public static int getMaxCollectionDepth() {
         return Integer.parseInt(get(Dav.COLLECTION_DEPTH_MAX_NUM));
     }
 
     /**
-     *Returns whether or not fsync is valid when writing a file.
-     *@return true if it is valid
+     * Returns whether or not fsync is valid when writing a file.
+     * @return true if it is valid
      */
     public static boolean getFsyncEnabled() {
         return Boolean.parseBoolean(get(BinaryData.FSYNC_ENABLED));
     }
 
     /**
-     *@return N: Get the maximum number of links that $ links can create.
+     * @return N: Get the maximum number of links that $ links can create.
      */
     public static int getLinksNtoNMaxSize() {
         return Integer.parseInt(get(OData.NN_LINKS_MAX_NUM));
     }
 
     /**
-     *@return $ expand Maximum number of times specified by specifying expand.
+     * @return $ expand Maximum number of times specified by specifying expand.
      */
     public static int getTopQueryMaxSizeWithExpand() {
         return Integer.parseInt(get(OData.EXPAND_TOP_MAXNUM));
     }
 
     /**
-     *@return Max expanded number of $ expand (when getting list).
+     * @return Max expanded number of $ expand (when getting list).
      */
     public static int getMaxExpandSizeForList() {
         return Integer.parseInt(get(OData.EXPAND_LIST_MAXNUM));
     }
 
     /**
-     *@return Max expanded number of $ expand (when acquiring one case).
+     * @return Max expanded number of $ expand (when acquiring one case).
      */
     public static int getMaxExpandSizeForRetrive() {
         return Integer.parseInt(get(OData.EXPAND_RETRIEVE_MAXNUM));
     }
 
     /**
-     *@return The maximum value that can be specified for $ top.
+     * @return The maximum value that can be specified for $ top.
      */
     public static int getTopQueryMaxSize() {
         return Integer.parseInt(get(OData.TOP_MAX_NUM));
     }
 
     /**
-     *@return The maximum value that can be specified for $ skip.
+     * @return The maximum value that can be specified for $ skip.
      */
     public static int getSkipQueryMaxSize() {
         return Integer.parseInt(get(OData.SKIP_MAX_NUM));
     }
 
     /**
-     *@return Default number of return cases when obtaining list.
+     * @return Default number of return cases when obtaining list.
      */
     public static int getTopQueryDefaultSize() {
         return Integer.parseInt(get(OData.TOP_DEFAULT));
     }
 
     /**
-     *@return The maximum number of properties of $ expand (when listing).
+     * @return The maximum number of properties of $ expand (when listing).
      */
     public static int getExpandPropertyMaxSizeForList() {
         return Integer.parseInt(get(OData.EXPAND_PROPERTY_MAX_NUM_LIST));
     }
 
     /**
-     *@return The maximum number of properties of $ expand (when acquiring one item).
+     * @return The maximum number of properties of $ expand (when acquiring one item).
      */
     public static int getExpandPropertyMaxSizeForRetrieve() {
         return Integer.parseInt(get(OData.EXPAND_PROPERTY_MAX_NUM_RETRIEVE));
     }
 
     /**
-     *@return Lock type.
+     * @return Lock type.
      */
     public static String getLockType() {
         return get(Lock.TYPE);
     }
 
     /**
-     *@return Account lock expiration date (s).
+     * @return Account lock expiration date (s).
      */
     public static String getAccountLockLifetime() {
         return get(Lock.ACCOUNTLOCK_LIFETIME);
     }
 
     /**
-     *@return The number of retries at lock acquisition.
+     * @return The number of retries at lock acquisition.
      */
     public static String getLockRetryTimes() {
         return get(Lock.RETRY_TIMES);
     }
 
     /**
-     *@return Interval at lock retry retry.
+     * @return Interval at lock retry retry.
      */
     public static String getLockRetryInterval() {
         return get(Lock.RETRY_INTERVAL);
     }
 
     /**
-     *@return Number of retries when acquiring cell lock.
+     * @return Number of retries when acquiring cell lock.
      */
     public static int getCellLockRetryTimes() {
         return Integer.parseInt(get(Lock.CELL_RETRY_TIMES));
     }
 
     /**
-     *@return Interval at cell retry acquisition retry.
+     * @return Interval at cell retry acquisition retry.
      */
     public static long getCellLockRetryInterval() {
         return Long.parseLong(get(Lock.CELL_RETRY_INTERVAL));
     }
 
     /**
-     *@return memcached host name to hold lock on memcached.
+     * @return memcached host name to hold lock on memcached.
      */
     public static String getLockMemcachedHost() {
         return get(Lock.MEMCACHED_HOST);
     }
 
     /**
-     *@return memcached port number for keeping locks on memcached.
+     * @return memcached port number for keeping locks on memcached.
      */
     public static String getLockMemcachedPort() {
         return get(Lock.MEMCACHED_PORT);
     }
 
     /**
-     *@return memcached operation for locking timeout value (ms).
+     * @return memcached operation for locking timeout value (ms).
      */
     public static long getLockMemcachedOpTimeout() {
         return Long.parseLong(get(Lock.MEMCACHED_OPTIMEOUT));
     }
 
     /**
-     *@return Storage directory of the latest event log file.
+     * @return Storage directory of the latest event log file.
      */
     public static String getEventLogCurrentDir() {
         return get(Event.EVENT_LOG_CURRENT_DIR);
@@ -931,38 +931,38 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Gets the setting value of ElasticSearch's host name.
-     *@return setting value
+     * Gets the setting value of ElasticSearch's host name.
+     * @return setting value
      */
     public static String getEsHosts() {
         return get(ES.HOSTS);
     }
 
     /**
-     *Retrieve ElasticSearch's cluster name setting value.
-     *@return setting value
+     * Retrieve ElasticSearch's cluster name setting value.
+     * @return setting value
      */
     public static String getEsClusterName() {
         return get(ES.CLUSTERNAME);
     }
 
     /**
-     *Get the index name prefix on Elastic Search of Unit that this application is in charge, for example setting u 0, use the name of u 0 _ addwo as the management information index.
-     *@return setting value
+     * Get the index name prefix on Elastic Search of Unit that this application is in charge, for example setting u 0, use the name of u 0 _ addwo as the management information index.
+     * @return setting value
      */
     public static String getEsUnitPrefix() {
         return get(ES.UNIT_PREFIX);
     }
 
     /**
-     *Get the set value of search result output upper limit of @ return Es.
+     * Get the set value of search result output upper limit of @ return Es.
      */
     public static int getEsTopNum() {
         return Integer.parseInt(get(ES.TOP_NUM));
     }
 
     /**
-     *@ return blob The route (URL, PATH) to store the data.
+     * @ return blob The route (URL, PATH) to store the data.
      */
     public static String getBlobStoreRoot() {
         return get(BlobStore.ROOT);
@@ -977,38 +977,38 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Binary data (Dav / Eventlog) Setting whether to delete physically when deleting.
-     *@return true: physical delete, false: logical delete
+     * Binary data (Dav / Eventlog) Setting whether to delete physically when deleting.
+     * @return true: physical delete, false: logical delete
      */
     public static boolean getPhysicalDeleteMode() {
         return Boolean.parseBoolean(get(BinaryData.PHYSICAL_DELETE_MODE));
     }
 
     /**
-     *Number of retries when creating / renaming / deleting hard links of Dav files.
-     *@return retry count
+     * Number of retries when creating / renaming / deleting hard links of Dav files.
+     * @return retry count
      */
     public static int getDavFileOperationRetryCount() {
         return Integer.parseInt(get(BinaryData.MAX_RETRY_COUNT));
     }
 
     /**
-     *Retry interval (msec) for hard link creation / renaming / deletion of Dav file.
-     *@return Retry interval (msec)
+     * Retry interval (msec) for hard link creation / renaming / deletion of Dav file.
+     * @return Retry interval (msec)
      */
     public static long getDavFileOperationRetryInterval() {
         return Long.parseLong(get(BinaryData.RETRY_INTERVAL));
     }
 
     /**
-     *The number of retries when an error occurred in @return ES.
+     * The number of retries when an error occurred in @return ES.
      */
     public static String getESRetryTimes() {
         return get(ES.RETRY_TIMES);
     }
 
     /**
-     *Retry interval (milliseconds) at error occurrence in @return ES.
+     * Retry interval (milliseconds) at error occurrence in @return ES.
      */
     public static String getESRetryInterval() {
         return get(ES.RETRY_INTERVAL);
@@ -1039,106 +1039,106 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *@return bar The expiration date (s) of the asynchronous processing status of the installation.
+     * @return bar The expiration date (s) of the asynchronous processing status of the installation.
      */
     public static String getBarInstallProgressLifeTimeExpireInSec() {
         return get(BAR.BAR_PROGRESS_EXPIRE_IN_SEC);
     }
 
     /**
-     *@return Cache type.
+     * @return Cache type.
      */
     public static String getCacheType() {
         return get(Cache.TYPE);
     }
 
     /**
-     *@return memcached host name.
+     * @return memcached host name.
      */
     public static String getCacheMemcachedHost() {
         return get(Cache.MEMCACHED_HOST);
     }
 
     /**
-     *@return memcached port number.
+     * @return memcached port number.
      */
     public static String getCacheMemcachedPort() {
         return get(Cache.MEMCACHED_PORT);
     }
 
     /**
-     *@ reccache memcached operation timeout value (ms).
+     * @ reccache memcached operation timeout value (ms).
      */
     public static long getCacheMemcachedOpTimeout() {
         return Long.parseLong(get(Cache.MEMCACHED_OPTIMEOUT));
     }
 
     /**
-     *Returns whether or not the cache of Cell is valid.
-     *@return true if it is valid.
+     * Returns whether or not the cache of Cell is valid.
+     * @return true if it is valid.
      */
     public static boolean isCellCacheEnabled() {
         return Boolean.parseBoolean(get(Cache.CELL_CACHE_ENABLED));
     }
 
     /**
-     *Returns whether or not the Box's cache is valid.
-     *@return true if it is valid.
+     * Returns whether or not the Box's cache is valid.
+     * @return true if it is valid.
      */
     public static boolean isBoxCacheEnabled() {
         return Boolean.parseBoolean(get(Cache.BOX_CACHE_ENABLED));
     }
 
     /**
-     *Returns whether the schema cache is valid or not.
-     *@return true if it is valid.
+     * Returns whether the schema cache is valid or not.
+     * @return true if it is valid.
      */
     public static boolean isSchemaCacheEnabled() {
         return Boolean.parseBoolean(get(Cache.SCHEMA_CACHE_ENABLED));
     }
 
     /**
-     *@return memcached Cache expiration date.
+     * @return memcached Cache expiration date.
      */
     public static int getCacheMemcachedExpiresIn() {
         return Integer.parseInt(get(Cache.MEMCACHED_EXPIRES_IN));
     }
 
     /**
-     *Get the host name setting value of Enine.
-     *@return setting value
+     * Get the host name setting value of Enine.
+     * @return setting value
      */
     public static String getEngineHost() {
         return get(Engine.HOST);
     }
 
     /**
-     *Get the set value of Enine 's port.
-     *@return setting value
+     * Get the set value of Enine 's port.
+     * @return setting value
      */
     public static int getEnginePort() {
         return Integer.parseInt(get(Engine.PORT));
     }
 
     /**
-     *Get Enine's path setting value.
-     *@return setting value
+     * Get Enine's path setting value.
+     * @return setting value
      */
     public static String getEnginePath() {
         return get(Engine.PATH);
     }
 
     /**
-     *Get the set value of the path of the X509 secret key file of this UNIT.
-     *@return setting value
+     * Get the set value of the path of the X509 secret key file of this UNIT.
+     * @return setting value
      */
     public static String getX509PrivateKey() {
         return get(X509.KEY);
     }
 
     /**
-     *Get the array of the set value of the path of the X509 root certificate file of this UNIT.
-     *@return setting value
+     * Get the array of the set value of the path of the X509 root certificate file of this UNIT.
+     * @return setting value
      */
     public static String[] getX509RootCertificate() {
         String[] x509RootCertificate = null;
@@ -1150,24 +1150,24 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Get the setting value of the path of the X509 certificate file of this UNIT.
-     *@return setting value
+     * Get the setting value of the path of the X509 certificate file of this UNIT.
+     * @return setting value
      */
     public static String getX509Certificate() {
         return get(X509.CRT);
     }
 
     /**
-     *The secret key setting used when encrypting the token.
-     *@return setting value
+     * The secret key setting used when encrypting the token.
+     * @return setting value
      */
     public static String getTokenSecretKey() {
         return get(Security.TOKEN_SECRET_KEY);
     }
 
     /**
-     *The salt value of the password to use for authentication.
-     *@return salt value of password
+     * The salt value of the password to use for authentication.
+     * @return salt value of password
      */
     public static String getAuthPasswordSalt() {
         return get(Security.AUTH_PASSWORD_SALT);
@@ -1246,15 +1246,15 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Reload the configuration information.
+     * Reload the configuration information.
      */
     public static void reload() {
         singleton.doReload();
     }
 
     /**
-     *Returns whether the execution environment is https or not.
-     *@return boolean For https: true
+     * Returns whether the execution environment is https or not.
+     * @return boolean For https: true
      */
     public static boolean isHttps() {
         return PersoniumUnitConfig.getUnitScheme().equals("https");
@@ -1271,24 +1271,24 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Get the maximum limit number of EntityType.
-     *@return Maximum number of EntityType
+     * Get the maximum limit number of EntityType.
+     * @return Maximum number of EntityType
      */
     public static int getUserdataMaxEntityCount() {
         return Integer.parseInt(get(UserDataProperties.MAX_ENTITY_TYPES));
     }
 
     /**
-     *Get the maximum limit number of properties that can be included in EntityType.
-     *@return Maximum number of properties in EntityType
+     * Get the maximum limit number of properties that can be included in EntityType.
+     * @return Maximum number of properties in EntityType
      */
     public static int getMaxPropertyCountInEntityType() {
         return Integer.parseInt(get(UserDataProperties.MAX_PROPERTY_COUNT_IN_ENTITY));
     }
 
     /**
-     *Get array of limit number of SimpleType in UsetData.
-     *@return List of limits on SimpleType in each hierarchy
+     * Get array of limit number of SimpleType in UsetData.
+     * @return List of limits on SimpleType in each hierarchy
      */
     public static int[] getUserdataSimpleTypePropertyLimits() {
         String expr = get(UserDataProperties.SIMPLE_TYPE_PROPERTY_LIMITS);
@@ -1296,8 +1296,8 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Get array of limit number of ComplexType in UsetData.
-     *@return List of limits on SimpleType in each hierarchy
+     * Get array of limit number of ComplexType in UsetData.
+     * @return List of limits on SimpleType in each hierarchy
      */
     public static int[] getUserdataComplexTypePropertyLimits() {
         int depth = getUserdataSimpleTypePropertyLimits().length;
@@ -1306,22 +1306,22 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     *Whether or not to update the last login time of Account when password authentication is successful ().
-     *@return true: Update (default) false: Do not update
+     * Whether or not to update the last login time of Account when password authentication is successful ().
+     * @return true: Update (default) false: Do not update
      */
     public static boolean getAccountLastAuthenticatedEnable() {
         return Boolean.parseBoolean(get(Account.ACCOUNT_LAST_AUTHENTICATED_ENABLED));
     }
 
     /**
-     *Return a numeric list (character string) specified as a comma-separated value as an int type array.
-     *If the contents of the numeric list are longer than the length specified by arrayLength, the long part is discarded. .
-     *eg limitExpression: "1, 2, 3, 4", arrayLength = 2 -> int [] {1, 2}
-     *If the contents of the numerical list are shorter than the length specified by arrayLength, missing parts are padded with zeros. .
-     *eg limitExpression: "1, 2", arrayLength = 4 → int [] {1, 2, 0, 0}
-     *@ param limitExpression Comma-separated numeric list (character string)
-     *@ param arrayLength The length of the array to return. If it is less than 0, it is the same as specifying an array of the number of elements obtained from limitExpression.
-     *@ return integer array
+     * Return a numeric list (character string) specified as a comma-separated value as an int type array.
+     * If the contents of the numeric list are longer than the length specified by arrayLength, the long part is discarded. .
+     * eg limitExpression: "1, 2, 3, 4", arrayLength = 2 -> int [] {1, 2}
+     * If the contents of the numerical list are shorter than the length specified by arrayLength, missing parts are padded with zeros. .
+     * eg limitExpression: "1, 2", arrayLength = 4 → int [] {1, 2, 0, 0}
+     * @ param limitExpression Comma-separated numeric list (character string)
+     * @ param arrayLength The length of the array to return. If it is less than 0, it is the same as specifying an array of the number of elements obtained from limitExpression.
+     * @ return integer array
      */
     private static int[] getPropertyLimits(String limitExpression, int arrayLength) {
         if (null != limitExpression) {

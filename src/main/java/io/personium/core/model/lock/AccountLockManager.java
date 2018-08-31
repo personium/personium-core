@@ -21,7 +21,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- *Utility to manage Lock.
+ * Utility to manage Lock.
  */
 public abstract class AccountLockManager extends LockManager {
 
@@ -29,14 +29,14 @@ public abstract class AccountLockManager extends LockManager {
     abstract Boolean putLock(String fullKey, Lock lock);
 
     /**
-     *Lock category that puts data access for each UnitUser temporarily into reference mode.
+     * Lock category that puts data access for each UnitUser temporarily into reference mode.
      */
     public static final String CATEGORY_ACCOUNT_LOCK = "AccountLock_";
 
     /**
-     *Write AccountLock to memcached.
-     *Lock time follows properties.
-     *@ param accountId Account ID that failed authentication
+     * Write AccountLock to memcached.
+     * Lock time follows properties.
+     * @ param accountId Account ID that failed authentication
      */
     public static void registAccountLockObjct(final String accountId) {
         String key =  CATEGORY_ACCOUNT_LOCK + accountId;
@@ -46,9 +46,9 @@ public abstract class AccountLockManager extends LockManager {
     }
 
     /**
-     *Check the status of AccountLock.
-     *@ param accountId account ID
-     *@return TRUE: Lock / FALSE: Unlock
+     * Check the status of AccountLock.
+     * @ param accountId account ID
+     * @return TRUE: Lock / FALSE: Unlock
      */
     public static boolean hasLockObject(final String accountId) {
         try {

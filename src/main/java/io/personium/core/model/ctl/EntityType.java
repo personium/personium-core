@@ -22,19 +22,19 @@ import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 /**
- *Edm definition of EntityType (misleading but this is a name) which is one of EntityType handling the schema of user data.
- *Although confusing, it is EntityType for defining EntityType.
+ * Edm definition of EntityType (misleading but this is a name) which is one of EntityType handling the schema of user data.
+ * Although confusing, it is EntityType for defining EntityType.
  */
 public class EntityType {
     private EntityType() {
     }
 
     /**
-     *Edm EntityType name.
+     * Edm EntityType name.
      */
     public static final String EDM_TYPE_NAME = "EntityType";
     /**
-     *Definition field of Name property.
+     * Definition field of Name property.
      */
     public static final EdmProperty.Builder P_ENTITYTYPE_NAME = EdmProperty.newBuilder("Name")
             .setType(EdmSimpleType.STRING)

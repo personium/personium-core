@@ -31,7 +31,7 @@ import io.personium.core.http.header.ByteRangeSpec;
 import io.personium.core.http.header.RangeHeaderHandler;
 
 /**
- *StreamingOutput class to use when returning the contents of the Dav file to Response Internally create a hard link for reading only and delete it after completion of output.
+ * StreamingOutput class to use when returning the contents of the Dav file to Response Internally create a hard link for reading only and delete it after completion of output.
  */
 public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFile {
 
@@ -39,13 +39,13 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
     private long fileSize = 0;
 
     /**
-     *constructor.
-     *@ param fileFullPath Full path of the file to read
-     *@ param fileSize Size of the file to read
+     * constructor.
+     * @ param fileFullPath Full path of the file to read
+     * @ param fileSize Size of the file to read
      * @param range RangeHeader
      * @param cellId Cell ID
      * @param encryptionType encryption type
-     *@throws BinaryDataNotFoundException if the file does not exist.
+     * @throws BinaryDataNotFoundException if the file does not exist.
      */
     public StreamingOutputForDavFileWithRange(final String fileFullPath,
             final long fileSize,

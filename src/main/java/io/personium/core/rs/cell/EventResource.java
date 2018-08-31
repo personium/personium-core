@@ -38,7 +38,7 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- *JAX-RS Resource for event bus.
+ * JAX-RS Resource for event bus.
  */
 public class EventResource {
     Cell cell;
@@ -60,8 +60,8 @@ public class EventResource {
     }
 
     /**
-     *Reception of events.
-     *@ param reader request body
+     * Reception of events.
+     * @ param reader request body
      * @return JAXRS Response
      */
     @WriteAPI
@@ -83,8 +83,8 @@ public class EventResource {
     }
 
     /**
-     *Log setting update.
-     *@return response
+     * Log setting update.
+     * @return response
      */
     @WriteAPI
     @PROPPATCH
@@ -95,8 +95,8 @@ public class EventResource {
     }
 
     /**
-     *Acquire log setting.
-     *@return response
+     * Acquire log setting.
+     * @return response
      */
     @PROPFIND
     public final Response getLogSettings() {
@@ -106,10 +106,10 @@ public class EventResource {
     }
 
     /**
-     *Analyze the request body and obtain the Event object.
-     *@ param reader Http input stream
+     * Analyze the request body and obtain the Event object.
+     * @ param reader Http input stream
      * @param requestKey
-     *@return Analyzed Event object
+     * @return Analyzed Event object
      */
     private PersoniumEvent getRequestBody(final Reader reader) {
         JSONObject body;
@@ -150,8 +150,8 @@ public class EventResource {
     }
 
     /**
-     *Validate each property value in Event.
-     *@ param event Event object
+     * Validate each property value in Event.
+     * @ param event Event object
      */
     private void validateEventProperties(final PersoniumEvent event) {
         String type = event.getType();

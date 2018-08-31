@@ -276,13 +276,13 @@ public class SnapshotFile implements Closeable {
      * <p>
      * <pre>
      * -------------------------
-     *├─MANIFEST_JSON
-     *│
-     *├─ODATA_DIR
-     *│ ├─ CELL_JSON
-     *│ └ ─ DATA _ PJSON
-     *│
-     *└ - WEBDAV_DIR
+     * ├─MANIFEST_JSON
+     * │
+     * ├─ODATA_DIR
+     * │ ├─ CELL_JSON
+     * │ └ ─ DATA _ PJSON
+     * │
+     * └ - WEBDAV_DIR
      * -------------------------
      * </pre>
      * @param fs FileSystem class of target zip file

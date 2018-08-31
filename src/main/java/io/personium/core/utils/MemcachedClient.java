@@ -31,10 +31,10 @@ import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultConnectionFactory;
 
 /**
- *Client that administers Memcached access with this application.
- *It wraps an open source MemcachedClient, and the impact of future library changes is within this class.
- *Because establishing connection of Memcached client takes time, keep Client in class variable of this class,
- *Establish connection at server startup and maintain connection as it is.
+ * Client that administers Memcached access with this application.
+ * It wraps an open source MemcachedClient, and the impact of future library changes is within this class.
+ * Because establishing connection of Memcached client takes time, keep Client in class variable of this class,
+ * Establish connection at server startup and maintain connection as it is.
  */
 public class MemcachedClient implements CacheClient {
     static volatile boolean isReportError = false;
@@ -64,11 +64,11 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     *Get the cache of the specified key.
-     *@ param <T> Type to get
-     *@ param key Cache key
-     *@ param clazz ClassCastExcetpion occurred when there is a type or type problem to get
-     *@return When cached object / null cache does not exist
+     * Get the cache of the specified key.
+     * @ param <T> Type to get
+     * @ param key Cache key
+     * @ param clazz ClassCastExcetpion occurred when there is a type or type problem to get
+     * @return When cached object / null cache does not exist
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -86,11 +86,11 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     *Cache objects only for a certain expiration date with the specified key.
-     *@ param key Key of the cache
-     *@ param expiresIn lifetime
-     *@ param object Object to cache
-     *@return Returns True on successful processing / False on failure.
+     * Cache objects only for a certain expiration date with the specified key.
+     * @ param key Key of the cache
+     * @ param expiresIn lifetime
+     * @ param object Object to cache
+     * @return Returns True on successful processing / False on failure.
      */
     public Boolean add(String key, int expiresIn, Object object) {
         try {
@@ -107,21 +107,21 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     *Cache the object with the specified key.
-     *@ param key Key of the cache
-     *@ param object Object to cache
-     *@return Returns True on successful processing / False on failure.
+     * Cache the object with the specified key.
+     * @ param key Key of the cache
+     * @ param object Object to cache
+     * @return Returns True on successful processing / False on failure.
      */
     public Boolean add(String key, Object object) {
         return this.add(key, 0, object);
     }
 
     /**
-     *Cache objects only for a certain expiration date with the specified key.
-     *@ param key Key of the cache
-     *@ param expiresIn lifetime
-     *@ param object Object to cache
-     *@return Returns True on successful processing / False on failure.
+     * Cache objects only for a certain expiration date with the specified key.
+     * @ param key Key of the cache
+     * @ param expiresIn lifetime
+     * @ param object Object to cache
+     * @return Returns True on successful processing / False on failure.
      */
     @Override
     public Boolean put(String key, int expiresIn, Object object) {
@@ -146,7 +146,7 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     *Clear all caches.
+     * Clear all caches.
      */
     public void clear() {
         try {
@@ -162,8 +162,8 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     *Deletion of specified key cache.
-     *@ param key Cache key
+     * Deletion of specified key cache.
+     * @ param key Cache key
      */
     @Override
     public void delete(String key) {
@@ -180,10 +180,10 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     *Create a new object with the specified key.
-     *@ param key Cache key
-     *@ param initValue Initial value
-     *@return Returns true if creation succeeded or already exists, false if it fails
+     * Create a new object with the specified key.
+     * @ param key Cache key
+     * @ param initValue Initial value
+     * @return Returns true if creation succeeded or already exists, false if it fails
      */
     public Boolean createLongValue(String key, long initValue) {
         try {
@@ -196,9 +196,9 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     *Returns the value of the specified key.
-     *@ param key Cache key
-     *@return Specified key value
+     * Returns the value of the specified key.
+     * @ param key Cache key
+     * @return Specified key value
      */
     public long getLongValue(String key) {
         try {
@@ -211,9 +211,9 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     *Increment the value of the specified key.
-     *@ param key Cache key
-     *@return Value after increment
+     * Increment the value of the specified key.
+     * @ param key Cache key
+     * @return Value after increment
      */
     public long incrementLongValue(String key) {
         try {
@@ -225,9 +225,9 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     *Decrement the value of the specified key.
-     *@ param key Cache key
-     *@return Value after decrementing
+     * Decrement the value of the specified key.
+     * @ param key Cache key
+     * @return Value after decrementing
      */
     public long decrementLongValue(String key) {
         try {
@@ -243,8 +243,8 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     *Delete the value of the specified key.
-     *@ param key Cache key
+     * Delete the value of the specified key.
+     * @ param key Cache key
      */
     public void deleteLongValue(String key) {
         delete(key);
@@ -265,30 +265,30 @@ public class MemcachedClient implements CacheClient {
         }
     }
     /**
-     *Client to use for caching.
+     * Client to use for caching.
      */
     static MemcachedClient cacheClient;
     /**
-     *Client to use for lock.
+     * Client to use for lock.
      */
     static MemcachedClient lockClient;
 
     /**
-     *@return Client used for caching.
+     * @return Client used for caching.
      */
     public static final MemcachedClient getCacheClient() {
         return cacheClient;
     }
 
     /**
-     *@return Client to use for locking.
+     * @return Client to use for locking.
      */
     public static final MemcachedClient getLockClient() {
         return lockClient;
     }
 
     /**
-     *Determine the value of isReportError and output log.
+     * Determine the value of isReportError and output log.
      */
     public static final void reportError() {
         if (isReportError) {
@@ -300,13 +300,13 @@ public class MemcachedClient implements CacheClient {
     }
 
     /**
-     *Exception class for Memcached client.
+     * Exception class for Memcached client.
      */
     @SuppressWarnings("serial")
     public static class MemcachedClientException extends RuntimeException {
         /**
-         *constructor.
-         *@ param cause root exception
+         * constructor.
+         * @ param cause root exception
          */
         public MemcachedClientException(Throwable cause) {
             super(cause);

@@ -66,7 +66,7 @@ import io.personium.core.utils.ODataUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- *JAX-RS resource in charge of ODataSvcSchemaResource.
+ * JAX-RS resource in charge of ODataSvcSchemaResource.
  */
 public final class ODataSvcSchemaResource extends ODataResource {
     private static final MediaType APPLICATION_ATOMSVC_XML_MEDIATYPE =
@@ -76,7 +76,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     /**
      * constructor.
-     *@ param davRsCmp Resource of user data in charge of this schema
+     * @ param davRsCmp Resource of user data in charge of this schema
      * @param odataSvcCollectionResource ODataSvcCollectionResource object
      */
     ODataSvcSchemaResource(
@@ -95,8 +95,8 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     /**
-     *Obtain Auth Scheme that can be used for authentication.
-     *Autret Scheme that can be used for @return authentication
+     * Obtain Auth Scheme that can be used for authentication.
+     * Autret Scheme that can be used for @return authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {
@@ -113,11 +113,11 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     /**
-     *Corresponds to the service metadata request.
+     * Corresponds to the service metadata request.
      * @param uriInfo UriInfo
      * @param format String
      * @param httpHeaders HttpHeaders
-     *@return JAX-RS response object
+     * @return JAX-RS response object
      */
     @Override
     @GET
@@ -158,8 +158,8 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     /**
-     *Corresponds to the service metadata request.
-     *@return JAX-RS response object
+     * Corresponds to the service metadata request.
+     * @return JAX-RS response object
      */
     @GET
     @Path("{first: \\$}metadata")
@@ -200,9 +200,9 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     /**
-     *Partial update preprocessing.
-     *@ param o EntityWrapper OEntityWrapper object
-     *@ param o EntityKey The entityKey to delete
+     * Partial update preprocessing.
+     * @ param o EntityWrapper OEntityWrapper object
+     * @ param o EntityKey The entityKey to delete
      */
     @Override
     public void beforeMerge(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
@@ -217,9 +217,9 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     /**
-     *Link registration preprocessing.
-     *@ param sourceEntity Linked entity
-     *@ param targetNavProp Navigation property to be linked
+     * Link registration preprocessing.
+     * @ param sourceEntity Linked entity
+     * @ param targetNavProp Navigation property to be linked
      */
     @Override
     public void beforeLinkCreate(OEntityId sourceEntity, String targetNavProp) {
@@ -228,18 +228,18 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     /**
-     *Link acquisition preprocessing.
-     *@ param sourceEntity Linked entity
-     *@ param targetNavProp Navigation property to be linked
+     * Link acquisition preprocessing.
+     * @ param sourceEntity Linked entity
+     * @ param targetNavProp Navigation property to be linked
      */
     @Override
     public void beforeLinkGet(OEntityId sourceEntity, String targetNavProp) {
     }
 
     /**
-     *Link deletion preprocessing.
-     *@ param sourceEntity Linked entity
-     *@ param targetNavProp Navigation property to be linked
+     * Link deletion preprocessing.
+     * @ param sourceEntity Linked entity
+     * @ param targetNavProp Navigation property to be linked
      */
     @Override
     public void beforeLinkDelete(OEntityId sourceEntity, String targetNavProp) {
@@ -248,9 +248,9 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     /**
-     *Check processing other than p: Format.
+     * Check processing other than p: Format.
      * @param entitySetName entityset name
-     *@ param props property list
+     * @ param props property list
      */
     @Override
     public void validate(String entitySetName, List<OProperty<?>> props) {
@@ -343,10 +343,10 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     /**
      * Not Implemented. <br />
-     *Currently unimplemented because it is only necessary for $ batch access control <br />
-     *Returns whether the access context has permission to $ batch.
-     *@ param ac access context
-     *@return true: The access context has permission to $ batch
+     * Currently unimplemented because it is only necessary for $ batch access control <br />
+     * Returns whether the access context has permission to $ batch.
+     * @ param ac access context
+     * @return true: The access context has permission to $ batch
      */
     @Override
     public boolean hasPrivilegeForBatch(AccessContext ac) {

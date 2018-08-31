@@ -48,7 +48,7 @@ import io.personium.core.model.lock.CellLockManager;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- *Filter applied to request and response of this application.
+ * Filter applied to request and response of this application.
  */
 @Provider
 @PreMatching
@@ -181,8 +181,8 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     }
 
     /**
-     *Authentication None OPTION Method check.
-     *@ param request pre-filter request
+     * Authentication None OPTION Method check.
+     * @ param request pre-filter request
      */
     private void checkOptionsMethod(String method, MultivaluedMap<String, String> headers) {
         String authValue = headers.getFirst(org.apache.http.HttpHeaders.AUTHORIZATION);
@@ -207,9 +207,9 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     }
 
     /**
-     *Check the value of the request header.
-     *Currently check only the Accept header (whether it is a US-ASCII character or not)
-     *@ param request pre-filter request
+     * Check the value of the request header.
+     * Currently check only the Accept header (whether it is a US-ASCII character or not)
+     * @ param request pre-filter request
      */
     private void checkAcceptHeader(MultivaluedMap<String, String> headers) {
         //In Jersey 1.10, if the key name and the value of the Accept header contain non-US-ASCII characters, it ends abnormally.
@@ -234,7 +234,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     }
 
     /**
-     *Add a response header common to all responses.
+     * Add a response header common to all responses.
      * Access-Control-Allow-Origin, Access-Control-Allow-Headers<br/>
      * X-Personium-Version<br/>
      * @param requestHeaders
@@ -276,7 +276,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     }
 
     /**
-     *Request log output.
+     * Request log output.
      * @param request
      * @param response
      */
@@ -294,7 +294,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     }
 
     /**
-     *Response log output.
+     * Response log output.
      * @param response
      */
     private void responseLog(Long requestTime, int responseStatus) {

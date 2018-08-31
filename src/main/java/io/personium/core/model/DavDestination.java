@@ -24,7 +24,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
 
 /**
- *Class managing Dav's destination information.
+ * Class managing Dav's destination information.
  */
 public class DavDestination {
 
@@ -35,11 +35,11 @@ public class DavDestination {
     private String destinationUri = null;
 
     /**
-     *constructor.
-     *@ param destinationUriString String indicating the destination path
-     *@ param baseUriString String indicating base URI
-     *@ param box Box information on the destination
-     *@throws URISyntaxException URI parse error
+     * constructor.
+     * @ param destinationUriString String indicating the destination path
+     * @ param baseUriString String indicating base URI
+     * @ param box Box information on the destination
+     * @throws URISyntaxException URI parse error
      */
     public DavDestination(String destinationUriString, String baseUriString, DavRsCmp box) throws URISyntaxException {
         destinationUri = destinationUriString;
@@ -49,33 +49,33 @@ public class DavDestination {
     }
 
     /**
-     *Get the Uri string of the destination.
-     *@return Uri string to move to
+     * Get the Uri string of the destination.
+     * @return Uri string to move to
      */
     public String getDestinationUri() {
         return destinationUri;
     }
 
     /**
-     *Get the destination DavRsCmp.
-     *@return DavRsCmp to move to
+     * Get the destination DavRsCmp.
+     * @return DavRsCmp to move to
      */
     public DavRsCmp getDestinationRsCmp() {
         return destinationRsCmp;
     }
 
     /**
-     *Get the destination DavCmp.
-     *@return DavCmp to move to
+     * Get the destination DavCmp.
+     * @return DavCmp to move to
      */
     public DavCmp getDestinationCmp() {
         return destinationRsCmp.getDavCmp();
     }
 
     /**
-     *Validate the resource to be moved using the MOVE method.
-     *@ param overwrite Whether to overwrite if the destination resource already exists
-     *@ param davCmp DavCmp of source resource
+     * Validate the resource to be moved using the MOVE method.
+     * @ param overwrite Whether to overwrite if the destination resource already exists
+     * @ param davCmp DavCmp of source resource
      */
     public void validateDestinationResource(String overwrite, DavCmp davCmp) {
         List<String> destinationPaths = this.destinationPath.getResourcePath();
@@ -102,16 +102,16 @@ public class DavDestination {
 }
 
     /**
-     *Check that the hierarchy of the resource after the movement does not exceed the maximum depth of the hierarchy of the collection.
+     * Check that the hierarchy of the resource after the movement does not exceed the maximum depth of the hierarchy of the collection.
      */
     private void checkDepthLimit() {
         //Check that the hierarchy of the resource after the TODO move does not exceed the maximum depth of the hierarchy of the collection
     }
 
     /**
-     *It checks whether the number of child elements of the parent resource has reached the maximum value.
-     *@ param currentCmp DavCmp of the resource to be moved
-     *@ param parentCmp DavCmp of the parent resource of the destination
+     * It checks whether the number of child elements of the parent resource has reached the maximum value.
+     * @ param currentCmp DavCmp of the resource to be moved
+     * @ param parentCmp DavCmp of the parent resource of the destination
      */
     private void checkParentChildCount(DavCmp currentCmp, DavCmp parentCmp) {
         if (!currentCmp.exists()
@@ -123,8 +123,8 @@ public class DavDestination {
     }
 
     /**
-     *It is checked whether or not the parent resource of the movement destination path exists.
-     *@ param destinationPaths Path information of the destination
+     * It is checked whether or not the parent resource of the movement destination path exists.
+     * @ param destinationPaths Path information of the destination
      */
     private void checkHasParent(List<String> destinationPaths, int hierarchyNumber) {
         if (hierarchyNumber < destinationPaths.size() - 1) {
@@ -179,7 +179,7 @@ public class DavDestination {
     }
 
     /**
-     *Load hierarchy information of destination.
+     * Load hierarchy information of destination.
      */
     public void loadDestinationHierarchy() {
         //Check whether the destination path exists from the highest level to the lowest level
@@ -206,10 +206,10 @@ public class DavDestination {
     }
 
     /**
-     *Whether the uuid of the DavNode passed in the argument is the same as the uuid of the destination DavNode is judged.
-     *@ param davCmp DavNode to be compared
-     *@return Returns true for the same uuid, false otherwise. <br />
-     *If the entity of the destination DavNode does not exist, false is also returned.
+     * Whether the uuid of the DavNode passed in the argument is the same as the uuid of the destination DavNode is judged.
+     * @ param davCmp DavNode to be compared
+     * @return Returns true for the same uuid, false otherwise. <br />
+     * If the entity of the destination DavNode does not exist, false is also returned.
      */
     public boolean equalsDestinationNodeId(DavCmp davCmp) {
         if (null != this.getDestinationCmp() && this.getDestinationCmp().exists()

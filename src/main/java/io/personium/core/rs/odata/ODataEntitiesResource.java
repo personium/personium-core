@@ -65,7 +65,7 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- *JAX-RS resource handling OData's Entities resource (a URL with entitySet specified without id specification).
+ * JAX-RS resource handling OData's Entities resource (a URL with entitySet specified without id specification).
  */
 public final class ODataEntitiesResource extends AbstractODataResource {
 
@@ -74,9 +74,9 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     AccessContext accessContext;
 
     /**
-     *constructor.
-     *@ param odataResource parent Resource
-     *@ param entitySetName Entity set name
+     * constructor.
+     * @ param odataResource parent Resource
+     * @ param entitySetName Entity set name
      */
     public ODataEntitiesResource(final ODataResource odataResource, final String entitySetName) {
         this.odataResource = odataResource;
@@ -87,11 +87,11 @@ public final class ODataEntitiesResource extends AbstractODataResource {
 
     /**
      * @param uriInfo UriInfo
-     *@ param accept Accept header
-     *@ param format $ format parameter
-     *@ param callback callback
-     *@ param skipToken skip token
-     *@ param q full-text search parameter
+     * @ param accept Accept header
+     * @ param format $ format parameter
+     * @ param callback callback
+     * @ param skipToken skip token
+     * @ param q full-text search parameter
      * @return JAX-RS Response
      */
     @GET
@@ -148,9 +148,9 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     }
 
     /**
-     *Ask Producer to get the request.
+     * Ask Producer to get the request.
      * @param queryInfo QueryInfo
-     *@return response
+     * @return response
      */
     EntitiesResponse getEntities(QueryInfo queryInfo) {
         EntitiesResponse resp = getOdataProducer().getEntities(getEntitySetName(), queryInfo);
@@ -158,10 +158,10 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     }
 
     /**
-     *Ask Producer to get the request.
+     * Ask Producer to get the request.
      * @param uriInfo UriInfo
-     *@ param fullTextSearchKeyword String Keyword to perform full text search
-     *@return response
+     * @ param fullTextSearchKeyword String Keyword to perform full text search
+     * @return response
      */
     EntitiesResponse getEntities(UriInfo uriInfo, String fullTextSearchKeyword) {
         QueryInfo queryInfo = null;
@@ -174,9 +174,9 @@ public final class ODataEntitiesResource extends AbstractODataResource {
 
     /**
      * @param uriInfo UriInfo
-     *@ param accept Accept header
-     *@ param format $ format parameter
-     *@ param reader request body
+     * @ param accept Accept header
+     * @ param format $ format parameter
+     * @ param reader request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -275,7 +275,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
@@ -290,8 +290,8 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     }
 
     /**
-     *Check processing other than p: Format.
-     *@ param props property list
+     * Check processing other than p: Format.
+     * @ param props property list
      */
     @Override
     public void validate(List<OProperty<?>> props) {
@@ -299,8 +299,8 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     }
 
     /**
-     *Method execution feasibility check.
-     *@ param uriInfo Requested resource path
+     * Method execution feasibility check.
+     * @ param uriInfo Requested resource path
      */
     private void checkNotAllowedMethod(UriInfo uriInfo) {
         //Method permission check

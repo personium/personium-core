@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *Mapping definition class for reading JSON file for ExtRole definition in bar file.
+ * Mapping definition class for reading JSON file for ExtRole definition in bar file.
  */
 public class JSONExtRole implements IJSONMappedObject {
 
@@ -47,15 +47,15 @@ public class JSONExtRole implements IJSONMappedObject {
     }
 
     /**
-     *Get ExtRole property.
-     *@return ExtRole name
+     * Get ExtRole property.
+     * @return ExtRole name
      */
     public String getExtRole() {
         return this.extRole;
     }
 
     /**
-     *Set ExtRole property.
+     * Set ExtRole property.
      * @param url extRoleURL.
      */
     public void setExtRole(String url) {
@@ -63,7 +63,7 @@ public class JSONExtRole implements IJSONMappedObject {
     }
 
     /**
-     *Get Relation name property.
+     * Get Relation name property.
      * @return Relation_Name
      */
     public String getRelationName() {
@@ -71,7 +71,7 @@ public class JSONExtRole implements IJSONMappedObject {
     }
 
     /**
-     *Relation name property setting.
+     * Relation name property setting.
      * @param relationName RelationName
      */
     public void setRelationName(String relationName) {

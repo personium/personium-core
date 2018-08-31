@@ -19,19 +19,19 @@ package io.personium.core.odata;
 import java.util.Map;
 
 /**
- *NavigationTargetKeyProperty Interface class.
+ * NavigationTargetKeyProperty Interface class.
  */
 public interface NavigationTargetKeyProperty {
 
     /**
-     *From the information of NavigationTargetKeyProperty, acquire Entry of Type and ID of link information.
-     *@return Type and ID Entry of link information
+     * From the information of NavigationTargetKeyProperty, acquire Entry of Type and ID of link information.
+     * @return Type and ID Entry of link information
      */
     Map.Entry<String, String> getLinkEntry();
 
     /**
-     *Analyze NavigationTargetKeyProperty and get a query to search for NTKP.
-     *@return NTKP search query
+     * Analyze NavigationTargetKeyProperty and get a query to search for NTKP.
+     * @return NTKP search query
      */
     Map<String, Object> getNtkpSearchQuery();
 

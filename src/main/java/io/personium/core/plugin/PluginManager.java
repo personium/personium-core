@@ -45,7 +45,7 @@ public class PluginManager {
 
     /**
      * getTypePluginInfo.
-     *Get target plug-in.
+     * Get target plug-in.
      * @param type String
      * @return pi PluginInfo
      */
@@ -62,7 +62,7 @@ public class PluginManager {
 
     /**
      * getGrantTypePluginInfo.
-     *Get target plug-in.
+     * Get target plug-in.
      * @param grant String
      * @return pi PluginInfo
      */

@@ -30,14 +30,14 @@ import org.apache.wink.webdav.model.Prop;
 import org.apache.wink.webdav.model.Propstat;
 
 /**
- *A JAXB object corresponding to the mkcol-response tag.
+ * A JAXB object corresponding to the mkcol-response tag.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "stats" })
 @XmlRootElement(namespace = "DAV:", name = "mkcol-response")
 public final class MkcolResponse {
     /**
-     *propstat tag.
+     * propstat tag.
      */
     @XmlElements({ @XmlElement(namespace = "DAV:", name = "propstat", type = Propstat.class) })
     List<Propstat> stats;

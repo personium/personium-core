@@ -63,7 +63,7 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- *Resource handling the Navigation property.
+ * Resource handling the Navigation property.
  * Jax-RS Resource.
  */
 public class ODataPropertyResource extends AbstractODataResource {
@@ -76,8 +76,8 @@ public class ODataPropertyResource extends AbstractODataResource {
     private final ODataResource odataResource;
 
     /**
-     *constructor.
-     *@ param entityResource parent resource
+     * constructor.
+     * @ param entityResource parent resource
      * @param targetNavProp Navigation Property
      */
     public ODataPropertyResource(
@@ -101,12 +101,12 @@ public class ODataPropertyResource extends AbstractODataResource {
     }
 
     /**
-     *Processing to the POST method.
+     * Processing to the POST method.
      * @param uriInfo UriInfo
-     *@ param accept Accept header
+     * @ param accept Accept header
      * @param requestKey X-Personium-RequestKey Header
-     *@ param format $ format query
-     *@ param reader request body
+     * @ param format $ format query
+     * @ param reader request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -175,9 +175,9 @@ public class ODataPropertyResource extends AbstractODataResource {
     }
 
     /**
-     *Generate Entity data to be registered via NavigationProperty from the input stream.
-     *@ param reader input stream
-     *@return OEntityWrapper object generated from the input stream
+     * Generate Entity data to be registered via NavigationProperty from the input stream.
+     * @ param reader input stream
+     * @return OEntityWrapper object generated from the input stream
      */
     OEntityWrapper createEntityFromInputStream(final Reader reader) {
         EdmEntityType edmEntityType = getOdataProducer().getMetadata()
@@ -190,9 +190,9 @@ public class ODataPropertyResource extends AbstractODataResource {
     }
 
     /**
-     *Generate Entity data to be registered via NavigationProperty from the input stream.
-     *@ param reader input stream
-     *@return OEntityWrapper object generated from the input stream
+     * Generate Entity data to be registered via NavigationProperty from the input stream.
+     * @ param reader input stream
+     * @return OEntityWrapper object generated from the input stream
      */
     OEntityWrapper createEntityFromInputStream(
             final Reader reader,
@@ -213,9 +213,9 @@ public class ODataPropertyResource extends AbstractODataResource {
     }
 
     /**
-     *Register Entity via NavigationProperty.
-     *@ param oew OEntityWrapper object for registration
-     *@return Entity response generated from registered content
+     * Register Entity via NavigationProperty.
+     * @ param oew OEntityWrapper object for registration
+     * @return Entity response generated from registered content
      */
     EntityResponse createEntity(OEntityWrapper oew) {
         //Process of attaching meta information if necessary
@@ -227,13 +227,13 @@ public class ODataPropertyResource extends AbstractODataResource {
     }
 
     /**
-     *Search processing by GET method for NavProp.
+     * Search processing by GET method for NavProp.
      * @param uriInfo UriInfo
-     *@ param accept Accept header
+     * @ param accept Accept header
      * @param requestKey X-Personium-RequestKey Header
-     *@ param callback ?? What is this? JSONP?
-     *@ param skipToken ?? What is this?
-     *@ param q full-text search parameter
+     * @ param callback ?? What is this? JSONP?
+     * @ param skipToken ?? What is this?
+     * @ param q full-text search parameter
      * @return JAX-RS Response
      */
     @GET
@@ -303,7 +303,7 @@ public class ODataPropertyResource extends AbstractODataResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS

@@ -62,8 +62,8 @@ public final class BoxPrivilege extends Privilege {
     static Map<String, BoxPrivilege> map = new HashMap<String, BoxPrivilege>();
 
     /**
-     *Box Level Get Privilege List.
-     *@return Box level Privilege list
+     * Box Level Get Privilege List.
+     * @return Box level Privilege list
      */
     public static Map<String, BoxPrivilege> getPrivilegeMap() {
         return map;

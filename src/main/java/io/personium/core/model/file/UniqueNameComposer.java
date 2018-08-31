@@ -22,7 +22,7 @@ import java.util.Enumeration;
 import java.util.UUID;
 
 /**
- *A utility class for creating unique names between threads / processes / servers.
+ * A utility class for creating unique names between threads / processes / servers.
  */
 public class UniqueNameComposer {
 
@@ -32,9 +32,9 @@ public class UniqueNameComposer {
     }
 
     /**
-     *Create a unique name through thread / process / server.
-     *@ param prefix Any string
-     *@return unique name
+     * Create a unique name through thread / process / server.
+     * @ param prefix Any string
+     * @return unique name
      */
     public static String compose(String prefix) {
         String macAddress = getMacAddress();
@@ -44,9 +44,9 @@ public class UniqueNameComposer {
     }
 
     /**
-     *Returns a character string based on the Mac address of the first network interface of the running server.
-     *If the Mac address can not be acquired, it returns a character string obtained by converting millisecond of the current date into hexadecimal as an alternative.
-     *@return A string representation of the Mac address. However, delimiters are not included between bytes.
+     * Returns a character string based on the Mac address of the first network interface of the running server.
+     * If the Mac address can not be acquired, it returns a character string obtained by converting millisecond of the current date into hexadecimal as an alternative.
+     * @return A string representation of the Mac address. However, delimiters are not included between bytes.
      */
     public static String getMacAddress() {
         //Get the MAC address of the first NIC.

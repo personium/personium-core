@@ -55,33 +55,33 @@ import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonValueEvent;
 
 /**
  * PersoniumJsonStreamReaderFactory.
- *Factory of Reader to read JSON in stream
+ * Factory of Reader to read JSON in stream
  */
 public class PersoniumJsonStreamReaderFactory {
     /**
-     *constructor.
+     * constructor.
      */
     private PersoniumJsonStreamReaderFactory() {
     }
 
     /**
      * JsonParseException.
-     *Exception on parsing error
+     * Exception on parsing error
      */
     public static class JsonParseException extends RuntimeException {
 
         private static final long serialVersionUID = 2362481232045271688L;
 
         /**
-         *constructor.
+         * constructor.
          */
         public JsonParseException() {
             super();
         }
 
         /**
-         *constructor.
-         *@ param message Message
+         * constructor.
+         * @ param message Message
          * @param cause Throwable
          */
         public JsonParseException(String message, Throwable cause) {
@@ -89,15 +89,15 @@ public class PersoniumJsonStreamReaderFactory {
         }
 
         /**
-         *constructor.
-         *@ param message Message
+         * constructor.
+         * @ param message Message
          */
         public JsonParseException(String message) {
             super(message);
         }
 
         /**
-         *constructor.
+         * constructor.
          * @param cause Throwable
          */
         public JsonParseException(Throwable cause) {
@@ -106,7 +106,7 @@ public class PersoniumJsonStreamReaderFactory {
     }
 
     /**
-     *JsonEvent interface class.
+     * JsonEvent interface class.
      */
     public interface JsonEvent {
 
@@ -167,14 +167,14 @@ public class PersoniumJsonStreamReaderFactory {
     public interface JsonStreamReader {
 
         /**
-         *Do you have the following values?
+         * Do you have the following values?
          * @return boolean
          */
         boolean hasNext();
 
         /**
-         *Return the next event.
-         *@return JSON event
+         * Return the next event.
+         * @return JSON event
          */
         JsonEvent nextEvent();
 
@@ -185,7 +185,7 @@ public class PersoniumJsonStreamReaderFactory {
         JsonEvent previousEvent();
 
         /**
-         *Close.
+         * Close.
          */
         void close();
     }
@@ -195,7 +195,7 @@ public class PersoniumJsonStreamReaderFactory {
      */
     public interface JsonStartPropertyEvent extends JsonEvent {
         /**
-         *@return key name
+         * @return key name
          */
         String getName();
     }
@@ -205,14 +205,14 @@ public class PersoniumJsonStreamReaderFactory {
      */
     public interface JsonEndPropertyEvent extends JsonEvent {
         /**
-         *Returns the value of JSON as a string.
-         *@return JSON value
+         * Returns the value of JSON as a string.
+         * @return JSON value
          */
         String getValue();
 
         /**
-         *Returns the JSON value as an object.
-         *@return object
+         * Returns the JSON value as an object.
+         * @return object
          */
         Object getObject();
     }
@@ -222,8 +222,8 @@ public class PersoniumJsonStreamReaderFactory {
      */
     public interface JsonValueEvent extends JsonEvent {
         /**
-         *Returns the value of JSON as a string.
-         *@return JSON value
+         * Returns the value of JSON as a string.
+         * @return JSON value
          */
         String getValue();
     }
@@ -255,26 +255,26 @@ public class PersoniumJsonStreamReaderFactory {
          */
         class JsonToken {
             /**
-             *Type of JSON token.
+             * Type of JSON token.
              */
             private final JsonTokenType type;
             /**
-             *The value of the JSON token.
+             * The value of the JSON token.
              */
             private final String value;
 
             /**
-             *constructor.
-             *@ param type JSON token type
+             * constructor.
+             * @ param type JSON token type
              */
             public JsonToken(JsonTokenType type) {
                 this(type, null);
             }
 
             /**
-             *constructor.
-             *@ param type JSON token type
-             *@ param value Value of JSON token
+             * constructor.
+             * @ param type JSON token type
+             * @ param value Value of JSON token
              */
             public JsonToken(JsonTokenType type, String value) {
                 this.type = type;
@@ -294,7 +294,7 @@ public class PersoniumJsonStreamReaderFactory {
             }
 
             /**
-             *Get type.
+             * Get type.
              * @return type type
              */
             public JsonTokenType getType() {
@@ -302,7 +302,7 @@ public class PersoniumJsonStreamReaderFactory {
             }
 
             /**
-             *Get the value.
+             * Get the value.
              * @return value value
              */
             public String getValue() {
@@ -311,25 +311,25 @@ public class PersoniumJsonStreamReaderFactory {
         }
 
         /**
-         *Do you have the following values?
+         * Do you have the following values?
          * @return boolean
          */
         boolean hasNext();
 
         /**
-         *Return the next JSON token.
-         *@return JSON token
+         * Return the next JSON token.
+         * @return JSON token
          */
         JsonToken nextToken();
 
         /**
-         *Close.
+         * Close.
          */
         void close();
     }
 
     /**
-     *Create a JsonStreamReader.
+     * Create a JsonStreamReader.
      * @param reader reader
      * @return JsonStreamReader
      */
@@ -338,7 +338,7 @@ public class PersoniumJsonStreamReaderFactory {
     }
 
     /**
-     *Create a JsonStreamTokenizer.
+     * Create a JsonStreamTokenizer.
      * @param reader reader
      * @return JsonStreamTokenizer
      */

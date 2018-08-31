@@ -46,7 +46,7 @@ import io.personium.core.rs.odata.ODataReceivedMessageResource;
 import io.personium.core.rs.odata.ODataSentMessageResource;
 
 /**
- *JAX-RS Resource handling DC Message Level Api. / Processing when the message comes to the message __ message.
+ * JAX-RS Resource handling DC Message Level Api. / Processing when the message comes to the message __ message.
  */
 public class MessageResource extends ODataCtlResource {
     static Logger log = LoggerFactory.getLogger(MessageResource.class);
@@ -72,11 +72,11 @@ public class MessageResource extends ODataCtlResource {
     }
 
     /**
-     *Message transmission API.
-     *@ param version PCS version
+     * Message transmission API.
+     * @ param version PCS version
      * @param uriInfo UriInfo
-     *@ param reader request body
-     *@return response
+     * @ param reader request body
+     * @return response
      */
     @WriteAPI
     @POST
@@ -97,10 +97,10 @@ public class MessageResource extends ODataCtlResource {
     }
 
     /**
-     *Message receiving API.
+     * Message receiving API.
      * @param uriInfo UriInfo
-     *@ param reader request body
-     *@return response
+     * @ param reader request body
+     * @return response
      */
     @WriteAPI
     @POST
@@ -120,10 +120,10 @@ public class MessageResource extends ODataCtlResource {
     }
 
     /**
-     *Message approval API.
-     *@ param key Message Id
-     *@ param reader request body
-     *@return response
+     * Message approval API.
+     * @ param key Message Id
+     * @ param reader request body
+     * @return response
      */
     @WriteAPI
     @POST

@@ -24,28 +24,28 @@ import java.util.Properties;
 
 
 /**
- *Log message creation class.
+ * Log message creation class.
  */
 public abstract class PersoniumCoreMessageUtils {
     /**
-     *Holds the log level setting.
+     * Holds the log level setting.
      */
     private static final Properties LOG_LEVEL_PROP;
     /**
-     *Holds the setting of the log message.
+     * Holds the setting of the log message.
      */
     private static final Properties LOG_MSG_PROP;
 
     /**
-     *Key of log level setting.
-     *Define up to the dot since you attach a message code to the back
-     *Example) io.personium.core.loglevel.PR400 - OD - 0001
+     * Key of log level setting.
+     * Define up to the dot since you attach a message code to the back
+     * Example) io.personium.core.loglevel.PR400 - OD - 0001
      */
     public static final String LOG_LEVEL = PersoniumUnitConfig.KEY_ROOT + "loglevel.";
 
     /**
-     *Key of log message setting.
-     *Define up to the dot since you attach a message code to the back
+     * Key of log message setting.
+     * Define up to the dot since you attach a message code to the back
      */
     public static final String LOG_MESSAGE = PersoniumUnitConfig.KEY_ROOT + "msg.";
 
@@ -74,15 +74,15 @@ public abstract class PersoniumCoreMessageUtils {
     }
 
     /**
-     *constructor.
+     * constructor.
      */
     private PersoniumCoreMessageUtils() {
     }
 
     /**
-     *Acquire log level from configuration file.
-     *@ param code Message code
-     *@return log level
+     * Acquire log level from configuration file.
+     * @ param code Message code
+     * @return log level
      */
     public static Severity getSeverity(String code) {
         String logLevel = LOG_LEVEL_PROP.getProperty(LOG_LEVEL + code);
@@ -100,9 +100,9 @@ public abstract class PersoniumCoreMessageUtils {
     }
 
     /**
-     *Retrieve messages from the configuration file.
-     *@ param code Message code
-     *@return message
+     * Retrieve messages from the configuration file.
+     * @ param code Message code
+     * @return message
      */
     public static String getMessage(String code) {
         String msg = LOG_MSG_PROP.getProperty(LOG_MESSAGE + code);

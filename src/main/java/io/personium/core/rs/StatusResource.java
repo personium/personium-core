@@ -33,7 +33,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.impl.es.EsModel;
 
 /**
- *JAX-RS Resource class corresponding to StatusResource.
+ * JAX-RS Resource class corresponding to StatusResource.
  */
 public class StatusResource {
     static Logger log = LoggerFactory.getLogger(StatusResource.class);
@@ -41,7 +41,7 @@ public class StatusResource {
     public static final String PROP_TARGET_URL = "io.personium.test.target";
 
     /**
-     *Processing on the GET method.
+     * Processing on the GET method.
      * @return JAS-RS Response
      */
     @SuppressWarnings("unchecked")
@@ -74,7 +74,7 @@ public class StatusResource {
     }
 
     /**
-     *Processing for the POST method.
+     * Processing for the POST method.
      * @return JAS-RS Response
      */
     @POST

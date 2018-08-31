@@ -39,23 +39,23 @@ import io.personium.core.model.impl.es.doc.ComplexTypePropertyDocHandler;
 import io.personium.core.model.impl.es.doc.PropertyDocHandler;
 
 /**
- *A class that implements a method for checking the limit number of Property in EntityType.
+ * A class that implements a method for checking the limit number of Property in EntityType.
  */
 public class PropertyLimitChecker {
 
     static Logger log = LoggerFactory.getLogger(PropertyLimitChecker.class);
 
     /**
-     *Notification object when an error occurs in restriction check.
+     * Notification object when an error occurs in restriction check.
      */
     public static class CheckError {
         String entityTypeName;
         String message;
 
         /**
-         *constructor.
-         *@ param entityTypeName EntityType name
-         *@ param message Error Details
+         * constructor.
+         * @ param entityTypeName EntityType name
+         * @ param message Error Details
          */
         public CheckError(String entityTypeName, String message) {
             this.entityTypeName = entityTypeName;
@@ -63,16 +63,16 @@ public class PropertyLimitChecker {
         }
 
         /**
-         *Returns the EntityType name.
-         *@return EntityType name
+         * Returns the EntityType name.
+         * @return EntityType name
          */
         public String getEntityTypeName() {
             return entityTypeName;
         }
 
         /**
-         *It returns an error message.
-         *@ return error message
+         * It returns an error message.
+         * @ return error message
          */
         public String getMessage() {
             return message;
@@ -80,7 +80,7 @@ public class PropertyLimitChecker {
     }
 
     /**
-     *Internal exception class.
+     * Internal exception class.
      */
     @SuppressWarnings("serial")
     static class PropertyLimitException extends Exception {
@@ -88,17 +88,17 @@ public class PropertyLimitChecker {
         private String entityTypeName = null;
 
         /**
-         *constructor.
-         *@ param message Message
+         * constructor.
+         * @ param message Message
          */
         PropertyLimitException(String message) {
             super(message);
         }
 
         /**
-         *constructor.
-         *@ param entityTypeName EntityType name
-         *@ param message Message
+         * constructor.
+         * @ param entityTypeName EntityType name
+         * @ param message Message
          */
         PropertyLimitException(String entityTypeName, String message) {
             super(message);
@@ -106,16 +106,16 @@ public class PropertyLimitChecker {
         }
 
         /**
-         *Returns the EntityType name.
-         *@return EntityType name
+         * Returns the EntityType name.
+         * @return EntityType name
          */
         public String getEntityTypeName() {
             return entityTypeName;
         }
 
         /**
-         *Set the EntityType name.
-         *@ param entityTypeName EntityType name
+         * Set the EntityType name.
+         * @ param entityTypeName EntityType name
          */
         public void setEntityTypeName(String entityTypeName) {
             this.entityTypeName = entityTypeName;
@@ -123,13 +123,13 @@ public class PropertyLimitChecker {
     }
 
     /**
-     *Exception when the hierarchy depth of EntityType exceeds the limit.
+     * Exception when the hierarchy depth of EntityType exceeds the limit.
      */
     @SuppressWarnings("serial")
     static class EntityTypeDepthExceedException extends PropertyLimitException {
         /**
          * constructor.
-         *@ param message Message
+         * @ param message Message
          */
         EntityTypeDepthExceedException(String message) {
             super(message);
@@ -163,9 +163,9 @@ public class PropertyLimitChecker {
 
     /**
      * constructor.
-     *@ param metadata UserData metadata (before property update)
-     *@ param entityTypeName EntityType name to be added
-     *@ param dynamicPropCount Number of DynamicProperty added
+     * @ param metadata UserData metadata (before property update)
+     * @ param entityTypeName EntityType name to be added
+     * @ param dynamicPropCount Number of DynamicProperty added
      */
     public PropertyLimitChecker(final EdmDataServices metadata,
             final String entityTypeName, final int dynamicPropCount) {
@@ -189,8 +189,8 @@ public class PropertyLimitChecker {
 
     /**
      * constructor.
-     *@ param metadata UserData metadata (before property update)
-     *@ param propHandler Handler for properties to add
+     * @ param metadata UserData metadata (before property update)
+     * @ param propHandler Handler for properties to add
      */
     public PropertyLimitChecker(final EdmDataServices metadata, PropertyDocHandler propHandler) {
         this();
@@ -244,8 +244,8 @@ public class PropertyLimitChecker {
     }
 
     /**
-     *Check the number of properties and the hierarchy limit value.
-     *@return List of error information
+     * Check the number of properties and the hierarchy limit value.
+     * @return List of error information
      */
     public List<PropertyLimitChecker.CheckError> checkPropertyLimits() {
 
@@ -298,9 +298,9 @@ public class PropertyLimitChecker {
     }
 
     /**
-     *Check the number of properties for the specified entity type.
-     *@ param entityTypeName Entity type name
-     *@return List of error information
+     * Check the number of properties for the specified entity type.
+     * @ param entityTypeName Entity type name
+     * @return List of error information
      */
     public List<PropertyLimitChecker.CheckError> checkPropertyLimits(String entityTypeName) {
         List<PropertyLimitChecker.CheckError> result = new ArrayList<PropertyLimitChecker.CheckError>();
@@ -333,12 +333,12 @@ public class PropertyLimitChecker {
     }
 
     /**
-     *Property limit check routine at hierarchical level.
-     *@ param depth Depth of hierarchy (0 for the first hierarchy, 1 for the second hierarchy, ....)
-     *@ param entityTypeName EntityType name
-     *@ param properties Property in EntityType
-     *@return Total number of properties under EntityType
-     *@throws PropertyLimitException exception notifying that the number of properties limit has been exceeded
+     * Property limit check routine at hierarchical level.
+     * @ param depth Depth of hierarchy (0 for the first hierarchy, 1 for the second hierarchy, ....)
+     * @ param entityTypeName EntityType name
+     * @ param properties Property in EntityType
+     * @return Total number of properties under EntityType
+     * @throws PropertyLimitException exception notifying that the number of properties limit has been exceeded
      */
     private int checkPropetyLimitPerLayer(int depth, String entityTypeName, Enumerable<EdmProperty> properties)
             throws PropertyLimitException {

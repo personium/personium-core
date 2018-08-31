@@ -80,7 +80,7 @@ import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.odata.PersoniumOptionsQueryParser;
 
 /**
- *ODataProvider for OData service of user data schema.
+ * ODataProvider for OData service of user data schema.
  */
 public class UserSchemaODataProducer extends EsODataProducer {
 
@@ -156,9 +156,9 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Perform uniqueness check of data.
-     *@ param entitySetName entity name
-     *@ param entity Entity to register / update newly
+     * Perform uniqueness check of data.
+     * @ param entitySetName entity name
+     * @ param entity Entity to register / update newly
      */
     @Override
     protected void checkUniqueness(String entitySetName, OEntityWrapper entity) {
@@ -195,7 +195,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Check processing necessary for registration.
+     * Check processing necessary for registration.
      * @param entitySetName entitySetName
      * @param oEntity oEntity
      * @param docHandler docHandler
@@ -336,7 +336,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Preprocessing of ComplexType deletion.
+     * Preprocessing of ComplexType deletion.
      * @param oEntityKey
      */
     private void beforeDeleteForComplexType(String complexTypeName) {
@@ -351,10 +351,10 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Check whether there is data using ComplexType as a type.
-     *@ param complexTypeName Complex type name to check
-     *@ param checkEntityType Entity type to check
-     *@return true if it exists true if it does not exist false
+     * Check whether there is data using ComplexType as a type.
+     * @ param complexTypeName Complex type name to check
+     * @ param checkEntityType Entity type to check
+     * @return true if it exists true if it does not exist false
      */
     private boolean isUsedComplexType(String complexTypeName, String checkEntityType) {
         EntitySetAccessor accessor = getAccessorForEntitySet(checkEntityType);
@@ -380,9 +380,9 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Get the EntityType setting ComplexType as a type.
-     *@ param complexTypeList List of complexTypes associated with the ComplexTypeProperty to delete
-     *@return List of EntityType setting ComplexType as type
+     * Get the EntityType setting ComplexType as a type.
+     * @ param complexTypeList List of complexTypes associated with the ComplexTypeProperty to delete
+     * @return List of EntityType setting ComplexType as type
      */
     protected List<String> getEntityTypeNameLinkedComplexType(List<String> complexTypeList) {
         ArrayList<String> entityTypeList = new ArrayList<String>();
@@ -404,9 +404,9 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Sets the ComplexType setting the specified ComplexType to type.
-     *@ param complexTypeName ComplexType name
-     *@ param complexTypeList List of complexTypes associated with the ComplexTypeProperty to delete
+     * Sets the ComplexType setting the specified ComplexType to type.
+     * @ param complexTypeName ComplexType name
+     * @ param complexTypeList List of complexTypes associated with the ComplexTypeProperty to delete
      */
     protected void addComplexTypeNameLinkedComplexType(String complexTypeName, List<String> complexTypeList) {
         Iterator<EdmComplexType> complexTypeIter = userDataProducer.getMetadata().getComplexTypes().iterator();
@@ -425,10 +425,10 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *1 - 0: Search processing is performed on the N side during N deletion processing.
+     * 1 - 0: Search processing is performed on the N side during N deletion processing.
      * @param np EdmNavigationProperty
      * @param entityKey entityKey
-     *@return true if it exists
+     * @return true if it exists
      */
     @Override
     public boolean findMultiPoint(final EdmNavigationProperty np, final OEntityKey entityKey) {
@@ -455,8 +455,8 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Checks whether entityTypeName user data exists.
-     *@ param entityTypeName EntityType name
+     * Checks whether entityTypeName user data exists.
+     * @ param entityTypeName EntityType name
      * @return boolean
      */
     private boolean isEmpty(final String entityTypeName) {
@@ -469,8 +469,8 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Get DocHandler.
-     *Type of @ param type elasticsearch
+     * Get DocHandler.
+     * Type of @ param type elasticsearch
      * @param oEntity OEntityWrapper
      * @return EntitySetDocHandler
      */
@@ -491,8 +491,8 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Get a DocHandler for updating.
-     *Type of @ param type elasticsearch
+     * Get a DocHandler for updating.
+     * Type of @ param type elasticsearch
      * @param oEntityWrapper OEntityWrapper
      * @return EntitySetDocHandler
      */
@@ -511,12 +511,12 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *EntityType name and UUID.
+     * EntityType name and UUID.
      */
     private Map<String, String> entityTypeIds = new HashMap<String, String>();
 
     /**
-     *Get EntityType name and UUID.
+     * Get EntityType name and UUID.
      * @return the entityTypeIds
      */
     public Map<String, String> getEntityTypeIds() {
@@ -524,7 +524,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Set EntityType name and UUID.
+     * Set EntityType name and UUID.
      * @param oEntity oEntity
      * @param staticFields staticFields
      */
@@ -537,10 +537,10 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Check unauthorized Link information.
-     *@ param sourceEntity source side Entity
-     *@ param targetEntity Target side Entity
-     *@ throws PersoniumCoreException AssociationEnd - AssociationEnd $ link is registered When an association has already been set between the same EntityType
+     * Check unauthorized Link information.
+     * @ param sourceEntity source side Entity
+     * @ param targetEntity Target side Entity
+     * @ throws PersoniumCoreException AssociationEnd - AssociationEnd $ link is registered When an association has already been set between the same EntityType
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceEntity, EntitySetDocHandler targetEntity)
@@ -556,11 +556,11 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Check unauthorized Link information.
-     *@ param sourceDocHandler Source side Entity
-     *@ param entity Target side Entity
-     *@ param targetEntitySetName EntitySet name of the target
-     *@ throws PersoniumCoreException AssociationEnd - AssociationEnd $ link is registered When an association has already been set between the same EntityType
+     * Check unauthorized Link information.
+     * @ param sourceDocHandler Source side Entity
+     * @ param entity Target side Entity
+     * @ param targetEntitySetName EntitySet name of the target
+     * @ throws PersoniumCoreException AssociationEnd - AssociationEnd $ link is registered When an association has already been set between the same EntityType
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceDocHandler, OEntity entity, String targetEntitySetName)
@@ -594,10 +594,10 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Check unauthorized Link information (AssociationEnd - AssociationEnd).
-     *@ param sourceEntity source side Entity
-     *@ param relatedTargetEntityTypeId ID of the target side EntityType
-     *@ throws PersoniumCoreException AssociationEnd - AssociationEnd $ link is registered When an association has already been set between the same EntityType
+     * Check unauthorized Link information (AssociationEnd - AssociationEnd).
+     * @ param sourceEntity source side Entity
+     * @ param relatedTargetEntityTypeId ID of the target side EntityType
+     * @ throws PersoniumCoreException AssociationEnd - AssociationEnd $ link is registered When an association has already been set between the same EntityType
      */
     private void checkAssociationEndToAssociationEndLink(
             EntitySetDocHandler sourceEntity,
@@ -649,11 +649,11 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Check if it supports change.
-     *@ param entitySetName Entity set name
-     *@ param oedh Existing data existing in the data store
-     *@ param originalManeToNoelinkId Link information existing in the data store
-     *@ param oedhNew request data
+     * Check if it supports change.
+     * @ param entitySetName Entity set name
+     * @ param oedh Existing data existing in the data store
+     * @ param originalManeToNoelinkId Link information existing in the data store
+     * @ param oedhNew request data
      */
     @Override
     protected void checkAcceptableModification(String entitySetName,
@@ -698,10 +698,10 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *Check whether the change of the value of Type is acceptable content.
-     *@ param existingType Type value before change
-     *@ param requestType Type value after change
-     *@return true: Acceptable false: Unacceptable
+     * Check whether the change of the value of Type is acceptable content.
+     * @ param existingType Type value before change
+     * @ param requestType Type value after change
+     * @return true: Acceptable false: Unacceptable
      */
     private boolean isAcceptableTypeModify(String existingType, String requestType) {
         //The Type property is allowed only in the following cases
@@ -713,11 +713,11 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *It checks whether each field of the s field is about to update.
-     *- Do not allow updates other than Type and Name.
-     *@ param requestKey Key of the field specified in the request
-     *@ param requestValue The value of the field specified in the request
-     *@ param existingValue The value of the current field
+     * It checks whether each field of the s field is about to update.
+     * - Do not allow updates other than Type and Name.
+     * @ param requestKey Key of the field specified in the request
+     * @ param requestValue The value of the field specified in the request
+     * @ param existingValue The value of the current field
      * @return true or false
      */
     private boolean isStaticFieldValueChanged(String requestKey, Object requestValue, Object existingValue) {
@@ -728,13 +728,13 @@ public class UserSchemaODataProducer extends EsODataProducer {
     }
 
     /**
-     *It checks whether there is a document that refers to the key name of the EntitySet passed as an argument.
+     * It checks whether there is a document that refers to the key name of the EntitySet passed as an argument.
      * <p>
-     *It is conceivable that the document to be updated is referred to by name (key name of EntitySet). <br />
-     *In such a case, it is necessary to confirm whether or not the reference source document exists before updating the document.
+     * It is conceivable that the document to be updated is referred to by name (key name of EntitySet). <br />
+     * In such a case, it is necessary to confirm whether or not the reference source document exists before updating the document.
      * </p>
-     *@ param entitySetName EntitySet name to be processed specified in the request URL
-     *@ param entityKey The key name of the processing target EntitySet specified in the request URL
+     * @ param entitySetName EntitySet name to be processed specified in the request URL
+     * @ param entityKey The key name of the processing target EntitySet specified in the request URL
      */
     protected void hasRelatedEntities(String entitySetName, OEntityKey entityKey) {
 

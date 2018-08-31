@@ -238,7 +238,7 @@ public class CellResource {
     }
 
     /**
-     *@ param pCredHeader pCredHeader X-Personium-Credential header
+     * @ param pCredHeader pCredHeader X-Personium-Credential header
      * @return CellCtlResource
      */
     @Path("__ctl")
@@ -248,7 +248,7 @@ public class CellResource {
     }
 
     /**
-     *Endpoint of password change API.
+     * Endpoint of password change API.
      * @param pCredHeader pCredHeader
      * @return Response
      */
@@ -259,12 +259,12 @@ public class CellResource {
     }
 
     /**
-     *Endpoint of authentication.
+     * Endpoint of authentication.
      * <ul>
-     *<li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
-     *<li> Issue CellLocal if scope does not exist. </ li>
+     * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
+     * <li> Issue CellLocal if scope does not exist. </ li>
      * </ul>
-     *@return TokenEndPointResource object
+     * @return TokenEndPointResource object
      */
     @Path("__token")
     public TokenEndPointResource auth() {
@@ -272,11 +272,11 @@ public class CellResource {
     }
 
     /**
-     *ImplicitFlow Endpoint of authentication.
+     * ImplicitFlow Endpoint of authentication.
      * <ul>
-     *<li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
+     * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
      * </ul>
-     *@return AuthzEndPointResource object
+     * @return AuthzEndPointResource object
      */
     @Path("__authz")
     public AuthzEndPointResource authz() {
@@ -284,8 +284,8 @@ public class CellResource {
     }
 
     /**
-     *Endpoint of error response by Html.
-     *@return AuthzEndPointResource object
+     * Endpoint of error response by Html.
+     * @return AuthzEndPointResource object
      */
     @Path("__html/error")
     public ErrorHtmlResource errorHtml() {
@@ -293,8 +293,8 @@ public class CellResource {
     }
 
     /**
-     *The endpoint of the role.
-     *@return RoleResource object
+     * The endpoint of the role.
+     * @return RoleResource object
      */
     @Path("__role")
     public RoleResource role() {
@@ -302,8 +302,8 @@ public class CellResource {
     }
 
     /**
-     *Box URL acquisition end point.
-     *@return BoxUrlResource object
+     * Box URL acquisition end point.
+     * @return BoxUrlResource object
      */
     @Path("__box")
     public BoxUrlResource boxUrl() {
@@ -311,8 +311,8 @@ public class CellResource {
     }
 
     /**
-     *Event API endpoint.
-     *@return EventResource object
+     * Event API endpoint.
+     * @return EventResource object
      */
     @Path("__event")
     public EventResource event() {
@@ -320,8 +320,8 @@ public class CellResource {
     }
 
     /**
-     *Endpoint of log retrieval.
-     *@return JAXRS response
+     * Endpoint of log retrieval.
+     * @return JAXRS response
      */
     @Path("__log")
     public LogResource log() {
@@ -338,8 +338,8 @@ public class CellResource {
     }
 
     /**
-     *Access to the default box.
-     *@ param jaxRsRequest HTTP request for JAX-RS
+     * Access to the default box.
+     * @ param jaxRsRequest HTTP request for JAX-RS
      * @return BoxResource Object
      */
     @Path("__")
@@ -349,8 +349,8 @@ public class CellResource {
     }
 
     /**
-     *Endpoint of message transmission.
-     *@return MessageResource object
+     * Endpoint of message transmission.
+     * @return MessageResource object
      */
     @Path("__message")
     public MessageResource message() {
@@ -388,9 +388,9 @@ public class CellResource {
     }
 
     /**
-     *A method that passes the following path to BoxResource.
-     *@ param boxName Box path name
-     *@ param jaxRsRequest HTTP request for JAX-RS
+     * A method that passes the following path to BoxResource.
+     * @ param boxName Box path name
+     * @ param jaxRsRequest HTTP request for JAX-RS
      * @return BoxResource Object
      */
     @Path("{box: [^\\/]+}")
@@ -401,7 +401,7 @@ public class CellResource {
     }
 
     /**
-     *Processing of the PROPFIND method.
+     * Processing of the PROPFIND method.
      * @param requestBodyXml Request Body
      * @param depth Depth Header
      * @param contentLength Content-Length Header
@@ -420,7 +420,7 @@ public class CellResource {
     }
 
     /**
-     *Processing of the PROPPATCH method.
+     * Processing of the PROPPATCH method.
      * @param requestBodyXml Request Body
      * @return JAX-RS Response
      */
@@ -445,8 +445,8 @@ public class CellResource {
     }
 
     /**
-     *Processing of ACL method.
-     *@ param reader configuration XML
+     * Processing of ACL method.
+     * @ param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -458,7 +458,7 @@ public class CellResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS

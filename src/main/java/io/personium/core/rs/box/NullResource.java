@@ -60,7 +60,7 @@ import io.personium.core.model.jaxb.ObjectIo;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- *A JAX-RS resource that is responsible for nonexistent paths below Box.
+ * A JAX-RS resource that is responsible for nonexistent paths below Box.
  */
 public class NullResource {
     static Logger log = LoggerFactory.getLogger(NullResource.class);
@@ -70,9 +70,9 @@ public class NullResource {
 
     /**
      * constructor.
-     *@ param parent parent resource
-     *@ param davCmp Parts responsible for processing dependent on backend implementation
-     *@ param isParentNull Determine if the parent is a NullResource
+     * @ param parent parent resource
+     * @ param davCmp Parts responsible for processing dependent on backend implementation
+     * @ param isParentNull Determine if the parent is a NullResource
      */
     public NullResource(final DavRsCmp parent, final DavCmp davCmp, final boolean isParentNull) {
         this.davRsCmp = new DavRsCmp(parent, davCmp);
@@ -80,8 +80,8 @@ public class NullResource {
     }
 
     /**
-     *GET method processing 404 Not Found.
-     *@return 404 Jax-RS Response representing Not Found
+     * GET method processing 404 Not Found.
+     * @return 404 Jax-RS Response representing Not Found
      */
     @GET
     public final Response get() {
@@ -93,10 +93,10 @@ public class NullResource {
     }
 
     /**
-     *Place a new file in this path.
-     *@ param contentType Content-Type header
-     *@ param inputStream request body
-     *@return Jax-RS Response object
+     * Place a new file in this path.
+     * @ param contentType Content-Type header
+     * @ param inputStream request body
+     * @return Jax-RS Response object
      */
     @WriteAPI
     @PUT
@@ -125,11 +125,11 @@ public class NullResource {
     }
 
     /**
-     *Create a new Collection in this path.
-     *@ param contentType Content-Type header
-     *@ param contentLength Content-Length header
-     *@ param transferEncoding Transfer-Encoding header
-     *@ param inputStream request body
+     * Create a new Collection in this path.
+     * @ param contentType Content-Type header
+     * @ param contentLength Content-Length header
+     * @ param transferEncoding Transfer-Encoding header
+     * @ param inputStream request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -210,10 +210,10 @@ public class NullResource {
     }
 
     /**
-     *Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
-     *@ param nextPath path name one down
-     *@ param request request
-     *@return Jax-RS resource object responsible for subordinate path
+     * Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
+     * @ param nextPath path name one down
+     * @ param request request
+     * @return Jax-RS resource object responsible for subordinate path
      */
     @Path("{nextPath}")
     public Object nextPath(@PathParam("nextPath") final String nextPath,
@@ -222,8 +222,8 @@ public class NullResource {
     }
 
     /**
-     *404 NOT FOUND is returned.
-     *@return Jax-RS response object
+     * 404 NOT FOUND is returned.
+     * @return Jax-RS response object
      */
     @DELETE
     public final Response delete() {
@@ -234,8 +234,8 @@ public class NullResource {
     }
 
     /**
-     *404 NOT FOUND is returned.
-     *@return Jax-RS response object
+     * 404 NOT FOUND is returned.
+     * @return Jax-RS response object
      */
     @POST
     public final Response post() {
@@ -246,8 +246,8 @@ public class NullResource {
     }
 
     /**
-     *404 NOT FOUND is returned.
-     *@return Jax-RS response object
+     * 404 NOT FOUND is returned.
+     * @return Jax-RS response object
      */
     @REPORT
     public final Response report() {
@@ -258,8 +258,8 @@ public class NullResource {
     }
 
     /**
-     *404 NOT FOUND is returned.
-     *@return Jax-RS response object
+     * 404 NOT FOUND is returned.
+     * @return Jax-RS response object
      */
     @WebDAVMethod.PROPFIND
     public final Response propfind() {
@@ -270,8 +270,8 @@ public class NullResource {
     }
 
     /**
-     *404 NOT FOUND is returned.
-     *@return Jax-RS response object
+     * 404 NOT FOUND is returned.
+     * @return Jax-RS response object
      */
     @WebDAVMethod.PROPPATCH
     public final Response proppatch() {
@@ -282,8 +282,8 @@ public class NullResource {
     }
 
     /**
-     *404 NOT FOUND is returned.
-     *@return Jax-RS response object
+     * 404 NOT FOUND is returned.
+     * @return Jax-RS response object
      */
     @ACL
     public final Response acl() {
@@ -294,8 +294,8 @@ public class NullResource {
     }
 
     /**
-     *404 NOT FOUND is returned.
-     *@return Jax-RS response object
+     * 404 NOT FOUND is returned.
+     * @return Jax-RS response object
      */
     @WebDAVMethod.MOVE
     public final Response move() {
@@ -306,7 +306,7 @@ public class NullResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS

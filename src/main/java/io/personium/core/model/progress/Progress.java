@@ -19,7 +19,7 @@ package io.personium.core.model.progress;
 import java.io.Serializable;
 
 /**
- *Asynchronous processing status object.
+ * Asynchronous processing status object.
  */
 public class Progress implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -50,9 +50,9 @@ public class Progress implements Serializable {
     }
 
     /**
-     *constructor.
-     *@ param key Asynchronous processing status key
-     *@ param value Asynchronous processing status value (JSON string)
+     * constructor.
+     * @ param key Asynchronous processing status key
+     * @ param value Asynchronous processing status value (JSON string)
      */
     public Progress(String key, String value) {
         this.key = key;
@@ -61,7 +61,7 @@ public class Progress implements Serializable {
     }
 
     /**
-     *Delete asynchronous processing status.
+     * Delete asynchronous processing status.
      */
     public void delete() {
         ProgressManager.deleteProgress(this.key);

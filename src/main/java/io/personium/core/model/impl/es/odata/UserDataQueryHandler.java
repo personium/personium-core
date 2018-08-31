@@ -31,18 +31,18 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 
 /**
- *UserData elasticsearch query handler.
+ * UserData elasticsearch query handler.
  */
 public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHandler {
     /**
-     *Property / ComplexTypeProperty and Alias ​​mapping data.
+     * Property / ComplexTypeProperty and Alias ​​mapping data.
      */
     private Map<String, PropertyAlias> propertyAliasMap;
 
     /**
-     *constructor.
-     *@ param entityType entity type
-     *@ param map property name and Map of Alias
+     * constructor.
+     * @ param entityType entity type
+     * @ param map property name and Map of Alias
      */
     public UserDataQueryHandler(EdmEntityType entityType, Map<String, PropertyAlias> map) {
         super(entityType);
@@ -116,10 +116,10 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
     }
 
     /**
-     *It is determined whether the untouched field should be used.
-     *@ param name property name
-     *@ param edmProperty property schema information
-     *true if the untretched field should be used, false otherwise
+     * It is determined whether the untouched field should be used.
+     * @ param name property name
+     * @ param edmProperty property schema information
+     * true if the untretched field should be used, false otherwise
      */
     private boolean isUntouched(String name, EdmProperty edmProperty) {
         if (Common.P_ID.getName().equals(name)
@@ -154,10 +154,10 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
     }
 
     /**
-     *Get the property's Alias ​​name from the mapping data.
-     *@ param key Search key for mapping data
-     *@ param propertyName property name
-     *@return Alias ​​name
+     * Get the property's Alias ​​name from the mapping data.
+     * @ param key Search key for mapping data
+     * @ param propertyName property name
+     * @return Alias ​​name
      */
     private String getAlias(String key, String propertyName) {
         if (propertyName.startsWith("_")) {

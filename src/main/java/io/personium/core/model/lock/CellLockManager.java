@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *Utility to manage cell lock.
+ * Utility to manage cell lock.
  */
 public abstract class CellLockManager extends LockManager {
 
@@ -83,12 +83,12 @@ public abstract class CellLockManager extends LockManager {
     abstract Boolean putLock(String fullKey, Lock lock);
 
     /**
-     *Prefix of reference count object.
+     * Prefix of reference count object.
      */
     public static final String REFERENCE_COUNT_PREFIX = "CellAccessCount_";
 
     /**
-     *Cell status object prefix.
+     * Cell status object prefix.
      */
     public static final String CELL_STATUS_PREFIX = "CellStatus_";
 
@@ -127,9 +127,9 @@ public abstract class CellLockManager extends LockManager {
     }
 
     /**
-     *Returns the reference count for the cell with the specified ID.
-     *@ param cellId Cell ID for which reference count is to be acquired
-     *@return Reference count for the specified cell
+     * Returns the reference count for the cell with the specified ID.
+     * @ param cellId Cell ID for which reference count is to be acquired
+     * @return Reference count for the specified cell
      */
     public static long getReferenceCount(String cellId) {
         String key =  REFERENCE_COUNT_PREFIX + cellId;
@@ -138,9 +138,9 @@ public abstract class CellLockManager extends LockManager {
     }
 
     /**
-     *Increment the reference count of the specified cell.
-     *@ param cellId Target cell ID
-     *@return Value of reference count after increment
+     * Increment the reference count of the specified cell.
+     * @ param cellId Target cell ID
+     * @return Value of reference count after increment
      */
     public static long incrementReferenceCount(String cellId) {
         String key =  REFERENCE_COUNT_PREFIX + cellId;
@@ -149,9 +149,9 @@ public abstract class CellLockManager extends LockManager {
     }
 
     /**
-     *Decrement the reference count of the specified cell.
-     *@ param cellId Target cell ID
-     *@return Value of reference count after decrementing
+     * Decrement the reference count of the specified cell.
+     * @ param cellId Target cell ID
+     * @return Value of reference count after decrementing
      */
     public static long decrementReferenceCount(String cellId) {
         String key =  REFERENCE_COUNT_PREFIX + cellId;

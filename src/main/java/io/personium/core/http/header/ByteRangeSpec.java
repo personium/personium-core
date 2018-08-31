@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *Container for managing ByteRangeSpec.
+ * Container for managing ByteRangeSpec.
  */
 public class ByteRangeSpec {
     private long entitySize;
@@ -34,10 +34,10 @@ public class ByteRangeSpec {
     }
 
     /**
-     *If byte-range-spec is parsed and syntactically correct, this object is returned, and if it is invalid, null is returned.
-     *@ param byteRangeSpecString String of byte-range-spec
-     *@ param entitySize Range Target file size
-     *@return this object
+     * If byte-range-spec is parsed and syntactically correct, this object is returned, and if it is invalid, null is returned.
+     * @ param byteRangeSpecString String of byte-range-spec
+     * @ param entitySize Range Target file size
+     * @return this object
      */
     static final ByteRangeSpec parse(final String byteRangeSpecString, final long entitySize) {
         String firstBytePosString;
@@ -99,7 +99,7 @@ public class ByteRangeSpec {
     }
 
     /**
-     *Returns true if the starting position of the Range is within the range of the file or checked and is within the range.
+     * Returns true if the starting position of the Range is within the range of the file or checked and is within the range.
      * @return bool
      */
     public boolean isInEntitySize() {
@@ -126,7 +126,7 @@ public class ByteRangeSpec {
     }
 
     /**
-     *Returning ContentLength considering specification of Range.
+     * Returning ContentLength considering specification of Range.
      * @return long contentLength
      */
     public long getContentLength() {
@@ -134,8 +134,8 @@ public class ByteRangeSpec {
     }
 
     /**
-     *Format the value of Range to the value of Content - Range header.
-     *@return Value of the Content-Range header
+     * Format the value of Range to the value of Content - Range header.
+     * @return Value of the Content-Range header
      */
     public String makeContentRangeHeaderField() {
         //Return in the format of Content - Range header

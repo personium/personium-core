@@ -27,7 +27,7 @@ import io.personium.core.utils.UriUtils;
 
 
 /**
- *A class that performs processing except delegation of processing from JaxRS Resource object excluding Dav related persistence.
+ * A class that performs processing except delegation of processing from JaxRS Resource object excluding Dav related persistence.
  */
 public class BoxRsCmp extends DavRsCmp {
 
@@ -36,11 +36,11 @@ public class BoxRsCmp extends DavRsCmp {
     Box box;
 
     /**
-     *constructor.
+     * constructor.
      * @param cellRsCmp CellRsCmp
      * @param davCmp DavCmp
      * @param accessContext AccessContext
-     *@ param box box
+     * @ param box box
      */
     public BoxRsCmp(final CellRsCmp cellRsCmp, final DavCmp davCmp, final AccessContext accessContext, final Box box) {
         super(cellRsCmp, davCmp);
@@ -49,8 +49,8 @@ public class BoxRsCmp extends DavRsCmp {
         this.box = box;
     }
     /**
-     *Returns the URL of this resource.
-     *@return URL string
+     * Returns the URL of this resource.
+     * @return URL string
      */
     public String getUrl() {
         //Recursively to the top BoxResource, BoxResource overrides this and gives the root URL.
@@ -59,16 +59,16 @@ public class BoxRsCmp extends DavRsCmp {
     }
 
     /**
-     *Returns the Cell to which the resource belongs.
-     *@return Cell object
+     * Returns the Cell to which the resource belongs.
+     * @return Cell object
      */
     public Cell getCell() {
         //BoxResource overrides this to recursively go to the top BoxResource and get to Cell from there.
         return this.cell;
     }
     /**
-     *Returns the Box to which the resource belongs.
-     *@return Box object
+     * Returns the Box to which the resource belongs.
+     * @return Box object
      */
     public Box getBox() {
         //BoxResource overrides this to recursively go to the top BoxResource and get to Cell from there.

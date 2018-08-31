@@ -49,7 +49,7 @@ import io.personium.core.utils.ODataUtils;
 public final class ODataProducerUtils {
 
     /**
-     *log.
+     * log.
      */
     static Logger log = LoggerFactory.getLogger(ODataProducerUtils.class);
 
@@ -57,11 +57,11 @@ public final class ODataProducerUtils {
     }
 
     /**
-     *Perform uniqueness check of data at Entity registration / update.
+     * Perform uniqueness check of data at Entity registration / update.
      * @param producer
-     *@ param newEntity Entity to register / update newly
-     *@ param originalEntity original Entity
-     *@ param originalKey The key name specified in the update request
+     * @ param newEntity Entity to register / update newly
+     * @ param originalEntity original Entity
+     * @ param originalKey The key name specified in the update request
      */
     static void checkUniqueness(EsODataProducer producer, OEntityWrapper newEntity,
             OEntityWrapper originalEntity, OEntityKey originalKey) {
@@ -210,7 +210,7 @@ public final class ODataProducerUtils {
     }
 
     /**
-     *Compare if linksKey and parent key are equal.
+     * Compare if linksKey and parent key are equal.
      * @param entity entity
      * @param linksKey linksKey
      * @return boolean
@@ -220,7 +220,7 @@ public final class ODataProducerUtils {
     }
 
     /**
-     *Generate a password change request to ES.
+     * Generate a password change request to ES.
      * @param oedhNew oedhNew
      * @param dcCredHeader dcCredHeader
      */
@@ -244,9 +244,9 @@ public final class ODataProducerUtils {
     }
 
     /**
-     *Merge the values ​​of dynamic fields and static fields of OEDH specified by argument and update oedhNew.
-     *@ param oedhExisting base OEDH
-     *@ param oedhNew Add OEDH
+     * Merge the values ​​of dynamic fields and static fields of OEDH specified by argument and update oedhNew.
+     * @ param oedhExisting base OEDH
+     * @ param oedhNew Add OEDH
      */
     public static void mergeFields(EntitySetDocHandler oedhExisting, EntitySetDocHandler oedhNew) {
         //Add registered properties to static fields

@@ -48,15 +48,15 @@ import org.odata4j.producer.resources.OptionsQueryParser;
 import io.personium.core.PersoniumCoreException;
 
 /**
- *PersoniumOptionsQueryParser class.
- *Copy from OData4j library source
+ * PersoniumOptionsQueryParser class.
+ * Copy from OData4j library source
  */
 public final class PersoniumOptionsQueryParser extends OptionsQueryParser {
 
     /**
-     *Parsing the Orderby query.
-     *@ param orderBy value of the orderby query
-     *@return Perth result
+     * Parsing the Orderby query.
+     * @ param orderBy value of the orderby query
+     * @return Perth result
      */
     public static List<OrderByExpression> parseOrderBy(String orderBy) {
         if (orderBy == null) {
@@ -66,9 +66,9 @@ public final class PersoniumOptionsQueryParser extends OptionsQueryParser {
     }
 
     /**
-     *Parse the Filter query.
-     *@ param filter filter query value
-     *@return Perth result
+     * Parse the Filter query.
+     * @ param filter filter query value
+     * @return Perth result
      */
     public static BoolCommonExpression parseFilter(String filter) {
         if (filter == null) {
@@ -86,9 +86,9 @@ public final class PersoniumOptionsQueryParser extends OptionsQueryParser {
     }
 
     /**
-     *Parses the Select query.
-     *@ param select Select query value
-     *@return Perth result
+     * Parses the Select query.
+     * @ param select Select query value
+     * @return Perth result
      */
     public static List<EntitySimpleProperty> parseSelect(String select) {
         if (select == null) {
@@ -98,9 +98,9 @@ public final class PersoniumOptionsQueryParser extends OptionsQueryParser {
     }
 
     /**
-     *Parsing Expand's query.
-     *@ param expand expand Query value
-     *@return Perth result
+     * Parsing Expand's query.
+     * @ param expand expand Query value
+     * @return Perth result
      */
     public static List<EntitySimpleProperty> parseExpand(String expand) {
         if (expand == null) {

@@ -23,23 +23,23 @@ import org.odata4j.edm.EdmDataServices;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- *A DocHandler to use when updating properties.
+ * A DocHandler to use when updating properties.
  */
 public class PropertyUpdateDocHandler extends PropertyDocHandler {
 
     /**
-     *Constructor that creates DocHandler without ID from OEntityWrapper.
-     *@param type ES type name
+     * Constructor that creates DocHandler without ID from OEntityWrapper.
+     * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     *@ param metadata schema information
+     * @ param metadata schema information
      */
     public PropertyUpdateDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         super(type, oEntityWrapper, metadata);
     }
 
     /**
-     *Acquire ES / MySQL registration data.
-     *@return Registration data
+     * Acquire ES / MySQL registration data.
+     * @return Registration data
      */
     @Override
     public Map<String, Object> getSource() {

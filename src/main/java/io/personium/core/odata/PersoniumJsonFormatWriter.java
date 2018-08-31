@@ -62,7 +62,7 @@ import io.personium.core.rs.odata.AbstractODataResource;
 import io.personium.core.rs.odata.ODataResource;
 
 /**
- *PersoniumJsonFormatWriter class.
+ * PersoniumJsonFormatWriter class.
  * @param <T>
  */
 public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
@@ -73,8 +73,8 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
     protected static final String RESULTS_PROPERTY = "results";
 
     /**
-     *constructor.
-     *@ param jsonpCallback callback
+     * constructor.
+     * @ param jsonpCallback callback
      */
     public PersoniumJsonFormatWriter(String jsonpCallback) {
         super(jsonpCallback);
@@ -191,9 +191,9 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
     }
 
     /**
-     *Create response data for Collection.
+     * Create response data for Collection.
      * @param jw JsonWriter
-     *@ param type Collection type
+     * @ param type Collection type
      * @param coll OCollection
      */
     @SuppressWarnings("rawtypes")
@@ -221,7 +221,7 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
     }
 
     /**
-     *Return EntityRelId.
+     * Return EntityRelId.
      * @param oe OEntity
      * @return EntityRelId
      */
@@ -230,9 +230,9 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
     }
 
     /**
-     *Return EntityRelId.
-     *@ param entitySet entity set
-     *@ param entityKey entity key
+     * Return EntityRelId.
+     * @ param entitySet entity set
+     * @ param entityKey entity key
      * @return EntityRelId
      */
     public String getEntityRelId(EdmEntitySet entitySet, OEntityKey entityKey) {
@@ -242,10 +242,10 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
     }
 
     /**
-     *Output the JSON field value according to the data type.
-     *@ param jw Output destination writer
-     *Data type of @ param type field
-     *@ param pvalue field value
+     * Output the JSON field value according to the data type.
+     * @ param jw Output destination writer
+     * Data type of @ param type field
+     * @ param pvalue field value
      */
     @Override
     protected void writeValue(JsonWriter jw, EdmType type, Object pvalue) {

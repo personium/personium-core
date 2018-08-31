@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *Define constants commonly used for Dav related.
+ * Define constants commonly used for Dav related.
  */
 public class DavCommon {
 
@@ -41,9 +41,9 @@ public class DavCommon {
     public static final String OVERWRITE_FALSE = "F";
 
     /**
-     *Invalid name check.
-     *@ param name Name of the resource to be checked
-     *@return true: normal, false: invalid
+     * Invalid name check.
+     * @ param name Name of the resource to be checked
+     * @return true: normal, false: invalid
      */
     public static final boolean isValidResourceName(String name) {
         //It is not a regular expression of TODO Common.PATTERN_NAME but is it the correct checking method? It does not match the contents of the API specification

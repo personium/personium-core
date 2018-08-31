@@ -29,58 +29,58 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.http.HttpStatus;
 
 /**
- *Log output class when authentication error (PR401 - AU - xxxx) occurs.
+ * Log output class when authentication error (PR401 - AU - xxxx) occurs.
  */
 @SuppressWarnings("serial")
 public final class PersoniumCoreAuthzException extends PersoniumCoreException {
 
     /**
-     *Authentication header is required.
+     * Authentication header is required.
      */
     public static final PersoniumCoreAuthzException AUTHORIZATION_REQUIRED = create("PR401-AU-0001");
     /**
-     *The token expired.
+     * The token expired.
      */
     public static final PersoniumCoreAuthzException EXPIRED_ACCESS_TOKEN = create("PR401-AU-0002");
     /**
-     *AuthenticationScheme is invalid.
+     * AuthenticationScheme is invalid.
      */
     public static final PersoniumCoreAuthzException INVALID_AUTHN_SCHEME = create("PR401-AU-0003");
     /**
-     *The format of basic authentication header is invalid.
+     * The format of basic authentication header is invalid.
      */
     public static final PersoniumCoreAuthzException BASIC_AUTH_FORMAT_ERROR = create("PR401-AU-0004");
 
     /**
-     *Token parsing error.
+     * Token parsing error.
      */
     public static final PersoniumCoreAuthzException TOKEN_PARSE_ERROR = create("PR401-AU-0006");
     /**
-     *Access with refresh token.
+     * Access with refresh token.
      */
     public static final PersoniumCoreAuthzException ACCESS_WITH_REFRESH_TOKEN = create("PR401-AU-0007");
     /**
-     *Token signature validation error.
+     * Token signature validation error.
      */
     public static final PersoniumCoreAuthzException TOKEN_DISG_ERROR = create("PR401-AU-0008");
     /**
-     *Cookie authentication error.
+     * Cookie authentication error.
      */
     public static final PersoniumCoreAuthzException COOKIE_AUTHENTICATION_FAILED = create("PR401-AU-0009");
 
     /**
-     *Basic authentication error (Account locked).
+     * Basic authentication error (Account locked).
      */
     public static final PersoniumCoreAuthzException BASIC_AUTHENTICATION_FAILED_IN_ACCOUNT_LOCK =
             create("PR401-AU-0010");
 
     /**
-     *Basic authentication error.
+     * Basic authentication error.
      */
     public static final PersoniumCoreAuthzException BASIC_AUTHENTICATION_FAILED = create("PR401-AU-0011");
 
     /**
-     *Force load inner class.
+     * Force load inner class.
      */
     public static void loadConfig() {
     }
@@ -89,14 +89,14 @@ public final class PersoniumCoreAuthzException extends PersoniumCoreException {
     AcceptableAuthScheme authScheme = AcceptableAuthScheme.ALL; //Make the setting to allow Basic / Bearer as default
 
     /**
-     *constructor.
-     *@ param status HTTP response status
-     *@ param severity error level
-     *@ param code error code
-     *@ param message error message
-     *@ param error Error code of OAuth authentication error
-     *@ param realm To return the WWWW-Authenticate header, set the realm value here
-     *@ param authScheme AuthScheme type to allow authentication
+     * constructor.
+     * @ param status HTTP response status
+     * @ param severity error level
+     * @ param code error code
+     * @ param message error message
+     * @ param error Error code of OAuth authentication error
+     * @ param realm To return the WWWW-Authenticate header, set the realm value here
+     * @ param authScheme AuthScheme type to allow authentication
      */
     PersoniumCoreAuthzException(final String code,
             final Severity severity,
@@ -110,7 +110,7 @@ public final class PersoniumCoreAuthzException extends PersoniumCoreException {
     }
 
     /**
-     *Set realm and create object.
+     * Set realm and create object.
      * @param realm2set realm
      * @return CoreAuthnException
      */
@@ -121,9 +121,9 @@ public final class PersoniumCoreAuthzException extends PersoniumCoreException {
     }
 
     /**
-     *Set realm and create object.
+     * Set realm and create object.
      * @param realm2set realm
-     *@ param acceptableAuthScheme AuthScheme type to allow authentication
+     * @ param acceptableAuthScheme AuthScheme type to allow authentication
      * @return CoreAuthnException
      */
     public PersoniumCoreAuthzException realm(String realm2set, AcceptableAuthScheme acceptableAuthScheme) {
@@ -157,8 +157,8 @@ public final class PersoniumCoreAuthzException extends PersoniumCoreException {
     }
 
     /**
-     *Cause Create and return an exception added.
-     *@ param t cause exception
+     * Cause Create and return an exception added.
+     * @ param t cause exception
      * @return PersoniumCoreException
      */
     public PersoniumCoreException reason(final Throwable t) {
@@ -171,7 +171,7 @@ public final class PersoniumCoreAuthzException extends PersoniumCoreException {
     }
 
     /**
-     *Factory method.
+     * Factory method.
      * @param code Personium message code
      * @return PersoniumCoreException
      */

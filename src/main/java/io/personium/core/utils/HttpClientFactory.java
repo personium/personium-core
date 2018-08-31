@@ -37,7 +37,7 @@ import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 
 /**
- *Switch implementation by changing HttpClient.
+ * Switch implementation by changing HttpClient.
  */
 public class HttpClientFactory {
     /** Type of HTTP communication.*/
@@ -53,9 +53,9 @@ public class HttpClientFactory {
     }
 
     /**
-     *Create an HTTPClient object.
-     *@ param type communication type
-     *@return HttpClient class instance created
+     * Create an HTTPClient object.
+     * @ param type communication type
+     * @return HttpClient class instance created
      */
     public static HttpClient create(final String type) {
         RequestConfig config = RequestConfig.custom()

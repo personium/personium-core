@@ -40,15 +40,15 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- *JAX-RS resource handling MERGE method of Entity resource of OData.
+ * JAX-RS resource handling MERGE method of Entity resource of OData.
  */
 public class ODataMergeResource extends ODataEntityResource {
 
     /**
-     *constructor.
-     *@ param odataResource ODataResource which is the parent resource
+     * constructor.
+     * @ param odataResource ODataResource which is the parent resource
      * @param entitySetName EntitySet Name
-     *@ param keyString key string
+     * @ param keyString key string
      * @param oEntityKey OEntityKey object
      */
     public ODataMergeResource(ODataResource odataResource,
@@ -57,10 +57,10 @@ public class ODataMergeResource extends ODataEntityResource {
     }
 
     /**
-     *Processing of MERGE method.
-     *@ param reader request body
-     *@ param accept Accept header
-     *@ param ifMatch If-Match header
+     * Processing of MERGE method.
+     * @ param reader request body
+     * @ param accept Accept header
+     * @ param ifMatch If-Match header
      * @return JAX-RSResponse
      */
     public Response merge(Reader reader,
@@ -106,12 +106,12 @@ public class ODataMergeResource extends ODataEntityResource {
     }
 
     /**
-     *Set default value to OProperty based on schema definition <br />
-     *For MERGE, do not set default values ​​for items other than key, updated, and published
+     * Set default value to OProperty based on schema definition <br />
+     * For MERGE, do not set default values ​​for items other than key, updated, and published
      * @param ep EdmProperty
-     *@ param propName property name
+     * @ param propName property name
      * @param op OProperty
-     *@ param metadata EdmDataServices schema definition
+     * @ param metadata EdmDataServices schema definition
      * @return Oproperty
      */
     @Override
@@ -136,11 +136,11 @@ public class ODataMergeResource extends ODataEntityResource {
     }
 
     /**
-     *Refer to the ComplexType schema and set mandatory checks and default values.
-     *@ param metadata schema information
-     *@ param edmComplexType Schema information of ComplexType
-     *@ param complexProperties List of ComplexTypeProperty
-     *@return List of ComplexType properties with default values
+     * Refer to the ComplexType schema and set mandatory checks and default values.
+     * @ param metadata schema information
+     * @ param edmComplexType Schema information of ComplexType
+     * @ param complexProperties List of ComplexTypeProperty
+     * @return List of ComplexType properties with default values
      */
     @Override
     protected List<OProperty<?>> createNewComplexProperties(EdmDataServices metadata,

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *Mapping definition class for reading JSON file for Relation definition in bar file.
+ * Mapping definition class for reading JSON file for Relation definition in bar file.
  */
 public class JSONRelation implements IJSONMappedObject {
 
@@ -43,7 +43,7 @@ public class JSONRelation implements IJSONMappedObject {
     }
 
     /**
-     *Get Name property.
+     * Get Name property.
      * @return Name
      */
     public String getName() {
@@ -51,7 +51,7 @@ public class JSONRelation implements IJSONMappedObject {
     }
 
     /**
-     *Set Name property.
+     * Set Name property.
      * @param name Name.
      */
     public void setName(String name) {

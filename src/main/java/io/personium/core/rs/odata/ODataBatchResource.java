@@ -73,14 +73,14 @@ import io.personium.core.rs.PersoniumCoreExceptionMapper;
 import io.personium.core.utils.UriUtils;
 
 /**
- *The ODataBatchResource class.
+ * The ODataBatchResource class.
  */
 public class ODataBatchResource extends AbstractODataResource {
 
     private static final String X_PERSONIUM_PRIORITY = "X-Personium-Priority";
 
     /**
-     *Whether to sleep to give Lock to another process.
+     * Whether to sleep to give Lock to another process.
      */
     public enum BatchPriority {
         /** Do not give Lock to other processes.*/
@@ -95,9 +95,9 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         *Generate an enumerated value from a character string (default value: LOW).
-         *@ param val String
-         *@return enumeration value
+         * Generate an enumerated value from a character string (default value: LOW).
+         * @ param val String
+         * @return enumeration value
          */
         public static BatchPriority fromString(String val) {
             for (BatchPriority e : BatchPriority.values()) {
@@ -124,7 +124,7 @@ public class ODataBatchResource extends AbstractODataResource {
     Map<String, String> entityTypeIds;
 
     /**
-     *constructor.
+     * constructor.
      * @param odataResource ODataResource
      */
     public ODataBatchResource(final ODataResource odataResource) {
@@ -133,12 +133,12 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Process batch request.
+     * Process batch request.
      * @param uriInfo uriInfo
      * @param headers headers
      * @param request request
      * @param reader reader
-     *@return response
+     * @return response
      */
     @WriteAPI
     @POST
@@ -206,7 +206,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Set timeout response in $ batch (Changeset).
+     * Set timeout response in $ batch (Changeset).
      */
     private void setChangesetTimeoutResponse(StringBuilder builder, String boundary, BatchBodyPart bodyPart) {
         BatchResponse res = getTimeoutResponse();
@@ -214,7 +214,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Set timeout response in $ batch.
+     * Set timeout response in $ batch.
      */
     private void setTimeoutResponse(StringBuilder builder, String boundary) {
         BatchResponse res = getTimeoutResponse();
@@ -222,7 +222,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Create timeout response.
+     * Create timeout response.
      */
     private BatchResponse getTimeoutResponse() {
         BatchResponse res = new BatchResponse();
@@ -234,11 +234,11 @@ public class ODataBatchResource extends AbstractODataResource {
     private volatile boolean timedOut = false;
 
     /**
-     *Determine whether the timeout time has elapsed <br />
-     *Calling condition that timer object is instantiated at API call. <br />
-     *If mode is YIELD, it sleeps to give Lock to another process before judging whether timeout time has elapsed.
-     *@ param mode Whether to sleep to give Lock to another process
-     *@return timeout Whether time has elapsed
+     * Determine whether the timeout time has elapsed <br />
+     * Calling condition that timer object is instantiated at API call. <br />
+     * If mode is YIELD, it sleeps to give Lock to another process before judging whether timeout time has elapsed.
+     * @ param mode Whether to sleep to give Lock to another process
+     * @return timeout Whether time has elapsed
      */
     private boolean isTimedOut(BatchElapsedTimer.Lock mode) {
         if (!timedOut) {
@@ -414,8 +414,8 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Bulk registration of user data via NP.
-     *@ param npBulkContexts NavigationProperty List of contexts
+     * Bulk registration of user data via NP.
+     * @ param npBulkContexts NavigationProperty List of contexts
      */
     private void execBulkRequestForNavigationProperty(List<NavigationPropertyBulkContext> npBulkContexts) {
         //Create BulkRequest from context for bulk registration
@@ -485,11 +485,11 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Create response body of Changeset of each request.
-     *@ param boundaryStr Boundary string
+     * Create response body of Changeset of each request.
+     * @ param boundaryStr Boundary string
      * @param bodyPart BatchBodyPart
-     *@ param res Response
-     *@return request response body
+     * @ param res Response
+     * @return request response body
      */
     private String getChangesetResponseBody(String boundaryStr,
             BatchBodyPart bodyPart,
@@ -538,10 +538,10 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Create response body of GET, LIST of each request.
-     *@ param boundaryStr Boundary string
-     *@ param res Response
-     *@return request response body
+     * Create response body of GET, LIST of each request.
+     * @ param boundaryStr Boundary string
+     * @ param res Response
+     * @return request response body
      */
     private String getRetrieveResponseBody(String boundaryStr,
             BatchResponse res) {
@@ -572,9 +572,9 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Whether list acquisition or one acquisition is acquired is determined.
-     *@ param uri request URI
-     *@return true: get list, false: get 1 case
+     * Whether list acquisition or one acquisition is acquired is determined.
+     * @ param uri request URI
+     * @return true: get list, false: get 1 case
      */
     private boolean isListRequst(BatchBodyPart bodyPart) {
         if (bodyPart.getEntityKeyWithParences() == null
@@ -585,7 +585,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Set the registration data of the batch request to the bulk request.
+     * Set the registration data of the batch request to the bulk request.
      * @param bodyPart BatchBodyPart
      */
     private void setBulkRequestsForEntity(BatchBodyPart bodyPart) {
@@ -708,9 +708,9 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Generate Entity data to be registered via NavigationProperty from the input stream.
-     *@ param reader input stream
-     *@return OEntityWrapper object generated from the input stream
+     * Generate Entity data to be registered via NavigationProperty from the input stream.
+     * @ param reader input stream
+     * @return OEntityWrapper object generated from the input stream
      */
     OEntityWrapper createEntityFromInputStream(
             final Reader reader,
@@ -732,9 +732,9 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Register Entity via NavigationProperty.
-     *@ param oew OEntityWrapper object for registration
-     *@return Entity response generated from registered content
+     * Register Entity via NavigationProperty.
+     * @ param oew OEntityWrapper object for registration
+     * @return Entity response generated from registered content
      */
     EntityResponse createEntity(OEntityWrapper oew) {
         //Process of attaching meta information if necessary
@@ -746,7 +746,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Relation type of link for registration via NP.
+     * Relation type of link for registration via NP.
      */
     public enum NavigationPropertyLinkType {
         /** 1:1 / 0..1:1 / 1:0..1 / 0..1:0..1 . */
@@ -760,7 +760,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Class for registration via NP.
+     * Class for registration via NP.
      */
     public static class NavigationPropertyBulkContext {
         private OEntityWrapper oew;
@@ -779,7 +779,7 @@ public class ODataBatchResource extends AbstractODataResource {
         private Exception exception;
 
         /**
-         *constructor.
+         * constructor.
          * @param bodyPart BatchBodyPart
          */
         public NavigationPropertyBulkContext(BatchBodyPart bodyPart) {
@@ -787,11 +787,11 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         *constructor.
-         *@ param bodyPart Batch BodyPart to register
-         *@ param oew Register OEntity
-         *@ param srcEntityId Link OEntityId
-         *@ param tgtNavProp NavigationProperty name
+         * constructor.
+         * @ param bodyPart Batch BodyPart to register
+         * @ param oew Register OEntity
+         * @ param srcEntityId Link OEntityId
+         * @ param tgtNavProp NavigationProperty name
          */
         public NavigationPropertyBulkContext(
                 BatchBodyPart bodyPart,
@@ -808,23 +808,23 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         *Set the OEntity to register.
-         *@ param entity OEntity to set
+         * Set the OEntity to register.
+         * @ param entity OEntity to set
          */
         public void setOEntityWrapper(OEntityWrapper entity) {
             this.oew = entity;
         }
 
         /**
-         *Get the OEntity to register.
-         *@return OEntity to register
+         * Get the OEntity to register.
+         * @return OEntity to register
          */
         public OEntityWrapper getOEntityWrapper() {
             return this.oew;
         }
 
         /**
-         *Get the EntityResponse of the registered result.
+         * Get the EntityResponse of the registered result.
          * @return EntityResponse
          */
         public EntityResponse getEntityResponse() {
@@ -832,141 +832,141 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         *Set EntityResponse of the registered result.
-         *@ param entityResponse EntityResponse of the registered result
+         * Set EntityResponse of the registered result.
+         * @ param entityResponse EntityResponse of the registered result
          */
         public void setEntityResponse(EntityResponse entityResponse) {
             this.entityResponse = entityResponse;
         }
 
         /**
-         *Get the link originator OEntityId.
-         *@return Link OEntityId
+         * Get the link originator OEntityId.
+         * @return Link OEntityId
          */
         public OEntityId getSrcEntityId() {
             return this.srcEntityId;
         }
 
         /**
-         *Gets the NavigationProperty name.
-         *@return NavigationProperty name
+         * Gets the NavigationProperty name.
+         * @return NavigationProperty name
          */
         public String getTgtNavProp() {
             return this.tgtNavProp;
         }
 
         /**
-         *Get the Batch BodyPart to register.
-         *@return register BatchBodyPart
+         * Get the Batch BodyPart to register.
+         * @return register BatchBodyPart
          */
         public BatchBodyPart getBodyPart() {
             return this.bodyPart;
         }
 
         /**
-         *Acquire the response body for Batch.
-         *Response body for @return Batch
+         * Acquire the response body for Batch.
+         * Response body for @return Batch
          */
         public BatchResponse getBatchResponse() {
             return this.res;
         }
 
         /**
-         *Set the response header for Batch.
-         *@ param key Batch Response header key
-         *@ param value The value of the header of BatchResponse
+         * Set the response header for Batch.
+         * @ param key Batch Response header key
+         * @ param value The value of the header of BatchResponse
          */
         public void setResponseHeader(String key, String value) {
             this.res.setHeader(key, value);
         }
 
         /**
-         *Set the response body for Batch.
-         *@ param body BatchResponse body
+         * Set the response body for Batch.
+         * @ param body BatchResponse body
          */
         public void setResponseBody(String body) {
             this.res.setBody(body);
         }
 
         /**
-         *Set the response code for Batch.
-         *@ param code Response code of BatchResponse
+         * Set the response code for Batch.
+         * @ param code Response code of BatchResponse
          */
         public void setResponseCode(int code) {
             this.res.setResponseCode(code);
         }
 
         /**
-         *Get the link type of the link.
-         *@return Link type of association
+         * Get the link type of the link.
+         * @return Link type of association
          */
         public NavigationPropertyLinkType getLinkType() {
             return linkType;
         }
 
         /**
-         *Set association type of link.
-         *@ param linkType Link association type
+         * Set association type of link.
+         * @ param linkType Link association type
          */
         public void setLinkType(NavigationPropertyLinkType linkType) {
             this.linkType = linkType;
         }
 
         /**
-         *Set the context information of the link entity.
-         */ EntityType (ID) / _ Context of EntityType side of NavigationProperty
-         *@return Context information of the link entity
+         * Set the context information of the link entity.
+         * 
+         * @return Context information of the link entity
          */
         public EntitySetDocHandler getSourceDocHandler() {
             return sourceDocHandler;
         }
 
         /**
-         *Set the context information of the link entity.
-         */ EntityType (ID) / _ Context of EntityType side of NavigationProperty
-         *@ param sourceDocHandler Context information of the link entity
+         * Set the context information of the link entity.
+         * 
+         * @ param sourceDocHandler Context information of the link entity
          */
         public void setSourceDocHandler(EntitySetDocHandler sourceDocHandler) {
             this.sourceDocHandler = sourceDocHandler;
         }
 
         /**
-         *Acquire registration context information.
-         */ EntityType (ID) / _ Context of _NavigationProperty side of NavigationProperty
-         *@return registration context information
+         * Acquire registration context information.
+         * 
+         * @return registration context information
          */
         public EntitySetDocHandler getTargetDocHandler() {
             return targetDocHandler;
         }
 
         /**
-         *Set registration context information.
-         */ EntityType (ID) / _ Context of _NavigationProperty side of NavigationProperty
-         *@ param targetDocHandler Registration context information
+         * Set registration context information.
+         * 
+         * @ param targetDocHandler Registration context information
          */
         public void setTargetDocHandler(EntitySetDocHandler targetDocHandler) {
             this.targetDocHandler = targetDocHandler;
         }
 
         /**
-         *Get link information to register.
-         *@return Link information to register
+         * Get link information to register.
+         * @return Link information to register
          */
         public LinkDocHandler getLinkDocHandler() {
             return linkDocHandler;
         }
 
         /**
-         *Set link information to be registered.
-         *@ param linkDocHandler Link information to register
+         * Set link information to be registered.
+         * @ param linkDocHandler Link information to register
          */
         public void setLinkDocHandler(LinkDocHandler linkDocHandler) {
             this.linkDocHandler = linkDocHandler;
         }
 
         /**
-         *Set exception information.
-         *@ param ex exception information
+         * Set exception information.
+         * @ param ex exception information
          */
         public void setException(Exception ex) {
             this.exception = ex;
@@ -974,16 +974,16 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         *Did an error occur during processing?
-         *@return true: error occurred, false: no error
+         * Did an error occur during processing?
+         * @return true: error occurred, false: no error
          */
         public boolean isError() {
             return this.isError;
         }
 
         /**
-         *Acquire exception information on errors that occurred during processing.
-         *@return exception information
+         * Acquire exception information on errors that occurred during processing.
+         * @return exception information
          */
         public Exception getException() {
             return this.exception;
@@ -991,10 +991,10 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *bulk Request checking and execution processing.
+     * bulk Request checking and execution processing.
      * @param uriInfo uriInfo
      * @param boundary boundary
-     *@ param navigationPropertyBulkContexts List of registration request information via navigation properties
+     * @ param navigationPropertyBulkContexts List of registration request information via navigation properties
      */
     private void checkAndExecBulk(
             StringBuilder responseBody,
@@ -1051,8 +1051,8 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *bulk Request execution processing.
-     *@ param responseBody For storing results
+     * bulk Request execution processing.
+     * @ param responseBody For storing results
      * @param uriInfo uriInfo
      * @param boundary boundary
      */
@@ -1118,7 +1118,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Create a Too Many Concurrent error response for POST request.
+     * Create a Too Many Concurrent error response for POST request.
      * @param responseBody
      * @param boundary
      */
@@ -1132,7 +1132,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Create a Too Many Concurrent error response for POST request via NP.
+     * Create a Too Many Concurrent error response for POST request via NP.
      * @param responseBody
      * @param boundary
      */
@@ -1143,10 +1143,10 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Batch request list acquisition processing.
+     * Batch request list acquisition processing.
      * @param uriInfo uriInfo
      * @param bodyPart BatchBodyPart
-     *@return response
+     * @return response
      */
     private BatchResponse list(UriInfo uriInfo, BatchBodyPart bodyPart) {
         BatchResponse res = new BatchResponse();
@@ -1195,10 +1195,10 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Process of obtaining one case of batch request.
+     * Process of obtaining one case of batch request.
      * @param uriInfo uriInfo
      * @param bodyPart BatchBodyPart
-     *@return response
+     * @return response
      */
     private BatchResponse retrieve(UriInfo uriInfo, BatchBodyPart bodyPart) {
         BatchResponse res = new BatchResponse();
@@ -1236,7 +1236,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Update processing of batch request.
+     * Update processing of batch request.
      * @param bodyPart BatchBodyPart
      */
     private BatchResponse update(BatchBodyPart bodyPart) {
@@ -1269,7 +1269,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Batch request deletion processing.
+     * Batch request deletion processing.
      * @param bodyPart BatchBodyPart
      * @return BatchResponse
      */
@@ -1298,7 +1298,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *$ Link registration process of batch request.
+     * $ Link registration process of batch request.
      * @param uriInfo uriInfo
      * @param bodyPart BatchBodyPart
      * @return BatchResponse
@@ -1342,8 +1342,8 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *$ batch Access control done on request.
-     *@ param ac access context
+     * $ batch Access control done on request.
+     * @ param ac access context
      */
     private void checkAccessContext(AccessContext ac) {
         //Schema authentication
@@ -1392,7 +1392,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Write access control for $ batch.
+     * Write access control for $ batch.
      * @param bodyPart bodyPart
      */
     private void checkWriteAccessContext(BatchBodyPart bodyPart) {
@@ -1416,7 +1416,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Read access control for $ batch.
+     * Read access control for $ batch.
      * @param bodyPart bodyPart
      */
     private void checkReadAccessContext(BatchBodyPart bodyPart) {
@@ -1440,9 +1440,9 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Check whether the NavigationProperty specification value of the request path is in the correct format.
+     * Check whether the NavigationProperty specification value of the request path is in the correct format.
      * @param bodyPart bodyPart
-     *Returns true if the @return specification is correct, false otherwise
+     * Returns true if the @return specification is correct, false otherwise
      */
     private boolean isValidNavigationProperty(BatchBodyPart bodyPart) {
         if (bodyPart.hasNavigationProperty()
@@ -1453,7 +1453,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Batch Class for managing access information.
+     * Batch Class for managing access information.
      */
     static class BatchAccess {
         private PersoniumCoreException exception = null;
@@ -1471,7 +1471,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     *Response information class of Batch request.
+     * Response information class of Batch request.
      */
     static class BatchResponse {
 
@@ -1480,32 +1480,32 @@ public class ODataBatchResource extends AbstractODataResource {
         private String body = null;
 
         /**
-         *Return the response code of BatchResponse.
-         *@return Response code of BatchResponse
+         * Return the response code of BatchResponse.
+         * @return Response code of BatchResponse
          */
         public int getResponseCode() {
             return responseCode;
         }
 
         /**
-         *Set the response code of BatchResponse.
-         *@ param responseCode Response code of BatchResponse
+         * Set the response code of BatchResponse.
+         * @ param responseCode Response code of BatchResponse
          */
         public void setResponseCode(int responseCode) {
             this.responseCode = responseCode;
         }
 
         /**
-         *Return the header of BatchResponse.
-         *@return BatchResponse header
+         * Return the header of BatchResponse.
+         * @return BatchResponse header
          */
         public Map<String, String> getHeaders() {
             return headers;
         }
 
         /**
-         *Get description of response code.
-         *@return Description of the response code (eg OK, No Content)
+         * Get description of response code.
+         * @return Description of the response code (eg OK, No Content)
          */
         public String getResponseMessage() {
             String message = null;
@@ -1532,32 +1532,32 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         *Set the header of BatchResponse.
-         *@ param key Batch Response header key
-         *@ param value The value of the header of BatchResponse
+         * Set the header of BatchResponse.
+         * @ param key Batch Response header key
+         * @ param value The value of the header of BatchResponse
          */
         public void setHeader(String key, String value) {
             this.headers.put(key, value);
         }
 
         /**
-         *Return the body of BatchResponse.
-         *@return Body of BatchResponse
+         * Return the body of BatchResponse.
+         * @return Body of BatchResponse
          */
         public String getBody() {
             return body;
         }
 
         /**
-         *Set the body of BatchResponse.
-         *@ param body Body of the BatchResponse
+         * Set the body of BatchResponse.
+         * @ param body Body of the BatchResponse
          */
         public void setBody(String body) {
             this.body = body;
         }
 
         /**
-         *Set error information.
+         * Set error information.
          * @param res BatchResponse
          * @param e PersoniumCoreException
          */
@@ -1580,9 +1580,9 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         *Create an error message in Json format.
+         * Create an error message in Json format.
          * @param exception PersoniumCoreException
-         *@return Json format error message for response body
+         * @return Json format error message for response body
          */
         private String createJsonBody(PersoniumCoreException exception) {
             String code = exception.getCode();

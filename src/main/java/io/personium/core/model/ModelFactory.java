@@ -31,32 +31,32 @@ import io.personium.core.model.impl.fs.CellSnapshotCellCmpFsImpl;
 import io.personium.core.odata.PersoniumODataProducer;
 
 /**
- *Factory class of model object.
+ * Factory class of model object.
  */
 public final class ModelFactory {
     /**
-     *Dummy constructor.
+     * Dummy constructor.
      */
     private ModelFactory() {
 
     }
 
     /**
-     *Generate and return a Cell object.
-     *If the corresponding Cell does not exist, it is null
+     * Generate and return a Cell object.
+     * If the corresponding Cell does not exist, it is null
      * @param uriInfo UriInfo
-     *@return Cell object
+     * @return Cell object
      */
     public static Cell cell(final UriInfo uriInfo) {
         return CellEsImpl.load(uriInfo);
     }
 
     /**
-     *Generate and return a Cell object.
-     *If the corresponding Cell does not exist, it is null
+     * Generate and return a Cell object.
+     * If the corresponding Cell does not exist, it is null
      * @param id id
      * @param uriInfo UriInfo
-     *@return Cell object
+     * @return Cell object
      */
     public static Cell cell(final String id, final UriInfo uriInfo) {
         return CellEsImpl.load(id, uriInfo);
@@ -73,18 +73,18 @@ public final class ModelFactory {
     }
 
     /**
-     *Creates and returns an internal implementation model object of Box.
-     *@ param box Box class
-     *@return Box's internal implementation model object
+     * Creates and returns an internal implementation model object of Box.
+     * @ param box Box class
+     * @return Box's internal implementation model object
      */
     public static BoxCmp boxCmp(final Box box) {
         return new BoxCmpFsImpl(box);
     }
 
     /**
-     *Generate and return the Cell's internal implementation model object.
+     * Generate and return the Cell's internal implementation model object.
      * @param cell Cell
-     *@return Cell's internal implementation model object
+     * @return Cell's internal implementation model object
      */
     public static CellCmp cellCmp(final Cell cell) {
         return new CellCmpFsImpl(cell);
@@ -100,22 +100,22 @@ public final class ModelFactory {
     }
 
     /**
-     *It is a factory of ODataProducer.
+     * It is a factory of ODataProducer.
      */
     public static class ODataCtl {
         /**
-         *Returns the ODataProducer handling the Unit management entity.
-         *@ param ac access context
-         *@return Unit ODataProducer handling management entities
+         * Returns the ODataProducer handling the Unit management entity.
+         * @ param ac access context
+         * @return Unit ODataProducer handling management entities
          */
         public static PersoniumODataProducer unitCtl(AccessContext ac) {
             return new UnitCtlODataProducer(ac);
         }
 
         /**
-         *Returns the ODataProducer handling the Cell management entity.
-         *@ param cell Cell's Cell
-         *@return ODataProducer handling Cell management entities
+         * Returns the ODataProducer handling the Cell management entity.
+         * @ param cell Cell's Cell
+         * @return ODataProducer handling Cell management entities
          */
         public static PersoniumODataProducer cellCtl(final Cell cell) {
             return new CellCtlODataProducer(cell);
@@ -132,7 +132,7 @@ public final class ModelFactory {
         }
 
         /**
-         *Return ODataProducer of user data schema.
+         * Return ODataProducer of user data schema.
          * @param cell Cell
          * @param davCmp DavCmp
          * @return ODataProducer
@@ -142,7 +142,7 @@ public final class ModelFactory {
         }
 
         /**
-         *Return ODataProducer of user data.
+         * Return ODataProducer of user data.
          * @param cell Cell
          * @param davCmp DavCmp
          * @return ODataProducer

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- *This is the basic class group of this application.
+ * This is the basic class group of this application.
  */
 package io.personium.core;
 

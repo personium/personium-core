@@ -37,7 +37,7 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- *JAX-RS resource responsible for PersoniumEngineSourceCollectionResource.
+ * JAX-RS resource responsible for PersoniumEngineSourceCollectionResource.
  */
 public class PersoniumEngineSourceCollection {
 
@@ -45,18 +45,18 @@ public class PersoniumEngineSourceCollection {
 
     /**
      * constructor.
-     *@ param parent parent resource
-     *@ param davCmp Parts responsible for processing dependent on backend implementation
+     * @ param parent parent resource
+     * @ param davCmp Parts responsible for processing dependent on backend implementation
      */
     PersoniumEngineSourceCollection(final DavRsCmp parent, final DavCmp davCmp) {
         this.davRsCmp = new DavRsCmp(parent, davCmp);
     }
 
     /**
-     *Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
-     *@ param nextPath path name one down
-     *@ param request request
-     *@return Jax-RS resource object responsible for subordinate path
+     * Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
+     * @ param nextPath path name one down
+     * @ param request request
+     * @return Jax-RS resource object responsible for subordinate path
      */
     @Path("{nextPath}")
     public Object nextPath(@PathParam("nextPath") final String nextPath,
@@ -93,8 +93,8 @@ public class PersoniumEngineSourceCollection {
     }
 
     /**
-     *MOVE processing. <br />
-     *Because __src MOVE can not be performed, it is set as uniform 400 errors.
+     * MOVE processing. <br />
+     * Because __src MOVE can not be performed, it is set as uniform 400 errors.
      */
     @WebDAVMethod.MOVE
     public void move() {
@@ -105,8 +105,8 @@ public class PersoniumEngineSourceCollection {
     }
 
     /**
-     *Processing of OPTIONS method.
-     *@return JAX-RS response object
+     * Processing of OPTIONS method.
+     * @return JAX-RS response object
      */
     @OPTIONS
     public Response options() {

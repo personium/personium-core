@@ -68,7 +68,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     *Get bar_version property.
+     * Get bar_version property.
      * @return barVersion
      */
     public String getBarVersion() {
@@ -76,7 +76,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     *Setting the bar_version property.
+     * Setting the bar_version property.
      * @param barVersion barVersion.
      */
     public void setBarVersion(String barVersion) {
@@ -84,7 +84,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     *Get box_version property.
+     * Get box_version property.
      * @return boxVersion
      */
     public String getBoxVersion() {
@@ -92,7 +92,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     *Set the box_version property.
+     * Set the box_version property.
      * @param boxVersion boxVersion.
      */
     public void setBoxVersion(String boxVersion) {
@@ -100,7 +100,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     *Get DefaultPath property.
+     * Get DefaultPath property.
      * @return defaultPath
      */
     public String getOldDefaultPath() {
@@ -108,7 +108,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     *Setting of the DefaultPath property.
+     * Setting of the DefaultPath property.
      * @param oldDefaultPath oldDefaultPath.
      */
     public void setOldDefaultPath(String oldDefaultPath) {
@@ -116,7 +116,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     *Get default_path property.
+     * Get default_path property.
      * @return defaultPath
      */
     public String getDefaultPath() {
@@ -124,7 +124,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     *Setting the default_path property.
+     * Setting the default_path property.
      * @param defaultPath defaultPath.
      */
     public void setDefaultPath(String defaultPath) {
@@ -132,7 +132,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     *Get the schema property.
+     * Get the schema property.
      * @return schema
      */
     public String getSchema() {
@@ -140,7 +140,7 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     *Setting the schema property.
+     * Setting the schema property.
      * @param schema schema.
      */
     public void setSchema(String schema) {
@@ -148,8 +148,8 @@ public class JSONManifest implements IJSONMappedObject {
     }
 
     /**
-     *Check the value of schema.
-     *@return true: Validate OK, false: Validate NG
+     * Check the value of schema.
+     * @return true: Validate OK, false: Validate NG
      */
     public boolean checkSchema() {
         //If the value of schema is null or not in URL format, return error.

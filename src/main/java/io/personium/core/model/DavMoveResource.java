@@ -28,7 +28,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
- *A class that performs processing relating to Move of Dav after receiving processing delegation from the JaxRS Resource object.
+ * A class that performs processing relating to Move of Dav after receiving processing delegation from the JaxRS Resource object.
  */
 public class DavMoveResource extends DavRsCmp {
 
@@ -38,10 +38,10 @@ public class DavMoveResource extends DavRsCmp {
     private String ifMatch = null;
 
     /**
-     *constructor.
-     *@ param parent parent resource
-     *@ param davCmp Parts responsible for processing dependent on backend implementation
-     *@ param headers Request header information
+     * constructor.
+     * @ param parent parent resource
+     * @ param davCmp Parts responsible for processing dependent on backend implementation
+     * @ param headers Request header information
      */
     public DavMoveResource(DavRsCmp parent, DavCmp davCmp, HttpHeaders headers) {
         super(parent, davCmp);
@@ -53,8 +53,8 @@ public class DavMoveResource extends DavRsCmp {
     }
 
     /**
-     *Processing of the MOVE method.
-     *@return JAX-RS response object
+     * Processing of the MOVE method.
+     * @return JAX-RS response object
      */
     public Response doMove() {
 
@@ -101,9 +101,9 @@ public class DavMoveResource extends DavRsCmp {
     }
 
     /**
-     *Validate the header of the Move method <br />
-     *If validation fails, throw an exception.
-     *@ param headers header information
+     * Validate the header of the Move method <br />
+     * If validation fails, throw an exception.
+     * @ param headers header information
      */
     void validateHeaders() {
         //Depth header
@@ -145,8 +145,8 @@ public class DavMoveResource extends DavRsCmp {
     }
 
     /**
-     *Create and return path information of the destination object.
-     *@return DavPath Object managing the resource path of the destination
+     * Create and return path information of the destination object.
+     * @return DavPath Object managing the resource path of the destination
      */
     private DavPath getDestination() {
         URI destUri;
@@ -161,23 +161,23 @@ public class DavMoveResource extends DavRsCmp {
     }
 
     /**
-     *Get the header of the specified key from the header information <br />
-     *If it does not exist, return null.
-     *@ param headers header information
-     *@ param key The key of the header to be acquired
-     *@return Header of the specified key
+     * Get the header of the specified key from the header information <br />
+     * If it does not exist, return null.
+     * @ param headers header information
+     * @ param key The key of the header to be acquired
+     * @return Header of the specified key
      */
     private String getFirstHeader(HttpHeaders headers, String key) {
         return this.getFirstHeader(headers, key, null);
     }
 
     /**
-     *Get the header of the specified key from the header information <br />
-     *If it does not exist, return null.
-     *@ param headers header information
-     *@ param key The key of the header to be acquired
-     *@ param defaultValue Default value if header does not exist
-     *@return Header of the specified key
+     * Get the header of the specified key from the header information <br />
+     * If it does not exist, return null.
+     * @ param headers header information
+     * @ param key The key of the header to be acquired
+     * @ param defaultValue Default value if header does not exist
+     * @return Header of the specified key
      */
     private String getFirstHeader(HttpHeaders headers, String key, String defaultValue) {
         List<String> header = headers.getRequestHeader(key);

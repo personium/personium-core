@@ -73,19 +73,19 @@ public interface DavCmp {
     String SERVICE_SRC_COLLECTION = "__src";
 
     /**
-     *Whether DavNode exists on the DB.
-     *@return true if it exists
+     * Whether DavNode exists on the DB.
+     * @return true if it exists
      */
     boolean exists();
 
     /**
-     *Update Dav's management data information.
+     * Update Dav's management data information.
      */
     void load();
 
     /**
-     *Update Dav's management data information <br />
-     *If there is no management data, it is an error.
+     * Update Dav's management data information <br />
+     * If there is no management data, it is an error.
      */
     void loadAndCheckDavInconsistency();
 
@@ -155,21 +155,21 @@ public interface DavCmp {
     boolean isCellLevel();
 
     /**
-     *Getter for schema authentication level setting.
-     *@return schema authentication level
+     * Getter for schema authentication level setting.
+     * @return schema authentication level
      */
     String getConfidentialLevel();
 
     /**
-     *Getter for getting unit promotion permission user setting.
-     *@return unit promotion permission user setting
+     * Getter for getting unit promotion permission user setting.
+     * @return unit promotion permission user setting
      */
     List<String> getOwnerRepresentativeAccounts();
 
     /**
-     *Returns the part responsible for the child path with the specified name.
-     *@ param name path component path name of child path
-     *@return Parts responsible for child path
+     * Returns the part responsible for the child path with the specified name.
+     * @ param name path component path name of child path
+     * @return Parts responsible for child path
      */
     DavCmp getChild(String name);
 
@@ -179,39 +179,39 @@ public interface DavCmp {
     Map<String, DavCmp> getChildren();
 
     /**
-     *Returns the part responsible for the parent path.
-     *@return Parts responsible for parent path
+     * Returns the part responsible for the parent path.
+     * @return Parts responsible for parent path
      */
     DavCmp getParent();
 
     /**
-     *Returns the number of parts of the child pass.
-     *@return Number of parts of the child path
+     * Returns the number of parts of the child pass.
+     * @return Number of parts of the child path
      */
     int getChildrenCount();
 
     /**
-     *Return type string.
-     *@return type string
+     * Return type string.
+     * @return type string
      */
     String getType();
 
     /**
-     *Returns the path string that this object is responsible for.
-     *@return Path string responsible for this object
+     * Returns the path string that this object is responsible for.
+     * @return Path string responsible for this object
      */
     String getName();
 
 
     /**
-     *Returns the nodeId of this object.
+     * Returns the nodeId of this object.
      * @return nodeId
      */
     String getId();
 
     /**
-     *Returns true if there is no data below.
-     *True if there is no data under @return.
+     * Returns true if there is no data below.
+     * True if there is no data under @return.
      */
     boolean isEmpty();
 
@@ -221,64 +221,64 @@ public interface DavCmp {
     void makeEmpty();
 
     /**
-     *Processing of MKCOL method.
-     *@ param type type
+     * Processing of MKCOL method.
+     * @ param type type
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder mkcol(String type);
 
     /**
-     *Processing of ACL method.
+     * Processing of ACL method.
      * @param reader Reader
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder acl(Reader reader);
 
     /**
-     *File update processing by PUT method.
-     *@ param contentType Content-Type header
-     *@ param inputStream request body
+     * File update processing by PUT method.
+     * @ param contentType Content-Type header
+     * @ param inputStream request body
      * @param etag Etag
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder putForUpdate(String contentType, InputStream inputStream, String etag);
 
     /**
-     *File creation processing by PUT method.
-     *@ param contentType Content-Type header
-     *@ param inputStream request body
+     * File creation processing by PUT method.
+     * @ param contentType Content-Type header
+     * @ param inputStream request body
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder putForCreate(String contentType, InputStream inputStream);
 
     /**
-     *Link with child resources.
-     *@ param name Path component name of child resource Component name
-     *@ param nodeId Node ID of child resource
-     *@ param asof Time to keep as update time
+     * Link with child resources.
+     * @ param name Path component name of child resource Component name
+     * @ param nodeId Node ID of child resource
+     * @ param asof Time to keep as update time
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder linkChild(String name, String nodeId, Long asof);
 
     /**
-     *Delete association with child resource.
-     *@ param name child resource name
-     *@ param asof Time to leave as deletion time
+     * Delete association with child resource.
+     * @ param name child resource name
+     * @ param asof Time to leave as deletion time
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder unlinkChild(String name, Long asof);
 
     /**
      * process PROPPATCH method.
-     *@ param propUpdate PROPPATCH request object
+     * @ param propUpdate PROPPATCH request object
      * @param url URL
-     *@return response object
+     * @return response object
      */
     Multistatus proppatch(Propertyupdate propUpdate, String url);
 
     /**
      * process DELETE method.
-     *@ param ifMatch If-Match header
+     * @ param ifMatch If-Match header
      * @param recursive set true to process recursively
      * @return JAX-RS ResponseBuilder
      */
@@ -286,19 +286,19 @@ public interface DavCmp {
 
     /**
      * process GET method.
-     *@ param rangeHeaderField Range header
+     * @ param rangeHeaderField Range header
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder get(String rangeHeaderField);
 
     /**
-     *Return ODataProducer for data manipulation.
+     * Return ODataProducer for data manipulation.
      * @return ODataProducer
      */
     PersoniumODataProducer getODataProducer();
 
     /**
-     *Return ODataProducer for schema operation.
+     * Return ODataProducer for schema operation.
      * @param cell Cell
      * @return ODataProducer
      */
@@ -311,25 +311,25 @@ public interface DavCmp {
 
 
     /**
-     *Move processing is performed.
+     * Move processing is performed.
      * @param etag ETag value
-     *@ param overwrite Whether to overwrite the destination resource
-     *@ param davDestination Hierarchy information of the destination
-     *@return ResponseBuilder response
+     * @ param overwrite Whether to overwrite the destination resource
+     * @ param davDestination Hierarchy information of the destination
+     * @return ResponseBuilder response
      */
     ResponseBuilder move(String etag, String overwrite, DavDestination davDestination);
 
     /**
-     *Returns the URL of this DavNode resource.
-     *@return URL string
+     * Returns the URL of this DavNode resource.
+     * @return URL string
      */
     String getUrl();
 
     /**
-     *Return NotFound exceptions according to resources <br />
-     *Since the messages depend on the resource, each resource class should override this method to define the message. <br />
-     *The additional information of the message should be set by the caller without setting it here.
-     *@return NotFound exception
+     * Return NotFound exceptions according to resources <br />
+     * Since the messages depend on the resource, each resource class should override this method to define the message. <br />
+     * The additional information of the message should be set by the caller without setting it here.
+     * @return NotFound exception
      */
     PersoniumCoreException getNotFoundException();
 }

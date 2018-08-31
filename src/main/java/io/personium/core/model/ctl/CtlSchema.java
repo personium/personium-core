@@ -50,11 +50,11 @@ import io.personium.core.model.Cell;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- *Schema information of the control entity group.
+ * Schema information of the control entity group.
  */
 public final class CtlSchema {
     /**
-     *The constructor is private.
+     * The constructor is private.
      */
     private CtlSchema() {
     }
@@ -94,9 +94,9 @@ public final class CtlSchema {
     }
 
     /**
-     *Creates and returns a CSDL extension annotation for a compound Unique Key constraint (CSDL extension by Personium).
-     *@ param name UK name
-     *@return Annotation list
+     * Creates and returns a CSDL extension annotation for a compound Unique Key constraint (CSDL extension by Personium).
+     * @ param name UK name
+     * @return Annotation list
      */
     public static List<EdmAnnotation<?>> createNamedUkAnnotation(final String name) {
         List<EdmAnnotation<?>> ret = new ArrayList<EdmAnnotation<?>>();
@@ -107,9 +107,9 @@ public final class CtlSchema {
     }
 
     /**
-     *Creates and returns an annotation of dynamic property or not.
-     *@ param name Boolean value (String type)
-     *@return Annotation list
+     * Creates and returns an annotation of dynamic property or not.
+     * @ param name Boolean value (String type)
+     * @return Annotation list
      */
     public static List<EdmAnnotation<?>> createIsDecleardAnnotation(final String name) {
         List<EdmAnnotation<?>> ret = new ArrayList<EdmAnnotation<?>>();
@@ -120,9 +120,9 @@ public final class CtlSchema {
     }
 
     /**
-     *Creates and returns the "Format" annotation.
-     *@ param name Format definition
-     *@return Annotation list
+     * Creates and returns the "Format" annotation.
+     * @ param name Format definition
+     * @return Annotation list
      */
     public static List<EdmAnnotation<?>> createFormatAnnotation(final String name) {
         List<EdmAnnotation<?>> ret = new ArrayList<EdmAnnotation<?>>();
@@ -133,7 +133,7 @@ public final class CtlSchema {
     }
 
     /**
-     *Returns the EdmDataServices object of the UnitCtl data service.
+     * Returns the EdmDataServices object of the UnitCtl data service.
      * @return EdmDataServices.Builder Object
      */
     public static EdmDataServices.Builder getEdmDataServicesForUnitCtl() {
@@ -147,7 +147,7 @@ public final class CtlSchema {
     }
 
     /**
-     *Returns the CellCtl data service's EdmDataServices object.
+     * Returns the CellCtl data service's EdmDataServices object.
      * @return EdmDataServices Object
      */
     public static EdmDataServices.Builder getEdmDataServicesForCellCtl() {
@@ -294,7 +294,7 @@ public final class CtlSchema {
     };
 
     /**
-     *Returns the EdmDataServices object of ODataSvcSchema data service.
+     * Returns the EdmDataServices object of ODataSvcSchema data service.
      * @return EdmDataServices.Builder Object
      */
     public static EdmDataServices.Builder getEdmDataServicesForODataSvcSchema() {
@@ -302,7 +302,7 @@ public final class CtlSchema {
     }
 
     /**
-     *Returns the EdmDataServices object of the UserCtl data service.
+     * Returns the EdmDataServices object of the UserCtl data service.
      * @param nodeId nodeId
      * @param typeEntities EntityType
      * @param assEndEntities AssociationEnd

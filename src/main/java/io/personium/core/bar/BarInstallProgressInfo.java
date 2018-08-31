@@ -25,7 +25,7 @@ import org.json.simple.JSONObject;
 import io.personium.core.model.progress.ProgressInfo;
 
 /**
- *bar Asynchronous processing status object for installation.
+ * bar Asynchronous processing status object for installation.
  */
 public class BarInstallProgressInfo implements ProgressInfo {
 
@@ -47,10 +47,10 @@ public class BarInstallProgressInfo implements ProgressInfo {
     private int lastPercent = 0;
 
     /**
-     *constructor.
-     *@ param cellId uuid of Cell
-     *@ param boxId uuid of Box
-     *@ param entryCount bar Number of entries (files) in the file
+     * constructor.
+     * @ param cellId uuid of Cell
+     * @ param boxId uuid of Box
+     * @ param entryCount bar Number of entries (files) in the file
      */
     public BarInstallProgressInfo(String cellId, String boxId, long entryCount) {
         this.cellId = cellId;
@@ -63,8 +63,8 @@ public class BarInstallProgressInfo implements ProgressInfo {
     }
 
     /**
-     *Update the progress rate.
-     *@ param delta Number of processed files (increment)
+     * Update the progress rate.
+     * @ param delta Number of processed files (increment)
      */
     public void addDelta(long delta) {
         this.progressCount += delta;
@@ -72,12 +72,12 @@ public class BarInstallProgressInfo implements ProgressInfo {
     }
 
     /**
-     *Whether or not the progress rate can be output as an internal event is judged.
-     *The judgment criteria are as follows.
+     * Whether or not the progress rate can be output as an internal event is judged.
+     * The judgment criteria are as follows.
      * <ul>
-     *<li> Whether the progress rate exceeds 10% band </ li>
+     * <li> Whether the progress rate exceeds 10% band </ li>
      * </ul>.
-     *@return Return true if output is possible, false otherwise.
+     * @return Return true if output is possible, false otherwise.
      */
     public boolean isOutputEventBus() {
        //TODO Updated in increments of 10% may not be updated for a long time, so it will be updated so that it will be updated even after a certain period of time
@@ -175,8 +175,8 @@ public class BarInstallProgressInfo implements ProgressInfo {
     }
 
     /**
-     *Acquires the contents of stored data in JSON format.
-     *@return JSON object.
+     * Acquires the contents of stored data in JSON format.
+     * @return JSON object.
      */
     @SuppressWarnings("unchecked")
     public JSONObject getJsonObject() {
@@ -199,8 +199,8 @@ public class BarInstallProgressInfo implements ProgressInfo {
     }
 
     /**
-     *Get the contents of stored data as JSON character string.
-     *@return JSON string
+     * Get the contents of stored data as JSON character string.
+     * @return JSON string
      */
     public String toString() {
         return getJsonObject().toJSONString();

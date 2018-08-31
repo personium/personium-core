@@ -34,7 +34,7 @@ import io.personium.core.odata.NavigationTargetKeyProperty;
 import io.personium.core.rs.odata.AbstractODataResource;
 
 /**
- *ES implementation of the NavigationTargetKeyProperty class.
+ * ES implementation of the NavigationTargetKeyProperty class.
  */
 public class EsNavigationTargetKeyProperty implements NavigationTargetKeyProperty {
 
@@ -63,7 +63,7 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     private Set<OProperty<?>> properties = new HashSet<OProperty<?>>();
 
     /**
-     *properties setter.
+     * properties setter.
      * @param properties properties
      */
     public void setProperties(Set<OProperty<?>> properties) {
@@ -74,11 +74,11 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     private EsODataProducer odataProducer;
 
     /**
-     *constructor.
+     * constructor.
      * @param cellId CellId
      * @param boxId boxId
      * @param nodeId nodeId
-     *@ param type type
+     * @ param type type
      * @param odataProducer odataProducer
      */
     public EsNavigationTargetKeyProperty(String cellId,
@@ -94,8 +94,8 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     }
 
     /**
-     *Search NavigationTargetKeyProperty.
-     *@return HashMap of type and ID of link information
+     * Search NavigationTargetKeyProperty.
+     * @return HashMap of type and ID of link information
      */
     private Map<String, String> search() {
         Map<String, Object> filter = getSearchQuery();
@@ -124,8 +124,8 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     }
 
     /**
-     *Acquire a search query.
-     *@return search query
+     * Acquire a search query.
+     * @return search query
      */
     private Map<String, Object> getSearchQuery() {
         //Assemble search query of Static field
@@ -176,7 +176,7 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     }
 
     /**
-     *Analyze property information.
+     * Analyze property information.
      */
     private void analyzeProperties() {
         for (OProperty<?> property : properties) {
@@ -201,8 +201,8 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     }
 
     /**
-     *Recursively search the transition of NTKP and return HashMap of Type and ID of link information.
-     *@return HashMap of type and ID of link information
+     * Recursively search the transition of NTKP and return HashMap of Type and ID of link information.
+     * @return HashMap of type and ID of link information
      */
     private Map<String, String> recursiveSearch() {
         analyzeProperties();
@@ -210,8 +210,8 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     }
 
     /**
-     *From the information of NavigationTargetKeyProperty, acquire Entry of Type and ID of link information.
-     *@return Type and ID Entry of link information
+     * From the information of NavigationTargetKeyProperty, acquire Entry of Type and ID of link information.
+     * @return Type and ID Entry of link information
      */
     @Override
     public Map.Entry<String, String> getLinkEntry() {
@@ -228,8 +228,8 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     }
 
     /**
-     *Analyze NavigationTargetKeyProperty and get a query to search for NTKP.
-     *@return NTKP search query
+     * Analyze NavigationTargetKeyProperty and get a query to search for NTKP.
+     * @return NTKP search query
      */
     @Override
     public Map<String, Object> getNtkpSearchQuery() {
@@ -243,7 +243,7 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     @SuppressWarnings("serial")
     public static class NTKPNotFoundException extends RuntimeException {
         /**
-         *constructor.
+         * constructor.
          * @param msg msg.
          */
         public NTKPNotFoundException(String msg) {

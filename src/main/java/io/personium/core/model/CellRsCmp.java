@@ -41,7 +41,7 @@ import io.personium.core.utils.HttpClientFactory;
 import io.personium.core.utils.UriUtils;
 
 /**
- *A class that performs processing except delegation of processing from JaxRS Resource object excluding Dav related persistence.
+ * A class that performs processing except delegation of processing from JaxRS Resource object excluding Dav related persistence.
  */
 public class CellRsCmp extends DavRsCmp {
 
@@ -89,24 +89,24 @@ public class CellRsCmp extends DavRsCmp {
     }
 
     /**
-     *Returns the URL of this resource.
-     *@return URL string
+     * Returns the URL of this resource.
+     * @return URL string
      */
     public String getUrl() {
         return this.cell.getUrl();
     }
 
     /**
-     *Returns the Cell to which the resource belongs.
-     *@return Cell object
+     * Returns the Cell to which the resource belongs.
+     * @return Cell object
      */
     public Cell getCell() {
         return this.cell;
     }
 
     /**
-     *Returns the Box to which the resource belongs.
-     *@return Box object
+     * Returns the Box to which the resource belongs.
+     * @return Box object
      */
     public Box getBox() {
         return null;
@@ -120,9 +120,9 @@ public class CellRsCmp extends DavRsCmp {
     }
 
     /**
-     *Check ACL information and judge whether access is possible.
-     *@ param ac access context
-     *@ param privilege Privilege of ACL (read or write)
+     * Check ACL information and judge whether access is possible.
+     * @ param ac access context
+     * @ param privilege Privilege of ACL (read or write)
      * @return boolean
      */
     public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
@@ -270,8 +270,8 @@ public class CellRsCmp extends DavRsCmp {
     }
 
     /**
-     *Obtain Auth Scheme that can be used for authentication.
-     *Autret Scheme that can be used for @return authentication
+     * Obtain Auth Scheme that can be used for authentication.
+     * Autret Scheme that can be used for @return authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {

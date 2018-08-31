@@ -273,12 +273,12 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     *Search for ID or Cell name Cell and return Cell object.
+     * Search for ID or Cell name Cell and return Cell object.
      * @param queryKey
-     *Key (Cell name) for searching for Cell
+     * Key (Cell name) for searching for Cell
      * @param queryValue
-     *Value for key when searching Cell
-     *@return Cell object If the corresponding Cell does not exist, or null if the value of queryKey is invalid
+     * Value for key when searching Cell
+     * @return Cell object If the corresponding Cell does not exist, or null if the value of queryKey is invalid
      */
     private static Cell findCell(String queryKey, String queryValue) {
         if (!queryKey.equals("_id") && !queryKey.equals("s.Name.untouched")) {
@@ -336,9 +336,9 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     *Set members of objects from Map.
+     * Set members of objects from Map.
      * @param json
-     *Actually Map
+     * Actually Map
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void setJson(Map json) {
@@ -489,11 +489,11 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     *Match ExtCell and Role and decide which Role to pay out.
+     * Match ExtCell and Role and decide which Role to pay out.
      * @param token
-     *Transcell access token
+     * Transcell access token
      * @param roles
-     *List of roles to be withdrawn. Add here (destructive method)
+     * List of roles to be withdrawn. Add here (destructive method)
      */
     private void addRoleListExtCelltoRole(final IExtRoleContainingToken token, List<Role> roles) {
         //Acquisition of Role corresponding to ExtCell-Role binding
@@ -544,12 +544,12 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     *List the Role to be paid out from the association between ExtCell, Relation and Role.
-     *List the Role to be paid out from the association between ExtCell, Relation, ExtRole, and Role.
+     * List the Role to be paid out from the association between ExtCell, Relation and Role.
+     * List the Role to be paid out from the association between ExtCell, Relation, ExtRole, and Role.
      * @param token
-     *Transcell access token
+     * Transcell access token
      * @param roles
-     *List of roles to be withdrawn. Add here (destructive method)
+     * List of roles to be withdrawn. Add here (destructive method)
      */
     @SuppressWarnings("unchecked")
     private void addRoleListExtCelltoRelationAndExtRole(final IExtRoleContainingToken token, List<Role> roles) {
@@ -645,12 +645,12 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     *Acquire corresponding data from the link table of Role and another entity set.
+     * Acquire corresponding data from the link table of Role and another entity set.
      * @param searchKey
-     *Entity set name of search condition
+     * Entity set name of search condition
      * @param searchValue
-     *Search uuid
-     *@return Search results
+     * Search uuid
+     * @return Search results
      */
     private PersoniumSearchResponse serchRoleLinks(final String searchKey, final String searchValue) {
 
@@ -679,11 +679,11 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     *Get the value of the role from the array of SearchHit containing Role.
+     * Get the value of the role from the array of SearchHit containing Role.
      * @param hits
-     *Search for Role and the result
+     * Search for Role and the result
      * @param roles
-     *List of roles to be withdrawn. Add here (destructive method)
+     * List of roles to be withdrawn. Add here (destructive method)
      */
     private void addRoles(PersoniumSearchHit[] hits, List<Role> roles) {
         for (PersoniumSearchHit hit : hits) {
@@ -696,11 +696,11 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     *Get the value of the role.
+     * Get the value of the role.
      * @param uuid
-     *Role UUID
+     * Role UUID
      * @param roles
-     *List of roles to be withdrawn. Add here (destructive method)
+     * List of roles to be withdrawn. Add here (destructive method)
      */
     @SuppressWarnings("unchecked")
     private void addRole(String uuid, List<Role> roles) {
@@ -749,8 +749,8 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     *Get the Cell name.
-     *@return Cell Name
+     * Get the Cell name.
+     * @return Cell Name
      */
     @Override
     public String getName() {
@@ -758,8 +758,8 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     *Returns the internal ID of this Cell.
-     *@return internal identity string
+     * Returns the internal ID of this Cell.
+     * @return internal identity string
      */
     @Override
     public String getId() {
@@ -767,17 +767,17 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     *Set the internal ID of this Cell.
+     * Set the internal ID of this Cell.
      * @param id
-     *Internal ID string
+     * Internal ID string
      */
     public void setId(String id) {
         this.id = id;
     }
 
     /**
-     *Returns the URL of this Cell.
-     *@return URL string
+     * Returns the URL of this Cell.
+     * @return URL string
      */
     @Override
     public String getUrl() {
@@ -785,17 +785,17 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     *Set the URL of this Cell.
+     * Set the URL of this Cell.
      * @param url
-     *URL string
+     * URL string
      */
     public void setUrl(String url) {
         this.url = url;
     }
 
     /**
-     *Returns the Unit URL of this Cell.
-     *@return unitUrl string
+     * Returns the Unit URL of this Cell.
+     * @return unitUrl string
      */
     @Override
     public String getUnitUrl() {
@@ -806,12 +806,12 @@ public class CellEsImpl implements Cell {
     static final String KEY_SCHEMA = "Schema";
 
     /**
-     *Check the value of property item with regular expression.
+     * Check the value of property item with regular expression.
      * @param propValue
-     *Property value
+     * Property value
      * @param dcFormat
-     *Value of dcFormat
-     *@ return In case of format error, return false
+     * Value of dcFormat
+     * @ return In case of format error, return false
      */
     private static boolean validatePropertyRegEx(String propValue, String dcFormat) {
         //Perform format check
@@ -824,8 +824,8 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     *Return the creation time of Cell.
-     *@return Cell creation time
+     * Return the creation time of Cell.
+     * @return Cell creation time
      */
     public long getPublished() {
         return this.published;

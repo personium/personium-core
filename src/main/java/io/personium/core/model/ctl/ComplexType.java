@@ -22,18 +22,18 @@ import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 /**
- *An Edm definition body of ComplexType which is one of EntityType handling the schema of user data.
+ * An Edm definition body of ComplexType which is one of EntityType handling the schema of user data.
  */
 public class ComplexType {
     private ComplexType() {
     }
 
     /**
-     *Edm EntityType name.
+     * Edm EntityType name.
      */
     public static final String EDM_TYPE_NAME = "ComplexType";
     /**
-     *Definition field of Name property.
+     * Definition field of Name property.
      */
     public static final EdmProperty.Builder P_COMPLEXTYPE_NAME = EdmProperty.newBuilder("Name")
             .setType(EdmSimpleType.STRING)

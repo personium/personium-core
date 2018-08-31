@@ -30,7 +30,7 @@ import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- *Class handling Box caching.
+ * Class handling Box caching.
  */
 public class BoxCache {
     static Logger log = LoggerFactory.getLogger(BoxCache.class);
@@ -44,10 +44,10 @@ public class BoxCache {
     }
 
     /**
-     *Get Box information from cache and return Box object.
-     *@ param boxName Box name
-     *@ param cell Cell object
-     *@return Box object. It is null if it does not exist in the cache
+     * Get Box information from cache and return Box object.
+     * @ param boxName Box name
+     * @ param cell Cell object
+     * @return Box object. It is null if it does not exist in the cache
      */
     public static Box get(String boxName, Cell cell) {
         if (!PersoniumUnitConfig.isBoxCacheEnabled()) {
@@ -74,8 +74,8 @@ public class BoxCache {
     }
 
     /**
-     *Cache Box.
-     *@ param box Box object
+     * Cache Box.
+     * @ param box Box object
      */
     public static void cache(Box box) {
         if (!PersoniumUnitConfig.isBoxCacheEnabled()) {
@@ -93,9 +93,9 @@ public class BoxCache {
     }
 
     /**
-     *Delete the cache information of the specified Box name.
-     *@ param boxName Box name
-     *@ param cell Cell object
+     * Delete the cache information of the specified Box name.
+     * @ param boxName Box name
+     * @ param cell Cell object
      */
     public static void clear(String boxName, Cell cell) {
         if (!PersoniumUnitConfig.isBoxCacheEnabled()) {

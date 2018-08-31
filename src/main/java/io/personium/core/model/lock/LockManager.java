@@ -24,7 +24,7 @@ import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- *Utility to manage Lock.
+ * Utility to manage Lock.
  */
 public abstract class LockManager {
 
@@ -37,11 +37,11 @@ public abstract class LockManager {
     static volatile int accountLockLifeTime = Integer.valueOf(PersoniumUnitConfig.getAccountLockLifetime());
 
     /**
-     *Memcached type.
+     * Memcached type.
      */
     public static final String TYPE_MEMCACHED = "memcached";
     /**
-     *InProcess type.
+     * InProcess type.
      */
     public static final String TYPE_IN_PROCESS = "inProcess";
 
@@ -88,11 +88,11 @@ public abstract class LockManager {
     }
 
     /**
-     *Get the lock.
-     *@ param category Category of lock
-     *@ param cellId Cell ID
-     *@ param boxId Box ID
-     *@ param nodeId ID of Node
+     * Get the lock.
+     * @ param category Category of lock
+     * @ param cellId Cell ID
+     * @ param boxId Box ID
+     * @ param nodeId ID of Node
      * @return Lock
      */
     public static Lock getLock(String category, String cellId, String boxId, String nodeId) {
@@ -128,7 +128,7 @@ public abstract class LockManager {
     }
 
     /*
-     *Lock release processing
+     * Lock release processing
      */
     static void releaseLock(String fullKey) {
         singleton.doReleaseLock(fullKey);
@@ -136,7 +136,7 @@ public abstract class LockManager {
 
 
     /**
-     *Erase all locks.
+     * Erase all locks.
      */
     public static void deleteAllLocks() {
         singleton.doDeleteAllLocks();

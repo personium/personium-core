@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- *Bar classes Mapping definition classes.
+ * Bar classes Mapping definition classes.
  */
 package io.personium.core.bar.jackson;
 

@@ -24,228 +24,228 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *Log message creation class.
+ * Log message creation class.
  */
 public final class PersoniumCoreLog {
 
     static Logger log = LoggerFactory.getLogger(PersoniumCoreLog.class);
 
     /**
-     *OData related.
+     * OData related.
      */
     public static class OData {
         /**
-         *More than 2 pieces of data came back at places where only one case should be obtained by searching with the primary key.
-         *{0}: Number of hits
+         * More than 2 pieces of data came back at places where only one case should be obtained by searching with the primary key.
+         * {0}: Number of hits
          */
         public static final PersoniumCoreLog FOUND_MULTIPLE_RECORDS = create("PL-OD-0001");
         /**
-         *Abnormal in bulk data registration.
+         * Abnormal in bulk data registration.
          */
         public static final PersoniumCoreLog BULK_INSERT_FAIL = create("PL-OD-0002");
         /**
-         *Duplicate property name was detected.
+         * Duplicate property name was detected.
          */
         public static final PersoniumCoreLog DUPLICATED_PROPERTY_NAME = create("PL-OD-0003");
     }
 
     /**
-     *WebDAV related.
+     * WebDAV related.
      */
     public static class Dav {
         /**
-         *When Role was not found.
-         *{0}: Detailed message
+         * When Role was not found.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog ROLE_NOT_FOUND = create("PL-DV-0001");
         /**
-         *Range header specification error.
-         *{0}: Detailed message
+         * Range header specification error.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog REQUESTED_RANGE_NOT_SATISFIABLE = create("PL-DV-0002");
         /**
-         *Failed skipping of file specified by Range header.
+         * Failed skipping of file specified by Range header.
          */
         public static final PersoniumCoreLog FILE_TOO_SHORT = create("PL-DV-0003");
         /**
-         *Failure to delete binary data.
-         *{0}: UUID of binary data
+         * Failure to delete binary data.
+         * {0}: UUID of binary data
          */
         public static final PersoniumCoreLog FILE_DELETE_FAIL = create("PL-DV-0004");
     }
 
     /**
-     *Authentication related.
+     * Authentication related.
      */
     public static class Auth {
         /**
-         *When failing to parse the token.
-         *{0}: Detailed message
+         * When failing to parse the token.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog TOKEN_PARSE_ERROR = create("PL-AU-0001");
         /**
-         *Signature validation error on token.
-         *{0}: Detailed message
+         * Signature validation error on token.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog TOKEN_DISG_ERROR = create("PL-AU-0002");
         /**
-         *Root CA certificate configuration error.
-         *{0}: Detailed message
+         * Root CA certificate configuration error.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog ROOT_CA_CRT_SETTING_ERROR = create("PL-AU-0003");
         /**
-         *Account does not exist when updating last login time.
-         *{0}: Detailed message
+         * Account does not exist when updating last login time.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog ACCOUNT_ALREADY_DELETED = create("PL-AU-0004");
         /**
-         *Corresponding account existed, but it does not correspond to the specified GrantType.
-         *{0}: Detailed message
+         * Corresponding account existed, but it does not correspond to the specified GrantType.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog UNSUPPORTED_ACCOUNT_GRANT_TYPE = create("PL-AU-0005");
     }
 
     /**
-     *OIDC authentication related.
+     * OIDC authentication related.
      */
     public static class OIDC {
         /**
-         *The corresponding account does not exist.
-         *{0}: Detailed message
+         * The corresponding account does not exist.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog NO_SUCH_ACCOUNT = create("PL-OI-0001");
         /**
-         *Corresponding account existed, but it does not correspond to the specified GrantType.
-         *{0}: Detailed message
+         * Corresponding account existed, but it does not correspond to the specified GrantType.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog UNSUPPORTED_ACCOUNT_GRANT_TYPE = create("PL-OI-0002");
         /**
-         *Request user and IDToken user do not match.
-         *{0}: Detailed message
+         * Request user and IDToken user do not match.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog INVALID_ACCOUNT = create("PL-OI-0003");
         /** .
-         *Issuer is not Google
-         *{0}: Detailed message
+         * Issuer is not Google
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog INVALID_ISSUER = create("PL-OI-0004");
     }
 
     /**
-     *Server internal error.
-     *Throw when a process can not be continued due to a server side failure or bug, which is to indicate the cause of the problem. Basically, when exceptions occur in category of WARN or more log output
+     * Server internal error.
+     * Throw when a process can not be continued due to a server side failure or bug, which is to indicate the cause of the problem. Basically, when exceptions occur in category of WARN or more log output
      */
     public static class Server {
         /**
-         *Failed to create master data for Ads.
-         *{0}: Detailed message
+         * Failed to create master data for Ads.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog DATA_STORE_ENTITY_CREATE_FAIL = create("PL-SV-0001");
         /**
-         *Failed to update master data to Ads.
-         *{0}: Detailed message
+         * Failed to update master data to Ads.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog DATA_STORE_ENTITY_UPDATE_FAIL = create("PL-SV-0002");
         /**
-         *Failed to delete master data to Ads.
-         *{0}: Detailed message
+         * Failed to delete master data to Ads.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog DATA_STORE_ENTITY_DELETE_FAIL = create("PL-SV-0003");
         /**
-         *Memcached port number format error.
-         *{0}: Detailed message
+         * Memcached port number format error.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog MEMCACHED_PORT_FORMAT_ERROR = create("PL-SV-0004");
         /**
-         *Failed to connect to memcached.
-         *{0}: host name
-         *{1}: Port name
-         *{2}: Detailed message
+         * Failed to connect to memcached.
+         * {0}: host name
+         * {1}: Port name
+         * {2}: Detailed message
          */
         public static final PersoniumCoreLog MEMCACHED_CONNECTO_FAIL = create("PL-SV-0005");
         /**
-         *Cache setting to memcached failed.
-         *{0}: Detailed message
+         * Cache setting to memcached failed.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog MEMCACHED_SET_FAIL = create("PL-SV-0006");
         /**
-         *Clear cache to memcached failed.
-         *{0}: Detailed message
+         * Clear cache to memcached failed.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog MEMCACHED_CLEAR_FAIL = create("PL-SV-0007");
         /**
-         *Failed to delete memcached cache.
-         *{0}: Detailed message
+         * Failed to delete memcached cache.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog MEMCACHED_DELETE_FAIL = create("PL-SV-0008");
         /**
-         *Failed to create master data in Bulk to Ads.
-         *{0}: Detailed message
+         * Failed to create master data in Bulk to Ads.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog DATA_STORE_ENTITY_BULK_CREATE_FAIL = create("PL-SV-0009");
         /**
-         *Failed to connect to RDB.
-         *{0}: Detailed message
+         * Failed to connect to RDB.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog RDB_CONNECT_FAIL = create("PL-SV-0010");
         /**
-         *SQL execution error.
-         *{0}: Detailed message
+         * SQL execution error.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog EXECUTE_QUERY_SQL_FAIL = create("PL-SV-0011");
         /**
-         *Failure to disconnect with RDB.
-         *{0}: Detailed message
+         * Failure to disconnect with RDB.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog RDB_DISCONNECT_FAIL = create("PL-SV-0012");
         /**
-         *Connection to ADS failed.
-         *{0}: Detailed message
+         * Connection to ADS failed.
+         * {0}: Detailed message
          */
         public static final PersoniumCoreLog ADS_CONNECTION_ERROR = create("PL-SV-0013");
         /**
-         *ElasticSearch's index does not exist.
-         *{0}: index name
+         * ElasticSearch's index does not exist.
+         * {0}: index name
          */
         public static final PersoniumCoreLog ES_INDEX_NOT_EXIST = create("PL-SV-0014");
         /**
-         *Failed to create Ads.
-         *{0}: index name
+         * Failed to create Ads.
+         * {0}: index name
          */
         public static final PersoniumCoreLog FAILED_TO_CREATE_ADS = create("PL-SV-0015");
         /**
-         *Output the SQL statement executed to JDBC to the log.
-         *{0}: Executed SQL statement
+         * Output the SQL statement executed to JDBC to the log.
+         * {0}: Executed SQL statement
          */
         public static final PersoniumCoreLog JDBC_EXEC_SQL = create("PL-SV-0016");
         /**
-         *Server startup failure.
+         * Server startup failure.
          */
         public static final PersoniumCoreLog FAILED_TO_START_SERVER = create("PL-SV-0017");
         /**
-         *Log the SQL execution of the user OData executed against JDBC.
-         *{0}: DB name
-         *{1}: Table name
+         * Log the SQL execution of the user OData executed against JDBC.
+         * {0}: DB name
+         * {1}: Table name
          * {2}:id
-         *{3}: Type
-         *{4}: Cell id
-         *{5}: Box id
-         *{6}: Node id
-         *{7}: id of EntityType
+         * {3}: Type
+         * {4}: Cell id
+         * {5}: Box id
+         * {6}: Node id
+         * {7}: id of EntityType
          */
         public static final PersoniumCoreLog JDBC_USER_ODATA_SQL = create("PL-SV-0018");
         /**
-         *I set the ReferenceOnly lock.
-         *{0}: Key name
+         * I set the ReferenceOnly lock.
+         * {0}: Key name
          */
         public static final PersoniumCoreLog SET_REFERENCE_ONLY_LOCK = create("PL-SV-0019");
         /**
-         *Failed to write repair log at Ads error.
+         * Failed to write repair log at Ads error.
          */
         public static final PersoniumCoreLog WRITE_ADS_FAILURE_LOG_ERROR = create("PL-SV-0020");
         /**
-         *Information to write to the repair log at the time of Ads error.
-         *{0}: log information
+         * Information to write to the repair log at the time of Ads error.
+         * {0}: log information
          */
         public static final PersoniumCoreLog WRITE_ADS_FAILURE_LOG_INFO = create("PL-SV-0021");
     }
@@ -255,47 +255,47 @@ public final class PersoniumCoreLog {
      */
     public static class Es {
         /**
-         *Connection to ES has been completed.
-         *{0}: connection node address
+         * Connection to ES has been completed.
+         * {0}: connection node address
          */
         public static final PersoniumCoreLog CONNECTED = create("PL-ES-0001");
         /**
-         *Request to ES has been completed.
-         *{0}: index name
-         *{1}: Type name
-         *{2}: Node name
-         *{3}: Request query
-         *{4}: Request type to ES
-         *The output order of {3} and {4} is reversed
+         * Request to ES has been completed.
+         * {0}: index name
+         * {1}: Type name
+         * {2}: Node name
+         * {3}: Request query
+         * {4}: Request type to ES
+         * The output order of {3} and {4} is reversed
          */
         public static final PersoniumCoreLog AFTER_REQUEST = create("PL-ES-0002");
         /**
-         *Create an index.
-         *{0}: index name
+         * Create an index.
+         * {0}: index name
          */
         public static final PersoniumCoreLog CREATING_INDEX = create("PL-ES-0003");
         /**
-         *The registration request to ES has been completed.
-         *{0}: index name
-         *{1}: Type name
-         *{2}: Node name
-         *{3}: Request type to ES
-         *{4}: Request query
+         * The registration request to ES has been completed.
+         * {0}: index name
+         * {1}: Type name
+         * {2}: Node name
+         * {3}: Request type to ES
+         * {4}: Request query
          */
         public static final PersoniumCoreLog AFTER_CREATE = create("PL-ES-0004");
         /**
-         *The registration request to ES has been completed.
-         *{0}: Request query
+         * The registration request to ES has been completed.
+         * {0}: Request query
          */
         public static final PersoniumCoreLog AFTER_CREATE_BODY = create("PL-ES-0005");
     }
 
     /**
-     *Other error.
+     * Other error.
      */
     public static class Misc {
         /**
-         *Unknown error such as source which can not be reached.
+         * Unknown error such as source which can not be reached.
          */
         public static final PersoniumCoreLog UNREACHABLE_CODE_ERROR = create("PL-MC-0001");
     }
@@ -306,8 +306,8 @@ public final class PersoniumCoreLog {
     Throwable reason;
 
     /**
-     *Force load inner class.
-     *Add an inner class of error classification here if it is added.
+     * Force load inner class.
+     * Add an inner class of error classification here if it is added.
      */
     public static void loadConfig() {
         new OData();
@@ -317,9 +317,9 @@ public final class PersoniumCoreLog {
     }
 
     /**
-     *constructor.
-     *@ param severity error level
-     *@ param message error message
+     * constructor.
+     * @ param severity error level
+     * @ param message error message
      */
     PersoniumCoreLog(final String code,
             final Severity severity,
@@ -330,8 +330,8 @@ public final class PersoniumCoreLog {
     }
 
     /**
-     *Factory method.
-     *@ param code error code
+     * Factory method.
+     * @ param code error code
      * @return PersoniumCoreLog
      */
     public static PersoniumCoreLog create(String code) {
@@ -349,16 +349,16 @@ public final class PersoniumCoreLog {
     }
 
     /**
-     *Return error code.
-     *@ return error code
+     * Return error code.
+     * @ return error code
      */
     public String getCode() {
         return this.code;
     }
 
     /**
-     *It creates and returns a message with a parameter substitution, and the expression of {1} {2} etc. on the error message is a keyword for parameter substitution.
-     *@ param params Additional message
+     * It creates and returns a message with a parameter substitution, and the expression of {1} {2} etc. on the error message is a keyword for parameter substitution.
+     * @ param params Additional message
      * @return PersoniumCoreLog
      */
     public PersoniumCoreLog params(final Object... params) {
@@ -370,8 +370,8 @@ public final class PersoniumCoreLog {
     }
 
     /**
-     *Cause Create and return an exception added.
-     *@ param t cause exception
+     * Cause Create and return an exception added.
+     * @ param t cause exception
      * @return PersoniumCoreException
      */
     public PersoniumCoreLog reason(final Throwable t) {
@@ -383,9 +383,9 @@ public final class PersoniumCoreLog {
     }
 
     /**
-     *Log output.
-     *When outputting the log, display the class name, method name, and the number of lines of the log output source.
-     *Output example)
+     * Log output.
+     * When outputting the log, display the class name, method name, and the number of lines of the log output source.
+     * Output example)
      * 2012-09-09 11:23:47.029 [main] [INFO ] CoreLog [io.personium.core.CoreLogTest#test:22] - JSON Parse Error.
      */
     public void writeLog() {

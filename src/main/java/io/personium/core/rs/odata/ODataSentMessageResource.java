@@ -650,9 +650,9 @@ public class ODataSentMessageResource extends ODataMessageResource {
     }
 
     /**
-     *Validate of To-ToRelation.
-     *@ param to Destination cell URL
-     *@ param toRelation Relation name to send
+     * Validate of To-ToRelation.
+     * @ param to Destination cell URL
+     * @ param toRelation Relation name to send
      */
     private void validateToAndToRelation(String to, String toRelation) {
         if (to == null && toRelation == null) {

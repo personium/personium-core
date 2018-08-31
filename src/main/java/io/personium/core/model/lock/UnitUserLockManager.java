@@ -21,7 +21,7 @@ import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- *Utility to manage Lock for each UnitUser.
+ * Utility to manage Lock for each UnitUser.
  */
 public abstract class UnitUserLockManager extends LockManager {
 
@@ -30,14 +30,14 @@ public abstract class UnitUserLockManager extends LockManager {
     abstract Boolean putLock(String fullKey, Lock lock);
 
     /**
-     *Lock category that locks data access for each UnitUser.
+     * Lock category that locks data access for each UnitUser.
      */
     public static final String CATEGORY_UNITUSER_LOCK = "UnitUserLock";
 
     /**
-     *Check status of UnitUserLock.
-     *@ param unitUserName unit user name
-     *@return TRUE: Lock / FALSE: Unlock
+     * Check status of UnitUserLock.
+     * @ param unitUserName unit user name
+     * @return TRUE: Lock / FALSE: Unlock
      */
     public static boolean hasLockObject(final String unitUserName) {
         try {
@@ -51,8 +51,8 @@ public abstract class UnitUserLockManager extends LockManager {
     }
 
     /**
-     *Write UnitUserLock.
-     *@ param unitUserName Unit user name to be locked
+     * Write UnitUserLock.
+     * @ param unitUserName Unit user name to be locked
      */
     public static void registLockObjct(final String unitUserName) {
         //Check if memcached has key
@@ -86,8 +86,8 @@ public abstract class UnitUserLockManager extends LockManager {
     }
 
     /**
-     *Release of UnitUserLock.
-     *@ param unitUserName unit user name
+     * Release of UnitUserLock.
+     * @ param unitUserName unit user name
      */
     public static void releaseLockObject(final String unitUserName) {
         String fullKey = LockKeyComposer.fullKeyFromCategoryAndKey(CATEGORY_UNITUSER_LOCK, unitUserName);

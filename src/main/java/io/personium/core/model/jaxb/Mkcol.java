@@ -34,20 +34,20 @@ import org.w3c.dom.Element;
 import io.personium.core.model.DavCmp;
 
 /**
- *A JAXB object corresponding to the mkcol tag.
+ * A JAXB object corresponding to the mkcol tag.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"sets" })
 @XmlRootElement(namespace = "DAV:", name = "mkcol")
 public final class Mkcol {
     /**
-     *The set tag.
+     * The set tag.
      */
     @XmlElements({@XmlElement(namespace = "DAV:", name = "set", type = Set.class) })
     List<Set> sets = null;
 
     /**
-     *Props tag.
+     * Props tag.
      * @return JAXB Object
      */
     public List<Prop> getPropList() {
@@ -77,9 +77,9 @@ public final class Mkcol {
     }
 
     /**
-     *Returns the collection type string.
-     *@return ColType string
-     *@ throws RequestException exception
+     * Returns the collection type string.
+     * @return ColType string
+     * @ throws RequestException exception
      */
     public String getWebdavColType() throws RequestException {
         Resourcetype rt = this.getResourcetype();
@@ -115,7 +115,7 @@ public final class Mkcol {
     }
 
     /**
-     *Exception object occurring in this class.
+     * Exception object occurring in this class.
      */
     @SuppressWarnings("serial")
     public static class RequestException extends Exception {

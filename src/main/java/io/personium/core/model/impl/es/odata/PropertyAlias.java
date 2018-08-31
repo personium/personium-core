@@ -19,36 +19,36 @@ package io.personium.core.model.impl.es.odata;
 import java.io.Serializable;
 
 /**
- *Alias ​​management class of Property and ComplexTypeProperty.
+ * Alias ​​management class of Property and ComplexTypeProperty.
  */
 public class PropertyAlias implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     *EntityTYpe name.
-     *EntityType or ComplexType
+     * EntityTYpe name.
+     * EntityType or ComplexType
      */
     private String entityTypeName;
     /**
-     *Property name on Edmx / ComplexTypeProperty name.
+     * Property name on Edmx / ComplexTypeProperty name.
      */
     private String propertyName;
     /**
-     *EntityType name associated with Property / ComplexTypeProperty.
+     * EntityType name associated with Property / ComplexTypeProperty.
      */
     private String propertyType;
     /**
-     *Alias ​​name to be set when data of Property / ComplexTypeProperty is stored.
+     * Alias ​​name to be set when data of Property / ComplexTypeProperty is stored.
      */
     private String alias;
 
     /**
-     *constructor.
-     *@ param entityTypeName EntityTYpe name
-     *@ param propertyName Property name on Edmx / ComplexTypeProperty name
-     *@ param propertyType Property type to which Property / ComplexTypeProperty is associated (eg Edm.String, complexXXX)
-     *@ param alias Alias ​​name to be set when data of Property / ComplexTypeProperty is stored
+     * constructor.
+     * @ param entityTypeName EntityTYpe name
+     * @ param propertyName Property name on Edmx / ComplexTypeProperty name
+     * @ param propertyType Property type to which Property / ComplexTypeProperty is associated (eg Edm.String, complexXXX)
+     * @ param alias Alias ​​name to be set when data of Property / ComplexTypeProperty is stored
      */
     public PropertyAlias(
             String entityTypeName,

@@ -22,19 +22,19 @@ import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
 
 /**
- *The Edm definition of Relation.
+ * The Edm definition of Relation.
  */
 public class Relation {
     private Relation() {
     }
 
     /**
-     *Edm EntityType name.
+     * Edm EntityType name.
      */
     public static final String EDM_TYPE_NAME = "Relation";
 
     /**
-     *Definition field of Name property.
+     * Definition field of Name property.
      */
     public static final EdmProperty.Builder P_NAME = EdmProperty.newBuilder("Name")
             .setType(EdmSimpleType.STRING)

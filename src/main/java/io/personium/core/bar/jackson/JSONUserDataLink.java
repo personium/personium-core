@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *JSON file for $ links definition (70 _ $ links_ json) in bar file Mapping definition class for reading.
+ * JSON file for $ links definition (70 _ $ links_ json) in bar file Mapping definition class for reading.
  */
 public class JSONUserDataLink implements IJSONMappedObject {
 
@@ -53,15 +53,15 @@ public class JSONUserDataLink implements IJSONMappedObject {
     private Map<String, String> toId;
 
     /**
-     *Get FromType property.
-     *@return FromType name
+     * Get FromType property.
+     * @return FromType name
      */
     public String getFromType() {
         return this.fromType;
     }
 
     /**
-     *Set the FromType property.
+     * Set the FromType property.
      * @param fromType FromType.
      */
     public void setFromType(String fromType) {
@@ -69,7 +69,7 @@ public class JSONUserDataLink implements IJSONMappedObject {
     }
 
     /**
-     *Get FromId name property.
+     * Get FromId name property.
      * @return FromId
      */
     public Map<String, String> getFromId() {
@@ -77,7 +77,7 @@ public class JSONUserDataLink implements IJSONMappedObject {
     }
 
     /**
-     *Set the FromId name property.
+     * Set the FromId name property.
      * @param fromIdValue FromId
      */
     public void setFromId(Map<String, String> fromIdValue) {
@@ -85,15 +85,15 @@ public class JSONUserDataLink implements IJSONMappedObject {
     }
 
     /**
-     *Get ToType property.
-     *@return ToType name
+     * Get ToType property.
+     * @return ToType name
      */
     public String getToType() {
         return this.toType;
     }
 
     /**
-     *Set ToType property.
+     * Set ToType property.
      * @param toType ToType.
      */
     public void setToType(String toType) {
@@ -101,7 +101,7 @@ public class JSONUserDataLink implements IJSONMappedObject {
     }
 
     /**
-     *Get ToId name property.
+     * Get ToId name property.
      * @return ToId
      */
     public Map<String, String> getToId() {
@@ -109,7 +109,7 @@ public class JSONUserDataLink implements IJSONMappedObject {
     }
 
     /**
-     *Set ToId name property.
+     * Set ToId name property.
      * @param toIdValue ToId
      */
     public void setToId(Map<String, String> toIdValue) {
@@ -117,8 +117,8 @@ public class JSONUserDataLink implements IJSONMappedObject {
     }
 
     /**
-     *Get ToType property in NavigatioinProperty format.
-     *@return Names of ToType in NavigatioinProperty format
+     * Get ToType property in NavigatioinProperty format.
+     * @return Names of ToType in NavigatioinProperty format
      */
     @JsonIgnore
     public String getNavPropToType() {

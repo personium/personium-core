@@ -39,7 +39,7 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
- *A class that collects OData utility functions.
+ * A class that collects OData utility functions.
  */
 public final class ODataUtils {
     static Logger log = LoggerFactory.getLogger(ODataUtils.class);
@@ -65,29 +65,29 @@ public final class ODataUtils {
     }
 
     /**
-     *Utility to examine Cardinality from Schema.
+     * Utility to examine Cardinality from Schema.
      */
     public static class Cardinality {
         /**
-         *Many to many.
+         * Many to many.
          */
         public static final int MANY_MANY = 4;
         /**
-         *Many to one.
+         * Many to one.
          */
         public static final int MANY_ONE = 3;
         /**
-         *One-to-many.
+         * One-to-many.
          */
         public static final int ONE_MANY = 2;
         /**
-         *One to one.
+         * One to one.
          */
         public static final int ONE_ONE = 1;
 
         /**
          * @param navProp EdmNavigationProperty
-         *@ return Cardinality constant (MANY_MANY etc.)
+         * @ return Cardinality constant (MANY_MANY etc.)
          */
         public static int forEdmNavigationProperty(EdmNavigationProperty navProp) {
             EdmMultiplicity fromM = navProp.getFromRole().getMultiplicity();
@@ -113,9 +113,9 @@ public final class ODataUtils {
     }
 
     /**
-     *Check if the value of If-Match header and Etag are equal.
+     * Check if the value of If-Match header and Etag are equal.
      * @param etag Etag
-     *@ param oedhExisting Existing document information
+     * @ param oedhExisting Existing document information
      */
     public static void checkEtag(final String etag, EntitySetDocHandler oedhExisting) {
 
@@ -146,10 +146,10 @@ public final class ODataUtils {
     }
 
     /**
-     *Merge the Map given by the argument.
-     *@ param baseProperty Properties to base on the merge
-     *@ param addProperty Properties to update with merge
-     *@return Merge result
+     * Merge the Map given by the argument.
+     * @ param baseProperty Properties to base on the merge
+     * @ param addProperty Properties to update with merge
+     * @return Merge result
      */
     public static Map<String, Object> getMergeFields(Map<String, Object> baseProperty,
             Map<String, Object> addProperty) {
@@ -179,8 +179,8 @@ public final class ODataUtils {
     }
 
     /**
-     *String value check.
-     *@ param value Check target value
+     * String value check.
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateString(String value) {
@@ -191,8 +191,8 @@ public final class ODataUtils {
     }
 
     /**
-     *Boolean value check.
-     *@ param value Check target value
+     * Boolean value check.
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateBoolean(String value) {
@@ -203,8 +203,8 @@ public final class ODataUtils {
     }
 
     /**
-     *Check the value of Int32.
-     *@ param value Check target value
+     * Check the value of Int32.
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateInt32(String value) {
@@ -218,8 +218,8 @@ public final class ODataUtils {
     }
 
     /**
-     *Value check of DateTime.
-     *@ param value Check target value
+     * Value check of DateTime.
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateDateTime(String value) {
@@ -263,8 +263,8 @@ public final class ODataUtils {
     }
 
     /**
-     *Single value check.
-     *@ param value Check target value
+     * Single value check.
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateSingle(String value) {
@@ -285,9 +285,9 @@ public final class ODataUtils {
     }
 
     /**
-     *Valid range value check of Double defined in OData.
-     *Effective range ± 2.23e - 308 to ± 1.79e + 308
-     *@ param value Check target value
+     * Valid range value check of Double defined in OData.
+     * Effective range ± 2.23e - 308 to ± 1.79e + 308
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateDouble(String value) {
@@ -300,9 +300,9 @@ public final class ODataUtils {
     }
 
     /**
-     *Valid range value check of Double defined in OData.
-     *Effective range ± 2.23e - 308 to ± 1.79e + 308
-     *@ param value Check target value
+     * Valid range value check of Double defined in OData.
+     * Effective range ± 2.23e - 308 to ± 1.79e + 308
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateDouble(Double value) {
@@ -668,10 +668,10 @@ public final class ODataUtils {
     }
 
     /**
-     *Retrieve the number of properties defined in the schema.
-     *@ param metadata schema information
-     *@ param entitySetName Name of the target entity set
-     *@return property number
+     * Retrieve the number of properties defined in the schema.
+     * @ param metadata schema information
+     * @ param entitySetName Name of the target entity set
+     * @return property number
      */
     public static int getStaticPropertyCount(EdmDataServices metadata, String entitySetName) {
         EdmEntitySet edmEntitySet = metadata.findEdmEntitySet(entitySetName);

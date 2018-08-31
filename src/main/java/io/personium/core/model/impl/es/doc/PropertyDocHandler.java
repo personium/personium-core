@@ -29,7 +29,7 @@ import io.personium.core.model.impl.es.odata.PropertyAlias;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- *Property DocHandler.
+ * Property DocHandler.
  */
 public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDocHandler {
 
@@ -38,17 +38,17 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     String linkTypeName = Property.P_ENTITYTYPE_NAME.getName();
 
     /**
-     *constructor.
+     * constructor.
      */
     public PropertyDocHandler() {
         this.propertyAliasMap = null;
     }
 
     /**
-     *Constructor that creates DocHandler without ID from OEntityWrapper.
-     *@param type ES type name
+     * Constructor that creates DocHandler without ID from OEntityWrapper.
+     * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     *@ param metadata schema information
+     * @ param metadata schema information
      */
     public PropertyDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         this.propertyAliasMap = null;
@@ -57,12 +57,12 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *constructor.
-     *@ param cellId Cell ID
-     *@ param boxId Box ID
-     *@ param nodeId node ID
-     *@ param entityTypeId ID of the associated entity type
-     *@ param source static property field
+     * constructor.
+     * @ param cellId Cell ID
+     * @ param boxId Box ID
+     * @ param nodeId node ID
+     * @ param entityTypeId ID of the associated entity type
+     * @ param source static property field
      */
     public PropertyDocHandler(String cellId,
             String boxId,
@@ -92,8 +92,8 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Return EntityType name.
-     *@return EntityType name
+     * Return EntityType name.
+     * @return EntityType name
      */
     public String getEntityTypeName() {
         String entityTypeId = (String) this.manyToOnelinkId.get(EntityType.EDM_TYPE_NAME);
@@ -101,40 +101,40 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Return the registered alias list.
-     *@return propertyMap Registered alias list
+     * Return the registered alias list.
+     * @return propertyMap Registered alias list
      */
     public Map<String, String> getEntityTypeMap() {
         return this.entityTypeMap;
     }
 
     /**
-     *Set up a registered alias list.
-     *@ param map propertyMap to set
+     * Set up a registered alias list.
+     * @ param map propertyMap to set
      */
     public void setEntityTypeMap(Map<String, String> map) {
         this.entityTypeMap = map;
     }
 
     /**
-     *Return the registered alias list.
-     *@return propertyMap Registered alias list
+     * Return the registered alias list.
+     * @return propertyMap Registered alias list
      */
     public Map<String, PropertyAlias> getPropertyAliasMap() {
         return this.propertyAliasMap;
     }
 
     /**
-     *Set up a registered alias list.
-     *@ param map set propertyAliasMap
+     * Set up a registered alias list.
+     * @ param map set propertyAliasMap
      */
     public void setPropertyAliasMap(Map<String, PropertyAlias> map) {
         this.propertyAliasMap = map;
     }
 
     /**
-     *Acquire ES / MySQL registration data.
-     *@return Registration data
+     * Acquire ES / MySQL registration data.
+     * @return Registration data
      */
     @Override
     public Map<String, Object> getSource() {
@@ -150,10 +150,10 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Set data for ES / MySQL registration to Map object.
-     *@ param property Alias ​​property Alias ​​information
-     *@ param key
-     *@return Created Map object
+     * Set data for ES / MySQL registration to Map object.
+     * @ param property Alias ​​property Alias ​​information
+     * @ param key
+     * @return Created Map object
      */
     protected Map<String, Object> setSource(String key, PropertyAlias propertyAlias) {
         this.propertyAliasMap.put(key, propertyAlias);
@@ -171,18 +171,18 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Get Name of Property.
-     *Name of @return Property
+     * Get Name of Property.
+     * Name of @return Property
      */
     public String getName() {
         return (String) this.staticFields.get("Name");
     }
 
     /**
-     *Get the property Alias ​​with the maximum value of registered property + 1.
-     *@ param entityTypeName EntityType name
-     *@ param dataType property data type name
-     *@return Alias ​​of the assigned property name
+     * Get the property Alias ​​with the maximum value of registered property + 1.
+     * @ param entityTypeName EntityType name
+     * @ param dataType property data type name
+     * @return Alias ​​of the assigned property name
      */
     protected String getNextAlias(String entityTypeName, String dataType) {
         //Determine the prefix of the alias from the data type
@@ -229,9 +229,9 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     *Alias ​​Gets index from string.
-     *@ param alias Alias ​​string
-     *@return index
+     * Alias ​​Gets index from string.
+     * @ param alias Alias ​​string
+     * @return index
      */
     protected int getAliasNumber(String alias) {
         if (alias.startsWith("C")) {

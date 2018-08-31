@@ -99,7 +99,7 @@ import io.personium.core.rs.FacadeResource;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- *ImplicitFlow JAX-RS resource responsible for authentication processing.
+ * ImplicitFlow JAX-RS resource responsible for authentication processing.
  */
 public class AuthzEndPointResource {
 
@@ -108,7 +108,7 @@ public class AuthzEndPointResource {
     private static final String PROFILE_JSON_NAME = "/profile.json";
 
     /**
-     *log.
+     * log.
      */
     static Logger log = LoggerFactory.getLogger(AuthzEndPointResource.class);
 
@@ -116,32 +116,32 @@ public class AuthzEndPointResource {
     private final CellRsCmp cellRsCmp;
 
     /**
-     *Login form _ Javascript source file.
+     * Login form _ Javascript source file.
      */
     private final String jsFileName = "ajax.js";
 
     /**
-     *Login form _ Initial display message.
+     * Login form _ Initial display message.
      */
     private final String passFormMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0002");
 
     /**
-     *Login form _ User ID · Password not yet entered.
+     * Login form _ User ID · Password not yet entered.
      */
     private final String noIdPassMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0003");
 
     /**
-     *Message when cookie authentication failed.
+     * Message when cookie authentication failed.
      */
     private final String missCookieMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0005");
 
     /**
-     *The UUID of the Account used for password authentication. It is used to update the last login time after password authentication.
+     * The UUID of the Account used for password authentication. It is used to update the last login time after password authentication.
      */
     private String accountId;
 
     /**
-     *constructor.
+     * constructor.
      * @param cell Cell
      * @param cellRsCmp cellRsCmp
      */
@@ -151,24 +151,24 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *Authentication endpoint. <H2> Issuance of token </ h2>
+     * Authentication endpoint. <H2> Issuance of token </ h2>
      * <ul>
-     *<li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
+     * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
      * </ul>
-     *@ param authzHeader Authorization header
-     *@ param pTarget query parameter
-     *@ param pOwner query parameter
-     *@ param assertion query parameter
-     *@ param clientId query parameter
-     *@ param responseType query parameter
-     *@ param redirectUri query parameter
-     *@ param host Host header
+     * @ param authzHeader Authorization header
+     * @ param pTarget query parameter
+     * @ param pOwner query parameter
+     * @ param assertion query parameter
+     * @ param clientId query parameter
+     * @ param responseType query parameter
+     * @ param redirectUri query parameter
+     * @ param host Host header
      * @param pCookie p_cookie
-     *@ param cookieRefreshToken cookie
-     *@ param keepLogin query parameter
-     *@ param state query parameter
-     *@ param isCancel Cancel flag
-     *@ param uriInfo context
+     * @ param cookieRefreshToken cookie
+     * @ param keepLogin query parameter
+     * @ param state query parameter
+     * @ param isCancel Cancel flag
+     * @ param uriInfo context
      * @return JAX-RS Response Object
      */
     @GET
@@ -193,16 +193,16 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *Authentication endpoint. <H2> Issuance of token </ h2>
+     * Authentication endpoint. <H2> Issuance of token </ h2>
      * <ul>
-     *<li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
+     * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
      * </ul>
-     *@ param authzHeader Authorization header
-     *@ param host Host header
+     * @ param authzHeader Authorization header
+     * @ param host Host header
      * @param pCookie p_cookie
-     *@ param cookieRefreshToken cookie
+     * @ param cookieRefreshToken cookie
      * @param formParams Body parameters
-     *@ param uriInfo context
+     * @ param uriInfo context
      * @return JAX-RS Response Object
      */
     @POST
@@ -507,10 +507,10 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *ImplicitFlow Password authentication form.
+     * ImplicitFlow Password authentication form.
      * @param clientId clientId
      * @param redirectUriStr redirectUriStr
-     *@ param message String to be output to message display area
+     * @ param message String to be output to message display area
      * @param state state
      * @param dcTraget dcTraget
      * @param pOwner pOwner
@@ -570,7 +570,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *Password authentication processing at ImplicitFlow.
+     * Password authentication processing at ImplicitFlow.
      * @param pTarget
      * @param redirectUriStr
      * @param clientId
@@ -704,7 +704,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *Transcel token authentication processing at ImplicitFlow.
+     * Transcel token authentication processing at ImplicitFlow.
      * @param redirectUriStr
      * @param clientId
      * @param cookieRefreshToken
@@ -789,7 +789,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *Cookie authentication processing at ImplicitFlow.
+     * Cookie authentication processing at ImplicitFlow.
      * @param redirectUriStr
      * @param clientId
      * @param host
@@ -887,7 +887,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *Authentication processing handling by ImplicitFlow.
+     * Authentication processing handling by ImplicitFlow.
      * @param redirectUriStr
      * @param clientId
      * @param host
@@ -959,9 +959,9 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *It is determined whether password authentication in ImplicitFlow was successful.
-     *@ param response Authentication response
-     *@return true: Authentication success false: Authentication failure
+     * It is determined whether password authentication in ImplicitFlow was successful.
+     * @ param response Authentication response
+     * @return true: Authentication success false: Authentication failure
      */
     protected boolean isSuccessAuthorization(Response response) {
         //When the response code is other than 303, it is regarded as an error that the screen transition does not occur
@@ -991,7 +991,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *After authenticating with ImplicitFlow, execute Redirect.
+     * After authenticating with ImplicitFlow, execute Redirect.
      * @param redirectUriStr
      * @param localTokenStr
      * @param localTokenExpiresIn
@@ -1036,7 +1036,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *Of the errors during authentication with ImplicitFlow, execute Redirect to redirect_uri set by the user in the following situation. Invalid / unspecified response_type 2
+     * Of the errors during authentication with ImplicitFlow, execute Redirect to redirect_uri set by the user in the following situation. Invalid / unspecified response_type 2
      * @param state
      * @return
      * @throws MalformedURLException
@@ -1052,7 +1052,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *Of the errors during authentication with ImplicitFlow, execute Redirect to redirect_uri set by the user in the following situation. Invalid / unspecified response_type 2
+     * Of the errors during authentication with ImplicitFlow, execute Redirect to redirect_uri set by the user in the following situation. Invalid / unspecified response_type 2
      * @param state
      * @return
      * @throws MalformedURLException
@@ -1082,7 +1082,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *Error handling during authentication with ImplicitFlow_cookie.
+     * Error handling during authentication with ImplicitFlow_cookie.
      * @param clientId
      * @param redirectUriStr
      * @param state TODO
@@ -1097,9 +1097,9 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *Authorization processing It is checked whether there is a Box whose schema is the cell URL specified by clientId.
-     *@ param clientId App Store URL
-     *@return true: authorization success false: authorization failure
+     * Authorization processing It is checked whether there is a Box whose schema is the cell URL specified by clientId.
+     * @ param clientId App Store URL
+     * @return true: authorization success false: authorization failure
      */
     private boolean checkAuthorization(final String clientId) {
         EntitySetAccessor boxAcceccor = EsModel.box(this.cell);
@@ -1142,7 +1142,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *Parameter check at ImplicitFlow authentication time.
+     * Parameter check at ImplicitFlow authentication time.
      * @param clientId
      * @param redirectUri
      * @param baseUri
@@ -1212,7 +1212,7 @@ public class AuthzEndPointResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS

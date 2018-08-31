@@ -39,7 +39,7 @@ import io.personium.plugin.base.auth.AuthConst;
 import io.personium.plugin.base.auth.AuthPlugin;
 
 /**
- *Authentication related utilities.
+ * Authentication related utilities.
  */
 public final class AuthUtils {
     private static final String MD_ALGORITHM = "SHA-256";
@@ -52,9 +52,9 @@ public final class AuthUtils {
     }
 
     /**
-     *Hash string of password string.
-     *@ param passwd raw password string
-     *@return hashed password string
+     * Hash string of password string.
+     * @ param passwd raw password string
+     * @return hashed password string
      */
     public static String hashPassword(final String passwd) {
         if (passwd == null) {

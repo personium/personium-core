@@ -22,7 +22,7 @@ import io.personium.common.es.EsBulkRequest;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
- *BatchCreateRequest class.
+ * BatchCreateRequest class.
  */
 public class BulkRequest implements EsBulkRequest {
 
@@ -32,13 +32,13 @@ public class BulkRequest implements EsBulkRequest {
     private Exception error;
 
     /**
-     *constructor.
+     * constructor.
      */
     public BulkRequest() {
     }
 
     /**
-     *constructor.
+     * constructor.
      * @param bodyPart BatchBodyPart
      */
     public BulkRequest(BatchBodyPart bodyPart) {
@@ -46,15 +46,15 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     *Get the type of registration destination.
-     *@return Type Name
+     * Get the type of registration destination.
+     * @return Type Name
      */
     public String getType() {
         return docHandler.getType();
     }
 
     /**
-     *Get the ID of the registration data.
+     * Get the ID of the registration data.
      * @return ID
      */
     public String getId() {
@@ -62,15 +62,15 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     *Acquire registration data.
-     *@return HashMap of registered data
+     * Acquire registration data.
+     * @return HashMap of registered data
      */
     public Map<String, Object> getSource() {
         return docHandler.getSource();
     }
 
     /**
-     *Getter of BodyPart.
+     * Getter of BodyPart.
      * @return BatchBodyPart
      */
     public BatchBodyPart getBodyPart() {
@@ -78,7 +78,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     *Setter of bodyPart.
+     * Setter of bodyPart.
      * @param bodyPart BatchBodyPart
      */
     public void setBodyPart(BatchBodyPart bodyPart) {
@@ -86,7 +86,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     *Getter of EntitySetName.
+     * Getter of EntitySetName.
      * @return EntitySetName
      */
     public String getEntitySetName() {
@@ -94,7 +94,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     *Setter of EntitySetName.
+     * Setter of EntitySetName.
      * @param entitySetName EntitySetName
      */
     public void setEntitySetName(String entitySetName) {
@@ -102,7 +102,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     *Docherand getter.
+     * Docherand getter.
      * @return EntitySetDocHandler
      */
     public EntitySetDocHandler getDocHandler() {
@@ -110,7 +110,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     *DocHandler's setter.
+     * DocHandler's setter.
      * @param docHandler EntitySetDocHandler
      */
     public void setDocHandler(EntitySetDocHandler docHandler) {
@@ -118,7 +118,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     *Getter of Error.
+     * Getter of Error.
      * @return Exception
      */
     public Exception getError() {
@@ -126,7 +126,7 @@ public class BulkRequest implements EsBulkRequest {
     }
 
     /**
-     *Error setter.
+     * Error setter.
      * @param error Exception
      */
     public void setError(Exception error) {

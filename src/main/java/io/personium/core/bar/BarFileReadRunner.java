@@ -132,7 +132,7 @@ import io.personium.core.rs.odata.ODataResource;
 import io.personium.core.utils.UriUtils;
 
 /**
- *Http Class for reading bar files from the request body.
+ * Http Class for reading bar files from the request body.
  */
 public class BarFileReadRunner implements Runnable {
 
@@ -143,7 +143,7 @@ public class BarFileReadRunner implements Runnable {
     private static final String CODE_BAR_INSTALL_STARTED = "PL-BI-1001";
 
     /**
-     *Object for logging.
+     * Object for logging.
      */
     static Logger log = LoggerFactory.getLogger(BarFileReadRunner.class);
 
@@ -199,7 +199,7 @@ public class BarFileReadRunner implements Runnable {
     private BarInstallProgressInfo progressInfo;
 
     /**
-     *constructor.
+     * constructor.
      * @param barFile bar file object
      * @param cell Install target Cell
      * @param boxName Install target Box Name
@@ -207,7 +207,7 @@ public class BarFileReadRunner implements Runnable {
      * @param producer ODataProducer
      * @param entitySetName entitySetName(=box name)
      * @param uriInfo uriInfo
-     *@ param requestKey The value of the RequestKey field to be output to the event log
+     * @ param requestKey The value of the RequestKey field to be output to the event log
      */
     public BarFileReadRunner(
             File barFile,
@@ -233,7 +233,7 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *bar file reading process.
+     * bar file reading process.
      */
     public void run() {
         boolean isSuccess = true;
@@ -344,7 +344,7 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *bar Make settings for internal event output of installation processing status.
+     * bar Make settings for internal event output of installation processing status.
      */
     private void setEventBus() {
         //The schema of the TODO Box and the subject's log are implemented at the time of formal correspondence of internal events
@@ -361,9 +361,9 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Get messages from exception objects.
-     *@ param ex exception object
-     *@return message
+     * Get messages from exception objects.
+     * @ param ex exception object
+     * @return message
      */
     private String getErrorMessage(Throwable ex) {
         String message = ex.getMessage();
@@ -375,25 +375,25 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Returns whether the entry obtained from the Zip archive is a "bar /" directory or not.
-     *true if it is @return "bar /"
+     * Returns whether the entry obtained from the Zip archive is a "bar /" directory or not.
+     * true if it is @return "bar /"
      */
     private boolean isRootDir() {
         return isMatchEntryName(ROOT_DIR);
     }
 
     /**
-     *Returns whether the entry obtained from the Zip archive is the "bar / 00_meta" directory or not.
-     *true if it is @return "bar / 00_meta"
+     * Returns whether the entry obtained from the Zip archive is the "bar / 00_meta" directory or not.
+     * true if it is @return "bar / 00_meta"
      */
     private boolean isMetadataDir() {
         return isMatchEntryName(META_DIR);
     }
 
     /**
-     *Returns whether the entry obtained from the Zip archive is the "bar / 90_contents" directory or not.
-     *@ param zae ZipArchiveEntry object
-     *true if it is @return "bar / 90_contents"
+     * Returns whether the entry obtained from the Zip archive is the "bar / 90_contents" directory or not.
+     * @ param zae ZipArchiveEntry object
+     * true if it is @return "bar / 90_contents"
      */
     private boolean isContentsDir(ZipArchiveEntry zae) {
         boolean ret = false;
@@ -406,9 +406,9 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Returns whether the entry name obtained from the Zip archive matches the specified character string.
-     *@ param name String to be compared
-     *@return true if matching
+     * Returns whether the entry name obtained from the Zip archive matches the specified character string.
+     * @ param name String to be compared
+     * @return true if matching
      */
     private boolean isMatchEntryName(String name) {
         boolean ret = false;
@@ -425,7 +425,7 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Get the maximum file size (MB) in the BAR file from the property file.
+     * Get the maximum file size (MB) in the BAR file from the property file.
      * @return io.personium.core.bar.entry.maxSize
      */
     private long getMaxBarEntryFileSize() {
@@ -442,13 +442,13 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Read and register one metadata in the bar file.
+     * Read and register one metadata in the bar file.
      * @param zae ZipArchiveEntry
-     *@ param entryName bar File entry name
-     *@ param maxSize Maximum file size of entry (MB)
-     *@ param keyList definition file list
-     *@ param doneKeys run & executed definition file
-     *@return boolean Process success
+     * @ param entryName bar File entry name
+     * @ param maxSize Maximum file size of entry (MB)
+     * @ param keyList definition file list
+     * @ param doneKeys run & executed definition file
+     * @return boolean Process success
      */
     protected boolean createMetadata(
             ZipArchiveEntry zae,
@@ -777,13 +777,13 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Get the type of entry under 90_contents of the bar file.
-     *@ param entryName bar File entry name
-     *@ param odataCols List of OData collections
-     *@ param webdavCols List of WebDAV collections
-     *@ param serviceCols List of service collections
-     *@ param davFiles List of WebDAV files
-     *@return entry type
+     * Get the type of entry under 90_contents of the bar file.
+     * @ param entryName bar File entry name
+     * @ param odataCols List of OData collections
+     * @ param webdavCols List of WebDAV collections
+     * @ param serviceCols List of service collections
+     * @ param davFiles List of WebDAV files
+     * @return entry type
      */
     protected int getEntryType(String entryName,
             Map<String, DavCmp> odataCols,
@@ -819,11 +819,11 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register the WebDAV file.
-     *@ param entryName bar File entry name
-     *@ param inputStream data
-     *@ param webdavCols WebDAV collection list
-     *@return true: registration successful, false: registration failure
+     * Register the WebDAV file.
+     * @ param entryName bar File entry name
+     * @ param inputStream data
+     * @ param webdavCols WebDAV collection list
+     * @return true: registration successful, false: registration failure
      */
     protected boolean registWebDavFile(String entryName, InputStream inputStream,
             Map<String, DavCmp> webdavCols) {
@@ -893,8 +893,8 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Returns the file name extension.
-     *@ param filename file name
+     * Returns the file name extension.
+     * @ param filename file name
      */
     private String getFileExtension(String filename) {
         String extension = "";
@@ -906,11 +906,11 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Analyze 90_rootprops_xml and perform registration processing such as Collectoin / ACL / WebDAV.
-     *@ param rootPropsName Path name in bar file of 90_rootprops_xml
-     *@ param inputStream Input stream
-     *URL of @ param boxUrl box
-     *@return true if successful
+     * Analyze 90_rootprops_xml and perform registration processing such as Collectoin / ACL / WebDAV.
+     * @ param rootPropsName Path name in bar file of 90_rootprops_xml
+     * @ param inputStream Input stream
+     * URL of @ param boxUrl box
+     * @return true if successful
      */
     protected boolean registXmlEntry(String rootPropsName, InputStream inputStream, String boxUrl) {
         //If you pass InputStream to the XML parser (StAX, SAX, DOM) as is, the file list acquisition processing
@@ -1024,10 +1024,10 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Verify that there is no inconsistency in the hierarchical structure of path defined in 90_rootprops.xml.
-     *@ param multiStatus 90 JOXB object read from 90 _rootprops.xml
-     *@ param rootPropsName Name of the entry currently being processed (for log output)
-     *@return Returns true if there is no conflict, false if there is contradiction.
+     * Verify that there is no inconsistency in the hierarchical structure of path defined in 90_rootprops.xml.
+     * @ param multiStatus 90 JOXB object read from 90 _rootprops.xml
+     * @ param rootPropsName Name of the entry currently being processed (for log output)
+     * @return Returns true if there is no conflict, false if there is contradiction.
      */
     protected boolean validateCollectionDefinitions(Multistatus multiStatus, String rootPropsName) {
 
@@ -1141,12 +1141,12 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Get the collection type of the path defined in each response tag in 90_rootprops.xml.
-     *@ param rootPropsName Name of the entry currently being processed (for log output)
-     *@ param response JAXB object for response tag to be processed
-     *@ return Returns the value of the collection type according to the definition content.
-     *WebDAV file, Service source is returned as WebDAV file.
-     *If the type of unauthorized collection is defined, return it as undefined.
+     * Get the collection type of the path defined in each response tag in 90_rootprops.xml.
+     * @ param rootPropsName Name of the entry currently being processed (for log output)
+     * @ param response JAXB object for response tag to be processed
+     * @ return Returns the value of the collection type according to the definition content.
+     * WebDAV file, Service source is returned as WebDAV file.
+     * If the type of unauthorized collection is defined, return it as undefined.
      */
     private int getCollectionType(String rootPropsName, Response response) {
         //Get the type of the collection defined by following the <propstat> element
@@ -1179,10 +1179,10 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Process one JSON data.
-     *@ param entryName Target file name
-     *@ param inputStream Input stream
-     *@return true if successful
+     * Process one JSON data.
+     * @ param entryName Target file name
+     * @ param inputStream Input stream
+     * @return true if successful
      */
     private boolean registJsonEntry(String entryName, InputStream inputStream) {
         JsonParser jp = null;
@@ -1234,10 +1234,10 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Reads data of 10_odatarelations.json and generates Link information of user data.
-     *@ param entryName Target file name
-     *@ param inputStream Input stream
-     *@return true if successful
+     * Reads data of 10_odatarelations.json and generates Link information of user data.
+     * @ param entryName Target file name
+     * @ param inputStream Input stream
+     * @return true if successful
      */
     protected List<IJSONMappedObject> registJsonLinksUserdata(String entryName, InputStream inputStream) {
         List<IJSONMappedObject> userDataLinks = new ArrayList<IJSONMappedObject>();
@@ -1301,12 +1301,12 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Check that the file structure in the metadata directory is correct.
+     * Check that the file structure in the metadata directory is correct.
      * @param zae
      * @param entryName
      * @param maxSize
      * @param doneKeys
-     *@return Return true if correct
+     * @return Return true if correct
      */
     private boolean isValidFileStructure(ZipArchiveEntry zae,
             String entryName,
@@ -1360,11 +1360,11 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *bar / 90_contents / {OdataCol_name} is checked to see if it is a correct definition.
-     *@ param entryName entry name (collection name)
-     *@ param col Map Map object for collection
-     *@ param doneKeys List of entries for processed OData collection
-     *@ return judgment processing result
+     * bar / 90_contents / {OdataCol_name} is checked to see if it is a correct definition.
+     * @ param entryName entry name (collection name)
+     * @ param col Map Map object for collection
+     * @ param doneKeys List of entries for processed OData collection
+     * @ return judgment processing result
      */
     protected boolean isValidODataContents(String entryName, Map<String, DavCmp> colMap, List<String> doneKeys) {
 
@@ -1448,10 +1448,10 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *10_relations.json, 20_roles.json, 30_extroles.json, 70_ $ links.json, 10_odatarelations.json validation check.
-     *@ param jp Json Perth
+     * 10_relations.json, 20_roles.json, 30_extroles.json, 70_ $ links.json, 10_odatarelations.json validation check.
+     * @ param jp Json Perth
      * @param mapper ObjectMapper
-     *@ param jsonName file name
+     * @ param jsonName file name
      * @throws IOException IOException
      */
     protected void registJsonEntityData(JsonParser jp, ObjectMapper mapper, String jsonName) throws IOException {
@@ -1494,12 +1494,12 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Validate check of required items.
-     *@ param jp Json parser
+     * Validate check of required items.
+     * @ param jp Json parser
      * @param mapper ObjectMapper
-     *@ param jsonName file name
+     * @ param jsonName file name
      * @throws IOException IOException
-     *@return JSONMappedObject JSONMapped object
+     * @return JSONMappedObject JSONMapped object
      */
     protected IJSONMappedObject barFileJsonValidate(
             JsonParser jp, ObjectMapper mapper, String jsonName) throws IOException {
@@ -1543,9 +1543,9 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Validate of 70 _ $ links.json.
-     *@ param jsonName JSON filename
-     *@ param links Read JSON object
+     * Validate of 70 _ $ links.json.
+     * @ param jsonName JSON filename
+     * @ param links Read JSON object
      */
     private void linksJsonValidate(String jsonName, JSONLink links) {
         if (links.getFromType() == null) {
@@ -1589,9 +1589,9 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Validation of 10_odatarelations.json.
-     *@ param jsonName JSON filename
-     *@ param links Read JSON object
+     * Validation of 10_odatarelations.json.
+     * @ param jsonName JSON filename
+     * @ param links Read JSON object
      */
     private void userDataLinksJsonValidate(String jsonName, JSONUserDataLink links) {
         if (links.getFromType() == null) {
@@ -1623,11 +1623,11 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Validate of manifest.json.
-     *@ param jp Json parser
+     * Validate of manifest.json.
+     * @ param jp Json parser
      * @param mapper ObjectMapper
-     *@return JSONManifest object
-     *@ throws IOException if data reading failed
+     * @return JSONManifest object
+     * @ throws IOException if data reading failed
      */
     protected JSONManifest manifestJsonValidate(JsonParser jp, ObjectMapper mapper) throws IOException {
         //Version check of TODO BAR file
@@ -1651,7 +1651,7 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Confirm that the field name matches the format of the file.
+     * Confirm that the field name matches the format of the file.
      * @param jp
      * @param jsonName
      * @throws IOException
@@ -1670,26 +1670,26 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Output of Http response message.
-     *@ param isError Specify true on error, false otherwise.
+     * Output of Http response message.
+     * @ param isError Specify true on error, false otherwise.
      * @param code
-     *Message code (message code defined in personium-messages.properties)
+     * Message code (message code defined in personium-messages.properties)
      * @param path
-     *Process target resource path (ex. /Bar/meta/roles.json)
+     * Process target resource path (ex. /Bar/meta/roles.json)
      */
     private void writeOutputStream(boolean isError, String code, String path) {
         writeOutputStream(isError, code, path, "");
     }
 
     /**
-     *bar File output of installation log details.
-     *@ param isError Specify true on error, false otherwise.
+     * bar File output of installation log details.
+     * @ param isError Specify true on error, false otherwise.
      * @param code
-     *Message code (message code defined in personium-messages.properties)
+     * Message code (message code defined in personium-messages.properties)
      * @param path
-     *Process target resource path (ex. /Bar/meta/roles.json)
+     * Process target resource path (ex. /Bar/meta/roles.json)
      * @param detail
-     *Detailed information on processing failure (PL-BI-2xxx)
+     * Detailed information on processing failure (PL-BI-2xxx)
      */
     private void writeOutputStream(boolean isError, String code, String path, String detail) {
         String message = PersoniumCoreMessageUtils.getMessage(code);
@@ -1705,11 +1705,11 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Output the installation processing status to EventBus as an internal event.
-     *@ param isError Specify true on error, false otherwise.
-     *@ param code processing code (ex. PL - BI - 0000)
-     *@ param path bar Entry path in the file (in the case of Edmx, the path of OData)
-     *@ param message Output message
+     * Output the installation processing status to EventBus as an internal event.
+     * @ param isError Specify true on error, false otherwise.
+     * @ param code processing code (ex. PL - BI - 0000)
+     * @ param path bar Entry path in the file (in the case of Edmx, the path of OData)
+     * @ param message Output message
      */
     @SuppressWarnings("unchecked")
     private void outputEventBus(boolean isError, String code, String path, String message) {
@@ -1736,8 +1736,8 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Output bar installation status to cache.
-     *@ param forceOutput Specify true to forcibly output, false otherwise
+     * Output bar installation status to cache.
+     * @ param forceOutput Specify true to forcibly output, false otherwise
      */
     private void writeToProgressCache(boolean forceOutput) {
         if (this.progressInfo != null && this.progressInfo.isOutputEventBus() || forceOutput) {
@@ -1764,15 +1764,15 @@ public class BarFileReadRunner implements Runnable {
     private String createdBoxName = "";
 
     /**
-     *Returns the box name of the created Box.
-     *@return Box name
+     * Returns the box name of the created Box.
+     * @return Box name
      */
     public String getCreatedBoxName() {
         return createdBoxName;
     }
 
     /**
-     *Returns the ETag of the created Box.
+     * Returns the ETag of the created Box.
      * @return ETag
      */
     public String getCreatedBoxETag() {
@@ -1798,8 +1798,8 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register Box information in ES.
-     *@ param json JSON object read from JSON file
+     * Register Box information in ES.
+     * @ param json JSON object read from JSON file
      */
     @SuppressWarnings("unchecked")
     void createBox(JSONObject json) {
@@ -1831,8 +1831,8 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register the Relation information defined in 10 _ $ relations.json to the ES.
-     *@ param json JSON object read from JSON file
+     * Register the Relation information defined in 10 _ $ relations.json to the ES.
+     * @ param json JSON object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createRelation(JSONObject json) {
@@ -1853,8 +1853,8 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register the Role information defined in 20 _ $ roles.json to the ES.
-     *@ param json JSON object read from JSON file
+     * Register the Role information defined in 20 _ $ roles.json to the ES.
+     * @ param json JSON object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createRole(JSONObject json) {
@@ -1875,8 +1875,8 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register ExtRole information defined in 30 _ $ extroles.json in the ES.
-     *@ param json JSON object read from JSON file
+     * Register ExtRole information defined in 30 _ $ extroles.json in the ES.
+     * @ param json JSON object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createExtRole(JSONObject json) {
@@ -1917,8 +1917,8 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register the link information defined in 70 _ $ links.json to the ES.
-     *@ param mappedObject Object read from JSON file
+     * Register the link information defined in 70 _ $ links.json to the ES.
+     * @ param mappedObject Object read from JSON file
      */
     private void createLinks(IJSONMappedObject mappedObject, PersoniumODataProducer producer) {
         Map<String, String> fromNameMap = ((JSONLink) mappedObject).getFromName();
@@ -1985,8 +1985,8 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register the link information defined in 10_odatarelations.json to the ES.
-     *@ param mappedObject Object read from JSON file
+     * Register the link information defined in 10_odatarelations.json to the ES.
+     * @ param mappedObject Object read from JSON file
      */
     private boolean createUserdataLink(IJSONMappedObject mappedObject, PersoniumODataProducer producer) {
         OEntityId sourceEntity = null;
@@ -2127,11 +2127,11 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register ACL and PROPPATCH information in Box.
+     * Register ACL and PROPPATCH information in Box.
      * @param targetBox box
      * @param aclElement ACL
-     *@ param propElements What to set with PROPATCH
-     *URL of @ param boxUrl box
+     * @ param propElements What to set with PROPATCH
+     * URL of @ param boxUrl box
      */
     private void registBoxAclAndProppatch(Box targetBox, Element aclElement,
             List<Element> propElements, String boxUrl) {
@@ -2165,8 +2165,8 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Get Map <key, DavCmpEsImpl> of the collection defined in the bar file.
-     *@return collection MapDavCmpEsImpl object
+     * Get Map <key, DavCmpEsImpl> of the collection defined in the bar file.
+     * @return collection MapDavCmpEsImpl object
      */
     private Map<String, DavCmp> getCollections(String colType) {
         Map<String, DavCmp> map = new HashMap<String, DavCmp>();
@@ -2181,10 +2181,10 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Get Map <key, DavCmpEsImpl> of the collection defined in the bar file.
-     *@ param entryName entry name
-     *@ param collections Collection's Map object
-     *@return collection MapDavCmpEsImpl object
+     * Get Map <key, DavCmpEsImpl> of the collection defined in the bar file.
+     * @ param entryName entry name
+     * @ param collections Collection's Map object
+     * @return collection MapDavCmpEsImpl object
      */
     private DavCmp getCollection(String entryName, Map<String, DavCmp> collections) {
         int pos = entryName.lastIndexOf("/");
@@ -2196,11 +2196,11 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Analyzes 00_ $ metadata_xml to register the user schema.
-     *@ param entryName entry name
-     *@ param inputStream Input stream
-     *@ param davCmp Collection Operation object
-     *@return true if successful
+     * Analyzes 00_ $ metadata_xml to register the user schema.
+     * @ param entryName entry name
+     * @ param inputStream Input stream
+     * @ param davCmp Collection Operation object
+     * @return true if successful
      */
     protected boolean registUserSchema(String entryName, InputStream inputStream, DavCmp davCmp) {
         EdmDataServices metadata = null;
@@ -2248,9 +2248,9 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register EntityType / Property defined in Edmx.
-     *@ param metadata Edmx metadata
-     *@ param davCmp Collection Operation object
+     * Register EntityType / Property defined in Edmx.
+     * @ param metadata Edmx metadata
+     * @ param davCmp Collection Operation object
      */
     @SuppressWarnings("unchecked")
     protected void createEntityTypes(EdmDataServices metadata, DavCmp davCmp) {
@@ -2286,10 +2286,10 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register Property / ComplexTypeProperty defined in Edmx.
-     *@ param entity EntityType / ComplexType object in which the Property to be registered is defined
-     *@ param davCmp Collection Operation object
-     *@ param producer OData producer
+     * Register Property / ComplexTypeProperty defined in Edmx.
+     * @ param entity EntityType / ComplexType object in which the Property to be registered is defined
+     * @ param davCmp Collection Operation object
+     * @ param producer OData producer
      */
     @SuppressWarnings("unchecked")
     protected void createProperties(EdmStructuralType entity, DavCmp davCmp, PersoniumODataProducer producer) {
@@ -2339,9 +2339,9 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register AssociationEnd and link information defined in Edmx.
-     *@ param metadata Edmx metadata
-     *@ param davCmp Collection Operation object
+     * Register AssociationEnd and link information defined in Edmx.
+     * @ param metadata Edmx metadata
+     * @ param davCmp Collection Operation object
      */
     protected void createAssociations(EdmDataServices metadata, DavCmp davCmp) {
         Iterable<EdmAssociation> associations = metadata.getAssociations();
@@ -2382,10 +2382,10 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /*
-     *Split the input string ("entity type name: role name") with a colon and return the character string after the colon
-     *Throw an exception if the colon is not included in the string
-     *@ param sourceRoleName The name of the source role ("entity type name: role name")
-     *@return Actual role name
+     * Split the input string ("entity type name: role name") with a colon and return the character string after the colon
+     * Throw an exception if the colon is not included in the string
+     * @ param sourceRoleName The name of the source role ("entity type name: role name")
+     * @return Actual role name
      */
     private String getRealRoleName(String sourceRoleName) {
         String[] tokens = sourceRoleName.split(":");
@@ -2399,11 +2399,11 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register the AssociationEnd passed as an argument.
-     *@ param producer Entity PersoniumODataProcucer object for registration
-     *@ param userMetadata User defined schema object
-     *@ param associationEnd AssociationEnd object for registration
-     *@ param associationEndName AssociationEnd name
+     * Register the AssociationEnd passed as an argument.
+     * @ param producer Entity PersoniumODataProcucer object for registration
+     * @ param userMetadata User defined schema object
+     * @ param associationEnd AssociationEnd object for registration
+     * @ param associationEndName AssociationEnd name
      */
     @SuppressWarnings("unchecked")
     protected void createAssociationEnd(PersoniumODataProducer producer,
@@ -2421,9 +2421,9 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Register ComplexType / ComplexTypeProperty defined in Edmx.
-     *@ param metadata Edmx metadata
-     *@ param davCmp Collection Operation object
+     * Register ComplexType / ComplexTypeProperty defined in Edmx.
+     * @ param metadata Edmx metadata
+     * @ param davCmp Collection Operation object
      */
     @SuppressWarnings("unchecked")
     protected void createComplexTypes(EdmDataServices metadata, DavCmp davCmp) {
@@ -2481,7 +2481,7 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Record the information that started processing in the cache.
+     * Record the information that started processing in the cache.
      */
     public void writeInitProgressCache() {
         setEventBus();
@@ -2490,7 +2490,7 @@ public class BarFileReadRunner implements Runnable {
     }
 
     /**
-     *Record error information in the cache.
+     * Record error information in the cache.
      */
     public void writeErrorProgressCache() {
         if (this.progressInfo != null) {

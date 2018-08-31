@@ -77,9 +77,9 @@ public abstract class Privilege {
     }
 
     /**
-     *Returns whether this Privilege contains the Privilege specified by its argument.
-     *@ param priv Targets Privilege
-     *True if it contains the Privilege specified by the @return argument
+     * Returns whether this Privilege contains the Privilege specified by its argument.
+     * @ param priv Targets Privilege
+     * True if it contains the Privilege specified by the @return argument
      */
     public boolean includes(final Privilege priv) {
         if (this == priv) {
@@ -92,10 +92,10 @@ public abstract class Privilege {
     }
 
     /**
-     *Return Privilege of the corresponding Privilege class.
-     *@ param <T> class of return value
-     *@ param clazz class to which Privilege belongs
-     *@ param privilegeName Name of Privilege to retrieve
+     * Return Privilege of the corresponding Privilege class.
+     * @ param <T> class of return value
+     * @ param clazz class to which Privilege belongs
+     * @ param privilegeName Name of Privilege to retrieve
      * @return .
      */
     @SuppressWarnings("unchecked")

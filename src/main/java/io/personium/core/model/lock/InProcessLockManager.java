@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *InProcess's LockManager.
+ * InProcess's LockManager.
  */
 class InProcessLockManager extends LockManager {
     Map<String, Object> inProcessLock = new HashMap<String, Object>();
@@ -160,7 +160,7 @@ class InProcessLockManager extends LockManager {
     }
 
     /**
-     *A class that holds information for AccountLock in InProcess.
+     * A class that holds information for AccountLock in InProcess.
      */
     static class AccountLock {
 
@@ -171,8 +171,8 @@ class InProcessLockManager extends LockManager {
 
         /**
          * constructor.
-         *@ param value value
-         *@ param expired Lock retention period (seconds)
+         * @ param value value
+         * @ param expired Lock retention period (seconds)
          */
         AccountLock(String value, int expired) {
             this.value = value;
@@ -181,9 +181,9 @@ class InProcessLockManager extends LockManager {
         }
 
         /**
-         *Return specified AccountLock <br />
-         *If expired is exceeded, return null.
-         *@return The value corresponding to the specified key (or null if it does not exist, if it exceeds expired)
+         * Return specified AccountLock <br />
+         * If expired is exceeded, return null.
+         * @return The value corresponding to the specified key (or null if it does not exist, if it exceeds expired)
          */
         public String value() {
             long now = System.currentTimeMillis();

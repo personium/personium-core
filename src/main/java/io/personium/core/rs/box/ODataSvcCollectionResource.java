@@ -49,7 +49,7 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- *JAX-RS resource in charge of ODataSvcResource.
+ * JAX-RS resource in charge of ODataSvcResource.
  */
 public final class ODataSvcCollectionResource extends ODataResource {
     //WRAP this to use the function as DavCollectionResource.
@@ -69,11 +69,11 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     *Processing of PROPFIND.
-     *@ param requestBodyXml request body
-     *@ param depth Depth header
-     *@ param contentLength Content-Length header
-     *@ param transferEncoding Transfer-Encoding header
+     * Processing of PROPFIND.
+     * @ param requestBodyXml request body
+     * @ param depth Depth header
+     * @ param contentLength Content-Length header
+     * @ param transferEncoding Transfer-Encoding header
      * @return JAX-RS Response
      */
     @WebDAVMethod.PROPFIND
@@ -89,8 +89,8 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     *Processing of PROPPATCH.
-     *@ param requestBodyXml request body
+     * Processing of PROPPATCH.
+     * @ param requestBodyXml request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -104,8 +104,8 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     *Processing of ACL method Set ACL.
-     *@ param reader configuration XML
+     * Processing of ACL method Set ACL.
+     * @ param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -145,7 +145,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @Override
@@ -164,9 +164,9 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     *Processing of the MOVE method.
-     *@ param headers header information
-     *@return JAX-RS response object
+     * Processing of the MOVE method.
+     * @ param headers header information
+     * @return JAX-RS response object
      */
     @WriteAPI
     @WebDAVMethod.MOVE
@@ -183,8 +183,8 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     *Obtain Auth Scheme that can be used for authentication.
-     *Autret Scheme that can be used for @return authentication
+     * Obtain Auth Scheme that can be used for authentication.
+     * Autret Scheme that can be used for @return authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {
@@ -192,9 +192,9 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     *Returns whether the access context has permission to $ batch.
-     *@ param ac access context
-     *@return true: The access context has permission to $ batch
+     * Returns whether the access context has permission to $ batch.
+     * @ param ac access context
+     * @return true: The access context has permission to $ batch
      */
     @Override
     public boolean hasPrivilegeForBatch(AccessContext ac) {
@@ -221,16 +221,16 @@ public final class ODataSvcCollectionResource extends ODataResource {
     }
 
     /**
-     *basic Check if authentication can be done.
-     *@ param ac access context
+     * basic Check if authentication can be done.
+     * @ param ac access context
      */
     public void setBasicAuthenticateEnableInBatchRequest(AccessContext ac) {
         ac.updateBasicAuthenticationStateForResource(this.davRsCmp.getBox());
     }
 
     /**
-     *Corresponds to the service metadata request.
-     *@return JAX-RS response object
+     * Corresponds to the service metadata request.
+     * @return JAX-RS response object
      */
     @Path("{first: \\$}metadata")
     public ODataSvcSchemaResource metadata() {

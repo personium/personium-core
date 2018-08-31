@@ -36,7 +36,7 @@ import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.PersoniumODataProducer;
 
 /**
- *JAX-RS resource that handles password change processing with resource class.
+ * JAX-RS resource that handles password change processing with resource class.
  */
 public class PasswordResource {
 
@@ -68,8 +68,8 @@ public class PasswordResource {
     }
 
     /**
-     *Change the password.
-     *@ return ODataEntityResource class object
+     * Change the password.
+     * @ return ODataEntityResource class object
      */
     @WriteAPI
     @PUT

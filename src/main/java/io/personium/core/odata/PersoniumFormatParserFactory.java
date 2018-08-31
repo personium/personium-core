@@ -44,7 +44,7 @@ import org.odata4j.format.FormatType;
 import org.odata4j.format.Settings;
 
 /**
- *FormatParserFactory of OData.
+ * FormatParserFactory of OData.
  */
 public class PersoniumFormatParserFactory {
 
@@ -59,11 +59,11 @@ public class PersoniumFormatParserFactory {
     }
 
     /**
-     *Get FormatParser.
-     *@ param <T> class
-     *@ param targetType Parse object type
-     *@ param type conversion format
-     *@ param settings setting
+     * Get FormatParser.
+     * @ param <T> class
+     * @ param targetType Parse object type
+     * @ param type conversion format
+     * @ param settings setting
      * @return FormatParser
      */
     @SuppressWarnings("unchecked")
@@ -74,11 +74,11 @@ public class PersoniumFormatParserFactory {
     }
 
     /**
-     *Get FormatParser.
-     *@ param <T> class
-     *@ param targetType Parse object type
-     *@ param contentType conversion format
-     *@ param settings setting
+     * Get FormatParser.
+     * @ param <T> class
+     * @ param targetType Parse object type
+     * @ param contentType conversion format
+     * @ param settings setting
      * @return FormatParser
      */
     public static <T> FormatParser<T> getParser(Class<T> targetType, MediaType contentType, Settings settings) {
@@ -87,7 +87,7 @@ public class PersoniumFormatParserFactory {
     }
 
     /**
-     *JSON parser group.
+     * JSON parser group.
      */
     public static class JsonParsers implements FormatParsers {
 

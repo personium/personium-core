@@ -39,7 +39,7 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.model.ModelFactory;
 
 /**
- *JAX-RS Resource for roll end point.
+ * JAX-RS Resource for roll end point.
  */
 public class RoleResource {
 
@@ -58,9 +58,9 @@ public class RoleResource {
     }
 
     /**
-     *Role Root of the resource.
-     *Returns a list of Box.
-     *@ param authzHeader Authorization header
+     * Role Root of the resource.
+     * Returns a list of Box.
+     * @ param authzHeader Authorization header
      * @return JAX-RS Response Object
      */
 //    @Path("")
@@ -84,9 +84,9 @@ public class RoleResource {
         return Response.ok().entity(sb.toString()).build();
     }
     /**
-     *Route of Role resource in Box units.
-     *Returns the role list associated with Box.
-     *When __ is specified as a Box name, it is regarded as a cell level role.
+     * Route of Role resource in Box units.
+     * Returns the role list associated with Box.
+     * When __ is specified as a Box name, it is regarded as a cell level role.
      * @param boxName boxName
      * @param authzHeader authzHeader
      * @return JAXRS Response

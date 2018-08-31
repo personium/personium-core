@@ -42,7 +42,7 @@ import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
- *Base class that implements basic processing of the data store layer.
+ * Base class that implements basic processing of the data store layer.
  */
 public class DataSourceAccessor {
     private EsIndex index;
@@ -53,17 +53,17 @@ public class DataSourceAccessor {
     static Logger log = LoggerFactory.getLogger(DataSourceAccessor.class);
 
     /**
-     *constructor.
-     *@ param index index
+     * constructor.
+     * @ param index index
      */
     public DataSourceAccessor(EsIndex index) {
         this.index = index;
     }
 
     /**
-     *constructor.
-     *@ param index index
-     *@ param name Type name
+     * constructor.
+     * @ param index index
+     * @ param name Type name
      * @param routingId routingID
      */
     protected DataSourceAccessor(EsIndex index, String name, String routingId) {
@@ -75,7 +75,7 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Getter of Index.
+     * Getter of Index.
      * @return EsIndex
      */
     public EsIndex getIndex() {
@@ -83,25 +83,25 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Get Type.
-     *@return response
+     * Get Type.
+     * @return response
      */
     public String getType() {
         return this.type.getType();
     }
 
     /**
-     *Get the routing ID to use when searching for ES.
-     *@return routing ID
+     * Get the routing ID to use when searching for ES.
+     * @return routing ID
      */
     protected String getRoutingId() {
         return this.routingid;
     }
 
     /**
-     *Acquisition of one document.
-     *@ param id Document ID
-     *@return response
+     * Acquisition of one document.
+     * @ param id Document ID
+     * @return response
      */
     public PersoniumGetResponse get(final String id) {
         try {
@@ -112,9 +112,9 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Create a new document.
-     *@ param data document
-     *@return ES response
+     * Create a new document.
+     * @ param data document
+     * @return ES response
      */
     @SuppressWarnings("rawtypes")
     public PersoniumIndexResponse create(final Map data) {
@@ -123,10 +123,10 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Create a new document.
+     * Create a new document.
      * @param id ID
-     *@ param data document
-     *@return ES response
+     * @ param data document
+     * @return ES response
      */
     @SuppressWarnings({"rawtypes" })
     public PersoniumActionResponse createForDavNodeFile(final String id, final Map data) {
@@ -135,10 +135,10 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Create a new document.
+     * Create a new document.
      * @param id ID
-     *@ param data document
-     *@return ES response
+     * @ param data document
+     * @return ES response
      */
     @SuppressWarnings({"rawtypes" })
     public PersoniumIndexResponse create(final String id, final Map data) {
@@ -160,11 +160,11 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Create a new document (for Cell creation).
+     * Create a new document (for Cell creation).
      * @param id ID
-     *@ param data document
-     *@ param docHandler document handler
-     *@return ES response
+     * @ param data document
+     * @ param docHandler document handler
+     * @return ES response
      */
     @SuppressWarnings({"rawtypes" })
     public PersoniumIndexResponse create(final String id, final Map data, final EntitySetDocHandler docHandler) {
@@ -186,11 +186,11 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Document update.
+     * Document update.
      * @param id ID
-     *@ param data document
-     *@ param version version number
-     *@return ES response
+     * @ param data document
+     * @ param version version number
+     * @return ES response
      */
     @SuppressWarnings({"rawtypes" })
     public PersoniumIndexResponse update(final String id, final Map data, final long version) {
@@ -212,10 +212,10 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Document update.
+     * Document update.
      * @param id ID
-     *@ param data document
-     *@return ES response
+     * @ param data document
+     * @return ES response
      */
     @SuppressWarnings("rawtypes")
     public PersoniumIndexResponse update(final String id, final Map data) {
@@ -223,9 +223,9 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Get the number of documents.
-     *@ param query Query information
-     *@return ES response
+     * Get the number of documents.
+     * @ param query Query information
+     * @return ES response
      */
     public long count(final Map<String, Object> query) {
         Map<String, Object> requestQuery = null;
@@ -244,9 +244,9 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Search documents.
-     *@ param query Query information
-     *@return ES response
+     * Search documents.
+     * @ param query Query information
+     * @return ES response
      */
     public PersoniumSearchResponse search(final Map<String, Object> query) {
         Map<String, Object> requestQuery = null;
@@ -267,10 +267,10 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Multi-search documents.
-     *When using this method, call number by specifying the number of acquisitions (size) in the query
-     *@ param queryList List of query information
-     *@return ES response
+     * Multi-search documents.
+     * When using this method, call number by specifying the number of acquisitions (size) in the query
+     * @ param queryList List of query information
+     * @return ES response
      */
     public PersoniumMultiSearchResponse multiSearch(final List<Map<String, Object>> queryList) {
         try {
@@ -282,9 +282,9 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Search documents against the index of ES.
-     *@ param query Query information
-     *@return ES response
+     * Search documents against the index of ES.
+     * @ param query Query information
+     * @return ES response
      */
     public PersoniumSearchResponse indexSearch(final Map<String, Object> query) {
         Map<String, Object> requestQuery = null;
@@ -308,7 +308,7 @@ public class DataSourceAccessor {
      * Delete a document.
      * @param docId Document id to delete
      * @param version The version of the document to delete
-     *@return response
+     * @return response
      */
     public PersoniumDeleteResponse delete(final String docId, final long version) {
         try {
@@ -322,11 +322,11 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Register the data in bulk. <br />
-     *Update and delete are not supported yet.
-     *@ param esBulkRequest Bulk registration document list for ES
+     * Register the data in bulk. <br />
+     * Update and delete are not supported yet.
+     * @ param esBulkRequest Bulk registration document list for ES
      * @param routingId routingId
-     *@return bulk response
+     * @return bulk response
      */
     public PersoniumBulkResponse bulkCreate(List<EsBulkRequest> esBulkRequest,
             String routingId) {
@@ -341,11 +341,11 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Register / update data in bulk. <br />
-     *Deletion is not supported yet.
-     *@ param esBulkRequest Bulk registration document list for ES
+     * Register / update data in bulk. <br />
+     * Deletion is not supported yet.
+     * @ param esBulkRequest Bulk registration document list for ES
      * @param routingId routingId
-     *@return bulk response
+     * @return bulk response
      */
     public PersoniumBulkResponse bulkUpdate(List<EsBulkRequest> esBulkRequest, String routingId) {
 
@@ -390,10 +390,10 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Execute search request for index.
+     * Execute search request for index.
      * @param routingId routingId
-     *@ param query search query
-     *@return Search results
+     * @ param query search query
+     * @return Search results
      */
     public PersoniumSearchResponse searchForIndex(String routingId, Map<String, Object> query) {
         try {
@@ -414,10 +414,10 @@ public class DataSourceAccessor {
     }
 
     /**
-     *Execute multi search request for index.
+     * Execute multi search request for index.
      * @param routingId routingId
-     *@ param queryList Search query list
-     *@return Search results
+     * @ param queryList Search query list
+     * @return Search results
      */
     public PersoniumMultiSearchResponse multiSearchForIndex(String routingId, List<Map<String, Object>> queryList) {
         try {

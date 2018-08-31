@@ -65,11 +65,11 @@ import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.core.rs.odata.ODataResource;
 
 /**
- *bar The class that performs the installation process.
+ * bar The class that performs the installation process.
  */
 public class BarFileInstaller {
     /**
-     *Object for logging.
+     * Object for logging.
      */
     static Logger log = LoggerFactory.getLogger(BarFileInstaller.class);
 
@@ -86,11 +86,11 @@ public class BarFileInstaller {
     private JSONObject manifestJson;
 
     /**
-     *constructor.
+     * constructor.
      * @param cell
-     *Cell object
+     * Cell object
      * @param boxName
-     *Box name
+     * Box name
      * @param oDataEntityResource oDataEntityResource
      * @param uriInfo UriInfo
      */
@@ -106,13 +106,13 @@ public class BarFileInstaller {
     }
 
     /**
-     *bar Method to perform file installation.
+     * bar Method to perform file installation.
      * @param headers
-     *MAP storing Http header
+     * MAP storing Http header
      * @param inStream
-     *InputStream for Http request body
-     *@ param requestKey The value of the RequestKey field to be output to the event log
-     *@return response
+     * InputStream for Http request body
+     * @ param requestKey The value of the RequestKey field to be output to the event log
+     * @return response
      */
     public Response barFileInstall(Map<String, String> headers,
             InputStream inStream, String requestKey) {
@@ -239,8 +239,8 @@ public class BarFileInstaller {
     }
 
     /**
-     *bar Method to pre-check at the time of acceptance of installation.
-     *@ param headers HTTP header
+     * bar Method to pre-check at the time of acceptance of installation.
+     * @ param headers HTTP header
      */
     private void checkPreConditions(Map<String, String> headers) {
         //[403] Access control
@@ -254,9 +254,9 @@ public class BarFileInstaller {
     }
 
     /**
-     *Http header check.
+     * Http header check.
      * @param headers
-     *MAP storing Http header
+     * MAP storing Http header
      */
     private void checkHeaders(Map<String, String> headers) {
         //Content-Type: fixed application / zip
@@ -268,7 +268,7 @@ public class BarFileInstaller {
     }
 
     /**
-     *Get the maximum file size (MB) of the bar file set in the system property.
+     * Get the maximum file size (MB) of the bar file set in the system property.
      * @return io.personium.core.bar.file.maxSize
      */
     protected long getMaxBarFileSize() {
@@ -283,7 +283,7 @@ public class BarFileInstaller {
     }
 
     /**
-     *Get the maximum file size (MB) in the BAR file from the property file.
+     * Get the maximum file size (MB) in the BAR file from the property file.
      * @return io.personium.core.bar.entry.maxSize
      */
     protected long getMaxBarEntryFileSize() {
@@ -300,18 +300,18 @@ public class BarFileInstaller {
     }
 
     /**
-     *Synchronization of file descriptors.
-     *@ param fd file descriptor
-     *@ throws SyncFailedException Synchronization failed
+     * Synchronization of file descriptors.
+     * @ param fd file descriptor
+     * @ throws SyncFailedException Synchronization failed
      */
     public void sync(FileDescriptor fd) throws SyncFailedException {
         fd.sync();
     }
 
     /**
-     *Http Reads the bar file from the request body and stores it in the temporary area.
-     *@ param inStream InputStream object for Http request body
-     *@ return The File object of the bar file stored in the temporary area
+     * Http Reads the bar file from the request body and stores it in the temporary area.
+     * @ param inStream InputStream object for Http request body
+     * @ return The File object of the bar file stored in the temporary area
      */
     private File storeTemporaryBarFile(InputStream inStream) {
 
@@ -354,14 +354,14 @@ public class BarFileInstaller {
     }
 
     /**
-     *bar A method that reads a file and validates it.
+     * bar A method that reads a file and validates it.
      * <ul>
-     *<li> Count the number of entries (files only) in the bar file. </ li>
-     *<li> Check the upper limit of the file size of each entry in the bar file. </ li>
-     *<li> Check the order of each entry in TODO bar file. </ li>
+     * <li> Count the number of entries (files only) in the bar file. </ li>
+     * <li> Check the upper limit of the file size of each entry in the bar file. </ li>
+     * <li> Check the order of each entry in TODO bar file. </ li>
      * </ul>.
-     *@ param barFile The File object of the bar file saved in the temporary area
-     *@returns bar Number of entries (files) in the file
+     * @ param barFile The File object of the bar file saved in the temporary area
+     * @returns bar Number of entries (files) in the file
      */
     private long checkBarFileContents(File barFile) {
 
@@ -449,10 +449,10 @@ public class BarFileInstaller {
     }
 
     /**
-     *Check file size of entry in bar file.
-     *@ param zae bar file entry
-     *@ param entryName entry name
-     *
+     * Check file size of entry in bar file.
+     * @ param zae bar file entry
+     * @ param entryName entry name
+     * @ param maxBarEntryFileSize File size of entry
      */
     protected void checkBarFileEntrySize(ZipArchiveEntry zae, String entryName,
             long maxBarEntryFileSize) {
@@ -466,8 +466,8 @@ public class BarFileInstaller {
     }
 
     /**
-     *bar File size check.
-     *@ param barFile bar file
+     * bar File size check.
+     * @ param barFile bar file
      */
     protected void checkBarFileSize(File barFile) {
         //[400] bar file file size exceeds the upper limit
@@ -481,7 +481,7 @@ public class BarFileInstaller {
     }
 
     /**
-     *Required file for bar file.
+     * Required file for bar file.
      */
     private Map<String, String> setupBarFileOrder() {
         Map<String, String> requiredBarFiles = new LinkedHashMap<String, String>();
@@ -493,7 +493,7 @@ public class BarFileInstaller {
     }
 
     /**
-     *Check the structure of the bar file.
+     * Check the structure of the bar file.
      */
     private boolean checkBarFileStructures(ZipArchiveEntry zae, Map<String, String> requiredBarFiles)
             throws UnsupportedEncodingException, ParseException {
@@ -506,7 +506,7 @@ public class BarFileInstaller {
     }
 
     /**
-     *Check whether the installation destination Box has already been registered and whether the schema URL defined in the manifest has already been registered.
+     * Check whether the installation destination Box has already been registered and whether the schema URL defined in the manifest has already been registered.
      */
     private void checkDuplicateBoxAndSchema(String schema) {
         PersoniumODataProducer producer = oDataEntityResource.getOdataProducer();
@@ -531,15 +531,15 @@ public class BarFileInstaller {
     }
 
     /**
-     *Get cell name.
-     *@return cell name
+     * Get cell name.
+     * @return cell name
      */
     public String getCellName() {
         return cell.getName();
     }
 
     /**
-     *Acquisition of ODataProducer.
+     * Acquisition of ODataProducer.
      * @return ODataProducer
      */
     public PersoniumODataProducer getOdataProducer() {
@@ -547,7 +547,7 @@ public class BarFileInstaller {
     }
 
     /**
-     *Acquisition of ODataEntityResource.
+     * Acquisition of ODataEntityResource.
      * @return ODataEntityResource
      */
     public ODataEntityResource getODataEntityResource() {

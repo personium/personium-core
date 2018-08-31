@@ -58,7 +58,7 @@ import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonValueEvent;
 import io.personium.core.utils.ODataUtils;
 
 /**
- *OCollection's parser.
+ * OCollection's parser.
  */
 public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatParser implements
         FormatParser<OCollection<? extends OObject>> {
@@ -68,10 +68,10 @@ public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatPars
     private String propertyName;
 
     /**
-     *constructor.
-     *@ param collectionType Collection type
-     *@ param md schema information
-     *@ param name property name
+     * constructor.
+     * @ param collectionType Collection type
+     * @ param md schema information
+     * @ param name property name
      */
     public PersoniumJsonCollectionFormatParser(EdmCollectionType collectionType, EdmDataServices md, String name) {
         super(null);
@@ -93,7 +93,7 @@ public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatPars
     }
 
     /**
-     *Perth of Collection.
+     * Perth of Collection.
      * @param jsr JsonStreamReader
      * @return OCollection
      */
@@ -135,7 +135,7 @@ public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatPars
     }
 
     /**
-     *Parsing for simple type array.
+     * Parsing for simple type array.
      * @param builder OCollection.Builder
      * @param jsr JsonStreamReader
      */
@@ -181,7 +181,7 @@ public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatPars
     }
 
     /**
-     *Create a collection builder.
+     * Create a collection builder.
      * @return OCollection.Builder
      */
     protected OCollection.Builder<OObject> newCollectionBuilder() {

@@ -35,29 +35,29 @@ import org.slf4j.LoggerFactory;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
- *StreamingOutput class to use when returning the contents of the Dav file to Response Internally create a hard link for reading only and delete it after completion of output.
+ * StreamingOutput class to use when returning the contents of the Dav file to Response Internally create a hard link for reading only and delete it after completion of output.
  */
 public class StreamingOutputForDavFile implements StreamingOutput {
 
     private static Logger logger = LoggerFactory.getLogger(StreamingOutputForDavFile.class);
 
     /**
-     *Maximum number of retries at the time of reading / writing Dav file, hard link creation / file name modification.
+     * Maximum number of retries at the time of reading / writing Dav file, hard link creation / file name modification.
      */
     private static int maxRetryCount = PersoniumUnitConfig.getDavFileOperationRetryCount();
 
     /**
-     *Retry interval (msec) at the time of reading / writing Dav file, hard link creation / file name modification.
+     * Retry interval (msec) at the time of reading / writing Dav file, hard link creation / file name modification.
      */
     private static long retryInterval = PersoniumUnitConfig.getDavFileOperationRetryInterval();
 
     /**
-     *The hard link path for loading.
+     * The hard link path for loading.
      */
     Path hardLinkPath = null;
 
     /**
-     *Input stream from the hard link for reading.
+     * Input stream from the hard link for reading.
      */
     InputStream hardLinkInput = null;
 

@@ -22,8 +22,8 @@ import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- *Class managing asynchronous processing status
- *The storage location of the processing status is the same as that of the LockManager class.
+ * Class managing asynchronous processing status
+ * The storage location of the processing status is the same as that of the LockManager class.
  * @see io.personium.core.model.lock.LockManager
  */
 public abstract class ProgressManager {
@@ -36,11 +36,11 @@ public abstract class ProgressManager {
     static volatile int lifeTime = Integer.valueOf(PersoniumUnitConfig.getBarInstallProgressLifeTimeExpireInSec());
 
     /**
-     *Memcached type.
+     * Memcached type.
      */
     public static final String TYPE_MEMCACHED = "memcached";
     /**
-     *InProcess type.
+     * InProcess type.
      */
     public static final String TYPE_IN_PROCESS = "inProcess";
 
@@ -59,8 +59,8 @@ public abstract class ProgressManager {
 
 
     /**
-     *Get asynchronous processing status.
-     *@ param fullKey Asynchronous processing status key
+     * Get asynchronous processing status.
+     * @ param fullKey Asynchronous processing status key
      * @return Progress
      */
     public static Progress getProgress(String fullKey) {
@@ -74,24 +74,24 @@ public abstract class ProgressManager {
     }
 
     /**
-     *Asynchronous processing status grading process.
-     *@ param key
-     *@ param progress Asynchronous processing status object
+     * Asynchronous processing status grading process.
+     * @ param key
+     * @ param progress Asynchronous processing status object
      */
     public static void putProgress(String key, Progress progress) {
         singleton.doPutProgress(key, progress);
     }
 
     /**
-     *Asynchronous processing status grading process.
-     *@ param key
+     * Asynchronous processing status grading process.
+     * @ param key
      */
     public static void deleteProgress(String key) {
         singleton.doDeleteProgress(key);
     }
 
     /**
-     *Erase all asynchronous processing status.
+     * Erase all asynchronous processing status.
      */
     public static void deleteAllProgress() {
         singleton.doDeleteAllProgress();

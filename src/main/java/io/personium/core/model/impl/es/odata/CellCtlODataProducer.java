@@ -39,7 +39,7 @@ import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- *ODataProducer of the Cell management object.
+ * ODataProducer of the Cell management object.
  */
 public class CellCtlODataProducer extends EsODataProducer {
     Cell cell;
@@ -91,7 +91,7 @@ public class CellCtlODataProducer extends EsODataProducer {
     }
 
     /**
-     *Implemented to return Id of Cell.
+     * Implemented to return Id of Cell.
      * @see io.personium.core.model.impl.es.odata.EsODataProducer#getCellId()
      * @return cell id
      */
@@ -138,19 +138,19 @@ public class CellCtlODataProducer extends EsODataProducer {
     }
 
     /**
-     *Check unauthorized Link information.
-     *@ param sourceEntity source side Entity
-     *@ param targetEntity Target side Entity
+     * Check unauthorized Link information.
+     * @ param sourceEntity source side Entity
+     * @ param targetEntity Target side Entity
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceEntity, EntitySetDocHandler targetEntity) {
     }
 
     /**
-     *Check unauthorized Link information.
-     *@ param sourceDocHandler Source side Entity
-     *@ param entity Target side Entity
-     *@ param targetEntitySetName EntitySet name of the target
+     * Check unauthorized Link information.
+     * @ param sourceDocHandler Source side Entity
+     * @ param entity Target side Entity
+     * @ param targetEntitySetName EntitySet name of the target
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceDocHandler, OEntity entity, String targetEntitySetName) {

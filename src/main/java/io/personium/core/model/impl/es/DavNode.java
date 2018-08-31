@@ -28,7 +28,7 @@ import io.personium.common.es.EsBulkRequest;
 import io.personium.core.PersoniumCoreException;
 
 /**
- *Class dealing with Dav's Node data.
+ * Class dealing with Dav's Node data.
  */
 public class DavNode implements EsBulkRequest {
 
@@ -76,7 +76,7 @@ public class DavNode implements EsBulkRequest {
     public static final String KEY_FILE = "f";
 
     /**
-     *constructor.
+     * constructor.
      */
     public DavNode() {
         long date = new Date().getTime();
@@ -94,10 +94,10 @@ public class DavNode implements EsBulkRequest {
     }
 
     /**
-     *constructor.
-     *@ param cellId Cell ID
-     *@ param boxId Box ID
-     *@ param nodeType Node type
+     * constructor.
+     * @ param cellId Cell ID
+     * @ param boxId Box ID
+     * @ param nodeType Node type
      */
     public DavNode(String cellId, String boxId, String nodeType) {
         long date = new Date().getTime();
@@ -115,9 +115,9 @@ public class DavNode implements EsBulkRequest {
     }
 
     /**
-     *constructor.
+     * constructor.
      * @param id ID
-     *@ param jsonStr source
+     * @ param jsonStr source
      * @return DavNode
      */
     @SuppressWarnings("unchecked")
@@ -308,7 +308,7 @@ public class DavNode implements EsBulkRequest {
     }
 
     /**
-     *Convert to JSON object and return DavNode information.
+     * Convert to JSON object and return DavNode information.
      * @return JSONObject
      */
     @SuppressWarnings("unchecked")
@@ -340,9 +340,9 @@ public class DavNode implements EsBulkRequest {
     }
 
     /**
-     *Set the type of the request (INDEX / DELETE) <br />
-     *In consideration of the influence on existing processing, the default value is set to INDEX.
-     *@ param request Request type
+     * Set the type of the request (INDEX / DELETE) <br />
+     * In consideration of the influence on existing processing, the default value is set to INDEX.
+     * @ param request Request type
      */
     public void setRequestType(BulkRequestType request) {
         this.requestType = request;

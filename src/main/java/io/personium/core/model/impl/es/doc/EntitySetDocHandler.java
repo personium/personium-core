@@ -28,205 +28,205 @@ import org.odata4j.expression.EntitySimpleProperty;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- *Handler to generate ElasticSearch document.
+ * Handler to generate ElasticSearch document.
  */
 public interface EntitySetDocHandler extends EsDocHandler {
 
     /**
-     *Getter of type.
+     * Getter of type.
      * @return type
      */
     String getType();
 
     /**
-     *CellID getter.
+     * CellID getter.
      * @return cellId
      */
     String getCellId();
 
     /**
-     *Getter of Box ID.
+     * Getter of Box ID.
      * @return boxId
      */
     String getBoxId();
 
     /**
-     *Getter of NodeID.
+     * Getter of NodeID.
      * @return nodeId
      */
     String getNodeId();
 
     /**
-     *Getter of EntityTypeID.
+     * Getter of EntityTypeID.
      * @return entityTypeId
      */
     String getEntityTypeId();
 
     /**
-     *Getter of StaticFields.
+     * Getter of StaticFields.
      * @return StaticFields
      */
     Map<String, Object> getStaticFields();
 
     /**
-     *Getter of Dynamic Fields.
+     * Getter of Dynamic Fields.
      * @return DynamicFields
      */
     Map<String, Object> getDynamicFields();
 
     /**
-     *Getlter of AclFields.
+     * Getlter of AclFields.
      * @return ManyToOnelinkId
      */
     Map<String, JSONObject> getAclFields();
 
     /**
-     *Getter of Hidden Fields.
+     * Getter of Hidden Fields.
      * @return HiddenFields
      */
     Map<String, Object> getHiddenFields();
 
     /**
-     *Getter of ManyToOnelinkId.
+     * Getter of ManyToOnelinkId.
      * @return ManyToOnelinkId
      */
     Map<String, Object> getManyToOnelinkId();
 
     /**
-     *Returns a string representation of StaticFields.
+     * Returns a string representation of StaticFields.
      * @return StaticFields
      */
     String getStaticFieldsString();
 
     /**
-     *Returns a string representation of DynamicFields.
+     * Returns a string representation of DynamicFields.
      * @return DynamicFields
      */
     String getDynamicFieldsString();
 
     /**
-     *Returns a string representation of HiddenFields.
+     * Returns a string representation of HiddenFields.
      * @return HiddenFields
      */
     String getHiddenFieldsString();
 
     /**
-     *Returns a string representation of ManyToOnelinkId.
+     * Returns a string representation of ManyToOnelinkId.
      * @return ManyToOnelinkId
      */
     String getManyToOnelinkIdString();
 
     /**
-     *Published getter.
+     * Published getter.
      * @return Published
      */
     Long getPublished();
 
     /**
-     *Updated getter.
+     * Updated getter.
      * @return Updated
      */
     Long getUpdated();
 
     /**
-     *Getter of UnitUserName.
-     *@return UnitUser name
+     * Getter of UnitUserName.
+     * @return UnitUser name
      */
     String getUnitUserName();
 
     /**
-     *Set UnitUser name when accessing Cell.
-     *@ param hiddenFieldsMap map object of hiddenFields
+     * Set UnitUser name when accessing Cell.
+     * @ param hiddenFieldsMap map object of hiddenFields
      */
     void resolveUnitUserName(Map<String, Object> hiddenFieldsMap);
 
     /**
-     *Id's setter.
-     *@ param id ID of elasticsearch
+     * Id's setter.
+     * @ param id ID of elasticsearch
      */
     void setId(String id);
 
     /**
-     *A setter of staticFields.
+     * A setter of staticFields.
      * @param staticFields staticFields
      */
     void setStaticFields(Map<String, Object> staticFields);
 
     /**
-     *CellId's setter.
-     *@ param cellId Cell ID
+     * CellId's setter.
+     * @ param cellId Cell ID
      */
     void setCellId(String cellId);
 
     /**
-     *Setter of boxId.
-     *@ param boxId Box ID
+     * Setter of boxId.
+     * @ param boxId Box ID
      */
     void setBoxId(String boxId);
 
     /**
-     *Setter of nodeId.
-     *@ param nodeId ID of node
+     * Setter of nodeId.
+     * @ param nodeId ID of node
      */
     void setNodeId(String nodeId);
 
     /**
-     *Setter of entityTypeId.
-     *@ param entityTypeId ID of entityType
+     * Setter of entityTypeId.
+     * @ param entityTypeId ID of entityType
      */
     void setEntityTypeId(String entityTypeId);
 
     /**
-     *Type setter.
+     * Type setter.
      * @param type type
      */
     void setType(String type);
 
     /**
-     *Version setter.
+     * Version setter.
      * @param version version
      */
     void setVersion(Long version);
 
     /**
-     *HiddenFields setter.
+     * HiddenFields setter.
      * @param hiddenFields hiddenFields
      */
     void setHiddenFields(Map<String, Object> hiddenFields);
 
     /**
-     *The setters of links.
-     *@ param links links information
+     * The setters of links.
+     * @ param links links information
      */
     void setManyToOnelinkId(Map<String, Object> links);
 
     /**
-     *Published setter.
-     *@ param published published information
+     * Published setter.
+     * @ param published published information
      */
     void setPublished(Long published);
 
     /**
-     *Updated setter.
-     *@ param updated updated information
+     * Updated setter.
+     * @ param updated updated information
      */
     void setUpdated(Long updated);
 
     /**
-     *The setter of dynamicFields.
-     *@ param dynamicFields Map of Dynamic Field
+     * The setter of dynamicFields.
+     * @ param dynamicFields Map of Dynamic Field
      */
     void setDynamicFields(Map<String, Object> dynamicFields);
 
     /**
-     *Create OEntity.
+     * Create OEntity.
      * @param eSet EdmEntitySet
      * @return OEntityWrapper
      */
     OEntityWrapper createOEntity(EdmEntitySet eSet);
 
     /**
-     *Create OEntity.
+     * Create OEntity.
      * @param eSet EdmEntitySet
      * @param metadata metadata
      * @param relatedEntitiesList relatedEntitiesList
@@ -237,11 +237,11 @@ public interface EntitySetDocHandler extends EsDocHandler {
             Map<String, List<OEntity>> relatedEntitiesList);
 
     /**
-     *Create OEntity.
+     * Create OEntity.
      * @param eSet EdmEntitySet
      * @param metadata metadata
      * @param relatedEntitiesList relatedEntitiesList
-     *@ param selectQuery $ select query
+     * @ param selectQuery $ select query
      * @return OEntityWrapper
      */
     OEntityWrapper createOEntity(EdmEntitySet eSet,
@@ -250,14 +250,14 @@ public interface EntitySetDocHandler extends EsDocHandler {
             List<EntitySimpleProperty> selectQuery);
 
     /**
-     *Generate ETag.
+     * Generate ETag.
      * @return ETag
      */
     String createEtag();
 
     /**
-     *Change the static property from Alias ​​name to property name.
-     *@ param metadata schema information
+     * Change the static property from Alias ​​name to property name.
+     * @ param metadata schema information
      */
     void convertAliasToName(EdmDataServices metadata);
 }

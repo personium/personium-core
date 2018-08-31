@@ -77,19 +77,19 @@ import io.personium.core.utils.EscapeControlCode;
 import net.spy.memcached.internal.CheckedOperationTimeoutException;
 
 /**
- *ODataProvider for user data OData service.
+ * ODataProvider for user data OData service.
  */
 public class UserDataODataProducer extends EsODataProducer {
 
     static Logger log = LoggerFactory.getLogger(UserDataODataProducer.class);
 
     /**
-     *The namespace name of user OData.
+     * The namespace name of user OData.
      */
     public static final String USER_ODATA_NAMESPACE = "UserData";
 
     /**
-     *Schema definition.
+     * Schema definition.
      */
     private EdmDataServices metadata = null;
 
@@ -141,9 +141,9 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     *Implementation subclass If you want Producer to be associated with a specific EntityType, implement it to override here and return EntityTypeId.
-     *@ param entityTypeName EntityType name
-     *Return @return EntityTypeId
+     * Implementation subclass If you want Producer to be associated with a specific EntityType, implement it to override here and return EntityTypeId.
+     * @ param entityTypeName EntityType name
+     * Return @return EntityTypeId
      */
     @Override
     public String getEntityTypeId(final String entityTypeName) {
@@ -151,8 +151,8 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     *Get DocHandler.
-     *Type of @ param type elasticsearch
+     * Get DocHandler.
+     * Type of @ param type elasticsearch
      * @param oEntity OEntityWrapper
      * @return EntitySetDocHandler
      */
@@ -191,7 +191,7 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     *Get user schema ..
+     * Get user schema ..
      * @return EdmDataServices edmDataServices
      */
     @Override
@@ -362,16 +362,16 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     *Get key information of Links.
-     *@ param entityTypeName EntityType name
-     *Return key information of @return links
+     * Get key information of Links.
+     * @ param entityTypeName EntityType name
+     * Return key information of @return links
      */
     public String getLinkskey(String entityTypeName) {
         return this.getEntityTypeId(entityTypeName);
     }
 
     /**
-     *Implementation subclass If you want Producer to be associated with a specific EntityType, implement it to override here and return LinkDocHandler.
+     * Implementation subclass If you want Producer to be associated with a specific EntityType, implement it to override here and return LinkDocHandler.
      * @param src srcEntitySetDocHandler
      * @param tgt tgtEntitySetDocHandler
      * @return LinkDocHandler
@@ -452,8 +452,8 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     *Entity of dynamic property is created.
-     *@ param docHandler Entity dock handler to register
+     * Entity of dynamic property is created.
+     * @ param docHandler Entity dock handler to register
      */
     public void createDynamicPropertyEntity(final EntitySetDocHandler docHandler) {
         EntitySetAccessor accessor = EsModel.cellCtl(cell, Property.EDM_TYPE_NAME);
@@ -506,9 +506,9 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     *Check the upper limit of the number of links when registering entities collectively via NavigationProperty.
-     *@ param npBulkContexts Context of bulk registration
-     *@ param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
+     * Check the upper limit of the number of links when registering entities collectively via NavigationProperty.
+     * @ param npBulkContexts Context of bulk registration
+     * @ param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
      */
     @Override
     public void checkLinksUpperLimitRecord(List<NavigationPropertyBulkContext> npBulkContexts,
@@ -580,9 +580,9 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     *Generate key of map of BatchLinkContext.
-     *@ param npBulkContext Context of bulk registration
-     *@return BatchLinkContext map key
+     * Generate key of map of BatchLinkContext.
+     * @ param npBulkContext Context of bulk registration
+     * @return BatchLinkContext map key
      */
     private String getBatchLinkContextsKey(NavigationPropertyBulkContext npBulkContext) {
         EntitySetDocHandler srcDocHandler = npBulkContext.getSourceDocHandler();
@@ -630,7 +630,7 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     *Mapping data of EntityType name and UUID.
+     * Mapping data of EntityType name and UUID.
      */
     private Map<String, String> entityTypeIds = new HashMap<String, String>();
 
@@ -669,19 +669,19 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     *Check unauthorized Link information.
-     *@ param sourceEntity source side Entity
-     *@ param targetEntity Target side Entity
+     * Check unauthorized Link information.
+     * @ param sourceEntity source side Entity
+     * @ param targetEntity Target side Entity
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceEntity, EntitySetDocHandler targetEntity) {
     }
 
     /**
-     *Check unauthorized Link information.
-     *@ param sourceDocHandler Source side Entity
-     *@ param entity Target side Entity
-     *@ param targetEntitySetName EntitySet name of the target
+     * Check unauthorized Link information.
+     * @ param sourceDocHandler Source side Entity
+     * @ param entity Target side Entity
+     * @ param targetEntitySetName EntitySet name of the target
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceDocHandler, OEntity entity, String targetEntitySetName) {

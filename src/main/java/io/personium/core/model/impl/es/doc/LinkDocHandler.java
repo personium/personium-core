@@ -34,8 +34,8 @@ import io.personium.core.model.impl.es.odata.EsQueryHandler;
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 
 /**
- *We deal with N: N links with ES. Links are stretched between two types. EsLinkHandler elh = new EsLinkHandler (type 1, type 2); Specify both keys to create a linked document.
- *Designate both keys and create a link document key. Specify the key of Type on one side to obtain the list of the other Type.
+ * We deal with N: N links with ES. Links are stretched between two types. EsLinkHandler elh = new EsLinkHandler (type 1, type 2); Specify both keys to create a linked document.
+ * Designate both keys and create a link document key. Specify the key of Type on one side to obtain the list of the other Type.
  */
 public class LinkDocHandler implements EsDocHandler {
     private String id;
@@ -52,7 +52,7 @@ public class LinkDocHandler implements EsDocHandler {
     private static final int DEFAULT_TOP_VALUE = PersoniumUnitConfig.getTopQueryDefaultSize();
 
     /**
-     *constructor.
+     * constructor.
      */
     public LinkDocHandler() {
         this.id = null;
@@ -68,7 +68,7 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     *constructor.
+     * constructor.
      * @param srcHandler OEntityDocHandler
      * @param tgtHandler OEntityDocHandler
      */
@@ -97,8 +97,8 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     *Constructor that generates LinkDocHandler from search result.
-     *@ param searchHit Search result data
+     * Constructor that generates LinkDocHandler from search result.
+     * @ param searchHit Search result data
      */
     public LinkDocHandler(final PersoniumSearchHit searchHit) {
         this.id = searchHit.getId();
@@ -269,12 +269,12 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     *Get the document count of N: N links.
-     *@ param accessor link accessor
+     * Get the document count of N: N links.
+     * @ param accessor link accessor
      * @param srcHandler OEntityDocHandler
      * @param targetSetName targetSetName
      * @param targetEntityTypeId targetEntityTypeId
-     *@return Document count
+     * @return Document count
      */
     public static long getNtoNCount(
             final ODataLinkAccessor accessor,
@@ -289,8 +289,8 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     *Get a list of N: N links.
-     *@ param accessor link accessor
+     * Get a list of N: N links.
+     * @ param accessor link accessor
      * @param srcHandler OEntityDocHandler
      * @param targetSetName targetSetName
      * @param targetEntityTypeId targetEntityTypeId
@@ -367,47 +367,47 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     *JSON key that stores update date and time in OData Link storage on ES.
+     * JSON key that stores update date and time in OData Link storage on ES.
      */
     public static final String KEY_UPDATED = "u";
     /**
-     *JSON key that stores created date in OData Link storage on ES.
+     * JSON key that stores created date in OData Link storage on ES.
      */
     public static final String KEY_PUBLISHED = "p";
     /**
-     *JSON key that stores the internal ID of Cell in OData Link storage on ES.
+     * JSON key that stores the internal ID of Cell in OData Link storage on ES.
      */
     public static final String KEY_CELL_ID = "c";
     /**
-     *JSON key that stores internal ID of Box in OData Link storage on ES.
+     * JSON key that stores internal ID of Box in OData Link storage on ES.
      */
     public static final String KEY_BOX_ID = "b";
     /**
-     *JSON key that stores the nodeid of the collection in OData Link storage on ES.
+     * JSON key that stores the nodeid of the collection in OData Link storage on ES.
      */
     public static final String KEY_NODE_ID = "n";
 
     /**
-     *JSON key that stores the type name of the smaller side in string comparison in OData Link storage on ES.
+     * JSON key that stores the type name of the smaller side in string comparison in OData Link storage on ES.
      */
     public static final String KEY_ENT1_TYPE = "t1";
     /**
-     *JSON key that stores the entity ID of the smaller type in string comparison in OData Link storage on ES.
+     * JSON key that stores the entity ID of the smaller type in string comparison in OData Link storage on ES.
      */
     public static final String KEY_ENT1_ID = "k1";
     /**
-     *JSON key that stores the type name of the larger side in string comparison in OData Link storage on ES.
+     * JSON key that stores the type name of the larger side in string comparison in OData Link storage on ES.
      */
     public static final String KEY_ENT2_TYPE = "t2";
     /**
-     *JSON key that stores the entity ID of the type of the larger side in string comparison in OData Link storage on ES.
+     * JSON key that stores the entity ID of the type of the larger side in string comparison in OData Link storage on ES.
      */
     public static final String KEY_ENT2_ID = "k2";
 
     /**
-     *Return the ID of the data associated with the specified entity type.
-     *@ param baseEntityType entity type
-     *@return ID Return null if it does not exist
+     * Return the ID of the data associated with the specified entity type.
+     * @ param baseEntityType entity type
+     * @return ID Return null if it does not exist
      */
     public String getLinkedEntitytIdFromBaseEntityType(String baseEntityType) {
         if (this.ent1Type.equals(baseEntityType)) {
@@ -420,9 +420,9 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     *Return ID of the specified entity type.
-     *@ param entityType entity type
-     *@return ID Return null if it does not exist
+     * Return ID of the specified entity type.
+     * @ param entityType entity type
+     * @return ID Return null if it does not exist
      */
     public String getEntitytIdFromEntityType(String entityType) {
         if (this.ent1Type.equals(entityType)) {
@@ -435,7 +435,7 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     *A class that generates query information for obtaining a list of N: N links.
+     * A class that generates query information for obtaining a list of N: N links.
      */
     public static class NtoNQueryParameter {
         private String t1;
@@ -444,10 +444,10 @@ public class LinkDocHandler implements EsDocHandler {
         private String k2;
 
         /**
-         *constructor.
+         * constructor.
          * @param srcHandler OEntityDocHandler
-         *@ param targetSetName EntitySet name on the target side
-         *@ param targetEntityTypeId EntityTypeID of target side
+         * @ param targetSetName EntitySet name on the target side
+         * @ param targetEntityTypeId EntityTypeID of target side
          */
         public NtoNQueryParameter(
                 final EntitySetDocHandler srcHandler,
@@ -471,9 +471,9 @@ public class LinkDocHandler implements EsDocHandler {
         }
 
         /**
-         *Generate query information for obtaining a list of N: N links (no sorting).
-         *@ param size Number of items to be acquired
-         *@ param from fetch count
+         * Generate query information for obtaining a list of N: N links (no sorting).
+         * @ param size Number of items to be acquired
+         * @ param from fetch count
          * @return ESQuery
          */
         public Map<String, Object> getSource(Integer size, Integer from) {
@@ -505,8 +505,8 @@ public class LinkDocHandler implements EsDocHandler {
         }
 
         /**
-         *Expand Generates query information for acquiring a list of N: N links at the time of acquiring target data.
-         *@ param size Number of items to be acquired
+         * Expand Generates query information for acquiring a list of N: N links at the time of acquiring target data.
+         * @ param size Number of items to be acquired
          * @return ESQuery
          */
         public Map<String, Object> getSourceForExpand(Integer size) {
@@ -530,7 +530,7 @@ public class LinkDocHandler implements EsDocHandler {
         }
 
         /**
-         *Get the key name (k1, k2) of the target side.
+         * Get the key name (k1, k2) of the target side.
          */
         String getTargetKey() {
             if (this.k1.length() == 0) {

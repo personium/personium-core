@@ -19,7 +19,7 @@ package io.personium.core.model.lock;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
- *Class that generates Lock key.
+ * Class that generates Lock key.
  */
 public class LockKeyComposer {
 
@@ -29,10 +29,10 @@ public class LockKeyComposer {
     }
 
     /**
-     *Generate a key for locking.
-     *@ param category category name of lock
-     *@ param key Information that contains the UUID to set as the lock key
-     *@return lock key
+     * Generate a key for locking.
+     * @ param category category name of lock
+     * @ param key Information that contains the UUID to set as the lock key
+     * @return lock key
      */
     public static String fullKeyFromCategoryAndKey(String category, String key) {
         StringBuilder sb = new StringBuilder(category);
@@ -42,12 +42,12 @@ public class LockKeyComposer {
     }
 
     /**
-     *Generate a key for locking.
-     *@ param category category name of lock
-     *@ param cellId Cell ID
-     *@ param boxId Box ID
-     *@ param nodeId ID of Node
-     *@return lock key
+     * Generate a key for locking.
+     * @ param category category name of lock
+     * @ param cellId Cell ID
+     * @ param boxId Box ID
+     * @ param nodeId ID of Node
+     * @return lock key
      */
     public static String fullKeyFromCategoryAndKey(String category, String cellId, String boxId, String nodeId) {
         return fullKeyFromCategoryAndKey(category, createLockScopeKey(cellId, boxId, nodeId));

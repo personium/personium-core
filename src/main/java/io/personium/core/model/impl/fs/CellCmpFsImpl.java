@@ -82,8 +82,8 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
     }
 
     /**
-     *Lock Cell.
-     *@return Lock of own node
+     * Lock Cell.
+     * @return Lock of own node
      */
     @Override
     public Lock lock() {

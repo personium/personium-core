@@ -68,7 +68,7 @@ import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.AbstractODataResource;
 
 /**
- *DocHandler of OEntity.
+ * DocHandler of OEntity.
  */
 public class OEntityDocHandler implements EntitySetDocHandler {
     //ES type
@@ -93,34 +93,34 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     int expandMaxNum;
 
     /**
-     *constructor.
+     * constructor.
      */
     public OEntityDocHandler() {
     }
 
     /**
-     *@return Map of Dynamic Field
+     * @return Map of Dynamic Field
      */
     public Map<String, Object> getDynamicFields() {
         return dynamicFields;
     }
 
     /**
-     *@ param dynamicFields Map of Dynamic Field
+     * @ param dynamicFields Map of Dynamic Field
      */
     public void setDynamicFields(Map<String, Object> dynamicFields) {
         this.dynamicFields = dynamicFields;
     }
 
     /**
-     *@return Hidden Field Map
+     * @return Hidden Field Map
      */
     public Map<String, Object> getHiddenFields() {
         return hiddenFields;
     }
 
     /**
-     *@ param hidden Fields Hidden Field Map
+     * @ param hidden Fields Hidden Field Map
      */
     public void setHiddenFields(Map<String, Object> hiddenFields) {
         this.hiddenFields = hiddenFields;
@@ -161,8 +161,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Parse Source in Map format and map to itself.
-     *@ param source mapping format information for mapping
+     * Parse Source in Map format and map to itself.
+     * @ param source mapping format information for mapping
      */
     @SuppressWarnings("unchecked")
     protected void parseSource(Map<String, Object> source) {
@@ -181,9 +181,9 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Parsing Link field.
-     *@ param source parse source information in the form of Map
-     *@return Link information
+     * Parsing Link field.
+     * @ param source parse source information in the form of Map
+     * @return Link information
      */
     @SuppressWarnings("unchecked")
     protected Map<String, Object> parseLinks(Map<String, Object> source) {
@@ -231,20 +231,20 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Constructor that creates DocHandler without ID from OEntityWrapper.
-     *@param type ES type name
+     * Constructor that creates DocHandler without ID from OEntityWrapper.
+     * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     *@ param metadata schema information
+     * @ param metadata schema information
      */
     public OEntityDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         initInstance(type, oEntityWrapper, metadata);
     }
 
     /**
-     *Create a DocHandler without ID from OEntityWrapper.
-     *@ param typeName ES type name
+     * Create a DocHandler without ID from OEntityWrapper.
+     * @ param typeName ES type name
      * @param oEntityWrapper OEntityWrapper
-     *@ param metadata schema information
+     * @ param metadata schema information
      */
     @SuppressWarnings("unchecked")
     protected void initInstance(String typeName, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
@@ -350,10 +350,10 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Returns a property value object converted to an appropriate type according to the property definition of the schema.
-     *@ param prop property object
-     *Property definition for @ param edmType schema
-     *@return Property value object converted to appropriate type
+     * Returns a property value object converted to an appropriate type according to the property definition of the schema.
+     * @ param prop property object
+     * Property definition for @ param edmType schema
+     * @return Property value object converted to appropriate type
      */
     @SuppressWarnings("unchecked")
     protected Object getSimpleValue(OProperty<?> prop, EdmType edmType) {
@@ -368,8 +368,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Set UnitUser name when accessing Cell.
-     *@ param hiddenFieldsMap map object of hiddenFields
+     * Set UnitUser name when accessing Cell.
+     * @ param hiddenFieldsMap map object of hiddenFields
      */
     public void resolveUnitUserName(final Map<String, Object> hiddenFieldsMap) {
         if (hiddenFieldsMap == null) {
@@ -386,17 +386,17 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Set UnitUser name when accessing Cell.
+     * Set UnitUser name when accessing Cell.
      */
     private void resolveUnitUserName() {
         this.resolveUnitUserName(this.hiddenFields);
     }
 
     /**
-     *Get an array of SimpleType.
+     * Get an array of SimpleType.
      * @param edmType EdmSimpleType
      * @param value OCollection
-     *@return An array of SimpleType
+     * @return An array of SimpleType
      */
     protected List<Object> getSimpleList(final EdmType edmType, final OCollection<OObject> value) {
         if (value == null) {
@@ -416,10 +416,10 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Convert one of the data in the array.
+     * Convert one of the data in the array.
      * @param edmType EdmSimpleType
-     *@ param propValue Value to be converted
-     *@return Value after conversion
+     * @ param propValue Value to be converted
+     * @return Value after conversion
      */
     @SuppressWarnings("unchecked")
     protected Object convertSimpleListValue(final EdmType edmType, Object propValue) {
@@ -436,11 +436,11 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Get an array of ComplexType.
+     * Get an array of ComplexType.
      * @param value OCollection
-     *@ param metadata schema information
-     *@ param complexTypeName Complex type name
-     *@return An array of SimpleType
+     * @ param metadata schema information
+     * @ param complexTypeName Complex type name
+     * @return An array of SimpleType
      */
     protected List<Object> getComplexList(OCollection<OComplexObject> value,
             EdmDataServices metadata,
@@ -457,7 +457,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Read and acquire properties of ComplexType.
+     * Read and acquire properties of ComplexType.
      * @param property
      * @return
      */
@@ -467,8 +467,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Read and acquire properties of ComplexType.
-     *@ param property Property List
+     * Read and acquire properties of ComplexType.
+     * @ param property Property List
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -519,20 +519,20 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Creates and returns an OEntity from the Es JSON object.
+     * Creates and returns an OEntity from the Es JSON object.
      * @param entitySet entitySet
-     *@ return Converted OEntity object
+     * @ return Converted OEntity object
      */
     public OEntityWrapper createOEntity(final EdmEntitySet entitySet) {
         return createOEntity(entitySet, null, null);
     }
 
     /**
-     *Creates and returns an OEntity from the Es JSON object.
+     * Creates and returns an OEntity from the Es JSON object.
      * @param entitySet entitySet
      * @param metadata metadata
      * @param relatedEntitiesList relatedEntitiesList
-     *@ return Converted OEntity object
+     * @ return Converted OEntity object
      */
     public OEntityWrapper createOEntity(final EdmEntitySet entitySet,
             EdmDataServices metadata,
@@ -541,10 +541,10 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Return alias corresponding to property name or property name depending on the type of document handler.
-     *@ param entitySetName Entity set name
-     *@ param propertyName property name
-     *@return Alias ​​corresponding to property name or property name
+     * Return alias corresponding to property name or property name depending on the type of document handler.
+     * @ param entitySetName Entity set name
+     * @ param propertyName property name
+     * @return Alias ​​corresponding to property name or property name
      */
     protected String getPropertyNameOrAlias(String entitySetName, String propertyName) {
         return propertyName;
@@ -555,12 +555,12 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Creates and returns an OEntity from the Es JSON object.
+     * Creates and returns an OEntity from the Es JSON object.
      * @param entitySet entitySet
      * @param metadata metadata
      * @param relatedEntitiesList relatedEntitiesList
-     *@ param selectQuery $ select query
-     *@ return Converted OEntity object
+     * @ param selectQuery $ select query
+     * @ return Converted OEntity object
      */
     public OEntityWrapper createOEntity(final EdmEntitySet entitySet,
             EdmDataServices metadata,
@@ -698,11 +698,11 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Add a simple type array element to the property.
-     *@ param properties Property summary
-     *@ param edmProp schema for additional properties
-     *@ param propValue Value of additional procedure
-     *Type information of type @ param edmType type
+     * Add a simple type array element to the property.
+     * @ param properties Property summary
+     * @ param edmProp schema for additional properties
+     * @ param propValue Value of additional procedure
+     * Type information of type @ param edmType type
      */
     @SuppressWarnings("unchecked")
     protected void addSimpleListProperty(List<OProperty<?>> properties,
@@ -726,12 +726,12 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Add Complex type array elements to the property.
-     *@ param metadata schema information
-     *@ param properties Property summary
-     *@ param edmProp schema for additional properties
-     *@ param propValue Value of additional procedure
-     *Type information of type @ param edmType type
+     * Add Complex type array elements to the property.
+     * @ param metadata schema information
+     * @ param properties Property summary
+     * @ param edmProp schema for additional properties
+     * @ param propValue Value of additional procedure
+     * Type information of type @ param edmType type
      */
     @SuppressWarnings("unchecked")
     protected void addComplexListProperty(EdmDataServices metadata,
@@ -760,11 +760,11 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Add properties of type SimpleType to property array.
-     *@ param properties Property array
-     *@ param prop Property to add
-     *@ param valO property's value
-     *@ param edmType type
+     * Add properties of type SimpleType to property array.
+     * @ param properties Property array
+     * @ param prop Property to add
+     * @ param valO property's value
+     * @ param edmType type
      */
     protected void addSimpleTypeProperty(List<OProperty<?>> properties, EdmProperty prop, Object valO,
             EdmType edmType) {
@@ -812,11 +812,11 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Convert ComplexType type property to OProperty array.
-     *@ param metadata schema definition
-     *@ param prop property of type ComplexType
-     *@ param value Value of type ComplexType
-     *@return Array of OProperty
+     * Convert ComplexType type property to OProperty array.
+     * @ param metadata schema definition
+     * @ param prop property of type ComplexType
+     * @ param value Value of type ComplexType
+     * @return Array of OProperty
      */
     private OProperty<List<OProperty<?>>> createComplexTypeProperty(
             EdmDataServices metadata,
@@ -832,11 +832,11 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Convert ComplexType type property to OProperty array.
-     *@ param metadata schema definition
-     *@ param prop property of type ComplexType
-     *@ param value Value of type ComplexType
-     *@return Array of OProperty
+     * Convert ComplexType type property to OProperty array.
+     * @ param metadata schema definition
+     * @ param prop property of type ComplexType
+     * @ param value Value of type ComplexType
+     * @return Array of OProperty
      */
     @SuppressWarnings("unchecked")
     protected List<OProperty<?>> getComplexTypePropList(EdmDataServices metadata,
@@ -879,11 +879,11 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Get Alias ​​name from property name.
-     *To manipulate user data, override this method and convert it to Alias.
-     *@ param propertyName property name
-     *@ param typeName ComplexType name to which this property belongs
-     *@return Alias ​​name
+     * Get Alias ​​name from property name.
+     * To manipulate user data, override this method and convert it to Alias.
+     * @ param propertyName property name
+     * @ param typeName ComplexType name to which this property belongs
+     * @return Alias ​​name
      */
     protected String resolveComplexTypeAlias(String propertyName, String typeName) {
         return propertyName;
@@ -899,8 +899,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     static Logger log = LoggerFactory.getLogger(OEntityDocHandler.class);
 
     /**
-     *Acquire registration data.
-     *@return Registration data
+     * Acquire registration data.
+     * @return Registration data
      */
     @Override
     public Map<String, Object> getSource() {
@@ -908,8 +908,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Acquire registration data.
-     *@return Registration data
+     * Acquire registration data.
+     * @return Registration data
      */
     protected Map<String, Object> getCommonSource() {
         Map<String, Object> ret = new HashMap<String, Object>();
@@ -926,7 +926,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Set it when you want to associate data with a specific Cell.
+     * Set it when you want to associate data with a specific Cell.
      * @param cellId CellId
      */
     public void setCellId(String cellId) {
@@ -934,7 +934,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Set it when you want to associate data with a specific Box.
+     * Set it when you want to associate data with a specific Box.
      * @param boxId Box Id
      */
     public void setBoxId(String boxId) {
@@ -942,7 +942,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Set it when you want to associate data with a specific node.
+     * Set it when you want to associate data with a specific node.
      * @param nodeId Node Id
      */
     public void setNodeId(String nodeId) {
@@ -950,8 +950,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Setter of entityTypeId.
-     *@ param entityTypeId ID of entityType
+     * Setter of entityTypeId.
+     * @ param entityTypeId ID of entityType
      */
     public void setEntityTypeId(String entityTypeId) {
         this.entityTypeId = entityTypeId;
@@ -965,7 +965,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Setter of manyToOnelinkId.
+     * Setter of manyToOnelinkId.
      * @param link manyToOnelinkId
      */
     public final void setManyToOnelinkId(Map<String, Object> link) {
@@ -973,7 +973,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *A setter of staticFields.
+     * A setter of staticFields.
      * @param staticFields staticFields
      */
     public final void setStaticFields(Map<String, Object> staticFields) {
@@ -1005,32 +1005,32 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Returns the update date in Long format.
-     *@return Long format of update date
+     * Returns the update date in Long format.
+     * @return Long format of update date
      */
     public Long getUpdated() {
         return this.updated;
     }
 
     /**
-     *Returns the created date in Long format.
-     *@return Created date in Long format
+     * Returns the created date in Long format.
+     * @return Created date in Long format
      */
     public Long getPublished() {
         return this.published;
     }
 
     /**
-     *Get upper limit value when $ expand is specified.
-     *@return Upper limit when $ expand is specified
+     * Get upper limit value when $ expand is specified.
+     * @return Upper limit when $ expand is specified
      */
     public int getExpandMaxNum() {
         return expandMaxNum;
     }
 
     /**
-     *Set the upper limit value when $ expand is specified.
-     *@param expandMaxNum upper limit when specifying $ expand
+     * Set the upper limit value when $ expand is specified.
+     * @param expandMaxNum upper limit when specifying $ expand
      */
     public void setExpandMaxNum(int expandMaxNum) {
         this.expandMaxNum = expandMaxNum;
@@ -1058,7 +1058,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Getter of entityTypeId.
+     * Getter of entityTypeId.
      * @return EntityType Id
      */
     public final String getEntityTypeId() {
@@ -1066,7 +1066,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Getter of manyToOnelinkId.
+     * Getter of manyToOnelinkId.
      * @return manyToOnelinkId
      */
     public final Map<String, Object> getManyToOnelinkId() {
@@ -1074,7 +1074,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Getter of staticFields.
+     * Getter of staticFields.
      * @return staticFields
      */
     public final Map<String, Object> getStaticFields() {
@@ -1082,67 +1082,67 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Getter of UnitUserName.
-     *@return UnitUser name
+     * Getter of UnitUserName.
+     * @return UnitUser name
      */
     public final String getUnitUserName() {
         return this.unitUserName;
     }
 
     /**
-     *JSON key that stores Declared Property in OData entity storage on ES.
+     * JSON key that stores Declared Property in OData entity storage on ES.
      */
     public static final String KEY_STATIC_FIELDS = "s";
     /**
-     *JSON key to store Dynamic Property in OData entity storage on ES.
+     * JSON key to store Dynamic Property in OData entity storage on ES.
      */
     public static final String KEY_DYNAMIC_FIELDS = "d";
     /**
-     *JSON key to store hidden items in OData entity storage on ES.
+     * JSON key to store hidden items in OData entity storage on ES.
      */
     public static final String KEY_HIDDEN_FIELDS = "h";
     /**
-     *JSON key that stores update date and time in OData entity storage on ES.
+     * JSON key that stores update date and time in OData entity storage on ES.
      */
     public static final String KEY_UPDATED = "u";
     /**
-     *JSON key that stores creation date and time in OData entity storage on ES.
+     * JSON key that stores creation date and time in OData entity storage on ES.
      */
     public static final String KEY_PUBLISHED = "p";
     /**
-     *JSON key that stores the Cell's internal ID in OData entity storage on ES.
+     * JSON key that stores the Cell's internal ID in OData entity storage on ES.
      */
     public static final String KEY_CELL_ID = "c";
     /**
-     *JSON key to store Box's internal ID in OData entity storage on ES.
+     * JSON key to store Box's internal ID in OData entity storage on ES.
      */
     public static final String KEY_BOX_ID = "b";
     /**
-     *A JSON key that stores the nodeid of the collection in OData entity storage on the ES.
+     * A JSON key that stores the nodeid of the collection in OData entity storage on the ES.
      */
     public static final String KEY_NODE_ID = "n";
     /**
-     *JSON key that stores internal ID of EntityType in OData entity storage on ES.
+     * JSON key that stores internal ID of EntityType in OData entity storage on ES.
      */
     public static final String KEY_ENTITY_ID = "t";
     /**
-     *In OData entity storage on ES, JSON key that stores the destination document internal ID of n: 1: 1: 1 Link.
+     * In OData entity storage on ES, JSON key that stores the destination document internal ID of n: 1: 1: 1 Link.
      */
     public static final String KEY_LINK = "l";
     /**
-     *Keys JSON holding Owner in OData entity storage on ES.
+     * Keys JSON holding Owner in OData entity storage on ES.
      */
     public static final String KEY_OWNER = "h.Owner.untouched";
 
     /**
-     *@return ACL setting information
+     * @return ACL setting information
      */
     public Map<String, JSONObject> getAclFields() {
         return new HashMap<String, JSONObject>();
     }
 
     /**
-     *Returns a string representation of StaticFields.
+     * Returns a string representation of StaticFields.
      * @return StaticFields
      */
     public String getStaticFieldsString() {
@@ -1150,7 +1150,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Returns a string representation of DynamicFields.
+     * Returns a string representation of DynamicFields.
      * @return DynamicFields
      */
     public String getDynamicFieldsString() {
@@ -1158,7 +1158,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Returns a string representation of HiddenFields.
+     * Returns a string representation of HiddenFields.
      * @return HiddenFields
      */
     public String getHiddenFieldsString() {
@@ -1166,7 +1166,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     *Returns a string representation of ManyToOnelinkId.
+     * Returns a string representation of ManyToOnelinkId.
      * @return ManyToOnelinkId
      */
     public String getManyToOnelinkIdString() {

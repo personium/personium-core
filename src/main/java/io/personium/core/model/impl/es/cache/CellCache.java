@@ -27,7 +27,7 @@ import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- *Class dealing with Cell's cache.
+ * Class dealing with Cell's cache.
  */
 public class CellCache {
     static Logger log = LoggerFactory.getLogger(CellCache.class);
@@ -42,9 +42,9 @@ public class CellCache {
     }
 
     /**
-     *Get the Cell information from the cache and return the Map storing the Cell information.
-     *@ param cellName Cell name
-     *@return Map object that stores Cell information. It is null if it does not exist in the cache
+     * Get the Cell information from the cache and return the Map storing the Cell information.
+     * @ param cellName Cell name
+     * @return Map object that stores Cell information. It is null if it does not exist in the cache
      */
     public static Map<String, Object> get(String cellName) {
         if (!PersoniumUnitConfig.isCellCacheEnabled()) {
@@ -62,9 +62,9 @@ public class CellCache {
     }
 
     /**
-     *Cache the Cell.
-     *@ param cellName Cell name
-     *@ param cell Map object that stores cell information
+     * Cache the Cell.
+     * @ param cellName Cell name
+     * @ param cell Map object that stores cell information
      */
     public static void cache(String cellName, Map<String, Object> cell) {
         if (!PersoniumUnitConfig.isCellCacheEnabled()) {
@@ -74,8 +74,8 @@ public class CellCache {
     }
 
     /**
-     *Delete the cache information of the specified Cell name.
-     *@ param cellName Cell name
+     * Delete the cache information of the specified Cell name.
+     * @ param cellName Cell name
      */
     public static void clear(String cellName) {
         if (!PersoniumUnitConfig.isCellCacheEnabled()) {

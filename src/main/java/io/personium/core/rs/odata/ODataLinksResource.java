@@ -70,7 +70,7 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- *JAX-RS Resource handling $ links of OData.
+ * JAX-RS Resource handling $ links of OData.
  */
 public final class ODataLinksResource {
     private final OEntityId sourceEntity;
@@ -81,16 +81,16 @@ public final class ODataLinksResource {
     private final AccessContext accessContext;
 
     /**
-     *log.
+     * log.
      */
     static Logger log = LoggerFactory.getLogger(ODataLinksResource.class);
 
     /**
-     *constructor.
-     *@ param odataResource Parent ODataResource
-     *@ param sourceEntity source Entity
-     *@ param targetNavProp destination Navigation Property
-     *@ param targetEntityKey Link EntityKey
+     * constructor.
+     * @ param odataResource Parent ODataResource
+     * @ param sourceEntity source Entity
+     * @ param targetNavProp destination Navigation Property
+     * @ param targetEntityKey Link EntityKey
      */
     public ODataLinksResource(
             final ODataResource odataResource,
@@ -106,13 +106,13 @@ public final class ODataLinksResource {
     }
 
     /**
-     *Create a link by receiving the POST method.
-     *The response at the time of success is 204. Since there is no description specifically, the Location header is not returned.
+     * Create a link by receiving the POST method.
+     * The response at the time of success is 204. Since there is no description specifically, the Location header is not returned.
      * InsertLink Request
      * If an InsertLink Request is successful, the response MUST have a 204 status code,
      * as specified in [RFC2616], and contain an empty response body.
      * @param uriInfo UriInfo
-     *@ param reqBody request body
+     * @ param reqBody request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -173,9 +173,9 @@ public final class ODataLinksResource {
     }
 
     /**
-     *Receive PUT method and update link.
+     * Receive PUT method and update link.
      * @param uriInfo UriInfo
-     *@ param reqBody request body
+     * @ param reqBody request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -195,12 +195,12 @@ public final class ODataLinksResource {
     }
 
     /**
-     *It checks whether the value specified in the request body is in the correct format, and returns the OEntityId of the $ link destination.
-     *@ param uriInfo request URL
-     *@ param reqBody request body
-     *@ param srcEntitySetName $ links Source EntitySet name
-     *@ param metadata metadata
-     *@return $ links destination OEntityId
+     * It checks whether the value specified in the request body is in the correct format, and returns the OEntityId of the $ link destination.
+     * @ param uriInfo request URL
+     * @ param reqBody request body
+     * @ param srcEntitySetName $ links Source EntitySet name
+     * @ param metadata metadata
+     * @return $ links destination OEntityId
      */
     static OEntityId parseRequestUri(final UriInfo uriInfo,
             final Reader reqBody,
@@ -255,10 +255,10 @@ public final class ODataLinksResource {
     }
 
     /**
-     *It checks whether the value specified in the request body is in the correct format, and returns the OEntityId of the $ link destination.
-     *@ param uriInfo request URL
-     *@ param reqBody request body
-     *@return $ links destination OEntityId
+     * It checks whether the value specified in the request body is in the correct format, and returns the OEntityId of the $ link destination.
+     * @ param uriInfo request URL
+     * @ param reqBody request body
+     * @return $ links destination OEntityId
      */
     private OEntityId parseRequestUri(final UriInfo uriInfo, final Reader reqBody) {
         return parseRequestUri(uriInfo, reqBody, this.sourceEntity.getEntitySetName(),
@@ -271,7 +271,7 @@ public final class ODataLinksResource {
     }
 
     /**
-     *Delete link by receiving DELETE method.
+     * Delete link by receiving DELETE method.
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -317,7 +317,7 @@ public final class ODataLinksResource {
     static final int NUM_LEVELS_FROM_SVC_ROOT = 3;
 
     /**
-     *Receive the GET method and return the link list.
+     * Receive the GET method and return the link list.
      * @param uriInfo UriInfo
      * @param format $format
      * @param callback ??
@@ -399,7 +399,7 @@ public final class ODataLinksResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS

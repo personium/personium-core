@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- *Jersey filter group used in this application.
+ * Jersey filter group used in this application.
  */
 package io.personium.core.jersey.filter;
 

@@ -66,7 +66,7 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- *A JAX-RS resource that handles the Entity resource (id specified URL) of OData.
+ * A JAX-RS resource that handles the Entity resource (id specified URL) of OData.
  */
 public class ODataEntityResource extends AbstractODataResource {
 
@@ -100,15 +100,15 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *The OEntityId object of the OData resource this resource is responsible for.
-     *@return OEntityId object
+     * The OEntityId object of the OData resource this resource is responsible for.
+     * @return OEntityId object
      */
     public OEntityId getOEntityId() {
         return OEntityIds.create(getEntitySetName(), this.oEntityKey);
     }
 
     /**
-     *constructor.
+     * constructor.
      */
     public ODataEntityResource() {
         this.odataResource = null;
@@ -118,10 +118,10 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *constructor.
-     *@ param odataResource ODataResource which is the parent resource
+     * constructor.
+     * @ param odataResource ODataResource which is the parent resource
      * @param entitySetName EntitySet Name
-     *@ param key key string
+     * @ param key key string
      */
     public ODataEntityResource(final ODataResource odataResource, final String entitySetName, final String key) {
         this.odataResource = odataResource;
@@ -170,13 +170,13 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *Processing of GET method.
+     * Processing of GET method.
      * @param uriInfo UriInfo
-     *@ param accept Accept header
-     *@ param ifNoneMatch If-None-Match header
-     *@ param format $ format parameter
-     *@ param expand $ expand parameter
-     *@ param select $ select parameter
+     * @ param accept Accept header
+     * @ param ifNoneMatch If-None-Match header
+     * @ param format $ format parameter
+     * @ param expand $ expand parameter
+     * @ param select $ select parameter
      * @return JAX-RSResponse
      */
     @GET
@@ -248,7 +248,7 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *Ask Producer to acquire Entity.
+     * Ask Producer to acquire Entity.
      * @param expand expand
      * @param select select
      * @param resUriInfo UriInfo
@@ -299,10 +299,10 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *Processing of PUT method.
-     *@ param reader request body
-     *@ param accept Accept header
-     *@ param ifMatch If-Match header
+     * Processing of PUT method.
+     * @ param reader request body
+     * @ param accept Accept header
+     * @ param ifMatch If-Match header
      * @return JAX-RSResponse
      */
     @WriteAPI
@@ -343,8 +343,8 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *Ask Producer to update the request.
-     *@ param reader request body
+     * Ask Producer to update the request.
+     * @ param reader request body
      * @param ifMatch ifMatch
      * @return OEntityWrapper
      */
@@ -367,10 +367,10 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *Processing of MERGE method.
-     *@ param reader request body
-     *@ param accept Accept header
-     *@ param ifMatch If-Match header
+     * Processing of MERGE method.
+     * @ param reader request body
+     * @ param accept Accept header
+     * @ param ifMatch If-Match header
      * @return JAX-RSResponse
      */
     @WriteAPI
@@ -384,9 +384,9 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *Processing of DELETE method.
-     *@ param accept Accept header
-     *@ param ifMatch If-Match header
+     * Processing of DELETE method.
+     * @ param accept Accept header
+     * @ param ifMatch If-Match header
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -413,7 +413,7 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *Ask Producer to delete Entity.
+     * Ask Producer to delete Entity.
      * @param ifMatch
      */
     void deleteEntity(final String ifMatch) {
@@ -430,10 +430,10 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *Processing the path $ links / {navProp}.
-     *Delegate processing to ODataLinksResource.
+     * Processing the path $ links / {navProp}.
+     * Delegate processing to ODataLinksResource.
      * @param targetNavProp Navigation Property
-     *@return ODataLinksResource object
+     * @return ODataLinksResource object
      */
     @Path("{first: \\$}links/{targetNavProp:.+?}")
     public ODataLinksResource links(@PathParam("targetNavProp") final String targetNavProp) {
@@ -442,11 +442,11 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *Processing the path $ links / {navProp} ({targetKey}).
-     *Delegate processing to ODataLinksResource.
-     *@ param targetNavProp target NavigationPropert
-     *@ param targetId ID of the target
-     *@return ODataLinksResource object
+     * Processing the path $ links / {navProp} ({targetKey}).
+     * Delegate processing to ODataLinksResource.
+     * @ param targetNavProp target NavigationPropert
+     * @ param targetId ID of the target
+     * @return ODataLinksResource object
      */
     @Path("{first: \\$}links/{targetNavProp:.+?}({targetId})")
     public ODataLinksResource link(@PathParam("targetNavProp") final String targetNavProp,
@@ -467,7 +467,7 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *Skip the processing on the path {navProp:. +} to ODataPropertyResource.
+     * Skip the processing on the path {navProp:. +} to ODataPropertyResource.
      * @param navProp Navigation Property
      * @return ODataPropertyResource Object
      */
@@ -477,9 +477,9 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *It is 404 because NavigationProperty can not specify ID.
+     * It is 404 because NavigationProperty can not specify ID.
      * @param navProp Navigation Property
-     *@ param targetId ID of the target
+     * @ param targetId ID of the target
      * @return ODataPropertyResource Object
      */
     @Path("{navProp: _.+}({targetId})")
@@ -489,7 +489,7 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *OPTIONS method.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
@@ -515,7 +515,7 @@ public class ODataEntityResource extends AbstractODataResource {
     }
 
     /**
-     *Method execution feasibility check.
+     * Method execution feasibility check.
      */
     protected void checkNotAllowedMethod() {
         if (ReceivedMessage.EDM_TYPE_NAME.equals(getEntitySetName())
