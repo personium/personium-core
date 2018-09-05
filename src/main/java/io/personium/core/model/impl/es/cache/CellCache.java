@@ -27,7 +27,7 @@ import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- * Cellのキャッシュを扱うクラス.
+ * Class dealing with Cell's cache.
  */
 public class CellCache {
     static Logger log = LoggerFactory.getLogger(CellCache.class);
@@ -42,9 +42,9 @@ public class CellCache {
     }
 
     /**
-     * Cell情報をキャッシュから取得し、Cell情報を格納したMapを返す.
-     * @param cellName Cell名
-     * @return Cell情報を格納したMapオブジェクト。キャッシュに存在しない場合はnull
+     * Get the Cell information from the cache and return the Map storing the Cell information.
+     * @ param cellName Cell name
+     * @return Map object that stores Cell information. It is null if it does not exist in the cache
      */
     public static Map<String, Object> get(String cellName) {
         if (!PersoniumUnitConfig.isCellCacheEnabled()) {
@@ -55,16 +55,16 @@ public class CellCache {
             Map<String, Object> cache = getMcdClient().get(cacheKey(cellName), Map.class);
             return cache;
         } catch (MemcachedClientException e) {
-            // キャッシュのアクセスに失敗した場合は、DBからデータを取得させるためnullを返却
+            //If cache access fails, return null to get data from DB
             log.info("Failed to get CellCache.");
             return null;
         }
     }
 
     /**
-     * Cellをキャッシュする.
-     * @param cellName Cell名
-     * @param cell Cell情報を格納したMapオブジェクト
+     * Cache the Cell.
+     * @ param cellName Cell name
+     * @ param cell Map object that stores cell information
      */
     public static void cache(String cellName, Map<String, Object> cell) {
         if (!PersoniumUnitConfig.isCellCacheEnabled()) {
@@ -74,8 +74,8 @@ public class CellCache {
     }
 
     /**
-     * 指定したCell名のキャッシュ情報を削除する.
-     * @param cellName Cell名
+     * Delete the cache information of the specified Cell name.
+     * @ param cellName Cell name
      */
     public static void clear(String cellName) {
         if (!PersoniumUnitConfig.isCellCacheEnabled()) {

@@ -37,15 +37,15 @@ import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 
 /**
- * HttpClientの実装を切り替えてNewする.
+ * Switch implementation by changing HttpClient.
  */
 public class HttpClientFactory {
-    /** HTTP通信のタイプ. */
+    /** Type of HTTP communication.*/
     public static final String TYPE_DEFAULT = "default";
-    /** HTTP通信のタイプ. */
+    /** Type of HTTP communication.*/
     public static final String TYPE_INSECURE = "insecure";
 
-    /** 接続タイムアウト値. */
+    /** Connection timeout value.*/
     private static final int TIMEOUT = 60000; // 20000;
 
     /** Constructor. */
@@ -53,9 +53,9 @@ public class HttpClientFactory {
     }
 
     /**
-     * HTTPClientオブジェクトを作成.
-     * @param type 通信タイプ
-     * @return 作成したHttpClientクラスインスタンス
+     * Create an HTTPClient object.
+     * @ param type communication type
+     * @return HttpClient class instance created
      */
     public static HttpClient create(final String type) {
         RequestConfig config = RequestConfig.custom()

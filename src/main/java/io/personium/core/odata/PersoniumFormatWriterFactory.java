@@ -66,12 +66,12 @@ import org.odata4j.producer.PropertyResponse;
 import org.odata4j.producer.exceptions.NotImplementedException;
 
 /**
- * FormatWriterFactoryのラッパークラス.
+ * Wrapper class for FormatWriterFactory.
  */
 public class PersoniumFormatWriterFactory {
 
     /**
-     * インターフェース.
+     * interface.
      */
     private interface FormatWriters {
 
@@ -98,13 +98,13 @@ public class PersoniumFormatWriterFactory {
     }
 
     /**
-     * フォーマットライターのゲッター.
-     * @param <T> 型
-     * @param targetType フォーマットライターのタイプ
-     * @param acceptTypes アクセプトタイプ
-     * @param format フォーマット
-     * @param callback コールバック
-     * @return フォーマットライター
+     * Getter of format writer.
+     * @ param <T> type
+     * @ param targetType Type of format writer
+     * @ param acceptTypes accept type
+     * @ param format Format
+     * @ param callback callback
+     * @return format writer
      */
     @SuppressWarnings("unchecked")
     public static <T> FormatWriter<T> getFormatWriter(Class<T> targetType,
@@ -183,15 +183,15 @@ public class PersoniumFormatWriterFactory {
     }
 
     /**
-     * JSON用のフォーマットライター.
+     * Format writer for JSON.
      */
     public static class JsonWriters implements FormatWriters {
 
         private final String callback;
 
         /**
-         * コンストラクタ.
-         * @param callback コールバック
+         * constructor.
+         * @ param callback callback
          */
         public JsonWriters(String callback) {
             this.callback = callback;
@@ -244,7 +244,7 @@ public class PersoniumFormatWriterFactory {
     }
 
     /**
-     * ATOM用のフォーマットライター.
+     * Format writer for ATOM.
      */
     public static class AtomWriters implements FormatWriters {
 

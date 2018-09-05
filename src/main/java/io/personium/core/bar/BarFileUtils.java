@@ -46,7 +46,7 @@ import io.personium.core.model.progress.Progress;
 import io.personium.core.model.progress.ProgressManager;
 
 /**
- * Httpリクエストボディからbarファイルを読み込むためのクラス.
+ * Http Class for reading bar files from the request body.
  */
 public class BarFileUtils {
 
@@ -58,29 +58,29 @@ public class BarFileUtils {
     static final String CODE_INSTALL_PROCESSING = "PL-BI-1002";
     static final String CODE_INSTALL_COMPLETED = "PL-BI-1003";
 
-    /** xml:baseのチェック用. 現状ほとんどの値を内部で置き換えてしまうのでチェックは緩くしている. */
+    /** For checking xml: base Current status Most of the values ​​are replaced internally, so checking is made loose.*/
     private static final String PATTERN_XML_BASE = "^(https?://.+)/([^/]{1,128})/__role/([^/]{1,128})/?$";
 
     private BarFileUtils() {
     }
 
     /**
-     * 70_$links.jsonのFromName/ToNameに関する複合キーを取得する.
-     * @param type FromType/ToNameに指定されたEntitySet名
-     * @param names FromName/ToNameに指定されたEntityKey名
-     * @param boxName Box名
-     * @return Entity作成時に使用するEntityKey名
+     * Get a composite key for FromName / ToName of 70 _ $ links.json.
+     * @ param type FromType / EntitySet name specified in ToName
+     * @ param names EntityKey name specified in FromName / ToName
+     * @ param boxName Box name
+     * @return EntityKey name to use when creating Entity
      */
     static String getComplexKeyName(final String type, final Map<String, String> names, final String boxName) {
         String keyname = null;
-        // 複合キー
+        //Compound key
         if (type.equals(Role.EDM_TYPE_NAME) || type.equals(Relation.EDM_TYPE_NAME)) {
             keyname = String.format("(Name='%s',_Box.Name='%s')", names.get("Name"), boxName);
             // URI(ExtRole)
         } else if (type.equals(ExtRole.EDM_TYPE_NAME)) {
             keyname = String.format("(ExtRole='%s',_Relation.Name='%s',_Relation._Box.Name='%s')",
                     names.get("ExtRole"), names.get("_Relation.Name"), boxName);
-            // その他
+            //Other
         } else {
             keyname = String.format("(Name='%s')", names.get("Name"));
         }
@@ -89,13 +89,13 @@ public class BarFileUtils {
     }
 
     /**
-     * ACLの名前空間をバリデートする.
-     * この際、ついでにロールインスタンスURLへの変換、BaseURLの変換を行う。
+     * Validate the namespace of the ACL.
+     * At the same time, it converts to the role instance URL and converts the Base URL.
      * @param element element
      * @param baseUrl baseUrl
      * @param cellName cellName
      * @param boxName boxName
-     * @return 生成したElementノード
+     * @return Generated Element node
      */
     static Element convertToRoleInstanceUrl(
             final Element element, final String baseUrl, final String cellName, final String boxName) {
@@ -118,11 +118,11 @@ public class BarFileUtils {
     }
 
     /**
-     * barファイル内に記載されたURLのホスト情報（scheme://hostname/)を処理中サーバの情報へ置換する.
+     * Replace the host information (scheme: // hostname /) of the URL described in the bar file with the information of the server being processed.
      * @param baseUrl baseUrl
      * @param cellName cellName
      * @param boxName boxName
-     * @return 生成したURL
+     * @return Generated URL
      */
     private static String getLocalUrl(String baseUrl, String cellName, String boxName) {
         StringBuilder builder = new StringBuilder();
@@ -135,9 +135,9 @@ public class BarFileUtils {
     }
 
     /**
-     * Cellオーナー情報からUnitUser名を取得する.
-     * @param owner オーナー情報(URL)
-     * @return UnitUser名
+     * Get UnitUser name from Cell owner information.
+     * @ param owner owner information (URL)
+     * @return UnitUser name
      */
     static String getUnitUserName(final String owner) {
         String unitUserName = null;
@@ -150,13 +150,13 @@ public class BarFileUtils {
     }
 
     /**
-     * barファイルエントリからJSONファイルを読み込む.
+     * bar Read JSON file from file entry.
      * @param <T> JSONMappedObject
-     * @param inStream barファイルエントリのInputStream
+     * @ param inStream bar File entry's InputStream
      * @param entryName entryName
      * @param clazz clazz
-     * @return JSONファイルから読み込んだオブジェクト
-     * @throws IOException JSONファイル読み込みエラー
+     * @return Object read from JSON file
+     * @ throws IOException Error loading JSON file
      */
     static <T> T readJsonEntry(
             InputStream inStream, String entryName, Class<T> clazz) throws IOException {
@@ -164,7 +164,7 @@ public class BarFileUtils {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory f = new JsonFactory();
         jp = f.createParser(inStream);
-        JsonToken token = jp.nextToken(); // JSONルート要素（"{"）
+        JsonToken token = jp.nextToken(); //JSON root element ("{")
         Pattern formatPattern = Pattern.compile(".*/+(.*)");
         Matcher formatMatcher = formatPattern.matcher(entryName);
         String jsonName = formatMatcher.replaceAll("$1");
@@ -182,12 +182,12 @@ public class BarFileUtils {
     }
 
     /**
-     * 内部イベントとしてEventBusへインストール処理状況を出力する.
+     * Output the installation processing status to EventBus as an internal event.
      * @param event Personium event object
      * @param eventBus Personium event bus for sending event
-     * @param code 処理コード（ex. PL-BI-0000）
-     * @param path barファイル内のエントリパス（Edmxの場合は、ODataのパス）
-     * @param message 出力用メッセージ
+     * @ param code processing code (ex. PL - BI - 0000)
+     * @ param path bar Entry path in the file (in the case of Edmx, the path of OData)
+     * @ param message Output message
      */
     static void outputEventBus(PersoniumEvent.Builder eventBuilder, EventBus eventBus, String code,
             String path, String message) {
@@ -202,11 +202,11 @@ public class BarFileUtils {
     }
 
     /**
-     * ProgressInfoへbarインストール状況を出力する.
-     * @param isError エラー時の場合はtrueを、それ以外はfalseを指定する.
+     * Output bar installation status to ProgressInfo.
+     * @ param isError Specify true on error, false otherwise.
      * @param progressInfo bar install progress
-     * @param code 処理コード（ex. PL-BI-0000）
-     * @param message 出力用メッセージ
+     * @ param code processing code (ex. PL - BI - 0000)
+     * @ param message Output message
      */
     @SuppressWarnings("unchecked")
     static void writeToProgress(boolean isError, BarInstallProgressInfo progressInfo, String code, String message) {
@@ -225,8 +225,8 @@ public class BarFileUtils {
     }
 
     /**
-     * キャッシュへbarインストール状況を出力する.
-     * @param forceOutput 強制的に出力する場合はtrueを、それ以外はfalseを指定する
+     * Output bar installation status to cache.
+     * @ param forceOutput Specify true to forcibly output, false otherwise
      * @param progressInfo bar install progress
      */
     static void writeToProgressCache(boolean forceOutput, BarInstallProgressInfo progressInfo) {

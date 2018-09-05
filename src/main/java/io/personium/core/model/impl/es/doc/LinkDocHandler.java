@@ -34,8 +34,8 @@ import io.personium.core.model.impl.es.odata.EsQueryHandler;
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 
 /**
- * ESでN:Nリンクを扱う. リンクは２つのタイプの間に張られている。 EsLinkHandler elh = new EsLinkHandler(type1, type2); 双方のキーを指定して、リンクドキュメントを作成する。
- * 双方のキーを指定して、リンクドキュメントのキーを作成する。 片側のTypeのキーを指定してもう片方のTypeの一覧を取得する。
+ * We deal with N: N links with ES. Links are stretched between two types. EsLinkHandler elh = new EsLinkHandler (type 1, type 2); Specify both keys to create a linked document.
+ * Designate both keys and create a link document key. Specify the key of Type on one side to obtain the list of the other Type.
  */
 public class LinkDocHandler implements EsDocHandler {
     private String id;
@@ -52,7 +52,7 @@ public class LinkDocHandler implements EsDocHandler {
     private static final int DEFAULT_TOP_VALUE = PersoniumUnitConfig.getTopQueryDefaultSize();
 
     /**
-     * コンストラクタ.
+     * constructor.
      */
     public LinkDocHandler() {
         this.id = null;
@@ -68,7 +68,7 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     * コンストラクタ.
+     * constructor.
      * @param srcHandler OEntityDocHandler
      * @param tgtHandler OEntityDocHandler
      */
@@ -81,7 +81,7 @@ public class LinkDocHandler implements EsDocHandler {
         String tgtType = tgtHandler.getType();
         String tgtId = tgtHandler.getId();
 
-        // ES 保存時の一意キー作成
+        //Create unique key when saving ES
         TreeMap<String, String> tm = new TreeMap<String, String>();
         tm.put(srcType, srcId);
         tm.put(tgtType, tgtId);
@@ -97,8 +97,8 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     * 検索結果からLinkDocHandlerを生成するコンストラクタ.
-     * @param searchHit 検索結果データ
+     * Constructor that generates LinkDocHandler from search result.
+     * @ param searchHit Search result data
      */
     public LinkDocHandler(final PersoniumSearchHit searchHit) {
         this.id = searchHit.getId();
@@ -112,7 +112,7 @@ public class LinkDocHandler implements EsDocHandler {
             this.nodeId = source.get(KEY_NODE_ID).toString();
         }
 
-        // ES 保存時の一意キー作成
+        //Create unique key when saving ES
         String srcType = source.get(KEY_ENT1_TYPE).toString();
         String srcId = source.get(KEY_ENT1_ID).toString();
         String tgtType = source.get(KEY_ENT2_TYPE).toString();
@@ -269,12 +269,12 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     * N:Nのリンクのドキュメント件数を取得する.
-     * @param accessor link用のaccessor
+     * Get the document count of N: N links.
+     * @ param accessor link accessor
      * @param srcHandler OEntityDocHandler
      * @param targetSetName targetSetName
      * @param targetEntityTypeId targetEntityTypeId
-     * @return ドキュメント件数
+     * @return Document count
      */
     public static long getNtoNCount(
             final ODataLinkAccessor accessor,
@@ -289,8 +289,8 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     * N:Nのリンクの一覧を取得する.
-     * @param accessor link用のaccessor
+     * Get a list of N: N links.
+     * @ param accessor link accessor
      * @param srcHandler OEntityDocHandler
      * @param targetSetName targetSetName
      * @param targetEntityTypeId targetEntityTypeId
@@ -306,7 +306,7 @@ public class LinkDocHandler implements EsDocHandler {
         NtoNQueryParameter parameter = new NtoNQueryParameter(srcHandler, targetSetName,
                 targetEntityTypeId);
 
-        // IDの一覧を検索
+        //Search list of ID
         Integer size = DEFAULT_TOP_VALUE;
         Integer from = 0;
         if (queryInfo != null) {
@@ -367,47 +367,47 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     * ES上のOData Link格納において更新日時を保存するJSONキー.
+     * JSON key that stores update date and time in OData Link storage on ES.
      */
     public static final String KEY_UPDATED = "u";
     /**
-     * ES上のOData Link格納において作成日時を保存するJSONキー.
+     * JSON key that stores created date in OData Link storage on ES.
      */
     public static final String KEY_PUBLISHED = "p";
     /**
-     * ES上のOData Link格納においてCellの内部IDを保存するJSONキー.
+     * JSON key that stores the internal ID of Cell in OData Link storage on ES.
      */
     public static final String KEY_CELL_ID = "c";
     /**
-     * ES上のOData Link格納においてBoxの内部IDを保存するJSONキー.
+     * JSON key that stores internal ID of Box in OData Link storage on ES.
      */
     public static final String KEY_BOX_ID = "b";
     /**
-     * ES上のOData Link格納においてコレクションのnodeidを保存するJSONキー.
+     * JSON key that stores the nodeid of the collection in OData Link storage on ES.
      */
     public static final String KEY_NODE_ID = "n";
 
     /**
-     * ES上のOData Link格納において文字列比較で小さい側のタイプ名を保存するJSONキー.
+     * JSON key that stores the type name of the smaller side in string comparison in OData Link storage on ES.
      */
     public static final String KEY_ENT1_TYPE = "t1";
     /**
-     * ES上のOData Link格納において文字列比較で小さい側のタイプのエンティティIDを保存するJSONキー.
+     * JSON key that stores the entity ID of the smaller type in string comparison in OData Link storage on ES.
      */
     public static final String KEY_ENT1_ID = "k1";
     /**
-     * ES上のOData Link格納において文字列比較で大きい側のタイプ名を保存するJSONキー.
+     * JSON key that stores the type name of the larger side in string comparison in OData Link storage on ES.
      */
     public static final String KEY_ENT2_TYPE = "t2";
     /**
-     * ES上のOData Link格納において文字列比較で大きい側のタイプのエンティティIDを保存するJSONキー.
+     * JSON key that stores the entity ID of the type of the larger side in string comparison in OData Link storage on ES.
      */
     public static final String KEY_ENT2_ID = "k2";
 
     /**
-     * 指定されたエンティティタイプと関連付いているデータのIDを返却する.
-     * @param baseEntityType エンティティタイプ
-     * @return ID 存在しない場合はnullを返却
+     * Return the ID of the data associated with the specified entity type.
+     * @ param baseEntityType entity type
+     * @return ID Return null if it does not exist
      */
     public String getLinkedEntitytIdFromBaseEntityType(String baseEntityType) {
         if (this.ent1Type.equals(baseEntityType)) {
@@ -420,9 +420,9 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     * 指定されたエンティティタイプのIDを返却する.
-     * @param entityType エンティティタイプ
-     * @return ID 存在しない場合はnullを返却
+     * Return ID of the specified entity type.
+     * @ param entityType entity type
+     * @return ID Return null if it does not exist
      */
     public String getEntitytIdFromEntityType(String entityType) {
         if (this.ent1Type.equals(entityType)) {
@@ -435,7 +435,7 @@ public class LinkDocHandler implements EsDocHandler {
     }
 
     /**
-     * N:Nのリンクの一覧を取得するためのクエリ情報を生成するクラス.
+     * A class that generates query information for obtaining a list of N: N links.
      */
     public static class NtoNQueryParameter {
         private String t1;
@@ -444,10 +444,10 @@ public class LinkDocHandler implements EsDocHandler {
         private String k2;
 
         /**
-         * コンストラクタ.
+         * constructor.
          * @param srcHandler OEntityDocHandler
-         * @param targetSetName ターゲット側のEntitySet名
-         * @param targetEntityTypeId ターゲット側のEntityTypeID
+         * @ param targetSetName EntitySet name on the target side
+         * @ param targetEntityTypeId EntityTypeID of target side
          */
         public NtoNQueryParameter(
                 final EntitySetDocHandler srcHandler,
@@ -471,9 +471,9 @@ public class LinkDocHandler implements EsDocHandler {
         }
 
         /**
-         * N:Nのリンクの一覧を取得するためのクエリ情報を生成する（ソートなし）.
-         * @param size 取得する件数
-         * @param from フェッチ数
+         * Generate query information for obtaining a list of N: N links (no sorting).
+         * @ param size Number of items to be acquired
+         * @ param from fetch count
          * @return ESQuery
          */
         public Map<String, Object> getSource(Integer size, Integer from) {
@@ -505,8 +505,8 @@ public class LinkDocHandler implements EsDocHandler {
         }
 
         /**
-         * Expand対象データ取得時のN:Nのリンクの一覧を取得するためのクエリ情報を生成する.
-         * @param size 取得する件数
+         * Expand Generates query information for acquiring a list of N: N links at the time of acquiring target data.
+         * @ param size Number of items to be acquired
          * @return ESQuery
          */
         public Map<String, Object> getSourceForExpand(Integer size) {
@@ -530,7 +530,7 @@ public class LinkDocHandler implements EsDocHandler {
         }
 
         /**
-         * ターゲット側のキー名(k1, k2)を取得する.
+         * Get the key name (k1, k2) of the target side.
          */
         String getTargetKey() {
             if (this.k1.length() == 0) {

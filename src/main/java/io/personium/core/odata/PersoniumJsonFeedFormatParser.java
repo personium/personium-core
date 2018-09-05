@@ -92,8 +92,8 @@ public class PersoniumJsonFeedFormatParser extends PersoniumJsonFormatParser {
     }
 
     /**
-     * コンストラクタ.
-     * @param settings セッティング情報
+     * constructor.
+     * @ param settings setting information
      */
     public PersoniumJsonFeedFormatParser(Settings settings) {
         super(settings);

@@ -19,14 +19,14 @@ package io.personium.core.model.progress;
 import java.io.Serializable;
 
 /**
- * 非同期処理状況オブジェクト.
+ * Asynchronous processing status object.
  */
 public class Progress implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    String key;     // キー
-    String value;   // JSON文字列
-    Long createdAt; // 作成時刻
+    String key;     //Key
+    String value;   //JSON string
+    Long createdAt; //Creation time
 
     /**
      * @return the key
@@ -50,9 +50,9 @@ public class Progress implements Serializable {
     }
 
     /**
-     * コンストラクタ.
-     * @param key 非同期処理状況のキー
-     * @param value 非同期処理状況の値（JSON文字列）
+     * constructor.
+     * @ param key Asynchronous processing status key
+     * @ param value Asynchronous processing status value (JSON string)
      */
     public Progress(String key, String value) {
         this.key = key;
@@ -61,7 +61,7 @@ public class Progress implements Serializable {
     }
 
     /**
-     * 非同期処理状況を削除します.
+     * Delete asynchronous processing status.
      */
     public void delete() {
         ProgressManager.deleteProgress(this.key);

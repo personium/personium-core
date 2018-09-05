@@ -36,7 +36,7 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.odata.PersoniumOptionsQueryParser;
 
 /**
- * クエリをパースして値を返却するクラス.
+ * A class that parses a query and returns a value.
  */
 public class QueryParser {
 
@@ -44,9 +44,9 @@ public class QueryParser {
     }
 
     /**
-     * skipクエリをパースして値を返却する.
-     * @param query クエリ文字列("$skip=VALUE")
-     * @return クエリで指定された値
+     * skip Parse the query and return the value.
+     * @ param query query string ("$ skip = VALUE")
+     * The value specified in the @return query
      */
     public static Integer parseSkipQuery(String query) {
         Integer skip = null;
@@ -56,16 +56,16 @@ public class QueryParser {
             throw PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$skip").reason(e);
         }
         if (skip != null && (0 > skip || skip > PersoniumUnitConfig.getSkipQueryMaxSize())) {
-            // Integerでそのまま値を返却すると、カンマが付くため、文字列でエラーメッセージを返却する
+            //When returning the value as it is with Integer, a comma is attached, so return an error message with a character string
             throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$skip", skip.toString());
         }
         return skip;
     }
 
     /**
-     * topクエリをパースして値を返却する.
-     * @param query クエリ文字列("$top=VALUE")
-     * @return クエリで指定された値
+     * top Parse the query and return the value.
+     * @ param query query string ("$ top = VALUE")
+     * The value specified in the @return query
      */
     public static Integer parseTopQuery(String query) {
         Integer top = null;
@@ -75,16 +75,16 @@ public class QueryParser {
             throw PersoniumCoreException.OData.QUERY_PARSE_ERROR_WITH_PARAM.params("$top").reason(e);
         }
         if (top != null && (0 > top || top > PersoniumUnitConfig.getTopQueryMaxSize())) {
-            // Integerでそのまま値を返却すると、カンマが付くため、文字列でエラーメッセージを返却する
+            //When returning the value as it is with Integer, a comma is attached, so return an error message with a character string
             throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", top.toString());
         }
         return top;
     }
 
     /**
-     * orderbyクエリをパースして値を返却する.
-     * @param query クエリ文字列("$orderby=VALUE")
-     * @return クエリで指定された値
+     * Parse the orderby query and return the value.
+     * @ param query query string ("$ orderby = VALUE")
+     * The value specified in the @return query
      */
     public static List<OrderByExpression> parseOderByQuery(String query) {
         List<OrderByExpression> orderBy = null;
@@ -100,9 +100,9 @@ public class QueryParser {
     }
 
     /**
-     * skiptokenクエリをパースして値を返却する.
-     * @param query クエリ文字列("$skiptoken=VALUE")
-     * @return クエリで指定された値
+     * Parse the skiptoken query and return the value.
+     * @ param query Query string ("$ skiptoken = VALUE")
+     * The value specified in the @return query
      */
     public static String parseSkipTokenQuery(String query) {
         String skipToken = null;
@@ -115,17 +115,17 @@ public class QueryParser {
     }
 
     /**
-     * inlinecountクエリをパースして値を返却する.
-     * @param query クエリ文字列("$inlinecount=VALUE")
-     * @return クエリで指定された値
+     * Inlinecount Parse the query and return the value.
+     * @ param query query string ("$ inlinecount = VALUE")
+     * The value specified in the @return query
      */
     public static InlineCount parseInlinecountQuery(String query) {
         InlineCount inlineCount = null;
         if (query == null) {
-            // デフォルト値の設定（__countなし）
+            //Setting the default value (without __count)
             inlineCount = InlineCount.NONE;
         } else {
-            // パースをして有効値以外が返却された場合はパースエラーとする
+            //If parsing is done and a value other than the valid value is returned, it becomes a parse error
             inlineCount = OptionsQueryParser.parseInlineCount(query);
             if (inlineCount == null) {
                 throw PersoniumCoreException.OData.INLINECOUNT_PARSE_ERROR.params(query);
@@ -135,9 +135,9 @@ public class QueryParser {
     }
 
     /**
-     * expandクエリをパースして値を返却する.
-     * @param query クエリ文字列("$expand=VALUE")
-     * @return クエリで指定された値
+     * expand Parse the query and return the value.
+     * @ param query query string ("$ expand = VALUE")
+     * The value specified in the @return query
      */
     public static List<EntitySimpleProperty> parseExpandQuery(String query) {
         List<EntitySimpleProperty> expand = null;
@@ -146,7 +146,7 @@ public class QueryParser {
         } catch (Exception e) {
             throw PersoniumCoreException.OData.EXPAND_PARSE_ERROR;
         }
-        // $expandに指定されたプロパティ数の上限チェック
+        //Check upper limit of the number of properties specified for $ expand
         if (expand != null && expand.size() > PersoniumUnitConfig.getExpandPropertyMaxSizeForList()) {
             throw PersoniumCoreException.OData.EXPAND_COUNT_LIMITATION_EXCEEDED;
         }
@@ -154,9 +154,9 @@ public class QueryParser {
     }
 
     /**
-     * selectクエリをパースして値を返却する.
-     * @param query クエリ文字列("$select=VALUE")
-     * @return クエリで指定された値
+     * Parse the select query and return the value.
+     * @ param query query string ("$ select = VALUE")
+     * The value specified in the @return query
      */
     public static List<EntitySimpleProperty> parseSelectQuery(String query) {
         List<EntitySimpleProperty> select = null;
@@ -174,9 +174,9 @@ public class QueryParser {
     }
 
     /**
-     * filterクエリをパースして値を返却する.
-     * @param query クエリ文字列("$filter=VALUE")
-     * @return クエリで指定された値
+     * filter Parse the query and return the value.
+     * @ param query query string ("$ filter = VALUE")
+     * The value specified in the @return query
      */
     public static BoolCommonExpression parseFilterQuery(String query) {
         BoolCommonExpression filter = null;
@@ -189,11 +189,11 @@ public class QueryParser {
     }
 
     /**
-     * qクエリをパースする.
-     * @param fullTextSearchKeyword クエリ文字列("q=VALUE")
+     * q Parse the query.
+     * @ param fullTextSearchKeyword query string ("q = VALUE")
      */
     public static void parseFullTextSearchQuery(String fullTextSearchKeyword) {
-        // 全文検索クエリqのバリデート
+        //Validate of full-text search query q
         if (fullTextSearchKeyword != null && (fullTextSearchKeyword.getBytes().length < 1
                 || fullTextSearchKeyword.getBytes().length > Common.MAX_Q_VALUE_LENGTH)) {
             throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("q", fullTextSearchKeyword);
@@ -201,7 +201,7 @@ public class QueryParser {
     }
 
     /**
-     * QueryInfoを生成.
+     * Generate QueryInfo.
      * @param requestQuery requestQuery
      * @return requestQuery
      */
@@ -217,9 +217,9 @@ public class QueryParser {
         List<OrderByExpression> orderBy = QueryParser.parseOderByQuery(queryParams.getFirst("$orderby"));
         parseFullTextSearchQuery(queryParams.getFirst("q"));
 
-        // $expand指定時は$topの最大値が変わるためチェックする
+        //When $ expand is specified, the maximum value of $ top changes, so check it
         if (expand != null && top != null && top > PersoniumUnitConfig.getTopQueryMaxSizeWithExpand()) {
-            // Integerでそのまま値を返却すると、カンマが付くため、文字列でエラーメッセージを返却する
+            //When returning the value as it is with Integer, a comma is attached, so return an error message with a character string
             throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", top.toString());
         }
 

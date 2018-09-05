@@ -40,7 +40,7 @@ import io.personium.core.event.EventUtils;
 import io.personium.core.model.Cell;
 
 /**
- * Archiveされたログファイルを格納するコレクション用のクラス.
+ * Class for collection that stores archived log files.
  */
 public class ArchiveLogCollection {
 
@@ -53,17 +53,17 @@ public class ArchiveLogCollection {
     private List<ArchiveLogFile> archivefileList = new ArrayList<ArchiveLogFile>();;
 
     /**
-     * コンストラクタ.
-     * @param cell コレクションが属するCellオブジェクト
-     * @param uriInfo コレクションのURL情報
+     * constructor.
+     * @ param cell Cell object to which the collection belongs
+     * @ param uriInfo collection URL information
      */
     public ArchiveLogCollection(Cell cell, UriInfo uriInfo) {
-        // archiveコレクションの作成日と更新日はセルの作成日とする
-        // ただし更新日についてはアーカイブログファイルが作成されている場合、そのファイルの最新日が「createFileInformation」で設定される
+        //The creation date and update date of the archive collection is the creation date of the cell
+        //However, when the archive log file is created for the update date, the latest date of the file is set with "createFileInformation"
         this.created = cell.getPublished();
         this.updated = cell.getPublished();
 
-        // archiveコレクションのURLを生成
+        //Generate URL of archive collection
         StringBuilder urlSb = new StringBuilder();
         UriBuilder uriBuilder = uriInfo.getBaseUriBuilder();
         uriBuilder.scheme(PersoniumUnitConfig.getUnitScheme());
@@ -76,20 +76,20 @@ public class ArchiveLogCollection {
     }
 
     /**
-     * コレクション配下のファイル情報を取得する.
+     * Get file information under collection.
      */
     public void createFileInformation() {
         File archiveDir = new File(this.directoryPath);
-        // ローテートされていない場合はアーカイブディレクトリが存在しないため、ファイル情報は取得しない
+        //If it is not rotated, there is no archive directory, so do not acquire file information
         if (!archiveDir.exists()) {
             return;
         }
         File[] fileList = archiveDir.listFiles();
         for (File file : fileList) {
-            // ファイルの更新日を取得
+            //Get update date of file
             long fileUpdated = file.lastModified();
 
-            // アーカイブログコレクションの更新日はアーカイブファイルの最新の更新日とする
+            //The update date of the archive log collection shall be the latest update date of the archive file
             if (this.updated < fileUpdated) {
                 this.updated = fileUpdated;
             }
@@ -99,11 +99,11 @@ public class ArchiveLogCollection {
             long fileCreated = 0L;
             long size = 0L;
             try {
-                // ファイルの作成日を取得
+                //Get creation date of file
                 attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
                 fileCreated = attr.creationTime().toMillis();
 
-                // 現状、過去ログ取得APIでは解凍後の状態しか取得できないためファイルの解凍後のサイズを取得する
+                //Currently, since the past log acquisition API can only acquire the state after decompression, obtain the size after decompressing the file
                 zipFile = new ZipFile(file);
                 Enumeration<? extends ZipEntry> emu = zipFile.entries();
                 while (emu.hasMoreElements()) {
@@ -124,7 +124,7 @@ public class ArchiveLogCollection {
                 IOUtils.closeQuietly(zipFile);
             }
 
-            // こちらも現状、過去ログ取得APIでは解凍後の状態しか取得できないため拡張子(.zip)を外したファイル名を取得する
+            //Here as well, since the past log acquisition API can only acquire the state after decompression, it acquires the file name without extension (. Zip)
             String fileName = file.getName();
             String fileNameWithoutZip = fileName.substring(0, fileName.length() - ".zip".length());
             String fileUrl = this.url + "/" + fileNameWithoutZip;
@@ -137,23 +137,23 @@ public class ArchiveLogCollection {
     }
 
     /**
-     * 作成日時を返却.
-     * @return 作成日時
+     * Return creation date and time.
+     * @return Created date and time
      */
     public long getCreated() {
         return created;
     }
 
     /**
-     * 更新日時を返却.
-     * @return 更新日時
+     * Refresh date and time is returned.
+     * @return Update date and time
      */
     public long getUpdated() {
         return updated;
     }
 
     /**
-     * URLを返却.
+     * Return URL.
      * @return URL
      */
     public String getUrl() {
@@ -161,7 +161,7 @@ public class ArchiveLogCollection {
     }
 
     /**
-     * ディレクトリへのパスを返却.
+     * Return the path to the directory.
      * @return URL
      */
     public String getDirectoryPath() {
@@ -169,8 +169,8 @@ public class ArchiveLogCollection {
     }
 
     /**
-     * コレクション配下のファイルを返却.
-     * @return Archivefileのリスト
+     * Return files under the collection.
+     * @return Archivefile list
      */
     public List<ArchiveLogFile> getArchivefileList() {
         return archivefileList;

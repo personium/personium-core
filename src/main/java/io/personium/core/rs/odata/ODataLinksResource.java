@@ -70,7 +70,7 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * ODataの$linksを扱う JAX-RS Resource.
+ * JAX-RS Resource handling $ links of OData.
  */
 public final class ODataLinksResource {
     private final OEntityId sourceEntity;
@@ -81,16 +81,16 @@ public final class ODataLinksResource {
     private final AccessContext accessContext;
 
     /**
-     * ログ.
+     * log.
      */
     static Logger log = LoggerFactory.getLogger(ODataLinksResource.class);
 
     /**
-     * コンストラクタ.
-     * @param odataResource 親の ODataResource
-     * @param sourceEntity リンク元Entity
-     * @param targetNavProp リンク先 Navigation Property
-     * @param targetEntityKey リンク先 EntityKey
+     * constructor.
+     * @ param odataResource Parent ODataResource
+     * @ param sourceEntity source Entity
+     * @ param targetNavProp destination Navigation Property
+     * @ param targetEntityKey Link EntityKey
      */
     public ODataLinksResource(
             final ODataResource odataResource,
@@ -106,13 +106,13 @@ public final class ODataLinksResource {
     }
 
     /**
-     * POSTメソッドを受けて linkを作成する.
-     * 成功時のレスポンスは204.特に記述が無いためLocationヘッダは返さない。
+     * Create a link by receiving the POST method.
+     * The response at the time of success is 204. Since there is no description specifically, the Location header is not returned.
      * InsertLink Request
      * If an InsertLink Request is successful, the response MUST have a 204 status code,
      * as specified in [RFC2616], and contain an empty response body.
      * @param uriInfo UriInfo
-     * @param reqBody リクエストボディ
+     * @ param reqBody request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -121,13 +121,13 @@ public final class ODataLinksResource {
             @Context UriInfo uriInfo,
             final Reader reqBody) {
 
-        // アクセス制御
+        //Access control
         this.checkWriteAccessContext();
 
-        // リンク作成前処理
+        //Link creation preprocessing
         this.odataResource.beforeLinkCreate(this.sourceEntity, this.targetNavProp);
 
-        // $links の POSTでNav Propのキー指定があってはいけない。
+        //Do not specify Nav Prop key in POST of $ links.
         if (this.targetEntityKey != null) {
             throw PersoniumCoreException.OData.KEY_FOR_NAVPROP_SHOULD_NOT_BE_SPECIFIED;
         }
@@ -135,15 +135,15 @@ public final class ODataLinksResource {
         OEntityId newTargetEntity =
                 parseRequestUri(UriUtils.createUriInfo(uriInfo, NUM_LEVELS_FROM_SVC_ROOT), reqBody);
 
-        // URLで指定したリンク先オブジェクトとBodyに指定したオブジェクトが等しいかをチェックする
+        //It checks whether the link destination object specified by URL is equal to the object specified for Body
         Pattern p = Pattern.compile("(.+)/([^/]+)$");
         Matcher m = p.matcher(newTargetEntity.getEntitySetName());
         String bodyNavProp = m.replaceAll("$2");
         String targetEntitySetName = null;
-        // 受信メッセージとアカウントの$linksの場合、リンク先にAccountを設定
+        //In the case of $ messages of inbound messages and accounts, set Account as the link destination
         if (ReceivedMessage.EDM_NPNAME_FOR_ACCOUNT.equals(this.targetNavProp)) {
             targetEntitySetName = Account.EDM_TYPE_NAME;
-            // アカウントと受信メッセージの$linksの場合、リンク先にReceivedMessageを設定
+            //In the case of $ link of account and received message, set ReceivedMessage to the link destination
         } else if (Account.EDM_NPNAME_FOR_RECEIVED_MESSAGE.equals(this.targetNavProp)) {
             targetEntitySetName = ReceivedMessage.EDM_TYPE_NAME;
         } else {
@@ -173,9 +173,9 @@ public final class ODataLinksResource {
     }
 
     /**
-     * PUTメソッドを受けて linkを更新する.
+     * Receive PUT method and update link.
      * @param uriInfo UriInfo
-     * @param reqBody リクエストボディ
+     * @ param reqBody request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -184,7 +184,7 @@ public final class ODataLinksResource {
             @Context UriInfo uriInfo,
             final Reader reqBody) {
 
-        // アクセス制御
+        //Access control
         this.checkWriteAccessContext();
 
         if (this.targetEntityKey == null) {
@@ -195,12 +195,12 @@ public final class ODataLinksResource {
     }
 
     /**
-     * リクエストボディで指定された値が正しい形式かチェックし、$links先のOEntityIdを返却する.
-     * @param uriInfo リクエストURL
-     * @param reqBody リクエストボディ
-     * @param srcEntitySetName $links元EntitySet名
-     * @param metadata メタデータ
-     * @return $links先のOEntityId
+     * It checks whether the value specified in the request body is in the correct format, and returns the OEntityId of the $ link destination.
+     * @ param uriInfo request URL
+     * @ param reqBody request body
+     * @ param srcEntitySetName $ links Source EntitySet name
+     * @ param metadata metadata
+     * @return $ links destination OEntityId
      */
     static OEntityId parseRequestUri(final UriInfo uriInfo,
             final Reader reqBody,
@@ -220,8 +220,8 @@ public final class ODataLinksResource {
 
         log.debug(uriInfo.getBaseUri().toASCIIString());
 
-        // 複合キー対応
-        // nullが指定されているとパースに失敗するため、null値が設定されている場合はダミーキーに置き換える
+        //Complex key correspondence
+        //If null is specified, parsing will fail, so if the null value is set it will be replaced with a dummy key
         String linkUrl = AbstractODataResource.replaceNullToDummyKey(link.getUri());
         log.debug(linkUrl);
         OEntityId oid = null;
@@ -238,7 +238,7 @@ public final class ODataLinksResource {
         oid = OEntityIds.create(oid.getEntitySetName(), entityKey);
         log.debug(oid.getEntityKey().toKeyString());
 
-        // parse処理では後ろ括弧のチェックの対応を行っていないため、括弧の対応チェックを行う
+        //In the parse processing, we did not deal with backward-bracket checks, so we check correspondence between parentheses
         String entityId = linkUrl;
         if (entityId.toLowerCase().startsWith(serviceRootUri.toLowerCase())) {
             entityId = linkUrl.substring(serviceRootUri.length());
@@ -255,10 +255,10 @@ public final class ODataLinksResource {
     }
 
     /**
-     * リクエストボディで指定された値が正しい形式かチェックし、$links先のOEntityIdを返却する.
-     * @param uriInfo リクエストURL
-     * @param reqBody リクエストボディ
-     * @return $links先のOEntityId
+     * It checks whether the value specified in the request body is in the correct format, and returns the OEntityId of the $ link destination.
+     * @ param uriInfo request URL
+     * @ param reqBody request body
+     * @return $ links destination OEntityId
      */
     private OEntityId parseRequestUri(final UriInfo uriInfo, final Reader reqBody) {
         return parseRequestUri(uriInfo, reqBody, this.sourceEntity.getEntitySetName(),
@@ -271,20 +271,20 @@ public final class ODataLinksResource {
     }
 
     /**
-     * DELETEメソッドを受けて linkを削除する.
+     * Delete link by receiving DELETE method.
      * @return JAX-RS Response
      */
     @WriteAPI
     @DELETE
     public Response deleteLink() {
 
-        // アクセス制御
+        //Access control
         this.checkWriteAccessContext();
 
-        // リンク削除前処理
+        //Link deletion preprocessing
         this.odataResource.beforeLinkDelete(this.sourceEntity, this.targetNavProp);
 
-        // TODO $links の 削除は以下の2つのリクエストで実行可能であるが、NavPropのKey未指定は未実装
+        //Deletion of TODO $ links can be executed with the following two requests, but NavProp key unspecified is not implemented yet
         // 1. http://host/service.svc/Customers('ALFKI')/$links/Orders(1)
         // 2. http://host/service.svc/Orders(1)/$links/Customer.
         if (this.targetEntityKey == null) {
@@ -317,7 +317,7 @@ public final class ODataLinksResource {
     static final int NUM_LEVELS_FROM_SVC_ROOT = 3;
 
     /**
-     * GETメソッドを受けて link一覧を返す.
+     * Receive the GET method and return the link list.
      * @param uriInfo UriInfo
      * @param format $format
      * @param callback ??
@@ -329,7 +329,7 @@ public final class ODataLinksResource {
             @QueryParam("$format") final String format,
             @QueryParam("$callback") final String callback) {
 
-        // アクセス制御
+        //Access control
         this.checkReadAccessContext();
         if (this.targetEntityKey != null) {
             return Response
@@ -339,7 +339,7 @@ public final class ODataLinksResource {
         }
         log.debug("GETTING $LINK");
 
-        // リンク取得前処理
+        //Link acquisition preprocessing
         this.odataResource.beforeLinkGet(this.sourceEntity, this.targetNavProp);
 
         EntityIdResponse response = getLinks(uriInfo);
@@ -352,7 +352,7 @@ public final class ODataLinksResource {
 
         if (response.getMultiplicity() == EdmMultiplicity.MANY) {
             SingleLinks links = SingleLinks.create(serviceRootUri, response.getEntities());
-            // TODO レスポンスはJSON固定とする.
+            //The TODO response shall be JSON fixed.
             FormatWriter<SingleLinks> fw = PersoniumFormatWriterFactory.getFormatWriter(SingleLinks.class, null, "json",
                     callback);
             fw.write(uriInfo2, sw, links);
@@ -399,13 +399,13 @@ public final class ODataLinksResource {
     }
 
     /**
-     * OPTIONSメソッド.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
     public Response options() {
 
-        // アクセス制御
+        //Access control
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryOptionsPrivilege());
 
@@ -423,8 +423,8 @@ public final class ODataLinksResource {
             queryInfo = queryInfo(uriInfo);
         }
         EntityIdResponse response = null;
-        // getLinksメソッドにパラメータを追加したが、インターフェースを修正すると影響範囲が大きいため、
-        // プロデューサーをキャストする
+        //We added parameters to the getLinks method, but since modifying the interface has a large influence range,
+        //Cast a producer
         if (this.odataProducer instanceof EsODataProducer) {
             EsODataProducer producer = (EsODataProducer) this.odataProducer;
             response = producer.getLinks(sourceEntity, targetNavProp, queryInfo);
@@ -450,8 +450,8 @@ public final class ODataLinksResource {
     }
 
     private void checkWriteAccessContext() {
-        // アクセス制御
-        // TODO BOXレベルの場合に同じ処理が2回走る。無駄なのでcheckAccessContextにPrivilegeを配列で渡す等の工夫が必要
+        //Access control
+        //The same process runs twice for TODO BOX level. Since it is useless, we need ingenuity such as passing Privilege as an array to checkAccessContext
         String entitySetNameFrom = sourceEntity.getEntitySetName();
         String entitySetNameTo = targetNavProp;
         if (entitySetNameFrom.equals(ReceivedMessage.EDM_TYPE_NAME)
@@ -467,8 +467,8 @@ public final class ODataLinksResource {
     }
 
     private void checkReadAccessContext() {
-        // アクセス制御
-        // TODO BOXレベルの場合に同じ処理が2回走る。無駄なのでcheckAccessContextにPrivilegeを配列で渡す等の工夫が必要
+        //Access control
+        //The same process runs twice for TODO BOX level. Since it is useless, we need ingenuity such as passing Privilege as an array to checkAccessContext
         String entitySetNameFrom = sourceEntity.getEntitySetName();
         String entitySetNameTo = targetNavProp;
         if (entitySetNameFrom.equals(ReceivedMessage.EDM_TYPE_NAME)

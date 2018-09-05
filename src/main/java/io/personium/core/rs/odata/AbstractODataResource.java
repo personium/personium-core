@@ -86,17 +86,17 @@ import io.personium.core.utils.EscapeControlCode;
 import io.personium.core.utils.ODataUtils;
 
 /**
- * ODataのリソースを扱う抽象クラス.
+ * Abstract class handling OData resources.
  */
 public abstract class AbstractODataResource {
 
     /**
-     * エンティティセット名.
+     * Entity set name.
      */
     private String entitySetName;
 
     /**
-     * ダミーキー名.
+     * Dummy key name.
      */
     public static final String DUMMY_KEY = "key_dummy@";
 
@@ -105,24 +105,24 @@ public abstract class AbstractODataResource {
      */
     private PersoniumODataProducer odataProducer;
 
-    /** $formatのJSON. */
+    /** JSON of $ format.*/
     public static final String FORMAT_JSON = "json";
-    /** $formatのatom. */
+    /** $ format atom.*/
     public static final String FORMAT_ATOM = "atom";
 
-    /** データ格納時の時刻(リクエストボディに"SYSUTCDATETIME()"が指定された場合はPersoniumJsonFromatParserクラスで設定). */
+    /** Time when data was stored (set "PersoniumJsonFromatParser class" when "SYSUTCDATETIME ()" is specified as the request body).*/
     private long currentTimeMillis = System.currentTimeMillis();
 
     /**
-     * entitySetNameのセッター.
-     * @param entitySetName エンティティセット名
+     * Setter of entitySetName.
+     * @ param entitySetName Entity set name
      */
     public void setEntitySetName(String entitySetName) {
         this.entitySetName = entitySetName;
     }
 
     /**
-     * odataProducerのゲッター.
+     * Getter of odataProducer.
      * @return odataProducer
      */
     public PersoniumODataProducer getOdataProducer() {
@@ -130,7 +130,7 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * odataProducerのセッター.
+     * Setter for odataProducer.
      * @param odataProducer odataProducer
      */
     public void setOdataProducer(PersoniumODataProducer odataProducer) {
@@ -138,18 +138,18 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * entitySetNameのゲッター.
-     * @return エンティティセット名
+     * Getter of entitySetName.
+     * @return entity set name
      */
     public String getEntitySetName() {
         return this.entitySetName;
     }
 
     /**
-     * 返すべきContentTypeを決定します.
-     * @param accept Accept ヘッダの内容
-     * @param format $format パラメタ
-     * @return 返すべきContent-Type
+     * Determine the ContentType to return.
+     * @ param accept Content of the Accept header
+     * @ param format $ format parameter
+     * @return Content-Type to return
      */
     public final MediaType decideOutputFormat(final String accept, final String format) {
         MediaType mediaType = null;
@@ -166,15 +166,15 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * クエリでの指定($format)から出力フォーマットを決定する.
-     * @param format $formatの指定値
-     * @return 出力フォーマット("application/json" or "application/atom+xml")
+     * Determine the output format from the specification ($ format) in the query.
+     * @ param format Specified value of $ format
+     * @return output format ("application / json" or "application / atom + xml")
      */
     private MediaType decideOutputFormatFromQueryValue(String format) {
         MediaType mediaType = null;
 
         if (format.equals(FORMAT_ATOM)) {
-            // $formatの指定がatomである場合
+            //When the specification of $ format is atom
             mediaType = MediaType.APPLICATION_ATOM_XML_TYPE;
         } else if (format.equals(FORMAT_JSON)) {
             mediaType = MediaType.APPLICATION_JSON_TYPE;
@@ -186,9 +186,9 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * Acceptヘッダの指定から出力フォーマットを決定する.
-     * @param acceptHeaderValue Acceptヘッダの指定値
-     * @return 出力フォーマット("application/json" or "application/atom+xml")
+     * Decide the output format from specification of Accept header.
+     * @ param acceptHeaderValue Specified value of Accept header
+     * @return output format ("application / json" or "application / atom + xml")
      */
     private MediaType decideOutputFormatFromHeaderValues(String acceptHeaderValue) {
         MediaType mediaType = null;
@@ -209,9 +209,9 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * 入力文字列からセミコロン以降を切り捨てる.
-     * @param source Acceptヘッダの指定値をカンマで分割した文字列
-     * @return セミコロンまでの文字列
+     * Truncate the semicolon after the input character string.
+     * @ param source Accept A character string obtained by dividing the specified value in the header with a comma
+     * @return String up to semicolon
      */
     private String truncateAfterSemicolon(String source) {
         String result = source;
@@ -233,30 +233,30 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * Entityの作成を Producerに依頼.
-     * @param reader リクエストボディ
-     * @param odataResource ODataリソース
+     * Ask Producer to create Entity.
+     * @ param reader request body
+     * @ param odataResource OData resource
      * @return EntityResponse
      */
     protected EntityResponse createEntity(final Reader reader, ODataCtlResource odataResource) {
         OEntityWrapper oew = getOEntityWrapper(reader, odataResource, null);
 
-        // Entityの作成を Producerに依頼.この中であわせて、存在確認もしてもらう。
+        //Ask Producer to create an Entity. In addition to this, we also ask for existence confirmation.
         EntityResponse res = getOdataProducer().createEntity(getEntitySetName(), oew);
         return res;
     }
 
     /**
-     * リクエストボディからOEntityWrapperを取得する.
-     * @param reader リクエストボディ
-     * @param odataResource ODataリソース
-     * @param metadata スキーマ定義
+     * Get the OEntityWrapper from the request body.
+     * @ param reader request body
+     * @ param odataResource OData resource
+     * @ param metadata schema definition
      * @return OEntityWrapper
      */
     public OEntityWrapper getOEntityWrapper(final Reader reader,
             ODataCtlResource odataResource,
             EdmDataServices metadata) {
-        // 登録すべきOEntityを作成
+        //Create OEntity to register
         OEntity newEnt;
         if (metadata == null) {
             newEnt = createRequestEntity(reader, null);
@@ -264,35 +264,35 @@ public abstract class AbstractODataResource {
             newEnt = createRequestEntity(reader, null, metadata);
         }
 
-        // ラッパにくるむ. POSTでIf-Match等 ETagを受け取ることはないのでetagはnull。
+        //Wrapped in a trumpet. Since POST never receives ETags such as If-Match Etag is null.
         String uuid = PersoniumUUID.randomUUID();
         OEntityWrapper oew = new OEntityWrapper(uuid, newEnt, null);
-        // 必要ならばメタ情報をつける処理
+        //Process of attaching meta information if necessary
         odataResource.beforeCreate(oew);
 
         return oew;
     }
 
     /**
-     * 入力ボディからOEntityオブジェクトを作成する.
-     * このメソッドではロック処理をかけることができないので、データの存在チェック等はしない。
-     * @param reader リクエストボディ
-     * @param oEntityKey 更新対象のentityKey。新規作成時はnullを指定する
-     * @return ODataエンティティ
+     * Create an OEntity object from the input body.
+     * Since this method can not apply the locking process, it does not check the existence of data.
+     * @ param reader request body
+     * @ param o EntityKey The entityKey to update. Specify null when creating a new one
+     * @return OData entity
      */
     protected OEntity createRequestEntity(final Reader reader, OEntityKey oEntityKey) {
-        // スキーマ情報の取得
+        //Retrieving Schema Information
         EdmDataServices metadata = this.odataProducer.getMetadata();
         return createRequestEntity(reader, oEntityKey, metadata);
     }
 
     /**
-     * 入力ボディからOEntityオブジェクトを作成する.
-     * このメソッドではロック処理をかけることができないので、データの存在チェック等はしない。
-     * @param reader リクエストボディ
-     * @param oEntityKey 更新対象のentityKey。新規作成時はnullを指定する
-     * @param metadata EdmDataServicesスキーマ定義
-     * @return ODataエンティティ
+     * Create an OEntity object from the input body.
+     * Since this method can not apply the locking process, it does not check the existence of data.
+     * @ param reader request body
+     * @ param o EntityKey The entityKey to update. Specify null when creating a new one
+     * @ param metadata EdmDataServices schema definition
+     * @return OData entity
      */
     protected OEntity createRequestEntity(final Reader reader, OEntityKey oEntityKey, EdmDataServices metadata) {
         return createRequestEntity(
@@ -303,34 +303,34 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * 入力ボディからOEntityオブジェクトを作成する.
-     * このメソッドではロック処理をかけることができないので、データの存在チェック等はしない。
-     * @param reader リクエストボディ
-     * @param oEntityKey 更新対象のentityKey。新規作成時はnullを指定する
-     * @param metadata EdmDataServicesスキーマ定義
-     * @param entitySetNameParam EntitySet名
-     * @return ODataエンティティ
+     * Create an OEntity object from the input body.
+     * Since this method can not apply the locking process, it does not check the existence of data.
+     * @ param reader request body
+     * @ param o EntityKey The entityKey to update. Specify null when creating a new one
+     * @ param metadata EdmDataServices schema definition
+     * @ param entitySetNameParam EntitySet name
+     * @return OData entity
      */
     protected OEntity createRequestEntity(final Reader reader,
             OEntityKey oEntityKey,
             EdmDataServices metadata,
             String entitySetNameParam) {
-        // スキーマ情報の取得
+        //Retrieving Schema Information
         EdmEntitySet edmEntitySet = metadata.findEdmEntitySet(entitySetNameParam);
         EdmEntityType edmEntityType = edmEntitySet.getType();
-        // スキーマに定義されたキーリストを取得
+        //Retrieve the key list defined in the schema
         List<String> keysDefined = edmEntityType.getKeys();
 
-        // リクエストからとりあえずの仮Ontityオブジェクトを作成する。
-        // このOEntityには、必須項目が入っていないような可能性もある。
+        //Create a temporary Ontity object for the time being from the request.
+        //There is a possibility that this OEntity does not contain required items.
         OEntity reqEntity = createOEntityFromRequest(keysDefined, metadata, reader, entitySetNameParam);
         List<OLink> links = reqEntity.getLinks();
 
-        // TODO Staticなスキーマチェックとデフォルト値設定を行う。
+        //TODO Static schema check and default value setting.
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
         List<String> schemaProps = new ArrayList<String>();
 
-        // 主キーのスキーマチェック
+        //Primary key schema check
         if (oEntityKey != null) {
             validatePrimaryKey(oEntityKey, edmEntityType);
         }
@@ -340,9 +340,9 @@ public abstract class AbstractODataResource {
             schemaProps.add(propName);
             OProperty<?> op = null;
             try {
-                // リクエストOEntityから該当プロパティを取得
+                //Acquire corresponding property from request OEntity
                 op = reqEntity.getProperty(propName);
-                // リクエストボディに__published、__updatedが指定されていた場合400エラーを返却する
+                //When __published, __ updated is specified in the request body 400 Return 400 error
                 if (op != null && (propName.equals(Common.P_PUBLISHED.getName())
                         || propName.equals(Common.P_UPDATED.getName()))) {
                     throw PersoniumCoreException.OData.FIELED_INVALID_ERROR
@@ -350,10 +350,10 @@ public abstract class AbstractODataResource {
                 }
 
                 if (ep.getType().isSimple()) {
-                    // シンプル型の場合
+                    //In case of simple type
                     op = getSimpleProperty(ep, propName, op);
                 } else {
-                    // Complex型の場合
+                    //In case of Complex type
                     op = getComplexProperty(ep, propName, op, metadata);
                 }
             } catch (PersoniumCoreException e) {
@@ -362,7 +362,7 @@ public abstract class AbstractODataResource {
                 op = setDefaultValue(ep, propName, op, metadata);
             }
 
-            // 入力があったので値のチェック処理に進む。
+            //Since there was an input, it goes to the value check processing.
             if (op != null && op.getValue() != null) {
                 if (ep.getType().isSimple()) {
                     validateProperty(ep, propName, op);
@@ -375,38 +375,38 @@ public abstract class AbstractODataResource {
                 props.add(op);
             }
         }
-        // DynamicPropertyの値を設定する
+        //Set the value of DynamicProperty
         int dynamicPropCount = 0;
         for (OProperty<?> property : reqEntity.getProperties()) {
 
             String req = property.getName();
             if (req.equals("__metadata")) {
-                // リクエストボディに__metadataが指定されていた場合400エラーを返却する
+                //When __metadata is specified in the request body 400 Return 400 error
                 throw PersoniumCoreException.OData.FIELED_INVALID_ERROR.params(req
                         + " is management information name. Cannot request.");
             }
-            // EntityTypeに存在しないdynamicPropertyが出現した場合は、スキーマを追加登録するため、プロパティ数へカウントする。
-            // 登録済みの場合は、declaredPropertyとして扱われるため、プロパティ数はカウントしない。
+            //When a dynamicProperty that does not exist in the EntityType appears, it is counted in the number of properties in order to additionally register the schema.
+            //If registered, it is treated as declaredProperty, so do not count the number of properties.
             if (!schemaProps.contains(req)) {
-                // dynamicPropertyの要素数をカウント
+                //Count the number of elements in dynamicProperty
                 dynamicPropCount++;
                 validateDynamicProperty(property);
                 props.add(property);
             } else {
-                // リクエストボディに指定された定義済のダイナミックプロパティ値がnullの場合は、nullとしてESへ格納するため省略しない
-                // （リクエストボディで省略されている場合は、ESへの格納が不要なためプロパティ情報としても省略する）
-                // ただし、プロパティ値がnull以外の場合は2重登録となるため、除外する
+                //If the defined dynamic property value specified in the request body is null, it is stored as null in the ES, so it is not omitted
+                //(If omitted in the request body, omitting it as property information because it is unnecessary to store in ES)
+                //However, if the property value is not null, it will be double registered, so exclude it
                 if (property.getValue() == null && isRegisteredDynamicProperty(edmEntityType, req)) {
                     validateDynamicProperty(property);
                     props.add(property);
                 }
             }
         }
-        // リソースごとのチェック処理
+        //Check processing for each resource
         this.collectProperties(props);
         this.validate(props);
 
-        // プロパティの要素数チェック
+        //Check number of elements of property
         if (dynamicPropCount > 0) {
             PropertyLimitChecker checker = new PropertyLimitChecker(metadata, entitySetNameParam, dynamicPropCount);
             List<CheckError> errors = checker.checkPropertyLimits(entitySetNameParam);
@@ -415,32 +415,32 @@ public abstract class AbstractODataResource {
             }
         }
 
-        // entity はImmutable なので、生成すべきEntityオブジェクトを再作成
-        // このOEntityはスキーマに従っていることが保証されているが、キーが存在しない。
+        //Because entity is Immutable, recreate Entity object to be created
+        //This OEntity is guaranteed to conform to the schema, but the key does not exist.
         OEntity newEnt = OEntities.createRequest(edmEntitySet, props, links);
 
-        // keyを設定
+        //Set key
         OEntityKey key = null;
-        // 複合キーかどうかで処理を振り分け
+        //Distribute processing depending on whether it is a compound key or not
         if (keysDefined.size() == 1) {
             // single-unnamed value
             String keyPropName = keysDefined.get(0);
             OProperty<?> keyProp = newEnt.getProperty(keyPropName);
             Object value = keyProp.getValue();
             if (value == null) {
-                // 単一主キーがnullの場合、400エラー
+                //400 error if single primary key is null
                 throw PersoniumCoreException.OData.NULL_SINGLE_KEY;
             }
             key = OEntityKey.create(keyProp.getValue());
         } else {
-            // multiple-named valueの実装
+            //Implementation of multiple-named value
             Map<String, Object> keyMap = new HashMap<String, Object>();
             for (String keyPropName : keysDefined) {
                 OProperty<?> keyProp = newEnt.getProperty(keyPropName);
                 Object value = keyProp.getValue();
                 if (value == null) {
-                    // 複合キーの場合は、null値を許可する
-                    // キー値がnullの場合、OEntityKeyの作成に失敗するため、ダミーキーを設定する
+                    //For compound keys, allow null values
+                    //If the key value is null, creation of OEntityKey fails, so set a dummy key
                     value = DUMMY_KEY;
                     props.remove(keyProp);
                     props.add(OProperties.string(keyPropName, (String) null));
@@ -450,8 +450,8 @@ public abstract class AbstractODataResource {
             key = OEntityKey.create(keyMap);
         }
         editProperty(props, key.toKeyString());
-        // 登録すべきOEntityを作成
-        // このOEntityはスキーマに従っていることが保証されており、キーも適切に設定されている。
+        //Create OEntity to register
+        //This OEntity is guaranteed to conform to the schema, and the key is properly set.
         newEnt = OEntities.create(reqEntity.getEntitySet(), key, props, links,
                 key.toKeyStringWithoutParentheses(), reqEntity.getEntitySet().getName());
         return newEnt;
@@ -459,9 +459,9 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * 引数で指定されたプロパティがDynamicPropertyで定義されているかをチェックする.
+     * It checks whether the property specified by the argument is defined by DynamicProperty.
      * @param edmEntityType edmEntityType
-     * @param propertyName プロパティ名
+     * @ param propertyName property name
      * @return true:DynamicProperty, false:DeclaredProperty
      */
     protected boolean isRegisteredDynamicProperty(EdmEntityType edmEntityType, String propertyName) {
@@ -469,7 +469,7 @@ public abstract class AbstractODataResource {
         EdmProperty prop = edmEntityType.findDeclaredProperty(propertyName);
         NamespacedAnnotation<?> isDeclared = prop.findAnnotation(Common.P_NAMESPACE.getUri(),
                 Property.P_IS_DECLARED.getName());
-        // Property/ComplexTypeProperty以外では、IsDeclaredは定義されていないため、除外する。
+        //Except for Property / ComplexTypeProperty, IsDeclared is not defined and is excluded.
         if (isDeclared != null && isDeclared.getValue().equals("false")) {
             isRegisteredDynamicProperty = true;
         }
@@ -477,21 +477,21 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * 主キーのバリ―デート.
-     * @param oEntityKey リクエストされたKey情報
-     * @param edmEntityType EntityTypeのスキーマ情報
+     * Primary Key Validate.
+     * @ param o EntityKey Requested Key information
+     * @ param edmEntityType Schema information for EntityType
      */
     protected void validatePrimaryKey(OEntityKey oEntityKey, EdmEntityType edmEntityType) {
         for (String key : edmEntityType.getKeys()) {
             EdmType keyEdmType = edmEntityType.findProperty(key).getType();
             if (OEntityKey.KeyType.SINGLE.equals(oEntityKey.getKeyType())) {
-                // 単一主キーの場合
+                //For a single primary key
                 if (!(oEntityKey.asSingleValue().getClass().equals(
                         EdmSimpleType.getSimple(keyEdmType.getFullyQualifiedTypeName()).getCanonicalJavaType()))) {
                     throw PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR;
                 }
             } else {
-                // 複合主キーの場合
+                //In case of composite primary key
                 Set<NamedValue<?>> nvSet = oEntityKey.asComplexValue();
                 for (NamedValue<?> nv : nvSet) {
                     if (nv.getName().equals(key) && !(nv.getValue().getClass().equals(
@@ -505,22 +505,22 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * プロパティ操作.
-     * @param props プロパティ一覧
-     * @param value キーの値
+     * Property operation.
+     * @ param props property list
+     * @ param value Value of key
      */
     protected void editProperty(List<OProperty<?>> props, String value) {
     }
 
     /**
-     * デフォルト値を設定したシンプルプロパティを取得する.
+     * Get a simple property with default value set.
      * @param ep EdmProperty
-     * @param propName プロパティ名
+     * @ param propName property name
      * @param op OProperty
-     * @return デフォルト値を設定したシンプルプロパティ
+     * @return Simple property with default value set
      */
     protected OProperty<?> getSimpleProperty(EdmProperty ep, String propName, OProperty<?> op) {
-        // 値が設定されていなければ、デフォルト値を設定する
+        //If the value is not set, the default value is set
         if (op == null || op.getValue() == null) {
             op = setDefaultValue(ep, propName, op);
         }
@@ -528,47 +528,47 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * デフォルト値を設定したComplexプロパティを取得する.
+     * Get the Complex property with the default value set.
      * @param ep EdmProperty
-     * @param propName プロパティ名
+     * @ param propName property name
      * @param op OProperty
-     * @param metadata スキーマ情報
-     * @return デフォルト値を設定したComplexプロパティ
+     * @ param metadata schema information
+     * @return Complex property with default value set
      */
     @SuppressWarnings("unchecked")
     protected OProperty<?> getComplexProperty(EdmProperty ep, String propName, OProperty<?> op,
             EdmDataServices metadata) {
-        // ComplexTypeのスキーマ情報を取得する
+        //Get schema information of ComplexType
         OProperty<?> newProp;
         EdmComplexType edmComplexType =
                 metadata.findEdmComplexType(ep.getType().getFullyQualifiedTypeName());
 
-        // dynamicPropertyの要素数をカウント
+        //Count the number of elements in dynamicProperty
         if (op == null || op.getValue() == null) {
             newProp = setDefaultValue(ep, propName, op, metadata);
         } else {
             if (ep.getCollectionKind().equals(CollectionKind.List)) {
-                // ComplexTypeが配列要素の場合は、OCollectionBuilderを作成する
+                //If ComplexType is an array element, create an OCollectionBuilder
                 EdmCollectionType collectionType = new EdmCollectionType(CollectionKind.List, ep.getType());
                 OCollection.Builder<OObject> builder = OCollections.<OObject>newBuilder(collectionType
                         .getItemType());
 
                 if (op.getValue() instanceof OCollection<?>) {
-                    // ComplexTypeプロパティを配列に追加する
+                    //Add ComplexType property to array
                     for (OComplexObject val : (OCollection<OComplexObject>) op.getValue()) {
-                        // ComplexTypeのOProperty一覧を取得する
+                        //Obtain OProperty list of ComplexType
                         List<OProperty<?>> newComplexProperties = getComplexPropertyList(ep, propName,
                                 val.getProperties(), metadata);
                         builder.add(OComplexObjects.create(edmComplexType, newComplexProperties));
                     }
 
-                    // ComplexTypeの配列要素をOCollectionプロパティとして設定する
+                    //Set array element of ComplexType as OCollection property
                     newProp = OProperties.collection(ep.getName(), collectionType, builder.build());
                 } else {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
                 }
             } else {
-                // ComplexTypeが配列でない場合は、ComplexTypeプロパティとして設定する
+                //If ComplexType is not an array, set it as ComplexType property
                 List<OProperty<?>> newComplexProperties = getComplexPropertyList(ep, propName,
                         (List<OProperty<?>>) op.getValue(), metadata);
                 newProp = OProperties.complex(propName, edmComplexType, newComplexProperties);
@@ -578,21 +578,21 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * デフォルト値を設定したComplexプロパティ一覧を取得する.
+     * Get the Complex property list with the default value set.
      * @param ep EdmProperty
-     * @param propName プロパティ名
-     * @param opList OProperty一覧
-     * @param metadata スキーマ情報
-     * @return デフォルト値を設定したシンプルプロパティ
+     * @ param propName property name
+     * @ param opList OProperty list
+     * @ param metadata schema information
+     * @return Simple property with default value set
      */
     protected List<OProperty<?>> getComplexPropertyList(EdmProperty ep, String propName, List<OProperty<?>> opList,
             EdmDataServices metadata) {
-        // ComplexTypeのスキーマ情報を取得する
+        //Get schema information of ComplexType
         EdmComplexType edmComplexType =
                 metadata.findEdmComplexType(ep.getType().getFullyQualifiedTypeName());
         Map<String, OProperty<?>> complexProperties = new HashMap<String, OProperty<?>>();
 
-        // 不足項目を確認するためにスキーマ情報をベースにループさせるので、OPropertyの一覧をHash形式に変換する
+        //Since it loops on the basis of the schema information to confirm the missing items, it converts OProperty list to Hash format
         for (OProperty<?> cp : opList) {
             complexProperties.put(cp.getName(), cp);
         }
@@ -600,30 +600,30 @@ public abstract class AbstractODataResource {
         List<OProperty<?>> newComplexProperties = createNewComplexProperties(metadata, edmComplexType,
                 complexProperties);
 
-        // デフォルト値を設定したComplexTypeプロパティの一覧を返却する
+        //Return a list of ComplexType properties with default values ​​set
         return newComplexProperties;
     }
 
     /**
-     * ComplexTypeスキーマを参照して、必須チェックとデフォルト値の設定を行う.
-     * @param metadata スキーマ情報
-     * @param edmComplexType ComplexTypeのスキーマ情報
-     * @param complexProperties ComplexTypePropertyのList
-     * @return デフォルト値を設定したComplexTypeプロパティの一覧
+     * Refer to the ComplexType schema and set mandatory checks and default values.
+     * @ param metadata schema information
+     * @ param edmComplexType Schema information of ComplexType
+     * @ param complexProperties List of ComplexTypeProperty
+     * @return List of ComplexType properties with default values
      */
     protected List<OProperty<?>> createNewComplexProperties(EdmDataServices metadata,
             EdmComplexType edmComplexType,
             Map<String, OProperty<?>> complexProperties) {
         List<OProperty<?>> newComplexProperties = new ArrayList<OProperty<?>>();
         for (EdmProperty ctp : edmComplexType.getProperties()) {
-            // プロパティ情報を取得する
+            //Acquire property information
             String compPropName = ctp.getName();
             OProperty<?> complexProperty = complexProperties.get(compPropName);
             if (ctp.getType().isSimple()) {
-                // シンプル型の場合
+                //In case of simple type
                 complexProperty = getSimpleProperty(ctp, compPropName, complexProperty);
             } else {
-                // Complex型の場合
+                //In case of Complex type
                 complexProperty = getComplexProperty(ctp, compPropName, complexProperty, metadata);
             }
             if (complexProperty != null) {
@@ -634,9 +634,9 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * デフォルト値の設定.
+     * Set default value.
      * @param ep EdmProperty
-     * @param propName プロパティ名
+     * @ param propName property name
      * @param op OProperty
      * @return Oproperty
      */
@@ -645,17 +645,17 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * デフォルト値の設定.
+     * Set default value.
      * @param ep EdmProperty
-     * @param propName プロパティ名
+     * @ param propName property name
      * @param op OProperty
-     * @param metadata EdmDataServicesスキーマ定義
+     * @ param metadata EdmDataServices schema definition
      * @return Oproperty
      */
     protected OProperty<?> setDefaultValue(EdmProperty ep, String propName, OProperty<?> op, EdmDataServices metadata) {
-        // スキーマ上定義されているのに入力の存在しない Property
-        // デフォルト値が定義されていればそれをいれる。
-        // ComplexTypeそのものの項目、または配列の項目であればデフォルト値は設定しない
+        //Property that does not have input but is defined in the schema
+        //If default values ​​are defined, add them.
+        //If it is an item of ComplexType itself or an item of an array, a default value is not set
         NamespacedAnnotation<?> annotation = ep.findAnnotation(Common.P_NAMESPACE.getUri(),
                 Property.P_IS_DECLARED.getName());
         if (annotation != null && !(Boolean.valueOf(annotation.getValue().toString()))) {
@@ -665,27 +665,27 @@ public abstract class AbstractODataResource {
                 && ep.getDefaultValue() != null) {
             op = generateDefautlProperty(ep);
         } else if (ep.isNullable()) {
-            // nullableがtrueであれば。nullの入ったプロパティ
-            // TODO これでいいのか？
+            //If nullable is true. Property with null
+            //TODO Is this OK?
             op = OProperties.null_(propName, ep.getType().getFullyQualifiedTypeName());
         } else {
-            // nullableがfalseであれば。エラーとする
+            //If nullable is false. Make an error
             throw PersoniumCoreException.OData.INPUT_REQUIRED_FIELD_MISSING.params(propName);
         }
         return op;
     }
 
     /**
-     * プロパティ項目の値をチェックする.
+     * Check the value of the property item.
      * @param ep EdmProperty
-     * @param propName プロパティ名
+     * @ param propName property name
      * @param op OProperty
      */
     protected void validateProperty(EdmProperty ep, String propName, OProperty<?> op) {
         for (NamespacedAnnotation<?> annotation : ep.getAnnotations()) {
             if (annotation.getName().equals(Common.P_FORMAT)) {
                 String pFormat = annotation.getValue().toString();
-                // 正規表現チェックの場合
+                //In case of regular expression check
                 if (pFormat.startsWith(Common.P_FORMAT_PATTERN_REGEX)) {
                     validatePropertyRegEx(propName, op, pFormat);
                 } else if (pFormat.equals(Common.P_FORMAT_PATTERN_URI)) {
@@ -700,9 +700,9 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * プロパティ項目の値をチェックする.
+     * Check the value of the property item.
      * @param ep EdmProperty
-     * @param propName プロパティ名
+     * @ param propName property name
      * @param op OProperty
      * @param metadata schema information
      */
@@ -733,27 +733,27 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * p:Format以外のチェック処理.
-     * @param props プロパティ一覧
+     * Check processing other than p: Format.
+     * @ param props property list
      * @param
      */
     public void validate(List<OProperty<?>> props) {
     }
 
     /**
-     * プロパティの一覧取得.
-     * @param props プロパティ一覧
+     * Get property list.
+     * @ param props property list
      * @param
      */
     public void collectProperties(List<OProperty<?>> props) {
     }
 
     /**
-     * ダイナミックプロパティ項目の値をチェックする.
+     * Check the value of the dynamic property item.
      * @param property OProperty
      */
     private void validateDynamicProperty(OProperty<?> property) {
-        // keyのチェック
+        //Check key
         String key = property.getName();
         Pattern pattern = Pattern.compile(Common.PATTERN_USERDATA_KEY);
         Matcher matcher = pattern.matcher(key);
@@ -761,12 +761,12 @@ public abstract class AbstractODataResource {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(key);
         }
 
-        // 動的プロパティなのでnullは許容する
+        //Since it is a dynamic property, null is allowed
         if (property.getValue() == null) {
             return;
         }
 
-        // String型のvalueのチェック
+        //Check for value of type String
         EdmType type = property.getType();
         if (EdmSimpleType.STRING.equals(type)) {
             String value = property.getValue().toString();
@@ -775,7 +775,7 @@ public abstract class AbstractODataResource {
             }
         }
 
-        // Double型の値範囲チェック
+        //Double value range check
         if (EdmSimpleType.DOUBLE.equals(type)) {
             double value = (Double) property.getValue();
             if (!ODataUtils.validateDouble(value)) {
@@ -785,10 +785,10 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * プロパティ項目の値を正規表現でチェックする.
-     * @param propName プロパティ名
+     * Check the value of property item with regular expression.
+     * @ param propName property name
      * @param op OProperty
-     * @param pFormat pFormatの値
+     * @ param pFormat pFormat value
      */
     protected void validatePropertyRegEx(String propName, OProperty<?> op, String pFormat) {
         // Extract regular expressions from('regular expression')
@@ -803,8 +803,8 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * プロパティ項目の値をURIかチェックする.
-     * @param propName プロパティ名
+     * Check whether the value of the property item is a URI.
+     * @ param propName property name
      * @param op OProperty
      */
     protected void validatePropertyUri(String propName, OProperty<?> op) {
@@ -836,36 +836,36 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * OEntityKeyの正規化を行う.
-     * 正規化後のOEntityKeyをtoKeyStringすると、同一キーであれば同一文字列になる。
-     * @param oEntityKey もとのOEntityKey
+     * Perform normalization of OEntityKey.
+     * When toKeyString OEntityKey after normalization, if it is the same key, it becomes the same character string.
+     * @ param oEntityKey original OEntityKey
      * @param edmEntitySet EdmEntitySet
-     * @return OEntityKey 正規化されたOEntityKey
+     * @return OEntityKey Normalized OEntityKey
      */
     public static OEntityKey normalizeOEntityKey(OEntityKey oEntityKey, EdmEntitySet edmEntitySet) {
         EdmEntityType edmEntityType = edmEntitySet.getType();
-        // スキーマに定義されたキーリストを取得
+        //Retrieve the key list defined in the schema
         List<String> keysDefined = edmEntityType.getKeys();
 
-        // keyを設定
+        //Set key
         OEntityKey key = null;
-        // 複合キーかどうかで処理を振り分け
+        //Distribute processing depending on whether it is a compound key or not
         if (keysDefined.size() == 1) {
             key = oEntityKey;
         } else {
             Map<String, Object> keyMap = new HashMap<String, Object>();
             if (OEntityKey.KeyType.COMPLEX == oEntityKey.getKeyType()) {
-                // 入力キーも複合のとき
+                //When the input key is also compound
                 Set<NamedValue<?>> nvSet = oEntityKey.asComplexValue();
-                // multiple-named valueの実装
+                //Implementation of multiple-named value
                 for (String keyName : keysDefined) {
                     for (NamedValue<?> nv : nvSet) {
                         if (nv.getName().equals(keyName)) {
-                            // 該当キーをMapに詰める処理
+                            //Process of filling the corresponding key in Map
                             Object value = nv.getValue();
                             if (value == null) {
-                                // 複合キーの場合は、null値を許可する
-                                // キー値がnullの場合、OEntityKeyの作成に失敗するため、ダミーキーを設定する
+                                //For compound keys, allow null values
+                                //If the key value is null, creation of OEntityKey fails, so set a dummy key
                                 value = DUMMY_KEY;
                             }
                             keyMap.put(keyName, value);
@@ -873,14 +873,14 @@ public abstract class AbstractODataResource {
                     }
                 }
             } else {
-                // 入力キーがシングルのとき
+                //When the input key is single
                 Object keyValue = oEntityKey.asSingleValue();
                 for (String keyName : keysDefined) {
                     EdmProperty eProp = edmEntityType.findProperty(keyName);
                     Object value = null;
                     if (eProp.isNullable() && eProp.getDefaultValue() == null) {
-                        // Nullableな項目がnullだったはず
-                        // キー値がnullの場合、OEntityKeyの作成に失敗するため、ダミーキーを設定する
+                        //Nullable item should be null
+                        //If the key value is null, creation of OEntityKey fails, so set a dummy key
                         value = DUMMY_KEY;
                     } else {
                         value = keyValue;
@@ -888,16 +888,16 @@ public abstract class AbstractODataResource {
                     keyMap.put(keyName, value);
                 }
             }
-            // 準備したMapからOEntityKeyを作成
+            //Create OEntityKey from prepared Map
             key = OEntityKey.create(keyMap);
         }
         return key;
     }
 
     /**
-     * リクエストボディReaderからOEntityを生成する.
-     * @param keyPropNames エンティティキーを作成するためのプロパティの名前のリスト
-     * @param reader リクエストボディ
+     * Generate OEntity from the request body Reader.
+     * @ param keyPropNames List of names of properties for creating entity keys
+     * @ param reader request body
      * @return OEntity
      */
     private OEntity createOEntityFromRequest(List<String> keyPropNames,
@@ -910,11 +910,11 @@ public abstract class AbstractODataResource {
             // single-unnamed value
             keyDummy = OEntityKey.create("");
         }
-        // TODO multiple-named valueの実装
+        //Implementation of TODO multiple-named value
 
         OEntity entity = null;
 
-        // ODataVersion.V2だと、おそらくバグのためJSONパースが動かないため、強制的にV1としてリクエストをパースする。
+        //With ODataVersion.V2, perhaps due to a bug, JSON parsing does not work, so forcibly parse the request as V1.
         entity = convertFromString(reader, MediaType.APPLICATION_JSON_TYPE, ODataVersion.V1, metadata,
                 entitySetNameParam, keyDummy);
 
@@ -922,13 +922,13 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * POST用のレスポンスビルダーを作成する.
+     * Create a response builder for POST.
      * @param ent OEntity
      * @param outputFormat Content-Type
-     * @param responseStr レスポンスボディ
-     * @param resUriInfo レスポンスのUriInfo
-     * @param key レスポンスのエンティティキー
-     * @return レスポンスビルダー
+     * @ param responseStr response body
+     * @ param resUriInfo response UriInfo
+     * @ param key Entity key of the response
+     * @return response builder
      */
     protected ResponseBuilder getPostResponseBuilder(
             OEntity ent,
@@ -941,7 +941,7 @@ public abstract class AbstractODataResource {
                         + getEntitySetName() + key)
                 .header(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataVersion.V2.asString);
 
-        // 応答にETAGを付与
+        //Give ETAG to response
         if (ent instanceof OEntityWrapper) {
             OEntityWrapper oew2 = (OEntityWrapper) ent;
             String etag = oew2.getEtag();
@@ -953,12 +953,12 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * レスポンスボディを作成する.
+     * Create a response body.
      * @param uriInfo UriInfo
-     * @param resp レスポンス
-     * @param format レスポンスボディのフォーマット
-     * @param acceptableMediaTypes 許可するMediaTypeのリスト
-     * @return レスポンスボディ
+     * @ param resp response
+     * @ param format Response body format
+     * @ param acceptableMediaTypes List of allowed MediaTypes
+     * @return response body
      */
     protected String renderEntityResponse(
             final UriInfo uriInfo,
@@ -982,59 +982,59 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * Entity Data Modelのプロパティスキーマ情報からODataプロパティのデフォルト値インスタンスを生成する.
-     * @param ep Entity Data Modelのプロパティ
-     * @return デフォルト値が入ったODataプロパティのインスタンス
+     * Creates a default value instance of the OData property from the property schema information of the Entity Data Model.
+     * @ param ep Entity Data Model properties
+     * @return Instance of OData property with default value
      */
     private OProperty<?> generateDefautlProperty(EdmProperty ep) {
         EdmType edmType = ep.getType();
         OProperty<?> op = null;
 
-        // スキーマからDefault値を取得する。
+        //Get the Default value from the schema.
         String defaultValue = ep.getDefaultValue();
         String propName = ep.getName();
 
-        // Default値が特定の関数である場合は、値を生成する。
+        //If the Default value is a specific function, generate a value.
         if (EdmSimpleType.STRING.equals(edmType)) {
-            // Typeが文字列でDefault値がCELLID()のとき。
+            //When Type is a character string and Default value is CELLID ().
             if (defaultValue.equals(Common.UUID)) {
-                // Typeが文字列でDefault値がUUID()のとき。
+                //When Type is a character string and Default value is UUID ().
                 String newUuid = UUID.randomUUID().toString().replaceAll("-", "");
                 op = OProperties.string(propName, newUuid);
             } else if (defaultValue.equals("null")) {
-                // Typeが文字列でDefault値がnullのとき。
+                //When Type is a character string and Default value is null.
                 op = OProperties.null_(propName, EdmSimpleType.STRING);
             } else {
-                // Typeが文字列でDefault値その他の値のとき。
+                //When Type is a character string and the Default value is other value.
                 op = OProperties.string(propName, defaultValue);
             }
         } else if (EdmSimpleType.DATETIME.equals(edmType)) {
-            // Edm.DateTime型：
+            //Edm.DateTime Type:
             if (null == defaultValue || defaultValue.equals("null")) {
-                // defaultValueがnullまたは"null"であれば、nullを設定する
+                //If defaultValue is null or "null", set it to null
                 op = OProperties.null_(propName, EdmSimpleType.DATETIME);
             } else {
-                // －"\/Date(...)\/"の場合は設定値をデフォルト値にする
-                // －"SYSUTCDATETIME()"の場合は現在時刻をデフォルト値にする
-                // TODO この実装では Atom 出力時にDefault TimeZoneで出力されてしまう
+                //- If "\ / Date (...) \ /", set the default value
+                //- For "SYSUTCDATETIME ()", set the current time to the default value
+                //TODO In this implementation, it is output as Default TimeZone at Atom output
                 op = OProperties.datetime(propName,
                         new Date(getTimeMillis(defaultValue)));
             }
 
         } else if (EdmSimpleType.SINGLE.equals(edmType)) {
-            // TypeがSINGLEでDefault値があるとき。
+            //When Type is SINGLE and there is a Default value.
             op = OProperties.single(propName, Float.valueOf(defaultValue));
         } else if (EdmSimpleType.INT64.equals(edmType)) {
-            // TypeがINT64でDefault値があるとき。
+            //When Type is INT64 and there is a Default value.
             op = OProperties.int64(propName, Long.valueOf(defaultValue));
         } else if (EdmSimpleType.INT32.equals(edmType)) {
-            // TypeがINT32でDefault値があるとき。
+            //When Type is INT32 and there is a Default value.
             op = OProperties.int32(propName, Integer.valueOf(defaultValue));
         } else if (EdmSimpleType.BOOLEAN.equals(edmType)) {
-            // TypeがBooleanでDefault値があるとき。
+            //When Type is Boolean and there is a Default value.
             op = OProperties.boolean_(propName, Boolean.parseBoolean(defaultValue));
         } else if (EdmSimpleType.DOUBLE.equals(edmType)) {
-            // TypeがDoubleでDefault値があるとき。
+            //When Type is Double and there is Default value.
             op = OProperties.double_(propName, Double.parseDouble(defaultValue));
         }
 
@@ -1061,9 +1061,9 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * ダミーキーチェック.
-     * @param value チェック対象の値
-     * @return true:ダミーキー false:ダミーキー以外
+     * Dummy key check.
+     * @ param value Value to check
+     * @return true: Dummy key false: other than dummy key
      */
     public static boolean isDummy(Object value) {
         boolean flag = false;
@@ -1074,27 +1074,27 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * ダミーキーをnullに置き換えた文字列を返却する.
-     * @param value 置換対象文字列
-     * @return 返還後文字列
+     * Returns a character string obtained by replacing the dummy key with null.
+     * @ param value Substitution target string
+     * @ return Return string
      */
     public static String replaceDummyKeyToNull(String value) {
         return value.replaceAll("'" + DUMMY_KEY + "'", "null");
     }
 
     /**
-     * nullをダミーキーに置き換えた文字列を返却する(括弧つき).
-     * @param value 置換対象文字列
-     * @return 返還後文字列
+     * Return a character string with null replaced with a dummy key (with parentheses).
+     * @ param value Substitution target string
+     * @ return Return string
      */
     public static String replaceNullToDummyKeyWithParenthesis(String value) {
         return replaceNullToDummyKey("(" + value + ")");
     }
 
     /**
-     * nullをダミーキーに置き換えた文字列を返却する.
-     * @param value 置換対象文字列
-     * @return 返還後文字列
+     * Return a character string with null replaced with a dummy key.
+     * @ param value Substitution target string
+     * @ return Return string
      */
     public static String replaceNullToDummyKey(String value) {
         Pattern pattern = Pattern.compile("=null([,|\\)])");
@@ -1140,9 +1140,9 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * NavigationTargetKeyPropertyからEntityTypeとPropertyNameを取得する.
-     * @param propertyName プロパティ名
-     * @return EntityTypeとPropertyName
+     * Get EntityType and PropertyName from NavigationTargetKeyProperty.
+     * @ param propertyName property name
+     * @return EntityType and PropertyName
      */
     public static HashMap<String, String> convertNTKP(String propertyName) {
         HashMap<String, String> ntkp = null;
@@ -1157,9 +1157,9 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * 引数で指定された文字列をTimeMillisの値として取得する.
-     * @param timeStr TimeMillisの文字列表現(ex."/Data(...)/", "SYSUTCDATETIME()")
-     * @return TimeMillisの値
+     * Acquires the character string specified by the argument as the value of TimeMillis.
+     * @ param timeStr TimeMillis string representation (ex. "/ Data (...) /", "SYSUTCDATETIME ()")
+     * @return TimeMillis value
      */
     private long getTimeMillis(String timeStr) {
         long timeMillis = 0;
@@ -1181,9 +1181,9 @@ public abstract class AbstractODataResource {
     }
 
     /**
-     * レスポンスボディのエスケープする.
-     * @param response レスポンスボディ
-     * @return エスケープしたレスポンスボディ
+     * Escape the response body.
+     * @ param response Response body
+     * @return escaped response body
      */
     public String escapeResponsebody(String response) {
         return EscapeControlCode.escape(response);

@@ -24,7 +24,7 @@ import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- * Lockを管理するユーティリティ.
+ * Utility to manage Lock.
  */
 public abstract class LockManager {
 
@@ -37,11 +37,11 @@ public abstract class LockManager {
     static volatile int accountLockLifeTime = Integer.valueOf(PersoniumUnitConfig.getAccountLockLifetime());
 
     /**
-     * Memcached タイプ.
+     * Memcached type.
      */
     public static final String TYPE_MEMCACHED = "memcached";
     /**
-     * InProcess タイプ.
+     * InProcess type.
      */
     public static final String TYPE_IN_PROCESS = "inProcess";
 
@@ -88,18 +88,18 @@ public abstract class LockManager {
     }
 
     /**
-     * ロックを取得します.
-     * @param category ロックのカテゴリ
-     * @param cellId CellのID
-     * @param boxId BoxのID
-     * @param nodeId NodeのID
+     * Get the lock.
+     * @ param category Category of lock
+     * @ param cellId Cell ID
+     * @ param boxId Box ID
+     * @ param nodeId ID of Node
      * @return Lock
      */
     public static Lock getLock(String category, String cellId, String boxId, String nodeId) {
         Long createdAt = new Date().getTime();
-        // memcached にキーが存在するか調べる
-        // なければmemcached に書きに行く
-        // あったら、リトライする。
+        //Check if memcached has key
+        //If not, I will write to memcached
+        //If you do, try retrying.
         int timesRetry = 0;
         while (timesRetry <= lockRetryTimes) {
             String fullKey = LockKeyComposer.fullKeyFromCategoryAndKey(category, cellId, boxId, nodeId);
@@ -128,7 +128,7 @@ public abstract class LockManager {
     }
 
     /*
-     * ロックのリリース処理
+     * Lock release processing
      */
     static void releaseLock(String fullKey) {
         singleton.doReleaseLock(fullKey);
@@ -136,7 +136,7 @@ public abstract class LockManager {
 
 
     /**
-     * ロックをすべて消します.
+     * Erase all locks.
      */
     public static void deleteAllLocks() {
         singleton.doDeleteAllLocks();

@@ -19,7 +19,7 @@ package io.personium.core.rs.odata;
 import java.util.Map;
 
 /**
- * OdataBatchクラス.
+ * The OdataBatch class.
  */
 public class BatchBodyPart {
     private String httpMethod = null;
@@ -47,7 +47,7 @@ public class BatchBodyPart {
     }
 
     /**
-     * HttpHeadersのゲッター.
+     * Getter of HttpHeaders.
      * @return HttpHeaders
      */
     public Map<String, String> getHttpHeaders() {
@@ -55,23 +55,23 @@ public class BatchBodyPart {
     }
 
     /**
-     * リクエストボディのゲッター.
-     * @return リクエストボディ
+     * Getter of request body.
+     * @return request body
      */
     public String getEntity() {
         return this.body;
     }
 
     /**
-     * リクエストボディのセッター.
-     * @param bodyParam リクエストボディ
+     * Request body setter.
+     * @ param bodyParam request body
      */
     public void setEntity(String bodyParam) {
         this.body = bodyParam;
     }
 
     /**
-     * uriのゲッター.
+     * Getter of uri.
      * @return uri
      */
     public String getUri() {
@@ -79,24 +79,24 @@ public class BatchBodyPart {
     }
 
     /**
-     * uriのセッター.
+     * uri's setter.
      * @param uri uri
      */
     public void setUri(String uri) {
         this.uri = uri;
 
         if (this.uri.endsWith("/")) {
-            // URLが"/"で終わっている場合は、終端の"/"を削除する
+            //If the URL ends with "/", delete the terminating "/"
             this.uri = this.uri.substring(0, this.uri.length() - 2);
         }
 
-        // URLの最後のパスを取得
+        //Get last URL of URL
         int index = this.uri.lastIndexOf('/');
         this.uriLast = this.uri.substring(index + 1);
     }
 
     /**
-     * HttpMethodのゲッター.
+     * Getter of HttpMethod.
      * @return HttpMethod
      */
     public String getHttpMethod() {
@@ -104,7 +104,7 @@ public class BatchBodyPart {
     }
 
     /**
-     * HttpMethodのセッター.
+     * HttpMethod's setter.
      * @param httpMethod HttpMethod
      */
     public void setHttpMethod(String httpMethod) {
@@ -112,8 +112,8 @@ public class BatchBodyPart {
     }
 
     /**
-     * エンティティセット名を取得する.
-     * @return エンティティセット名
+     * Get the entity set name.
+     * @return entity set name
      */
     public String getEntitySetName() {
         if (hasNavigationProperty() || isLinksRequest) {
@@ -129,16 +129,16 @@ public class BatchBodyPart {
     }
 
     /**
-     * エンティティセット名を設定する.
-     * @param entitySetName エンティティセット名
+     * Set the entity set name.
+     * @ param entitySetName Entity set name
      */
     public void setSourceEntitySetName(String entitySetName) {
         this.sourceEntitySetName = entitySetName;
     }
 
     /**
-     * エンティティキーを取得する.
-     * @return エンティティキー
+     * Get the entity key.
+     * @return entity key
      */
     public String getEntityKeyWithParences() {
         if (hasNavigationProperty() || isLinksRequest) {
@@ -154,8 +154,8 @@ public class BatchBodyPart {
     }
 
     /**
-     * エンティティキーを取得する.
-     * @return エンティティキー
+     * Get the entity key.
+     * @return entity key
      */
     public String getEntityKey() {
         if (hasNavigationProperty()) {
@@ -171,63 +171,63 @@ public class BatchBodyPart {
     }
 
     /**
-     * エンティティキーを設定する.
-     * @param entityKey エンティティキー
+     * Set the entity key.
+     * @ param entityKey entity key
      */
     public void setSourceEntityKey(String entityKey) {
         this.sourceEntitySetKey = entityKey;
     }
 
     /**
-     * changesetの始端かどうかを返却する.
-     * @return true: changesetの始端
+     * It returns whether it is the beginning of changeset.
+     * @return true: beginning of changeset
      */
     public Boolean isChangesetStart() {
         return bChangesetStart;
     }
 
     /**
-     * changesetの始端フラグのセッター.
-     * @param flg true: changesetの始端
+     * The setter of the beginning of the changeset.
+     * @ param flg true: beginning of changeset
      */
     public void setbChangesetStart(Boolean flg) {
         this.bChangesetStart = flg;
     }
 
     /**
-     * changesetの終端かどうかを返却する.
-     * @return true: changesetの終端
+     * Return whether it is the end of changeset.
+     * @return true: end of changeset
      */
     public Boolean isChangesetEnd() {
         return bChangesetEnd;
     }
 
     /**
-     * changesetの終端フラグのセッター.
-     * @param flg true: changesetの終端
+     * The terminator flag setter of changeset.
+     * @ param flg true: termination of changeset
      */
     public void setChangesetEnd(Boolean flg) {
         this.bChangesetEnd = flg;
     }
 
     /**
-     * changeset文字列のゲッター.
-     * @return changeset文字列
+     * changeset String getter.
+     * @return changeset string
      */
     public String getChangesetStr() {
         return changesetStr;
     }
 
     /**
-     * changeset文字列のセッター.
-     * @param changesetStr changeset文字列
+     * changeset String setter.
+     * @ param changesetStr changeset string
      */
     public void setChangesetStr(String changesetStr) {
         this.changesetStr = changesetStr;
     }
 
     /**
-     * NavigationProperty経由の登録時に指定されたパスをもとにソース/ターゲット情報を設定する.
+     * Set source / target information based on the path specified when registering via NavigationProperty.
      * @param requestPath requestPath
      */
     public void setNavigationProperty(String requestPath) {
@@ -240,7 +240,7 @@ public class BatchBodyPart {
     }
 
     /**
-     * NavigationProperty経由での登録時に使用するターゲットEntitySet名を取得する.
+     * Get the target EntitySet name to use when registering via NavigationProperty.
      * @return the targetEntitySetName
      */
     public String getTargetNavigationProperty() {
@@ -248,16 +248,16 @@ public class BatchBodyPart {
     }
 
     /**
-     * このバルクリクエストがNavigationProperty経由の登録を行おうとしているかどうかを返却する.
-     * @return NavigationProperty経由の登録時はtrueを、それ以外はfalseを返す
+     * Returns whether this bulk request is about to register via NavigationProperty.
+     * @return Returns true when registering via NavigationProperty, false otherwise
      */
     public boolean hasNavigationProperty() {
         return this.targetNavigationProperty != null;
     }
 
     /**
-     * CollectionまでのURIを返却する.
-     * @return CollectionまでのURI
+     * Return the URI up to the Collection.
+     * URI up to @return Collection
      */
     public String getCollectionUri() {
         int index = this.uri.lastIndexOf('/');
@@ -265,64 +265,64 @@ public class BatchBodyPart {
     }
 
     /**
-     * このバルクリクエストがLinks登録を行おうとしているかどうかを返却する.
-     * @return Links登録時はtrueを、それ以外はfalseを返す
+     * Return whether this bulk request is about to register Links or not.
+     * @return Links Return true for registration, false otherwise
      */
     public Boolean isLinksRequest() {
         return isLinksRequest;
     }
 
     /**
-     * このバルクリクエストがLinks登録を行おうとしているかどうかを設定する.
-     * @param isLinksRequest Links登録時はtrueを、それ以外はfalse
+     * Sets whether this bulk request is trying to register Links.
+     * @ param isLinksRequest Links true for registration, false otherwise
      */
     public void setIsLinksRequest(Boolean isLinksRequest) {
         this.isLinksRequest = isLinksRequest;
     }
 
     /**
-     * $links先のEntitySet名を取得する.
-     * @return $links先のEntitySet名
+     * $ links Get the EntitySet name of the destination.
+     * @return $ links destination EntitySet name
      */
     public String getTargetEntitySetName() {
         return targetEntitySetName;
     }
 
     /**
-     * $links先のEntitySet名を設定する.
-     * @param entitySetName $links先のEntitySet名
+     * $ links Set the EntitySet name of the destination.
+     * @ param entitySetName $ links destination EntitySet name
      */
     public void setTargetEntitySetName(String entitySetName) {
         this.targetEntitySetName = entitySetName;
     }
 
     /**
-     * $links先のEntityキーを取得する.
-     * @return $links先のEntityキー
+     * $ links Get the Entity key of the destination.
+     * @return $ links destination Entity key
      */
     public String getTargetEntityKey() {
         return targetEntitySetKey;
     }
 
     /**
-     * $links先のEntityキーを設定する.
-     * @param entityKey $links先のEntityキー
+     * $ links Set the Entity key of the destination.
+     * @ param entityKey $ links destination Entity key
      */
     public void setTargetEntityKey(String entityKey) {
         this.targetEntitySetKey = entityKey;
     }
 
     /**
-     * バルクリクエストのクエリを取得する.
-     * @return バルクリクエストのクエリ
+     * Get a query for bulk requests.
+     * @return Query for bulk requests
      */
     public String getRequestQuery() {
         return this.requestQuery;
     }
 
     /**
-     * バルクリクエストのクエリを設定する.
-     * @param query クエリ
+     * Set up a bulk request query.
+     * @ param query query
      */
     public void setRequestQuery(String query) {
         this.requestQuery = query;

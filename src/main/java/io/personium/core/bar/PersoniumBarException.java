@@ -97,11 +97,11 @@ public class PersoniumBarException extends RuntimeException {
      * @return PersoniumBarException
      */
     public PersoniumBarException detail(String detailMessage) {
-        // 置換メッセージ作成
+        //Replacement message creation
         String ms = MessageFormat.format(this.message, detailMessage);
-        // 制御コードのエスケープ処理
+        //Escape processing of control code
         ms = EscapeControlCode.escape(ms);
-        // メッセージ置換クローンを作成
+        //Create a message replacement clone
         return new PersoniumBarException(this.code, this.path, ms);
     }
 
@@ -111,11 +111,11 @@ public class PersoniumBarException extends RuntimeException {
      * @return PersoniumBarException
      */
     public PersoniumBarException detail(PersoniumBarException.Detail detail) {
-        // 置換メッセージ作成
+        //Replacement message creation
         String ms = MessageFormat.format(this.message, detail.getMessage());
-        // 制御コードのエスケープ処理
+        //Escape processing of control code
         ms = EscapeControlCode.escape(ms);
-        // メッセージ置換クローンを作成
+        //Create a message replacement clone
         return new PersoniumBarException(this.code, this.path, ms);
     }
 
@@ -145,9 +145,9 @@ public class PersoniumBarException extends RuntimeException {
         public Detail(String code, Object... params) {
             this.code = code;
             String ms = PersoniumCoreMessageUtils.getMessage(code);
-            // 置換メッセージ作成
+            //Replacement message creation
             ms = MessageFormat.format(message, params);
-            // 制御コードのエスケープ処理
+            //Escape processing of control code
             message = EscapeControlCode.escape(ms);
         }
 

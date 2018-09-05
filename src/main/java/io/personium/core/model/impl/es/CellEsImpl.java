@@ -98,7 +98,7 @@ public class CellEsImpl implements Cell {
     private Long published;
     private Map<String, Object> json;
 
-    /** Esの検索結果出力上限. */
+    /** Es search result output upper limit.*/
     private static final int TOP_NUM = PersoniumUnitConfig.getEsTopNum();
 
     /** logger. */
@@ -133,7 +133,7 @@ public class CellEsImpl implements Cell {
         }
 
         // check that no Cell Control Object exists
-        // TODO 性能を向上させるため、Type横断でc:（セルのuuid）の値を検索して、チェックするように変更する
+        //In order to improve the TODO performance, change the type so as to check the value of c: (uuid of the cell) in the Type traversal
         if (producer.getEntitiesCount(Account.EDM_TYPE_NAME, queryInfo).getCount() > 0
                 || producer.getEntitiesCount(Role.EDM_TYPE_NAME, queryInfo).getCount() > 0
                 || producer.getEntitiesCount(ExtCell.EDM_TYPE_NAME, queryInfo).getCount() > 0
@@ -154,11 +154,11 @@ public class CellEsImpl implements Cell {
             return new Box(this, null);
         }
 
-        // URlに指定されたBox名のフォーマットチェックをする。不正の場合Boxが存在しないためnullを返却する
+        //Check the format of the Box name specified in URl. In case of invalid Because none of Box exists, return null
         if (!validatePropertyRegEx(boxName, Common.PATTERN_NAME)) {
             return null;
         }
-        // キャッシュされたBoxの取得を試みる。
+        //Attempt to acquire the cached Box.
         Box cachedBox = BoxCache.get(boxName, this);
         if (cachedBox != null) {
             return cachedBox;
@@ -182,7 +182,7 @@ public class CellEsImpl implements Cell {
 
     @Override
     public Box getBoxForSchema(String boxSchema) {
-        // スキーマ名一覧の取得（別名を含む）
+        //Retrieving the schema name list (including aliases)
         List<String> boxSchemas = UriUtils.getUrlVariations(this.getUnitUrl(), boxSchema);
 
         ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
@@ -262,7 +262,7 @@ public class CellEsImpl implements Cell {
     }
 
     private static String getBaseUri(final UriInfo uriInfo, String cellName) {
-        // URLを生成してSet
+        //Create URL and set
         StringBuilder urlSb = new StringBuilder();
         UriBuilder uriBuilder = uriInfo.getBaseUriBuilder();
         uriBuilder.scheme(PersoniumUnitConfig.getUnitScheme());
@@ -273,18 +273,18 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     * ID 又はCell名Cellを検索しCellオブジェクトを返却する.
+     * Search for ID or Cell name Cell and return Cell object.
      * @param queryKey
-     *            Cellを検索する際のキー(Cell名)
+     * Key (Cell name) for searching for Cell
      * @param queryValue
-     *            Cellを検索する際のキーに対する値
-     * @return Cell オブジェクト 該当するCellが存在しないとき、又はqueryKeyの値が無効な場合はnull
+     * Value for key when searching Cell
+     * @return Cell object If the corresponding Cell does not exist, or null if the value of queryKey is invalid
      */
     private static Cell findCell(String queryKey, String queryValue) {
         if (!queryKey.equals("_id") && !queryKey.equals("s.Name.untouched")) {
             return null;
         }
-        // URlに指定されたCell名のフォーマットチェックをする。不正の場合はCellが存在しないためnullを返却する
+        //Check the format of the Cell name specified in URl. In case of invalid, return null because Cell does not exist
         if (!validatePropertyRegEx(queryValue, Common.PATTERN_NAME)) {
             return null;
         }
@@ -316,10 +316,10 @@ public class CellEsImpl implements Cell {
                 CellCache.cache(queryValue, cache);
             } catch (RuntimeException e) {
                 if (e.getCause() instanceof CheckedOperationTimeoutException) {
-                    // memcachedへの接続でタイムアウトした場合はログだけ出力し、続行する
+                    //If timeout occurs due to connection to memcached, output only the log and continue
                     log.info("Faild to cache Cell info.");
                 } else {
-                    // その他のエラーの場合、サーバエラーとする
+                    //In case of other errors, it is regarded as a server error
                     throw PersoniumCoreException.Server.SERVER_CONNECTION_ERROR;
                 }
             }
@@ -336,9 +336,9 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     * Mapからオブジェクトのメンバを設定する.
+     * Set members of objects from Map.
      * @param json
-     *            実はMap
+     * Actually Map
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void setJson(Map json) {
@@ -371,7 +371,7 @@ public class CellEsImpl implements Cell {
 
     @Override
     public boolean authenticateAccount(final OEntityWrapper oew, final String password) {
-        // TODO 時間をはかる攻撃（名前忘れた） に対処するため、IDがみつからなくても、無駄に処理はする。
+        //In order to cope with the TODO time exploiting attack (name has been forgotten), even if an ID is not found, processing is done uselessly.
         String cred = null;
         if (oew != null) {
             cred = (String) oew.get("HashedCredential");
@@ -387,7 +387,7 @@ public class CellEsImpl implements Cell {
     @SuppressWarnings("unchecked")
     @Override
     public List<Role> getRoleListForAccount(final String username) {
-        // Accountを取得
+        //Acquire Account
         EntitySetAccessor accountType = EsModel.cellCtl(this, Account.EDM_TYPE_NAME);
 
         List<Map<String, Object>> filters = new ArrayList<Map<String, Object>>();
@@ -413,7 +413,7 @@ public class CellEsImpl implements Cell {
         List<Role> ret = new ArrayList<Role>();
         ODataLinkAccessor links = EsModel.cellCtlLink(this);
 
-        // アカウントに結びつくロールの検索
+        //Search for roles tied to accounts
         List<Map<String, Object>> searchRoleQueries = new ArrayList<Map<String, Object>>();
         searchRoleQueries.add(QueryMapFactory.termQuery("t1", "Account"));
         searchRoleQueries.add(QueryMapFactory.termQuery("t2", "Role"));
@@ -430,7 +430,7 @@ public class CellEsImpl implements Cell {
         searchRoleSource.put("query",
                 QueryMapFactory.filteredQuery(null, QueryMapFactory.mustQuery(searchRoleQueries)));
 
-        // 検索結果件数設定
+        //Search result count setting
         searchRoleSource.put("size", TOP_NUM);
 
         PersoniumSearchResponse res = links.search(searchRoleSource);
@@ -455,7 +455,7 @@ public class CellEsImpl implements Cell {
             String boxName = null;
             String schema = null;
             if (boxId != null) {
-                // Boxの検索
+                //Search Box
                 EntitySetAccessor box = EsModel.box(this);
                 PersoniumGetResponse getRes = box.get(boxId);
                 if (getRes == null || !getRes.isExists()) {
@@ -477,26 +477,26 @@ public class CellEsImpl implements Cell {
     public List<Role> getRoleListHere(final IExtRoleContainingToken token) {
         List<Role> ret = new ArrayList<Role>();
 
-        // ExtCellとRoleの結びつけ設定から払い出すRoleをリストアップ
+        //List the Role to be paid out from the association setting of ExtCell and Role
         this.addRoleListExtCelltoRole(token, ret);
 
-        // ExtCellとRelationとRoleの結びつけから払い出すRoleをリストアップ
-        // と
-        // ExtCellとRelationとExtRoleとRoleの結びつけから払い出すRoleをリストアップ
+        //List the Role to be paid out from the association of ExtCell, Relation and Role
+        //When
+        //List Role to be paid out from the association between ExtCell, Relation, ExtRole, and Role
         this.addRoleListExtCelltoRelationAndExtRole(token, ret);
 
         return ret;
     }
 
     /**
-     * ExtCellとRoleの突き合わせを行い払い出すRoleを決める.
+     * Match ExtCell and Role and decide which Role to pay out.
      * @param token
-     *            トランスセルアクセストークン
+     * Transcell access token
      * @param roles
-     *            払い出すロールのリスト。ここに追加する（破壊的メソッド）
+     * List of roles to be withdrawn. Add here (destructive method)
      */
     private void addRoleListExtCelltoRole(final IExtRoleContainingToken token, List<Role> roles) {
-        // ExtCell-Role結びつけに対応するRoleの取得
+        //Acquisition of Role corresponding to ExtCell-Role binding
         String extCell = token.getExtCellUrl();
         String principal = token.getSubject();
         String principalCell;
@@ -506,18 +506,18 @@ public class CellEsImpl implements Cell {
             principalCell = token.getSubject();
         }
 
-        // アクセス主体がExtCellと異なる場合（2段階以上のトランスセルトークン認証）は許さない。
+        //If the access subject is different from ExtCell (two or more levels of transcell token authentication), do not allow.
         if (extCell.equals(principalCell)) {
             ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
             EntitiesResponse response = null;
-            // 検索結果出力件数設定
+            //Number of search result output setting
             QueryInfo qi = QueryInfo.newBuilder().setTop(TOP_NUM).setInlineCount(InlineCount.NONE).build();
 
             List<String> list = UriUtils.getUrlVariations(this.getUnitUrl(), extCell);
             for (int i = 0; i < list.size(); i++) {
                 String extCellUrl = list.get(i);
                 try {
-                    // ExtCell-Roleのリンク情報取得
+                    //Acquire link information of ExtCell-Role
                     response = (EntitiesResponse) op.getNavProperty(ExtCell.EDM_TYPE_NAME,
                             OEntityKey.create(extCellUrl),
                             "_" + Role.EDM_TYPE_NAME, qi);
@@ -534,7 +534,7 @@ public class CellEsImpl implements Cell {
                 return;
             }
 
-            // ExtCell-Roleのリンク情報をすべて見て今回アクセスしてきたセル向けのロールを洗い出す。
+            //Look at all link information of ExtCell-Role and wash out the roll for cell which has accessed this time.
             List<OEntity> entList = response.getEntities();
             for (OEntity ent : entList) {
                 OEntityWrapper entRole = (OEntityWrapper) ent;
@@ -544,27 +544,27 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     * ExtCellとRelationとRoleの結びつけから払い出すRoleをリストアップ. と
-     * ExtCellとRelationとExtRoleとRoleの結びつけから払い出すRoleをリストアップ.
+     * List the Role to be paid out from the association between ExtCell, Relation and Role.
+     * List the Role to be paid out from the association between ExtCell, Relation, ExtRole, and Role.
      * @param token
-     *            トランスセルアクセストークン
+     * Transcell access token
      * @param roles
-     *            払い出すロールのリスト。ここに追加する（破壊的メソッド）
+     * List of roles to be withdrawn. Add here (destructive method)
      */
     @SuppressWarnings("unchecked")
     private void addRoleListExtCelltoRelationAndExtRole(final IExtRoleContainingToken token, List<Role> roles) {
         String extCell = token.getExtCellUrl();
 
-        // ExtCell-Role結びつけに対応するRoleの取得
+        //Acquisition of Role corresponding to ExtCell-Role binding
         ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
         EntitiesResponse response = null;
-        // 検索結果出力件数設定
+        //Number of search result output setting
         QueryInfo qi = QueryInfo.newBuilder().setTop(TOP_NUM).setInlineCount(InlineCount.NONE).build();
         List<String> list = UriUtils.getUrlVariations(this.getUnitUrl(), extCell);
         for (int i = 0; i < list.size(); i++) {
             try {
                 String extCellUrl = list.get(i);
-                // ExtCell-Relationのリンク情報取得
+                //Acquire link information of ExtCell-Relation
                 response = (EntitiesResponse) op.getNavProperty(ExtCell.EDM_TYPE_NAME,
                         OEntityKey.create(extCellUrl),
                         "_" + Relation.EDM_TYPE_NAME, qi);
@@ -585,23 +585,23 @@ public class CellEsImpl implements Cell {
         for (OEntity ent : entList) {
             OEntityWrapper entRelation = (OEntityWrapper) ent;
 
-            // ExtCell-Relationのリンク情報をすべて見て今回アクセスしてきたセル向けのロールを洗い出す。
+            //Look at all the link information of ExtCell-Relation and wash out the roll for cell accessed this time.
             PersoniumSearchResponse res = serchRoleLinks(Relation.EDM_TYPE_NAME, entRelation.getUuid());
             if (res == null) {
                 continue;
             }
             this.addRoles(res.getHits().getHits(), roles);
-            // ↑ ここまででExtCellとRelationとRoleの結びつけから払い出すRoleをリストアップ.は完了
-            // ↓ こっからはExtCellとRelationとExtRoleとRoleの結びつけから払い出すRoleをリストアップの処理.
+            //↑ List the Role to be paid out from the association between ExtCell, Relation and Role so far.
+            //↓ This is the process of listing Role to be paid out from the association between ExtCell, Relation, ExtRole, and Role.
 
-            // RelationからExtRoleの情報取得。
+            //Retrieve ExtRole information from Relation.
             EntitySetAccessor extRoleType = EsModel.cellCtl(this, ExtRole.EDM_TYPE_NAME);
 
-            // Relationに結びつくExtRoleの検索
-            // 現在の登録件数を取得してから一覧取得する
+            //Search for ExtRole linked to Relation
+            //Acquire a list after acquiring the number of current registrations
             Map<String, Object> source = new HashMap<String, Object>();
 
-            // 暗黙フィルタを指定して、検索対象を検索条件の先頭に設定する（絞りこみ）
+            //Specify an implicit filter and set the search target to the beginning of the search condition (narrow down)
             List<Map<String, Object>> implicitFilters = QueryMapFactory.getImplicitFilters(this.id, null, null, null,
                     extRoleType.getType());
             String linksKey = OEntityDocHandler.KEY_LINK + "." + Relation.EDM_TYPE_NAME;
@@ -610,15 +610,15 @@ public class CellEsImpl implements Cell {
             Map<String, Object> filteredQuery = QueryMapFactory.filteredQuery(null, query);
             source.put("query", filteredQuery);
             long hitNum = extRoleType.count(source);
-            // ExtCellの設定が存在しないときは飛ばす
+            //Skip this if ExtCell settings do not exist
             if (hitNum == 0) {
                 continue;
             }
             source.put("size", hitNum);
 
             PersoniumSearchHits extRoleHits = extRoleType.search(source).getHits();
-            // ExtCellの設定が存在しないときは飛ばす
-            // 件数取得後に削除される場合があるため、検索結果を再度確認しておく
+            //Skip this if ExtCell settings do not exist
+            //Since it may be deleted after acquiring the number, check the search result again
             if (extRoleHits.getCount() == 0) {
                 continue;
             }
@@ -627,12 +627,12 @@ public class CellEsImpl implements Cell {
                 Map<String, Object> extRoleS = (Map<String, Object>) extRoleSource.get("s");
                 String esExtRole = (String) extRoleS.get(ExtRole.EDM_TYPE_NAME);
 
-                // トークンに入ってるロールと突き合わせ
+                //Match with the rolls in the token
                 for (Role tokenRole : token.getRoleList()) {
                     if (!tokenRole.createUrl().equals(esExtRole)) {
                         continue;
                     }
-                    // ExtCell-Roleのリンク情報をすべて見て今回アクセスしてきたセル向けのロールを洗い出す。
+                    //Look at all link information of ExtCell-Role and wash out the roll for cell which has accessed this time.
                     PersoniumSearchResponse resExtRoleToRole = serchRoleLinks(
                             ExtRole.EDM_TYPE_NAME, extRoleHit.getId());
                     if (resExtRoleToRole == null) {
@@ -645,17 +645,17 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     * Roleと他のエンティテセットのリンクテーブルから対応するデータを取得する.
+     * Acquire corresponding data from the link table of Role and another entity set.
      * @param searchKey
-     *            検索条件のエンティティセット名
+     * Entity set name of search condition
      * @param searchValue
-     *            検索するuuid
-     * @return 検索結果
+     * Search uuid
+     * @return Search results
      */
     private PersoniumSearchResponse serchRoleLinks(final String searchKey, final String searchValue) {
 
         ODataLinkAccessor links = EsModel.cellCtlLink(this);
-        // Relationに結びつくロールの検索
+        //Search for roles linked to Relation
         Map<String, Object> source = new HashMap<String, Object>();
         Map<String, Object> filter = new HashMap<String, Object>();
         Map<String, Object> and = new HashMap<String, Object>();
@@ -672,35 +672,35 @@ public class CellEsImpl implements Cell {
         filter.put("and", and);
         source.put("filter", filter);
         source.put("query", query);
-        // 検索結果件数設定
+        //Search result count setting
         source.put("size", TOP_NUM);
 
         return links.search(source);
     }
 
     /**
-     * Roleが含まれたSearchHitの配列からロールの値を取得する.
+     * Get the value of the role from the array of SearchHit containing Role.
      * @param hits
-     *            Roleを検索し結果
+     * Search for Role and the result
      * @param roles
-     *            払い出すロールのリスト。ここに追加する（破壊的メソッド）
+     * List of roles to be withdrawn. Add here (destructive method)
      */
     private void addRoles(PersoniumSearchHit[] hits, List<Role> roles) {
         for (PersoniumSearchHit hit : hits) {
             Map<String, Object> src = hit.getSource();
             String roleUuid = (String) src.get("k2");
 
-            // Relation-Roleのリンク情報をすべて見て今回アクセスしてきたセル向けのロールを洗い出す。
+            //See all of the Relation-Role link information and identify the roll for the cell that is accessed this time.
             this.addRole(roleUuid, roles);
         }
     }
 
     /**
-     * ロールの値を取得する.
+     * Get the value of the role.
      * @param uuid
-     *            RoleのUUID
+     * Role UUID
      * @param roles
-     *            払い出すロールのリスト。ここに追加する（破壊的メソッド）
+     * List of roles to be withdrawn. Add here (destructive method)
      */
     @SuppressWarnings("unchecked")
     private void addRole(String uuid, List<Role> roles) {
@@ -717,7 +717,7 @@ public class CellEsImpl implements Cell {
         String boxId = (String) l.get(Box.EDM_TYPE_NAME);
         String boxName = null;
         if (boxId != null) {
-            // Boxの検索
+            //Search Box
             Map<String, Object> boxsrc = DavCmpFsImpl.searchBox(this, boxId);
             Map<String, Object> boxs = (Map<String, Object>) boxsrc.get("s");
             boxName = (String) boxs.get(KEY_NAME);
@@ -749,8 +749,8 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     * Cell名を取得します.
-     * @return Cell名
+     * Get the Cell name.
+     * @return Cell Name
      */
     @Override
     public String getName() {
@@ -758,8 +758,8 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     * このCellの内部IDを返します.
-     * @return 内部ID文字列
+     * Returns the internal ID of this Cell.
+     * @return internal identity string
      */
     @Override
     public String getId() {
@@ -767,17 +767,17 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     * このCellの内部IDを設定します.
+     * Set the internal ID of this Cell.
      * @param id
-     *            内部ID文字列
+     * Internal ID string
      */
     public void setId(String id) {
         this.id = id;
     }
 
     /**
-     * このCellのURLを返します.
-     * @return URL文字列
+     * Returns the URL of this Cell.
+     * @return URL string
      */
     @Override
     public String getUrl() {
@@ -785,17 +785,17 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     * このCellのURLを設定します.
+     * Set the URL of this Cell.
      * @param url
-     *            URL文字列
+     * URL string
      */
     public void setUrl(String url) {
         this.url = url;
     }
 
     /**
-     * このCellのUnit URLを返します.
-     * @return unitUrl 文字列
+     * Returns the Unit URL of this Cell.
+     * @return unitUrl string
      */
     @Override
     public String getUnitUrl() {
@@ -806,15 +806,15 @@ public class CellEsImpl implements Cell {
     static final String KEY_SCHEMA = "Schema";
 
     /**
-     * プロパティ項目の値を正規表現でチェックする.
+     * Check the value of property item with regular expression.
      * @param propValue
-     *            プロパティ値
+     * Property value
      * @param dcFormat
-     *            dcFormatの値
-     * @return フォーマットエラーの場合、falseを返却
+     * Value of dcFormat
+     * @ return In case of format error, return false
      */
     private static boolean validatePropertyRegEx(String propValue, String dcFormat) {
-        // フォーマットのチェックを行う
+        //Perform format check
         Pattern pattern = Pattern.compile(dcFormat);
         Matcher matcher = pattern.matcher(propValue);
         if (!matcher.matches()) {
@@ -824,8 +824,8 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     * Cellの作成時間を返却する.
-     * @return Cellの作成時間
+     * Return the creation time of Cell.
+     * @return Cell creation time
      */
     public long getPublished() {
         return this.published;
@@ -836,7 +836,7 @@ public class CellEsImpl implements Cell {
         CellCtlODataProducer ccop = new CellCtlODataProducer(this);
         OEntity oe = ccop.getEntityByInternalId(Role.EDM_TYPE_NAME, roleId);
         if (oe == null) {
-            // ロールが存在しない場合、nullを返す。
+            //If the role does not exist, it returns null.
             return null;
         }
 
@@ -855,12 +855,12 @@ public class CellEsImpl implements Cell {
     public String roleResourceUrlToId(String roleUrl, String baseUrl) {
         EntitySetAccessor roleType = EsModel.cellCtl(this, Role.EDM_TYPE_NAME);
 
-        // roleNameがURLの対応
+        //The roleName corresponds to the URL
         URL rUrl = null;
         try {
-            // xml:baseの対応
+            //Correspondence of xml: base
             if (baseUrl != null && !"".equals(baseUrl)) {
-                // URLの相対パス対応
+                //URL relative path correspondence
                 rUrl = new URL(new URL(baseUrl), roleUrl);
             } else {
                 rUrl = new URL(roleUrl);
@@ -877,12 +877,12 @@ public class CellEsImpl implements Cell {
             throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
 
-        // ロールリソースのセルURL部分はACL設定対象のセルURLと異なるものを指定することは許さない
+        //It is not permitted to designate the cell URL portion of the role resource different from the cell URL of the ACL setting target
         if (!(this.getUrl().equals(role.getBaseUrl()))) {
             PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Cell different").writeLog();
             throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
-        // Roleの検索
+        //Search for Role
         List<Map<String, Object>> queries = new ArrayList<Map<String, Object>>();
         queries.add(QueryMapFactory.termQuery("c", this.getId()));
         queries.add(QueryMapFactory.termQuery("s." + KEY_NAME + ".untouched", role.getName()));
@@ -891,7 +891,7 @@ public class CellEsImpl implements Cell {
 
         List<Map<String, Object>> filters = new ArrayList<Map<String, Object>>();
         if (!(Box.DEFAULT_BOX_NAME.equals(role.getBoxName()))) {
-            // Roleがボックスと紐付く場合に、検索クエリを追加
+            //Add search queries when Role is tied to a box
             Box targetBox = this.getBoxForName(role.getBoxName());
             if (targetBox == null) {
                 throw PersoniumCoreException.Dav.BOX_LINKED_BY_ROLE_NOT_FOUND.params(baseUrl);
@@ -899,7 +899,7 @@ public class CellEsImpl implements Cell {
             String boxId = targetBox.getId();
             filters.add(QueryMapFactory.termQuery("l." + Box.EDM_TYPE_NAME, boxId));
         } else {
-            // Roleがボックスと紐付かない場合にもnull検索クエリを追加
+            //Addition of null search query even when Role is not tied to a box
             filters.add(QueryMapFactory.missingFilter("l." + Box.EDM_TYPE_NAME));
         }
 
@@ -910,12 +910,12 @@ public class CellEsImpl implements Cell {
         source.put("query", query);
         PersoniumSearchHits hits = roleType.search(source).getHits();
 
-        // 対象のRoleが存在しない場合はNull
+        //Null if target Role does not exist
         if (hits == null || hits.getCount() == 0) {
             PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Not Hit").writeLog();
             throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
         }
-        // 対象のRoleが複数件取得された場合は内部エラーとする
+        //If more than one target Role is acquired, set as internal error
         if (hits.getAllPages() > 1) {
             PersoniumCoreLog.OData.FOUND_MULTIPLE_RECORDS.params(hits.getAllPages()).writeLog();
             throw PersoniumCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT;
@@ -927,7 +927,7 @@ public class CellEsImpl implements Cell {
 
     @Override
     public void delete(boolean recursive, String unitUserName) {
-        // Cellに対するアクセス数を確認して、アクセスをロックする
+        //Check the number of accesses to Cell and lock access
         int maxLoopCount = PersoniumUnitConfig.getCellLockRetryTimes();
         long interval = PersoniumUnitConfig.getCellLockRetryInterval();
         waitCellAccessible(this.id, maxLoopCount, interval);
@@ -959,7 +959,7 @@ public class CellEsImpl implements Cell {
     private void waitCellAccessible(String cellId, int maxLoopCount, long interval) {
         for (int loopCount = 0; loopCount < maxLoopCount; loopCount++) {
             long count = CellLockManager.getReferenceCount(cellId);
-            // 自分のリクエスト分も含まれるので他のリクエストが存在する場合は１より大きくなる
+            //Since it includes my request, it becomes larger than 1 if there are other requests
             if (count <= 1) {
                 return;
             }

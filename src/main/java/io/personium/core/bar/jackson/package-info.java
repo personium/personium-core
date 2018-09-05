@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- * barファイルのMapping定義のクラス群です.
+ * Bar classes Mapping definition classes.
  */
 package io.personium.core.bar.jackson;
 

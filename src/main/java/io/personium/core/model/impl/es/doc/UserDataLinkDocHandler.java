@@ -21,20 +21,20 @@ import java.util.TreeMap;
 import io.personium.common.es.response.PersoniumSearchHit;
 
 /**
- * ESでN:Nリンクを扱う. リンクは２つのタイプの間に張られている。 EsLinkHandler elh = new EsLinkHandler(type1, type2); 双方のキーを指定して、リンクドキュメントを作成する。
- * 双方のキーを指定して、リンクドキュメントのキーを作成する。 片側のTypeのキーを指定してもう片方のTypeの一覧を取得する。
+ * We deal with N: N links with ES. Links are stretched between two types. EsLinkHandler elh = new EsLinkHandler (type 1, type 2); Specify both keys to create a linked document.
+ * Designate both keys and create a link document key. Specify the key of Type on one side to obtain the list of the other Type.
  */
 public class UserDataLinkDocHandler extends LinkDocHandler {
 
     /**
-     * コンストラクタ.
+     * constructor.
      */
     public UserDataLinkDocHandler() {
         super();
     }
 
     /**
-     * コンストラクタ.
+     * constructor.
      * @param srcHandler OEntityDocHandler
      * @param tgtHandler OEntityDocHandler
      */
@@ -46,7 +46,7 @@ public class UserDataLinkDocHandler extends LinkDocHandler {
         String tgtentityTypeId = tgtHandler.getEntityTypeId();
         String tgtId = tgtHandler.getId();
 
-        // ES 保存時の一意キー作成
+        //Create unique key when saving ES
         TreeMap<String, String> tm = new TreeMap<String, String>();
         tm.put(entityTypeId, srcId);
         tm.put(tgtentityTypeId, tgtId);
@@ -60,8 +60,8 @@ public class UserDataLinkDocHandler extends LinkDocHandler {
     }
 
     /**
-     * コンストラクタ.
-     * @param searchHit 検索結果
+     * constructor.
+     * @ param searchHit Search result
      */
     public UserDataLinkDocHandler(PersoniumSearchHit searchHit) {
         super(searchHit);

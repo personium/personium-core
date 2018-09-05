@@ -21,7 +21,7 @@ import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- * UnitUserごとのLockを管理するユーティリティ.
+ * Utility to manage Lock for each UnitUser.
  */
 public abstract class UnitUserLockManager extends LockManager {
 
@@ -30,19 +30,19 @@ public abstract class UnitUserLockManager extends LockManager {
     abstract Boolean putLock(String fullKey, Lock lock);
 
     /**
-     * UnitUserごとのデータアクセスをロックするLockカテゴリ.
+     * Lock category that locks data access for each UnitUser.
      */
     public static final String CATEGORY_UNITUSER_LOCK = "UnitUserLock";
 
     /**
-     * UnitUserLockの状態確認.
-     * @param unitUserName ユニットユーザ名
-     * @return TRUE：Lock／FALSE：Unlock
+     * Check status of UnitUserLock.
+     * @ param unitUserName unit user name
+     * @return TRUE: Lock / FALSE: Unlock
      */
     public static boolean hasLockObject(final String unitUserName) {
         try {
             String key = CATEGORY_UNITUSER_LOCK + "-" + unitUserName;
-            // 対象UnitUserのLock確認
+            //Confirm Lock of target UnitUser
             String lockPublic = singleton.doGetUnituserLock(key);
             return lockPublic != null;
         } catch (MemcachedClientException e) {
@@ -51,13 +51,13 @@ public abstract class UnitUserLockManager extends LockManager {
     }
 
     /**
-     * UnitUserLockの書き込み.
-     * @param unitUserName ロック対象のユニットユーザ名
+     * Write UnitUserLock.
+     * @ param unitUserName Unit user name to be locked
      */
     public static void registLockObjct(final String unitUserName) {
-        // memcached にキーが存在するか調べる
-        // なければmemcached に書きに行く
-        // あったら、リトライする。
+        //Check if memcached has key
+        //If not, I will write to memcached
+        //If you do, try retrying.
         int timesRetry = 0;
         while (timesRetry <= lockRetryTimes) {
             String key = LockKeyComposer.fullKeyFromCategoryAndKey(CATEGORY_UNITUSER_LOCK, unitUserName);
@@ -86,8 +86,8 @@ public abstract class UnitUserLockManager extends LockManager {
     }
 
     /**
-     * UnitUserLockのリリース.
-     * @param unitUserName ユニットユーザ名
+     * Release of UnitUserLock.
+     * @ param unitUserName unit user name
      */
     public static void releaseLockObject(final String unitUserName) {
         String fullKey = LockKeyComposer.fullKeyFromCategoryAndKey(CATEGORY_UNITUSER_LOCK, unitUserName);

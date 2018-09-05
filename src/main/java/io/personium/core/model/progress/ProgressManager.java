@@ -22,8 +22,8 @@ import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- * 非同期処理状況を管理するクラス
- * 処理状況の格納先については、LockManagerクラスと同じ方式とする.
+ * Class managing asynchronous processing status
+ * The storage location of the processing status is the same as that of the LockManager class.
  * @see io.personium.core.model.lock.LockManager
  */
 public abstract class ProgressManager {
@@ -36,11 +36,11 @@ public abstract class ProgressManager {
     static volatile int lifeTime = Integer.valueOf(PersoniumUnitConfig.getBarInstallProgressLifeTimeExpireInSec());
 
     /**
-     * Memcached タイプ.
+     * Memcached type.
      */
     public static final String TYPE_MEMCACHED = "memcached";
     /**
-     * InProcess タイプ.
+     * InProcess type.
      */
     public static final String TYPE_IN_PROCESS = "inProcess";
 
@@ -59,8 +59,8 @@ public abstract class ProgressManager {
 
 
     /**
-     * 非同期処理状況を取得します.
-     * @param fullKey 非同期処理状況のキー
+     * Get asynchronous processing status.
+     * @ param fullKey Asynchronous processing status key
      * @return Progress
      */
     public static Progress getProgress(String fullKey) {
@@ -74,24 +74,24 @@ public abstract class ProgressManager {
     }
 
     /**
-     * 非同期処理状況のりリース処理.
-     * @param key キー
-     * @param progress 非同期処理状況オブジェクト
+     * Asynchronous processing status grading process.
+     * @ param key
+     * @ param progress Asynchronous processing status object
      */
     public static void putProgress(String key, Progress progress) {
         singleton.doPutProgress(key, progress);
     }
 
     /**
-     * 非同期処理状況のりリース処理.
-     * @param key キー
+     * Asynchronous processing status grading process.
+     * @ param key
      */
     public static void deleteProgress(String key) {
         singleton.doDeleteProgress(key);
     }
 
     /**
-     * 非同期処理状況をすべて消します.
+     * Erase all asynchronous processing status.
      */
     public static void deleteAllProgress() {
         singleton.doDeleteAllProgress();

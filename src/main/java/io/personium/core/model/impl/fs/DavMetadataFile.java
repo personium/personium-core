@@ -40,7 +40,7 @@ public class DavMetadataFile {
     private static Logger log = LoggerFactory.getLogger(DavMetadataFile.class);
 
     /** Metadata file name. */
-    // TODO ファイル名はUnix, Windowsで使えるけれどDAVでは使えない名前がいい。
+    //TODO filename can be used on Unix, Windows, but it is nice to use on DAV.
     public static final String DAV_META_FILE_NAME = ".pmeta";
 
     /** Milliseconds to wait of metafile reading retries. */
@@ -61,7 +61,7 @@ public class DavMetadataFile {
     /** JSON Key for ACL. */
     private static final String KEY_ACL = "a";
 
-    /** JSON Key for PROPSを保存するJSONキー. */
+    /** JSON Key for PROPS JSON key to save.*/
     private static final String KEY_PROPS = "d";
 
     /** JSON Key for published. */

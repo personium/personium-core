@@ -34,7 +34,7 @@ import io.personium.plugin.base.PluginMessageUtils.Severity;
 import io.personium.plugin.base.auth.AuthPluginException;
 
 /**
- * ログメッセージ作成クラス.
+ * Log message creation class.
  */
 /**
  * @author naoki
@@ -43,114 +43,114 @@ import io.personium.plugin.base.auth.AuthPluginException;
 public final class PersoniumCoreAuthnException extends PersoniumCoreException {
 
     /**
-     * Grant-Typeの値が異常.
+     * Grant-Type value is abnormal.
      */
     public static final PersoniumCoreAuthnException UNSUPPORTED_GRANT_TYPE =
             create("PR400-AN-0001", Error.UNSUPPORTED_GRANT_TYPE);
     /**
-     * p_targetの値異常.
+     * Abnormal value of p_target.
      */
     public static final PersoniumCoreAuthnException INVALID_TARGET = create("PR400-AN-0002", Error.INVALID_REQUEST);
     /**
-     * Client Secret パースエラー.
+     * Client Secret Parsing error.
      */
     public static final PersoniumCoreAuthnException CLIENT_SECRET_PARSE_ERROR =
             create("PR400-AN-0003", Error.INVALID_CLIENT);
     /**
-     * Client Secret 有効期限チェック.
+     * Client Secret expiration date check.
      */
     public static final PersoniumCoreAuthnException CLIENT_SECRET_EXPIRED =
             create("PR400-AN-0004", Error.INVALID_CLIENT);
     /**
-     * Client Secret 署名検証をエラー.
+     * Client Secret Signature validation error.
      */
     public static final PersoniumCoreAuthnException CLIENT_SECRET_DSIG_INVALID =
             create("PR400-AN-0005", Error.INVALID_CLIENT);
     /**
-     * Client Secret のIssuerがIDと等しくない.
+     * Issuer of Client Secret is not equal to ID.
      */
     public static final PersoniumCoreAuthnException CLIENT_SECRET_ISSUER_MISMATCH =
             create("PR400-AN-0006", Error.INVALID_CLIENT);
     /**
-     * Client Secret のターゲットが自分でない.
+     * Client Secret's target is not yourself.
      */
     public static final PersoniumCoreAuthnException CLIENT_SECRET_TARGET_WRONG =
             create("PR400-AN-0007", Error.INVALID_CLIENT);
 
     /**
-     * トランスセルトークン認証ではユニットユーザ昇格はできない.
+     * For transcell token authentication, unit user promotion is not possible.
      */
     public static final PersoniumCoreAuthnException TC_ACCESS_REPRESENTING_OWNER =
             create("PR400-AN-0008", Error.INVALID_GRANT);
     /**
-     * トークンパースエラー.
+     * Token parsing error.
      */
     public static final PersoniumCoreAuthnException TOKEN_PARSE_ERROR = create("PR400-AN-0009", Error.INVALID_GRANT);
     /**
-     * 有効期限切れ.
+     * Expired.
      */
     public static final PersoniumCoreAuthnException TOKEN_EXPIRED = create("PR400-AN-0010", Error.INVALID_GRANT);
     /**
-     * 署名検証をエラー.
+     * Error in signature verification.
      */
     public static final PersoniumCoreAuthnException TOKEN_DSIG_INVALID = create("PR400-AN-0011", Error.INVALID_GRANT);
     /**
-     * トークン のターゲットが自分でない.
-     * {0}:トークンのターゲットURL
+     * The target of the token is not yourself.
+     * {0}: target URL of token
      */
     public static final PersoniumCoreAuthnException TOKEN_TARGET_WRONG = create("PR400-AN-0012", Error.INVALID_GRANT);
     /**
-     * リフレッシュトークンでない.
+     * It is not a refresh token.
      */
     public static final PersoniumCoreAuthnException NOT_REFRESH_TOKEN = create("PR400-AN-0013", Error.INVALID_GRANT);
     /**
-     * 権限がないから昇格できない.
+     * I can not be promoted because I do not have permission.
      */
     public static final PersoniumCoreAuthnException NOT_ALLOWED_REPRESENT_OWNER =
             create("PR400-AN-0014", Error.INVALID_GRANT);
     /**
-     * オーナーがいないセルは昇格できない.
+     * A cell without an owner can not be promoted.
      */
     public static final PersoniumCoreAuthnException NO_CELL_OWNER = create("PR400-AN-0015", Error.INVALID_GRANT);
     /**
-     * 必須パラメータが無い.
-     * {0}:パラメータキー名
+     * There is no required parameter.
+     * {0}: Parameter key name
      */
     public static final PersoniumCoreAuthnException REQUIRED_PARAM_MISSING =
             create("PR400-AN-0016", Error.INVALID_REQUEST);
     /**
-     * 認証エラー.
+     * Authentication error.
      */
     public static final PersoniumCoreAuthnException AUTHN_FAILED = create("PR400-AN-0017", Error.INVALID_GRANT);
     /**
-     * 認証ヘッダの指定誤り.
+     * Invalid specification of authentication header.
      */
     public static final PersoniumCoreAuthnException AUTH_HEADER_IS_INVALID =
             create("PR400-AN-0018", Error.INVALID_CLIENT);
     /**
-     * Accountロック中.
+     * Account locked.
      */
     public static final PersoniumCoreAuthnException ACCOUNT_LOCK_ERROR = create("PR400-AN-0019", Error.INVALID_GRANT);
 
     /**
-     * NetWork関連エラー.
+     * NetWork related error.
      */
     public static final PersoniumCoreAuthnException NETWORK_ERROR = create("PR500-NW-0000", Error.SERVER_ERROR);
     /**
-     * HTTPリクエストに失敗.
+     * HTTP request failed.
      */
     public static final PersoniumCoreAuthnException HTTP_REQUEST_FAILED = create("PR500-NW-0001", Error.SERVER_ERROR);
     /**
-     * 接続先が想定外の応答を返却.
+     * The connection destination returns an unexpected response.
      */
     public static final PersoniumCoreAuthnException UNEXPECTED_RESPONSE = create("PR500-NW-0002", Error.SERVER_ERROR);
     /**
-     * 接続先が想定外の値を返却.
+     * The connection destination returns an unexpected value.
      */
     public static final PersoniumCoreAuthnException UNEXPECTED_VALUE = create("PR500-NW-0003", Error.SERVER_ERROR);
 
     /**
-     * インナークラスを強制的にロードする.
+     * Force load inner class.
      */
     public static void loadConfig() {
     }
@@ -159,13 +159,13 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     String realm;
 
     /**
-     * コンストラクタ.
-     * @param status HTTPレスポンスステータス
-     * @param severityエラーレベル
-     * @param code エラーコード
-     * @param message エラーメッセージ
-     * @param error OAuth認証エラーのエラーコード
-     * @param realm WWWW-Authenticateヘッダを返す場合はここにrealm値を設定する
+     * constructor.
+     * @ param status HTTP response status
+     * @ param severity error level
+     * @ param code error code
+     * @ param message error message
+     * @ param error Error code of OAuth authentication error
+     * @ param realm To return the WWWW-Authenticate header, set the realm value here
      */
     PersoniumCoreAuthnException(final String code,
             final Severity severity,
@@ -179,12 +179,12 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     }
 
     /**
-     * realmを設定してオブジェクト生成.
+     * Set realm and create object.
      * @param realm2set realm
      * @return CoreAuthnException
      */
     public PersoniumCoreAuthnException realm(String realm2set) {
-        // クローンを作成
+        //Make a clone
         return new PersoniumCoreAuthnException(this.code, this.severity, this.message, this.status,
                 this.error, realm2set);
     }
@@ -204,8 +204,8 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .entity(errorJson.toJSONString());
 
-        // レルム値が設定されていれば、WWW-Authenticateヘッダーを返却する。
-        // __tokenエンドポイントでは、認証失敗時(401返却時)には、同ヘッダーに Auth SchemeがBasicの値を返却するため、ここでは固定値とする。
+        //If the realm value is set, the WWW-Authenticate header is returned.
+        //On the __token endpoint, since Auth Scheme returns the Basic value to the same header at the time of authentication failure (401 return), it is assumed to be a fixed value here.
         if (this.realm != null && statusCode == HttpStatus.SC_UNAUTHORIZED) {
             rb = rb.header(HttpHeaders.WWW_AUTHENTICATE, Scheme.BASIC + " realm=\"" + this.realm + "\"");
         }
@@ -213,36 +213,36 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     }
 
     /**
-     * 原因例外を追加したものを作成して返します.
-     * @param t 原因例外
+     * Cause Create and return an exception added.
+     * @ param t cause exception
      * @return PersoniumCoreException
      */
     public PersoniumCoreException reason(final Throwable t) {
-        // クローンを作成して
+        //Make a clone
         PersoniumCoreException ret = new PersoniumCoreAuthnException(
                 this.code, this.severity, this.message, this.status, this.error, this.realm);
-        // スタックトレースをセット
+        //Set stack trace
         ret.setStackTrace(t.getStackTrace());
         return ret;
     }
 
     /**
-     * ファクトリーメソッド.
-     * @param code Personiumメッセージコード
-     * @param error OAuth2エラーコード
+     * Factory method.
+     * @ param code Personium message code
+     * @ param error OAuth 2 error code
      * @return PersoniumCoreException
      */
     public static PersoniumCoreAuthnException create(String code, String error) {
         int statusCode = PersoniumCoreException.parseCode(code);
 
-        // ログレベルの取得
+        //Acquire log level
         Severity severity = PersoniumCoreMessageUtils.getSeverity(code);
         if (severity == null) {
-            // ログレベルが設定されていなかったらレスポンスコードから自動的に判定する。
+            //If the log level is not set, it is automatically judged from the response code.
             severity = decideSeverity(statusCode);
         }
 
-        // ログメッセージの取得
+        //Obtaining log messages
         String message = PersoniumCoreMessageUtils.getMessage(code);
 
         return new PersoniumCoreAuthnException(code, severity, message, statusCode, error, null);
@@ -266,19 +266,19 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
     }
 
     /**
-     * メッセージをパラメタ置換したものを作成して返します. エラーメッセージ上の $1 $2 等の表現がパラメタ置換用キーワードです。
-     * @param params 付加メッセージ
+     * It creates and returns a message with parameter substitution, and the expression such as $ 1 $ 2 on the error message is a keyword for parameter substitution.
+     * @ param params Additional message
      * @return PersoniumCoreMessage
      */
     @Override
     public PersoniumCoreAuthnException params(final Object... params) {
-        // 置換メッセージ作成
+        //Replacement message creation
         String ms = MessageFormat.format(this.message, params);
 
-        // 制御コードのエスケープ処理
+        //Escape processing of control code
         ms = EscapeControlCode.escape(ms);
 
-        // メッセージ置換クローンを作成
+        //Create a message replacement clone
         PersoniumCoreAuthnException ret = new PersoniumCoreAuthnException(
                  this.code, this.severity, ms, this.status, this.error, this.realm);
         return ret;

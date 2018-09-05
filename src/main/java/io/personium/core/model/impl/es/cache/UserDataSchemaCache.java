@@ -28,7 +28,7 @@ import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- * ユーザデータスキーマのキャッシュを扱うクラス.
+ * A class that handles caching of user data schema.
  */
 public class UserDataSchemaCache {
     static Logger log = LoggerFactory.getLogger(UserDataSchemaCache.class);
@@ -42,9 +42,9 @@ public class UserDataSchemaCache {
     }
 
     /**
-     * スキーマ情報をキャッシュから取得し、スキーマ情報を格納したMapを返す.
-     * @param nodeId ノードID
-     * @return スキーマ情報を格納したMapオブジェクト。キャッシュに存在しない場合はnull
+     * Retrieves the schema information from the cache and returns the Map storing the schema information.
+     * @ param nodeId node ID
+     * @return A Map object containing schema information. It is null if it does not exist in the cache
      */
     public static Map<String, Object> get(String nodeId) {
         if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
@@ -55,16 +55,16 @@ public class UserDataSchemaCache {
             Map<String, Object> cache = getMcdClient().get(cacheKey(nodeId), Map.class);
             return cache;
         } catch (MemcachedClientException e) {
-            // キャッシュのアクセスに失敗した場合は、DBからデータを取得させるためnullを返却
+            //If cache access fails, return null to get data from DB
             log.info("Failed to get UserDataSchemaCache.");
             return null;
         }
     }
 
     /**
-     * スキーマ情報をキャッシュする.
-     * @param nodeId ノードID
-     * @param schema スキーマ情報を格納したMapオブジェクト
+     * Cache the schema information.
+     * @ param nodeId node ID
+     * @ param schema Map object containing schema information
      */
     public static void cache(String nodeId, Map<String, Object> schema) {
         if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
@@ -74,8 +74,8 @@ public class UserDataSchemaCache {
     }
 
     /**
-     * 指定したスキーマのキャッシュ情報を削除する.
-     * @param nodeId ノードID
+     * Delete the cache information of the specified schema.
+     * @ param nodeId node ID
      */
     public static void clear(String nodeId) {
         if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
@@ -85,8 +85,8 @@ public class UserDataSchemaCache {
     }
 
     /**
-     * 指定したスキーマのキャッシュ情報を無効化する.
-     * @param nodeId ノードID
+     * Invalidate the cache information of the specified schema.
+     * @ param nodeId node ID
      */
     public static void disable(String nodeId) {
         if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
@@ -99,9 +99,9 @@ public class UserDataSchemaCache {
     }
 
     /**
-     * キャッシュ情報が無効化されているかを返す.
-     * @param cache キャッシュ情報
-     * @return 無効の場合はtrue,有効の場合はfalse
+     * Returns whether cache information is invalidated.
+     * @ param cache Cache information
+     * @return true if disabled, false if enabled
      */
     public static boolean isDisabled(Map<String, Object> cache) {
         if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
@@ -116,10 +116,10 @@ public class UserDataSchemaCache {
     }
 
     /**
-     * キャッシュ情報に変更があったかを返す.
-     * @param nodeId ノードID
-     * @param cache 元のキャッシュ情報
-     * @return 変更があった場合はtrue,変更がない場合はfalse
+     * It returns whether there was a change in the cache information.
+     * @ param nodeId node ID
+     * @ param cache Original cache information
+     * @return true if there was a change, false if there is no change
      */
     @SuppressWarnings("unchecked")
     public static boolean isChanged(String nodeId, Map<String, Object> cache) {
@@ -131,7 +131,7 @@ public class UserDataSchemaCache {
         try {
             latestCache = getMcdClient().get(cacheKey(nodeId), Map.class);
         } catch (MemcachedClientException e) {
-            // キャッシュのアクセスに失敗した場合は、DBからデータを取得させるためtrueを返却
+            //If cache access fails, return true to get data from the DB
             log.info("Failed to get latest UserDataSchemaCache.");
         }
         if (latestCache == null) {

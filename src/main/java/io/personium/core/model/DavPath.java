@@ -23,7 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Davのパス情報を管理するクラス.
+ * Class managing Dav's path information.
  */
 public class DavPath {
 
@@ -38,8 +38,8 @@ public class DavPath {
     private List<String> resourcePath = new ArrayList<String>();
 
     /**
-     * コンストラクタ.
-     * @param uri DavのURI
+     * constructor.
+     * @ param uri Dav URI
      * @param baseUri BaseURI
      */
     public DavPath(URI uri, String baseUri) {
@@ -64,28 +64,28 @@ public class DavPath {
     }
 
     /**
-     * @return baseURI文字列
+     * @return baseURI string
      */
     public String getBaseUri() {
         return this.baseUri;
     }
 
     /**
-     * @return Cell名
+     * @return Cell Name
      */
     public String getCellName() {
         return this.cellName;
     }
 
     /**
-     * @return Box名
+     * @return Box name
      */
     public String getBoxName() {
         return this.boxName;
     }
 
     /**
-     * @return Box配下のリソースのパス
+     * Path of resource under @return Box
      */
     public List<String> getResourcePath() {
         return this.resourcePath;

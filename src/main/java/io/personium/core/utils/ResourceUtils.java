@@ -32,7 +32,7 @@ import io.personium.common.utils.PersoniumCoreUtils.HttpHeaders;
 import io.personium.core.PersoniumCoreException;
 
 /**
- * リソース系ユーティリティ関数を集めたクラス.
+ * A class that collects resource-related utility functions.
  */
 public class ResourceUtils {
 
@@ -43,8 +43,8 @@ public class ResourceUtils {
     }
 
     /**
-     * Readerからリクエストボディを取得してJSONObjectにする.
-     * @param reader リクエストボディ
+     * Get request body from Reader and make it JSONObject.
+     * @ param reader request body
      * @return JSONObject
      */
     public static JSONObject parseBodyAsJSON(Reader reader) {
@@ -68,14 +68,14 @@ public class ResourceUtils {
     }
 
     /**
-     * リクエストボディが存在するかどうかをヘッダ情報からチェックする. <br />
-     * ※本メソッドではリクエストボディは読み取らず、ヘッダ情報からリクエストボディの有無を判定する。
-     * @param contentLength Content-Lengthヘッダの値
-     * @param transferEncoding Transfer-Encodingヘッダの値
-     * @return true:リクエストボディが存在する false:リクエストボディが存在しない
+     * Check from the header information whether or not the request body exists <br />
+     * * In this method, the request body is not read, and the presence or absence of the request body is judged from the header information.
+     * @ param contentLength Value of the Content-Length header
+     * @ param transferEncoding Value of Transfer-Encoding header
+     * @return true: request body exists false: request body does not exist
      */
     public static boolean hasApparentlyRequestBody(Long contentLength, String transferEncoding) {
-        // 以下を満たせばリクエストボディが存在すると判定する
+        //If the following is satisfied, it is judged that the request body exists
         return ((null != contentLength && contentLength > 0L) //NOPMD -To maintain readability
                 || null != transferEncoding);
     }
@@ -105,8 +105,8 @@ public class ResourceUtils {
     }
 
     /**
-     * OPTIONSメソッドに対する正常応答につかうResponseBuilderを作って返します.
-     * @param allowedMethods 許可されるHTTPメソッド文字列.
+     * It creates and returns a ResponseBuilder that handles the normal response to the OPTIONS method.
+     * @param allowedMethods Allowed HTTP method string.
      * @return ResponseBuilder
      */
     public static ResponseBuilder responseBuilderForOptions(String... allowedMethods) {

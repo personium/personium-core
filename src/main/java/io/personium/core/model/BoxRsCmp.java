@@ -27,7 +27,7 @@ import io.personium.core.utils.UriUtils;
 
 
 /**
- * JaxRS Resource オブジェクトから処理の委譲を受けてDav関連の永続化を除く処理を行うクラス.
+ * A class that performs processing except delegation of processing from JaxRS Resource object excluding Dav related persistence.
  */
 public class BoxRsCmp extends DavRsCmp {
 
@@ -36,11 +36,11 @@ public class BoxRsCmp extends DavRsCmp {
     Box box;
 
     /**
-     * コンストラクタ.
+     * constructor.
      * @param cellRsCmp CellRsCmp
      * @param davCmp DavCmp
      * @param accessContext AccessContext
-     * @param box ボックス
+     * @ param box box
      */
     public BoxRsCmp(final CellRsCmp cellRsCmp, final DavCmp davCmp, final AccessContext accessContext, final Box box) {
         super(cellRsCmp, davCmp);
@@ -49,29 +49,29 @@ public class BoxRsCmp extends DavRsCmp {
         this.box = box;
     }
     /**
-     * このリソースのURLを返します.
-     * @return URL文字列
+     * Returns the URL of this resource.
+     * @return URL string
      */
     public String getUrl() {
-        // 再帰的に最上位のBoxResourceまでいって、BoxResourceではここをオーバーライドしてルートURLを与えている。
+        //Recursively to the top BoxResource, BoxResource overrides this and gives the root URL.
         //return this.parent.getUrl() + "/" + this.pathName;
         return this.cell.getUrl() + this.box.getName();
     }
 
     /**
-     * リソースが所属するCellを返す.
-     * @return Cellオブジェクト
+     * Returns the Cell to which the resource belongs.
+     * @return Cell object
      */
     public Cell getCell() {
-        // 再帰的に最上位のBoxResourceまでいって、そこからCellにたどりつくため、BoxResourceではここをオーバーライドしている。
+        //BoxResource overrides this to recursively go to the top BoxResource and get to Cell from there.
         return this.cell;
     }
     /**
-     * リソースが所属するBoxを返す.
-     * @return Boxオブジェクト
+     * Returns the Box to which the resource belongs.
+     * @return Box object
      */
     public Box getBox() {
-        // 再帰的に最上位のBoxResourceまでいって、そこからCellにたどりつくため、BoxResourceではここをオーバーライドしている。
+        //BoxResource overrides this to recursively go to the top BoxResource and get to Cell from there.
         return this.box;
     }
 

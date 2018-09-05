@@ -19,12 +19,12 @@ package io.personium.core.bar.jackson;
 import org.json.simple.JSONObject;
 
 /**
- * Mappingされたオブジェクトの共通インタフェース.
+ * Common interface of mapped objects.
  */
 public interface IJSONMappedObject {
 
     /**
-     * JSONオブジェクトを返す.
+     * Returns a JSON object.
      * @return JSONObject
      */
     JSONObject getJson();

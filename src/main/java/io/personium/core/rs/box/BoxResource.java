@@ -94,25 +94,25 @@ public class BoxResource {
      * @param cell CELL Object
      * @param boxName Box Name
      * @param cellRsCmp cellRsCmp
-     * @param accessContext AccessContextオブジェクト
-     * @param jaxRsRequest JAX-RS用HTTPリクエスト
+     * @ param accessContext AccessContext object
+     * @ param jaxRsRequest HTTP request for JAX-RS
      */
     public BoxResource(final Cell cell, final String boxName, final AccessContext accessContext,
             final CellRsCmp cellRsCmp, Request jaxRsRequest) {
-        // 親はなし。パス名としてとりあえずboxNameをいれておく。
+        //No parents. For now let's put boxName as the path name.
         this.cell = cell;
         this.boxName = boxName;
         // this.path= path;
         this.accessContext = accessContext;
 
-        // Boxの存在確認
-        // 本クラスではBoxが存在していることを前提としているため、Boxがない場合はエラーとする。
-        // ただし、boxインストールではBoxがないことを前提としているため、以下の条件に合致する場合は処理を継続する。
-        // －HTTPメソッドが MKCOL である。かつ、
-        // －PathInfoが インストール先Box名 で終了している。
-        // （CollectionへのMKCOLの場合があるため、boxインストールであることを確認する）
+        //Confirm existence of Box
+        //Since this class assumes that Box exists, if there is no Box, it is an error.
+        //However, since it is assumed that there is no Box in box installation, processing is continued if the following conditions are satisfied.
+        //- The HTTP method is MKCOL. And,
+        //- PathInfo is terminated with the installation destination Box name.
+        //(MKCOL to the Collection may be the case, so confirm that it is a box installation)
         this.box = this.cell.getBoxForName(boxName);
-        // boxインストールではCellレベルで動作させる必要がある。
+        //In box installation it is necessary to operate at Cell level.
         this.cellRsCmp = cellRsCmp;
         if (this.box != null) {
             //BoxCmp is necessary only if this Box exists
@@ -137,10 +137,10 @@ public class BoxResource {
 
 
     /**
-     * 現在のリソースの一つ下位パスを担当するJax-RSリソースを返す.
-     * @param nextPath 一つ下のパス名
-     * @param request リクエスト
-     * @return 下位パスを担当するJax-RSリソースオブジェクト
+     * Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
+     * @ param nextPath path name one down
+     * @ param request request
+     * @return Jax-RS resource object responsible for subordinate path
      */
     @Path("{nextPath}")
     public Object nextPath(@PathParam("nextPath") final String nextPath,
@@ -198,9 +198,9 @@ public class BoxResource {
         // Access control.
         this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.READ);
 
-        // キャッシュからboxインストールの非同期処理状況を取得する。
-        // この際、nullが返ってきた場合は、boxインストールが実行されていないか、
-        // 実行されたがキャッシュの有効期限が切れたとみなす。
+        //Get asynchronous processing status of box installation from cache.
+        //In this case, if null is returned, box installation has not been executed,
+        //It is assumed that the cache has expired although it was executed.
         String key = "box-" + this.box.getId();
         Progress progress = ProgressManager.getProgress(key);
         if (progress == null) {
@@ -230,8 +230,8 @@ public class BoxResource {
     }
 
     /**
-     * boxインストールが実行されていないか、実行されたがキャッシュの有効期限が切れた場合のレスポンスを作成する.
-     * @return レスポンス用JSONオブジェクト
+     * box Creates a response if the installation is not running or if it was executed but the cache expired.
+     * @return JSON object for response
      */
     @SuppressWarnings("unchecked")
     private JSONObject createNotRequestedResponse() {
@@ -247,8 +247,8 @@ public class BoxResource {
     }
 
     /**
-     * boxインストールが実行されていないか、実行されたがキャッシュの有効期限が切れた場合のレスポンスを作成する.
-     * @return レスポンス用JSONオブジェクト
+     * box Creates a response if the installation is not running or if it was executed but the cache expired.
+     * @return JSON object for response
      */
     @SuppressWarnings("unchecked")
     private JSONObject createResponse(JSONObject values) {
@@ -291,7 +291,7 @@ public class BoxResource {
     }
 
     /**
-     * PROPFINDメソッドの処理.
+     * Processing of the PROPFIND method.
      * @param requestBodyXml Request Body
      * @param depth Depth Header
      * @param contentLength Content-Length Header
@@ -310,20 +310,20 @@ public class BoxResource {
     }
 
     /**
-     * PROPPATCHメソッドの処理.
+     * Processing of the PROPPATCH method.
      * @param requestBodyXml Request Body
      * @return JAX-RS Response
      */
     @WriteAPI
     @WebDAVMethod.PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
-        // アクセス制御
+        //Access control
         this.boxRsCmp.checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
         return this.boxRsCmp.doProppatch(requestBodyXml);
     }
 
     /**
-     * OPTIONSメソッド.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
@@ -332,25 +332,25 @@ public class BoxResource {
     }
 
     /**
-     * ACLメソッドの処理. ACLの設定を行う.
-     * @param reader 設定XML
+     * Processing of ACL method Set ACL.
+     * @ param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
     @ACL
     public Response acl(final Reader reader) {
-        // アクセス制御
+        //Access control
         this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
         return this.boxRsCmp.doAcl(reader);
     }
 
     /**
-     * MKCOLメソッドの処理. boxインストールを行う.
+     * Processing of MKCOL method.
      * @param uriInfo UriInfo
      * @param pCredHeader dcCredHeader
-     * @param contentType Content-Typeヘッダの値
-     * @param contentLength Content-Lengthヘッダの値
-     * @param inStream HttpリクエストのInputStream
+     * @ param contentType Value of Content-Type header
+     * @ param contentLength Value of the Content-Length header
+     * @ param inStream InputStream of Http request
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -371,18 +371,18 @@ public class BoxResource {
         String requestKey = this.cellRsCmp.getRequestKey();
         Response res = null;
         try {
-            // ログファイル出力
-            // X-Personium-RequestKeyの解析（指定なしの場合にデフォルト値を補充）
+            //Log file output
+            //Analysis of X-Personium-RequestKey (supplementing default value when not specified)
             requestKey = ResourceUtils.validateXPersoniumRequestKey(requestKey);
-            // TODO findBugs対策↓
+            //TODO findBugs countermeasure ↓
             log.debug(requestKey);
 
             if (Box.DEFAULT_BOX_NAME.equals(this.boxName)) {
                 throw PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
             }
 
-            // Boxを作成するためにCellCtlResource、ODataEntityResource(ODataProducer)が必要
-            // この時点では "X-Personium-Credential" ヘッダーは不要なのでnullを指定する
+            //CellCtlResource, ODataEntityResource (ODataProducer) required to create Box
+            //At this point, the "X-Personium-Credential" header is unnecessary and therefore null is specified
             CellCtlResource cellctl = new CellCtlResource(this.accessContext, null, this.cellRsCmp);
             String keyName = "'" + this.boxName + "'";
             ODataEntityResource odataEntity = new ODataEntityResource(cellctl, Box.EDM_TYPE_NAME, keyName);
@@ -397,7 +397,7 @@ public class BoxResource {
             res = installer.barFileInstall(headers, inStream, requestKey);
             result = Integer.toString(res.getStatus());
         } catch (RuntimeException e) {
-            // TODO 内部イベントの正式対応が必要
+            //Formal response of TODO internal event is required
             if (e instanceof PersoniumCoreException) {
                 result = Integer.toString(((PersoniumCoreException) e).getStatus());
             } else {
@@ -420,15 +420,15 @@ public class BoxResource {
     }
 
     /**
-     * MOVEメソッドの処理.
-     * @param headers ヘッダ情報
-     * @return JAX-RS応答オブジェクト
+     * Processing of the MOVE method.
+     * @ param headers header information
+     * @return JAX-RS response object
      */
     @WebDAVMethod.MOVE
     public Response move(
             @Context HttpHeaders headers) {
 
-        // Boxリソースに対するMOVEメソッドは使用禁止
+        //MOVE method for Box resource is disabled
         this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.WRITE);
         throw PersoniumCoreException.Dav.RESOURCE_PROHIBITED_TO_MOVE_BOX;
     }

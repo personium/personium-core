@@ -55,33 +55,33 @@ import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonValueEvent;
 
 /**
  * PersoniumJsonStreamReaderFactory.
- * JSONをストリームで読み込むReaderのファクトリー
+ * Factory of Reader to read JSON in stream
  */
 public class PersoniumJsonStreamReaderFactory {
     /**
-     * コンストラクタ.
+     * constructor.
      */
     private PersoniumJsonStreamReaderFactory() {
     }
 
     /**
      * JsonParseException.
-     * パースエラー時の例外
+     * Exception on parsing error
      */
     public static class JsonParseException extends RuntimeException {
 
         private static final long serialVersionUID = 2362481232045271688L;
 
         /**
-         * コンストラクタ.
+         * constructor.
          */
         public JsonParseException() {
             super();
         }
 
         /**
-         * コンストラクタ.
-         * @param message メッセージ
+         * constructor.
+         * @ param message Message
          * @param cause Throwable
          */
         public JsonParseException(String message, Throwable cause) {
@@ -89,15 +89,15 @@ public class PersoniumJsonStreamReaderFactory {
         }
 
         /**
-         * コンストラクタ.
-         * @param message メッセージ
+         * constructor.
+         * @ param message Message
          */
         public JsonParseException(String message) {
             super(message);
         }
 
         /**
-         * コンストラクタ.
+         * constructor.
          * @param cause Throwable
          */
         public JsonParseException(Throwable cause) {
@@ -106,7 +106,7 @@ public class PersoniumJsonStreamReaderFactory {
     }
 
     /**
-     * JsonEventインターフェースクラス.
+     * JsonEvent interface class.
      */
     public interface JsonEvent {
 
@@ -167,14 +167,14 @@ public class PersoniumJsonStreamReaderFactory {
     public interface JsonStreamReader {
 
         /**
-         * 次の値を持っているか.
+         * Do you have the following values?
          * @return boolean
          */
         boolean hasNext();
 
         /**
-         * 次のイベントを返却.
-         * @return JSONイベント
+         * Return the next event.
+         * @return JSON event
          */
         JsonEvent nextEvent();
 
@@ -185,7 +185,7 @@ public class PersoniumJsonStreamReaderFactory {
         JsonEvent previousEvent();
 
         /**
-         * クローズ.
+         * Close.
          */
         void close();
     }
@@ -195,7 +195,7 @@ public class PersoniumJsonStreamReaderFactory {
      */
     public interface JsonStartPropertyEvent extends JsonEvent {
         /**
-         * @return キー名
+         * @return key name
          */
         String getName();
     }
@@ -205,14 +205,14 @@ public class PersoniumJsonStreamReaderFactory {
      */
     public interface JsonEndPropertyEvent extends JsonEvent {
         /**
-         * JSONの値を文字列で返す.
-         * @return JSON値
+         * Returns the value of JSON as a string.
+         * @return JSON value
          */
         String getValue();
 
         /**
-         * JSONの値をオブジェクトで返す.
-         * @return オブジェクト
+         * Returns the JSON value as an object.
+         * @return object
          */
         Object getObject();
     }
@@ -222,8 +222,8 @@ public class PersoniumJsonStreamReaderFactory {
      */
     public interface JsonValueEvent extends JsonEvent {
         /**
-         * JSONの値を文字列で返す.
-         * @return JSON値
+         * Returns the value of JSON as a string.
+         * @return JSON value
          */
         String getValue();
     }
@@ -255,26 +255,26 @@ public class PersoniumJsonStreamReaderFactory {
          */
         class JsonToken {
             /**
-             * JSONトークンのタイプ.
+             * Type of JSON token.
              */
             private final JsonTokenType type;
             /**
-             * JSONトークンの値.
+             * The value of the JSON token.
              */
             private final String value;
 
             /**
-             * コンストラクタ.
-             * @param type JSONトークンのタイプ
+             * constructor.
+             * @ param type JSON token type
              */
             public JsonToken(JsonTokenType type) {
                 this(type, null);
             }
 
             /**
-             * コンストラクタ.
-             * @param type JSONトークンのタイプ
-             * @param value JSONトークンの値
+             * constructor.
+             * @ param type JSON token type
+             * @ param value Value of JSON token
              */
             public JsonToken(JsonTokenType type, String value) {
                 this.type = type;
@@ -294,7 +294,7 @@ public class PersoniumJsonStreamReaderFactory {
             }
 
             /**
-             * タイプを取得する.
+             * Get type.
              * @return type type
              */
             public JsonTokenType getType() {
@@ -302,7 +302,7 @@ public class PersoniumJsonStreamReaderFactory {
             }
 
             /**
-             * 値を取得する.
+             * Get the value.
              * @return value value
              */
             public String getValue() {
@@ -311,25 +311,25 @@ public class PersoniumJsonStreamReaderFactory {
         }
 
         /**
-         * 次の値を持っているか.
+         * Do you have the following values?
          * @return boolean
          */
         boolean hasNext();
 
         /**
-         * 次のJSONトークンを返却.
-         * @return JSONトークン
+         * Return the next JSON token.
+         * @return JSON token
          */
         JsonToken nextToken();
 
         /**
-         * クローズ.
+         * Close.
          */
         void close();
     }
 
     /**
-     * JsonStreamReaderを作成する.
+     * Create a JsonStreamReader.
      * @param reader reader
      * @return JsonStreamReader
      */
@@ -338,7 +338,7 @@ public class PersoniumJsonStreamReaderFactory {
     }
 
     /**
-     * JsonStreamTokenizerを作成する.
+     * Create a JsonStreamTokenizer.
      * @param reader reader
      * @return JsonStreamTokenizer
      */

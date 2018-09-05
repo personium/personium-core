@@ -65,7 +65,7 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * ODataのEntitiesリソース( id 指定がなくentitySetが指定されたURL）を扱うJAX-RSリソース.
+ * JAX-RS resource handling OData's Entities resource (a URL with entitySet specified without id specification).
  */
 public final class ODataEntitiesResource extends AbstractODataResource {
 
@@ -74,9 +74,9 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     AccessContext accessContext;
 
     /**
-     * コンストラクタ.
-     * @param odataResource 親Resource
-     * @param entitySetName エンティティセット名
+     * constructor.
+     * @ param odataResource parent Resource
+     * @ param entitySetName Entity set name
      */
     public ODataEntitiesResource(final ODataResource odataResource, final String entitySetName) {
         this.odataResource = odataResource;
@@ -87,11 +87,11 @@ public final class ODataEntitiesResource extends AbstractODataResource {
 
     /**
      * @param uriInfo UriInfo
-     * @param accept Acceptヘッダ
-     * @param format $format パラメタ
-     * @param callback コールバック
-     * @param skipToken スキップトークン
-     * @param q 全文検索パラメタ
+     * @ param accept Accept header
+     * @ param format $ format parameter
+     * @ param callback callback
+     * @ param skipToken skip token
+     * @ param q full-text search parameter
      * @return JAX-RS Response
      */
     @GET
@@ -103,15 +103,15 @@ public final class ODataEntitiesResource extends AbstractODataResource {
             @QueryParam("$skiptoken") final String skipToken,
             @QueryParam("q") final String q) {
 
-        // アクセス制御
+        //Access control
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
 
-        // リクエストの取得をProducerに依頼
+        //Ask Producer to get the request
         EntitiesResponse resp = getEntities(uriInfo, q);
         StringWriter sw = new StringWriter();
 
-        // $formatとAcceptヘッダの値から出力形式を決定
+        //Determining the output format from the values ​​of $ format and Accept header
         List<MediaType> acceptableMediaTypes = new ArrayList<MediaType>();
         MediaType contentType = decideOutputFormat(accept, format);
         acceptableMediaTypes.add(contentType);
@@ -124,7 +124,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         String entity = null;
         entity = sw.toString();
 
-        // 制御コードのエスケープ処理
+        //Escape processing of control code
         entity = escapeResponsebody(entity);
 
         // TODO remove this hack, check whether we are Version 2.0 compatible anyway
@@ -148,9 +148,9 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     }
 
     /**
-     * リクエストの取得をProducerに依頼.
+     * Ask Producer to get the request.
      * @param queryInfo QueryInfo
-     * @return レスポンス
+     * @return response
      */
     EntitiesResponse getEntities(QueryInfo queryInfo) {
         EntitiesResponse resp = getOdataProducer().getEntities(getEntitySetName(), queryInfo);
@@ -158,10 +158,10 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     }
 
     /**
-     * リクエストの取得をProducerに依頼.
+     * Ask Producer to get the request.
      * @param uriInfo UriInfo
-     * @param fullTextSearchKeyword String 全文検索を行うキーワード
-     * @return レスポンス
+     * @ param fullTextSearchKeyword String Keyword to perform full text search
+     * @return response
      */
     EntitiesResponse getEntities(UriInfo uriInfo, String fullTextSearchKeyword) {
         QueryInfo queryInfo = null;
@@ -174,9 +174,9 @@ public final class ODataEntitiesResource extends AbstractODataResource {
 
     /**
      * @param uriInfo UriInfo
-     * @param accept Acceptヘッダ
-     * @param format $format パラメタ
-     * @param reader リクエストボディ
+     * @ param accept Accept header
+     * @ param format $ format parameter
+     * @ param reader request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -187,24 +187,24 @@ public final class ODataEntitiesResource extends AbstractODataResource {
             @DefaultValue(FORMAT_JSON) @QueryParam("$format") final String format,
             final Reader reader) {
 
-        // メソッド実行可否チェック
+        //Method execution feasibility check
         checkNotAllowedMethod(uriInfo);
 
-        // アクセス制御
+        //Access control
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryWritePrivilege(getEntitySetName()));
 
         UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
 
-        // Entityの作成を Producerに依頼
+        //Ask Producer to create Entity
         EntityResponse res = this.createEntity(reader, this.odataResource);
 
-        // 作成結果の評価
+        //Evaluation of creation result
         OEntity ent = res.getEntity();
 
-        // 現状は、ContentTypeはJSON固定
+        //Currently, ContentType is fixed to JSON
         MediaType outputFormat = this.decideOutputFormat(accept, format);
-        // Entity Responseをレンダー
+        //Render Entity Response
         List<MediaType> contentTypes = new ArrayList<MediaType>();
         contentTypes.add(outputFormat);
 
@@ -212,7 +212,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         String key = AbstractODataResource.replaceDummyKeyToNull(convertedKey.toKeyString());
         String responseStr = renderEntityResponse(resUriInfo, res, format, contentTypes);
 
-        // 制御コードのエスケープ処理
+        //Escape processing of control code
         responseStr = escapeResponsebody(responseStr);
 
         ResponseBuilder rb = getPostResponseBuilder(ent, outputFormat, responseStr, resUriInfo, key);
@@ -248,15 +248,15 @@ public final class ODataEntitiesResource extends AbstractODataResource {
         String skipToken = QueryParser.parseSkipTokenQuery(mm.getFirst("$skiptoken"));
         List<OrderByExpression> orderBy = QueryParser.parseOderByQuery(mm.getFirst("$orderby"));
 
-        // 全文検索クエリqのバリデート
+        //Validate of full-text search query q
         if (fullTextSearchKeyword != null && (fullTextSearchKeyword.getBytes().length < 1
                 || fullTextSearchKeyword.getBytes().length > Q_MAX_LENGTH)) {
             throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("q", fullTextSearchKeyword);
         }
 
-        // $expand指定時は$topの最大値が変わるためチェックする
+        //When $ expand is specified, the maximum value of $ top changes, so check it
         if (expand != null && top != null && top > PersoniumUnitConfig.getTopQueryMaxSizeWithExpand()) {
-            // Integerでそのまま値を返却すると、カンマが付くため、文字列でエラーメッセージを返却する
+            //When returning the value as it is with Integer, a comma is attached, so return an error message with a character string
             throw PersoniumCoreException.OData.QUERY_INVALID_ERROR.params("$top", top.toString());
         }
 
@@ -275,12 +275,12 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     }
 
     /**
-     * OPTIONSメソッド.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
     public Response options() {
-        // アクセス制御
+        //Access control
         this.odataResource.checkAccessContext(this.accessContext,
                 this.odataResource.getNecessaryReadPrivilege(getEntitySetName()));
         return ResourceUtils.responseBuilderForOptions(
@@ -290,8 +290,8 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     }
 
     /**
-     * p:Format以外のチェック処理.
-     * @param props プロパティ一覧
+     * Check processing other than p: Format.
+     * @ param props property list
      */
     @Override
     public void validate(List<OProperty<?>> props) {
@@ -299,11 +299,11 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     }
 
     /**
-     * メソッド実行可否チェック.
-     * @param uriInfo リクエストされたリソースパス
+     * Method execution feasibility check.
+     * @ param uriInfo Requested resource path
      */
     private void checkNotAllowedMethod(UriInfo uriInfo) {
-        // メソッド許可チェック
+        //Method permission check
         String[] uriPath = uriInfo.getPath().split("/");
         if (ReceivedMessage.EDM_TYPE_NAME.equals(uriPath[uriPath.length - 1])
                 || SentMessage.EDM_TYPE_NAME.equals(uriPath[uriPath.length - 1])) {

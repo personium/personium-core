@@ -41,7 +41,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 /**
- * JAXBを簡単に使うためのユーティリティクラス.
+ * Utility class for easy use of JAXB.
  */
 public final class ObjectIo {
     private static JAXBContext context = null;
@@ -49,7 +49,7 @@ public final class ObjectIo {
     private static Map<String, String> nameSpaceToJsonMap = new HashMap<String, String>();
 
     /**
-     * コンストラクタ.
+     * constructor.
      */
     private ObjectIo() {
 
@@ -57,7 +57,7 @@ public final class ObjectIo {
 
     static {
         try {
-            // io.personium.core.model.jaxb パッケージのcontextを作成
+            //Create context for io.personium.core.model.jaxb package
             context = JAXBContext.newInstance(ObjectIo.class.getPackage().getName());
             // Use org.eclipse.persistence.jaxb (MOXy).
             jsonContext = JAXBContextFactory.createContext(ObjectIo.class.getPackage().getName(),
@@ -70,34 +70,34 @@ public final class ObjectIo {
     }
 
     /**
-     * @param <T> 戻り値としてほしいクラス
-     * @param is XML入力ストリーム
-     * @param elementClass 要素クラス
-     * @return unmarshalされたクラス
-     * @throws IOException IO上の問題があったとき投げられる例外
-     * @throws JAXBException JAXB上の問題があったとき投げられる例外
+     * @ param <T> class you want as return value
+     * @ param is XML input stream
+     * @ param elementClass element class
+     * @return unmarshaled class
+     * @ throws IOException Exception thrown when there is a problem on IO
+     * @ throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static <T> T unmarshal(final InputStream is, final Class<T> elementClass) throws IOException, JAXBException {
         return unmarshal(new BufferedReader(new InputStreamReader(is)), elementClass);
     }
     /**
-     * @param <T> 戻り値としてほしいクラス
-     * @param node Documentノード
-     * @param elementClass 要素クラス
-     * @return unmarshalされたクラス
-     * @throws IOException IO上の問題があったとき投げられる例外
-     * @throws JAXBException JAXB上の問題があったとき投げられる例外
+     * @ param <T> class you want as return value
+     * @ param node Document node
+     * @ param elementClass element class
+     * @return unmarshaled class
+     * @ throws IOException Exception thrown when there is a problem on IO
+     * @ throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static <T> T unmarshal(final Node node, final Class<T> elementClass) throws IOException, JAXBException {
         return unmarshalNode(node, elementClass);
     }
     /**
-     * @param <T> 戻り値としてほしいクラス
-     * @param node XMLノード
-     * @param elementClass 要素クラス
-     * @return unmarshalされたクラス
-     * @throws IOException IO上の問題があったとき投げられる例外
-     * @throws JAXBException JAXB上の問題があったとき投げられる例外
+     * @ param <T> class you want as return value
+     * @ param node XML node
+     * @ param elementClass element class
+     * @return unmarshaled class
+     * @ throws IOException Exception thrown when there is a problem on IO
+     * @ throws JAXBException Exception thrown when there is a problem on JAXB
      */
     @SuppressWarnings("unchecked")
     public static <T> T unmarshalNode(final Node node, final Class<T> elementClass) throws IOException, JAXBException {
@@ -109,12 +109,12 @@ public final class ObjectIo {
         return (T) object;
     }
     /**
-     * @param <T> 戻り値としてほしいクラス
-     * @param reader XML入力ストリーム
-     * @param elementClass 要素クラス
-     * @return unmarshalされたクラス
-     * @throws IOException IO上の問題があったとき投げられる例外
-     * @throws JAXBException JAXB上の問題があったとき投げられる例外
+     * @ param <T> class you want as return value
+     * @ param reader XML input stream
+     * @ param elementClass element class
+     * @return unmarshaled class
+     * @ throws IOException Exception thrown when there is a problem on IO
+     * @ throws JAXBException Exception thrown when there is a problem on JAXB
      */
     @SuppressWarnings("unchecked")
     public static <T> T unmarshal(final Reader reader, final Class<T> elementClass) throws IOException, JAXBException {
@@ -127,10 +127,10 @@ public final class ObjectIo {
     }
 
     /**
-     * @param instance オブジェクト
-     * @param writer XML出力ストリーム
-     * @throws IOException IO上の問題があったとき投げられる例外
-     * @throws JAXBException JAXB上の問題があったとき投げられる例外
+     * @ param instance object
+     * @ param writer XML output stream
+     * @ throws IOException Exception thrown when there is a problem on IO
+     * @ throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static void marshal(
             final Object instance, final Writer writer) throws IOException, JAXBException {
@@ -139,10 +139,10 @@ public final class ObjectIo {
     }
 
     /**
-     * @param instance オブジェクト
-     * @param outputStream XML出力ストリーム
-     * @throws IOException IO上の問題があったとき投げられる例外
-     * @throws JAXBException JAXB上の問題があったとき投げられる例外
+     * @ param instance object
+     * @ param outputStream XML output stream
+     * @ throws IOException Exception thrown when there is a problem on IO
+     * @ throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static void marshal(
             final Object instance,
@@ -151,10 +151,10 @@ public final class ObjectIo {
         m.marshal(instance, outputStream);
     }
     /**
-     * @param instance オブジェクト
-     * @param doc XMLドキュメント
-     * @throws IOException IO上の問題があったとき投げられる例外
-     * @throws JAXBException JAXB上の問題があったとき投げられる例外
+     * @ param instance object
+     * @ param doc XML document
+     * @ throws IOException Exception thrown when there is a problem on IO
+     * @ throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static void marshal(
             final Object instance, final Document doc) throws IOException, JAXBException {
@@ -162,10 +162,10 @@ public final class ObjectIo {
         m.marshal(instance, doc);
     }
     /**
-     * @param instance オブジェクト
-     * @param writer JSON出力ストリーム
-     * @throws IOException IO上の問題があったとき投げられる例外
-     * @throws JAXBException JAXB上の問題があったとき投げられる例外
+     * @ param instance object
+     * @ param writer JSON output stream
+     * @ throws IOException Exception thrown when there is a problem on IO
+     * @ throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static void toJson(Object instance, Writer writer) throws IOException, JAXBException {
 
@@ -177,12 +177,12 @@ public final class ObjectIo {
         marshaller.marshal(instance, writer);
     }
     /**
-     * @param <T> 戻り値としてほしいクラス
-     * @param reader XML入力ストリーム
-     * @param elementClass 要素クラス
-     * @return unmarshalされたクラス
-     * @throws IOException IO上の問題があったとき投げられる例外
-     * @throws JAXBException JAXB上の問題があったとき投げられる例外
+     * @ param <T> class you want as return value
+     * @ param reader XML input stream
+     * @ param elementClass element class
+     * @return unmarshaled class
+     * @ throws IOException Exception thrown when there is a problem on IO
+     * @ throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static <T> T fromJson(Reader reader, Class<T> elementClass) throws IOException, JAXBException {
 

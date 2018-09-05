@@ -20,33 +20,33 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Dav関連で共通的に使う定数群を定義.
+ * Define constants commonly used for Dav related.
  */
 public class DavCommon {
 
     private DavCommon() {
     }
 
-    /** リソース最小長. */
+    /** Resource minimum length.*/
     private static final int MIN_RESOURCE_LENGTH = 1;
-    /** リソース最大長. */
+    /** Maximum resource length.*/
     private static final int MAX_RESOURCE_LENGTH = 256;
 
-    /** Depthヘッダのデフォルト値. */
+    /** Default value of Depth header.*/
     public static final String DEPTH_INFINITY = "infinity";
 
-    /** Overwriteヘッダの上書きを許可する場合の値. */
+    /** Overwrite Value for overwriting header overrides.*/
     public static final String OVERWRITE_TRUE = "T";
-    /** Overwriteヘッダの上書きを許可しない場合の値. */
+    /** Overwrite Value when header overwrite is not allowed.*/
     public static final String OVERWRITE_FALSE = "F";
 
     /**
-     * 不正な名前のチェック.
-     * @param name チェック対象のリソース名
-     * @return true:正常、false:不正
+     * Invalid name check.
+     * @ param name Name of the resource to be checked
+     * @return true: normal, false: invalid
      */
     public static final boolean isValidResourceName(String name) {
-        // TODO Common.PATTERN_NAMEの正規表現ではないが正しいチェック方法なのか？API仕様書の内容とは合っていない
+        //It is not a regular expression of TODO Common.PATTERN_NAME but is it the correct checking method? It does not match the contents of the API specification
         if (name.length() >= MIN_RESOURCE_LENGTH
                 && name.length() < MAX_RESOURCE_LENGTH) {
             String regex = "[\\\\/:*?\"<>| ]";

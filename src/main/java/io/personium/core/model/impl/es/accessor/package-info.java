@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- * データストア層の基本処理を実装するパッケージ.
+ * A package that implements the basic processing of the data store layer.
  */
 package io.personium.core.model.impl.es.accessor;
 

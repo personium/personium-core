@@ -36,7 +36,7 @@ import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.PersoniumODataProducer;
 
 /**
- * リソースクラスでパスワード変更処理を司るJAX-RSリソース.
+ * JAX-RS resource that handles password change processing in resource class.
  */
 public class PasswordResource {
 
@@ -68,15 +68,15 @@ public class PasswordResource {
     }
 
     /**
-     * パスワードの変更をする.
-     * @return ODataEntityResourceクラスのオブジェクト
+     * Change the password.
+     * @ return ODataEntityResource class object
      */
     @WriteAPI
     @PUT
     public Response mypass() {
-        // アクセス制御
+        //Access control
         this.accessContext.checkMyLocalToken(cell, this.davRsCmp.getAcceptableAuthScheme());
-        // セルローカルトークンからパスワード変更するAccount名を取得する
+        //Get the Account name to change password from cell local token
         this.key = this.accessContext.getSubject();
         String[] keyName;
         keyName = this.key.split("#");
@@ -88,14 +88,14 @@ public class PasswordResource {
             throw PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.reason(e);
         }
 
-        // Accountのスキーマ情報を取得する
+        //Obtain schema information of Account
         PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(accessContext.getCell());
         EdmEntitySet esetAccount = producer.getMetadata().getEdmEntitySet(Account.EDM_TYPE_NAME);
 
-        // パスワードの変更をProducerに依頼
+        //Ask Producer to change password
         producer.updatePassword(esetAccount, this.oEntityKey, this.pCredHeader);
 
-        // レスポンス返却
+        //Response return
         return Response.noContent()
                 .header(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataVersion.V2.asString)
                 .build();

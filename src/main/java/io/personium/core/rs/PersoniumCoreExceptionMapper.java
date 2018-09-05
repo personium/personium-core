@@ -32,7 +32,7 @@ import io.personium.core.exceptions.ODataErrorMessage;
 import io.personium.plugin.base.PluginMessageUtils.Severity;
 
 /**
- * 本アプリケーションの例外マッパー. ログ出力と適切な形でのエラー応答出力を行う。
+ * Exception mapper for this application. Perform log output and error response output in an appropriate form.
  */
 @Provider
 public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Exception> {
@@ -41,20 +41,20 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
 
     @Override
     public Response toResponse(final Exception exception) {
-        // PersoniumCoreException ならば
+        //If PersoniumCoreException
         if (exception instanceof PersoniumCoreException) {
             return this.handlePersoniumCoreException((PersoniumCoreException) exception);
         }
-        // JaxRS例外 ならば
+        //If JaxRS exception
         if (exception instanceof WebApplicationException) {
             return this.handleWebApplicationException((WebApplicationException) exception);
         }
         /*
-         * PersoniumCoreException以外の例外の扱い。ただし、WebApplicationExceptionやそのサブクラスを投げられると、
-         * JAX-RS層で処理されてしまい、ここには来ない模様。（Jerseyではそうなっている）
+         * Handling exceptions other than PersoniumCoreException. However, when WebApplicationException or its subclass is thrown,
+         * It was processed by the JAX-RS layer and it seems not to come here. (This is true in Jersey)
          */
-        // ログ出力
-        // Unknown Exceptionはいろいろなケースで発生するため、乱数のIDをつけてログが一意になるようにする。
+        //Log output
+        //Since Unknown Exception occurs in various cases, it makes ID of a random number so that log becomes unique.
         String id = Math.abs(UUID.randomUUID().getMostSignificantBits() % ERROR_ID_ROOT) + "";
         StackTraceElement[] ste = exception.getStackTrace();
         StringBuilder sb = new StringBuilder("[PR500-SV-9999] - Unknown Exception [" + id + "] ");
@@ -70,7 +70,7 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
     }
 
     /*
-     * PersoniumCoreExceptionの扱い。
+     * Handling of PersoniumCoreException.
      */
     private Response handlePersoniumCoreException(final PersoniumCoreException pce) {
         Severity sv = pce.getSeverity();
@@ -79,7 +79,7 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
         Response res = pce.createResponse();
         String format = String.format("[%s] - %s", code, message);
         Throwable cause = pce.getCause();
-        // ログ出力
+        //Log output
         switch (sv) {
         case INFO:
             log.info(format, cause);
@@ -97,7 +97,7 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
     }
 
     /*
-     * PersoniumCoreExceptionの扱い。
+     * Handling of PersoniumCoreException.
      */
     private Response handleWebApplicationException(final WebApplicationException webappException) {
         Response res = webappException.getResponse();

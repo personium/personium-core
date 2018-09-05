@@ -30,19 +30,19 @@ import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmType;
 
 /**
- * OData4J の OEntity に Etag情報と独自メタデータを扱う力を持たせたクラス.
+ * A class that made OEntity of OData 4J have the power to handle Etag information and original metadata.
  */
 public final class OEntityWrapper implements OEntity {
     String uuid;
     OEntity core;
-    String etag; // Opaque Etagの中身 ー W/"(中身)"
+    String etag; //Contents of Opaque Etag - W / "(Inside)"
     Map<String, Object> metadata = new HashMap<String, Object>();
     Map<String, Object> manyToOneLinks = new HashMap<String, Object>();
 
     /**
-     * コンストラクタ.
+     * constructor.
      * @param uuid UUID
-     * @param oEntity OEntityオブジェクト
+     * @ param o Entity OEntity object
      * @param etag ETag
      */
     public OEntityWrapper(final String uuid, final OEntity oEntity, final String etag) {
@@ -51,24 +51,24 @@ public final class OEntityWrapper implements OEntity {
         this.etag = etag;
     }
     /**
-     * キーを指定して独自メタデータを取得します.
-     * @param key メタデータのキー
-     * @return メタデータの値
+     * Specify the key to get your own metadata.
+     * @ param key Key of metadata
+     * @return metadata value
      */
     public Object get(final String key) {
         return this.metadata.get(key);
     }
     /**
-     * 独自メタデータを設定します.
-     * @param key メタデータのキー
-     * @param val メタデータの値
+     * Set up your own metadata.
+     * @ param key Key of metadata
+     * @ param val Value of metadata
      */
     public void put(final String key, final Object val) {
         this.metadata.put(key, val);
     }
     /**
-     * 独自メタデータをすべて取得します.
-     * @return 独自メタデータ
+     * We will retrieve all our own metadata.
+     * @return original metadata
      */
     public Map<String, Object> getMetadata() {
         return this.metadata;
@@ -133,7 +133,7 @@ public final class OEntityWrapper implements OEntity {
     }
 
     /**
-     * @return 内部ID
+     * @return Internal ID
      */
     public String getUuid() {
         return uuid;
@@ -151,7 +151,7 @@ public final class OEntityWrapper implements OEntity {
         this.etag = etag;
     }
     /**
-     * Etagを返します.
+     * Return Etag.
      * @return Etag
      */
     public String getEtag() {
@@ -159,16 +159,16 @@ public final class OEntityWrapper implements OEntity {
     }
 
     /**
-     * linksを設定します.
-     * @param paramManyToOneLinks リンク情報
+     * Configure links.
+     * @ param paramManyToOneLinks link information
      */
     public void setManyToOneLinks(final Map<String, Object> paramManyToOneLinks) {
         this.manyToOneLinks = paramManyToOneLinks;
     }
 
     /**
-     * 指定されたキーのlinkのUUIDを返します.
-     * @param key リンクキー
+     * Returns the UUID of link for the specified key.
+     * @ param key link key
      * @return linkUUID
      */
     public String getLinkUuid(String key) {

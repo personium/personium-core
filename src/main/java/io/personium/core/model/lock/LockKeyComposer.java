@@ -19,7 +19,7 @@ package io.personium.core.model.lock;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
- * Lockキーを生成するクラス.
+ * Class that generates Lock key.
  */
 public class LockKeyComposer {
 
@@ -29,10 +29,10 @@ public class LockKeyComposer {
     }
 
     /**
-     * ロック用のキーを生成する.
-     * @param category ロックのカテゴリ名
-     * @param key ロックキーに設定するUUIDを含んだ情報
-     * @return ロックキー
+     * Generate a key for locking.
+     * @ param category category name of lock
+     * @ param key Information that contains the UUID to set as the lock key
+     * @return lock key
      */
     public static String fullKeyFromCategoryAndKey(String category, String key) {
         StringBuilder sb = new StringBuilder(category);
@@ -42,12 +42,12 @@ public class LockKeyComposer {
     }
 
     /**
-     * ロック用のキーを生成する.
-     * @param category ロックのカテゴリ名
-     * @param cellId CellのID
-     * @param boxId BoxのID
-     * @param nodeId NodeのID
-     * @return ロックキー
+     * Generate a key for locking.
+     * @ param category category name of lock
+     * @ param cellId Cell ID
+     * @ param boxId Box ID
+     * @ param nodeId ID of Node
+     * @return lock key
      */
     public static String fullKeyFromCategoryAndKey(String category, String cellId, String boxId, String nodeId) {
         return fullKeyFromCategoryAndKey(category, createLockScopeKey(cellId, boxId, nodeId));
@@ -61,7 +61,7 @@ public class LockKeyComposer {
         } else if (cellId != null) {
             return cellId;
         } else {
-            // CellIDがNullの場合はunitPrefix
+            //If CellID is Null, unitPrefix
             return PersoniumUnitConfig.getEsUnitPrefix();
         }
     }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- * Esに格納するデータとESに依存しないデータモデルを相互変換するオブジェクト群.
+ * A group of objects that mutually convert data stored in Es and a data model independent of ES.
  */
 package io.personium.core.model.impl.es.doc;
 

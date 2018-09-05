@@ -45,7 +45,7 @@ public class PluginManager {
 
     /**
      * getTypePluginInfo.
-     * 対象のプラグインを取得します。
+     * Get target plug-in.
      * @param type String
      * @return pi PluginInfo
      */
@@ -62,7 +62,7 @@ public class PluginManager {
 
     /**
      * getGrantTypePluginInfo.
-     * 対象のプラグインを取得します。
+     * Get target plug-in.
      * @param grant String
      * @return pi PluginInfo
      */
@@ -72,7 +72,7 @@ public class PluginManager {
             pi = pl.getPlugins().get(i);
             if (pi != null) {
                 String gtype = getGrantType(pi);
-                // 完全一致
+                //Perfect matching
                 if (gtype.equals(grant)) {
                     return pi;
                 }

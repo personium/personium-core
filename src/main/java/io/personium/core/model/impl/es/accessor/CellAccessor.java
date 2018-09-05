@@ -30,14 +30,14 @@ import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 
 /**
- * Cellのアクセス処理を実装したクラス.
+ * A class that implements Cell access processing.
  */
 public class CellAccessor extends AbstractEntitySetAccessor {
 
     /**
-     * コンストラクタ.
-     * @param index インデックス
-     * @param name タイプ名
+     * constructor.
+     * @ param index index
+     * @ param name Type name
      * @param routingId routingId
      */
     public CellAccessor(EsIndex index, String name, String routingId) {
@@ -45,17 +45,17 @@ public class CellAccessor extends AbstractEntitySetAccessor {
     }
 
     /**
-     * セル配下のDavFile数を返却する.
+     * Return the number of DavFiles under the cell.
      * TODO It will be deleted in response to core issue #71.
-     * @param cellId 削除対象のセルID
-     * @param unitUserName ユニットユーザ名
-     * @return セル配下のDavFile数
+     * @ param cellId Cell ID to delete
+     * @ param unitUserName unit user name
+     * @return Number of DavFiles under cell
      */
     public long getDavFileTotalCount(String cellId, String unitUserName) {
-        // CellAccessorはadインデックスに対するアクセスのため、ユニットユーザ側のアクセッサを取得
+        //CellAccessor obtains unit user's accessor for access to ad index
         DataSourceAccessor accessor = EsModel.dsa(unitUserName);
 
-        // Countのみを取得するためサイズを0で指定
+        //To obtain only Count, specify the size as 0
         Map<String, Object> countQuery = getDavFileFilterQuery(cellId);
         countQuery.put("size", 0);
 
@@ -64,16 +64,16 @@ public class CellAccessor extends AbstractEntitySetAccessor {
     }
 
     /**
-     * セル配下のDavFileID一覧を返却する.
+     * Return the DavFileID list under the cell.
      * TODO It will be deleted in response to core issue #71.
-     * @param cellId 削除対象のセルID
-     * @param unitUserName ユニットユーザ名
-     * @param size 取得件数
-     * @param from 取得開始位置
-     * @return セル配下のDavFile数
+     * @ param cellId Cell ID to delete
+     * @ param unitUserName unit user name
+     * @ param size Number of acquisitions
+     * @ param from acquisition start position
+     * @return Number of DavFiles under cell
      */
     public List<String> getDavFileIdList(String cellId, String unitUserName, int size, int from) {
-        // CellAccessorはadインデックスに対するアクセスのため、ユニットユーザ側のアクセッサを取得
+        //CellAccessor obtains unit user's accessor for access to ad index
         DataSourceAccessor accessor = EsModel.dsa(unitUserName);
 
         Map<String, Object> searchQuery = getDavFileFilterQuery(cellId);

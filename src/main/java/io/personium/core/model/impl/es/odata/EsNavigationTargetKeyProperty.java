@@ -34,7 +34,7 @@ import io.personium.core.odata.NavigationTargetKeyProperty;
 import io.personium.core.rs.odata.AbstractODataResource;
 
 /**
- * NavigationTargetKeyPropertyクラスのES実装.
+ * ES implementation of the NavigationTargetKeyProperty class.
  */
 public class EsNavigationTargetKeyProperty implements NavigationTargetKeyProperty {
 
@@ -50,35 +50,35 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     /** nodeId. */
     private String nodeId;
 
-    /** staticフィールドの検索項目. */
+    /** Search field of static field.*/
     private Map<String, String> statics = new HashMap<String, String>();
 
-    /** linkフィールドの検索項目. */
+    /** link field search item.*/
     private Map<String, String> links = new HashMap<String, String>();
 
-    /** 推移先NTKP. */
+    /** Destination NTKP.*/
     private EsNavigationTargetKeyProperty shiftNtkp;
 
-    /** Property情報. */
+    /** Property information.*/
     private Set<OProperty<?>> properties = new HashSet<OProperty<?>>();
 
     /**
-     * propertiesのセッター.
+     * properties setter.
      * @param properties properties
      */
     public void setProperties(Set<OProperty<?>> properties) {
         this.properties = properties;
     }
 
-    /** ODataProducer情報. */
+    /** ODataProducer information.*/
     private EsODataProducer odataProducer;
 
     /**
-     * コンストラクタ.
+     * constructor.
      * @param cellId CellId
      * @param boxId boxId
      * @param nodeId nodeId
-     * @param type タイプ
+     * @ param type type
      * @param odataProducer odataProducer
      */
     public EsNavigationTargetKeyProperty(String cellId,
@@ -94,19 +94,19 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     }
 
     /**
-     * NavigationTargetKeyPropertyを検索する.
-     * @return リンク情報のTypeとIDのHashMap
+     * Search NavigationTargetKeyProperty.
+     * @return HashMap of type and ID of link information
      */
     private Map<String, String> search() {
         Map<String, Object> filter = getSearchQuery();
 
-        // 検索の実行
+        //Perform search
         EntitySetAccessor esType = odataProducer.getAccessorForEntitySet(type);
         PersoniumSearchHits sHits = esType.search(filter).hits();
 
         Map<String, String> link = new HashMap<String, String>();
         if (sHits.getCount() == 0) {
-            // 存在していなければ、例外をあげる
+            //I will raise an exception if it does not exist
             String value = null;
             for (Map.Entry<String, String> ent : statics.entrySet()) {
                 value = ent.getValue();
@@ -117,18 +117,18 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
                 throw new NTKPNotFoundException(value);
             }
         } else {
-            // {"type" : "id情報"}の形式で検索結果を返却する
+            //Return search result in the form of {"type": "id information"}
             link.put(type, sHits.getAt(0).getId());
         }
         return link;
     }
 
     /**
-     * 検索クエリー取得する.
-     * @return 検索クエリー
+     * Acquire a search query.
+     * @return search query
      */
     private Map<String, Object> getSearchQuery() {
-        // Staticフィールドの検索クエリを組み立てる
+        //Assemble search query of Static field
         List<Map<String, Object>> terms = new ArrayList<Map<String, Object>>();
         if (!statics.isEmpty()) {
             for (Map.Entry<String, String> ent : statics.entrySet()) {
@@ -137,12 +137,12 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
             }
         }
 
-        // Linkフィールドの検索クエリを組み立てる
+        //Assemble the search query of Link field
         if (!links.isEmpty()) {
             for (Map.Entry<String, String> ent : links.entrySet()) {
                 String linkKey = OEntityDocHandler.KEY_LINK + "." + ent.getKey();
                 if (AbstractODataResource.isDummy(ent.getValue())) {
-                    // ダミーキーの場合はリンクのNull検索クエリを組み立てる
+                    //In the case of a dummy key, construct a null search query of the link
                     terms.add(QueryMapFactory.missingFilter(linkKey));
                 } else {
                     terms.add(QueryMapFactory.termQuery(linkKey, ent.getValue()));
@@ -151,15 +151,15 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
         }
 
         List<Map<String, Object>> implicitConditions = new ArrayList<Map<String, Object>>();
-        // NodeIDを検索条件に指定
+        //Specify NodeID as search condition
         if (nodeId != null) {
             implicitConditions.add(QueryMapFactory.termQuery(OEntityDocHandler.KEY_NODE_ID, nodeId));
         }
-        // BoxIdを検索条件に指定
+        //Specify BoxId as search condition
         if (boxId != null) {
             implicitConditions.add(QueryMapFactory.termQuery(OEntityDocHandler.KEY_BOX_ID, boxId));
         }
-        // CellIDを検索条件に指定
+        //Specify CellID as search condition
         if (cellId != null) {
             implicitConditions.add(QueryMapFactory.termQuery(OEntityDocHandler.KEY_CELL_ID, cellId));
         }
@@ -176,21 +176,21 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     }
 
     /**
-     * プロパティー情報を解析する.
+     * Analyze property information.
      */
     private void analyzeProperties() {
         for (OProperty<?> property : properties) {
             HashMap<String, String> ntkp = AbstractODataResource.convertNTKP(property.getName());
             if (ntkp == null) {
-                // staticフィールドの検索条件
+                //Search conditions for static fields
                 statics.put(property.getName(), (String) property.getValue());
             } else {
-                // linksフィールドの検索条件
+                //Search conditions for links field
                 if (shiftNtkp == null) {
                     shiftNtkp = new EsNavigationTargetKeyProperty(cellId, boxId, nodeId, ntkp.get("entityType"),
                             odataProducer);
                 }
-                // OPropertyを組み立てて、追加する
+                //Assemble and add OProperty
                 OProperty<?> newProperty = OProperties.string(ntkp.get("propName"), (String) property.getValue());
                 shiftNtkp.properties.add(newProperty);
             }
@@ -201,8 +201,8 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     }
 
     /**
-     * NTKPの推移を再帰的に検索して、リンク情報のTypeとIDのHashMapを返却する.
-     * @return リンク情報のTypeとIDのHashMap
+     * Recursively search the transition of NTKP and return HashMap of Type and ID of link information.
+     * @return HashMap of type and ID of link information
      */
     private Map<String, String> recursiveSearch() {
         analyzeProperties();
@@ -210,8 +210,8 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     }
 
     /**
-     * NavigationTargetKeyPropertyの情報から、リンク情報のTypeとIDのEntryを取得する.
-     * @return リンク情報のTypeとIDのEntry
+     * From the information of NavigationTargetKeyProperty, acquire Entry of Type and ID of link information.
+     * @return Type and ID Entry of link information
      */
     @Override
     public Map.Entry<String, String> getLinkEntry() {
@@ -219,7 +219,7 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
         if (links.isEmpty()) {
             return null;
         }
-        // ダミーキーが設定されている場合はリンク情報無し
+        //No link information when dummy key is set
         Map.Entry<String, String> entry = links.entrySet().iterator().next();
         if (AbstractODataResource.isDummy(entry.getValue())) {
             return null;
@@ -228,8 +228,8 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     }
 
     /**
-     * NavigationTargetKeyPropertyを解析して、NTKPを検索するクエリーを取得する.
-     * @return NTKP検索クエリー
+     * Analyze NavigationTargetKeyProperty and get a query to search for NTKP.
+     * @return NTKP search query
      */
     @Override
     public Map<String, Object> getNtkpSearchQuery() {
@@ -243,7 +243,7 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
     @SuppressWarnings("serial")
     public static class NTKPNotFoundException extends RuntimeException {
         /**
-         * コンストラクタ.
+         * constructor.
          * @param msg msg.
          */
         public NTKPNotFoundException(String msg) {

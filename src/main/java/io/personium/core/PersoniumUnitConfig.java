@@ -34,20 +34,20 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * 設定情報を保持するクラス. このクラスからクラスパス上にある personium-unit-config.propertiesの内容にアクセスできます。
+ * A class that holds configuration information, from which you can access the contents of personium-unit-config.properties on the classpath.
  */
 public class PersoniumUnitConfig {
     private static final int DEFAULT_BATCH_TIMEOUT = 270000;
     private static final int DEFAULT_BATCH_SLEEP_INTERVAL = 1000;
     private static final int DEFAULT_BATCH_SLEEP = 50;
 
-    /** personium-unit-config.propertiesの設定ファイルパスキー. */
+    /** personium-unit-config.properties setting file passkey.*/
     static final String KEY_CONFIG_FILE = "io.personium.configurationFile";
 
-    /** 本アプリで使うプロパティキーのプレフィクス. */
+    /** Prefix of the property key used in this application.*/
     static final String KEY_ROOT = "io.personium.core.";
 
-    /** Core version設定のキー. */
+    /** Key for setting the Core version.*/
     public static final String CORE_VERSION = KEY_ROOT + "version";
 
     /** Thread pool num io cell key. */
@@ -57,13 +57,13 @@ public class PersoniumUnitConfig {
     /** Thread pool num misc key. */
     public static final String THREAD_POOL_NUM_MISC = KEY_ROOT + "thread.pool.num.misc";
 
-    /** マスタートークン設定のキー. */
+    /** Key of master token setting.*/
     public static final String MASTER_TOKEN = KEY_ROOT + "masterToken";
 
-    /** ユニットユーザトークン発行者として認定するホスト名. */
+    /** Unit User name to be certified as a user token issuer.*/
     public static final String UNIT_USER_ISSUERS = KEY_ROOT + "unitUser.issuers";
 
-    /** ユニットのスキーム設定キー. */
+    /** Scheme setting key for unit.*/
     public static final String UNIT_SCHEME = KEY_ROOT + "unitScheme";
 
     /** Port number key for UnitUrl. */
@@ -72,7 +72,7 @@ public class PersoniumUnitConfig {
     /** Path key for UnitUrl. */
     public static final String UNIT_PATH = KEY_ROOT + "unitPath";
 
-    /** プラグインのパス設定キー. */
+    /** Plugin path setting key.*/
     public static final String PLUGIN_PATH = KEY_ROOT + "plugin.path";
 
     /**
@@ -86,77 +86,77 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * OData廻りの設定.
+     * Setting around OData.
      */
     public static final class OData {
-        /** $batch処理を行う際のリクエスト最大件数. */
+        /** Maximum number of requests when doing $ batch processing.*/
         public static final String BATCH_BULK_REQUEST_MAX_SIZE = KEY_ROOT + "odata.batch.bulkRequestMaxSize";
 
-        /** $batch処理のタイムアウト時間. */
+        /** Timeout time for $ batch processing.*/
         public static final String BATCH_REQUEST_TIMEOUT_IN_MILLIS = KEY_ROOT + "odata.batch.timeoutInMillis";
 
-        /** $batch処理のスリープ時間. */
+        /** Sleep time for $ batch processing.*/
         public static final String BATCH_SLEEP_IN_MILLIS = KEY_ROOT + "odata.batch.sleepInMillis";
 
-        /** $batch処理のスリープ間隔. */
+        /** Sleep interval of $ batch processing.*/
         public static final String BATCH_SLEEP_INTERVAL_IN_MILLIS = KEY_ROOT + "odata.batch.sleepIntervalInMillis";
 
-        /** N:Nの$linksが作成可能な最大件数. */
+        /** N: The maximum number of N links that $ links can create.*/
         public static final String NN_LINKS_MAX_NUM = KEY_ROOT + "odata.links.NtoN.maxnum";
 
-        /** $expand指定時の$top最大数. */
+        /** $ top Maximum number when specifying $ expand.*/
         public static final String EXPAND_TOP_MAXNUM = KEY_ROOT + "odata.query.expand.top.maxnum";
 
-        /** $expandの最大展開数（一覧取得時）. */
+        /** Maximum expanded number of $ expand (when list is acquired).*/
         public static final String EXPAND_LIST_MAXNUM = KEY_ROOT + "odata.expand.list.maxnum";
 
-        /** $expandの最大展開数（一件取得時）. */
+        /** Maximum expanded number of $ expand (when acquiring one case).*/
         public static final String EXPAND_RETRIEVE_MAXNUM = KEY_ROOT + "odata.expand.retrieve.maxnum";
 
-        /** $topの最大値数. */
+        /** Maximum number of $ top.*/
         public static final String TOP_MAX_NUM = KEY_ROOT + "odata.query.top.maxnum";
 
-        /** $skipの最大値数. */
+        /** Maximum number of $ skip.*/
         public static final String SKIP_MAX_NUM = KEY_ROOT + "odata.query.skip.maxnum";
 
-        /** 一覧取得時のデフォルト返却件数. */
+        /** Number of default returns at the time of list acquisition.*/
         public static final String TOP_DEFAULT = KEY_ROOT + "odata.query.top.default";
 
-        /** $expandのプロパティの最大値数（一覧取得時）. */
+        /** Maximum number of properties of $ expand (when list is acquired).*/
         public static final String EXPAND_PROPERTY_MAX_NUM_LIST = KEY_ROOT + "odata.query.expand.property.maxnum.list";
 
-        /** $expandのプロパティの最大値数（一件取得時）. */
+        /** Maximum number of properties of $ expand (when acquiring one case).*/
         public static final String EXPAND_PROPERTY_MAX_NUM_RETRIEVE = KEY_ROOT
                 + "odata.query.expand.property.maxnum.retrieve";
     }
 
     /**
-     * Account廻りの設定.
+     * Setting around Account.
      */
     public static final class Account {
-        /** パスワード認証成功時に、Accountの最終ログイン時刻を更新するか否か(true:更新する(デフォルト) false:更新しない). */
+        /** Whether or not to update the last login time of Account at the time of successful password authentication (true: Update (default) false: Do not update).*/
         public static final String ACCOUNT_LAST_AUTHENTICATED_ENABLED = KEY_ROOT + "account.lastauthenticated.enabled";
     }
 
     /**
-     * Dav廻りの設定.
+     * Setting around Dav.
      */
     public static final class Dav {
-        /** コレクションの子要素の最大数. */
+        /** Maximum number of child elements of the collection.*/
         public static final String COLLECTION_CHILDRESOURCE_MAX_NUM = KEY_ROOT + "dav.childresource.maxnum";
 
-        /** コレクションの階層の深さの最大数. */
+        /** The maximum number of depths in the collection's hierarchy.*/
         public static final String COLLECTION_DEPTH_MAX_NUM = KEY_ROOT + "dav.depth.maxnum";
     }
 
     /**
-     * Security廻りの設定.
+     * Setting around Security.
      */
     public static final class Security {
-        /** トークンを暗号化する際に利用している秘密鍵. */
+        /** The secret key used when encrypting the token.*/
         public static final String TOKEN_SECRET_KEY = KEY_ROOT + "security.secret16";
 
-        /** トークンを暗号化する際に利用している秘密鍵. */
+        /** The secret key used when encrypting the token.*/
         public static final String AUTH_PASSWORD_SALT = KEY_ROOT + "security.auth.password.salt";
 
         /** Encrypt the DAV file (true: enabled false: disabled (default)). */
@@ -164,192 +164,192 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Lockの設定.
+     * Lock setting.
      */
     public static final class Lock {
-        /** Lockのタイプ. 許容値： memcached */
+        /** Type of Lock Tolerance: memcached*/
         public static final String TYPE = KEY_ROOT + "lock.type";
 
-        /** アカウントロックの有効期限(s). */
+        /** Account lock expiration date (s).*/
         public static final String ACCOUNTLOCK_LIFETIME = KEY_ROOT + "lock.accountlock.time";
 
-        /** ロック取得時のリトライ回数. */
+        /** Number of retries at lock acquisition.*/
         public static final String RETRY_TIMES = KEY_ROOT + "lock.retry.times";
 
-        /** ロック取得リトライ時の間隔. */
+        /** Interval at lock retry retry.*/
         public static final String RETRY_INTERVAL = KEY_ROOT + "lock.retry.interval";
 
-        /** セルロック取得時のリトライ回数. */
+        /** Number of retries at cell lock acquisition.*/
         public static final String CELL_RETRY_TIMES = KEY_ROOT + "lock.cell.retry.times";
 
-        /** セルロック取得リトライ時の間隔. */
+        /** Interval at cell lock acquisition retry.*/
         public static final String CELL_RETRY_INTERVAL = KEY_ROOT + "lock.cell.retry.interval";
 
-        /** ロックをmemcachedに保持する際のmemcachedホスト名. */
+        /** The memcached host name to hold lock on memcached.*/
         public static final String MEMCACHED_HOST = KEY_ROOT + "lock.memcached.host";
 
-        /** ロックをmemcachedに保持する際のmemcachedポート番号. */
+        /** The memcached port number for keeping locks on memcached.*/
         public static final String MEMCACHED_PORT = KEY_ROOT + "lock.memcached.port";
 
-        /** ロック用memcached operationタイムアウト値(ms). */
+        /** Lock memcached operation Timeout value (ms).*/
         public static final String MEMCACHED_OPTIMEOUT = KEY_ROOT + "lock.memcached.opTimeout";
     }
 
     /**
-     * Elastic Search 関連の設定.
+     * Elastic Search related settings.
      */
     public static final class ES {
-        /** Elastic Search ホスト設定のプロパティキー. */
+        /** Elastic Search host configuration property key.*/
         public static final String HOSTS = KEY_ROOT + "es.hosts";
 
-        /** Elastic Search クラスタ名設定のプロパティキー. */
+        /** Elastic Search Property key for cluster name setting.*/
         public static final String CLUSTERNAME = KEY_ROOT + "es.cluster.name";
 
-        /** Elastic Search を使用する際、DB生成時に用いるDB命名に用いるUNIT名に対応したプレフィクス設定のプロパティキー. */
+        /** When using Elastic Search, the prefix setting property key corresponding to the UNIT name used for DB naming used at DB creation.*/
         public static final String UNIT_PREFIX = KEY_ROOT + "es.unitPrefix";
 
-        /** Elastic Search の検索結果出力上限設定のプロパティキー. */
+        /** Property key of search result output upper limit setting of Elastic Search.*/
         public static final String TOP_NUM = KEY_ROOT + "es.topnum";
 
-        /** エラー発生時のリトライ回数. */
+        /** Number of retries when an error occurs.*/
         public static final String RETRY_TIMES = KEY_ROOT + "es.retryTimes";
 
-        /** エラー発生時のリトライ間隔. */
+        /** Retry interval at error occurrence.*/
         public static final String RETRY_INTERVAL = KEY_ROOT + "es.retryInterval";
     }
 
     /**
-     * BinaryDataの設定.
+     * Setting of BinaryData.
      */
     public static final class BinaryData {
-        /** ファイル削除時に物理削除するかどうかの設定.(true: 物理削除, false: 論理削除). */
+        /** Setting whether to delete physically when deleting files (true: physical deletion, false: logical deletion).*/
         public static final String PHYSICAL_DELETE_MODE = KEY_ROOT + "binaryData.physical.delete.mode";
 
-        /** ファイルへの書き込み時にfsyncを有効にするか否か(true:有効 false:無効(デフォルト)). */
+        /** Whether to enable fsync when writing to a file (true: valid false: disabled (default)).*/
         public static final String FSYNC_ENABLED = KEY_ROOT + "binaryData.fsync.enabled";
 
-        /** Davファイルの読み書き時、ハードリンク作成/ファイル名改変時の最大リトライ回数. */
+        /** Maximum number of retries at the time of reading / writing of Dav file, hard link creation / file name modification.*/
         public static final String MAX_RETRY_COUNT = KEY_ROOT + "binaryData.dav.retry.count";
 
-        /** Davファイルの読み書き時、ハードリンク作成/ファイル名改変時のリトライ間隔(msec). */
+        /** Retry interval (msec) at the time of reading / writing Dav file, hard link creation / file name modification.*/
         public static final String RETRY_INTERVAL = KEY_ROOT + "binaryData.dav.retry.interval";
     }
 
     /**
-     * Blobの設定.
+     * Blob setting.
      */
     public static final class BlobStore {
-        /** Elastic Search を使用する際、blobデータを格納するルート(URL, PATH)設定のプロパティキー. */
+        /** Property key of root (URL, PATH) setting to store blob data when using Elastic Search.*/
         public static final String ROOT = KEY_ROOT + "blobStore.root";
     }
 
     /**
-     * ユーザデータ内のプロパティの数、階層の制限設定.
+     * Number of properties in user data, hierarchy limit setting.
      */
     public static final class UserDataProperties {
-        /** EntityTypeの最大数制限. */
+        /** Maximum number limit of EntityType.*/
         public static final String MAX_ENTITY_TYPES = KEY_ROOT + "box.odata.schema.MaxEntityTypes";
 
-        /** EntityTypeに含まれるプロパティの最大数. */
+        /** Maximum number of properties contained in EntityType.*/
         public static final String MAX_PROPERTY_COUNT_IN_ENTITY = KEY_ROOT + "box.odata.schema.MaxProperties";
 
-        /** 各階層のSimpleTypeの制限数 (e.g. 400,100,20,0). */
+        /** The limit number of SimpleType of each hierarchy (eg 400, 100, 20, 0).*/
         public static final String SIMPLE_TYPE_PROPERTY_LIMITS =
                 KEY_ROOT + "box.odata.schema.property.LayerLimits.SimpleType";
 
-        /** 各階層のComplexTypeの制限数 (e.g. 20,20,50,0). */
+        /** The limit number of ComplexType of each hierarchy (eg 20, 20, 50, 0).*/
         public static final String COMPLEX_TYPE_PROPERTY_LIMITS =
                 KEY_ROOT + "box.odata.schema.property.LayerLimits.ComplexType";
     }
 
     /**
-     * イベントの設定.
+     * Event setting.
      */
     public static final class Event {
-        /** 最新のイベントログファイルの格納ディレクトリ. */
+        /** Storage directory of the latest event log file.*/
         public static final String EVENT_LOG_CURRENT_DIR = KEY_ROOT + "event.log.current.dir";
         /** Maximum event hop count. */
         public static final String EVENT_HOP_MAXNUM = KEY_ROOT + "event.hop.maxnum";
     }
 
     /**
-     * Cache廻りの設定.
+     * Setting around Cache.
      */
     public static final class Cache {
-        /** Cacheのタイプ. 許容値： none/memcached */
+        /** Type of Cache Tolerance: none / memcached*/
         public static final String TYPE = KEY_ROOT + "cache.type";
 
-        /** セルのキャッシュを有効とするか否か. 許容値： true/false */
+        /** Whether cell caching is enabled Tolerance: true / false*/
         public static final String CELL_CACHE_ENABLED = KEY_ROOT + "cache.cell.enabled";
 
-        /** ボックスのキャッシュを有効とするか否か. 許容値： true/false */
+        /** Whether box caching is enabled Tolerance: true / false*/
         public static final String BOX_CACHE_ENABLED = KEY_ROOT + "cache.box.enabled";
 
-        /** スキーマのキャッシュを有効とするか否か. 許容値： true/false */
+        /** Whether schema caching is enabled Tolerance: true / false*/
         public static final String SCHEMA_CACHE_ENABLED = KEY_ROOT + "cache.schema.enabled";
 
-        /** memcachedホスト名. */
+        /** memcached host name.*/
         public static final String MEMCACHED_HOST = KEY_ROOT + "cache.memcached.host";
 
-        /** memcachedポート番号. */
+        /** memcached port number.*/
         public static final String MEMCACHED_PORT = KEY_ROOT + "cache.memcached.port";
 
-        /** memcached operationタイムアウト値(ms). */
+        /** memcached operation Timeout value (ms).*/
         public static final String MEMCACHED_OPTIMEOUT = KEY_ROOT + "cache.memcached.opTimeout";
 
-        /** キャッシュ有効期限. */
+        /** Cache expiration date.*/
         public static final String MEMCACHED_EXPIRES_IN = KEY_ROOT + "cache.memcached.expiresin";
     }
 
     /**
-     * Engine廻りの設定.
+     * Setting around Engine.
      */
     public static final class Engine {
-        /** EngineのHostキー. */
+        /** The Host key of the Engine.*/
         public static final String HOST = KEY_ROOT + "engine.host";
 
-        /** EngineのPortキー. */
+        /** Port of the Engine.*/
         public static final String PORT = KEY_ROOT + "engine.port";
 
-        /** EngineのPathキー. */
+        /** Path key of Engine.*/
         public static final String PATH = KEY_ROOT + "engine.path";
     }
 
     /**
-     * X509廻りの設定.
+     * Setting around X509.
      */
     public static final class X509 {
-        /** X509ルート証明書を配置したパス設定のプロパティキー. */
+        /** X509 Property key of the path setting where the root certificate is placed.*/
         public static final String ROOT_CRT = KEY_ROOT + "x509.root";
 
-        /** X509証明書を配置したパス設定のプロパティキー. */
+        /** X509 Property key of path setting where certificate is placed.*/
         public static final String CRT = KEY_ROOT + "x509.crt";
 
-        /** X509秘密鍵を配置したパス設定のプロパティキー. */
+        /** X509 Property key of the path setting where the private key is placed.*/
         public static final String KEY = KEY_ROOT + "x509.key";
     }
 
     /**
-     * bar file export/install関連の設定.
+     * bar file export / install related settings.
      */
     public static final class BAR {
-        /** barファイルの最大ファイルサイズ(MB)のプロパティキー. */
+        /** bar Property key of the maximum file size (MB) of the file.*/
         public static final String BAR_FILE_MAX_SIZE = KEY_ROOT + "bar.file.maxSize";
 
-        /** barファイル内エントリの最大ファイルサイズ(MB)のプロパティキー. */
+        /** bar Property key of the maximum file size (MB) entry in the file.*/
         public static final String BAR_ENTRY_MAX_SIZE = KEY_ROOT + "bar.entry.maxSize";
 
-        /** ユーザデータのリンク処理時にレスポンスを返却するサイズのプロパティキー. */
+        /** A property key of a size to return a response when linking user data.*/
         public static final String BAR_USERDATA_LINKS_OUTPUT_STREAM_SIZE = KEY_ROOT
                 + "bar.userdata.linksOutputStreamSize";
 
-        /** ユーザデータの一括登録件数のプロパティキー. */
+        /** Property key of collective number of registered user data.*/
         public static final String BAR_USERDATA_BULK_SIZE = KEY_ROOT + "bar.userdata.bulkSize";
 
         /** Temporary storage directory for bar files. */
         public static final String BAR_TMP_DIR = KEY_ROOT + "bar.tmp.dir";
 
-        /** memcachedに格納するbarインストール処理状況の有効期限（秒). */
+        /** Store in memcached bar The validity period (in seconds) of the installation processing status.*/
         public static final String BAR_PROGRESS_EXPIRE_IN_SEC = KEY_ROOT + "bar.progress.expireInSec";
     }
 
@@ -396,7 +396,7 @@ public class PersoniumUnitConfig {
     }
 
     static {
-        // 各種メッセージ出力クラスを強制的にロードする
+        //Forcibly load various message output classes
         PersoniumCoreLog.loadConfig();
         PersoniumCoreException.loadConfig();
         PersoniumCoreAuthnException.loadConfig();
@@ -407,27 +407,27 @@ public class PersoniumUnitConfig {
 
     // static Logger log = LoggerFactory.getLogger(PersoniumCoreConfig.class);
 
-    /** 設定値を格納するプロパティ実体. */
+    /** Property entity that stores the setting value.*/
     private final Properties props = new Properties();
 
-    /** オーバーライドする設定値を格納するプロパティ実体. */
+    /** Property entity that stores setting values ​​to be overridden.*/
     private final Properties propsOverride = new Properties();
 
     /**
-     * protectedなコンストラクタ.
+     * A protected constructor.
      */
     protected PersoniumUnitConfig() {
         this.doReload();
     }
 
     /**
-     * 設定のリロード.
+     * Reload the settings.
      */
     private synchronized void doReload() {
         Logger log = LoggerFactory.getLogger(PersoniumUnitConfig.class);
         Properties properties = getUnitConfigDefaultProperties();
         Properties propertiesOverride = getPersoniumConfigProperties();
-        // 読み込みに成功した場合、メンバ変数へ置換する
+        //When reading succeeds, replace with member variable
         if (!properties.isEmpty()) {
             this.props.clear();
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {
@@ -473,7 +473,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * personium-unit-config-default.propertiesファイルを読み込む.
+     * Read the personium-unit-config-default.properties file.
      * @return personium-unit-config-default.properties
      */
     protected Properties getUnitConfigDefaultProperties() {
@@ -495,7 +495,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * personium-unit-config.propertiesファイルを読み込む.
+     * Read the personium-unit-config.properties file.
      * @return personium-unit-config.properties
      */
     protected Properties getPersoniumConfigProperties() {
@@ -524,8 +524,8 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * personium-unit-config.propertiesをInputStream形式で取得する.
-     * @param configFilePath 設定ファイルパス
+     * Get personium-unit-config.properties in InputStream format.
+     * @ param configFilePath configuration file path
      * @return personium-unit-config.properties
      */
     protected InputStream getConfigFileInputStream(String configFilePath) {
@@ -538,12 +538,12 @@ public class PersoniumUnitConfig {
         }
 
         try {
-            // 設定ファイルを指定されたパスから読み込む
+            //Read the configuration file from the specified path
             File configFile = new File(configFilePath);
             configFileInputStream = new FileInputStream(configFile);
             log.info("personium-unit-config.properties from system properties.");
         } catch (FileNotFoundException e) {
-            // 指定されたパスにファイルが存在しない場合は、クラスパス上のファイルを読み込む
+            //If there is no file in the specified path, read the file on the class path
             configFileInputStream = PersoniumUnitConfig.class.getClassLoader().getResourceAsStream(
                     "personium-unit-config.properties");
             log.info("personium-unit-config.properties from class path.");
@@ -552,52 +552,52 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * 設定値の取得.
-     * @param key キー
-     * @return 設定値
+     * Acquire setting value.
+     * @ param key
+     * @return setting value
      */
     private String doGet(final String key) {
         return props.getProperty(key);
     }
 
     /**
-     * 設定値の設定.
-     * @param key キー
-     * @param value 値
+     * Setting value setting.
+     * @ param key
+     * @ param value value
      */
     private void doSet(final String key, final String value) {
         props.setProperty(key, value);
     }
 
     /**
-     * すべてのプロパティを取得します。
-     * @return プロパティ一覧オブジェクト
+     * Get all the properties.
+     * @return property list object
      */
     public static Properties getProperties() {
         return singleton.props;
     }
 
     /**
-     * Key文字列を指定して設定情報を取得します.
-     * @param key 設定キー
-     * @return 設定値
+     * Key Specify the character string to acquire setting information.
+     * @ param key setting key
+     * @return setting value
      */
     public static String get(final String key) {
         return singleton.doGet(key);
     }
 
     /**
-     * Key文字列を指定して設定情報を変更します.
-     * @param key 設定キー
-     * @param value 値
+     * Key Specify the character string and change the setting information.
+     * @ param key setting key
+     * @ param value value
      */
     public static void set(final String key, final String value) {
         singleton.doSet(key, value);
     }
 
     /**
-     * Core Versionの値を取得します.
-     * @return Core Versionの値
+     * Get the value of Core Version.
+     * @return Core Version value
      */
     public static String getCoreVersion() {
         return get(CORE_VERSION);
@@ -628,22 +628,22 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * ユニットマスタートークンの値を取得します.
-     * @return マスタートークンの値
+     * Get the unit master token value.
+     * @ return Master token value
      */
     public static String getMasterToken() {
         return get(MASTER_TOKEN);
     }
 
     /**
-     * @return ユニットユーザトークン発行者として認定するホスト名.
+     * @return unit Host name to be certified as a user token issuer.
      */
     public static String getUnitUserIssuers() {
         return get(UNIT_USER_ISSUERS);
     }
 
     /**
-     * @return ユニットのスキーム設定キー.
+     * @return scheme setting key for unit.
      */
     public static String getUnitScheme() {
         return get(UNIT_SCHEME);
@@ -672,7 +672,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @return プラグインのパス設定キー.
+     * @return plugin's path setup key.
      */
     public static String getPluginPath() {
         return get(PLUGIN_PATH);
@@ -718,7 +718,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @return $batch処理を行う際のリクエスト最大件数.
+     * @return Maximum number of requests when doing $ batch processing.
      */
     public static String getOdataBatchBulkRequestMaxSize() {
 
@@ -730,7 +730,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @return $batch処理のタイムアウト時間（ミリ秒）
+     * @return $ batch processing timeout time (ms)
      */
     public static long getOdataBatchRequestTimeoutInMillis() {
 
@@ -742,7 +742,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @return $batch処理のスリープ時間（ミリ秒）
+     * @return $ sleep time for batch processing (ms)
      */
     public static long getOdataBatchSleepInMillis() {
 
@@ -754,7 +754,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @return $batch処理のスリープ間隔（ミリ秒）
+     * @return $ sleep interval of batch processing (ms)
      */
     public static long getOdataBatchSleepIntervalInMillis() {
 
@@ -766,157 +766,157 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * コレクションの子要素の最大制限数を取得.
-     * @return コレクションの子要素の最大数
+     * Get the maximum limit number of child elements of the collection.
+     * @return Maximum number of child elements of collection
      */
     public static int getMaxChildResourceCount() {
         return Integer.parseInt(get(Dav.COLLECTION_CHILDRESOURCE_MAX_NUM));
     }
 
     /**
-     * コレクションの階層の最大制限数を取得.
-     * @return コレクションの階層の最大数
+     * Get the maximum limit number of collection hierarchy.
+     * @return Maximum number of hierarchies in collection
      */
     public static int getMaxCollectionDepth() {
         return Integer.parseInt(get(Dav.COLLECTION_DEPTH_MAX_NUM));
     }
 
     /**
-     * ファイル書き込み時にfsyncが有効であるか否かを返す.
-     * @return 有効である場合はtrue
+     * Returns whether or not fsync is valid when writing a file.
+     * @return true if it is valid
      */
     public static boolean getFsyncEnabled() {
         return Boolean.parseBoolean(get(BinaryData.FSYNC_ENABLED));
     }
 
     /**
-     * @return N:Nの$linksが作成可能な最大件数を取得.
+     * @return N: Get the maximum number of links that $ links can create.
      */
     public static int getLinksNtoNMaxSize() {
         return Integer.parseInt(get(OData.NN_LINKS_MAX_NUM));
     }
 
     /**
-     * @return $expand指定時の$top最大数.
+     * @return $ expand Maximum number of times specified by specifying expand.
      */
     public static int getTopQueryMaxSizeWithExpand() {
         return Integer.parseInt(get(OData.EXPAND_TOP_MAXNUM));
     }
 
     /**
-     * @return $expandの最大展開数（一覧取得時）.
+     * @return Max expanded number of $ expand (when getting list).
      */
     public static int getMaxExpandSizeForList() {
         return Integer.parseInt(get(OData.EXPAND_LIST_MAXNUM));
     }
 
     /**
-     * @return $expandの最大展開数（一件取得時）.
+     * @return Max expanded number of $ expand (when acquiring one case).
      */
     public static int getMaxExpandSizeForRetrive() {
         return Integer.parseInt(get(OData.EXPAND_RETRIEVE_MAXNUM));
     }
 
     /**
-     * @return $topに指定可能な最大値.
+     * @return The maximum value that can be specified for $ top.
      */
     public static int getTopQueryMaxSize() {
         return Integer.parseInt(get(OData.TOP_MAX_NUM));
     }
 
     /**
-     * @return $skipに指定可能な最大値.
+     * @return The maximum value that can be specified for $ skip.
      */
     public static int getSkipQueryMaxSize() {
         return Integer.parseInt(get(OData.SKIP_MAX_NUM));
     }
 
     /**
-     * @return 一覧取得時のデフォルト返却件数.
+     * @return Default number of return cases when obtaining list.
      */
     public static int getTopQueryDefaultSize() {
         return Integer.parseInt(get(OData.TOP_DEFAULT));
     }
 
     /**
-     * @return $expandのプロパティの最大値数（一覧取得時）.
+     * @return The maximum number of properties of $ expand (when listing).
      */
     public static int getExpandPropertyMaxSizeForList() {
         return Integer.parseInt(get(OData.EXPAND_PROPERTY_MAX_NUM_LIST));
     }
 
     /**
-     * @return $expandのプロパティの最大値数（一件取得時）.
+     * @return The maximum number of properties of $ expand (when acquiring one item).
      */
     public static int getExpandPropertyMaxSizeForRetrieve() {
         return Integer.parseInt(get(OData.EXPAND_PROPERTY_MAX_NUM_RETRIEVE));
     }
 
     /**
-     * @return Lockのタイプ.
+     * @return Lock type.
      */
     public static String getLockType() {
         return get(Lock.TYPE);
     }
 
     /**
-     * @return アカウントロックの有効期限(s).
+     * @return Account lock expiration date (s).
      */
     public static String getAccountLockLifetime() {
         return get(Lock.ACCOUNTLOCK_LIFETIME);
     }
 
     /**
-     * @return ロック取得時のリトライ回数.
+     * @return The number of retries at lock acquisition.
      */
     public static String getLockRetryTimes() {
         return get(Lock.RETRY_TIMES);
     }
 
     /**
-     * @return ロック取得リトライ時の間隔.
+     * @return Interval at lock retry retry.
      */
     public static String getLockRetryInterval() {
         return get(Lock.RETRY_INTERVAL);
     }
 
     /**
-     * @return セルロック取得時のリトライ回数.
+     * @return Number of retries when acquiring cell lock.
      */
     public static int getCellLockRetryTimes() {
         return Integer.parseInt(get(Lock.CELL_RETRY_TIMES));
     }
 
     /**
-     * @return セルロック取得リトライ時の間隔.
+     * @return Interval at cell retry acquisition retry.
      */
     public static long getCellLockRetryInterval() {
         return Long.parseLong(get(Lock.CELL_RETRY_INTERVAL));
     }
 
     /**
-     * @return ロックをmemcachedに保持する際のmemcachedホスト名.
+     * @return memcached host name to hold lock on memcached.
      */
     public static String getLockMemcachedHost() {
         return get(Lock.MEMCACHED_HOST);
     }
 
     /**
-     * @return ロックをmemcachedに保持する際のmemcachedポート番号.
+     * @return memcached port number for keeping locks on memcached.
      */
     public static String getLockMemcachedPort() {
         return get(Lock.MEMCACHED_PORT);
     }
 
     /**
-     * @return ロック用memcached operationタイムアウト値(ms).
+     * @return memcached operation for locking timeout value (ms).
      */
     public static long getLockMemcachedOpTimeout() {
         return Long.parseLong(get(Lock.MEMCACHED_OPTIMEOUT));
     }
 
     /**
-     * @return 最新のイベントログファイルの格納ディレクトリ.
+     * @return Storage directory of the latest event log file.
      */
     public static String getEventLogCurrentDir() {
         return get(Event.EVENT_LOG_CURRENT_DIR);
@@ -931,38 +931,38 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * ElasticSearchのホスト名の設定値を取得します.
-     * @return 設定値
+     * Gets the setting value of ElasticSearch's host name.
+     * @return setting value
      */
     public static String getEsHosts() {
         return get(ES.HOSTS);
     }
 
     /**
-     * ElasticSearchのクラスタ名の設定値を取得します.
-     * @return 設定値
+     * Retrieve ElasticSearch's cluster name setting value.
+     * @return setting value
      */
     public static String getEsClusterName() {
         return get(ES.CLUSTERNAME);
     }
 
     /**
-     * 本アプリが担当するUnitのElasticSearch上のindex名接頭辞を取得します. 例えばu0と設定すると、管理情報indexとしてu0_adwoという名前のものを使います。
-     * @return 設定値
+     * Get the index name prefix on Elastic Search of Unit that this application is in charge, for example setting u 0, use the name of u 0 _ addwo as the management information index.
+     * @return setting value
      */
     public static String getEsUnitPrefix() {
         return get(ES.UNIT_PREFIX);
     }
 
     /**
-     * @return Esの検索結果出力上限の設定値を取得します.
+     * Get the set value of search result output upper limit of @ return Es.
      */
     public static int getEsTopNum() {
         return Integer.parseInt(get(ES.TOP_NUM));
     }
 
     /**
-     * @return blobデータを格納するルート(URL, PATH).
+     * @ return blob The route (URL, PATH) to store the data.
      */
     public static String getBlobStoreRoot() {
         return get(BlobStore.ROOT);
@@ -977,38 +977,38 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * バイナリデータ(Dav/Eventlog)削除時に物理削除するかどうかの設定.
-     * @return true: 物理削除, false: 論理削除
+     * Binary data (Dav / Eventlog) Setting whether to delete physically when deleting.
+     * @return true: physical delete, false: logical delete
      */
     public static boolean getPhysicalDeleteMode() {
         return Boolean.parseBoolean(get(BinaryData.PHYSICAL_DELETE_MODE));
     }
 
     /**
-     * Davファイルのハードリンク作成/改名/削除時のリトライ回数.
-     * @return リトライ回数
+     * Number of retries when creating / renaming / deleting hard links of Dav files.
+     * @return retry count
      */
     public static int getDavFileOperationRetryCount() {
         return Integer.parseInt(get(BinaryData.MAX_RETRY_COUNT));
     }
 
     /**
-     * Davファイルのハードリンク作成/改名/削除時のリトライ間隔(msec).
-     * @return リトライ間隔(msec)
+     * Retry interval (msec) for hard link creation / renaming / deletion of Dav file.
+     * @return Retry interval (msec)
      */
     public static long getDavFileOperationRetryInterval() {
         return Long.parseLong(get(BinaryData.RETRY_INTERVAL));
     }
 
     /**
-     * @return ESでエラー発生時のリトライ回数.
+     * The number of retries when an error occurred in @return ES.
      */
     public static String getESRetryTimes() {
         return get(ES.RETRY_TIMES);
     }
 
     /**
-     * @return ESでエラー発生時のリトライ間隔(ミリ秒).
+     * Retry interval (milliseconds) at error occurrence in @return ES.
      */
     public static String getESRetryInterval() {
         return get(ES.RETRY_INTERVAL);
@@ -1039,106 +1039,106 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @return barインストールの非同期処理状況の有効期限(s).
+     * @return bar The expiration date (s) of the asynchronous processing status of the installation.
      */
     public static String getBarInstallProgressLifeTimeExpireInSec() {
         return get(BAR.BAR_PROGRESS_EXPIRE_IN_SEC);
     }
 
     /**
-     * @return Cacheのタイプ.
+     * @return Cache type.
      */
     public static String getCacheType() {
         return get(Cache.TYPE);
     }
 
     /**
-     * @return memcachedホスト名.
+     * @return memcached host name.
      */
     public static String getCacheMemcachedHost() {
         return get(Cache.MEMCACHED_HOST);
     }
 
     /**
-     * @return memcachedポート番号.
+     * @return memcached port number.
      */
     public static String getCacheMemcachedPort() {
         return get(Cache.MEMCACHED_PORT);
     }
 
     /**
-     * @return cache用memcached operationタイムアウト値(ms).
+     * @ reccache memcached operation timeout value (ms).
      */
     public static long getCacheMemcachedOpTimeout() {
         return Long.parseLong(get(Cache.MEMCACHED_OPTIMEOUT));
     }
 
     /**
-     * Cellのキャッシュが有効か否かを返す.
-     * @return 有効な場合はtrue.
+     * Returns whether or not the cache of Cell is valid.
+     * @return true if it is valid.
      */
     public static boolean isCellCacheEnabled() {
         return Boolean.parseBoolean(get(Cache.CELL_CACHE_ENABLED));
     }
 
     /**
-     * Boxのキャッシュが有効か否かを返す.
-     * @return 有効な場合はtrue.
+     * Returns whether or not the Box's cache is valid.
+     * @return true if it is valid.
      */
     public static boolean isBoxCacheEnabled() {
         return Boolean.parseBoolean(get(Cache.BOX_CACHE_ENABLED));
     }
 
     /**
-     * スキーマのキャッシュが有効か否かを返す.
-     * @return 有効な場合はtrue.
+     * Returns whether the schema cache is valid or not.
+     * @return true if it is valid.
      */
     public static boolean isSchemaCacheEnabled() {
         return Boolean.parseBoolean(get(Cache.SCHEMA_CACHE_ENABLED));
     }
 
     /**
-     * @return memcachedキャッシュ有効期限.
+     * @return memcached Cache expiration date.
      */
     public static int getCacheMemcachedExpiresIn() {
         return Integer.parseInt(get(Cache.MEMCACHED_EXPIRES_IN));
     }
 
     /**
-     * Enineのホスト名設定値を取得します.
-     * @return 設定値
+     * Get the host name setting value of Enine.
+     * @return setting value
      */
     public static String getEngineHost() {
         return get(Engine.HOST);
     }
 
     /**
-     * Enineのportの設定値を取得します.
-     * @return 設定値
+     * Get the set value of Enine 's port.
+     * @return setting value
      */
     public static int getEnginePort() {
         return Integer.parseInt(get(Engine.PORT));
     }
 
     /**
-     * Enineののパスの設定値を取得します.
-     * @return 設定値
+     * Get Enine's path setting value.
+     * @return setting value
      */
     public static String getEnginePath() {
         return get(Engine.PATH);
     }
 
     /**
-     * 本UNITのX509秘密鍵ファイルのパスの設定値を取得します.
-     * @return 設定値
+     * Get the set value of the path of the X509 secret key file of this UNIT.
+     * @return setting value
      */
     public static String getX509PrivateKey() {
         return get(X509.KEY);
     }
 
     /**
-     * 本UNITのX509ルート証明書ファイルのパスの設定値の配列を取得します.
-     * @return 設定値
+     * Get the array of the set value of the path of the X509 root certificate file of this UNIT.
+     * @return setting value
      */
     public static String[] getX509RootCertificate() {
         String[] x509RootCertificate = null;
@@ -1150,24 +1150,24 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * 本UNITのX509証明書ファイルのパスの設定値を取得します.
-     * @return 設定値
+     * Get the setting value of the path of the X509 certificate file of this UNIT.
+     * @return setting value
      */
     public static String getX509Certificate() {
         return get(X509.CRT);
     }
 
     /**
-     * トークンを暗号化する際に利用している秘密鍵設定.
-     * @return 設定値
+     * The secret key setting used when encrypting the token.
+     * @return setting value
      */
     public static String getTokenSecretKey() {
         return get(Security.TOKEN_SECRET_KEY);
     }
 
     /**
-     * 認証時に使用するパスワードのソルト値.
-     * @return パスワードのソルト値
+     * The salt value of the password to use for authentication.
+     * @return salt value of password
      */
     public static String getAuthPasswordSalt() {
         return get(Security.AUTH_PASSWORD_SALT);
@@ -1246,15 +1246,15 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * 設定情報をリロードします.
+     * Reload the configuration information.
      */
     public static void reload() {
         singleton.doReload();
     }
 
     /**
-     * 実行環境がhttpsかどうかを返却します.
-     * @return boolean httpsの場合:true
+     * Returns whether the execution environment is https or not.
+     * @return boolean For https: true
      */
     public static boolean isHttps() {
         return PersoniumUnitConfig.getUnitScheme().equals("https");
@@ -1271,24 +1271,24 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * EntityTypeの最大制限数を取得.
-     * @return EntityTypeの最大数
+     * Get the maximum limit number of EntityType.
+     * @return Maximum number of EntityType
      */
     public static int getUserdataMaxEntityCount() {
         return Integer.parseInt(get(UserDataProperties.MAX_ENTITY_TYPES));
     }
 
     /**
-     * EntityTypeに包含可能なプロパティの最大制限数を取得.
-     * @return EntityType内の最大プロパティ数
+     * Get the maximum limit number of properties that can be included in EntityType.
+     * @return Maximum number of properties in EntityType
      */
     public static int getMaxPropertyCountInEntityType() {
         return Integer.parseInt(get(UserDataProperties.MAX_PROPERTY_COUNT_IN_ENTITY));
     }
 
     /**
-     * UsetData内のSimpleTypeの制限数の配列を取得.
-     * @return 各階層における SimpleTypeの制限数のリスト
+     * Get array of limit number of SimpleType in UsetData.
+     * @return List of limits on SimpleType in each hierarchy
      */
     public static int[] getUserdataSimpleTypePropertyLimits() {
         String expr = get(UserDataProperties.SIMPLE_TYPE_PROPERTY_LIMITS);
@@ -1296,8 +1296,8 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * UsetData内のComplexTypeの制限数の配列を取得.
-     * @return 各階層における SimpleTypeの制限数のリスト
+     * Get array of limit number of ComplexType in UsetData.
+     * @return List of limits on SimpleType in each hierarchy
      */
     public static int[] getUserdataComplexTypePropertyLimits() {
         int depth = getUserdataSimpleTypePropertyLimits().length;
@@ -1306,22 +1306,22 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * パスワード認証成功時に、Accountの最終ログイン時刻を更新するか否か().
-     * @return true:更新する(デフォルト) false:更新しない
+     * Whether or not to update the last login time of Account when password authentication is successful ().
+     * @return true: Update (default) false: Do not update
      */
     public static boolean getAccountLastAuthenticatedEnable() {
         return Boolean.parseBoolean(get(Account.ACCOUNT_LAST_AUTHENTICATED_ENABLED));
     }
 
     /**
-     * カンマ区切りで指定された数値リスト(文字列)を、int型の配列にして返す。
-     * arrayLengthで指定された長さよりも、数値リストの内容が長い場合は、長い部分は捨てられる。<br/>
-     * e.g. limitExpression : "1,2,3,4", arrayLength = 2 → int[] { 1, 2 }
-     * arrayLengthで指定された長さよりも、数値リストの内容が短い場合は、足りない部分が 0詰めされる。<br/>
-     * e.g. limitExpression : "1,2", arrayLength = 4 → int[] { 1, 2, 0, 0 }
-     * @param limitExpression カンマ区切りの数値リスト(文字列)
-     * @param arrayLength 返す配列の長さ。0以下の場合は、limitExpressionから得られる要素数の配列を指定したのと同じとなる。
-     * @return 整数配列
+     * Return a numeric list (character string) specified as a comma-separated value as an int type array.
+     * If the contents of the numeric list are longer than the length specified by arrayLength, the long part is discarded. .
+     * eg limitExpression: "1, 2, 3, 4", arrayLength = 2 -> int [] {1, 2}
+     * If the contents of the numerical list are shorter than the length specified by arrayLength, missing parts are padded with zeros. .
+     * eg limitExpression: "1, 2", arrayLength = 4 → int [] {1, 2, 0, 0}
+     * @ param limitExpression Comma-separated numeric list (character string)
+     * @ param arrayLength The length of the array to return. If it is less than 0, it is the same as specifying an array of the number of elements obtained from limitExpression.
+     * @ return integer array
      */
     private static int[] getPropertyLimits(String limitExpression, int arrayLength) {
         if (null != limitExpression) {
@@ -1333,11 +1333,11 @@ public class PersoniumUnitConfig {
             Arrays.fill(result, 0);
             for (int i = 0; i < values.length && i < arrayLength; i++) {
                 if ("*".equals(values[i])) {
-                    // -1 は無制限を示す数値
+                    //-1 is a numerical value indicating unlimited
                     result[i] = -1;
                 } else {
                     result[i] = Integer.parseInt(values[i]);
-                    // Notice: 数値で無かった場合は、NumberFormatExceptionが投げられる。
+                    //Notice: If it is not a number, a NumberFormatException is thrown.
                 }
             }
             return result;

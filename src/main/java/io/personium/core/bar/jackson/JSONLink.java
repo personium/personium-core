@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * barファイル内の$links定義用JSONファイル(70_$links_json)読み込み用Mapping定義クラス.
+ * JSON file for $ links definition (70 _ $ links_ json) in bar file Mapping definition class for reading.
  */
 public class JSONLink implements IJSONMappedObject {
 
@@ -42,15 +42,15 @@ public class JSONLink implements IJSONMappedObject {
     private Map<String, String> toName;
 
     /**
-     * FromTypeプロパティの取得.
-     * @return FromType名
+     * Get FromType property.
+     * @return FromType name
      */
     public String getFromType() {
         return this.fromType;
     }
 
     /**
-     * FromTypeプロパティの設定.
+     * Set the FromType property.
      * @param fromType FromType.
      */
     public void setFromType(String fromType) {
@@ -58,7 +58,7 @@ public class JSONLink implements IJSONMappedObject {
     }
 
     /**
-     * FromName名プロパティの取得.
+     * Get FromName name property.
      * @return FromName
      */
     public Map<String, String> getFromName() {
@@ -66,7 +66,7 @@ public class JSONLink implements IJSONMappedObject {
     }
 
     /**
-     * FromName名プロパティの設定.
+     * Set FromName name property.
      * @param fromName FromName
      */
     public void setFromName(Map<String, String> fromName) {
@@ -74,15 +74,15 @@ public class JSONLink implements IJSONMappedObject {
     }
 
     /**
-     * ToTypeプロパティの取得.
-     * @return ToType名
+     * Get ToType property.
+     * @return ToType name
      */
     public String getToType() {
         return this.toType;
     }
 
     /**
-     * ToTypeプロパティの設定.
+     * Set ToType property.
      * @param toType ToType.
      */
     public void setToType(String toType) {
@@ -90,7 +90,7 @@ public class JSONLink implements IJSONMappedObject {
     }
 
     /**
-     * ToName名プロパティの取得.
+     * Get ToName name property.
      * @return ToName
      */
     public Map<String, String> getToName() {
@@ -98,7 +98,7 @@ public class JSONLink implements IJSONMappedObject {
     }
 
     /**
-     * ToName名プロパティの設定.
+     * Set ToName name property.
      * @param toName ToName
      */
     public void setToName(Map<String, String> toName) {
@@ -106,8 +106,8 @@ public class JSONLink implements IJSONMappedObject {
     }
 
     /**
-     * NavigatioinProperty形式のToTypeプロパティの取得.
-     * @return NavigatioinProperty形式のToType名
+     * Get ToType property in NavigatioinProperty format.
+     * @return Names of ToType in NavigatioinProperty format
      */
     public String getNavPropToType() {
         return "_" + this.toType;

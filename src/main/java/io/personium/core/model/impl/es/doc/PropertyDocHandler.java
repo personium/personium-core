@@ -29,7 +29,7 @@ import io.personium.core.model.impl.es.odata.PropertyAlias;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- * プロパティのDocHandler.
+ * Property DocHandler.
  */
 public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDocHandler {
 
@@ -38,17 +38,17 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     String linkTypeName = Property.P_ENTITYTYPE_NAME.getName();
 
     /**
-     * コンストラクタ.
+     * constructor.
      */
     public PropertyDocHandler() {
         this.propertyAliasMap = null;
     }
 
     /**
-     * OEntityWrapperから IDのないDocHandlerをつくるConstructor.
-     * @param type ESのtype名
+     * Constructor that creates DocHandler without ID from OEntityWrapper.
+     * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     * @param metadata スキーマ情報
+     * @ param metadata schema information
      */
     public PropertyDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         this.propertyAliasMap = null;
@@ -57,12 +57,12 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * コンストラクタ.
-     * @param cellId セルID
-     * @param boxId ボックスID
-     * @param nodeId ノードID
-     * @param entityTypeId 紐付くエンティティタイプのID
-     * @param source 静的プロパティフィールド
+     * constructor.
+     * @ param cellId Cell ID
+     * @ param boxId Box ID
+     * @ param nodeId node ID
+     * @ param entityTypeId ID of the associated entity type
+     * @ param source static property field
      */
     public PropertyDocHandler(String cellId,
             String boxId,
@@ -73,7 +73,7 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
         this.type = Property.EDM_TYPE_NAME;
         this.version = 0L;
 
-        // Cell, Box, Nodeの紐付
+        //Pegged with Cell, Box, Node
         this.setCellId(cellId);
         this.setBoxId(boxId);
         this.setNodeId(nodeId);
@@ -92,8 +92,8 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * EntityType名を返却する.
-     * @return EntityType名
+     * Return EntityType name.
+     * @return EntityType name
      */
     public String getEntityTypeName() {
         String entityTypeId = (String) this.manyToOnelinkId.get(EntityType.EDM_TYPE_NAME);
@@ -101,40 +101,40 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * 登録済のエイリアス一覧を返却する.
-     * @return propertyMap 登録済のエイリアス一覧
+     * Return the registered alias list.
+     * @return propertyMap Registered alias list
      */
     public Map<String, String> getEntityTypeMap() {
         return this.entityTypeMap;
     }
 
     /**
-     * 登録済のエイリアス一覧を設定する.
-     * @param map セットする propertyMap
+     * Set up a registered alias list.
+     * @ param map propertyMap to set
      */
     public void setEntityTypeMap(Map<String, String> map) {
         this.entityTypeMap = map;
     }
 
     /**
-     * 登録済のエイリアス一覧を返却する.
-     * @return propertyMap 登録済のエイリアス一覧
+     * Return the registered alias list.
+     * @return propertyMap Registered alias list
      */
     public Map<String, PropertyAlias> getPropertyAliasMap() {
         return this.propertyAliasMap;
     }
 
     /**
-     * 登録済のエイリアス一覧を設定する.
-     * @param map セットする propertyAliasMap
+     * Set up a registered alias list.
+     * @ param map set propertyAliasMap
      */
     public void setPropertyAliasMap(Map<String, PropertyAlias> map) {
         this.propertyAliasMap = map;
     }
 
     /**
-     * ES/MySQL登録用データを取得する.
-     * @return 登録用データ
+     * Acquire ES / MySQL registration data.
+     * @return Registration data
      */
     @Override
     public Map<String, Object> getSource() {
@@ -150,10 +150,10 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * ES/MySQL登録用データをMapオブジェクトに設定する.
-     * @param propertyAlias プロパティのAlias情報
-     * @param key キー
-     * @return 作成したMapオブジェクト
+     * Set data for ES / MySQL registration to Map object.
+     * @ param property Alias ​​property Alias ​​information
+     * @ param key
+     * @return Created Map object
      */
     protected Map<String, Object> setSource(String key, PropertyAlias propertyAlias) {
         this.propertyAliasMap.put(key, propertyAlias);
@@ -171,40 +171,40 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * PropertyのNameを取得する.
-     * @return PropertyのName
+     * Get Name of Property.
+     * Name of @return Property
      */
     public String getName() {
         return (String) this.staticFields.get("Name");
     }
 
     /**
-     * 登録済みプロパティの最大値＋１のプロパティAliasを取得する.
-     * @param entityTypeName EntityType名
-     * @param dataType プロパティのデータ型名
-     * @return 採番したプロパティ名のAlias
+     * Get the property Alias ​​with the maximum value of registered property + 1.
+     * @ param entityTypeName EntityType name
+     * @ param dataType property data type name
+     * @return Alias ​​of the assigned property name
      */
     protected String getNextAlias(String entityTypeName, String dataType) {
-        // データ種別からエイリアスのプレフィックスを決定する
+        //Determine the prefix of the alias from the data type
         String aliasPrefix = "P";
         if (!dataType.startsWith("Edm.")) {
             aliasPrefix = "C";
         }
 
-        // プロパティとエイリアスの対応MapをEntityType名で絞り込んでエイリアスのListを作る
+        //Construct a List of aliases by narrowing the correspondence map of properties and aliases with the EntityType name
         List<Integer> aliasList = new ArrayList<Integer>();
         for (Map.Entry<String, PropertyAlias> entry : this.propertyAliasMap.entrySet()) {
             if (entry.getKey().endsWith(this.linkTypeName + "='" + entityTypeName + "'")) {
                 String value = entry.getValue().getAlias();
                 if (value == null) {
-                    // 暫定的なnullチェック
+                    //Temporary null check
                     continue;
                 }
                 if (!value.startsWith(aliasPrefix)) {
-                    // プレフィックス(P/C)が異なるエイリアスは除外
+                    //Exclude aliases with different prefixes (P / C)
                     continue;
                 }
-                // 数値部分のみ切り出し
+                //Cut out only numerical part
                 int num = getAliasNumber(value);
                 aliasList.add(Integer.valueOf(num));
             }
@@ -212,10 +212,10 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
 
         int nextNum = aliasList.size() + 1;
 
-        // プロパティ番号の採番
-        // 単純型と複合型の通番は個別に採番する。
+        //Numbering of property numbers
+        //Common numbers of simple type and complex type are numbered separately.
         if (aliasList.contains(Integer.valueOf(nextNum))) {
-            // 既に使われているので空きを探す
+            //Search for vacancies as they are already in use
             for (int i = 0; i < aliasList.size(); i++) {
                 if (!aliasList.contains(Integer.valueOf(i + 1))) {
                     nextNum = i + 1;
@@ -229,9 +229,9 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * Alias文字列からインデックスを取得する.
-     * @param alias Alias文字列
-     * @return インデックス
+     * Alias ​​Gets index from string.
+     * @ param alias Alias ​​string
+     * @return index
      */
     protected int getAliasNumber(String alias) {
         if (alias.startsWith("C")) {

@@ -39,55 +39,55 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
- * OData系ユーティリティ関数を集めたクラス.
+ * A class that collects OData utility functions.
  */
 public final class ODataUtils {
     static Logger log = LoggerFactory.getLogger(ODataUtils.class);
 
-    /** URI最大長. */
+    /** URI maximum length.*/
     static final int URI_MAX_LENGTH = 1024;
-    /** DateTime型の最小値(1753-01-01 T00:00:00.000). */
+    /** Minimum value of DateTime type (1753-01-01 T00: 00: 00.000).*/
     public static final long DATETIME_MIN = -6847804800000L;
-    /** DateTime型の最大値(9999-12-31 T23:59:59.999). */
+    /** Maximum value of DateTime type (9999-12-31 T23: 59: 59.999).*/
     public static final long DATETIME_MAX = 253402300799999L;
 
-    /** ODataで定義されているEdm.Double型の正の最小値. */
+    /*Positive minimum value of Edm.Double type defined by * OData.*/
     public static final double DOUBLE_POSITIVE_MIN_VALUE = 2.23e-308;
-    /** ODataで定義されているEdm.Double型の正の最大値. */
+    /** The maximum positive value of Edm.Double type defined by OData.*/
     public static final double DOUBLE_POSITIVE_MAX_VALUE = 1.79e+308;
 
-    /** ODataで定義されているEdm.Double型の負の最小値. */
+    /** Negative minimum value of Edm.Double type defined in OData.*/
     public static final double DOUBLE_NEGATIVE_MIN_VALUE = -1.79e+308;
-    /** ODataで定義されているEdm.Double型の負の最大値. */
+    /** Negative maximum value of Edm.Double type defined in OData.*/
     public static final double DOUBLE_NEGATIVE_MAX_VALUE = -2.23e-308;
 
     private ODataUtils() {
     }
 
     /**
-     * スキーマからCardinalityを調べるユーティリティ.
+     * Utility to examine Cardinality from Schema.
      */
     public static class Cardinality {
         /**
-         * 多対多.
+         * Many to many.
          */
         public static final int MANY_MANY = 4;
         /**
-         * 多対一.
+         * Many to one.
          */
         public static final int MANY_ONE = 3;
         /**
-         * 一対多.
+         * One-to-many.
          */
         public static final int ONE_MANY = 2;
         /**
-         * 一対一.
+         * One to one.
          */
         public static final int ONE_ONE = 1;
 
         /**
          * @param navProp EdmNavigationProperty
-         * @return Cardinalityの定数 (MANY_MANY等）
+         * @ return Cardinality constant (MANY_MANY etc.)
          */
         public static int forEdmNavigationProperty(EdmNavigationProperty navProp) {
             EdmMultiplicity fromM = navProp.getFromRole().getMultiplicity();
@@ -113,9 +113,9 @@ public final class ODataUtils {
     }
 
     /**
-     * If-MatchヘッダとEtagの値が等しいかチェック.
+     * Check if the value of If-Match header and Etag are equal.
      * @param etag Etag
-     * @param oedhExisting 存在するドキュメント情報
+     * @ param oedhExisting Existing document information
      */
     public static void checkEtag(final String etag, EntitySetDocHandler oedhExisting) {
 
@@ -123,12 +123,12 @@ public final class ODataUtils {
             return;
         }
 
-        // IfMatchヘッダに「*」が指定されている場合は無条件に実行
+        //Execute unconditionally if "*" is specified in IfMatch header
         if ("*".equals(etag)) {
             return;
         }
 
-        // IfMatchヘッダのEtagからバージョンとUpdatedの値を取得
+        //Obtain version and Updated value from Etag of IfMatch header
         long ifMatchVersion = 0;
         long ifMatchUpdated = 0;
         Pattern pattern = Pattern.compile("(^[0-9]+)-([0-9]+)");
@@ -139,17 +139,17 @@ public final class ODataUtils {
         } catch (NumberFormatException e) {
             throw PersoniumCoreException.OData.ETAG_NOT_MATCH.reason(e);
         }
-        // バージョンチェック
+        //Version check
         if (ifMatchVersion != oedhExisting.getVersion() || ifMatchUpdated != oedhExisting.getUpdated()) {
             throw PersoniumCoreException.OData.ETAG_NOT_MATCH;
         }
     }
 
     /**
-     * 引数で与えられたMapをマージする.
-     * @param baseProperty マージのベースにするプロパティ群
-     * @param addProperty マージで更新するプロパティ群
-     * @return マージ結果
+     * Merge the Map given by the argument.
+     * @ param baseProperty Properties to base on the merge
+     * @ param addProperty Properties to update with merge
+     * @return Merge result
      */
     public static Map<String, Object> getMergeFields(Map<String, Object> baseProperty,
             Map<String, Object> addProperty) {
@@ -169,7 +169,7 @@ public final class ODataUtils {
                 baseProperty.put(key, value);
             } else {
                 Map<String, Object> nestMap = (Map<String, Object>) baseProperty.get(key);
-                if (nestMap == null) { // MERGE前の値がnullであった場合にはMERGEしようとしている値をputできない→空のHashMapを作成
+                if (nestMap == null) { //If the previous value of MERGE is null, you can not put the value you are MERGEing → Create an empty HashMap
                     nestMap = new HashMap<String, Object>();
                     baseProperty.put(key, nestMap);
                 }
@@ -179,8 +179,8 @@ public final class ODataUtils {
     }
 
     /**
-     * Stringの値チェック.
-     * @param value チェック対象値
+     * String value check.
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateString(String value) {
@@ -191,8 +191,8 @@ public final class ODataUtils {
     }
 
     /**
-     * Booleanの値チェック.
-     * @param value チェック対象値
+     * Boolean value check.
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateBoolean(String value) {
@@ -203,13 +203,13 @@ public final class ODataUtils {
     }
 
     /**
-     * Int32の値チェック.
-     * @param value チェック対象値
+     * Check the value of Int32.
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateInt32(String value) {
         try {
-            // 整数型
+            //Integer type
             Integer.parseInt(value);
             return true;
         } catch (NumberFormatException e) {
@@ -218,13 +218,13 @@ public final class ODataUtils {
     }
 
     /**
-     * DateTimeの値チェック.
-     * @param value チェック対象値
+     * Value check of DateTime.
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateDateTime(String value) {
-        // DateTimeのチェックをする
-        // SYSUTCDATETIME() または、/Date(【long型】)/
+        //Check DateTime
+        //SYSUTCDATETIME () or / Date ([long type]) /
         try {
             if (Common.SYSUTCDATETIME.equals(value)) {
                 return true;
@@ -263,14 +263,14 @@ public final class ODataUtils {
     }
 
     /**
-     * Singleの値チェック.
-     * @param value チェック対象値
+     * Single value check.
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateSingle(String value) {
         try {
             if (value.contains(".")) {
-                // 小数型
+                //Decimal type
                 Pattern pattern = Pattern.compile(Common.PATTERN_DECIMAL);
                 Matcher matcher = pattern.matcher(value);
                 if (!matcher.matches()) {
@@ -285,9 +285,9 @@ public final class ODataUtils {
     }
 
     /**
-     * ODataで定義されているDoubleの有効範囲値チェック.
-     * 有効範囲 ± 2.23e -308 から ± 1.79e +308
-     * @param value チェック対象値
+     * Valid range value check of Double defined in OData.
+     * Effective range ± 2.23e - 308 to ± 1.79e + 308
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateDouble(String value) {
@@ -300,9 +300,9 @@ public final class ODataUtils {
     }
 
     /**
-     * ODataで定義されているDoubleの有効範囲値チェック.
-     * 有効範囲 ± 2.23e -308 から ± 1.79e +308
-     * @param value チェック対象値
+     * Valid range value check of Double defined in OData.
+     * Effective range ± 2.23e - 308 to ± 1.79e + 308
+     * @ param value Check target value
      * @return boolean
      */
     public static boolean validateDouble(Double value) {
@@ -668,10 +668,10 @@ public final class ODataUtils {
     }
 
     /**
-     * スキーマ定義されたプロパティ数を取得する.
-     * @param metadata スキーマ情報
-     * @param entitySetName 対象のエンティティセット名
-     * @return プロパティ数
+     * Retrieve the number of properties defined in the schema.
+     * @ param metadata schema information
+     * @ param entitySetName Name of the target entity set
+     * @return property number
      */
     public static int getStaticPropertyCount(EdmDataServices metadata, String entitySetName) {
         EdmEntitySet edmEntitySet = metadata.findEdmEntitySet(entitySetName);

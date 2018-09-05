@@ -101,8 +101,8 @@ import io.personium.core.rs.odata.ODataBatchResource.NavigationPropertyLinkType;
 import io.personium.core.utils.ODataUtils;
 
 /**
- * ElasticSearchでODataを扱うProducer. 全体として、スキーマチェックは呼び出し側で行われた上で呼び出される前提とし、 本クラスでは無駄な２重チェックを行わないために、スキーマチェックは行わない。
- * 本クラスはElasticSearchでODataを扱う上での特有の処理に特化する。
+ * Producer that handles OData with ElasticSearch. Overall, as a premise that the schema check is called on the caller side, it is assumed that it will be called up. In this class, no schema checking is done because it does not perform wasteful double checking.
+ * This class specializes in processing unique to dealing with OData with ElasticSearch.
  */
 public abstract class EsODataProducer implements PersoniumODataProducer {
 
@@ -112,34 +112,34 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     private Map<String, PropertyAlias> propertyAliasMap = new HashMap<String, PropertyAlias>();
 
     /**
-     * entitySet名が属するESインデックスに対応したアクセサオブジェクトを返すようサブクラスで実装します.
-     * @param entitySetName entitySet名
-     * @return アクセサオブジェクト
+     * Implement in subclass to return accessor object corresponding to ES index to which entitySet name belongs.
+     * @ param entitySetName entitySet name
+     * @return accessor object
      */
     public abstract DataSourceAccessor getAccessorForIndex(String entitySetName);
 
     /**
-     * entitySet名に対応したアクセサオブジェクトを返すようサブクラスで実装します.
-     * @param entitySetName entitySet名
-     * @return アクセサオブジェクト
+     * Implement in subclass to return accessor object corresponding to entitySet name.
+     * @ param entitySetName entitySet name
+     * @return accessor object
      */
     public abstract EntitySetAccessor getAccessorForEntitySet(String entitySetName);
 
     /**
-     * リンク情報を格納するアクセサオブジェクトを返すようサブクラスで実装します.
-     * @return アクセサオブジェクト
+     * Implement in subclass to return accessor object that stores the link information.
+     * @return accessor object
      */
     public abstract ODataLinkAccessor getAccessorForLink();
 
     /**
-     * Logを格納するアクセサオブジェクトを返すようサブクラスで実装します.
-     * @return アクセサオブジェクト
+     * Implement in subclass to return accessor object that stores Log.
+     * @return accessor object
      */
     public abstract DataSourceAccessor getAccessorForLog();
 
     /**
-     * Batchアクセサオブジェクトを返すようサブクラスで実装します.
-     * @return アクセサオブジェクト
+     * Implement in subclass to return Batch accessor object.
+     * @return accessor object
      */
     public abstract DataSourceAccessor getAccessorForBatch();
 
@@ -150,7 +150,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 実装サブクラスProducerが特定のCellに紐付くようにしたいときは、ここをoverrideしてcellIdを返すように実装する。
+     * Implementation subclass If you want Producer to be associated with a specific Cell, implement it so that it override here and return cellId.
      * @return CellId
      */
     public String getCellId() {
@@ -158,7 +158,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 実装サブクラスProducerが特定のBoxに紐付くようにしたいときは、ここをoverrideしてboxIdを返すように実装する。
+     * Implementation subclass If you want Producer to be associated with a particular Box, implement it to override here and return boxId.
      * @return getBoxId
      */
     public String getBoxId() {
@@ -166,24 +166,24 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 実装サブクラスProducerが特定のNodeに紐付くようにしたいときは、ここをoverrideしてNodeIdを返すように実装する。
-     * @return NodeIdを返す
+     * Implementation subclass If you want Producer to be associated with a specific Node, implement it to override here and return NodeId.
+     * Return @ return NodeId
      */
     public String getNodeId() {
         return null;
     }
 
     /**
-     * Linksのkey情報を取得する.
-     * @param entityTypeName EntityType名
-     * @return linksのkey情報を返す
+     * Get key information of Links.
+     * @ param entityTypeName EntityType name
+     * Return key information of @return links
      */
     public String getLinkskey(String entityTypeName) {
         return entityTypeName;
     }
 
     /**
-     * 実装サブクラスProducerが特定のEntityTypeに紐付くようにしたいときは、ここをoverrideしてLinkDocHandlerを返すように実装する。
+     * Implementation subclass If you want Producer to be associated with a specific EntityType, implement it to override here and return LinkDocHandler.
      * @param src srcEntitySetDocHandler
      * @param tgt tgtEntitySetDocHandler
      * @return LinkDocHandler
@@ -193,8 +193,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 検索結果からLinkDocHandlerを生成する.
-     * @param searchHit 検索結果
+     * Generate LinkDocHandler from the search result.
+     * @ param searchHit Search result
      * @return LinkDocHandler
      */
     public LinkDocHandler getLinkDocHandler(PersoniumSearchHit searchHit) {
@@ -217,51 +217,51 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * プロパティ名とエイリアスの対応Mapを返す.
-     * @return プロパティ名とエイリアスの対応Map
+     * Returns the correspondence Map of property name and alias.
+     * @return Correspondence between property names and aliases Map
      */
     public Map<String, String> getEntityTypeMap() {
         return entityTypeMap;
     }
 
     /**
-     * プロパティ名とエイリアスの対応Mapを設定する.
-     * @param map プロパティ名とエイリアスの対応Map
+     * Set correspondence map of property name and alias.
+     * @ param map correspondence between property name and alias Map
      */
     public void setEntityTypeMap(Map<String, String> map) {
         this.entityTypeMap = map;
     }
 
     /**
-     * プロパティ名とエイリアスの対応Mapを返す.
-     * @return プロパティ名とエイリアスの対応Map
+     * Returns the correspondence Map of property name and alias.
+     * @return Correspondence between property names and aliases Map
      */
     public Map<String, PropertyAlias> getPropertyAliasMap() {
         return propertyAliasMap;
     }
 
     /**
-     * プロパティ名とエイリアスの対応Mapを設定する.
-     * @param map プロパティ名とエイリアスの対応Map
+     * Set correspondence map of property name and alias.
+     * @ param map correspondence between property name and alias Map
      */
     public void setPropertyAliasMap(Map<String, PropertyAlias> map) {
         this.propertyAliasMap = map;
     }
 
     /**
-     * 実装サブクラスProducer登録処理を行いたいときは、ここをoverrideして、結果を返すよう実装する。
-     * @param entitySetName エンティティセット名
-     * @param oEntity 登録対象のエンティティ
-     * @param docHandler 登録対象のエンティティドックハンドラ
+     * Implementation subclass If you want to perform Producer registration processing, implement override this place and return the result.
+     * @ param entitySetName Entity set name
+     * @ param o Entity entity to be registered
+     * @ param docHandler Entity dock handler to register
      */
     public void beforeCreate(final String entitySetName, final OEntity oEntity, final EntitySetDocHandler docHandler) {
     }
 
     /**
-     * 実装サブクラスProducer更新処理を行いたいときは、ここをoverrideして子データの存在チェックし、結果を返すよう実装する。
-     * @param entitySetName エンティティセット名
-     * @param oEntityKey 更新対象のエンティティキー
-     * @param docHandler 更新対象のエンティティドックハンドラ
+     * Implementation subclass If you want to perform Producer update processing, implement override this to check existence of child data and return result.
+     * @ param entitySetName Entity set name
+     * @ param o EntityKey Entity key to be updated
+     * @ param docHandler Entity dock handler to be updated
      */
     public void beforeUpdate(final String entitySetName,
             final OEntityKey oEntityKey,
@@ -269,48 +269,48 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 実装サブクラスProducerが削除処理を行いたいときは、ここをoverrideして子データの存在チェックし、結果を返すよう実装する。
-     * @param entitySetName エンティティセット名
-     * @param oEntityKey 削除対象のエンティティキー
-     * @param docHandler 削除対象ドキュメント
+     * Implementation subclass If Producer wishes to perform deletion processing, it overrides here, checks the existence of child data, and implements it so as to return the result.
+     * @ param entitySetName Entity set name
+     * @ param o EntityKey Entity key to delete
+     * @ param docHandler Document to be deleted
      */
     public void beforeDelete(final String entitySetName, final OEntityKey oEntityKey,
             final EntitySetDocHandler docHandler) {
     }
 
     /**
-     * 実装サブクラスProducerがバルク一括登録処理を行いたいときは、ここをoverrideして子データの存在チェックし、結果を返すよう実装する。
-     * @param bulkRequestDocHandler バルク一括登録のDocHandler
+     * Implementation subclass If Producer wishes to perform bulk bulk registration processing, it overrides this, checks the existence of child data, and returns the result.
+     * @ param bulkRequestDocHandler Bulk bulk registration DocHandler
      */
     public void beforeBulkCreate(final LinkedHashMap<String, BulkRequest> bulkRequestDocHandler) {
     }
 
     /**
-     * 実装サブクラスProducer登録処理を行いたいときは、ここをoverrideして、結果を返すよう実装する。
-     * @param entitySetName エンティティセット名
-     * @param oEntity 登録対象のエンティティ
-     * @param docHandler 登録対象のエンティティドックハンドラ
+     * Implementation subclass If you want to perform Producer registration processing, implement override this place and return the result.
+     * @ param entitySetName Entity set name
+     * @ param o Entity entity to be registered
+     * @ param docHandler Entity dock handler to register
      */
     public void afterCreate(final String entitySetName, final OEntity oEntity, final EntitySetDocHandler docHandler) {
     }
 
     /**
-     * 実装サブクラスProducer更新処理を行いたいときは、ここをoverrideして、結果を返すよう実装する。
+     * Implementation subclass Producer If you want to perform update processing, implement override this place and return the result.
      */
     public void afterUpdate() {
     }
 
     /**
-     * 実装サブクラスProducer削除処理を行いたいときは、ここをoverrideして、結果を返すよう実装する。
+     * Implementation subclass Producer If you wish to perform deletion processing, implement override this place and return the result.
      */
     public void afterDelete() {
     }
 
     /**
-     * 1-0:Nの削除処理時にN側を検索処理を行う.
+     * 1 - 0: Search processing is performed on the N side during N deletion processing.
      * @param np EdmNavigationProperty
      * @param entityKey entityKey
-     * @return 存在する場合true
+     * @return true if it exists
      */
     public boolean findMultiPoint(final EdmNavigationProperty np, final OEntityKey entityKey) {
         EdmAssociationEnd from = np.getFromRole();
@@ -318,7 +318,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         if ((EdmMultiplicity.ONE.equals(from.getMultiplicity())
                 || EdmMultiplicity.ZERO_TO_ONE.equals(from.getMultiplicity()))
                 && EdmMultiplicity.MANY.equals(to.getMultiplicity())) {
-            // 検索して０件であることを確認する;
+            //Search and check that it is 0;
             CountResponse cr = getNavPropertyCount(from.getType().getName(), entityKey, to.getType().getName(),
                     new EntityQueryInfo.Builder().build());
             return cr.getCount() > 0;
@@ -327,7 +327,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * PK, UKで指定されたユニーク性確保のためOData空間のLockを行う.
+     * Perform locking of OData space to ensure uniqueness designated by PK, UK.
      * @param lock
      */
     Lock lock() {
@@ -363,7 +363,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             final EntityQueryInfo queryInfo) {
         final int expandMaxNum = PersoniumUnitConfig.getMaxExpandSizeForRetrive();
 
-        // 注）EntitySetの存在保証は予め呼び出し側で行われているため、ここではチェックしない。
+        //Note) Since the existence guarantee of EntitySet is done on the calling side beforehand, it is not checked here.
         EdmEntitySet eSet = this.getMetadata().findEdmEntitySet(entitySetName);
         EntitySetDocHandler oedh = this.retrieveWithKey(eSet, entityKey, queryInfo);
 
@@ -374,18 +374,18 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         ExpandEntitiesMapCreator creator = new ExpandEntitiesMapCreator(queryInfo, eSet.getType(), expandMaxNum);
         Map<String, List<OEntity>> expandEntitiesMap = creator.create(oedh, this);
 
-        // NavigationTargetKeyPropertyを設定する
+        //Set NavigationTargetKeyProperty
         setNavigationTargetKeyProperty(eSet, oedh);
         if (oedh instanceof OEntityDocHandler) {
             ((OEntityDocHandler) oedh).setExpandMaxNum(expandMaxNum);
         }
-        // ESのレスポンスから OEntityをつくる
+        //Create OEntity from ES response
         List<EntitySimpleProperty> selectQuery = null;
         if (queryInfo != null) {
             selectQuery = queryInfo.select;
         }
         OEntityWrapper entity = oedh.createOEntity(eSet, this.getMetadata(), expandEntitiesMap, selectQuery);
-        // ODataの Entity Responseを作る。
+        //Create an Entity Response for OData.
         EntityResponse res = Responses.entity(entity);
         return res;
     }
@@ -400,7 +400,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             final String internalId) {
         final int expandMaxNum = PersoniumUnitConfig.getMaxExpandSizeForRetrive();
 
-        // 注）EntitySetの存在保証は予め呼び出し側で行われているため、ここではチェックしない。
+        //Note) Since the existence guarantee of EntitySet is done on the calling side beforehand, it is not checked here.
         EdmEntitySet eSet = this.getMetadata().findEdmEntitySet(entitySetName);
         EntitySetDocHandler oedh = this.retrieveWithInternalId(eSet, internalId);
 
@@ -409,45 +409,45 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         }
 
 
-        // NavigationTargetKeyPropertyを設定する
+        //Set NavigationTargetKeyProperty
         setNavigationTargetKeyProperty(eSet, oedh);
         if (oedh instanceof OEntityDocHandler) {
             ((OEntityDocHandler) oedh).setExpandMaxNum(expandMaxNum);
         }
-        // ESのレスポンスから OEntityをつくる
+        //Create OEntity from ES response
         OEntityWrapper entity = oedh.createOEntity(eSet, this.getMetadata(), null, null);
-        // ODataの Entity Responseを作る。
+        //Create an Entity Response for OData.
         return entity;
     }
 
 
     /**
-     * EntitySetDocHandlerにNavigationTargetKeyPropertyを設定する.
+     * Set NavigationTargetKeyProperty for EntitySetDocHandler.
      * @param eSet EntitySet
      * @param oedh EntitySetDocHandler
      */
     @SuppressWarnings("unchecked")
     public void setNavigationTargetKeyProperty(EdmEntitySet eSet, EntitySetDocHandler oedh) {
-        // NavigationTargetKeyPropertyを設定する
+        //Set NavigationTargetKeyProperty
         Map<String, Object> staticFields = oedh.getStaticFields();
         Map<String, Object> links = oedh.getManyToOnelinkId();
         Enumerable<EdmProperty> eProps = eSet.getType().getProperties();
         for (EdmProperty eProp : eProps) {
-            // リンク対象の検索情報を組み立てる
+            //Assemble the search information of the link target
             String propertyName = eProp.getName();
             HashMap<String, String> ntkp = AbstractODataResource.convertNTKP(propertyName);
             if (ntkp != null) {
                 String entityType = ntkp.get("entityType");
                 String propName = ntkp.get("propName");
                 String linkId = (String) links.get(getLinkskey(entityType));
-                // link情報が2階層以上かどうかをチェックする
+                //Check if the link information is more than two levels
                 while (propName.startsWith("_")) {
-                    // linkの情報を取得する
+                    //Acquire link information
                     String id = (String) links.get(getLinkskey(entityType));
                     EntitySetAccessor esType = this.getAccessorForEntitySet(entityType);
                     PersoniumGetResponse res = esType.get(id);
                     if (res != null) {
-                        // linkに紐付いているlinkのIDを取得する
+                        //Acquire the link ID associated with link
                         HashMap<String, String> tmpntkp = AbstractODataResource.convertNTKP(propName);
                         entityType = tmpntkp.get("entityType");
                         propName = tmpntkp.get("propName");
@@ -473,17 +473,17 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * エンティティを取得する.
-     * @param entitySet エンティティセット
-     * @param oEntityKey エンティティキー
-     * @return 取得結果
+     * Get an entity.
+     * @ param entitySet entity set
+     * @ param o EntityKey entity key
+     * @return Acquisition result
      */
     protected EntitySetDocHandler retrieveWithKey(EdmEntitySet entitySet, OEntityKey oEntityKey) {
         return retrieveWithKey(entitySet, oEntityKey, null);
     }
 
     /**
-     * キーに従い一件取得を行う.
+     * Acquire one case according to the key.
      * @param entitySet EdmEntitySet
      * @param oEntityKey OEntityKey
      * @param queryInfo EntityQueryInfo
@@ -491,7 +491,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
      */
     EntitySetDocHandler retrieveWithKey(EdmEntitySet entitySet, OEntityKey oEntityKey, EntityQueryInfo queryInfo) {
         if (entitySet == null) {
-            // スキーマチェックは上位でやっているのでEntitySetがnullを指定された時も例外を上げずにnullで返却する。
+            //Schema checking is done at the top, so when EntitySet is specified as null, return it null without raising an exception.
             return null;
         }
         Set<OProperty<?>> keys = new HashSet<OProperty<?>>();
@@ -507,7 +507,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             }
         }
 
-        // 複合キーが省略されていた場合は、ダミーキーを設定
+        //If the compound key is omitted, set the dummy key
         List<String> schemaKeys = entitySet.getType().getKeys();
         for (String schemaKey : schemaKeys) {
             boolean existSchemaKey = false;
@@ -518,7 +518,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 }
             }
             if (!existSchemaKey) {
-                // TODO 省略可能なフィールドでない場合はエラーとする
+                //TODO It is an error if it is not an optional field
                 String type = entitySet.getType().findProperty(schemaKey).getType().getFullyQualifiedTypeName();
                 OProperty<?> p = OProperties.parseSimple(schemaKey, type, AbstractODataResource.DUMMY_KEY);
                 keys.add(p);
@@ -533,7 +533,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * Keyに従い一件取得を行う.
+     * Acquire one case according to Key.
      * @param entitySet EdmEntitySet
      * @param keys Map<String, OProperty>
      * @param queryInfo queryInfo
@@ -541,12 +541,12 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
      */
     EntitySetDocHandler retrieveWithKey(
             EdmEntitySet entitySet, Set<OProperty<?>> keys, EntityQueryInfo queryInfo) {
-        // メソッドのロジックはクエリを作って検索して結果を詰めて返す流れ。
+        //The logic of the method creates a query, searches for it, and fills the result and returns it.
 
-        // 1. ESのクエリ作成
+        //1. Querying ES
         String entitySetName = entitySet.getName();
 
-        // ESクエリは共通して次の構造となる {"filter": SOME_FILTER }
+        //The ES queries commonly have the following structure {"filter": SOME_FILTER}
         Map<String, Object> source = new HashMap<String, Object>();
         Map<String, Object> filter = new HashMap<String, Object>();
 
@@ -554,8 +554,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             Map<String, Object> query = new HashMap<String, Object>();
 
             if (this.getCellId() == null) {
-                // 特定CELLに紐付いていない場合
-                // KeyがSINGLEのとき以下の形となる
+                //When it is not associated with a specific CELL
+                //When Key is SINGLE it becomes the following form
                 query = QueryMapFactory.filteredQuery(null, QueryMapFactory.termQuery(
                         OEntityDocHandler.KEY_STATIC_FIELDS + "." + keys.iterator().next().getName() + ".untouched",
                         keys.iterator().next().getValue()));
@@ -563,7 +563,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 query = QueryMapFactory.filteredQuery(null,
                         QueryMapFactory.mustQuery(getImplicitFilters(entitySetName)));
 
-                // 特定CELLに紐付いている場合 単一キーのとき
+                //When linked to specific CELL When single key
                 Map<String, Object> and = new HashMap<String, Object>();
                 List<Object> filters = new ArrayList<Object>();
                 filter.put("and", and);
@@ -583,7 +583,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             source.put("filter", filter);
             source.put("query", query);
         } else {
-            // 複合キー
+            //Compound key
             EsNavigationTargetKeyProperty esNtkp = new EsNavigationTargetKeyProperty(this.getCellId(),
                     this.getBoxId(), this.getNodeId(), entitySetName, this);
             esNtkp.setProperties(keys);
@@ -596,27 +596,27 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             queryHandler.getSelectQuery(source, queryInfo.select);
         }
 
-        // 2. ESへのリクエスト
+        //2. Request to ES
         EntitySetAccessor esType = this.getAccessorForEntitySet(entitySetName);
         PersoniumSearchResponse res = esType.search(source);
 
-        // 3. ESからの応答の評価
-        // Indexつくりたてのときはresがnullになる。データがないのでnullを返せば良い.
+        //3. Evaluation of response from ES
+        //In the case of Index fresh, res becomes null. Since there is no data, return null.
         if (res == null) {
             return null;
         }
         PersoniumSearchHits hits = res.getHits();
-        // ヒット件数0はしなかったらNullを返す
+        //If the number of hits 0 is not done, it returns Null
         if (hits.getCount() == 0) {
             return null;
         }
-        // データが２件以上返ったら異常事態
+        //When two or more pieces of data return, abnormal situation
         if (hits.getAllPages() > 1) {
             PersoniumCoreLog.OData.FOUND_MULTIPLE_RECORDS.params(hits.getAllPages()).writeLog();
             throw PersoniumCoreException.Server.DATA_STORE_UNKNOWN_ERROR.reason(new RuntimeException(
                     "multiple records (" + hits.getAllPages() + ") found for the key ."));
         }
-        // ここで晴れてhit数は１であることが保証されるのでその１件を返す。
+        //Here it is sunny and the number of hits is guaranteed to be 1, so return 1 case.
         return getDocHandler(hits.getHits()[0], entitySetName);
     }
     private EntitySetDocHandler retrieveWithInternalId(EdmEntitySet eSet, String internalId) {
@@ -630,9 +630,9 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
 
     /**
-     * DocHandlerを取得する.
-     * @param searchHit 検索結果
-     * @param entitySetName エンティティセット名
+     * Get DocHandler.
+     * @ param searchHit Search result
+     * @ param entitySetName Entity set name
      * @return EntitySetDocHandler
      */
     protected EntitySetDocHandler getDocHandler(PersoniumSearchHit searchHit, String entitySetName) {
@@ -640,8 +640,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * DocHandlerを取得する.
-     * @param type elasticsearchのType
+     * Get DocHandler.
+     * Type of @ param type elasticsearch
      * @param oEntity OEntityWrapper
      * @return EntitySetDocHandler
      */
@@ -650,9 +650,9 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * DocHandlerを取得する.
+     * Get DocHandler.
      * @param response GetResponse
-     * @param entitySetName エンティティセット名
+     * @ param entitySetName Entity set name
      * @return EntitySetDocHandler
      */
     protected EntitySetDocHandler getDocHandler(PersoniumGetResponse response, String entitySetName) {
@@ -660,8 +660,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 更新用のDocHandlerを取得する.
-     * @param type elasticsearchのType
+     * Get a DocHandler for updating.
+     * Type of @ param type elasticsearch
      * @param oEntityWrapper OEntityWrapper
      * @return EntitySetDocHandler
      */
@@ -670,7 +670,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 一件取得を行う.
+     * Perform one acquisition.
      * @param oEntityId OEntityId
      * @return EntitySetDocHandler
      */
@@ -699,18 +699,18 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
      * @return a packaged collection of entities to pass back to the client
      */
     public EntitiesResponse getEntities(final String entitySetName, final QueryInfo queryInfo, EdmEntitySet eSet) {
-        // 注）EntitySetの存在保証は予め呼び出し側で行われているため、ここではチェックしない。
+        //Note) Since the existence guarantee of EntitySet is done on the calling side beforehand, it is not checked here.
         EntitySetAccessor esType = this.getAccessorForEntitySet(entitySetName);
-        // Cell / Box / Node / EntityTypeに基づいた暗黙フィルタの作成
+        //Create Implicit Filter based on Cell / Box / Node / EntityType
         List<Map<String, Object>> implicitFilters = getImplicitFilters(entitySetName);
-        // implicitFIltersを渡して、検索を実行する
+        //Pass implicitFIlters and perform a search
         return execEntitiesRequest(queryInfo, eSet, esType, implicitFilters);
     }
 
     /**
-     * Cell / Box / Node / EntityTypeに基づいた暗黙フィルタの作成.
-     * @param entitySetName エンティティセット名
-     * @return Cell / Box / Node / EntityTypeに基づいた暗黙フィルタ
+     * Create an implicit filter based on Cell / Box / Node / EntityType.
+     * @ param entitySetName Entity set name
+     * @return Implicit filter based on Cell / Box / Node / EntityType
      */
     protected List<Map<String, Object>> getImplicitFilters(String entitySetName) {
         String cellId = this.getCellId();
@@ -721,12 +721,12 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 一覧取得検索を実行する.
-     * @param queryInfo クエリ情報
-     * @param eSet エンティティセット
-     * @param esType アクセサオブジェクト
-     * @param implicitFilters 暗黙的な検索条件
-     * @return EntitiesResponse エンティティ一覧
+     * Perform list retrieval.
+     * @ param queryInfo query information
+     * @ param eSet entity set
+     * @ param esType accessor object
+     * @ param implicitFilters Implicit search condition
+     * @return EntitiesResponse entity list
      */
     public EntitiesResponse execEntitiesRequest(final QueryInfo queryInfo,
             EdmEntitySet eSet,
@@ -734,7 +734,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             List<Map<String, Object>> implicitFilters) {
         final int expandMaxNum = PersoniumUnitConfig.getMaxExpandSizeForList();
 
-        // 条件検索等。
+        //Conditional search etc.
         ODataQueryHandler visitor = getODataQueryHandler(queryInfo, eSet.getType(), implicitFilters);
         Map<String, Object> source = visitor.getSource();
 
@@ -746,7 +746,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 throw PersoniumCoreException.Server.DATA_STORE_SEARCH_ERROR.reason(ex);
             }
         }
-        // inlinecountの指定がallpagesの場合のみヒット件数を返却する
+        //Returns the number of hits only when the inlinecount specification is allpages
         Integer count = null;
         if (queryInfo != null && queryInfo.inlineCount != null && queryInfo.inlineCount.equals(InlineCount.ALLPAGES)) {
             if (res == null) {
@@ -769,8 +769,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 selectQuery = queryInfo.select;
             }
 
-            // Propert/ComplexTypePropertyと、Aliasのマッピングデータを作成する
-            // また、EntityType/ComplexTypeのUUIDと名前とのマッピングデータについても作成する(
+            //Create Property / ComplexTypeProperty and Alias ​​mapping data
+            //Also, create mapping data of UUID and name of EntityType / ComplexType (
             if (this.propertyAliasMap != null) {
                 setEntityPropertyMap(eSet, hits, ntkpValueMap);
             }
@@ -784,13 +784,13 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             creator.setCache(entityList, this);
 
             for (EntitySetDocHandler oedh : entityList) {
-                // entityKeyの生成
+                //Generation of entityKey
                 List<String> keys = eSet.getType().getKeys();
 
                 List<String> kv = new ArrayList<String>();
                 for (String key : keys) {
                     kv.add(key);
-                    // TODO キーがStringであることを仮定してしまってる。キーの値が文字列以外であるときは、その対応が必要。
+                    //I assume that the TODO key is a String. If the value of the key is other than a character string, it is necessary to deal with it.
                     String v = (String) oedh.getStaticFields().get(key);
                     if (v == null) {
                         v = AbstractODataResource.DUMMY_KEY;
@@ -799,7 +799,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 }
                 expandEntitiesMap = creator.create(oedh, this);
 
-                // NTKPHashMapから値を設定する
+                //Set values ​​from NTKPHashMap
                 Map<String, Object> staticFields = oedh.getStaticFields();
                 Map<String, Object> links = oedh.getManyToOnelinkId();
                 for (Map.Entry<String, String> ntkpProperty : ntkpProperties.entrySet()) {
@@ -823,10 +823,10 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 検索結果をもとに、プロパティとAliasをマッピングする.
+     * Based on the search result, map properties and Alias.
      * @param eSet EdmEntitySet
-     * @param hits 検索結果
-     * @param ntkpValueMap NTKPマップ
+     * @ param hits Search results
+     * @ param ntkpValueMap NTKP map
      */
     @SuppressWarnings("unchecked")
     private void setEntityPropertyMap(EdmEntitySet eSet, PersoniumSearchHit[] hits, Map<String, String> ntkpValueMap) {
@@ -839,7 +839,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             linkTypeName = ComplexType.EDM_TYPE_NAME;
             entityTypeKey = ComplexTypeProperty.P_COMPLEXTYPE_NAME.getName();
         } else {
-            // Property/ComplexTypeProperty以外は何もしない。
+            //Do nothing other than Property / ComplexTypeProperty.
             return;
         }
         this.entityTypeMap.putAll(ntkpValueMap);
@@ -859,7 +859,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             String entityTypeName = ntkpValueMap.get(entityTypeKey + entityTypeId);
             String key = "Name='" + propertyName + "'," + entityTypeKey + "='" + entityTypeName + "'";
             if (processedPropertyAlias.contains(key)) {
-                // プロパティ名の重複を検出
+                //Detect duplicate property names
                 PersoniumCoreLog.OData.DUPLICATED_PROPERTY_NAME.params(entityTypeId, key).writeLog();
                 throw PersoniumCoreException.OData.DUPLICATED_PROPERTY_NAME.params(propertyName);
             }
@@ -869,7 +869,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * EntityType名とUUIDのマッピングデータを設定する.
+     * Set mapping data of EntityType name and UUID.
      * @param oEntity oEntity
      * @param staticFields staticFields
      */
@@ -877,7 +877,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * EntityType名とUUIDのマッピングデータを取得する.
+     * Get mapping data of EntityType name and UUID.
      * @return the entityTypeIds
      */
     public Map<String, String> getEntityTypeIds() {
@@ -885,9 +885,9 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 実装サブクラスProducerが特定のEntityTypeに紐付くようにしたいときは、ここをoverrideしてEntityTypeIdを返すように実装する。
-     * @param entityTypeName EntityType名
-     * @return EntityTypeIdを返す
+     * Implementation subclass If you want Producer to be associated with a specific EntityType, implement it to override here and return EntityTypeId.
+     * @ param entityTypeName EntityType name
+     * Return @return EntityTypeId
      */
     public String getEntityTypeId(final String entityTypeName) {
         return null;
@@ -905,7 +905,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             Map<String, String> ntkpValueMap) {
         Enumerable<EdmProperty> eProps = eSet.getType().getProperties();
         for (EdmProperty eProp : eProps) {
-            // リンク対象の検索情報を組み立てる
+            //Assemble the search information of the link target
             String propertyName = eProp.getName();
             HashMap<String, String> ntkp = AbstractODataResource.convertNTKP(propertyName);
             if (ntkp != null) {
@@ -913,9 +913,9 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 String propName = ntkp.get("propName");
                 ntkpProperties.put(propertyName, entityType);
 
-                // 1階層目のNTKPのエンティティ一覧を取得する
+                //Acquire the entity list of NTKP at the first level
                 EntitySetAccessor ntkpAccessor = this.getAccessorForEntitySet(entityType);
-                // Cell、Box,NodeIDの検索条件を追加
+                //Add search condition of Cell, Box, NodeID
                 List<Map<String, Object>> implicitFilters = getImplicitFilters(entityType);
                 Map<String, Object> searchQuery = new HashMap<String, Object>();
                 if (implicitFilters.size() != 0) {
@@ -927,7 +927,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
                 PersoniumSearchHit[] ntkpSearchResults = ntkpAccessor.search(searchQuery).getHits().getHits();
 
-                // 2階層目のNTKPが存在する場合、2階層目のNTKPのエンティティ一覧を取得する
+                //When NTKP of the second hierarchy exists, the entity list of the second hierarchy NTKP is acquired
                 PersoniumSearchHit[] nestNtkpSearchResults = null;
                 Map<String, String> nestNtkpValueMap = new HashMap<String, String>();
                 String linkedEntityType = null;
@@ -946,7 +946,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                     }
                 }
 
-                // LinkIDがKey,NTKPの値がValueのMapを作成する
+                //Create Map with LinkID as Key and NTKP Value as Value
                 for (PersoniumSearchHit ntkpSearchResult : ntkpSearchResults) {
                     String linkId = ntkpSearchResult.getId();
                     Map<String, Object> linkFields = (Map<String, Object>) ntkpSearchResult.getSource().get(
@@ -1022,7 +1022,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             EdmEntitySet eSet, EntitySetAccessor esType) {
         EdmEntityType srcType = eSet.getType();
 
-        // レコードの存在確認＆削除のためのES id取得
+        //Acquire ES id for checking the existence of records & deleting
         EntitySetDocHandler hit = this.retrieveWithKey(eSet, entityKey);
 
         if (hit == null) {
@@ -1083,23 +1083,23 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * EntitySet名とOEntityからEntitySetDocHandlerを生成して取得する.
-     * @param entitySetName EntitySet名
+     * EntitySetDocHandler is generated from EntitySet name and OEntity and acquired.
+     * @ param entitySetName EntitySet name
      * @param entity OEntity
      * @return EntitySetDocHandler
      */
     @Override
     public EntitySetDocHandler getEntitySetDocHandler(final String entitySetName, final OEntity entity) {
-        // DocHandlerを生成する
+        //Generate DocHandler
         OEntityKey entityKey = entity.getEntityKey();
         EntitySetDocHandler docHandler = getDocHanlder(entitySetName, (OEntityWrapper) entity);
 
-        // Cell, Box, Nodeの紐付を行う
+        //Link Cell, Box, Node
         docHandler.setCellId(this.getCellId());
         docHandler.setBoxId(this.getBoxId());
         docHandler.setNodeId(this.getNodeId());
 
-        // 複合キーでNTKPの項目(ex. _EntityType.Name)があれば、リンク情報を設定する
+        //If there is an NTKP item (ex. _EntityType.Name) with a compound key, link information is set
         if (KeyType.COMPLEX.equals(entityKey.getKeyType())) {
             setLinksFromOEntity(entity, docHandler);
         }
@@ -1107,7 +1107,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * Entityの作成処理.このなかで主キーやUKによる一意チェックも行う.一意性の問題があれば例外を発生する.
+     * Entity creation processing, also performs uniqueness check by primary key and UK.In case of uniqueness problem raises an exception.
      * @param entitySetName the entity-set name
      * @param entity the request entity sent from the client
      * @return the newly-created entity, fully populated with the key and default properties
@@ -1115,17 +1115,17 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     @Override
     public EntityResponse createEntity(final String entitySetName, final OEntity entity) {
         OEntityKey entityKey = entity.getEntityKey();
-        // リクエストのOEntityからelasticsearchに登録する形式のJSONObjectに変換する
+        //Convert from OEntity of request to JSONObject of the form registered in elasticsearch
         EntitySetAccessor esType = this.getAccessorForEntitySet(entitySetName);
         OEntityWrapper oew = (OEntityWrapper) entity;
 
-        // ユニーク性チェックのためまずロックを行う
-        // OData 空間全体をlockする(将来的に必要があればentitySetNameでロック)
+        //Lock first for uniqueness check
+        //Lock the whole OData space (lock it with entitySetName if necessary for future)
         Lock lock = this.lock();
         try {
             return createEntity(entitySetName, entity, entityKey, esType, oew);
         } finally {
-            // ロックの解除
+            //Unlock
             log.debug("unlock");
             lock.release();
         }
@@ -1155,13 +1155,13 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         checkUniqueness(entitySetName, oew);
 
         EntitySetDocHandler oedh = getDocHanlder(esType.getType(), oew);
-        // Cell, Box, Nodeの紐付
+        //Pegged with Cell, Box, Node
         oedh.setCellId(this.getCellId());
         oedh.setBoxId(this.getBoxId());
         oedh.setNodeId(this.getNodeId());
         oedh.setEntityTypeId(this.getEntityTypeId(entitySetName));
 
-        // 複合キーでNTKPの項目(ex. _EntityType.Name)があれば、リンク情報を設定する
+        //If there is an NTKP item (ex. _EntityType.Name) with a compound key, link information is set
         if (KeyType.COMPLEX.equals(entityKey.getKeyType())) {
             try {
                 setLinksFromOEntity(entity, oedh);
@@ -1170,14 +1170,14 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             }
         }
 
-        // 登録前処理
+        //Pre-registration process
         this.beforeCreate(entitySetName, entity, oedh);
 
-        // データが存在しなければ、esJsonをESに保存する
+        //If data does not exist, save esJson in ES
         PersoniumIndexResponse idxRs = null;
         idxRs = esType.create(oedh.getId(), oedh);
 
-        // 登録後処理
+        //Post registration process
         this.afterCreate(entitySetName, entity, oedh);
 
         Long version = idxRs.getVersion();
@@ -1189,22 +1189,22 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * データの一意性チェックを行う.
-     * @param entitySetName エンティティ名
-     * @param oew 新しく登録・更新するEntity
+     * Perform uniqueness check of data.
+     * @ param entitySetName entity name
+     * @ param oew Entity to register / update newly
      */
     protected void checkUniqueness(String entitySetName, OEntityWrapper oew) {
         ODataProducerUtils.checkUniqueness(this, oew, null, null);
     }
 
     /**
-     * OEntityにNTKPの項目があれば、リンク情報を設定する.
-     * @param entity リクエスト情報OEntity
-     * @param oedh 登録データのドキュメントハンドラー
-     * @throws NTKPNotFoundException NTKPで指定されたリソースが存在しない
+     * If there is an item of NTKP in OEntity, link information is set.
+     * @ param entity Request information OEntity
+     * @ param oedh document handler for registered data
+     * @ throws NTKPNotFoundException The resource specified by NTKP does not exist
      */
     private void setLinksFromOEntity(final OEntity entity, EntitySetDocHandler oedh) throws NTKPNotFoundException {
-        // EntityKeyのPropertyをもとに、リンク情報を取得する
+        //Based on the Property of EntityKey, obtain link information
         Set<OProperty<?>> properties = entity.getEntityKey().asComplexProperties();
         EsNavigationTargetKeyProperty esNtkp = new EsNavigationTargetKeyProperty(this.getCellId(), this.getBoxId(),
                 this.getNodeId(), entity.getEntityType().getName(), this);
@@ -1223,7 +1223,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         esNtkp.setProperties(properties);
         Map.Entry<String, String> link = esNtkp.getLinkEntry();
 
-        // NTKPの情報をOEDHから削除する
+        //Delete NTKP information from OEDH
         for (OProperty<?> property : properties) {
             HashMap<String, String> ntkp = AbstractODataResource.convertNTKP(property.getName());
             if (ntkp != null) {
@@ -1231,13 +1231,13 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             }
         }
 
-        // リンク情報が設定されていない場合はリンク情報を空にする
+        //If link information is not set, empty the link information
         if (link == null) {
             oedh.setManyToOnelinkId(new HashMap<String, Object>());
             return;
         }
-        // 存在していれば、登録Entityにリンク情報を追加する
-        // 例）AssociationEndの登録の場合 "l":{"EntityType":"EntityTypeのUUID"}
+        //If it exists, link information is added to the registration Entity
+        //Example) When registering AssociationEnd "l": {"EntityType": "UUID of EntityType"}
         Map<String, Object> links = oedh.getManyToOnelinkId();
         links.put(link.getKey(), link.getValue());
         oedh.setManyToOnelinkId(links);
@@ -1260,22 +1260,22 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             final OEntityKey entityKey,
             final String navProp,
             final OEntity entity) {
-        // NavigationProperty経由のデータ作成を実装する。
+        //Implement data creation via NavigationProperty.
         EdmEntitySet eSet = this.getMetadata().findEdmEntitySet(entitySetName);
-        // OData 空間全体をlockする(将来的に必要があればentitySetNameでロック)
+        //Lock the whole OData space (lock it with entitySetName if necessary for future)
         Lock lock = this.lock();
         try {
-            // src側のりソース存在確認.主キーでの検索を行う。
+            //Confirm that src side paste existence. Search with primary key.
             EntitySetDocHandler srcDh = this.retrieveWithKey(eSet, entityKey);
             if (srcDh == null) {
-                // src側のりソースが存在しなかったら404 エラーとする
+                //If src side paste source does not exist, it is set as 404 error
                 throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
             }
-            // 関連のタイプ (NN/1N/N1/11) を判定
+            //Determine the type of association (NN / 1N / N1 / 11)
 
-            // tgt側レコードの作成
-            // srcとtgtの紐付
-            // TODO 実装未完了
+            //Create tgt side record
+            //String of src and tgt
+            //TODO implementation incomplete
             return null;
         } finally {
             log.debug("unlock");
@@ -1299,10 +1299,10 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         if (srcNavProp == null) {
             throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
-        // n:1かn:nの切り分けを行う
+        //Isolate n: 1 or n: n
         EdmAssociation assoc = srcNavProp.getRelationship();
-        // ユニーク性チェックのためまずロックを行う
-        // OData 空間全体をlockする(将来的に必要があればentitySetNameでロック)
+        //Lock first for uniqueness check
+        //Lock the whole OData space (lock it with entitySetName if necessary for future)
         Lock lock = this.lock();
         try {
             createLink(sourceEntity, targetEntity, srcNavProp, assoc);
@@ -1327,7 +1327,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         if (srcNavProp == null) {
             throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
-        // n:1かn:nの切り分けを行う
+        //Isolate n: 1 or n: n
         EdmAssociation assoc = srcNavProp.getRelationship();
 
         createLink(sourceEntity, targetEntity, srcNavProp, assoc);
@@ -1337,12 +1337,12 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     private void createLink(OEntityId sourceEntity, OEntityId targetEntity,
             EdmNavigationProperty srcNavProp, EdmAssociation assoc) {
         EntitySetDocHandler src = this.retrieveWithKey(sourceEntity);
-        // データが存在しない場合は404
+        //If there is no data 404
         if (src == null) {
             throw PersoniumCoreException.OData.NOT_FOUND;
         }
         EntitySetDocHandler tgt = this.retrieveWithKey(targetEntity);
-        // ターゲットが存在しない場合は400
+        //If the target does not exist 400
         if (tgt == null) {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("uri");
         }
@@ -1350,8 +1350,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * リンク元・先のデータチェックや、既にリンクが作成済みかなどの、データ登録の前提条件をチェックする.
-     * @param navigationPropertyContext NP経由登録用のコンテキスト
+     * Check the prerequisites for data registration, such as checking the link source / destination data or already creating the link.
+     * @ param navigationPropertyContext Context for registration via NP
      */
     private void validateLinkForNavigationPropertyContext(NavigationPropertyBulkContext navigationPropertyContext) {
         OEntityId sourceEntity = navigationPropertyContext.getSrcEntityId();
@@ -1366,22 +1366,22 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         }
 
         EntitySetDocHandler src = navigationPropertyContext.getSourceDocHandler();
-        // データが存在しない場合は404
+        //If there is no data 404
         if (src == null) {
             throw PersoniumCoreException.OData.NOT_FOUND;
         }
 
-        // 1:1の関連は存在し得ないので、AssociationEnd - AssociationEndの$linksで1:1の登録をしようとした場合はエラーとする
+        //Since 1: 1 association can not exist, if you try to register 1: 1 with $ links of AssociationEnd - AssociationEnd it is an error
         String targetEntitySetName = targetEntity.getEntitySetName();
         checkAssociationEndMultiplicity(targetNavProp, targetEntity, targetEntitySetName, src);
 
-        // $linksの登録済みチェック
+        //Registered check of $ links
         checkExistsLink(sourceEntity, srcNavProp, src, targetEntity);
     }
 
     /**
-     * NP経由のリンク情報をコンテキストに設定する.
-     * @param navigationPropertyContext NP経由登録用のコンテキスト
+     * Set the link information via NP to the context.
+     * @ param navigationPropertyContext Context for registration via NP
      */
     private void setNavigationPropertyContext(NavigationPropertyBulkContext navigationPropertyContext) {
         OEntityId sourceEntity = navigationPropertyContext.getSrcEntityId();
@@ -1393,79 +1393,79 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         EntitySetDocHandler sourceDocHandler = navigationPropertyContext.getSourceDocHandler();
         EntitySetDocHandler targetDocHandler = navigationPropertyContext.getTargetDocHandler();
 
-        // NP経由のリンク情報をコンテキストに設定
+        //Set link information via NP to context
         if (navigationPropertyContext.getLinkType() == NavigationPropertyLinkType.manyToMany) {
-            // n:nの場合
+            //In the case of n: n
             LinkDocHandler docHandler = this.getLinkDocHandler(sourceDocHandler, targetDocHandler);
 
-            // コンテキストにリンク用のdocHandlerを設定.
+            //Set docHandler for link in context.
             navigationPropertyContext.setLinkDocHandler(docHandler);
         } else if (navigationPropertyContext.getLinkType() == NavigationPropertyLinkType.oneToOne) {
-            // 1:1/0..1:1/1:0..1/0..1:0..1 の場合
+            //In case of 1: 1 / 0. 1: 1/1: 0..1 / 0..1: 0..1
             String toLinksKey = getLinkskey(srcNavProp.getToRole().getType().getName());
             String fromLinksKey = getLinkskey(srcNavProp.getFromRole().getType().getName());
             Map<String, Object> sourceLinks = sourceDocHandler.getManyToOnelinkId();
             Map<String, Object> targetLinks = targetDocHandler.getManyToOnelinkId();
 
-            // link情報を更新する
+            //Update link information
             sourceLinks.put(toLinksKey, targetDocHandler.getId());
             sourceDocHandler.setManyToOnelinkId(sourceLinks);
 
-            // Aliasをプロパティ名に変換する
+            //Convert Alias ​​to property name
             sourceDocHandler.convertAliasToName(getMetadata());
 
-            // NP経由でPropetyを作成した場合、バージョンが更新されるので、バージョンを取得する
+            //When Propety is created via NP, the version is updated, so get the version
             targetLinks.put(fromLinksKey, sourceDocHandler.getId());
             targetDocHandler.setManyToOnelinkId(targetLinks);
 
-            // Aliasをプロパティ名に変換する
+            //Convert Alias ​​to property name
             targetDocHandler.convertAliasToName(getMetadata());
 
-            // コンテキストにリンク用のdocHandlerを設定.
+            //Set docHandler for link in context.
             navigationPropertyContext.setSourceDocHandler(sourceDocHandler);
             navigationPropertyContext.setTargetDocHandler(targetDocHandler);
         } else {
             String fromEntitySetName = srcNavProp.getFromRole().getType().getName();
             String toEntitySetName = srcNavProp.getToRole().getType().getName();
             if (navigationPropertyContext.getLinkType() == NavigationPropertyLinkType.oneToMany) {
-                // 1:n/0..1:nの場合
+                //1: n / 0. 1: n
                 String fromLinksKey = getLinkskey(fromEntitySetName);
                 Map<String, Object> links = new HashMap<String, Object>();
 
-                // 登録用のlinksオブジェクトを生成して、登録対象のオブジェクトに設定する
+                //Create a link object for registration and set it as an object to be registered
                 links = targetDocHandler.getManyToOnelinkId();
                 links.put(fromLinksKey, sourceDocHandler.getId());
                 targetDocHandler.setManyToOnelinkId(links);
 
-                // Aliasをプロパティ名に変換する
+                //Convert Alias ​​to property name
                 targetDocHandler.convertAliasToName(getMetadata());
 
-                // コンテキストにリンク用のdocHandlerを設定.
+                //Set docHandler for link in context.
                 navigationPropertyContext.setTargetDocHandler(targetDocHandler);
             } else {
-                // n:1/n:0..1の場合
+                //In the case of n: 1 / n: 0..1
                 String toLinksKey = getLinkskey(toEntitySetName);
                 Map<String, Object> links = new HashMap<String, Object>();
 
-                // 登録用のlinksオブジェクトを生成して、登録対象のオブジェクトに設定する
+                //Create a link object for registration and set it as an object to be registered
                 links = sourceDocHandler.getManyToOnelinkId();
                 links.put(toLinksKey, targetDocHandler.getId());
                 sourceDocHandler.setManyToOnelinkId(links);
 
-                // Aliasをプロパティ名に変換する
+                //Convert Alias ​​to property name
                 sourceDocHandler.convertAliasToName(getMetadata());
 
-                // コンテキストにリンク用のdocHandlerを設定.
+                //Set docHandler for link in context.
                 navigationPropertyContext.setSourceDocHandler(sourceDocHandler);
             }
         }
     }
 
     /**
-     * NavigationProeprtyのEdm（スキーマ）を取得する.
-     * @param entitySetName 取得対象のEntitySet名
-     * @param navigationPropertyName 取得対象のNavigationProperty名
-     * @return NavigationProeprtyのEdm（スキーマ）
+     * Get the Edm (schema) of NavigationProeprty.
+     * @ param entitySetName EntitySet name to be acquired
+     * @ param navigationPropertyName Name of the NavigationProperty to be acquired
+     * @return NavigationProeprty's Edm (schema)
      */
     private EdmNavigationProperty getEdmNavigationProperty(String entitySetName, String navigationPropertyName) {
         EdmEntitySet srcSet = this.getMetadata().findEdmEntitySet(entitySetName);
@@ -1486,8 +1486,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
      */
     public final EntityResponse createNp(OEntityId sourceOEntity,
             String targetNavProp, OEntity entity, String targetEntitySetName) {
-        // スキーマチェック
-        // srcTypeからtgtTypeへN:N Assocが定義されているか調べる
+        //Schema check
+        //From srcType to tgtType Check if N: N Assoc is defined
         EdmEntitySet srcSet = this.getMetadata().findEdmEntitySet(sourceOEntity.getEntitySetName());
         EdmEntityType srcType = srcSet.getType();
         EdmNavigationProperty srcNavProp = srcType.findNavigationProperty(targetNavProp);
@@ -1496,13 +1496,13 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         }
 
         EntityResponse res;
-        // ユニーク性チェックのためまずロックを行う
-        // OData 空間全体をlockする(将来的に必要があればentitySetNameでロック)
+        //Lock first for uniqueness check
+        //Lock the whole OData space (lock it with entitySetName if necessary for future)
         Lock lock = this.lock();
 
         try {
 
-            // sourceデータが存在しない場合は404
+            //If there is no source data 404
             EntitySetDocHandler sourceDocHandler = this.retrieveWithKey(sourceOEntity);
             if (sourceDocHandler == null) {
                 throw PersoniumCoreException.OData.NOT_FOUND;
@@ -1512,18 +1512,18 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 throw PersoniumCoreException.OData.CONFLICT_LINKS;
             }
 
-            // 1:1の関連は存在し得ないので、AssociationEnd - AssociationEndの$linksで1:1の登録をしようとした場合はエラーとする
+            //Since 1: 1 association can not exist, if you try to register 1: 1 with $ links of AssociationEnd - AssociationEnd it is an error
             checkAssociationEndMultiplicity(targetNavProp, entity, targetEntitySetName, sourceDocHandler);
 
             checkInvalidLinks(sourceDocHandler, entity, targetEntitySetName);
 
-            // $linksの登録済みチェック
+            //Registered check of $ links
             checkExistsLink(sourceOEntity, srcNavProp, sourceDocHandler, entity);
 
-            // $links上限値チェック
+            //$ links high limit check
             checkUpperLimitRecord(srcNavProp, sourceDocHandler, targetEntitySetName);
 
-            // targetのEntity作成
+            //Create Entity of target
             res = createNavigationPropertyEntity(entity, targetEntitySetName);
             if (res == null || res.getEntity() == null) {
                 return null;
@@ -1533,7 +1533,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 throw PersoniumCoreException.Server.UNKNOWN_ERROR;
             }
 
-            // $linksの登録
+            //Register $ links
             entity = createNavigationPropertyLink(sourceOEntity, entity, srcNavProp, sourceDocHandler, retrievedEntity);
             res = Responses.entity(entity);
 
@@ -1545,27 +1545,27 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * $linksの登録可能な上限値を超えて登録をしようとしているかをチェックする.
-     * @param srcNavProp ソース側のEdmNavigationProperty
-     * @param sourceDocHandler ソース側のDocHandler
-     * @param targetEntitySetName ターゲット側のEntitySet名
+     * It checks whether you are going to register beyond the limit that can be registered with $ links.
+     * @ param srcNavProp EdmNavigationProperty on the source side
+     * @ param sourceDocHandler Source side DocHandler
+     * @ param targetEntitySetName EntitySet name on the target side
      */
     private void checkUpperLimitRecord(
             EdmNavigationProperty srcNavProp,
             EntitySetDocHandler sourceDocHandler,
             String targetEntitySetName) {
-        // 関連がN:N以外の場合は、上限値制限なし
+        //When the relation is other than N: N, there is no upper limit value limit
         if (!isAssociationOfNToN(srcNavProp.getRelationship())) {
             return;
         }
 
-        // ユーザデータの$links取得の場合、targetのEntityTypeの_idを取得する
+        //In case of acquiring $ links of user data, acquire _id of EntityType of target
         String targetEntityTypeId = null;
         if (sourceDocHandler.getType().equals(UserDataODataProducer.USER_ODATA_NAMESPACE)) {
             targetEntityTypeId = getEntityTypeId(targetEntitySetName);
         }
 
-        // 登録済み$links
+        //Registered $ links
         long count = LinkDocHandler.getNtoNCount(this.getAccessorForLink(), sourceDocHandler, targetEntitySetName,
                 targetEntityTypeId);
         log.info("Registered links count: [" + count + "]");
@@ -1576,9 +1576,9 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 引数で指定された関連がN:Nかどうかを判定する.
+     * It is judged whether the relation specified by the argument is N: N.
      * @param assoc EdmAssociation
-     * @return true: N:N, false: N:N以外
+     * @return true: N: N, false: N: other than N
      */
     private boolean isAssociationOfNToN(EdmAssociation assoc) {
         EdmMultiplicity multiplicity1 = assoc.getEnd1().getMultiplicity();
@@ -1590,30 +1590,30 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             EdmNavigationProperty srcNavProp,
             EntitySetDocHandler sourceDocHandler,
             OEntity targetrEntity) {
-        // n:1かn:nの切り分けを行う
+        //Isolate n: 1 or n: n
         EdmAssociation assoc = srcNavProp.getRelationship();
         EdmMultiplicity multiplicity1 = assoc.getEnd1().getMultiplicity();
         EdmMultiplicity multiplicity2 = assoc.getEnd2().getMultiplicity();
 
         if ((multiplicity1 == EdmMultiplicity.ONE || multiplicity1 == EdmMultiplicity.ZERO_TO_ONE)
                 && (multiplicity2 == EdmMultiplicity.ONE || multiplicity2 == EdmMultiplicity.ZERO_TO_ONE)) {
-            // 1:1/0..1:1/1:0..1/0..1:0..1 の場合
+            //In case of 1: 1 / 0. 1: 1/1: 0..1 / 0..1: 0..1
             checkExistsLinkForOnetoOne(sourceDocHandler, null, srcNavProp);
 
         } else if (!(multiplicity1 == EdmMultiplicity.MANY && multiplicity2 == EdmMultiplicity.MANY)) {
             String multiplicityOneEntitySetName = getOneAssociationEnd(assoc).getType().getName();
             String toEntitySetName = srcNavProp.getToRole().getType().getName();
             EntitySetDocHandler targetDocHandler = new OEntityDocHandler();
-            // 別Typeに同じ名前の要素がある場合を考慮して、Typeを検索条件に追加
+            //Add Type to the search condition in consideration of the case where there is an element with the same name in another Type
             targetDocHandler.setType(toEntitySetName);
             if (sourceOEntity.getEntitySetName().equals(multiplicityOneEntitySetName)) {
-                // 1:Nの場合
+                //In case of 1: N
 
-                // ユーザODataの場合は、Nameプロパティが存在しない、かつ、リンク登録後に同一データが存在するかの一意性チェックは行わないため、Nameプロパティはセットしない
+                //In the case of the user OData, since the uniqueness check as to whether the Name property does not exist and the same data exists after link registration is not performed, the Name property is not set
                 if (!(this instanceof UserDataODataProducer)) {
                     Map<String, Object> staticFields = new HashMap<String, Object>();
                     if (ExtRole.EDM_TYPE_NAME.equals(toEntitySetName)) {
-                        // ExtRoleはNameプロパティを持たないため、"ExtRole"で区別する
+                        //Since ExtRole does not have a Name property, it is distinguished by "ExtRole"
                         staticFields.put(ExtRole.EDM_TYPE_NAME,
                                 targetrEntity.getProperty(ExtRole.EDM_TYPE_NAME).getValue());
                     } else if (ReceivedMessage.EDM_TYPE_NAME.equals(toEntitySetName)
@@ -1628,7 +1628,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 checkExistsLinksForOneToN(sourceOEntity, sourceDocHandler, targetDocHandler,
                         multiplicityOneEntitySetName, toEntitySetName);
             } else {
-                // N:1の場合
+                //When N: 1
                 checkExistsLinksForNtoOne(sourceDocHandler, toEntitySetName);
             }
         }
@@ -1651,8 +1651,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 一括登録用のコンテキストにリンクタイプをセットする.
-     * @param navigationPropertyContext 一括登録のコンテキスト
+     * Set the link type in the context for batch registration.
+     * @ param navigationPropertyContext Context of bulk registration
      */
     private void setNavigationPropertyLinkType(
             NavigationPropertyBulkContext navigationPropertyContext) {
@@ -1690,14 +1690,14 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         EdmMultiplicity multiplicity2 = assoc.getEnd2().getMultiplicity();
 
         if (multiplicity1 == EdmMultiplicity.MANY && multiplicity2 == EdmMultiplicity.MANY) {
-            // n:nの場合
+            //In the case of n: n
             LinkDocHandler docHandler = this.getLinkDocHandler(sourceDocHandler, retrievedEntity);
 
             ODataLinkAccessor linkAccessor = this.getAccessorForLink();
             createLinkForNtoN(linkAccessor, docHandler);
         } else if ((multiplicity1 == EdmMultiplicity.ONE || multiplicity1 == EdmMultiplicity.ZERO_TO_ONE)
                 && (multiplicity2 == EdmMultiplicity.ONE || multiplicity2 == EdmMultiplicity.ZERO_TO_ONE)) {
-            // 1:1/0..1:1/1:0..1/0..1:0..1 の場合
+            //In case of 1: 1 / 0. 1: 1/1: 0..1 / 0..1: 0..1
             long version = createLinkForOnetoOne(sourceDocHandler, retrievedEntity, srcNavProp);
             setETagVersion((OEntityWrapper) entity, version);
         } else {
@@ -1706,7 +1706,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             String fromEntitySetName = srcNavProp.getFromRole().getType().getName();
             String toEntitySetName = srcNavProp.getToRole().getType().getName();
             if (sourceOEntity.getEntitySetName().equals(multiplicityOneEntitySetName)) {
-                // 1:n/0..1:nの場合
+                //1: n / 0. 1: n
                 String fromLinksKey = getLinkskey(fromEntitySetName);
                 long version = createLinkForNtoOne(sourceDocHandler, retrievedEntity, fromLinksKey,
                         toEntitySetName);
@@ -1715,7 +1715,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 }
 
             } else {
-                // n:1/n:0..1の場合
+                //In the case of n: 1 / n: 0..1
                 String toLinksKey = getLinkskey(toEntitySetName);
                 long version = createLinkForNtoOne(retrievedEntity, sourceDocHandler, toLinksKey,
                         fromEntitySetName);
@@ -1732,7 +1732,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         EntitySetDocHandler oedh;
         EntitySetAccessor esType;
         String etag = null;
-        // バージョンが更新された場合、etag情報を更新する
+        //When version is updated, update etag information
         esType = this.getAccessorForEntitySet(entity.getEntitySetName());
         oedh = getDocHanlder(esType.getType(), entity);
         oedh.setVersion(version);
@@ -1742,7 +1742,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
     private EntityResponse createNavigationPropertyEntity(OEntity entity, String entitySetName) {
         OEntityKey entityKey = entity.getEntityKey();
-        // リクエストのOEntityからelasticsearchに登録する形式のJSONObjectに変換する
+        //Convert from OEntity of request to JSONObject of the form registered in elasticsearch
         EntitySetAccessor esType = this.getAccessorForEntitySet(entitySetName);
         EntityResponse res = createEntity(entitySetName, entity, entityKey, esType, (OEntityWrapper) entity);
         return res;
@@ -1767,34 +1767,34 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         checkInvalidLinks(sourceEntity, targetEntity);
 
         if (multiplicity1 == EdmMultiplicity.MANY && multiplicity2 == EdmMultiplicity.MANY) {
-            // n:nの場合
-            // LINKを扱うアクセサを取る
+            //In the case of n: n
+            //Take accessors to handle LINK
             ODataLinkAccessor esType = this.getAccessorForLink();
-            // NNLink情報の ES保存時の一意キー作成
+            //Creating a unique key when saving NNLink information ES
             LinkDocHandler docHandler = this.getLinkDocHandler(sourceEntity, targetEntity);
 
-            // $linksの一意性チェック
+            //Uniqueness check of $ links
             checkExistsLinkForNtoN(esType, docHandler);
 
-            // $links上限値チェック
-            // リンク元
+            //$ links high limit check
+            //Link source
             String targetEntitySetName = srcNavProp.getToRole().getType().getName();
             checkUpperLimitRecord(srcNavProp, sourceEntity, targetEntitySetName);
-            // リンク先
+            //Link destination
             String sourceEntitySetName = srcNavProp.getFromRole().getType().getName();
             checkUpperLimitRecord(srcNavProp, targetEntity, sourceEntitySetName);
 
             createLinkForNtoN(esType, docHandler);
         } else if ((multiplicity1 == EdmMultiplicity.ONE || multiplicity1 == EdmMultiplicity.ZERO_TO_ONE)
                 && (multiplicity2 == EdmMultiplicity.ONE || multiplicity2 == EdmMultiplicity.ZERO_TO_ONE)) {
-            // 1:1の場合
+            //In case of 1: 1
             checkExistsLinkForOnetoOne(sourceEntity, targetEntity, srcNavProp);
             version = createLinkForOnetoOne(sourceEntity, targetEntity, srcNavProp);
         } else {
-            // n:1の1のEdmAssociationEndを取得する
+            //Get an EdmAssociationEnd of 1: n: 1
             EdmAssociationEnd oneAssoc = getOneAssociationEnd(assoc);
-            // n:1の場合、nのデータに1のIDをリンク情報をとして追加する
-            // ESから1:NそれぞれのAssocのEntityを取得する
+            //In the case of n: 1, the ID of 1 is added as the link information to the data of n
+            //Acquire Entity of each Assoc of 1: N from ES
             String entityTypeName = oneAssoc.getType().getName();
             boolean isParent = ODataProducerUtils.isParentEntity(sourceOEntity, entityTypeName);
             String fromLinksKey = getLinkskey(srcNavProp.getFromRole().getType().getName());
@@ -1818,17 +1818,17 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 不正なLink情報のチェックを行う.
-     * @param sourceEntity ソース側Entity
-     * @param targetEntity ターゲット側Entity
+     * Check unauthorized Link information.
+     * @ param sourceEntity source side Entity
+     * @ param targetEntity Target side Entity
      */
     protected abstract void checkInvalidLinks(EntitySetDocHandler sourceEntity, EntitySetDocHandler targetEntity);
 
     /**
-     * 不正なLink情報のチェックを行う.
-     * @param sourceDocHandler ソース側Entity
-     * @param entity ターゲット側Entity
-     * @param targetEntitySetName ターゲットのEntitySet名
+     * Check unauthorized Link information.
+     * @ param sourceDocHandler Source side Entity
+     * @ param entity Target side Entity
+     * @ param targetEntitySetName EntitySet name of the target
      */
     protected abstract void checkInvalidLinks(EntitySetDocHandler sourceDocHandler,
             OEntity entity,
@@ -1837,7 +1837,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     private void checkExistsLinkForOnetoOne(final EntitySetDocHandler source,
             final EntitySetDocHandler target,
             EdmNavigationProperty srcNavProp) {
-        // 既に同一NavigationPropetiesにlinksが登録されている場合は409とする
+        //When links are already registered in the same NavigationPropeties, it is set to 409
         String toLinksKey = getLinkskey(srcNavProp.getToRole().getType().getName());
         String fromLinksKey = getLinkskey(srcNavProp.getFromRole().getType().getName());
         Map<String, Object> sourceLinks = source.getManyToOnelinkId();
@@ -1849,11 +1849,11 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 1:1のlinksを生成.
-     * @param sourceEntity リクエストURLにて指定されたEntity
-     * @param targetEntity リクエストBODYにて指定されたEntity
-     * @param srcNavProp ナビゲーションプロパティ
-     * @return バージョン情報
+     * Generate 1: 1 links.
+     * @ param sourceEntity Entity specified in the request URL
+     * @ param targetEntity Entity specified by request BODY
+     * @ param srcNavProp navigation property
+     * @return version information
      */
     private long createLinkForOnetoOne(final EntitySetDocHandler source,
             final EntitySetDocHandler target,
@@ -1863,19 +1863,19 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         Map<String, Object> sourceLinks = source.getManyToOnelinkId();
         Map<String, Object> targetLinks = target.getManyToOnelinkId();
 
-        // link情報を更新する
+        //Update link information
         sourceLinks.put(toLinksKey, target.getId());
         source.setManyToOnelinkId(sourceLinks);
 
-        // Aliasをプロパティ名に変換する
+        //Convert Alias ​​to property name
         source.convertAliasToName(getMetadata());
         updateLink(source, fromLinksKey);
 
-        // NP経由でPropetyを作成した場合、バージョンが更新されるので、バージョンを取得する
+        //When Propety is created via NP, the version is updated, so get the version
         targetLinks.put(fromLinksKey, source.getId());
         target.setManyToOnelinkId(targetLinks);
 
-        // Aliasをプロパティ名に変換する
+        //Convert Alias ​​to property name
         target.convertAliasToName(getMetadata());
 
         long version = updateLink(target, toLinksKey);
@@ -1883,30 +1883,30 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * link情報を更新する.
-     * @param docHandler 更新対象のEntitySetDocHandler
-     * @param entSetName 更新対象のEntitySet名
-     * @return バージョン
+     * Update link information.
+     * @ param docHandler EntitySetDocHandler to be updated
+     * @ param entSetName EntitySet name to be updated
+     * @return version
      */
     private long updateLink(EntitySetDocHandler docHandler, String entSetName) {
-        // アクセサを取る
+        //Take accessors
         EntitySetAccessor esType = this.getAccessorForEntitySet(entSetName);
         return esType.update(docHandler.getId(), docHandler).getVersion();
     }
 
     private void checkExistsLinkForNtoN(ODataLinkAccessor esType, LinkDocHandler docHandler) {
         String docid = docHandler.createLinkId();
-        // Link の存在確認
+        //Confirm existence of Link
         PersoniumGetResponse gRes = esType.get(docid);
         if (gRes != null && gRes.exists()) {
-            // 既に該当LINKが存在する
+            //The corresponding LINK already exists
             throw PersoniumCoreException.OData.CONFLICT_LINKS;
         }
     }
 
     private void createLinkForNtoN(ODataLinkAccessor esType, LinkDocHandler docHandler) {
         String docid = docHandler.createLinkId();
-        // NNLink情報の couch保存時のJSONドキュメント作成
+        //JSON document creation when couch of NNLink information is saved
         esType.create(docid, docHandler);
     }
 
@@ -1915,7 +1915,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             String targetEntityTypeName) {
         String linksKey = getLinkskey(targetEntityTypeName);
 
-        // ソース側（multiplicity *）が既にターゲットEntityTYpe（multiplicity 1）にlinksが登録されている場合は409とする
+        //If links are already registered in the target EntityTYpe (multiplicity 1) on the source side (multiplicity *), it is set to 409
         if (sourceEntity != null) {
             Map<String, Object> links = sourceEntity.getManyToOnelinkId();
             if (links != null && links.get(linksKey) != null) {
@@ -1931,7 +1931,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             String targetEntitySetName) {
         String linksKey = getLinkskey(sourceEntityTypeName);
 
-        // ターゲット側のmultiplicityが*で既に同一NavigationPropetiesにlinksが登録されている場合は409とする
+        //If multiplicity of the target is * and links are already registered in the same NavigationPropeties, it is set to 409
         if (targetEntity != null) {
             Map<String, Object> links = targetEntity.getManyToOnelinkId();
             if (links != null && links.get(linksKey) != null) {
@@ -1939,7 +1939,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             }
         }
 
-        // 単一キーのEntityに対して$linksを登録した際に、同名のキーが存在する場合は409
+        //When $ link is registered for a single key Entity, if there is a key of the same name 409
         EntitySetAccessor esType = this.getAccessorForEntitySet(targetEntitySetName);
         boolean uniqueness = checkUniquenessEntityKeyForAddLink(sourceOEntity.getEntitySetName(),
                 sourceEntity, targetEntity, linksKey, esType);
@@ -1957,31 +1957,31 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * N:1のLinksを生成.
-     * @param targetEntity リクエストBODYにて指定されたEntity
-     * @param oneAssoc N:1の1のAssociation情報
+     * Generate Links of N: 1.
+     * @ param targetEntity Entity specified by request BODY
+     * @ param oneAssoc N: 1's Association information
      * @param srcNavProp NavigationProperty
-     * @return バージョン
+     * @return version
      */
     private long createLinkForNtoOne(EntitySetDocHandler sourceEntity,
             EntitySetDocHandler targetEntity,
             String fromLinksKey,
             String targetEntitySetName) {
-        // 登録用のlinksオブジェクトを生成して、登録対象のオブジェクトに設定する
+        //Create a link object for registration and set it as an object to be registered
         Map<String, Object> links = targetEntity.getManyToOnelinkId();
         links.put(fromLinksKey, sourceEntity.getId());
         targetEntity.setManyToOnelinkId(links);
 
-        // Aliasをプロパティ名に変換する
+        //Convert Alias ​​to property name
         targetEntity.convertAliasToName(getMetadata());
         long version = updateLink(targetEntity, targetEntitySetName);
         return version;
     }
 
     /**
-     * 1:Nの1のEdmAssociationEndを取得する.
-     * @param assoc Association情報
-     * @return 1:Nの1のEdmAssociationEnd
+     * 1: Get 1 EdmAssociationEnd of N.
+     * @ param assoc Association information
+     * @return 1: N's EdmAssociationEnd
      */
     private EdmAssociationEnd getOneAssociationEnd(EdmAssociation assoc) {
         EdmAssociationEnd[] assocs = {assoc.getEnd1(), assoc.getEnd2() };
@@ -2009,22 +2009,22 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             final OEntityKey targetEntityKey) {
         String srcSetName = sourceEntityId.getEntitySetName();
 
-        // スキーマチェック
-        // srcTypeからtgtTypeへN:N Assocが定義されているか調べる
+        //Schema check
+        //From srcType to tgtType Check if N: N Assoc is defined
         EdmEntitySet srcSet = this.getMetadata().findEdmEntitySet(srcSetName);
         EdmEntityType srcType = srcSet.getType();
 
         EdmNavigationProperty navProp = srcType.findNavigationProperty(targetNavProp);
         if (navProp == null) {
-            // TODO 本来はリクエストされたリソースが存在しないことになるため404エラーを返却すべき
+            //TODO Originally, since the requested resource does not exist, 404 error should be returned
             throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
         EdmEntitySet tgtSet = this.getMetadata().findEdmEntitySet(navProp.getToRole().getType().getName());
 
-        // n:1かn:nの切り分けを行う
+        //Isolate n: 1 or n: n
         EdmAssociation assoc = navProp.getRelationship();
 
-        // OData 空間全体をlockする
+        //Lock entire OData space
         Lock lock = this.lock();
         try {
             deleteLink(sourceEntityId, targetEntityKey, srcSet, tgtSet, assoc);
@@ -2046,19 +2046,19 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             final OEntityKey targetEntityKey) {
         String srcSetName = sourceEntityId.getEntitySetName();
 
-        // スキーマチェック
-        // srcTypeからtgtTypeへN:N Assocが定義されているか調べる
+        //Schema check
+        //From srcType to tgtType Check if N: N Assoc is defined
         EdmEntitySet srcSet = this.getMetadata().findEdmEntitySet(srcSetName);
         EdmEntityType srcType = srcSet.getType();
 
         EdmNavigationProperty navProp = srcType.findNavigationProperty(targetNavProp);
         if (navProp == null) {
-            // TODO 本来はリクエストされたリソースが存在しないことになるため404エラーを返却すべき
+            //TODO Originally, since the requested resource does not exist, 404 error should be returned
             throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
         EdmEntitySet tgtSet = this.getMetadata().findEdmEntitySet(navProp.getToRole().getType().getName());
 
-        // n:1かn:nの切り分けを行う
+        //Isolate n: 1 or n: n
         EdmAssociation assoc = navProp.getRelationship();
 
         deleteLink(sourceEntityId, targetEntityKey, srcSet, tgtSet, assoc);
@@ -2069,44 +2069,44 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
         if (assoc.getEnd1().getMultiplicity() == EdmMultiplicity.MANY
                 && assoc.getEnd2().getMultiplicity() == EdmMultiplicity.MANY) {
-            // n:nの場合
+            //In the case of n: n
             deleteLinks(sourceEntityId, targetEntityKey, tgtSet);
         } else if (assoc.getEnd1().getMultiplicity() != EdmMultiplicity.MANY
                 && assoc.getEnd2().getMultiplicity() != EdmMultiplicity.MANY) {
-            // [0..1:0..1] or [0..1:1] or [1:0..1] or [1:1]の場合は相互リンクのため、両方のデータからリンク情報を削除する
-            // リンク先・リンク元のデータを取得する
+            //In the case of [0..1: 0..1] or [0..1: 1] or [1: 0..1] or [1: 1], since it is a mutual link, link information is extracted from both data delete
+            //Acquire the data of the link destination / link source
             EntitySetDocHandler source = this.retrieveWithKey(sourceEntityId);
             EntitySetDocHandler target = this.retrieveWithKey(tgtSet, targetEntityKey);
-            // 該当データが存在しない場合は404
+            //If the corresponding data does not exist, 404
             if (source == null || target == null) {
                 throw PersoniumCoreException.OData.NOT_FOUND;
             }
 
-            // 取得したデータ同士の関連付けをチェックし、関連付いていないリンクを削除しようとした場合は400を返却する
+            //If the linkage between the acquired data is checked and an attempt to delete unlinked links is made, 400 is returned
             isExistsLinks(source, target, tgtSet);
             isExistsLinks(target, source, srcSet);
 
-            // Aliasをプロパティ名に変換する
+            //Convert Alias ​​to property name
             source.convertAliasToName(getMetadata());
             target.convertAliasToName(getMetadata());
 
-            // 両方のリンクを削除
+            //Delete both links
             String sourceEntitySetName = srcSet.getName();
             String targetEntitySetName = tgtSet.getName();
             linkUpdate(source, sourceEntitySetName, targetEntitySetName);
             linkUpdate(target, targetEntitySetName, sourceEntitySetName);
         } else {
-            // n:1の1のEdmAssociationEndを取得する
+            //Get an EdmAssociationEnd of 1: n: 1
             EdmAssociationEnd oneAssoc = getOneAssociationEnd(assoc);
-            // n:1の場合、1のデータのリンク情報から該当する項目を削除する
+            //In the case of n: 1, the relevant item is deleted from the link information of the data of 1
             deleteLinks(sourceEntityId, targetEntityKey, tgtSet, oneAssoc);
         }
     }
 
     /**
-     * 取得したデータ同士の関連付けをチェックし、関連付いていないリンクを削除しようとした場合は400を返却する.
-     * @param source ESから取得したチェック対象のEntitySetのデータ
-     * @param source ESから取得したリンク先のEntitySetのデータ
+     * If the linkage between the acquired data is checked, and if it is attempted to delete the unlinked link, 400 is returned.
+     * @ param source Data of the EntitySet to be checked acquired from ES
+     * @ param source Data of the linked EntitySet obtained from ES
      * @param entitySet EntitySet
      */
     private void isExistsLinks(EntitySetDocHandler source, EntitySetDocHandler target, EdmEntitySet entitySet) {
@@ -2153,41 +2153,41 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * N:Nのリンク情報を削除する.
-     * @param sourceEntityId リクエストURLにて指定されたEntity
-     * @param targetEntityKey リクエストBODYにて指定されたEntity
-     * @param tgtSet リクエストBODYにて指定されたEntityKey
+     * Delete the link information of N: N.
+     * @ param sourceEntityId Entity specified in the request URL
+     * @ param targetEntityKey Entity specified by request BODY
+     * @ param tgtSet EntityKey specified in request BODY
      */
     private void deleteLinks(OEntityId sourceEntityId, OEntityKey targetEntityKey, EdmEntitySet tgtSet) {
-        // 両者のidを取得する
+        //Acquire the id of both
         EntitySetDocHandler src = this.retrieveWithKey(sourceEntityId);
         EntitySetDocHandler tgt = this.retrieveWithKey(tgtSet, targetEntityKey);
 
-        // 該当データが存在しない場合は404
+        //If the corresponding data does not exist, 404
         if (src == null || tgt == null) {
             throw PersoniumCoreException.OData.NOT_FOUND;
         }
 
-        // リンクエンティティを削除する
+        //Delete link entity
         if (!deleteLinkEntity(src, tgt)) {
-            // 該当LINKが存在しない場合はエラーにする
+            //If the applicable LINK does not exist, it is set as an error
             throw PersoniumCoreException.OData.NOT_FOUND;
         }
     }
 
     /**
-     * N:Nのリンクエンティティを削除する.
-     * @param source リンク元エンティティ
-     * @param target リンク先エンティティ
-     * @return 削除正常時はtrue データが存在しない場合はfalseを返却
+     * Delete N: N link entity.
+     * @ param source source entity
+     * @ param target Linked Entity
+     * @return Delete Returns false if true data does not exist
      */
     private boolean deleteLinkEntity(EntitySetDocHandler source, EntitySetDocHandler target) {
-        // 削除すべきEsドキュメントを特定
+        //Identify the Es document to delete
         ODataLinkAccessor esType = this.getAccessorForLink();
         LinkDocHandler elh = this.getLinkDocHandler(source, target);
         String docid = elh.createLinkId();
 
-        // Link の存在確認
+        //Confirm existence of Link
         PersoniumGetResponse gRes = esType.get(docid);
         if (gRes != null && gRes.exists()) {
             esType.delete(elh);
@@ -2199,32 +2199,32 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     private void linkUpdate(EntitySetDocHandler tgt, String sourceEntitySetName, String unlinkEntitySetName) {
         Map<String, Object> links = tgt.getManyToOnelinkId();
 
-        // 登録用のlinksオブジェクトを生成して、登録対象のオブジェクトに設定する
+        //Create a link object for registration and set it as an object to be registered
         links.remove(getLinkskey(unlinkEntitySetName));
         tgt.setManyToOnelinkId(links);
 
-        // アクセサを取る
+        //Take accessors
         EntitySetAccessor esType = this.getAccessorForEntitySet(sourceEntitySetName);
         esType.update(tgt.getId(), tgt);
     }
 
     /**
-     * N:1のリンク情報を削除する.
-     * @param sourceEntityId リクエストURLにて指定されたEntity
-     * @param targetEntityKey リクエストBODYにて指定されたEntity
-     * @param tgtSet リクエストBODYにて指定されたEntityKey
-     * @param oneAssoc 1:Nの1のAssociation情報
+     * Delete the link information of N: 1.
+     * @ param sourceEntityId Entity specified in the request URL
+     * @ param targetEntityKey Entity specified by request BODY
+     * @ param tgtSet EntityKey specified in request BODY
+     * @ param oneAssoc 1: N 1's Association information
      */
     private void deleteLinks(OEntityId sourceEntityId,
             OEntityKey targetEntityKey,
             EdmEntitySet tgtSet,
             EdmAssociationEnd oneAssoc) {
-        // ESから1:NそれぞれのAssocのEntityを取得する
+        //Acquire Entity of each Assoc of 1: N from ES
         EntitySetDocHandler src;
         EntitySetDocHandler tgt;
         String linksKey = getLinkskey(oneAssoc.getType().getName());
         String sourceEntitySetName = null;
-        // 両者のidを取得する
+        //Acquire the id of both
         if (ODataProducerUtils.isParentEntity(sourceEntityId, oneAssoc.getType().getName())) {
             src = this.retrieveWithKey(sourceEntityId);
             tgt = this.retrieveWithKey(tgtSet, targetEntityKey);
@@ -2235,29 +2235,29 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             sourceEntitySetName = sourceEntityId.getEntitySetName();
         }
 
-        // 該当データが存在しない場合は404
+        //If the corresponding data does not exist, 404
         if (src == null || tgt == null) {
             throw PersoniumCoreException.OData.NOT_FOUND;
         }
 
-        // 削除対象のlinksが存在しない場合は404とする
+        //When no link to be deleted exists, it is set to 404
         Map<String, Object> links = tgt.getManyToOnelinkId();
         if (!src.getId().equals(links.get(linksKey))) {
             throw PersoniumCoreException.OData.NOT_FOUND;
         }
 
-        // 登録用のlinksオブジェクトを生成して、登録対象のオブジェクトに設定する
+        //Create a link object for registration and set it as an object to be registered
         links.remove(linksKey);
         tgt.setManyToOnelinkId(links);
 
-        // Aliasをプロパティ名に変換する
+        //Convert Alias ​​to property name
         src.convertAliasToName(getMetadata());
         tgt.convertAliasToName(getMetadata());
 
-        // アクセサを取る
+        //Take accessors
         EntitySetAccessor esType = this.getAccessorForEntitySet(sourceEntitySetName);
 
-        // 複合キーのEntityに対して$linksを削除した際に、同名の単一キーが存在する場合は409
+        //When deleting $ links for Entity of a composite key, if there is a single key of the same name 409
         boolean uniqueness = checkUniquenessEntityKey(sourceEntitySetName, tgt, linksKey, esType);
         if (!uniqueness) {
             String param = sourceEntitySetName + "('" + tgt.getStaticFields().get("Name") + "')";
@@ -2268,18 +2268,18 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 一意性チェックルーチン.
-     * @param entitySetName エンティティセット名
-     * @param tgt 更新対象のEntity
-     * @param esType 検索対象のESAccessor
-     * @param termQuery リンク検索クエリ
-     * @return Esの検索結果
+     * Uniqueness check routine.
+     * @ param entitySetName Entity set name
+     * @ param tgt Entity to be updated
+     * @ param esType ESAccessor to search for
+     * @ param termQuery link search query
+     * Search results for @return Es
      */
     protected long checkUniquenessEntityCount(final String entitySetName,
             final EntitySetDocHandler tgt,
             final EntitySetAccessor esType, Map<String, Object> termQuery) {
-        // 単一キーとなった同名のエンティティが存在するかどうかをチェック
-        // Staticフィールドの検索クエリを組み立てる
+        //Check if there is an entity with the same name as a single key
+        //Assemble search query of Static field
         List<Map<String, Object>> terms = new ArrayList<Map<String, Object>>();
         if (null != tgt && null != tgt.getStaticFields() && !tgt.getStaticFields().isEmpty()) {
             if (tgt.getStaticFields().get("__id") != null) {
@@ -2288,17 +2288,17 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             } else if (tgt.getStaticFields().get("Name") != null) {
                 terms.add(QueryMapFactory.termQuery(OEntityDocHandler.KEY_STATIC_FIELDS + ".Name"
                         + ".untouched", (String) tgt.getStaticFields().get("Name")));
-                // 別Typeに同じ名前の要素がある場合を考慮して、Typeを検索条件に追加
+                //Add Type to the search condition in consideration of the case where there is an element with the same name in another Type
                 terms.add(QueryMapFactory.termQuery("_type", (String) tgt.getType()));
             } else if (tgt.getStaticFields().get(ExtRole.EDM_TYPE_NAME) != null) {
                 terms.add(QueryMapFactory.termQuery(OEntityDocHandler.KEY_STATIC_FIELDS + "." + ExtRole.EDM_TYPE_NAME
                         + ".untouched", (String) tgt.getStaticFields().get(ExtRole.EDM_TYPE_NAME)));
-                // 別Typeに同じ名前の要素がある場合を考慮して、Typeを検索条件に追加
+                //Add Type to the search condition in consideration of the case where there is an element with the same name in another Type
                 terms.add(QueryMapFactory.termQuery("_type", (String) tgt.getType()));
             }
         }
 
-        // リンクのNull検索クエリを組み立てる
+        //Assemble a null search query for links
         terms.add(termQuery);
 
         Map<String, Object> query = QueryMapFactory.filteredQuery(null,
@@ -2310,24 +2310,24 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
         filter.put("query", query);
 
-        // 検索の実行
+        //Perform search
         return esType.count(filter);
     }
 
     /**
-     * リンク削除時の一意性チェック.
-     * @param entitySetName エンティティセット名
-     * @param tgt 更新対象のEntity
-     * @param linksKey リンク先のEntittyType名
-     * @param esType 検索対象のESAccessor
-     * @return true 一意性が保たれる | false 一意性が保たれない
+     * Uniqueness check at link deletion.
+     * @ param entitySetName Entity set name
+     * @ param tgt Entity to be updated
+     * @ param linksKey EntittyType name of the link
+     * @ param esType ESAccessor to search for
+     * @return true Uniqueness is preserved | false Uniqueness is not preserved
      */
     protected boolean checkUniquenessEntityKey(final String entitySetName, final EntitySetDocHandler tgt,
             final String linksKey, final EntitySetAccessor esType) {
 
-        // Linkフィールドの検索クエリを組み立てる
+        //Assemble the search query of Link field
         String linkKey = OEntityDocHandler.KEY_LINK + "." + linksKey;
-        // リンクのNull検索クエリを組み立てる
+        //Assemble a null search query for links
         long count = checkUniquenessEntityCount(entitySetName, tgt, esType, QueryMapFactory.missingFilter(linkKey));
         if (count != 0) {
             return false;
@@ -2336,20 +2336,20 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * リンク登録時の一意性チェック.
-     * @param entitySetName エンティティセット名
-     * @param src リンク元のEntity
-     * @param tgt 更新対象のEntity
-     * @param linksKey リンク先のEntittyType名
-     * @param esType 検索対象のESAccessor
-     * @return true 一意性が保たれる | false 一意性が保たれない
+     * Uniqueness check at link registration.
+     * @ param entitySetName Entity set name
+     * @ param src Entity of link source
+     * @ param tgt Entity to be updated
+     * @ param linksKey EntittyType name of the link
+     * @ param esType ESAccessor to search for
+     * @return true Uniqueness is preserved | false Uniqueness is not preserved
      */
     protected boolean checkUniquenessEntityKeyForAddLink(final String entitySetName,
             final EntitySetDocHandler src, final EntitySetDocHandler tgt,
             final String linksKey, final EntitySetAccessor esType) {
-        // 複合キーとなった同名のエンティティが存在するかどうかをチェック
+        //It is checked whether or not there is an entity of the same name as a compound key
 
-        // Linkフィールドの検索クエリを組み立てる
+        //Assemble the search query of Link field
         String linkKey = OEntityDocHandler.KEY_LINK + "." + linksKey;
         long count = checkUniquenessEntityCount(entitySetName,
                 tgt, esType, QueryMapFactory.termQuery(linkKey, src.getId()));
@@ -2359,7 +2359,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         return true;
     }
 
-    /** N:1の最大リンク取得件数. */
+    /** N: Number of maximum link acquisition number of 1.*/
     private static final int DEFAULT_TOP_VALUE = PersoniumUnitConfig.getTopQueryDefaultSize();
 
     /**
@@ -2391,7 +2391,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
         }
 
-        // srcTypeからtgtTypeへN:N Assocが定義されているか調べる
+        //From srcType to tgtType Check if N: N Assoc is defined
         String srcSetName = sourceEntity.getEntitySetName();
         EdmEntityType srcType = this.getMetadata().findEdmEntitySet(srcSetName).getType();
 
@@ -2400,14 +2400,14 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             throw PersoniumCoreException.OData.NO_SUCH_ASSOCIATION;
         }
 
-        // n:1かn:nの切り分けを行う
+        //Isolate n: 1 or n: n
         EdmAssociation assoc = navProp.getRelationship();
 
         String targetSetName = navProp.getToRole().getType().getName();
         List<OEntityId> oeids = new ArrayList<OEntityId>();
         EdmEntitySet tgtSet = this.getMetadata().findEdmEntitySet(targetSetName);
 
-        // ユーザデータの$links取得の場合、targetのEntityTypeの_idを取得する
+        //In case of acquiring $ links of user data, acquire _id of EntityType of target
         String targetEntityTypeId = null;
         if (src.getType().equals(UserDataODataProducer.USER_ODATA_NAMESPACE)) {
             targetEntityTypeId = getEntityTypeId(targetSetName);
@@ -2415,7 +2415,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
         if (assoc.getEnd1().getMultiplicity() == EdmMultiplicity.MANY
                 && assoc.getEnd2().getMultiplicity() == EdmMultiplicity.MANY) {
-            // N:Nのlinkの登録数の上限値1万に合わせて、最大1万件を取得する
+            //Acquire up to 10,000 cases according to the upper limit value of registration number of N: N link registration number of 10,000
             EntitySetAccessor tgtEsType = this.getAccessorForEntitySet(targetSetName);
             QueryInfo qi = QueryInfo.newBuilder().setTop(PersoniumUnitConfig.getTopQueryMaxSize())
                     .setInlineCount(InlineCount.NONE).build();
@@ -2429,16 +2429,16 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 && assoc.getEnd2().getMultiplicity() == EdmMultiplicity.ZERO_TO_ONE)
                 || (assoc.getEnd1().getMultiplicity() == EdmMultiplicity.ONE //NOPMD -To maintain readability
                 && assoc.getEnd2().getMultiplicity() == EdmMultiplicity.ONE)) {
-            // 片方のEdmAssociationEndを取得する
+            //Acquire one EdmAssociationEnd
             oeids = getOEntityIds(src, targetSetName, tgtSet);
 
         } else {
-            // n:1の1のEdmAssociationEndを取得する
+            //Get an EdmAssociationEnd of 1: n: 1
             EdmAssociationEnd oneAssoc = getOneAssociationEnd(assoc);
             String linksKey = this.getLinkskey(oneAssoc.getType().getName());
 
             if (ODataProducerUtils.isParentEntity(sourceEntity, oneAssoc.getType().getName())) {
-                // SOURCEが1の場合、NavPropで指定されたタイプのデータの{"l":{"entitySet":UUID}を検索する
+                //When SOURCE is 1, it searches for {"l": {"entitySet": UUID} of data of type specified by NavProp
                 Integer size = DEFAULT_TOP_VALUE;
                 Integer from = 0;
                 if (queryInfo != null) {
@@ -2449,30 +2449,30 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                         from = queryInfo.skip;
                     }
                 }
-                // EntityType / Node / Box / Cell の順で暗黙フィルタを指定
-                // リンク先情報をフィルターの先頭に指定することで絞り込みする。
+                //Specify an implicit filter in order of EntityType / Node / Box / Cell
+                //Filter by specifying the link destination information at the head of the filter.
                 List<Map<String, Object>> implicitFilters = getImplicitFilters(targetSetName);
                 implicitFilters.add(0, getLinkFieldsQuery(linksKey, src.getId()));
                 Map<String, Object> query = QueryMapFactory.mustQuery(implicitFilters);
                 Map<String, Object> filteredQuery = QueryMapFactory.filteredQuery(null, query);
-                // ソート条件を指定（セル制御オブジェクト：Name、UserOData：__idを使用）
-                // TODO セル制御オブジェクトにはNameプロパティをもたないものがあり、この場合ソート順が不定になる。
+                //Specify sort condition (Cell control object: Name, UserOData: use __ id)
+                //Some TODO cell control objects do not have a Name property, in which case the sort order is undefined.
                 List<Map<String, Object>> sort = new ArrayList<Map<String, Object>>();
                 sort.add(QueryMapFactory.sortQuery("s.Name.untouched", "asc"));
                 sort.add(QueryMapFactory.sortQuery("s.__id.untouched", "asc"));
-                // クエリ情報の集約
+                //Aggregate query information
                 Map<String, Object> filter = new HashMap<String, Object>();
                 filter.put("size", size);
                 filter.put("from", from);
                 filter.put("query", filteredQuery);
                 filter.put("sort", sort);
 
-                // 検索の実行
+                //Perform search
                 EntitySetAccessor esType = this.getAccessorForEntitySet(targetSetName);
                 PersoniumSearchHits sHits = esType.search(filter).hits();
                 oeids = getOEntityIds(sHits, targetSetName, tgtSet);
             } else {
-                // SOURCEがNの場合
+                //When SOURCE is N
                 oeids = getOEntityIds(src, targetSetName, tgtSet);
             }
         }
@@ -2481,14 +2481,14 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 検索結果からOEntityIdのListを生成して、取得する.
-     * @param sHits Linksの検索結果
-     * @param targetSetName リクエストURLにて指定されたNavPropのEntitySet名
-     * @param tgtSet リクエストURLにて指定されたNavPropのEdmEntitySet
-     * @return OEntityIdの一覧
+     * Generate and obtain a List of OEntityId from the search result.
+     * Search results for @ param sHits Links
+     * @ param targetSetName EntitySet name of NavProp specified in the request URL
+     * @ param tgtSet NavProp's EdmEntitySet specified in the request URL
+     * @return OEntityId list
      */
     private List<OEntityId> getOEntityIds(PersoniumSearchHits sHits, String targetSetName, EdmEntitySet tgtSet) {
-        // 検索結果からOEntityIdのListを生成する
+        //Generate a List of OEntityId from the search result
         List<OEntityId> oeids = new ArrayList<OEntityId>();
         if (sHits == null) {
             return oeids;
@@ -2502,11 +2502,11 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * N:1のNのデータからOEntityIdを生成して、取得する.
-     * @param src リクエストURLにて指定されたEntity
-     * @param targetSetName リクエストURLにて指定されたNavPropのEntitySet名
+     * N: Generates and obtains OEntityId from N's data.
+     * @ param src Entity specified in the request URL
+     * @ param targetSetName EntitySet name of NavProp specified in the request URL
      * @param tgtSet targetEdmEntitySet
-     * @return OEntityIdの一覧
+     * @return OEntityId list
      */
     private List<OEntityId> getOEntityIds(EntitySetDocHandler src, String targetSetName, EdmEntitySet tgtSet) {
         List<OEntityId> oeids = new ArrayList<OEntityId>();
@@ -2536,79 +2536,79 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * NavigationProperty経由の一覧取得を実行する.
-     * クエリ情報で指定がない場合はデフォルト件数(最大25件を返却する)
-     * @param entitySetName エンティティセット名
-     * @param entityKey エンティティキー
-     * @param navPropStr ナビゲーションプロパティ
-     * @param queryInfo クエリ情報
-     * @return 検索結果
+     * Execute list acquisition via NavigationProperty.
+     * If there is no specification in the query information, the default number of cases (return up to 25 items)
+     * @ param entitySetName Entity set name
+     * @ param entityKey entity key
+     * @ param navPropStr navigation property
+     * @ param queryInfo query information
+     * @return Search results
      */
     @Override
     public BaseResponse getNavProperty(final String entitySetName,
             final OEntityKey entityKey,
             final String navPropStr,
             final QueryInfo queryInfo) {
-        // 注）起点EntitySetの存在保証は予め呼び出し側で行われているため、ここではチェックしない。
-        // 注）不正なNavigationPropertiy指定も予め呼び出し側で確認・排除されている前提。
+        //Note) Since the existence guarantee of the origin EntitySet is done in advance on the caller side, it is not checked here.
+        //Note) Premise that illegal NavigationProperty specification is confirmed / eliminated beforehand on caller side.
 
-        // Src側Entityの取得
+        //Acquisition of Src side Entity
         EdmEntitySet sourceSet = this.getMetadata().findEdmEntitySet(entitySetName);
 
-        // TargetのEdmEntitySetを取得
+        //Acquire Target's EdmEntitySet
         EdmNavigationProperty navProp = sourceSet.getType().findNavigationProperty(navPropStr);
         String targetSetName = navProp.getToRole().getType().getName();
         EdmEntitySet targetSet = this.getMetadata().findEdmEntitySet(targetSetName);
 
-        // Targetのアクセサを取得
+        //Get Target's accessor
         EntitySetAccessor esType = this.getAccessorForEntitySet(targetSetName);
 
-        // EntitySetの取得を行う
+        //Get EntitySet
         EntitySetDocHandler source = this.retrieveWithKey(sourceSet, entityKey);
         if (source == null) {
             throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
         }
 
-        // ユーザデータの$links取得の場合、targetのEntityTypeの_idを取得する
+        //In case of acquiring $ links of user data, acquire _id of EntityType of target
         String targetEntityTypeId = null;
         if (source.getType().equals(UserDataODataProducer.USER_ODATA_NAMESPACE)) {
             targetEntityTypeId = getEntityTypeId(targetSetName);
         }
 
-        // 次にMultiplicityを確認する。
+        //Next, check the multiplicity.
         int cardinality = ODataUtils.Cardinality.forEdmNavigationProperty(navProp);
         Map<String, Object> linkQuery;
 
-        // Cardinalityパターンに応じて、Es検索クエリを作る。
+        //Depending on the Cardinality pattern, create an Es search query.
         if (ODataUtils.Cardinality.MANY_MANY == cardinality) {
-            // N:Nの場合はType[Link]を検索して、NavigationPropertyのID一覧を取得する
+            //In the case of N: N, Type [Link] is searched to acquire the ID list of NavigationProperty
             Map<String, Object> idsQuery = new HashMap<String, Object>();
-            // N:Nのlinkの登録数の上限値1万に合わせて、最大1万件を取得する
+            //Acquire up to 10,000 cases according to the upper limit value of registration number of N: N link registration number of 10,000
             QueryInfo qi = QueryInfo.newBuilder().setTop(PersoniumUnitConfig.getTopQueryMaxSize())
                     .setInlineCount(InlineCount.NONE).build();
 
             List<String> value = LinkDocHandler.query(this.getAccessorForLink(),
                     source, esType.getType(), targetEntityTypeId, qi);
 
-            // idが空の場合は空の検索結果を返却する
+            //If id is empty, return empty search result
             if (value.isEmpty()) {
                 return emptyResult(queryInfo, targetSet);
             }
 
-            // 取得したID一覧を検索条件として設定する
+            //And sets the acquired ID list as a search condition
             linkQuery = new HashMap<String, Object>();
 
             idsQuery.put("values", value);
             linkQuery.put("ids", idsQuery);
         } else if (ODataUtils.Cardinality.ONE_MANY == cardinality) {
-            // 1:Nの場合はリンク情報の検索条件を設定する
+            //In the case of 1: N, the search condition of the link information is set
             linkQuery = getLinkFieldsQuery(getLinkskey(entitySetName), source.getId());
 
         } else {
-            // N:1,1:1なら検索条件にNavigationPropertyのIDを設定する
-            // { "ids" : { "values" : ["リンク元EntityTypeの内部ID"] } }
+            //If N: 1, 1: 1, the ID of NavigationProperty is set as the search condition
+            //{"ids": {"values": ["Internal ID of linking source EntityType"]}}
             String linkId = (String) source.getManyToOnelinkId().get(getLinkskey(targetSetName));
-            // リンクが設定されていない場合は、空の検索結果を返却する
+            //If the link is not set, return empty search results
             if (linkId == null) {
                 return emptyResult(queryInfo, targetSet);
             }
@@ -2621,33 +2621,33 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             linkQuery.put("ids", idsQuery);
         }
 
-        // Cell / Box / Node / EntityTypeに基づいた暗黙フィルタの作成
+        //Create Implicit Filter based on Cell / Box / Node / EntityType
         List<Map<String, Object>> implicitFilters = getImplicitFilters(targetSetName);
 
-        // Link情報の検索条件を暗黙フィルタに追加
+        //Add search condition of Link information to implicit filter
         implicitFilters.add(linkQuery);
 
-        // implicitFIltersを渡して、検索を実行する
+        //Pass implicitFIlters and perform a search
         return execEntitiesRequest(queryInfo, targetSet, esType, implicitFilters);
     }
 
     /**
-     * リンクフィールドの検索クエリを取得する.
-     * @param entitySet エンティティセット名
-     * @param id リンクエンティティのID
-     * @return 検索クエリ
+     * Get search query of link field.
+     * @ param entitySet entity set name
+     * @ param id ID of the link entity
+     * @ return search query
      */
     public Map<String, Object> getLinkFieldsQuery(String entitySet, String id) {
-        // { "term" : { "l.リンク元EntityType名.untouched" : "リンク元EntityTypeの内部ID" }}
+        //{"term": {"l. linking source EntityType name. untouched": "internal ID of linking source EntityType"}}
         String linkKey = OEntityDocHandler.KEY_LINK + "." + entitySet;
         return QueryMapFactory.termQuery(linkKey, id);
     }
 
     /**
-     * 空の検索結果を返却する.
-     * @param queryInfo 検索条件
-     * @param targetSet 対象のEntitySet
-     * @return BaseResponse レスポンス
+     * Return empty search results.
+     * @ param queryInfo search condition
+     * @ param targetSet target EntitySet
+     * @return BaseResponse response
      */
     public BaseResponse emptyResult(final QueryInfo queryInfo, EdmEntitySet targetSet) {
         Integer count = null;
@@ -2667,8 +2667,8 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
      */
     @Override
     public void mergeEntity(final String entitySetName, final OEntity entity) {
-        // OData4jのODataProducerのこのメソッドは、構造的に主キー変更に耐えられないという欠陥があるため
-        // 本アプリでは使わない。
+        //Since this method of ODataProducer of OData 4 j has a defect that it can not withstand primary key change structurally
+        //It is not used in this application.
         throw new RuntimeException("Bug! Do not call this method. ");
     }
 
@@ -2677,7 +2677,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             final OEntityKey originalKey,
             final OEntityWrapper oEntityWrapper) {
 
-        // ロック取得
+        //Get lock
         Lock lock = this.lock();
         try {
             updateAndMergeEntity(entitySetName, originalKey, oEntityWrapper, true);
@@ -2691,9 +2691,9 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     public void updateEntity(final String entitySetName,
             final OEntityKey originalKey,
             final OEntityWrapper oEntityWrapper) {
-        // 注）EntitySetの存在保証は予め呼び出し側で行われているため、ここではチェックしない。
+        //Note) Since the existence guarantee of EntitySet is done on the calling side beforehand, it is not checked here.
 
-        // ロック取得
+        //Get lock
         Lock lock = this.lock();
         try {
             hasRelatedEntities(entitySetName, originalKey);
@@ -2706,7 +2706,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
     @Override
     public void updateEntity(final String entitySetName, final OEntity entity) {
-        // OData4jのODataProducerのこのメソッドは、構造的に主キー変更に耐えられないという欠陥があるため本アプリでは使わない。
+        //This method of OData 4j's ODataProducer is not used in this application because it has a defect that it can not withstand primary key change structurally.
         throw new RuntimeException("Bug! Do not call this method. ");
     }
 
@@ -2714,39 +2714,39 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             final OEntityKey originalKey,
             final OEntityWrapper oEntityWrapper,
             boolean isMergeMode) {
-        // まずは存在確認をする。存在しないときはNullが返ってくる。
+        //First of all check the existence. If it does not exist, Null is returned.
         EntitySetDocHandler oedhExisting = this.retrieveWithKey(oEntityWrapper.getEntitySet(), originalKey);
         if (oedhExisting == null) {
             throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
         }
 
-        // If-MatchヘッダとEtagの値が等しいかチェック
+        //Check if the value of If-Match header and Etag are equal
         ODataUtils.checkEtag(oEntityWrapper.getEtag(), oedhExisting);
 
-        // 呼び出し元がUUIDを取得できるよう引数のoEntityWrapperに破壊的にUUIDを詰めてあげる。
+        //To destroy the UUID in the oEntityWrapper of the argument so that the caller can get the UUID.
         oEntityWrapper.setUuid(oedhExisting.getId());
         EntitySetAccessor esType = this.getAccessorForEntitySet(entitySetName);
         EntitySetDocHandler oedhNew = getUpdateDocHanlder(esType.getType(), oEntityWrapper);
 
-        // 変更後データの一意性チェックを行う。
+        //Perform uniqueness check of changed data.
         ODataProducerUtils.checkUniqueness(this, oEntityWrapper,
                 oedhExisting.createOEntity(oEntityWrapper.getEntitySet(), this.getMetadata(), null), originalKey);
 
-        // Cell, Box, Node, EntityTypeの紐付
+        //Pegged with Cell, Box, Node, EntityType
         oedhNew.setCellId(this.getCellId());
         oedhNew.setBoxId(this.getBoxId());
         oedhNew.setNodeId(this.getNodeId());
         oedhNew.setEntityTypeId(this.getEntityTypeId(entitySetName));
         oedhNew.setManyToOnelinkId(oedhExisting.getManyToOnelinkId());
 
-        // 更新前のリンク情報を保管しておく
-        // oedhExistingのリンク情報のMapオブジェクトとoedhNewのリンク情報のMapオブジェクトは同じものを使用している。
-        // これにより、setLinksFromOEntity()でoedhNewのリンク情報を更新するとoedhExistingのリンク情報も更新されてしまう。
-        // このため、更新前のリンク情報を保持しておく必要があった。
+        //Save link information before updating
+        //The Map object of link information of oedhExisting and the Map object of link information of oedhNew use the same one.
+        //By doing this, if you update link information of oedhNew with setLinksFromOEntity (), the link information of oedhExisting will also be updated.
+        //For this reason, it is necessary to hold link information before updating.
         Map<String, Object> originalManeToNoelinkId = new HashMap<String, Object>();
         originalManeToNoelinkId.putAll(oedhExisting.getManyToOnelinkId());
 
-        // 複合キーでNTKPの項目(ex. _EntityType.Name)があれば、リンク情報を設定する
+        //If there is an NTKP item (ex. _EntityType.Name) with a compound key, link information is set
         if (KeyType.COMPLEX.equals(oEntityWrapper.getEntityKey().getKeyType())) {
             try {
                 setLinksFromOEntity(oEntityWrapper, oedhNew);
@@ -2755,36 +2755,36 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             }
         }
 
-        // __publishedは更新しないため、ESから取得した値を使用する
+        //Since __published is not updated, use the value obtained from ES
         oedhNew.setPublished(oedhExisting.getPublished());
 
-        // サポートする変更かどうかをチェックする
+        //Check if changes are supported
         checkAcceptableModification(entitySetName, oedhExisting, originalManeToNoelinkId, oedhNew);
 
-        // 更新前処理
+        //Pre-update processing
         this.beforeUpdate(entitySetName, originalKey, oedhNew);
 
         if (isMergeMode) {
-            // マージモードの場合は、既存のドキュメントにリクエストのドキュメントをマージする
+            //In the merge mode, merge the document of the request into the existing document
             oedhExisting.convertAliasToName(getMetadata());
             ODataProducerUtils.mergeFields(oedhExisting, oedhNew);
 
-            // スキーマ内のプロパティ数とデータ内のdynamicプロパティ数が制限値を超えないかチェック
+            //Check whether the number of properties in the schema and the number of dynamic properties in the data do not exceed the limit
             int propNum = ODataUtils.getStaticPropertyCount(this.getMetadata(), entitySetName);
             checkPropertySize(propNum + oedhNew.getDynamicFields().size());
         }
 
-        // ユーザデータ更新の場合は__idは更新しない
+        //__Id is not updated for user data update
         Map<String, Object> staticFields = oedhNew.getStaticFields();
         if (staticFields.containsKey("__id") && KeyType.SINGLE.equals(originalKey.getKeyType())) {
-            // ユーザデータは現在単一キーなので複合キーの対応はしない
-            // TODO 今後、ユーザデータを複合キーにする場合、複合キーの対応が必要
+            //Since user data is currently single key, it does not correspond to compound key
+            //TODO In the future, when using user data as a compound key, it is necessary to handle compound key
             staticFields.put("__id", originalKey.asSingleValue());
             oedhNew.setStaticFields(staticFields);
         }
 
-        // hidden fieldsの情報とUnitUser名を更新する。
-        // ただし、Account更新の場合は、HashedCredentialを置換しないように対処
+        //Update hidden fields information and UnitUser name.
+        //However, in case of updating Account, it is necessary not to replace HashedCredential.
         String hashedCredentialValue = (String) oedhNew.getHiddenFields().get("HashedCredential");
         oedhNew.getHiddenFields().putAll(oedhExisting.getHiddenFields());
         if (hashedCredentialValue != null) {
@@ -2792,19 +2792,19 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         }
         oedhNew.resolveUnitUserName(oedhExisting.getHiddenFields());
 
-        // DynamicFieldの内容をコピーする
+        //Copy contents of DynamicField
         if (oedhExisting.getDynamicFields() != null) {
             oedhNew.getDynamicFields().putAll(oedhExisting.getDynamicFields());
         }
 
-        // ACL情報をコピーする
+        //Copy ACL information
         if (oedhExisting.getAclFields() != null) {
             oedhNew.getAclFields().putAll(oedhExisting.getAclFields());
         }
 
-        // esJsonをESに保存する
+        //Save esJson in ES
         PersoniumIndexResponse idxRes = null;
-        // リクエストのEtag指定から検査用versionを取り出す（Etag指定が無い場合はNull）
+        //Retrieve verification version from Etag specification of request (null if there is no Etag specification)
         Long version = oedhNew.getVersion();
         if (version == null || version < 0) {
             idxRes = esType.update(oedhNew.getId(), oedhNew);
@@ -2812,34 +2812,34 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             idxRes = esType.update(oedhNew.getId(), oedhNew, version);
         }
 
-        // 更新後の処理
+        //Processing after updating
         this.afterUpdate();
 
-        // Resource層でETag返還ができるよう、レスポンスから得たVersion情報を、引数のOEntityWrapperに破壊的に設定
+        //Set Version information obtained from response destructively to argument OEntityWrapper so that ETag can be returned by Resource layer
         oedhNew.setVersion(idxRes.version());
         oEntityWrapper.setEtag(oedhNew.createEtag());
     }
 
     /**
-     * Accountのパスワード変更を実行する.
+     * Perform password change of Account.
      * @param entitySet entitySetName
-     * @param originalKey 更新対象キー
+     * @ param originalKey Key to be updated
      * @param dcCredHeader dcCredHeader
      */
     public void updatePassword(final EdmEntitySet entitySet,
             final OEntityKey originalKey, final String dcCredHeader) {
         Lock lock = lock();
         try {
-            // ESから変更するAccount情報を取得する
+            //Acquire Account information to be changed from ES
             EntitySetDocHandler oedhNew = this.retrieveWithKey(entitySet, originalKey);
             if (oedhNew == null) {
                 throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
             }
-            // 取得したAccountのパスワードと更新日を上書きする
+            //Overwrite password and update date of acquired Account
             ODataProducerUtils.createRequestPassword(oedhNew, dcCredHeader);
 
-            // esJsonをESに保存する
-            // Accountのバージョン情報を取り出す
+            //Save esJson in ES
+            //Retrieve version information of Account
             EntitySetAccessor esType = this.getAccessorForEntitySet(entitySet.getName());
             Long version = oedhNew.getVersion();
             esType.update(oedhNew.getId(), oedhNew, version);
@@ -2850,36 +2850,36 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * Accountの最終ログイン時刻を更新する.
+     * Update last login time of Account.
      * @param entitySet entitySetName
-     * @param originalKey 更新対象キー
-     * @param accountId アカウントのID
+     * @ param originalKey Key to be updated
+     * @ param accountId Account ID
      */
     public void updateLastAuthenticated(final EdmEntitySet entitySet, final OEntityKey originalKey, String accountId) {
         Lock lock = lock();
         try {
-            // 現在時刻を取得
+            //Get current time
             long nowTimeMillis = System.currentTimeMillis();
 
-            // ESから変更するAccount情報を取得する
+            //Acquire Account information to be changed from ES
             EntitySetAccessor esType = this.getAccessorForEntitySet(entitySet.getName());
             PersoniumGetResponse personiumGetResponseNew = esType.get(accountId);
             if (personiumGetResponseNew == null) {
-                // 認証から最終ログイン時刻更新までにAccountが削除された場合は、更新対象が存在しないため、正常終了する。
+                //When the Account is deleted from the authentication until the last login time update, since there is no update object, the process ends normally.
                 PersoniumCoreLog.Auth.ACCOUNT_ALREADY_DELETED.params(originalKey.toKeyString()).writeLog();
                 return;
             }
             EntitySetDocHandler oedhNew = new OEntityDocHandler(personiumGetResponseNew);
-            // 取得したAccountの最終ログイン日時を上書きする
+            //Overwrite the last login date and time of the acquired Account
             Map<String, Object> staticFields = oedhNew.getStaticFields();
             staticFields.put("LastAuthenticated", nowTimeMillis);
             oedhNew.setStaticFields(staticFields);
-            // 本メソッドが呼ばれるのは認証成功時なので、Accountの更新ではないとみなしている。
-            // このため、Accountの__updatedは上書きしていない。
-            // また、ElasticsearchのデータをUpdateする際、ETagが置き換わるが、こちらは置き換わってよいものとする。
+            //Since this method is called at the time of authentication success, it is regarded as not updating the Account.
+            //For this reason, Account's __updated has not been overwritten.
+            //Also, when updating the Elasticsearch data, ETag is replaced, but here it is acceptable to replace it.
 
-            // esJsonをESに保存する
-            // Accountのバージョン情報を取り出す
+            //Save esJson in ES
+            //Retrieve version information of Account
             Long version = oedhNew.getVersion();
             esType.update(oedhNew.getId(), oedhNew, version);
         } finally {
@@ -2913,9 +2913,9 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
         EdmEntitySet eSet = this.getMetadata().findEdmEntitySet(entitySetName);
         if (eSet != null) {
-            // 注）EntitySetの存在保証は予め呼び出し側で行われているため、ここではチェックしない。
+            //Note) Since the existence guarantee of EntitySet is done on the calling side beforehand, it is not checked here.
             EntitySetAccessor esType = this.getAccessorForEntitySet(entitySetName);
-            // Cell / Box / Node / EntityTypeに基づいた暗黙フィルタの作成
+            //Create Implicit Filter based on Cell / Box / Node / EntityType
             List<Map<String, Object>> implicitFilters = getImplicitFilters(entitySetName);
             ODataQueryHandler visitor = getODataQueryHandler(queryInfo, eSet.getType(), implicitFilters);
             Map<String, Object> source = visitor.getSource();
@@ -2945,12 +2945,12 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         long tmpCount;
         try {
             EntitySetDocHandler src = this.retrieveWithKey(oeId);
-            // 1対Nのリンクを持つデータを検索するクエリを作成
+            //Create a query to retrieve data with one to N links
             Map<String, Object> key = getLinkFieldsQuery(getLinkskey(toEntitySetName), src.getId());
             List<Map<String, Object>> filters = getImplicitFilters(fromEntitySetName);
             filters.add(key);
 
-            // 条件検索を組み立てる
+            //Assemble condition search
             EdmEntityType type = getMetadata().findEdmEntitySet(fromEntitySetName).getType();
             ODataQueryHandler visitor = getODataQueryHandler(query, type, filters);
             Map<String, Object> source = visitor.getSource();
@@ -2970,34 +2970,34 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * NavigationProperty経由でエンティティを一括登録する.
-     * @param npBulkContexts 一括登録のコンテキスト
-     * @param npBulkRequests エンティティ一括登録用のリクエスト情報（bulkCreateEntity用）
+     * Register entities collectively via NavigationProperty.
+     * @ param npBulkContexts Context of bulk registration
+     * @ param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
      */
     public void bulkCreateEntityViaNavigationProperty(
             List<NavigationPropertyBulkContext> npBulkContexts,
             LinkedHashMap<String, BulkRequest> npBulkRequests) {
 
-        // ユニーク性チェックのためまずロックを行う
+        //Lock first for uniqueness check
         Lock lock = this.lock();
         log.debug("bulkCreateEntityViaNavigationProperty get lock");
         try {
-            // リンク元のデータを一括検索する
+            //Collectively search the link source data
             if (!setLinkSourcesToBulkContexts(npBulkContexts)) {
-                // 処理対象のデータが存在しないとき
+                //When data to be processed does not exist
                 return;
             }
 
-            // リンク元・先のデータチェックや、既にリンクが作成済みかなどの、データ登録の前提条件をチェックする
+            //Check the prerequisites for data registration, such as checking the link source / destination data or already creating the link
             int contextIndex = 0;
             for (BulkRequest npBulkRequest : npBulkRequests.values()) {
                 NavigationPropertyBulkContext npBulkContext = npBulkContexts.get(contextIndex++);
                 if (!npBulkContext.isError()) {
                     try {
-                        // リンクタイプを設定する
+                        //Set the link type
                         setNavigationPropertyLinkType(npBulkContext);
 
-                        // データチェックをする
+                        //Perform data check
                         validateLinkForNavigationPropertyContext(npBulkContext);
                         if (isConflictLinks(npBulkContexts, npBulkContext)) {
                             npBulkRequest.setError(PersoniumCoreException.OData.CONFLICT_LINKS);
@@ -3010,40 +3010,40 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 }
             }
 
-            // $linksの上限値チェック
+            //Check upper limit of $ links
             checkLinksUpperLimitRecord(npBulkContexts, npBulkRequests);
 
-            // エンティティを登録する
+            //Register an entity
             List<EntityResponse> resultList = bulkCreateEntityWithoutLock(getMetadata(), npBulkRequests, getCellId());
 
-            // エンティティ登録の結果をもとに、一括登録のコンテキストを更新する
+            //Based on the result of entity registration, update the context of collective registration
             int index = 0;
             contextIndex = 0;
             for (BulkRequest request : npBulkRequests.values()) {
                 NavigationPropertyBulkContext npBulkContext = npBulkContexts.get(contextIndex++);
                 Exception exception = request.getError();
                 if (exception != null) {
-                    // エンティティの登録時に発生したExceptionを設定する
+                    //Set Exception that occurred when registering an entity
                     npBulkContext.setException(exception);
                 } else {
-                    // Etagなどの情報が付与されるため、登録したエンティティでコンテキストを更新する
+                    //Since information such as Etag is given, the context is updated at the registered entity
                     EntityResponse entityResponse = resultList.get(index);
                     OEntityWrapper entity = (OEntityWrapper) entityResponse.getEntity();
                     npBulkContext.setOEntityWrapper(entity);
                     npBulkContext.setEntityResponse(entityResponse);
 
-                    // 登録したエンティティの情報をコンテキストに設定
+                    //Set information of registered entity to context
                     EntitySetDocHandler targetDocHandler = request.getDocHandler();
                     targetDocHandler.setId(entity.getUuid());
                     npBulkContext.setTargetDocHandler(targetDocHandler);
 
-                    // リンク情報をコンテキストに設定する
+                    //Set link information as context
                     setNavigationPropertyContext(npBulkContext);
                     index++;
                 }
             }
 
-            // リンク情報を登録する
+            //Register link information
             bulkCreateLinks(npBulkContexts, getCellId());
         } finally {
             lock.release();
@@ -3052,22 +3052,22 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * NavigationProperty経由でエンティティを一括登録する際のリンク数の上限値チェックを行う.
-     * @param npBulkContexts 一括登録のコンテキスト
-     * @param npBulkRequests エンティティ一括登録用のリクエスト情報（bulkCreateEntity用）
+     * Check the upper limit of the number of links when registering entities collectively via NavigationProperty.
+     * @ param npBulkContexts Context of bulk registration
+     * @ param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
      */
     public void checkLinksUpperLimitRecord(List<NavigationPropertyBulkContext> npBulkContexts,
             LinkedHashMap<String, BulkRequest> npBulkRequests) {
     }
 
     /**
-     * ソース側のエンティティを一括検索してNavigationPropertyBulkContextに設定する.
-     * @param npBulkContexts コンテキスト
-     * @return true: 正常に処理が終了 / false: 処理対象のデータが存在しない
+     * Search entities on the source side in batch and set them as NavigationPropertyBulkContext.
+     * @ param npBulkContexts context
+     * @return true: Processing is completed normally / false: Data to be processed does not exist
      */
     @SuppressWarnings("unchecked")
     private boolean setLinkSourcesToBulkContexts(List<NavigationPropertyBulkContext> npBulkContexts) {
-        // 一括検索用に一時的にキーとコンテキストのMapを作成
+        //Create key and context Map temporarily for bulk search
         Map<String, List<NavigationPropertyBulkContext>> npBulkContextMap = new HashMap<String,
                 List<NavigationPropertyBulkContext>>();
         for (NavigationPropertyBulkContext npBulkContext : npBulkContexts) {
@@ -3081,24 +3081,24 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             }
         }
 
-        // リンク元のデータを一括検索する
+        //Collectively search the link source data
         Map<String, Object> searchQuery = getBulkSearchQuery(npBulkContexts);
         if (searchQuery == null) {
-            // 処理対象のデータが存在しないとき
+            //When data to be processed does not exist
             return false;
         }
         DataSourceAccessor accessor = getAccessorForBatch();
         PersoniumSearchResponse searchResponse = accessor.searchForIndex(getCellId(), searchQuery);
         if (searchResponse.getHits().getCount() != 0) {
             for (PersoniumSearchHit hit : searchResponse.getHits().getHits()) {
-                // TODO 複合主キー対応
+                //Compatible with TODO complex primary key
                 HashMap<String, Object> staticFields = (HashMap<String, Object>) hit.getSource()
                         .get(OEntityDocHandler.KEY_STATIC_FIELDS);
                 String entityTypeId = (String) hit.getSource().get(OEntityDocHandler.KEY_ENTITY_ID);
                 String key = entityTypeId + ":" + (String) staticFields.get("__id");
                 List<NavigationPropertyBulkContext> targetContexts = npBulkContextMap.get(key);
                 for (NavigationPropertyBulkContext ctx : targetContexts) {
-                    // リンク元のデータをコンテキストに設定する
+                    //Set the link source data to the context
                     Map<String, String> entityTypeIds = getEntityTypeIds();
                     for (Map.Entry<String, String> entry : entityTypeIds.entrySet()) {
                         String tmpEntityTypeName = entry.getKey();
@@ -3116,9 +3116,9 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * バルク登録を実行する.
-     * @param metadata スキーマ情報
-     * @param bulkRequests 登録するBatchCreateRequestのリスト
+     * Perform bulk registration.
+     * @ param metadata schema information
+     * @ param bulkRequests List of BatchCreateRequests to register
      * @param cellId cellId
      * @return EntitiesResponse
      */
@@ -3126,7 +3126,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             EdmDataServices metadata,
             LinkedHashMap<String, BulkRequest> bulkRequests,
             String cellId) {
-        // ロック取得
+        //Get lock
         Lock lock = this.lock();
         log.debug("lock");
         try {
@@ -3138,10 +3138,10 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * バルク登録を実行する.
-     * このメソッドはロックを取得しないため、必ず呼び出しもとでロックを取得・解放すること.
-     * @param metadata スキーマ情報
-     * @param bulkRequests 登録するBatchCreateRequestのリスト
+     * Perform bulk registration.
+     * Since this method does not acquire locks, be sure to acquire / release locks at the calling side.
+     * @ param metadata schema information
+     * @ param bulkRequests List of BatchCreateRequests to register
      * @param cellId cellId
      * @return EntitiesResponse
      */
@@ -3153,7 +3153,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
         DataSourceAccessor accessor = getAccessorForBatch();
 
-        // elasticsearchに主キーが衝突するデータがあればエラー情報を設定する
+        //If there is data whose primary key conflicts with elasticsearch, error information is set
         Map<String, Object> searchQuery = getBulkConflictCheckQuery(bulkRequests);
         if (searchQuery == null) {
             return response;
@@ -3161,7 +3161,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         PersoniumSearchResponse searchResponse = accessor.searchForIndex(cellId, searchQuery);
         if (searchResponse.getHits().getCount() != 0) {
             for (PersoniumSearchHit hit : searchResponse.getHits().getHits()) {
-                // TODO 複合主キー対応
+                //Compatible with TODO complex primary key
                 HashMap<String, Object> staticFields = (HashMap<String, Object>) hit.getSource()
                         .get(OEntityDocHandler.KEY_STATIC_FIELDS);
                 String entityTypeId = (String) hit.getSource().get(OEntityDocHandler.KEY_ENTITY_ID);
@@ -3172,7 +3172,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
         beforeBulkCreate(bulkRequests);
 
-        // 登録対象のみのリクエストデータを生成する
+        //Generate request data only for registration target
         Map<String, String> keyMap = new HashMap<String, String>();
         List<EsBulkRequest> esBulkRequest = new ArrayList<EsBulkRequest>();
         for (Entry<String, BulkRequest> request : bulkRequests.entrySet()) {
@@ -3185,14 +3185,14 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
         if (esBulkRequest.size() == 0) {
             return response;
         }
-        // 一括登録を実行する
+        //Execute collective registration
         try {
             PersoniumBulkResponse bulkResponse = accessor.bulkCreate(esBulkRequest, cellId);
-            // EntitiesResponse組み立て
+            //EntitiesResponse assembly
             for (PersoniumBulkItemResponse itemResponse : bulkResponse.items()) {
                 String key = keyMap.get(itemResponse.getId());
                 if (itemResponse.isFailed()) {
-                    // バルク内でエラーが発生していた場合はエラーをセットする
+                    //If an error has occurred in the bulk, set an error
                     bulkRequests.get(key).setError(new ServerErrorException("failed to store to es"));
                 } else {
                     bulkRequests.get(key).getDocHandler().setVersion(itemResponse.version());
@@ -3205,7 +3205,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 }
             }
         } catch (PersoniumCoreException e) {
-            // バルクリクエストが失敗した場合は、バルクで登録に使用したデータすべてにエラーを設定する
+            //If the bulk request fails, set an error in all data used for registration in bulk
             PersoniumCoreLog.OData.BULK_INSERT_FAIL.reason(e).writeLog();
             for (EsBulkRequest request : esBulkRequest) {
                 HashMap<String, Object> staticFields = (HashMap<String, Object>) request.getSource()
@@ -3214,7 +3214,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 bulkRequests.get(entityTypeId + ":" + (String) staticFields.get("__id")).setError(e);
             }
         } catch (EsClientException e) {
-            // バルクリクエストが失敗した場合は、バルクで登録に使用したデータすべてにエラーを設定する
+            //If the bulk request fails, set an error in all data used for registration in bulk
             PersoniumCoreLog.OData.BULK_INSERT_FAIL.reason(e).writeLog();
             for (EsBulkRequest request : esBulkRequest) {
                 HashMap<String, Object> staticFields = (HashMap<String, Object>) request.getSource()
@@ -3228,26 +3228,26 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * bulkRequestsに含まれるエンティティの一括検索用のクエリを作成する.
-     * @param bulkRequests 一括検索するリクエストのリスト
-     * @return 検索クエリ
+     * Create a query for bulk search of entities contained in bulkRequests.
+     * @ param bulkRequests List of requests to bulk retrieve
+     * @ return search query
      */
     private Map<String, Object> getBulkConflictCheckQuery(LinkedHashMap<String, BulkRequest> bulkRequests) {
-        // 検索条件のためのHash初期化
+        //Hash initialization for search conditions
         List<Object> orList = new ArrayList<Object>();
 
-        // データ競合確認のためのクエリを生成する
+        //Generate a query for data conflict check
         for (Entry<String, BulkRequest> request : bulkRequests.entrySet()) {
-            // エラーデータは無視する
+            //Ignore error data
             if (request.getValue().getError() != null) {
                 continue;
             }
-            // TODO スキーマ情報の主キーから生成、ユニークキーのチェック、NTKP対応
+            //Generated from primary key of TODO schema information, check of unique key, NTKP compliant
             List<Object> andList = new ArrayList<Object>();
             Map<String, Object> and = new HashMap<String, Object>();
             andList.add(QueryMapFactory.termFilter(OEntityDocHandler.KEY_STATIC_FIELDS + ".__id.untouched",
                     (String) request.getValue().getDocHandler().getStaticFields().get("__id"), false));
-            // タイプの指定
+            //Type specification
             andList.add(QueryMapFactory.termQuery("_type",
                     request.getValue().getDocHandler().getType()));
             andList.add(QueryMapFactory.termQuery(OEntityDocHandler.KEY_ENTITY_ID,
@@ -3255,7 +3255,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             and.put("and", andList);
             orList.add(and);
         }
-        // 対象データが存在しないとき
+        //When target data does not exist
         if (orList.size() == 0) {
             return null;
         }
@@ -3264,36 +3264,36 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * コンテキストに含まれるソース側エンティティの一括検索用のクエリを作成する.
-     * @param bulkContexts コンテキスト
-     * @return 検索クエリ
+     * Create a query for collective search of source side entities included in the context.
+     * @ param bulkContexts context
+     * @ return search query
      */
     private Map<String, Object> getBulkSearchQuery(List<NavigationPropertyBulkContext> bulkContexts) {
-        // 検索条件のためのHash初期化
+        //Hash initialization for search conditions
         List<Object> orList = new ArrayList<Object>();
 
-        // 重複クエリを排除する
+        //Eliminate duplicate queries
         Set<List<Object>> registeredQuery = new HashSet<List<Object>>();
 
-        // データ競合確認のためのクエリを生成する
+        //Generate a query for data conflict check
         for (NavigationPropertyBulkContext bulkContext : bulkContexts) {
             if (bulkContext.isError()) {
-                // エラーデータは無視する
+                //Ignore error data
                 continue;
             }
 
-            // TODO スキーマ情報の主キーから生成、ユニークキーのチェック、NTKP対応
+            //Generated from primary key of TODO schema information, check of unique key, NTKP compliant
             List<Object> andList = new ArrayList<Object>();
             Map<String, Object> and = new HashMap<String, Object>();
             andList.add(QueryMapFactory.termFilter(OEntityDocHandler.KEY_STATIC_FIELDS + ".__id.untouched",
                     bulkContext.getSrcEntityId().getEntityKey().asSingleValue().toString(), false));
-            // タイプの指定
+            //Type specification
             andList.add(QueryMapFactory.termQuery("_type",
                     UserDataODataProducer.USER_ODATA_NAMESPACE));
             andList.add(QueryMapFactory.termQuery(OEntityDocHandler.KEY_ENTITY_ID,
                     getLinkskey(bulkContext.getSrcEntityId().getEntitySetName())));
 
-            // 重複クエリを排除する
+            //Eliminate duplicate queries
             if (registeredQuery.contains(andList)) {
                 continue;
             }
@@ -3301,7 +3301,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             and.put("and", andList);
             orList.add(and);
         }
-        // 対象データが存在しないとき
+        //When target data does not exist
         if (orList.size() == 0) {
             return null;
         }
@@ -3309,18 +3309,18 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * 引数で渡されたorフィルタクエリにCell、Box,NodeIDの検索条件などを付加する.
-     * @param orList orフィルタクエリ
-     * @return 検索クエリ
+     * Attach the search condition of Cell, Box, NodeID etc to the or filter query passed as argument.
+     * @ param orList or filter query
+     * @ return search query
      */
     private Map<String, Object> composeQueryWithOrFilter(List<Object> orList) {
-        // 検索条件のためのHash初期化
+        //Hash initialization for search conditions
         Map<String, Object> searchQuery = new HashMap<String, Object>();
         Map<String, Object> filter = new HashMap<String, Object>();
 
         filter.put("or", orList);
 
-        // Cell、Box,NodeIDの検索条件を追加
+        //Add search condition of Cell, Box, NodeID
         Map<String, Object> query = QueryMapFactory.filteredQuery(null,
                 QueryMapFactory.mustQuery(getImplicitFilters(null)));
 
@@ -3375,14 +3375,14 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * バルク登録を実行する.
-     * @param bulkContexts 登録するNavigationPropertyBulkContextのリスト
+     * Perform bulk registration.
+     * @ param bulkContexts List of NavigationPropertyBulkContext to register
      * @param cellId cellId
      */
     private void bulkCreateLinks(
             List<NavigationPropertyBulkContext> bulkContexts,
             String cellId) {
-        // 登録対象のみのリクエストデータを生成する
+        //Generate request data only for registration target
         List<EsBulkRequest> esBulkRequest = new ArrayList<EsBulkRequest>();
         List<EntitySetDocHandler> adsBulkEntityRequest = new ArrayList<EntitySetDocHandler>();
         List<LinkDocHandler> adsBulkLinkRequest = new ArrayList<LinkDocHandler>();
@@ -3431,7 +3431,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             return;
         }
 
-        // 一括登録を実行する
+        //Execute collective registration
         DataSourceAccessor accessor = getAccessorForBatch();
         try {
             int responseIndex = 0;
@@ -3473,7 +3473,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 }
             }
         } catch (EsClientException e) {
-            // バルクリクエストが失敗した場合は、バルクで登録に使用したデータすべてにエラーを設定する
+            //If the bulk request fails, set an error in all data used for registration in bulk
             for (NavigationPropertyBulkContext context : bulkContexts) {
                 if (context.isError()) {
                     continue;
@@ -3484,18 +3484,18 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * リクエストボディの要素数をチェックする.
-     * @param propNum プロパティ数
+     * Check the number of elements of the request body.
+     * @ param propNum property number
      */
     public void checkPropertySize(int propNum) {
     }
 
     /**
-     * サポートする変更かどうかをチェックする.
-     * @param entitySetName エンティティセット名
-     * @param oedhExisting データストアに存在するデータ
-     * @param originalManeToNoelinkId データストアに存在するリンク情報
-     * @param oedhNew リクエストデータ
+     * Check if it supports change.
+     * @ param entitySetName Entity set name
+     * @ param oedh Existing data existing in the data store
+     * @ param originalManeToNoelinkId Link information existing in the data store
+     * @ param oedhNew request data
      */
     protected void checkAcceptableModification(String entitySetName,
             EntitySetDocHandler oedhExisting,
@@ -3505,12 +3505,12 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
 
 
     /**
-     * 引数で渡されたEntitySetのキー名を参照しているドキュメントがあるかどうかを確認する.
+     * It checks whether there is a document that refers to the key name of the EntitySet passed as an argument.
      * <p>
-     * 更新対象のドキュメントを名前（EntitySetのキー名）で参照している場合が考えられる。 このような場合、ドキュメント更新前に参照元のドキュメントが存在しているかどうかを確認する必要がある。
+     * It is conceivable that the document to be updated is referred to by name (key name of EntitySet). In such a case, it is necessary to confirm whether or not the reference source document exists before updating the document.
      * </p>
-     * @param entitySetName リクエストURLに指定された処理対象のEntitySet名
-     * @param entityKey リクエストURLに指定された処理対象EntitySetのキー名
+     * @ param entitySetName EntitySet name to be processed specified in the request URL
+     * @ param entityKey The key name of the processing target EntitySet specified in the request URL
      */
     protected void hasRelatedEntities(String entitySetName, OEntityKey entityKey) {
     }

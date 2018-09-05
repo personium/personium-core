@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 /**
- * ODataのAPIに対して Elastic Search のバックエンドを操作するクラス群.
- * このパッケージ内のクラスは実際には正しく実装していません。
+ * A set of classes that manipulate the Elastic Search backend against the OData API.
+ * Classes in this package are not actually implemented correctly.
  */
 package io.personium.core.model.impl.es.odata;
 

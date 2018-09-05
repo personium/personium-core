@@ -48,15 +48,15 @@ import org.odata4j.producer.resources.OptionsQueryParser;
 import io.personium.core.PersoniumCoreException;
 
 /**
- * PersoniumOptionsQueryParserクラス.
- * OData4jのライブラリのソースよりコピー
+ * PersoniumOptionsQueryParser class.
+ * Copy from OData4j library source
  */
 public final class PersoniumOptionsQueryParser extends OptionsQueryParser {
 
     /**
-     * Orderbyのクエリをパースする.
-     * @param orderBy orderbyクエリの値
-     * @return パース結果
+     * Parsing the Orderby query.
+     * @ param orderBy value of the orderby query
+     * @return Perth result
      */
     public static List<OrderByExpression> parseOrderBy(String orderBy) {
         if (orderBy == null) {
@@ -66,9 +66,9 @@ public final class PersoniumOptionsQueryParser extends OptionsQueryParser {
     }
 
     /**
-     * Filterのクエリをパースする.
-     * @param filter filterクエリの値
-     * @return パース結果
+     * Parse the Filter query.
+     * @ param filter filter query value
+     * @return Perth result
      */
     public static BoolCommonExpression parseFilter(String filter) {
         if (filter == null) {
@@ -86,9 +86,9 @@ public final class PersoniumOptionsQueryParser extends OptionsQueryParser {
     }
 
     /**
-     * Selectのクエリをパースする.
-     * @param select selectクエリの値
-     * @return パース結果
+     * Parses the Select query.
+     * @ param select Select query value
+     * @return Perth result
      */
     public static List<EntitySimpleProperty> parseSelect(String select) {
         if (select == null) {
@@ -98,9 +98,9 @@ public final class PersoniumOptionsQueryParser extends OptionsQueryParser {
     }
 
     /**
-     * Expandのクエリをパースする.
-     * @param expand expandクエリの値
-     * @return パース結果
+     * Parsing Expand's query.
+     * @ param expand expand Query value
+     * @return Perth result
      */
     public static List<EntitySimpleProperty> parseExpand(String expand) {
         if (expand == null) {
