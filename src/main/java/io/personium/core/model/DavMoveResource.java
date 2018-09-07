@@ -39,9 +39,9 @@ public class DavMoveResource extends DavRsCmp {
 
     /**
      * constructor.
-     * @ param parent parent resource
-     * @ param davCmp Parts responsible for processing dependent on backend implementation
-     * @ param headers Request header information
+     * @param parent parent resource
+     * @param davCmp Parts responsible for processing dependent on backend implementation
+     * @param headers Request header information
      */
     public DavMoveResource(DavRsCmp parent, DavCmp davCmp, HttpHeaders headers) {
         super(parent, davCmp);
@@ -103,7 +103,7 @@ public class DavMoveResource extends DavRsCmp {
     /**
      * Validate the header of the Move method <br />
      * If validation fails, throw an exception.
-     * @ param headers header information
+     * @param headers header information
      */
     void validateHeaders() {
         //Depth header
@@ -163,8 +163,8 @@ public class DavMoveResource extends DavRsCmp {
     /**
      * Get the header of the specified key from the header information <br />
      * If it does not exist, return null.
-     * @ param headers header information
-     * @ param key The key of the header to be acquired
+     * @param headers header information
+     * @param key The key of the header to be acquired
      * @return Header of the specified key
      */
     private String getFirstHeader(HttpHeaders headers, String key) {
@@ -174,9 +174,9 @@ public class DavMoveResource extends DavRsCmp {
     /**
      * Get the header of the specified key from the header information <br />
      * If it does not exist, return null.
-     * @ param headers header information
-     * @ param key The key of the header to be acquired
-     * @ param defaultValue Default value if header does not exist
+     * @param headers header information
+     * @param key The key of the header to be acquired
+     * @param defaultValue Default value if header does not exist
      * @return Header of the specified key
      */
     private String getFirstHeader(HttpHeaders headers, String key, String defaultValue) {

@@ -81,7 +81,7 @@ public class PersoniumJsonStreamReaderFactory {
 
         /**
          * constructor.
-         * @ param message Message
+         * @param message Message
          * @param cause Throwable
          */
         public JsonParseException(String message, Throwable cause) {
@@ -90,7 +90,7 @@ public class PersoniumJsonStreamReaderFactory {
 
         /**
          * constructor.
-         * @ param message Message
+         * @param message Message
          */
         public JsonParseException(String message) {
             super(message);
@@ -265,7 +265,7 @@ public class PersoniumJsonStreamReaderFactory {
 
             /**
              * constructor.
-             * @ param type JSON token type
+             * @param type JSON token type
              */
             public JsonToken(JsonTokenType type) {
                 this(type, null);
@@ -273,8 +273,8 @@ public class PersoniumJsonStreamReaderFactory {
 
             /**
              * constructor.
-             * @ param type JSON token type
-             * @ param value Value of JSON token
+             * @param type JSON token type
+             * @param value Value of JSON token
              */
             public JsonToken(JsonTokenType type, String value) {
                 this.type = type;

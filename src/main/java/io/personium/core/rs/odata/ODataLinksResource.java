@@ -87,10 +87,10 @@ public final class ODataLinksResource {
 
     /**
      * constructor.
-     * @ param odataResource Parent ODataResource
-     * @ param sourceEntity source Entity
-     * @ param targetNavProp destination Navigation Property
-     * @ param targetEntityKey Link EntityKey
+     * @param odataResource Parent ODataResource
+     * @param sourceEntity source Entity
+     * @param targetNavProp destination Navigation Property
+     * @param targetEntityKey Link EntityKey
      */
     public ODataLinksResource(
             final ODataResource odataResource,
@@ -112,7 +112,7 @@ public final class ODataLinksResource {
      * If an InsertLink Request is successful, the response MUST have a 204 status code,
      * as specified in [RFC2616], and contain an empty response body.
      * @param uriInfo UriInfo
-     * @ param reqBody request body
+     * @param reqBody request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -175,7 +175,7 @@ public final class ODataLinksResource {
     /**
      * Receive PUT method and update link.
      * @param uriInfo UriInfo
-     * @ param reqBody request body
+     * @param reqBody request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -196,10 +196,10 @@ public final class ODataLinksResource {
 
     /**
      * It checks whether the value specified in the request body is in the correct format, and returns the OEntityId of the $ link destination.
-     * @ param uriInfo request URL
-     * @ param reqBody request body
-     * @ param srcEntitySetName $ links Source EntitySet name
-     * @ param metadata metadata
+     * @param uriInfo request URL
+     * @param reqBody request body
+     * @param srcEntitySetName $ links Source EntitySet name
+     * @param metadata metadata
      * @return $ links destination OEntityId
      */
     static OEntityId parseRequestUri(final UriInfo uriInfo,
@@ -256,8 +256,8 @@ public final class ODataLinksResource {
 
     /**
      * It checks whether the value specified in the request body is in the correct format, and returns the OEntityId of the $ link destination.
-     * @ param uriInfo request URL
-     * @ param reqBody request body
+     * @param uriInfo request URL
+     * @param reqBody request body
      * @return $ links destination OEntityId
      */
     private OEntityId parseRequestUri(final UriInfo uriInfo, final Reader reqBody) {

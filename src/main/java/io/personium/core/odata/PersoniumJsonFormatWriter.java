@@ -74,7 +74,7 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
 
     /**
      * constructor.
-     * @ param jsonpCallback callback
+     * @param jsonpCallback callback
      */
     public PersoniumJsonFormatWriter(String jsonpCallback) {
         super(jsonpCallback);
@@ -193,7 +193,7 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
     /**
      * Create response data for Collection.
      * @param jw JsonWriter
-     * @ param type Collection type
+     * @param type Collection type
      * @param coll OCollection
      */
     @SuppressWarnings("rawtypes")
@@ -231,8 +231,8 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
 
     /**
      * Return EntityRelId.
-     * @ param entitySet entity set
-     * @ param entityKey entity key
+     * @param entitySet entity set
+     * @param entityKey entity key
      * @return EntityRelId
      */
     public String getEntityRelId(EdmEntitySet entitySet, OEntityKey entityKey) {
@@ -243,9 +243,9 @@ public abstract class PersoniumJsonFormatWriter<T> extends JsonFormatWriter<T> {
 
     /**
      * Output the JSON field value according to the data type.
-     * @ param jw Output destination writer
-     * Data type of @ param type field
-     * @ param pvalue field value
+     * @param jw Output destination writer
+     * Data type of @param type field
+     * @param pvalue field value
      */
     @Override
     protected void writeValue(JsonWriter jw, EdmType type, Object pvalue) {

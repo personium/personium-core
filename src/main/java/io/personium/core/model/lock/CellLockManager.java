@@ -128,7 +128,7 @@ public abstract class CellLockManager extends LockManager {
 
     /**
      * Returns the reference count for the cell with the specified ID.
-     * @ param cellId Cell ID for which reference count is to be acquired
+     * @param cellId Cell ID for which reference count is to be acquired
      * @return Reference count for the specified cell
      */
     public static long getReferenceCount(String cellId) {
@@ -139,7 +139,7 @@ public abstract class CellLockManager extends LockManager {
 
     /**
      * Increment the reference count of the specified cell.
-     * @ param cellId Target cell ID
+     * @param cellId Target cell ID
      * @return Value of reference count after increment
      */
     public static long incrementReferenceCount(String cellId) {
@@ -150,7 +150,7 @@ public abstract class CellLockManager extends LockManager {
 
     /**
      * Decrement the reference count of the specified cell.
-     * @ param cellId Target cell ID
+     * @param cellId Target cell ID
      * @return Value of reference count after decrementing
      */
     public static long decrementReferenceCount(String cellId) {

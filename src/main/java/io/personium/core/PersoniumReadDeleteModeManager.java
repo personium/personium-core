@@ -49,7 +49,7 @@ public class PersoniumReadDeleteModeManager {
 
     /**
      * Check whether it is an executable method in ReadDeleteOnly mode.
-     * @ param method Request method
+     * @param method Request method
      * @return boolean true: authorization method false: unauthorized method
      */
     public static boolean isAllowedMethod(String method) {
@@ -68,8 +68,8 @@ public class PersoniumReadDeleteModeManager {
     /**
      * When the operation mode of the PCS is the ReadDeleteOnly mode, only the reference system request is permitted.
      * If it is not permitted, raise an exception and process it with ExceptionMapper.
-     * @ param method Request method
-     * @ param pathSegment path segment
+     * @param method Request method
+     * @param pathSegment path segment
      */
     public static void checkReadDeleteOnlyMode(String method, List<PathSegment> pathSegment) {
         //If it is not in the ReadDeleteOnly mode, processing is permitted

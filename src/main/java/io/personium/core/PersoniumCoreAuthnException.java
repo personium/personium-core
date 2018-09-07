@@ -160,12 +160,12 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
 
     /**
      * constructor.
-     * @ param status HTTP response status
-     * @ param severity error level
-     * @ param code error code
-     * @ param message error message
-     * @ param error Error code of OAuth authentication error
-     * @ param realm To return the WWWW-Authenticate header, set the realm value here
+     * @param status HTTP response status
+     * @param severity error level
+     * @param code error code
+     * @param message error message
+     * @param error Error code of OAuth authentication error
+     * @param realm To return the WWWW-Authenticate header, set the realm value here
      */
     PersoniumCoreAuthnException(final String code,
             final Severity severity,
@@ -214,7 +214,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
 
     /**
      * Cause Create and return an exception added.
-     * @ param t cause exception
+     * @param t cause exception
      * @return PersoniumCoreException
      */
     public PersoniumCoreException reason(final Throwable t) {
@@ -228,8 +228,8 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
 
     /**
      * Factory method.
-     * @ param code Personium message code
-     * @ param error OAuth 2 error code
+     * @param code Personium message code
+     * @param error OAuth 2 error code
      * @return PersoniumCoreException
      */
     public static PersoniumCoreAuthnException create(String code, String error) {
@@ -267,7 +267,7 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
 
     /**
      * It creates and returns a message with parameter substitution, and the expression such as $ 1 $ 2 on the error message is a keyword for parameter substitution.
-     * @ param params Additional message
+     * @param params Additional message
      * @return PersoniumCoreMessage
      */
     @Override

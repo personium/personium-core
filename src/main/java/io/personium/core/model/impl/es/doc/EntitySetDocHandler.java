@@ -136,13 +136,13 @@ public interface EntitySetDocHandler extends EsDocHandler {
 
     /**
      * Set UnitUser name when accessing Cell.
-     * @ param hiddenFieldsMap map object of hiddenFields
+     * @param hiddenFieldsMap map object of hiddenFields
      */
     void resolveUnitUserName(Map<String, Object> hiddenFieldsMap);
 
     /**
      * Id's setter.
-     * @ param id ID of elasticsearch
+     * @param id ID of elasticsearch
      */
     void setId(String id);
 
@@ -154,25 +154,25 @@ public interface EntitySetDocHandler extends EsDocHandler {
 
     /**
      * CellId's setter.
-     * @ param cellId Cell ID
+     * @param cellId Cell ID
      */
     void setCellId(String cellId);
 
     /**
      * Setter of boxId.
-     * @ param boxId Box ID
+     * @param boxId Box ID
      */
     void setBoxId(String boxId);
 
     /**
      * Setter of nodeId.
-     * @ param nodeId ID of node
+     * @param nodeId ID of node
      */
     void setNodeId(String nodeId);
 
     /**
      * Setter of entityTypeId.
-     * @ param entityTypeId ID of entityType
+     * @param entityTypeId ID of entityType
      */
     void setEntityTypeId(String entityTypeId);
 
@@ -196,25 +196,25 @@ public interface EntitySetDocHandler extends EsDocHandler {
 
     /**
      * The setters of links.
-     * @ param links links information
+     * @param links links information
      */
     void setManyToOnelinkId(Map<String, Object> links);
 
     /**
      * Published setter.
-     * @ param published published information
+     * @param published published information
      */
     void setPublished(Long published);
 
     /**
      * Updated setter.
-     * @ param updated updated information
+     * @param updated updated information
      */
     void setUpdated(Long updated);
 
     /**
      * The setter of dynamicFields.
-     * @ param dynamicFields Map of Dynamic Field
+     * @param dynamicFields Map of Dynamic Field
      */
     void setDynamicFields(Map<String, Object> dynamicFields);
 
@@ -241,7 +241,7 @@ public interface EntitySetDocHandler extends EsDocHandler {
      * @param eSet EdmEntitySet
      * @param metadata metadata
      * @param relatedEntitiesList relatedEntitiesList
-     * @ param selectQuery $ select query
+     * @param selectQuery $ select query
      * @return OEntityWrapper
      */
     OEntityWrapper createOEntity(EdmEntitySet eSet,
@@ -257,7 +257,7 @@ public interface EntitySetDocHandler extends EsDocHandler {
 
     /**
      * Change the static property from Alias ​​name to property name.
-     * @ param metadata schema information
+     * @param metadata schema information
      */
     void convertAliasToName(EdmDataServices metadata);
 }

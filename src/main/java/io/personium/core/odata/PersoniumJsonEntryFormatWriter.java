@@ -48,7 +48,7 @@ public class PersoniumJsonEntryFormatWriter extends PersoniumJsonFormatWriter<En
 
     /**
      * constructor.
-     * @ param jsonpCallback callback
+     * @param jsonpCallback callback
      */
     public PersoniumJsonEntryFormatWriter(String jsonpCallback) {
         super(jsonpCallback);

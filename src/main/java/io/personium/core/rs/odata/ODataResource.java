@@ -74,7 +74,7 @@ public abstract class ODataResource extends ODataCtlResource {
     /**
      * constructor.
      * @param accessContext AccessContext
-     * @ param rootUrl root URL
+     * @param rootUrl root URL
      * @param producer ODataProducer
      */
     public ODataResource(final AccessContext accessContext,
@@ -230,7 +230,7 @@ public abstract class ODataResource extends ODataCtlResource {
 
     /**
      * 
-     * @ param entitySetName Path representing entitySet name
+     * @param entitySetName Path representing entitySet name
      * @param request Request
      * @return ODataEntitiesResource
      */
@@ -252,10 +252,10 @@ public abstract class ODataResource extends ODataCtlResource {
 
     /**
      * 
-     * @ param entitySetName entitySet name
-     * @ param key key string
+     * @param entitySetName entitySet name
+     * @param key key string
      * @param request Request
-     * @ return ODataEntityResource class object
+     * @return ODataEntityResource class object
      */
     @Path("{entitySet}({key})")
     public ODataEntityResource entity(
@@ -328,14 +328,14 @@ public abstract class ODataResource extends ODataCtlResource {
 
     /**
      * Returns the privileges required for reading from the level of the class to be processed and the entity set name.
-     * @ param entitySetNameStr target entity set
+     * @param entitySetNameStr target entity set
      * Privileges required for @return processing
      */
     public abstract Privilege getNecessaryReadPrivilege(String entitySetNameStr);
 
     /**
      * Returns the authority required for writing from the level of the class to be processed and the entity set name.
-     * @ param entitySetNameStr target entity set
+     * @param entitySetNameStr target entity set
      * Privileges required for @return processing
      */
     public abstract Privilege getNecessaryWritePrivilege(String entitySetNameStr);
@@ -348,7 +348,7 @@ public abstract class ODataResource extends ODataCtlResource {
 
     /**
      * Returns whether the access context has permission to $ batch.
-     * @ param ac access context
+     * @param ac access context
      * @return true: The access context has permission to $ batch
      */
     public abstract boolean hasPrivilegeForBatch(AccessContext ac);

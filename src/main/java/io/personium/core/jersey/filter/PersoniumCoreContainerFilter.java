@@ -182,7 +182,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
 
     /**
      * Authentication None OPTION Method check.
-     * @ param request pre-filter request
+     * @param request pre-filter request
      */
     private void checkOptionsMethod(String method, MultivaluedMap<String, String> headers) {
         String authValue = headers.getFirst(org.apache.http.HttpHeaders.AUTHORIZATION);
@@ -209,7 +209,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     /**
      * Check the value of the request header.
      * Currently check only the Accept header (whether it is a US-ASCII character or not)
-     * @ param request pre-filter request
+     * @param request pre-filter request
      */
     private void checkAcceptHeader(MultivaluedMap<String, String> headers) {
         //In Jersey 1.10, if the key name and the value of the Accept header contain non-US-ASCII characters, it ends abnormally.

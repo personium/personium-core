@@ -37,7 +37,7 @@ public class BatchRequestShutter {
 
     /**
      * Update status of whether Too Many Concurrent occurred during Batch request.
-     * @ param e Exception raised
+     * @param e Exception raised
      */
     public void updateStatus(Exception e) {
         if (PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS.equals(e)) {
@@ -48,7 +48,7 @@ public class BatchRequestShutter {
     /**
      * Determine if you can execute individual requests in Batch <br />
      * If Too Many Concurrent has already occurred in the Batch request and it is an update method it is not possible to execute it.
-     * @ param httpMethod method name
+     * @param httpMethod method name
      * @return true: executable, false: not executable
      */
     public boolean accept(String httpMethod) {

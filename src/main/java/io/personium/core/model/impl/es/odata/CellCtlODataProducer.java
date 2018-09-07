@@ -139,8 +139,8 @@ public class CellCtlODataProducer extends EsODataProducer {
 
     /**
      * Check unauthorized Link information.
-     * @ param sourceEntity source side Entity
-     * @ param targetEntity Target side Entity
+     * @param sourceEntity source side Entity
+     * @param targetEntity Target side Entity
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceEntity, EntitySetDocHandler targetEntity) {
@@ -148,9 +148,9 @@ public class CellCtlODataProducer extends EsODataProducer {
 
     /**
      * Check unauthorized Link information.
-     * @ param sourceDocHandler Source side Entity
-     * @ param entity Target side Entity
-     * @ param targetEntitySetName EntitySet name of the target
+     * @param sourceDocHandler Source side Entity
+     * @param entity Target side Entity
+     * @param targetEntitySetName EntitySet name of the target
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceDocHandler, OEntity entity, String targetEntitySetName) {

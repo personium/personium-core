@@ -33,23 +33,23 @@ import io.personium.core.odata.OEntityWrapper;
 public class ODataCtlResource {
     /**
      * Preprocessing process.
-     * @ param o EntityWrapper OEntityWrapper object
+     * @param o EntityWrapper OEntityWrapper object
      */
     public void beforeCreate(final OEntityWrapper oEntityWrapper) {
     }
 
     /**
      * Pre-update processing.
-     * @ param o EntityWrapper OEntityWrapper object
-     * @ param o EntityKey The entityKey to delete
+     * @param o EntityWrapper OEntityWrapper object
+     * @param o EntityKey The entityKey to delete
      */
     public void beforeUpdate(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
     }
 
     /**
      * Partial update preprocessing.
-     * @ param o EntityWrapper OEntityWrapper object
-     * @ param o EntityKey The entityKey to delete
+     * @param o EntityWrapper OEntityWrapper object
+     * @param o EntityKey The entityKey to delete
      */
     public void beforeMerge(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
         beforeUpdate(oEntityWrapper, oEntityKey);
@@ -57,24 +57,24 @@ public class ODataCtlResource {
 
     /**
      * Pre-deletion process.
-     * @ param entitySetName entitySet name
-     * @ param o EntityKey The entityKey to delete
+     * @param entitySetName entitySet name
+     * @param o EntityKey The entityKey to delete
      */
     public void beforeDelete(final String entitySetName, final OEntityKey oEntityKey) {
     }
 
     /**
      * Processing after deletion.
-     * @ param entitySetName entitySet name
-     * @ param o EntityKey The entityKey to delete
+     * @param entitySetName entitySet name
+     * @param o EntityKey The entityKey to delete
      */
     public void afterDelete(final String entitySetName, final OEntityKey oEntityKey) {
     }
 
     /**
      * Link registration preprocessing.
-     * @ param sourceEntity Linked entity
-     * @ param targetNavProp Navigation property to be linked
+     * @param sourceEntity Linked entity
+     * @param targetNavProp Navigation property to be linked
      */
     public void beforeLinkCreate(OEntityId sourceEntity, String targetNavProp) {
         //$ Links specification of ExtRole and _Relation is not allowed (Relation: ExtRole is 1: N relation)
@@ -83,16 +83,16 @@ public class ODataCtlResource {
 
     /**
      * Link acquisition preprocessing.
-     * @ param sourceEntity Linked entity
-     * @ param targetNavProp Navigation property to be linked
+     * @param sourceEntity Linked entity
+     * @param targetNavProp Navigation property to be linked
      */
     public void beforeLinkGet(OEntityId sourceEntity, String targetNavProp) {
     }
 
     /**
      * Link deletion preprocessing.
-     * @ param sourceEntity Linked entity
-     * @ param targetNavProp Navigation property to be linked
+     * @param sourceEntity Linked entity
+     * @param targetNavProp Navigation property to be linked
      */
     public void beforeLinkDelete(OEntityId sourceEntity, String targetNavProp) {
         //$ Links specification of ExtRole and _Relation is not allowed (Relation: ExtRole is 1: N relation)
@@ -102,7 +102,7 @@ public class ODataCtlResource {
     /**
      * Check processing other than p: Format.
      * @param entitySetName target entityset name
-     * @ param props property list
+     * @param props property list
      */
     public void validate(String entitySetName, List<OProperty<?>> props) {
     }

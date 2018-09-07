@@ -117,7 +117,7 @@ public class EsModel {
 
     /**
      * Returns the Index operation object for UnitUser.
-     * @ param userUri UnitUser name (URL)
+     * @param userUri UnitUser name (URL)
      * @return Index object
      */
     public static EsIndex idxUser(String userUri) {
@@ -129,7 +129,7 @@ public class EsModel {
 
     /**
      * Returns the Index operation object for UnitUser from the ES index name.
-     * @ param indexName Index name of ES
+     * @param indexName Index name of ES
      * @return Index object
      */
     public static EsIndex idxUserWithUnitPrefix(String indexName) {
@@ -140,11 +140,11 @@ public class EsModel {
 
     /**
      * Returns the Index operation object with the specified name.
-     * @ param indexName index name
-     * @ param typeName index type
-     * @ param routingId type of index
-     * @ param times index type
-     * @ param interval index type
+     * @param indexName index name
+     * @param typeName index type
+     * @param routingId type of index
+     * @param times index type
+     * @param interval index type
      * @return EsType object
      */
     public static EsType type(String indexName, String typeName, String routingId, int times, int interval) {
@@ -180,7 +180,7 @@ public class EsModel {
 
     /**
      * Unit control type type name Return Type Operation object.
-     * @ param type Type name
+     * @param type Type name
      * @param cellId cellId
      * @return Type object
      */
@@ -195,7 +195,7 @@ public class EsModel {
     /**
      * Returns the Cell control Type operation object with the specified type name of the specified Cell.
      * @param cell Cell
-     * @ param type Type name
+     * @param type Type name
      * @return Type object
      */
     public static EntitySetAccessor cellCtl(final Cell cell, final String type) {
@@ -250,7 +250,7 @@ public class EsModel {
 
     /**
      * Returns the DataSourceAccessor of the specified UnitUser name.
-     * @ param unitUserName unit user name
+     * @param unitUserName unit user name
      * @return DataSourceAccessor
      */
     public static DataSourceAccessor dsa(final String unitUserName) {
@@ -259,7 +259,7 @@ public class EsModel {
 
     /**
      * Returns the DataSourceAccessor of the specified ES index name.
-     * @ param indexName Index name of ES
+     * @param indexName Index name of ES
      * @return DataSourceAccessor
      */
     public static DataSourceAccessor getDataSourceAccessorFromIndexName(final String indexName) {

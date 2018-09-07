@@ -39,7 +39,7 @@ public class DavPath {
 
     /**
      * constructor.
-     * @ param uri Dav URI
+     * @param uri Dav URI
      * @param baseUri BaseURI
      */
     public DavPath(URI uri, String baseUri) {

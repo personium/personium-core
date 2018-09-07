@@ -48,9 +48,9 @@ public class BarInstallProgressInfo implements ProgressInfo {
 
     /**
      * constructor.
-     * @ param cellId uuid of Cell
-     * @ param boxId uuid of Box
-     * @ param entryCount bar Number of entries (files) in the file
+     * @param cellId uuid of Cell
+     * @param boxId uuid of Box
+     * @param entryCount bar Number of entries (files) in the file
      */
     public BarInstallProgressInfo(String cellId, String boxId, long entryCount) {
         this.cellId = cellId;
@@ -64,7 +64,7 @@ public class BarInstallProgressInfo implements ProgressInfo {
 
     /**
      * Update the progress rate.
-     * @ param delta Number of processed files (increment)
+     * @param delta Number of processed files (increment)
      */
     public void addDelta(long delta) {
         this.progressCount += delta;

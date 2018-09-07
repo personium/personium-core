@@ -60,10 +60,10 @@ public class PersoniumFormatParserFactory {
 
     /**
      * Get FormatParser.
-     * @ param <T> class
-     * @ param targetType Parse object type
-     * @ param type conversion format
-     * @ param settings setting
+     * @param <T> class
+     * @param targetType Parse object type
+     * @param type conversion format
+     * @param settings setting
      * @return FormatParser
      */
     @SuppressWarnings("unchecked")
@@ -75,10 +75,10 @@ public class PersoniumFormatParserFactory {
 
     /**
      * Get FormatParser.
-     * @ param <T> class
-     * @ param targetType Parse object type
-     * @ param contentType conversion format
-     * @ param settings setting
+     * @param <T> class
+     * @param targetType Parse object type
+     * @param contentType conversion format
+     * @param settings setting
      * @return FormatParser
      */
     public static <T> FormatParser<T> getParser(Class<T> targetType, MediaType contentType, Settings settings) {

@@ -50,7 +50,7 @@ public class PersoniumJsonSingleLinkFormatWriter extends PersoniumJsonFormatWrit
 
     /**
      * constructor.
-     * @ param jsonpCallback callback
+     * @param jsonpCallback callback
      */
     public PersoniumJsonSingleLinkFormatWriter(String jsonpCallback) {
         super(jsonpCallback);

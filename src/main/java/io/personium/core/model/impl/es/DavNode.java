@@ -95,9 +95,9 @@ public class DavNode implements EsBulkRequest {
 
     /**
      * constructor.
-     * @ param cellId Cell ID
-     * @ param boxId Box ID
-     * @ param nodeType Node type
+     * @param cellId Cell ID
+     * @param boxId Box ID
+     * @param nodeType Node type
      */
     public DavNode(String cellId, String boxId, String nodeType) {
         long date = new Date().getTime();
@@ -117,7 +117,7 @@ public class DavNode implements EsBulkRequest {
     /**
      * constructor.
      * @param id ID
-     * @ param jsonStr source
+     * @param jsonStr source
      * @return DavNode
      */
     @SuppressWarnings("unchecked")
@@ -342,7 +342,7 @@ public class DavNode implements EsBulkRequest {
     /**
      * Set the type of the request (INDEX / DELETE) <br />
      * In consideration of the influence on existing processing, the default value is set to INDEX.
-     * @ param request Request type
+     * @param request Request type
      */
     public void setRequestType(BulkRequestType request) {
         this.requestType = request;

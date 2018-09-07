@@ -32,7 +32,7 @@ public class EscapeControlCode {
 
     /**
      * Escape control code.
-     * @ param input String to be escaped
+     * @param input String to be escaped
      * @return String escaping control code
      */
     public static String escape(String input) {
@@ -51,7 +51,7 @@ public class EscapeControlCode {
 
     /**
      * And determines whether or not a control code is included.
-     * @ param input judgment character string
+     * @param input judgment character string
      * @return true: Contains the control code false: contains no control code
      */
     public static boolean isContainsControlChar(String input) {
@@ -66,7 +66,7 @@ public class EscapeControlCode {
 
     /**
      * Converts a character string to a Unicode character.
-     * @ param convertString String to be converted
+     * @param convertString String to be converted
      * @return Unicode character
      */
     private static String convertToUnicode(String convertString) {

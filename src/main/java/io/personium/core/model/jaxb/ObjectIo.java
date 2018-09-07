@@ -70,34 +70,34 @@ public final class ObjectIo {
     }
 
     /**
-     * @ param <T> class you want as return value
-     * @ param is XML input stream
-     * @ param elementClass element class
+     * @param <T> class you want as return value
+     * @param is XML input stream
+     * @param elementClass element class
      * @return unmarshaled class
-     * @ throws IOException Exception thrown when there is a problem on IO
-     * @ throws JAXBException Exception thrown when there is a problem on JAXB
+     * @throws IOException Exception thrown when there is a problem on IO
+     * @throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static <T> T unmarshal(final InputStream is, final Class<T> elementClass) throws IOException, JAXBException {
         return unmarshal(new BufferedReader(new InputStreamReader(is)), elementClass);
     }
     /**
-     * @ param <T> class you want as return value
-     * @ param node Document node
-     * @ param elementClass element class
+     * @param <T> class you want as return value
+     * @param node Document node
+     * @param elementClass element class
      * @return unmarshaled class
-     * @ throws IOException Exception thrown when there is a problem on IO
-     * @ throws JAXBException Exception thrown when there is a problem on JAXB
+     * @throws IOException Exception thrown when there is a problem on IO
+     * @throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static <T> T unmarshal(final Node node, final Class<T> elementClass) throws IOException, JAXBException {
         return unmarshalNode(node, elementClass);
     }
     /**
-     * @ param <T> class you want as return value
-     * @ param node XML node
-     * @ param elementClass element class
+     * @param <T> class you want as return value
+     * @param node XML node
+     * @param elementClass element class
      * @return unmarshaled class
-     * @ throws IOException Exception thrown when there is a problem on IO
-     * @ throws JAXBException Exception thrown when there is a problem on JAXB
+     * @throws IOException Exception thrown when there is a problem on IO
+     * @throws JAXBException Exception thrown when there is a problem on JAXB
      */
     @SuppressWarnings("unchecked")
     public static <T> T unmarshalNode(final Node node, final Class<T> elementClass) throws IOException, JAXBException {
@@ -109,12 +109,12 @@ public final class ObjectIo {
         return (T) object;
     }
     /**
-     * @ param <T> class you want as return value
-     * @ param reader XML input stream
-     * @ param elementClass element class
+     * @param <T> class you want as return value
+     * @param reader XML input stream
+     * @param elementClass element class
      * @return unmarshaled class
-     * @ throws IOException Exception thrown when there is a problem on IO
-     * @ throws JAXBException Exception thrown when there is a problem on JAXB
+     * @throws IOException Exception thrown when there is a problem on IO
+     * @throws JAXBException Exception thrown when there is a problem on JAXB
      */
     @SuppressWarnings("unchecked")
     public static <T> T unmarshal(final Reader reader, final Class<T> elementClass) throws IOException, JAXBException {
@@ -127,10 +127,10 @@ public final class ObjectIo {
     }
 
     /**
-     * @ param instance object
-     * @ param writer XML output stream
-     * @ throws IOException Exception thrown when there is a problem on IO
-     * @ throws JAXBException Exception thrown when there is a problem on JAXB
+     * @param instance object
+     * @param writer XML output stream
+     * @throws IOException Exception thrown when there is a problem on IO
+     * @throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static void marshal(
             final Object instance, final Writer writer) throws IOException, JAXBException {
@@ -139,10 +139,10 @@ public final class ObjectIo {
     }
 
     /**
-     * @ param instance object
-     * @ param outputStream XML output stream
-     * @ throws IOException Exception thrown when there is a problem on IO
-     * @ throws JAXBException Exception thrown when there is a problem on JAXB
+     * @param instance object
+     * @param outputStream XML output stream
+     * @throws IOException Exception thrown when there is a problem on IO
+     * @throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static void marshal(
             final Object instance,
@@ -151,10 +151,10 @@ public final class ObjectIo {
         m.marshal(instance, outputStream);
     }
     /**
-     * @ param instance object
-     * @ param doc XML document
-     * @ throws IOException Exception thrown when there is a problem on IO
-     * @ throws JAXBException Exception thrown when there is a problem on JAXB
+     * @param instance object
+     * @param doc XML document
+     * @throws IOException Exception thrown when there is a problem on IO
+     * @throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static void marshal(
             final Object instance, final Document doc) throws IOException, JAXBException {
@@ -162,10 +162,10 @@ public final class ObjectIo {
         m.marshal(instance, doc);
     }
     /**
-     * @ param instance object
-     * @ param writer JSON output stream
-     * @ throws IOException Exception thrown when there is a problem on IO
-     * @ throws JAXBException Exception thrown when there is a problem on JAXB
+     * @param instance object
+     * @param writer JSON output stream
+     * @throws IOException Exception thrown when there is a problem on IO
+     * @throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static void toJson(Object instance, Writer writer) throws IOException, JAXBException {
 
@@ -177,12 +177,12 @@ public final class ObjectIo {
         marshaller.marshal(instance, writer);
     }
     /**
-     * @ param <T> class you want as return value
-     * @ param reader XML input stream
-     * @ param elementClass element class
+     * @param <T> class you want as return value
+     * @param reader XML input stream
+     * @param elementClass element class
      * @return unmarshaled class
-     * @ throws IOException Exception thrown when there is a problem on IO
-     * @ throws JAXBException Exception thrown when there is a problem on JAXB
+     * @throws IOException Exception thrown when there is a problem on IO
+     * @throws JAXBException Exception thrown when there is a problem on JAXB
      */
     public static <T> T fromJson(Reader reader, Class<T> elementClass) throws IOException, JAXBException {
 

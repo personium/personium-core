@@ -51,8 +51,8 @@ public class Progress implements Serializable {
 
     /**
      * constructor.
-     * @ param key Asynchronous processing status key
-     * @ param value Asynchronous processing status value (JSON string)
+     * @param key Asynchronous processing status key
+     * @param value Asynchronous processing status value (JSON string)
      */
     public Progress(String key, String value) {
         this.key = key;

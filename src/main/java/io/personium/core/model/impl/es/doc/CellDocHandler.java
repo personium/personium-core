@@ -48,7 +48,7 @@ public class CellDocHandler extends OEntityDocHandler {
     }
 
     /**
-     * @ param aclFields ACL setting information
+     * @param aclFields ACL setting information
      */
     public void setAclFields(Map<String, JSONObject> aclFields) {
         this.aclFields = aclFields;
@@ -79,7 +79,7 @@ public class CellDocHandler extends OEntityDocHandler {
      * Constructor.
      * @param type type
      * @param oEntity OEntityWrapper
-     * @ param metadata schema information
+     * @param metadata schema information
      */
     public CellDocHandler(String type, OEntityWrapper oEntity, EdmDataServices metadata) {
         super(type, oEntity, metadata);
@@ -101,7 +101,7 @@ public class CellDocHandler extends OEntityDocHandler {
 
     /**
      * Parse Source in Map format and map to itself.
-     * @ param source mapping format information for mapping
+     * @param source mapping format information for mapping
      */
     @Override
     @SuppressWarnings("unchecked")

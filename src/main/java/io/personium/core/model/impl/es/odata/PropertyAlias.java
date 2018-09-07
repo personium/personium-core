@@ -45,10 +45,10 @@ public class PropertyAlias implements Serializable {
 
     /**
      * constructor.
-     * @ param entityTypeName EntityTYpe name
-     * @ param propertyName Property name on Edmx / ComplexTypeProperty name
-     * @ param propertyType Property type to which Property / ComplexTypeProperty is associated (eg Edm.String, complexXXX)
-     * @ param alias Alias ​​name to be set when data of Property / ComplexTypeProperty is stored
+     * @param entityTypeName EntityTYpe name
+     * @param propertyName Property name on Edmx / ComplexTypeProperty name
+     * @param propertyType Property type to which Property / ComplexTypeProperty is associated (eg Edm.String, complexXXX)
+     * @param alias Alias ​​name to be set when data of Property / ComplexTypeProperty is stored
      */
     public PropertyAlias(
             String entityTypeName,

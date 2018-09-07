@@ -48,9 +48,9 @@ public final class ODataErrorMessage {
 
     /**
      * constructor.
-     * @ param paramCode code
-     * @ param messageLang message language tag RFC 4646 / RFC 5646?
-     * @ param messageValue message
+     * @param paramCode code
+     * @param messageLang message language tag RFC 4646 / RFC 5646?
+     * @param messageValue message
      */
     public ODataErrorMessage(final String paramCode,
             final String messageLang,
@@ -60,8 +60,8 @@ public final class ODataErrorMessage {
     }
     /**
      * constructor.
-     * @ param paramCode code
-     * @ param messageValue message
+     * @param paramCode code
+     * @param messageValue message
      */
     public ODataErrorMessage(final String paramCode,
             final String messageValue) {

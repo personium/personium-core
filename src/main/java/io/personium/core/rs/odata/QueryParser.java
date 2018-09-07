@@ -45,7 +45,7 @@ public class QueryParser {
 
     /**
      * skip Parse the query and return the value.
-     * @ param query query string ("$ skip = VALUE")
+     * @param query query string ("$ skip = VALUE")
      * The value specified in the @return query
      */
     public static Integer parseSkipQuery(String query) {
@@ -64,7 +64,7 @@ public class QueryParser {
 
     /**
      * top Parse the query and return the value.
-     * @ param query query string ("$ top = VALUE")
+     * @param query query string ("$ top = VALUE")
      * The value specified in the @return query
      */
     public static Integer parseTopQuery(String query) {
@@ -83,7 +83,7 @@ public class QueryParser {
 
     /**
      * Parse the orderby query and return the value.
-     * @ param query query string ("$ orderby = VALUE")
+     * @param query query string ("$ orderby = VALUE")
      * The value specified in the @return query
      */
     public static List<OrderByExpression> parseOderByQuery(String query) {
@@ -101,7 +101,7 @@ public class QueryParser {
 
     /**
      * Parse the skiptoken query and return the value.
-     * @ param query Query string ("$ skiptoken = VALUE")
+     * @param query Query string ("$ skiptoken = VALUE")
      * The value specified in the @return query
      */
     public static String parseSkipTokenQuery(String query) {
@@ -116,7 +116,7 @@ public class QueryParser {
 
     /**
      * Inlinecount Parse the query and return the value.
-     * @ param query query string ("$ inlinecount = VALUE")
+     * @param query query string ("$ inlinecount = VALUE")
      * The value specified in the @return query
      */
     public static InlineCount parseInlinecountQuery(String query) {
@@ -136,7 +136,7 @@ public class QueryParser {
 
     /**
      * expand Parse the query and return the value.
-     * @ param query query string ("$ expand = VALUE")
+     * @param query query string ("$ expand = VALUE")
      * The value specified in the @return query
      */
     public static List<EntitySimpleProperty> parseExpandQuery(String query) {
@@ -155,7 +155,7 @@ public class QueryParser {
 
     /**
      * Parse the select query and return the value.
-     * @ param query query string ("$ select = VALUE")
+     * @param query query string ("$ select = VALUE")
      * The value specified in the @return query
      */
     public static List<EntitySimpleProperty> parseSelectQuery(String query) {
@@ -175,7 +175,7 @@ public class QueryParser {
 
     /**
      * filter Parse the query and return the value.
-     * @ param query query string ("$ filter = VALUE")
+     * @param query query string ("$ filter = VALUE")
      * The value specified in the @return query
      */
     public static BoolCommonExpression parseFilterQuery(String query) {
@@ -190,7 +190,7 @@ public class QueryParser {
 
     /**
      * q Parse the query.
-     * @ param fullTextSearchKeyword query string ("q = VALUE")
+     * @param fullTextSearchKeyword query string ("q = VALUE")
      */
     public static void parseFullTextSearchQuery(String fullTextSearchKeyword) {
         //Validate of full-text search query q

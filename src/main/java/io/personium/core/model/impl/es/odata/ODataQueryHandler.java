@@ -29,20 +29,20 @@ public interface ODataQueryHandler {
 
     /**
      * Initialization.
-     * @ param queryInfo QueryInfo of OData 4 j.
-     * @ param implicitConds Implicit search condition.
+     * @param queryInfo QueryInfo of OData 4 j.
+     * @param implicitConds Implicit search condition.
      */
     void initialize(QueryInfo queryInfo, List<Map<String, Object>> implicitConds);
 
     /**
      * Get search query.
-     * @ return search query
+     * @return search query
      */
     Map<String, Object> getSource();
 
     /**
      * Assemble a query for ES search from the value of $ select.
-     * @ param baseSource Map containing input values
+     * @param baseSource Map containing input values
      * @param selects $select
      */
     void getSelectQuery(Map<String, Object> baseSource,

@@ -35,8 +35,8 @@ public class ByteRangeSpec {
 
     /**
      * If byte-range-spec is parsed and syntactically correct, this object is returned, and if it is invalid, null is returned.
-     * @ param byteRangeSpecString String of byte-range-spec
-     * @ param entitySize Range Target file size
+     * @param byteRangeSpecString String of byte-range-spec
+     * @param entitySize Range Target file size
      * @return this object
      */
     static final ByteRangeSpec parse(final String byteRangeSpecString, final long entitySize) {

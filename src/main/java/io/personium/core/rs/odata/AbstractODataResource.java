@@ -115,7 +115,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Setter of entitySetName.
-     * @ param entitySetName Entity set name
+     * @param entitySetName Entity set name
      */
     public void setEntitySetName(String entitySetName) {
         this.entitySetName = entitySetName;
@@ -147,8 +147,8 @@ public abstract class AbstractODataResource {
 
     /**
      * Determine the ContentType to return.
-     * @ param accept Content of the Accept header
-     * @ param format $ format parameter
+     * @param accept Content of the Accept header
+     * @param format $ format parameter
      * @return Content-Type to return
      */
     public final MediaType decideOutputFormat(final String accept, final String format) {
@@ -167,7 +167,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Determine the output format from the specification ($ format) in the query.
-     * @ param format Specified value of $ format
+     * @param format Specified value of $ format
      * @return output format ("application / json" or "application / atom + xml")
      */
     private MediaType decideOutputFormatFromQueryValue(String format) {
@@ -187,7 +187,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Decide the output format from specification of Accept header.
-     * @ param acceptHeaderValue Specified value of Accept header
+     * @param acceptHeaderValue Specified value of Accept header
      * @return output format ("application / json" or "application / atom + xml")
      */
     private MediaType decideOutputFormatFromHeaderValues(String acceptHeaderValue) {
@@ -210,7 +210,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Truncate the semicolon after the input character string.
-     * @ param source Accept A character string obtained by dividing the specified value in the header with a comma
+     * @param source Accept A character string obtained by dividing the specified value in the header with a comma
      * @return String up to semicolon
      */
     private String truncateAfterSemicolon(String source) {
@@ -234,8 +234,8 @@ public abstract class AbstractODataResource {
 
     /**
      * Ask Producer to create Entity.
-     * @ param reader request body
-     * @ param odataResource OData resource
+     * @param reader request body
+     * @param odataResource OData resource
      * @return EntityResponse
      */
     protected EntityResponse createEntity(final Reader reader, ODataCtlResource odataResource) {
@@ -248,9 +248,9 @@ public abstract class AbstractODataResource {
 
     /**
      * Get the OEntityWrapper from the request body.
-     * @ param reader request body
-     * @ param odataResource OData resource
-     * @ param metadata schema definition
+     * @param reader request body
+     * @param odataResource OData resource
+     * @param metadata schema definition
      * @return OEntityWrapper
      */
     public OEntityWrapper getOEntityWrapper(final Reader reader,
@@ -276,8 +276,8 @@ public abstract class AbstractODataResource {
     /**
      * Create an OEntity object from the input body.
      * Since this method can not apply the locking process, it does not check the existence of data.
-     * @ param reader request body
-     * @ param o EntityKey The entityKey to update. Specify null when creating a new one
+     * @param reader request body
+     * @param o EntityKey The entityKey to update. Specify null when creating a new one
      * @return OData entity
      */
     protected OEntity createRequestEntity(final Reader reader, OEntityKey oEntityKey) {
@@ -289,9 +289,9 @@ public abstract class AbstractODataResource {
     /**
      * Create an OEntity object from the input body.
      * Since this method can not apply the locking process, it does not check the existence of data.
-     * @ param reader request body
-     * @ param o EntityKey The entityKey to update. Specify null when creating a new one
-     * @ param metadata EdmDataServices schema definition
+     * @param reader request body
+     * @param o EntityKey The entityKey to update. Specify null when creating a new one
+     * @param metadata EdmDataServices schema definition
      * @return OData entity
      */
     protected OEntity createRequestEntity(final Reader reader, OEntityKey oEntityKey, EdmDataServices metadata) {
@@ -305,10 +305,10 @@ public abstract class AbstractODataResource {
     /**
      * Create an OEntity object from the input body.
      * Since this method can not apply the locking process, it does not check the existence of data.
-     * @ param reader request body
-     * @ param o EntityKey The entityKey to update. Specify null when creating a new one
-     * @ param metadata EdmDataServices schema definition
-     * @ param entitySetNameParam EntitySet name
+     * @param reader request body
+     * @param o EntityKey The entityKey to update. Specify null when creating a new one
+     * @param metadata EdmDataServices schema definition
+     * @param entitySetNameParam EntitySet name
      * @return OData entity
      */
     protected OEntity createRequestEntity(final Reader reader,
@@ -461,7 +461,7 @@ public abstract class AbstractODataResource {
     /**
      * It checks whether the property specified by the argument is defined by DynamicProperty.
      * @param edmEntityType edmEntityType
-     * @ param propertyName property name
+     * @param propertyName property name
      * @return true:DynamicProperty, false:DeclaredProperty
      */
     protected boolean isRegisteredDynamicProperty(EdmEntityType edmEntityType, String propertyName) {
@@ -478,8 +478,8 @@ public abstract class AbstractODataResource {
 
     /**
      * Primary Key Validate.
-     * @ param o EntityKey Requested Key information
-     * @ param edmEntityType Schema information for EntityType
+     * @param o EntityKey Requested Key information
+     * @param edmEntityType Schema information for EntityType
      */
     protected void validatePrimaryKey(OEntityKey oEntityKey, EdmEntityType edmEntityType) {
         for (String key : edmEntityType.getKeys()) {
@@ -506,8 +506,8 @@ public abstract class AbstractODataResource {
 
     /**
      * Property operation.
-     * @ param props property list
-     * @ param value Value of key
+     * @param props property list
+     * @param value Value of key
      */
     protected void editProperty(List<OProperty<?>> props, String value) {
     }
@@ -515,7 +515,7 @@ public abstract class AbstractODataResource {
     /**
      * Get a simple property with default value set.
      * @param ep EdmProperty
-     * @ param propName property name
+     * @param propName property name
      * @param op OProperty
      * @return Simple property with default value set
      */
@@ -530,9 +530,9 @@ public abstract class AbstractODataResource {
     /**
      * Get the Complex property with the default value set.
      * @param ep EdmProperty
-     * @ param propName property name
+     * @param propName property name
      * @param op OProperty
-     * @ param metadata schema information
+     * @param metadata schema information
      * @return Complex property with default value set
      */
     @SuppressWarnings("unchecked")
@@ -580,9 +580,9 @@ public abstract class AbstractODataResource {
     /**
      * Get the Complex property list with the default value set.
      * @param ep EdmProperty
-     * @ param propName property name
-     * @ param opList OProperty list
-     * @ param metadata schema information
+     * @param propName property name
+     * @param opList OProperty list
+     * @param metadata schema information
      * @return Simple property with default value set
      */
     protected List<OProperty<?>> getComplexPropertyList(EdmProperty ep, String propName, List<OProperty<?>> opList,
@@ -606,9 +606,9 @@ public abstract class AbstractODataResource {
 
     /**
      * Refer to the ComplexType schema and set mandatory checks and default values.
-     * @ param metadata schema information
-     * @ param edmComplexType Schema information of ComplexType
-     * @ param complexProperties List of ComplexTypeProperty
+     * @param metadata schema information
+     * @param edmComplexType Schema information of ComplexType
+     * @param complexProperties List of ComplexTypeProperty
      * @return List of ComplexType properties with default values
      */
     protected List<OProperty<?>> createNewComplexProperties(EdmDataServices metadata,
@@ -636,7 +636,7 @@ public abstract class AbstractODataResource {
     /**
      * Set default value.
      * @param ep EdmProperty
-     * @ param propName property name
+     * @param propName property name
      * @param op OProperty
      * @return Oproperty
      */
@@ -647,9 +647,9 @@ public abstract class AbstractODataResource {
     /**
      * Set default value.
      * @param ep EdmProperty
-     * @ param propName property name
+     * @param propName property name
      * @param op OProperty
-     * @ param metadata EdmDataServices schema definition
+     * @param metadata EdmDataServices schema definition
      * @return Oproperty
      */
     protected OProperty<?> setDefaultValue(EdmProperty ep, String propName, OProperty<?> op, EdmDataServices metadata) {
@@ -678,7 +678,7 @@ public abstract class AbstractODataResource {
     /**
      * Check the value of the property item.
      * @param ep EdmProperty
-     * @ param propName property name
+     * @param propName property name
      * @param op OProperty
      */
     protected void validateProperty(EdmProperty ep, String propName, OProperty<?> op) {
@@ -702,7 +702,7 @@ public abstract class AbstractODataResource {
     /**
      * Check the value of the property item.
      * @param ep EdmProperty
-     * @ param propName property name
+     * @param propName property name
      * @param op OProperty
      * @param metadata schema information
      */
@@ -734,7 +734,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Check processing other than p: Format.
-     * @ param props property list
+     * @param props property list
      * @param
      */
     public void validate(List<OProperty<?>> props) {
@@ -742,7 +742,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Get property list.
-     * @ param props property list
+     * @param props property list
      * @param
      */
     public void collectProperties(List<OProperty<?>> props) {
@@ -786,9 +786,9 @@ public abstract class AbstractODataResource {
 
     /**
      * Check the value of property item with regular expression.
-     * @ param propName property name
+     * @param propName property name
      * @param op OProperty
-     * @ param pFormat pFormat value
+     * @param pFormat pFormat value
      */
     protected void validatePropertyRegEx(String propName, OProperty<?> op, String pFormat) {
         // Extract regular expressions from('regular expression')
@@ -804,7 +804,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Check whether the value of the property item is a URI.
-     * @ param propName property name
+     * @param propName property name
      * @param op OProperty
      */
     protected void validatePropertyUri(String propName, OProperty<?> op) {
@@ -838,7 +838,7 @@ public abstract class AbstractODataResource {
     /**
      * Perform normalization of OEntityKey.
      * When toKeyString OEntityKey after normalization, if it is the same key, it becomes the same character string.
-     * @ param oEntityKey original OEntityKey
+     * @param oEntityKey original OEntityKey
      * @param edmEntitySet EdmEntitySet
      * @return OEntityKey Normalized OEntityKey
      */
@@ -896,8 +896,8 @@ public abstract class AbstractODataResource {
 
     /**
      * Generate OEntity from the request body Reader.
-     * @ param keyPropNames List of names of properties for creating entity keys
-     * @ param reader request body
+     * @param keyPropNames List of names of properties for creating entity keys
+     * @param reader request body
      * @return OEntity
      */
     private OEntity createOEntityFromRequest(List<String> keyPropNames,
@@ -925,9 +925,9 @@ public abstract class AbstractODataResource {
      * Create a response builder for POST.
      * @param ent OEntity
      * @param outputFormat Content-Type
-     * @ param responseStr response body
-     * @ param resUriInfo response UriInfo
-     * @ param key Entity key of the response
+     * @param responseStr response body
+     * @param resUriInfo response UriInfo
+     * @param key Entity key of the response
      * @return response builder
      */
     protected ResponseBuilder getPostResponseBuilder(
@@ -955,9 +955,9 @@ public abstract class AbstractODataResource {
     /**
      * Create a response body.
      * @param uriInfo UriInfo
-     * @ param resp response
-     * @ param format Response body format
-     * @ param acceptableMediaTypes List of allowed MediaTypes
+     * @param resp response
+     * @param format Response body format
+     * @param acceptableMediaTypes List of allowed MediaTypes
      * @return response body
      */
     protected String renderEntityResponse(
@@ -983,7 +983,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Creates a default value instance of the OData property from the property schema information of the Entity Data Model.
-     * @ param ep Entity Data Model properties
+     * @param ep Entity Data Model properties
      * @return Instance of OData property with default value
      */
     private OProperty<?> generateDefautlProperty(EdmProperty ep) {
@@ -1062,7 +1062,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Dummy key check.
-     * @ param value Value to check
+     * @param value Value to check
      * @return true: Dummy key false: other than dummy key
      */
     public static boolean isDummy(Object value) {
@@ -1075,8 +1075,8 @@ public abstract class AbstractODataResource {
 
     /**
      * Returns a character string obtained by replacing the dummy key with null.
-     * @ param value Substitution target string
-     * @ return Return string
+     * @param value Substitution target string
+     * @return Return string
      */
     public static String replaceDummyKeyToNull(String value) {
         return value.replaceAll("'" + DUMMY_KEY + "'", "null");
@@ -1084,8 +1084,8 @@ public abstract class AbstractODataResource {
 
     /**
      * Return a character string with null replaced with a dummy key (with parentheses).
-     * @ param value Substitution target string
-     * @ return Return string
+     * @param value Substitution target string
+     * @return Return string
      */
     public static String replaceNullToDummyKeyWithParenthesis(String value) {
         return replaceNullToDummyKey("(" + value + ")");
@@ -1093,8 +1093,8 @@ public abstract class AbstractODataResource {
 
     /**
      * Return a character string with null replaced with a dummy key.
-     * @ param value Substitution target string
-     * @ return Return string
+     * @param value Substitution target string
+     * @return Return string
      */
     public static String replaceNullToDummyKey(String value) {
         Pattern pattern = Pattern.compile("=null([,|\\)])");
@@ -1141,7 +1141,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Get EntityType and PropertyName from NavigationTargetKeyProperty.
-     * @ param propertyName property name
+     * @param propertyName property name
      * @return EntityType and PropertyName
      */
     public static HashMap<String, String> convertNTKP(String propertyName) {
@@ -1158,7 +1158,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Acquires the character string specified by the argument as the value of TimeMillis.
-     * @ param timeStr TimeMillis string representation (ex. "/ Data (...) /", "SYSUTCDATETIME ()")
+     * @param timeStr TimeMillis string representation (ex. "/ Data (...) /", "SYSUTCDATETIME ()")
      * @return TimeMillis value
      */
     private long getTimeMillis(String timeStr) {
@@ -1182,7 +1182,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Escape the response body.
-     * @ param response Response body
+     * @param response Response body
      * @return escaped response body
      */
     public String escapeResponsebody(String response) {

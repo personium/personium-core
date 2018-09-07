@@ -195,7 +195,7 @@ public class PersoniumExpressionParser {
 
     /**
      * Perth in orderby.
-     * @ param value orderby value
+     * @param value orderby value
      * @return Perth result
      */
     public static List<OrderByExpression> parseOrderBy(String value) {
@@ -219,7 +219,7 @@ public class PersoniumExpressionParser {
 
     /**
      * Parse of filter.
-     * Value of @ param value filter
+     * Value of @param value filter
      * @return Perth result
      */
     public static CommonExpression parse(String value) {
@@ -236,7 +236,7 @@ public class PersoniumExpressionParser {
 
     /**
      * A parse of select.
-     * @ param value Value of select
+     * @param value Value of select
      * @return Perth result
      */
     public static List<EntitySimpleProperty> parseExpand(String value) {
@@ -259,7 +259,7 @@ public class PersoniumExpressionParser {
 
     /**
      * Parsing expand.
-     * @ param value The value of expand
+     * @param value The value of expand
      * @return Perth result
      */
     public static List<EntitySimpleProperty> parseExpandQuery(String value) {
@@ -286,7 +286,7 @@ public class PersoniumExpressionParser {
 
     /**
      * dumpTokens.
-     * @ param tokens token list
+     * @param tokens token list
      */
     public static void dumpTokens(List<Token> tokens) {
         for (Token t : tokens) {
@@ -298,7 +298,7 @@ public class PersoniumExpressionParser {
 
     /**
      * processParentheses.
-     * @ param tokens token list
+     * @param tokens token list
      * @return token list
      */
     public static List<Token> processParentheses(List<Token> tokens) {

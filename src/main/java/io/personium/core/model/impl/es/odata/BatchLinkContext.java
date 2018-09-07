@@ -69,7 +69,7 @@ public class BatchLinkContext {
 
     /**
      * Set the number of items registered in the DB.
-     * @ param existsCount Number registered in DB
+     * @param existsCount Number registered in DB
      */
     void setExistsCount(long existsCount) {
         this.existsCount = existsCount;

@@ -78,7 +78,7 @@ public class EsNavigationTargetKeyProperty implements NavigationTargetKeyPropert
      * @param cellId CellId
      * @param boxId boxId
      * @param nodeId nodeId
-     * @ param type type
+     * @param type type
      * @param odataProducer odataProducer
      */
     public EsNavigationTargetKeyProperty(String cellId,

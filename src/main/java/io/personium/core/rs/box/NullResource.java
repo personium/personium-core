@@ -70,9 +70,9 @@ public class NullResource {
 
     /**
      * constructor.
-     * @ param parent parent resource
-     * @ param davCmp Parts responsible for processing dependent on backend implementation
-     * @ param isParentNull Determine if the parent is a NullResource
+     * @param parent parent resource
+     * @param davCmp Parts responsible for processing dependent on backend implementation
+     * @param isParentNull Determine if the parent is a NullResource
      */
     public NullResource(final DavRsCmp parent, final DavCmp davCmp, final boolean isParentNull) {
         this.davRsCmp = new DavRsCmp(parent, davCmp);
@@ -94,8 +94,8 @@ public class NullResource {
 
     /**
      * Place a new file in this path.
-     * @ param contentType Content-Type header
-     * @ param inputStream request body
+     * @param contentType Content-Type header
+     * @param inputStream request body
      * @return Jax-RS Response object
      */
     @WriteAPI
@@ -126,10 +126,10 @@ public class NullResource {
 
     /**
      * Create a new Collection in this path.
-     * @ param contentType Content-Type header
-     * @ param contentLength Content-Length header
-     * @ param transferEncoding Transfer-Encoding header
-     * @ param inputStream request body
+     * @param contentType Content-Type header
+     * @param contentLength Content-Length header
+     * @param transferEncoding Transfer-Encoding header
+     * @param inputStream request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -211,8 +211,8 @@ public class NullResource {
 
     /**
      * Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
-     * @ param nextPath path name one down
-     * @ param request request
+     * @param nextPath path name one down
+     * @param request request
      * @return Jax-RS resource object responsible for subordinate path
      */
     @Path("{nextPath}")

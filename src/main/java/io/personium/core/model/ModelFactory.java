@@ -74,7 +74,7 @@ public final class ModelFactory {
 
     /**
      * Creates and returns an internal implementation model object of Box.
-     * @ param box Box class
+     * @param box Box class
      * @return Box's internal implementation model object
      */
     public static BoxCmp boxCmp(final Box box) {
@@ -105,7 +105,7 @@ public final class ModelFactory {
     public static class ODataCtl {
         /**
          * Returns the ODataProducer handling the Unit management entity.
-         * @ param ac access context
+         * @param ac access context
          * @return Unit ODataProducer handling management entities
          */
         public static PersoniumODataProducer unitCtl(AccessContext ac) {
@@ -114,7 +114,7 @@ public final class ModelFactory {
 
         /**
          * Returns the ODataProducer handling the Cell management entity.
-         * @ param cell Cell's Cell
+         * @param cell Cell's Cell
          * @return ODataProducer handling Cell management entities
          */
         public static PersoniumODataProducer cellCtl(final Cell cell) {

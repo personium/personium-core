@@ -159,7 +159,7 @@ public class BarFileInstallRunner implements Runnable {
 
     /**
      * Register Box information in ES.
-     * @ param json JSON object read from JSON file
+     * @param json JSON object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createBox(String boxName, String schema) {
@@ -325,7 +325,7 @@ public class BarFileInstallRunner implements Runnable {
 
     /**
      * Register the Relation information defined in 10 _ $ relations.json to the ES.
-     * @ param jsonMapObjects JSONMap object read from JSON file
+     * @param jsonMapObjects JSONMap object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createRelations(JSONRelations jsonMapObjects) {
@@ -345,7 +345,7 @@ public class BarFileInstallRunner implements Runnable {
 
     /**
      * Register the Role information defined in 20 _ $ roles.json to the ES.
-     * @ param jsonMapObjects JSONMap object read from JSON file
+     * @param jsonMapObjects JSONMap object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createRoles(JSONRoles jsonMapObjects) {
@@ -365,7 +365,7 @@ public class BarFileInstallRunner implements Runnable {
 
     /**
      * Register ExtRole information defined in 30 _ $ extroles.json in the ES.
-     * @ param jsonMapObjects JSONMap object read from JSON file
+     * @param jsonMapObjects JSONMap object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createExtRoles(JSONExtRoles jsonMapObjects) {
@@ -387,7 +387,7 @@ public class BarFileInstallRunner implements Runnable {
 
     /**
      * Register the Rule information defined in 50_rules.json to the ES.
-     * @ param jsonMapObjects JSONMap object read from JSON file
+     * @param jsonMapObjects JSONMap object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createRules(JSONRules jsonMapObjects) {
@@ -409,7 +409,7 @@ public class BarFileInstallRunner implements Runnable {
 
     /**
      * Register the link information defined in 70 _ $ links.json to the ES.
-     * @ param jsonMapObjects JSONMap object read from JSON file
+     * @param jsonMapObjects JSONMap object read from JSON file
      */
     private void createLinks(JSONLinks jsonMapObjects) {
         for (JSONLink jsonMapObject : jsonMapObjects.getLinks()) {
@@ -481,8 +481,8 @@ public class BarFileInstallRunner implements Runnable {
 
     /**
      * Analyze 90_rootprops_xml and perform registration processing such as Collectoin / ACL / WebDAV.
-     * @ param rootPropsName Path name in bar file of 90_rootprops_xml
-     * @ param bufferedReader input stream Reader
+     * @param rootPropsName Path name in bar file of 90_rootprops_xml
+     * @param bufferedReader input stream Reader
      */
     protected void registXmlEntry(String rootPropsName, BufferedReader bufferedReader) {
         writeOutputStream(false, BarFileUtils.CODE_INSTALL_STARTED, rootPropsName);
@@ -593,8 +593,8 @@ public class BarFileInstallRunner implements Runnable {
 
     /**
      * Verify that there is no inconsistency in the hierarchical structure of path defined in 90_rootprops.xml.
-     * @ param multiStatus 90 JOXB object read from 90 _rootprops.xml
-     * @ param rootPropsName Name of the entry currently being processed (for log output)
+     * @param multiStatus 90 JOXB object read from 90 _rootprops.xml
+     * @param rootPropsName Name of the entry currently being processed (for log output)
      */
     private void validateCollectionDefinitions(Multistatus multiStatus, String rootPropsName) {
 
@@ -696,9 +696,9 @@ public class BarFileInstallRunner implements Runnable {
 
     /**
      * Get the collection type of the path defined in each response tag in 90_rootprops.xml.
-     * @ param rootPropsName Name of the entry currently being processed (for log output)
-     * @ param response JAXB object for response tag to be processed
-     * @ return Returns the value of the collection type according to the definition content.
+     * @param rootPropsName Name of the entry currently being processed (for log output)
+     * @param response JAXB object for response tag to be processed
+     * @return Returns the value of the collection type according to the definition content.
      * WebDAV file, Service source is returned as WebDAV file.
      * If the type of unauthorized collection is defined, return it as undefined.
      */
@@ -734,8 +734,8 @@ public class BarFileInstallRunner implements Runnable {
      * Register ACL and PROPPATCH information in Box.
      * @param targetBox box
      * @param aclElement ACL
-     * @ param propElements What to set with PROPATCH
-     * URL of @ param boxUrl box
+     * @param propElements What to set with PROPATCH
+     * URL of @param boxUrl box
      */
     private void registBoxAclAndProppatch(Box targetBox, Element aclElement,
             List<Element> propElements, String boxUrl) {
@@ -843,7 +843,7 @@ public class BarFileInstallRunner implements Runnable {
 
     /**
      * Get messages from exception objects.
-     * @ param ex exception object
+     * @param ex exception object
      * @return message
      */
     private String getErrorMessage(Throwable ex) {
@@ -857,7 +857,7 @@ public class BarFileInstallRunner implements Runnable {
 
     /**
      * Output of Http response message.
-     * @ param isError Specify true on error, false otherwise.
+     * @param isError Specify true on error, false otherwise.
      * @param code
      * Message code (message code defined in personium-messages.properties)
      * @param path
@@ -869,7 +869,7 @@ public class BarFileInstallRunner implements Runnable {
 
     /**
      * bar File output of installation log details.
-     * @ param isError Specify true on error, false otherwise.
+     * @param isError Specify true on error, false otherwise.
      * @param code
      * Message code (message code defined in personium-messages.properties)
      * @param path

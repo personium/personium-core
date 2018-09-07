@@ -79,7 +79,7 @@ public final class Mkcol {
     /**
      * Returns the collection type string.
      * @return ColType string
-     * @ throws RequestException exception
+     * @throws RequestException exception
      */
     public String getWebdavColType() throws RequestException {
         Resourcetype rt = this.getResourcetype();

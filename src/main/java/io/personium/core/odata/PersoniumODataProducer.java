@@ -58,15 +58,15 @@ public interface PersoniumODataProducer extends ODataProducer {
     /**
      * ETag · Entity update corresponding to primary key change.
      * @param entitySetName entitySetName
-     * @ param originalKey Key to be updated
-     * @ param o EntityWrapper data (including updated key)
+     * @param originalKey Key to be updated
+     * @param o EntityWrapper data (including updated key)
      */
     void updateEntity(String entitySetName, OEntityKey originalKey, OEntityWrapper oEntityWrapper);
 
     /**
      * Account password change.
      * @param entitySetName entitySetName
-     * @ param originalKey Key to be updated
+     * @param originalKey Key to be updated
      * @param pCredHeader dcCredHeader
      */
     void updatePassword(EdmEntitySet entitySetName, OEntityKey originalKey, String pCredHeader);
@@ -74,16 +74,16 @@ public interface PersoniumODataProducer extends ODataProducer {
     /**
      * Change last login time of Account.
      * @param entitySetName entitySetName
-     * @ param originalKey Key to be updated
-     * @ param accountId Account ID
+     * @param originalKey Key to be updated
+     * @param accountId Account ID
      */
     void updateLastAuthenticated(EdmEntitySet entitySetName, OEntityKey originalKey, String accountId);
 
     /**
      * ETag · Entity MERGE for primary key change.
      * @param entitySetName entitySetName
-     * @ param originalKey Key to be updated
-     * @ param o EntityWrapper data (including updated key)
+     * @param originalKey Key to be updated
+     * @param o EntityWrapper data (including updated key)
      */
     void mergeEntity(String entitySetName, OEntityKey originalKey, OEntityWrapper oEntityWrapper);
 
@@ -97,7 +97,7 @@ public interface PersoniumODataProducer extends ODataProducer {
 
     /**
      * EntitySetDocHandler is generated from EntitySet name and OEntity and acquired.
-     * @ param entitySetName EntitySet name
+     * @param entitySetName EntitySet name
      * @param entity OEntity
      * @return EntitySetDocHandler
      */
@@ -105,15 +105,15 @@ public interface PersoniumODataProducer extends ODataProducer {
 
     /**
      * Update processing handler.
-     * @ param entitySetName Entity set name
+     * @param entitySetName Entity set name
      */
     void onChange(String entitySetName);
 
     /**
      * Perform bulk registration.
-     * @ param metadata schema information
-     * @ param bulkRequests List of EntitySetDocHandler to register
-     * @ param cellId Cell ID
+     * @param metadata schema information
+     * @param bulkRequests List of EntitySetDocHandler to register
+     * @param cellId Cell ID
      * @return EntitiesResponse
      */
     List<EntityResponse> bulkCreateEntity(EdmDataServices metadata,
@@ -132,16 +132,16 @@ public interface PersoniumODataProducer extends ODataProducer {
 
     /**
      * Register entities collectively via NavigationProperty.
-     * @ param npBulkContexts Context of bulk registration
-     * @ param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
+     * @param npBulkContexts Context of bulk registration
+     * @param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
      */
     void bulkCreateEntityViaNavigationProperty(List<NavigationPropertyBulkContext> npBulkContexts,
             LinkedHashMap<String, BulkRequest> npBulkRequests);
 
     /**
      * Check the upper limit of the number of links when registering entities collectively via NavigationProperty.
-     * @ param npBulkContexts Context of bulk registration
-     * @ param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
+     * @param npBulkContexts Context of bulk registration
+     * @param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
      */
     void checkLinksUpperLimitRecord(List<NavigationPropertyBulkContext> npBulkContexts,
             LinkedHashMap<String, BulkRequest> npBulkRequests);

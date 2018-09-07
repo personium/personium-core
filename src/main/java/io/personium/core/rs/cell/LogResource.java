@@ -114,10 +114,10 @@ public class LogResource {
     /**
      * Obtain a list of archive event log files.
      * @param requestBodyXml Request Body
-     * @ param uriInfo request URL information
-     * @ param contentLength contentlength Content of header
-     * @ param transferEncoding Contents of Transfer-Encoding header
-     * @ param depth Depth header content
+     * @param uriInfo request URL information
+     * @param contentLength contentlength Content of header
+     * @param transferEncoding Contents of Transfer-Encoding header
+     * @param depth Depth header content
      * @return JAX-RS Response Object
      */
     @Path(ARCHIVE_COLLECTION)
@@ -251,8 +251,8 @@ public class LogResource {
 
     /**
      * Get event log file.
-     * @ param ifNoneMatch If-None-Match header
-     * @ param logCollection Collection name
+     * @param ifNoneMatch If-None-Match header
+     * @param logCollection Collection name
      * @param fileName fileName
      * @return JAXRS Response
      */
@@ -364,7 +364,7 @@ public class LogResource {
 
     /**
      * Collection name check of event log.
-     * @ param collectionName Collection name ("current" or "archive")
+     * @param collectionName Collection name ("current" or "archive")
      * @return true: correct, false: error
      */
     protected boolean isValidLogCollection(String collectionName) {
@@ -378,8 +378,8 @@ public class LogResource {
      * <li> current: "default.log" fixed
      * <li> archive: File name starting with "default.log." (404 if there is no actual file, but here only the file name check)
      * </ul>
-     * @ param collectionName Collection name ("current" or "archive")
-     * @ param fileName File name ("default.log" or "default.log. *")
+     * @param collectionName Collection name ("current" or "archive")
+     * @param fileName File name ("default.log" or "default.log. *")
      * @return true: correct, false: error
      */
     protected boolean isValidLogFile(String collectionName, String fileName) {

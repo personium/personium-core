@@ -41,8 +41,8 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
 
     /**
      * constructor.
-     * @ param entityType entity type
-     * @ param map property name and Map of Alias
+     * @param entityType entity type
+     * @param map property name and Map of Alias
      */
     public UserDataQueryHandler(EdmEntityType entityType, Map<String, PropertyAlias> map) {
         super(entityType);
@@ -117,8 +117,8 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
 
     /**
      * It is determined whether the untouched field should be used.
-     * @ param name property name
-     * @ param edmProperty property schema information
+     * @param name property name
+     * @param edmProperty property schema information
      * true if the untretched field should be used, false otherwise
      */
     private boolean isUntouched(String name, EdmProperty edmProperty) {
@@ -155,8 +155,8 @@ public class UserDataQueryHandler extends EsQueryHandler implements ODataQueryHa
 
     /**
      * Get the property's Alias ​​name from the mapping data.
-     * @ param key Search key for mapping data
-     * @ param propertyName property name
+     * @param key Search key for mapping data
+     * @param propertyName property name
      * @return Alias ​​name
      */
     private String getAlias(String key, String propertyName) {

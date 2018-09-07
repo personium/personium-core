@@ -59,9 +59,9 @@ public final class ODataProducerUtils {
     /**
      * Perform uniqueness check of data at Entity registration / update.
      * @param producer
-     * @ param newEntity Entity to register / update newly
-     * @ param originalEntity original Entity
-     * @ param originalKey The key name specified in the update request
+     * @param newEntity Entity to register / update newly
+     * @param originalEntity original Entity
+     * @param originalKey The key name specified in the update request
      */
     static void checkUniqueness(EsODataProducer producer, OEntityWrapper newEntity,
             OEntityWrapper originalEntity, OEntityKey originalKey) {
@@ -245,8 +245,8 @@ public final class ODataProducerUtils {
 
     /**
      * Merge the values ​​of dynamic fields and static fields of OEDH specified by argument and update oedhNew.
-     * @ param oedhExisting base OEDH
-     * @ param oedhNew Add OEDH
+     * @param oedhExisting base OEDH
+     * @param oedhNew Add OEDH
      */
     public static void mergeFields(EntitySetDocHandler oedhExisting, EntitySetDocHandler oedhNew) {
         //Add registered properties to static fields

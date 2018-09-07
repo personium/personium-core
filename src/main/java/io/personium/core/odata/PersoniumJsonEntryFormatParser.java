@@ -51,7 +51,7 @@ public class PersoniumJsonEntryFormatParser extends PersoniumJsonFormatParser im
 
     /**
      * constructor.
-     * @ param settings setting
+     * @param settings setting
      */
     public PersoniumJsonEntryFormatParser(Settings settings) {
         super(settings);
@@ -59,7 +59,7 @@ public class PersoniumJsonEntryFormatParser extends PersoniumJsonFormatParser im
 
     /**
      * Perth of Entry.
-     * @ param reader Birth character
+     * @param reader Birth character
      * @return Entry
      */
     @Override

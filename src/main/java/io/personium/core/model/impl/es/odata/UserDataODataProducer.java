@@ -142,7 +142,7 @@ public class UserDataODataProducer extends EsODataProducer {
 
     /**
      * Implementation subclass If you want Producer to be associated with a specific EntityType, implement it to override here and return EntityTypeId.
-     * @ param entityTypeName EntityType name
+     * @param entityTypeName EntityType name
      * Return @return EntityTypeId
      */
     @Override
@@ -152,7 +152,7 @@ public class UserDataODataProducer extends EsODataProducer {
 
     /**
      * Get DocHandler.
-     * Type of @ param type elasticsearch
+     * Type of @param type elasticsearch
      * @param oEntity OEntityWrapper
      * @return EntitySetDocHandler
      */
@@ -363,7 +363,7 @@ public class UserDataODataProducer extends EsODataProducer {
 
     /**
      * Get key information of Links.
-     * @ param entityTypeName EntityType name
+     * @param entityTypeName EntityType name
      * Return key information of @return links
      */
     public String getLinkskey(String entityTypeName) {
@@ -453,7 +453,7 @@ public class UserDataODataProducer extends EsODataProducer {
 
     /**
      * Entity of dynamic property is created.
-     * @ param docHandler Entity dock handler to register
+     * @param docHandler Entity dock handler to register
      */
     public void createDynamicPropertyEntity(final EntitySetDocHandler docHandler) {
         EntitySetAccessor accessor = EsModel.cellCtl(cell, Property.EDM_TYPE_NAME);
@@ -507,8 +507,8 @@ public class UserDataODataProducer extends EsODataProducer {
 
     /**
      * Check the upper limit of the number of links when registering entities collectively via NavigationProperty.
-     * @ param npBulkContexts Context of bulk registration
-     * @ param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
+     * @param npBulkContexts Context of bulk registration
+     * @param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
      */
     @Override
     public void checkLinksUpperLimitRecord(List<NavigationPropertyBulkContext> npBulkContexts,
@@ -581,7 +581,7 @@ public class UserDataODataProducer extends EsODataProducer {
 
     /**
      * Generate key of map of BatchLinkContext.
-     * @ param npBulkContext Context of bulk registration
+     * @param npBulkContext Context of bulk registration
      * @return BatchLinkContext map key
      */
     private String getBatchLinkContextsKey(NavigationPropertyBulkContext npBulkContext) {
@@ -670,8 +670,8 @@ public class UserDataODataProducer extends EsODataProducer {
 
     /**
      * Check unauthorized Link information.
-     * @ param sourceEntity source side Entity
-     * @ param targetEntity Target side Entity
+     * @param sourceEntity source side Entity
+     * @param targetEntity Target side Entity
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceEntity, EntitySetDocHandler targetEntity) {
@@ -679,9 +679,9 @@ public class UserDataODataProducer extends EsODataProducer {
 
     /**
      * Check unauthorized Link information.
-     * @ param sourceDocHandler Source side Entity
-     * @ param entity Target side Entity
-     * @ param targetEntitySetName EntitySet name of the target
+     * @param sourceDocHandler Source side Entity
+     * @param entity Target side Entity
+     * @param targetEntitySetName EntitySet name of the target
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceDocHandler, OEntity entity, String targetEntitySetName) {

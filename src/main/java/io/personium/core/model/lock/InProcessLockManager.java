@@ -171,8 +171,8 @@ class InProcessLockManager extends LockManager {
 
         /**
          * constructor.
-         * @ param value value
-         * @ param expired Lock retention period (seconds)
+         * @param value value
+         * @param expired Lock retention period (seconds)
          */
         AccountLock(String value, int expired) {
             this.value = value;

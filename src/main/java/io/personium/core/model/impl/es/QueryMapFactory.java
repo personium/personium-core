@@ -47,8 +47,8 @@ public final class QueryMapFactory {
 
     /**
      * term Generate and return an instance of Map storing query information.
-     * @ param key search key
-     * @ param value Search keyword
+     * @param key search key
+     * @param value Search keyword
      * @return Map containing input values
      */
     public static Map<String, Object> termQuery(String key, Object value) {
@@ -62,8 +62,8 @@ public final class QueryMapFactory {
 
     /**
      * sort Creates and returns an instance of Map storing query information.
-     * @ param key Sort key
-     * @ param order Specify ascending / descending order
+     * @param key Sort key
+     * @param order Specify ascending / descending order
      * @return Map containing input values
      */
     public static Map<String, Object> sortQuery(String key, String order) {
@@ -90,7 +90,7 @@ public final class QueryMapFactory {
 
     /**
      * bool.must Create and return a Map instance that stores query information.
-     * @ param queries must Query list specified by query
+     * @param queries must Query list specified by query
      * @return Map containing input values
      */
     public static Map<String, Object> mustQuery(List<Map<String, Object>> queries) {
@@ -103,7 +103,7 @@ public final class QueryMapFactory {
 
     /**
      * bool.should Generate a Map instance storing query information and return it.
-     * @ param queries should Query list specified by query
+     * @param queries should Query list specified by query
      * @return Map containing input values
      */
     public static Map<String, Object> shouldQuery(List<Map<String, Object>> queries) {
@@ -116,7 +116,7 @@ public final class QueryMapFactory {
 
     /**
      * missing Create and return an instance of Map that stores query information.
-     * @ param key search key
+     * @param key search key
      * @return Map containing input values
      */
     public static Map<String, Object> missingFilter(String key) {
@@ -129,9 +129,9 @@ public final class QueryMapFactory {
 
     /**
      * Generate and return an instance of Map storing term filter information.
-     * @ param key search key
-     * @ param value Search keyword
-     * @ param isCache Whether to cache
+     * @param key search key
+     * @param value Search keyword
+     * @param isCache Whether to cache
      * @return Map containing input values
      */
     public static Map<String, Object> termFilter(String key, String value, boolean isCache) {
@@ -146,7 +146,7 @@ public final class QueryMapFactory {
 
     /**
      * Creates and returns an instance of Map that stores filtered query information.
-     * @ param query filtered-query If omitted omit match_all
+     * @param query filtered-query If omitted omit match_all
      * @param filter filtered-filter
      * @return Map containing input values
      */
@@ -170,11 +170,11 @@ public final class QueryMapFactory {
 
     /**
      * Create an implicit filter based on Cell / Box / Node / EntityType.
-     * @ param cellId UUID of Cell
-     * @ param boxId UUID of Box
-     * @ param nodeId UUID of DavNode
-     * @ param entityTypeId UUID of EntityType
-     * @ param entitySetName Entity set name
+     * @param cellId UUID of Cell
+     * @param boxId UUID of Box
+     * @param nodeId UUID of DavNode
+     * @param entityTypeId UUID of EntityType
+     * @param entitySetName Entity set name
      * @return Implicit filter based on Cell / Box / Node / EntityType
      */
     public static List<Map<String, Object>> getImplicitFilters(String cellId, String boxId, String nodeId,
@@ -213,7 +213,7 @@ public final class QueryMapFactory {
 
     /**
      * Generate a list of term queries for multiple types of Elasticsearch.
-     * @ param searchTargetTypes List of types of Elasticsearch
+     * @param searchTargetTypes List of types of Elasticsearch
      * @return List of created term queries
      */
     public static List<Map<String, Object>> multiTypeTerms(String[] searchTargetTypes) {

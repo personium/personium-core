@@ -155,20 +155,20 @@ public class AuthzEndPointResource {
      * <ul>
      * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
      * </ul>
-     * @ param authzHeader Authorization header
-     * @ param pTarget query parameter
-     * @ param pOwner query parameter
-     * @ param assertion query parameter
-     * @ param clientId query parameter
-     * @ param responseType query parameter
-     * @ param redirectUri query parameter
-     * @ param host Host header
+     * @param authzHeader Authorization header
+     * @param pTarget query parameter
+     * @param pOwner query parameter
+     * @param assertion query parameter
+     * @param clientId query parameter
+     * @param responseType query parameter
+     * @param redirectUri query parameter
+     * @param host Host header
      * @param pCookie p_cookie
-     * @ param cookieRefreshToken cookie
-     * @ param keepLogin query parameter
-     * @ param state query parameter
-     * @ param isCancel Cancel flag
-     * @ param uriInfo context
+     * @param cookieRefreshToken cookie
+     * @param keepLogin query parameter
+     * @param state query parameter
+     * @param isCancel Cancel flag
+     * @param uriInfo context
      * @return JAX-RS Response Object
      */
     @GET
@@ -197,12 +197,12 @@ public class AuthzEndPointResource {
      * <ul>
      * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
      * </ul>
-     * @ param authzHeader Authorization header
-     * @ param host Host header
+     * @param authzHeader Authorization header
+     * @param host Host header
      * @param pCookie p_cookie
-     * @ param cookieRefreshToken cookie
+     * @param cookieRefreshToken cookie
      * @param formParams Body parameters
-     * @ param uriInfo context
+     * @param uriInfo context
      * @return JAX-RS Response Object
      */
     @POST
@@ -510,7 +510,7 @@ public class AuthzEndPointResource {
      * ImplicitFlow Password authentication form.
      * @param clientId clientId
      * @param redirectUriStr redirectUriStr
-     * @ param message String to be output to message display area
+     * @param message String to be output to message display area
      * @param state state
      * @param dcTraget dcTraget
      * @param pOwner pOwner
@@ -960,7 +960,7 @@ public class AuthzEndPointResource {
 
     /**
      * It is determined whether password authentication in ImplicitFlow was successful.
-     * @ param response Authentication response
+     * @param response Authentication response
      * @return true: Authentication success false: Authentication failure
      */
     protected boolean isSuccessAuthorization(Response response) {
@@ -1098,7 +1098,7 @@ public class AuthzEndPointResource {
 
     /**
      * Authorization processing It is checked whether there is a Box whose schema is the cell URL specified by clientId.
-     * @ param clientId App Store URL
+     * @param clientId App Store URL
      * @return true: authorization success false: authorization failure
      */
     private boolean checkAuthorization(final String clientId) {

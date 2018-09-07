@@ -41,8 +41,8 @@ public class EventUtils {
 
     /**
      * Get the directory path of the log file to be output on the event bus.
-     * @ param cellId uuid of Cell
-     * @ param owner owner information
+     * @param cellId uuid of Cell
+     * @param owner owner information
      * @return Directory of the log file (return null if it does not exist)
      */
     public static StringBuilder getEventLogDir(String cellId, String owner) {
@@ -79,8 +79,8 @@ public class EventUtils {
 
     /**
      * Delete all event logs.
-     * @ param cellId ID of the cell
-     * @ param owner Cell owner (URL format)
+     * @param cellId ID of the cell
+     * @param owner Cell owner (URL format)
      * @throws BinaryDataAccessException Failed to delete event log file
      */
     public static void deleteEventLog(String cellId, String owner) throws BinaryDataAccessException {

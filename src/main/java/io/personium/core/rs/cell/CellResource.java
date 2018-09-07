@@ -238,7 +238,7 @@ public class CellResource {
     }
 
     /**
-     * @ param pCredHeader pCredHeader X-Personium-Credential header
+     * @param pCredHeader pCredHeader X-Personium-Credential header
      * @return CellCtlResource
      */
     @Path("__ctl")
@@ -339,7 +339,7 @@ public class CellResource {
 
     /**
      * Access to the default box.
-     * @ param jaxRsRequest HTTP request for JAX-RS
+     * @param jaxRsRequest HTTP request for JAX-RS
      * @return BoxResource Object
      */
     @Path("__")
@@ -389,8 +389,8 @@ public class CellResource {
 
     /**
      * A method that passes the following path to BoxResource.
-     * @ param boxName Box path name
-     * @ param jaxRsRequest HTTP request for JAX-RS
+     * @param boxName Box path name
+     * @param jaxRsRequest HTTP request for JAX-RS
      * @return BoxResource Object
      */
     @Path("{box: [^\\/]+}")
@@ -446,7 +446,7 @@ public class CellResource {
 
     /**
      * Processing of ACL method.
-     * @ param reader configuration XML
+     * @param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI

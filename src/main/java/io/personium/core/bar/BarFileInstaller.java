@@ -111,7 +111,7 @@ public class BarFileInstaller {
      * MAP storing Http header
      * @param inStream
      * InputStream for Http request body
-     * @ param requestKey The value of the RequestKey field to be output to the event log
+     * @param requestKey The value of the RequestKey field to be output to the event log
      * @return response
      */
     public Response barFileInstall(Map<String, String> headers,
@@ -240,7 +240,7 @@ public class BarFileInstaller {
 
     /**
      * bar Method to pre-check at the time of acceptance of installation.
-     * @ param headers HTTP header
+     * @param headers HTTP header
      */
     private void checkPreConditions(Map<String, String> headers) {
         //[403] Access control
@@ -301,8 +301,8 @@ public class BarFileInstaller {
 
     /**
      * Synchronization of file descriptors.
-     * @ param fd file descriptor
-     * @ throws SyncFailedException Synchronization failed
+     * @param fd file descriptor
+     * @throws SyncFailedException Synchronization failed
      */
     public void sync(FileDescriptor fd) throws SyncFailedException {
         fd.sync();
@@ -310,8 +310,8 @@ public class BarFileInstaller {
 
     /**
      * Http Reads the bar file from the request body and stores it in the temporary area.
-     * @ param inStream InputStream object for Http request body
-     * @ return The File object of the bar file stored in the temporary area
+     * @param inStream InputStream object for Http request body
+     * @return The File object of the bar file stored in the temporary area
      */
     private File storeTemporaryBarFile(InputStream inStream) {
 
@@ -360,7 +360,7 @@ public class BarFileInstaller {
      * <li> Check the upper limit of the file size of each entry in the bar file. </ li>
      * <li> Check the order of each entry in TODO bar file. </ li>
      * </ul>.
-     * @ param barFile The File object of the bar file saved in the temporary area
+     * @param barFile The File object of the bar file saved in the temporary area
      * @returns bar Number of entries (files) in the file
      */
     private long checkBarFileContents(File barFile) {
@@ -450,9 +450,9 @@ public class BarFileInstaller {
 
     /**
      * Check file size of entry in bar file.
-     * @ param zae bar file entry
-     * @ param entryName entry name
-     * @ param maxBarEntryFileSize File size of entry
+     * @param zae bar file entry
+     * @param entryName entry name
+     * @param maxBarEntryFileSize File size of entry
      */
     protected void checkBarFileEntrySize(ZipArchiveEntry zae, String entryName,
             long maxBarEntryFileSize) {
@@ -467,7 +467,7 @@ public class BarFileInstaller {
 
     /**
      * bar File size check.
-     * @ param barFile bar file
+     * @param barFile bar file
      */
     protected void checkBarFileSize(File barFile) {
         //[400] bar file file size exceeds the upper limit

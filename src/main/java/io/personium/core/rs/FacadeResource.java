@@ -58,10 +58,10 @@ public class FacadeResource {
     public static final String COOKIE_PEER_QUERY_KEY = "p_cookie_peer";
 
     /**
-     * @ param cookieAuthValue The value specified for the p_cookie key in the cookie
-     * @ param cookiePeer p_cookie_peer Value specified in the query
-     * @ param authzHeaderValue Authorization header
-     * @ param host Host header
+     * @param cookieAuthValue The value specified for the p_cookie key in the cookie
+     * @param cookiePeer p_cookie_peer Value specified in the query
+     * @param authzHeaderValue Authorization header
+     * @param host Host header
      * @param uriInfo UriInfo
      * @param xPersoniumUnitUser X-Personium-UnitUser header
      * @param xPersoniumRequestKey X-Personium-RequestKey header
@@ -107,11 +107,11 @@ public class FacadeResource {
     }
 
     /**
-     * @ param cookieAuthValue The value specified for the p_cookie key in the cookie
-     * @ param cookiePeer p_cookie_peer Value specified in the query
-     * @ param authzHeaderValue Authorization header
-     * @ param host Host header
-     * @ param xPersoniumUnitUser header
+     * @param cookieAuthValue The value specified for the p_cookie key in the cookie
+     * @param cookiePeer p_cookie_peer Value specified in the query
+     * @param authzHeaderValue Authorization header
+     * @param host Host header
+     * @param xPersoniumUnitUser header
      * @param uriInfo UriInfo
      * @return UnitCtlResource object
      */
@@ -130,9 +130,9 @@ public class FacadeResource {
     }
 
     /**
-     * @ param authzHeaderValue Authorization header
-     * @ param host Host header
-     * @ param xPersoniumUnitUser header
+     * @param authzHeaderValue Authorization header
+     * @param host Host header
+     * @param xPersoniumUnitUser header
      * @param uriInfo UriInfo
      * @return UnitCtlResource object
      */

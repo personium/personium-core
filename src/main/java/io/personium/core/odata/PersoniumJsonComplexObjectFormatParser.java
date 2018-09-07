@@ -68,7 +68,7 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
 
     /**
      * constructor.
-     * @ param s setting information
+     * @param s setting information
      */
     public PersoniumJsonComplexObjectFormatParser(Settings s) {
         super(s);
@@ -84,7 +84,7 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
 
     /**
      * The parse of ComplexTypeObject.
-     * @ param reader Perth target
+     * @param reader Perth target
      * @return OComplexObject
      */
     @Override
@@ -100,7 +100,7 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
 
     /**
      * The parse of ComplexTypeObject.
-     * @ param jsr JsonStreamReader of parse target character
+     * @param jsr JsonStreamReader of parse target character
      * @return OComplexObject
      */
     public OComplexObject parseSingleObject(JsonStreamReader jsr) {
@@ -118,7 +118,7 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
 
     /**
      * The parse of ComplexTypeObject.
-     * @ param jsr JsonStreamReader of parse target character
+     * @param jsr JsonStreamReader of parse target character
      * @param startPropertyEvent JsonEvent
      * @return OComplexObject
      */
@@ -130,8 +130,8 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
 
     /**
      * Add the shortcoming ComplexTypeProperty.
-     * @ param props Property list to be added
-     * @ param jsr JsonStreamReader of parse target character
+     * @param props Property list to be added
+     * @param jsr JsonStreamReader of parse target character
      * @return OComplexObject
      */
     private OComplexObject eatProps(List<OProperty<?>> props, JsonStreamReader jsr) {
@@ -155,9 +155,9 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
 
     /**
      * Added properties.
-     * @ param props Property list to be added
-     * @ param name Additional Property Name
-     * @ param jsr JsonStreamReader of parse target character
+     * @param props Property list to be added
+     * @param name Additional Property Name
+     * @param jsr JsonStreamReader of parse target character
      */
     protected void addProperty(List<OProperty<?>> props, String name, JsonStreamReader jsr) {
         JsonEvent event = jsr.nextEvent();
@@ -250,9 +250,9 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
     /**
      * Get the value of the JSON object.
      * @param event JsonEvent
-     * @ param name property name
+     * @param name property name
      * @param jsr JsonStreamReader
-     * @ param ep Property Definition
+     * @param ep Property Definition
      * @return JsonObjectPropertyValue
      */
     protected JsonObjectPropertyValue getValue(JsonEvent event,

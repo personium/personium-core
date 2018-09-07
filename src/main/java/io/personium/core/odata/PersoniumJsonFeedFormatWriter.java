@@ -50,7 +50,7 @@ public class PersoniumJsonFeedFormatWriter extends PersoniumJsonFormatWriter<Ent
 
     /**
      * constructor.
-     * @ param jsonpCallback callback
+     * @param jsonpCallback callback
      */
     public PersoniumJsonFeedFormatWriter(String jsonpCallback) {
         super(jsonpCallback);

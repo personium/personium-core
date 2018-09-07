@@ -67,8 +67,8 @@ public class FilterConditionValidator {
      * <li>DoubleLiteral</li>
      * </ul>
      * The notation such as "1.0 f" or "1.0 m" (SingleLiteral, DecimalLiteral respectively) is a parse error.
-     * @ param edmProperty Property specified in search condition of $ filter
-     * @ param searchValue Value of search condition for $ filter
+     * @param edmProperty Property specified in search condition of $ filter
+     * @param searchValue Value of search condition for $ filter
      */
     static void validateFilterOpCondition(EdmProperty edmProperty, CommonExpression searchValue) {
         //Comparison operator (lt / le / ge / gt) Commonly allowable data: string / integer value / real number
@@ -99,8 +99,8 @@ public class FilterConditionValidator {
      * <li>NullLiteral</li>
      * </ul>
      * The notation such as "1.0 f" or "1.0 m" (SingleLiteral, DecimalLiteral respectively) is a parse error.
-     * @ param edmProperty Property specified in search condition of $ filter
-     * @ param searchValue Value of search condition for $ filter
+     * @param edmProperty Property specified in search condition of $ filter
+     * @param searchValue Value of search condition for $ filter
      */
     static void validateFilterEqCondition(EdmProperty edmProperty, CommonExpression searchValue) {
         //Verify that the value of the search condition can be evaluated as the data type of the schema defined property.
@@ -119,8 +119,8 @@ public class FilterConditionValidator {
      * <ul>
      * <li>StringLiteral</li>
      * </ul>
-     * @ param edmProperty Property specified for the function of $ filter
-     * @ param searchValue The value specified for the function of $ filter
+     * @param edmProperty Property specified for the function of $ filter
+     * @param searchValue The value specified for the function of $ filter
      */
     static void validateFilterFuncCondition(EdmProperty edmProperty, CommonExpression searchValue) {
         //Function (substringof / startswith) Commonly allowable data: Character string
@@ -144,8 +144,8 @@ public class FilterConditionValidator {
     interface AbstractValidator {
         /**
          * Verify the inconsistency between the data type of the property specified in the search condition and the data of the search condition value.
-         * @ param searchValue Search condition value
-         * @ param propertyName Property name to search for
+         * @param searchValue Search condition value
+         * @param propertyName Property name to search for
          */
         void validate(CommonExpression searchValue, String propertyName);
     }

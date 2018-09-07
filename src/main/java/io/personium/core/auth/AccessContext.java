@@ -161,14 +161,14 @@ public class AccessContext {
 
     /**
      * Factory method, which creates and returns an object based on the value of the accessing Cell and Authorization header.
-     * @ param authzHeaderValue Authorization header value
-     * @ param request URIInfo URI information of the request
-     * @ param pCookiePeer The value of p_cookie_peer specified in the request parameter
-     * @ param pCookieAuthValue Value specified for p_cookie in cookie
-     * @ param cell Accessing Cell
-     * @ param baseUri accessing baseUri
-     * @ param host The value of Host in the request header
-     * @ param xPersoniumUnitUser X-Personium-UnitUser header
+     * @param authzHeaderValue Authorization header value
+     * @param request URIInfo URI information of the request
+     * @param pCookiePeer The value of p_cookie_peer specified in the request parameter
+     * @param pCookieAuthValue Value specified for p_cookie in cookie
+     * @param cell Accessing Cell
+     * @param baseUri accessing baseUri
+     * @param host The value of Host in the request header
+     * @param xPersoniumUnitUser X-Personium-UnitUser header
      * @return Generated AccessContext object
      */
     public static AccessContext create(String authzHeaderValue,
@@ -318,9 +318,9 @@ public class AccessContext {
 
     /**
      * Merge with the parent's ACL information and judge whether access is possible.
-     * @ param acl ALC set in the resource
-     * @ param resourcePrivilege Privilege required to access the resource
-     * @ param cellUrl Cell URL
+     * @param acl ALC set in the resource
+     * @param resourcePrivilege Privilege required to access the resource
+     * @param cellUrl Cell URL
      * @return boolean
      */
     public boolean requirePrivilege(Acl acl, Privilege resourcePrivilege, String cellUrl) {
@@ -396,7 +396,7 @@ public class AccessContext {
 
     /**
      * Perform access control (only master token, unit user token, unit local unit user token accessible).
-     * @ param resourcePrivilege Required authority
+     * @param resourcePrivilege Required authority
      * @return Whether access is possible
      */
     public boolean isUnitUserToken(Privilege resourcePrivilege) {
@@ -422,7 +422,7 @@ public class AccessContext {
 
     /**
      * Access control is performed (Subject can access only token of CELL).
-     * @ param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
+     * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
     public void checkCellIssueToken(AcceptableAuthScheme acceptableAuthScheme) {
         if (TYPE_TRANS.equals(this.getType())
@@ -444,7 +444,7 @@ public class AccessContext {
     /**
      * Make sure the token is your local cell token.
      * @param cellname cell
-     * @ param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
+     * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
     public void checkMyLocalToken(Cell cellname, AcceptableAuthScheme acceptableAuthScheme) {
         //Returning 401 if there is no illegal token or token designation
@@ -462,9 +462,9 @@ public class AccessContext {
 
     /**
      * Schema setting is checked to judge whether access is possible.
-     * @ param settingConfidentialLevel Schema level setting
+     * @param settingConfidentialLevel Schema level setting
      * @param box box
-     * @ param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
+     * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
     public void checkSchemaAccess(String settingConfidentialLevel, Box box, AcceptableAuthScheme acceptableAuthScheme) {
         //If you are a master token or unit user, unit local unit user pass through schema authentication.
@@ -528,7 +528,7 @@ public class AccessContext {
     /**
      * If basic authentication can not be done, it is checked whether basic authentication can be performed or not, and the state of Basic authentication disabled is set in context. <br />
      * In this method, only checking is performed, and whether or not it is actually an authentication error is left to the access right check process of the structure.
-     * @ param box Box object (specify null for Cell level)
+     * @param box Box object (specify null for Cell level)
      */
     public void updateBasicAuthenticationStateForResource(Box box) {
         //No check unless it is basic authentication
@@ -558,7 +558,7 @@ public class AccessContext {
 
     /**
      * Throw invalid token exceptions.
-     * @ param allowedAuthScheme Whether it is a call from a resource that does not allow basic authentication
+     * @param allowedAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
     public void throwInvalidTokenException(AcceptableAuthScheme allowedAuthScheme) {
         String realm = getRealm();
@@ -592,7 +592,7 @@ public class AccessContext {
 
     /**
      * Generate the key for token encryption / decryption at the time of cookie authentication.
-     * @ param uri request URI
+     * @param uri request URI
      * @return Key used for encryption / decryption
      */
     public static String getCookieCryptKey(URI uri) {
@@ -612,9 +612,9 @@ public class AccessContext {
 
     /**
      * Factory method. It creates and returns an object by basic authentication based on the value of Cell and Authorization header being accessed.
-     * @ param authzHeaderValue Authorization header value
-     * @ param cell Accessing Cell
-     * @ param baseUri accessing baseUri
+     * @param authzHeaderValue Authorization header value
+     * @param cell Accessing Cell
+     * @param baseUri accessing baseUri
      * @param uriInfo uri info
      * @return Generated AccessContext object
      */
@@ -663,11 +663,11 @@ public class AccessContext {
 
     /**
      * Factory method, which creates and returns an object by Bearer authentication based on the value of Cell and Authorization header being accessed.
-     * @ param authzHeaderValue Authorization header value
-     * @ param cell Accessing Cell
-     * @ param baseUri accessing baseUri
+     * @param authzHeaderValue Authorization header value
+     * @param cell Accessing Cell
+     * @param baseUri accessing baseUri
      * @param uriInfo uri info
-     * @ param xPersoniumUnitUser X-Personium-UnitUser header
+     * @param xPersoniumUnitUser X-Personium-UnitUser header
      * @return Generated AccessContext object
      */
     private static AccessContext createBearerAuthz(String authzHeaderValue, Cell cell,
@@ -823,9 +823,9 @@ public class AccessContext {
 
     /**
      * It checks whether necessary privilege is set to Privilege of ACL.
-     * @ param acePrivileges List of Privilege settings configured on the ACE
-     * @ param resourcePrivilege Required authority
-     * @ return Checkability
+     * @param acePrivileges List of Privilege settings configured on the ACE
+     * @param resourcePrivilege Required authority
+     * @return Checkability
      */
     private boolean requireAcePrivilege(List<String> acePrivileges, Privilege resourcePrivilege) {
         for (String aclPrivilege : acePrivileges) {
@@ -842,8 +842,8 @@ public class AccessContext {
 
     /**
      * Relative path resolution of configuration role URL.
-     * The value of the xml: base attribute of the @ param base ACL
-     * @ param principal Href principal-Href of ACL
+     * The value of the xml: base attribute of the @param base ACL
+     * @param principal Href principal-Href of ACL
      * @return
      */
     private String getPrincipalHrefUrl(String base, String principalHref) {

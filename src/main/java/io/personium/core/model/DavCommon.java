@@ -42,7 +42,7 @@ public class DavCommon {
 
     /**
      * Invalid name check.
-     * @ param name Name of the resource to be checked
+     * @param name Name of the resource to be checked
      * @return true: normal, false: invalid
      */
     public static final boolean isValidResourceName(String name) {

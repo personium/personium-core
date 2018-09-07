@@ -70,10 +70,10 @@ public final class ODataSvcCollectionResource extends ODataResource {
 
     /**
      * Processing of PROPFIND.
-     * @ param requestBodyXml request body
-     * @ param depth Depth header
-     * @ param contentLength Content-Length header
-     * @ param transferEncoding Transfer-Encoding header
+     * @param requestBodyXml request body
+     * @param depth Depth header
+     * @param contentLength Content-Length header
+     * @param transferEncoding Transfer-Encoding header
      * @return JAX-RS Response
      */
     @WebDAVMethod.PROPFIND
@@ -90,7 +90,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
 
     /**
      * Processing of PROPPATCH.
-     * @ param requestBodyXml request body
+     * @param requestBodyXml request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -105,7 +105,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
 
     /**
      * Processing of ACL method Set ACL.
-     * @ param reader configuration XML
+     * @param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -165,7 +165,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
 
     /**
      * Processing of the MOVE method.
-     * @ param headers header information
+     * @param headers header information
      * @return JAX-RS response object
      */
     @WriteAPI
@@ -193,7 +193,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
 
     /**
      * Returns whether the access context has permission to $ batch.
-     * @ param ac access context
+     * @param ac access context
      * @return true: The access context has permission to $ batch
      */
     @Override
@@ -222,7 +222,7 @@ public final class ODataSvcCollectionResource extends ODataResource {
 
     /**
      * basic Check if authentication can be done.
-     * @ param ac access context
+     * @param ac access context
      */
     public void setBasicAuthenticateEnableInBatchRequest(AccessContext ac) {
         ac.updateBasicAuthenticationStateForResource(this.davRsCmp.getBox());

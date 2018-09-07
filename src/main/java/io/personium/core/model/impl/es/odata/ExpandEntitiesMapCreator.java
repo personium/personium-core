@@ -64,9 +64,9 @@ public final class ExpandEntitiesMapCreator {
 
     /**
      * constructor.
-     * @ param queryInfo query information
-     * @ param baseEntityType Expand The original entity type type
-     * @ param expandMaxNum Expand Maximum number of acquired entities
+     * @param queryInfo query information
+     * @param baseEntityType Expand The original entity type type
+     * @param expandMaxNum Expand Maximum number of acquired entities
      */
     public ExpandEntitiesMapCreator(final QueryInfo queryInfo,
             final EdmEntityType baseEntityType,
@@ -96,7 +96,7 @@ public final class ExpandEntitiesMapCreator {
 
     /**
      * Create a cache of the specified entity.
-     * @ param baseEntity Expand The original entity
+     * @param baseEntity Expand The original entity
      * @param producer producer
      */
     public void setCache(EntitySetDocHandler baseEntity, EsODataProducer producer) {
@@ -107,7 +107,7 @@ public final class ExpandEntitiesMapCreator {
 
     /**
      * Create a cache of the specified entity.
-     * @ param baseEntityList Expand The original entity list
+     * @param baseEntityList Expand The original entity list
      * @param producer producer
      */
     public void setCache(List<EntitySetDocHandler> baseEntityList, EsODataProducer producer) {
@@ -225,7 +225,7 @@ public final class ExpandEntitiesMapCreator {
 
     /**
      * $ expand Gets the specified Entity.
-     * @ param baseEntity Expand The original entity
+     * @param baseEntity Expand The original entity
      * @param producer producer
      * @return OEntity list
      */
@@ -261,9 +261,9 @@ public final class ExpandEntitiesMapCreator {
 
     /**
      * Search the link destination entity ID from the Link table and return the ID list of the link destination data.
-     * @ param baseEntity source entity
+     * @param baseEntity source entity
      * @param producer EsODataProducer
-     * @ param entityTypeListForLinkTable Entity type list to be searched
+     * @param entityTypeListForLinkTable Entity type list to be searched
      * @return ID list of linked data
      */
     private List<String> getRelatedEntityIdListFromLinkTable(List<EntitySetDocHandler> baseEntityList,
@@ -310,8 +310,8 @@ public final class ExpandEntitiesMapCreator {
     /**
      * Create a query list for N: N Link table search.
      * @param producer EsODataProducer
-     * @ param entityTypeListForLinkTable Entity type list to be searched
-     * @ param baseEntityList Source entity list
+     * @param entityTypeListForLinkTable Entity type list to be searched
+     * @param baseEntityList Source entity list
      * @return Link Query list for table search
      */
     private List<Map<String, Object>> createLinkTableSearchQueries(EsODataProducer producer,

@@ -34,8 +34,8 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
 
     /**
      * constructor.
-     * @ param index index
-     * @ param name Type name
+     * @param index index
+     * @param name Type name
      * @param routingId routingId
      */
     protected AbstractEntitySetAccessor(EsIndex index, String name, String routingId) {
@@ -44,7 +44,7 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
 
     /**
      * Register data of ODataEntity with UUID.
-     * @ param docHandler registration data
+     * @param docHandler registration data
      * @return registration result
      */
     @Override
@@ -55,8 +55,8 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
 
     /**
      * Perform data registration of ODataEntity.
-     * @ param id ID of registration data
-     * @ param docHandler registration data
+     * @param id ID of registration data
+     * @param docHandler registration data
      * @return registration result
      */
     public PersoniumIndexResponse create(String id, EntitySetDocHandler docHandler) {
@@ -67,8 +67,8 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
 
     /**
      * Data of Cell is updated.
-     * @ param id ID of update data
-     * @ param docHandler registration data
+     * @param id ID of update data
+     * @param docHandler registration data
      * @return Update result
      */
     @Override
@@ -78,9 +78,9 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
 
     /**
      * Perform data update of ODataEntity with version specification.
-     * @ param id ID of update data
-     * @ param docHandler registration data
-     * @ param version version information
+     * @param id ID of update data
+     * @param docHandler registration data
+     * @param version version information
      * @return Update result
      */
     public PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler, long version) {
@@ -90,7 +90,7 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
 
     /**
      * Delete data of ODataEntity.
-     * @ param docHandler delete data
+     * @param docHandler delete data
      * @return Deletion result
      */
     @Override
@@ -100,8 +100,8 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
 
     /**
      * Delete data of ODataEntity.
-     * @ param docHandler delete data
-     * @ param version version information
+     * @param docHandler delete data
+     * @param version version information
      * @return Deletion result
      */
     @Override

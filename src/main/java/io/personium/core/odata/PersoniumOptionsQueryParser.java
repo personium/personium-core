@@ -55,7 +55,7 @@ public final class PersoniumOptionsQueryParser extends OptionsQueryParser {
 
     /**
      * Parsing the Orderby query.
-     * @ param orderBy value of the orderby query
+     * @param orderBy value of the orderby query
      * @return Perth result
      */
     public static List<OrderByExpression> parseOrderBy(String orderBy) {
@@ -67,7 +67,7 @@ public final class PersoniumOptionsQueryParser extends OptionsQueryParser {
 
     /**
      * Parse the Filter query.
-     * @ param filter filter query value
+     * @param filter filter query value
      * @return Perth result
      */
     public static BoolCommonExpression parseFilter(String filter) {
@@ -87,7 +87,7 @@ public final class PersoniumOptionsQueryParser extends OptionsQueryParser {
 
     /**
      * Parses the Select query.
-     * @ param select Select query value
+     * @param select Select query value
      * @return Perth result
      */
     public static List<EntitySimpleProperty> parseSelect(String select) {
@@ -99,7 +99,7 @@ public final class PersoniumOptionsQueryParser extends OptionsQueryParser {
 
     /**
      * Parsing Expand's query.
-     * @ param expand expand Query value
+     * @param expand expand Query value
      * @return Perth result
      */
     public static List<EntitySimpleProperty> parseExpand(String expand) {

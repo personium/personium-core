@@ -45,8 +45,8 @@ public class PersoniumEngineSourceCollection {
 
     /**
      * constructor.
-     * @ param parent parent resource
-     * @ param davCmp Parts responsible for processing dependent on backend implementation
+     * @param parent parent resource
+     * @param davCmp Parts responsible for processing dependent on backend implementation
      */
     PersoniumEngineSourceCollection(final DavRsCmp parent, final DavCmp davCmp) {
         this.davRsCmp = new DavRsCmp(parent, davCmp);
@@ -54,8 +54,8 @@ public class PersoniumEngineSourceCollection {
 
     /**
      * Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
-     * @ param nextPath path name one down
-     * @ param request request
+     * @param nextPath path name one down
+     * @param request request
      * @return Jax-RS resource object responsible for subordinate path
      */
     @Path("{nextPath}")

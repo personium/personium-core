@@ -69,9 +69,9 @@ public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatPars
 
     /**
      * constructor.
-     * @ param collectionType Collection type
-     * @ param md schema information
-     * @ param name property name
+     * @param collectionType Collection type
+     * @param md schema information
+     * @param name property name
      */
     public PersoniumJsonCollectionFormatParser(EdmCollectionType collectionType, EdmDataServices md, String name) {
         super(null);

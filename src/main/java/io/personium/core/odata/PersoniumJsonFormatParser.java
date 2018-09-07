@@ -124,7 +124,7 @@ public class PersoniumJsonFormatParser {
 
     /**
      * Metadata's setter.
-     * @ param metadata schema information
+     * @param metadata schema information
      */
     public void setMetadata(EdmDataServices metadata) {
         this.metadata = metadata;
@@ -148,7 +148,7 @@ public class PersoniumJsonFormatParser {
 
     /**
      * constructor.
-     * @ param settings setting information
+     * @param settings setting information
      */
     protected PersoniumJsonFormatParser(Settings settings) {
         if (settings != null) {
@@ -202,11 +202,11 @@ public class PersoniumJsonFormatParser {
 
     /**
      * Convert to OEntity.
-     * @ param entitySet entity set
-     * @ param entityType entity type
-     * @ param key
-     * @ param properties
-     * @ param links link information
+     * @param entitySet entity set
+     * @param entityType entity type
+     * @param key
+     * @param properties
+     * @param links link information
      * @return OEntity
      */
     private OEntity toOEntity(EdmEntitySet entitySet,
@@ -356,8 +356,8 @@ public class PersoniumJsonFormatParser {
     /**
      * Get the value of the JSON object.
      * @param event JsonEvent
-     * @ param ees entity set type
-     * @ param name property name
+     * @param ees entity set type
+     * @param name property name
      * @param jsr JsonStreamReader
      * @param entry JsonEntry
      * @return JsonObjectPropertyValue
@@ -401,8 +401,8 @@ public class PersoniumJsonFormatParser {
     /**
      * Gets the specified annotation.
      * @param type EdmType
-     * @ param namespaceUri namespace
-     * @ param localName Name of acquisition target
+     * @param namespaceUri namespace
+     * @param localName Name of acquisition target
      * @return namespaceUri
      */
     private NamespacedAnnotation<?> findAnnotation(EdmType type, String namespaceUri, String localName) {

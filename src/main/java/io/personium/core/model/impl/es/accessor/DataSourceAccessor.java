@@ -54,7 +54,7 @@ public class DataSourceAccessor {
 
     /**
      * constructor.
-     * @ param index index
+     * @param index index
      */
     public DataSourceAccessor(EsIndex index) {
         this.index = index;
@@ -62,8 +62,8 @@ public class DataSourceAccessor {
 
     /**
      * constructor.
-     * @ param index index
-     * @ param name Type name
+     * @param index index
+     * @param name Type name
      * @param routingId routingID
      */
     protected DataSourceAccessor(EsIndex index, String name, String routingId) {
@@ -100,7 +100,7 @@ public class DataSourceAccessor {
 
     /**
      * Acquisition of one document.
-     * @ param id Document ID
+     * @param id Document ID
      * @return response
      */
     public PersoniumGetResponse get(final String id) {
@@ -113,7 +113,7 @@ public class DataSourceAccessor {
 
     /**
      * Create a new document.
-     * @ param data document
+     * @param data document
      * @return ES response
      */
     @SuppressWarnings("rawtypes")
@@ -125,7 +125,7 @@ public class DataSourceAccessor {
     /**
      * Create a new document.
      * @param id ID
-     * @ param data document
+     * @param data document
      * @return ES response
      */
     @SuppressWarnings({"rawtypes" })
@@ -137,7 +137,7 @@ public class DataSourceAccessor {
     /**
      * Create a new document.
      * @param id ID
-     * @ param data document
+     * @param data document
      * @return ES response
      */
     @SuppressWarnings({"rawtypes" })
@@ -162,8 +162,8 @@ public class DataSourceAccessor {
     /**
      * Create a new document (for Cell creation).
      * @param id ID
-     * @ param data document
-     * @ param docHandler document handler
+     * @param data document
+     * @param docHandler document handler
      * @return ES response
      */
     @SuppressWarnings({"rawtypes" })
@@ -188,8 +188,8 @@ public class DataSourceAccessor {
     /**
      * Document update.
      * @param id ID
-     * @ param data document
-     * @ param version version number
+     * @param data document
+     * @param version version number
      * @return ES response
      */
     @SuppressWarnings({"rawtypes" })
@@ -214,7 +214,7 @@ public class DataSourceAccessor {
     /**
      * Document update.
      * @param id ID
-     * @ param data document
+     * @param data document
      * @return ES response
      */
     @SuppressWarnings("rawtypes")
@@ -224,7 +224,7 @@ public class DataSourceAccessor {
 
     /**
      * Get the number of documents.
-     * @ param query Query information
+     * @param query Query information
      * @return ES response
      */
     public long count(final Map<String, Object> query) {
@@ -245,7 +245,7 @@ public class DataSourceAccessor {
 
     /**
      * Search documents.
-     * @ param query Query information
+     * @param query Query information
      * @return ES response
      */
     public PersoniumSearchResponse search(final Map<String, Object> query) {
@@ -269,7 +269,7 @@ public class DataSourceAccessor {
     /**
      * Multi-search documents.
      * When using this method, call number by specifying the number of acquisitions (size) in the query
-     * @ param queryList List of query information
+     * @param queryList List of query information
      * @return ES response
      */
     public PersoniumMultiSearchResponse multiSearch(final List<Map<String, Object>> queryList) {
@@ -283,7 +283,7 @@ public class DataSourceAccessor {
 
     /**
      * Search documents against the index of ES.
-     * @ param query Query information
+     * @param query Query information
      * @return ES response
      */
     public PersoniumSearchResponse indexSearch(final Map<String, Object> query) {
@@ -324,7 +324,7 @@ public class DataSourceAccessor {
     /**
      * Register the data in bulk. <br />
      * Update and delete are not supported yet.
-     * @ param esBulkRequest Bulk registration document list for ES
+     * @param esBulkRequest Bulk registration document list for ES
      * @param routingId routingId
      * @return bulk response
      */
@@ -343,7 +343,7 @@ public class DataSourceAccessor {
     /**
      * Register / update data in bulk. <br />
      * Deletion is not supported yet.
-     * @ param esBulkRequest Bulk registration document list for ES
+     * @param esBulkRequest Bulk registration document list for ES
      * @param routingId routingId
      * @return bulk response
      */
@@ -392,7 +392,7 @@ public class DataSourceAccessor {
     /**
      * Execute search request for index.
      * @param routingId routingId
-     * @ param query search query
+     * @param query search query
      * @return Search results
      */
     public PersoniumSearchResponse searchForIndex(String routingId, Map<String, Object> query) {
@@ -416,7 +416,7 @@ public class DataSourceAccessor {
     /**
      * Execute multi search request for index.
      * @param routingId routingId
-     * @ param queryList Search query list
+     * @param queryList Search query list
      * @return Search results
      */
     public PersoniumMultiSearchResponse multiSearchForIndex(String routingId, List<Map<String, Object>> queryList) {

@@ -81,7 +81,7 @@ public abstract class PersoniumCoreMessageUtils {
 
     /**
      * Acquire log level from configuration file.
-     * @ param code Message code
+     * @param code Message code
      * @return log level
      */
     public static Severity getSeverity(String code) {
@@ -101,7 +101,7 @@ public abstract class PersoniumCoreMessageUtils {
 
     /**
      * Retrieve messages from the configuration file.
-     * @ param code Message code
+     * @param code Message code
      * @return message
      */
     public static String getMessage(String code) {

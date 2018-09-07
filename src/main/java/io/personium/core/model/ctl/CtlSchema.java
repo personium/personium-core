@@ -95,7 +95,7 @@ public final class CtlSchema {
 
     /**
      * Creates and returns a CSDL extension annotation for a compound Unique Key constraint (CSDL extension by Personium).
-     * @ param name UK name
+     * @param name UK name
      * @return Annotation list
      */
     public static List<EdmAnnotation<?>> createNamedUkAnnotation(final String name) {
@@ -108,7 +108,7 @@ public final class CtlSchema {
 
     /**
      * Creates and returns an annotation of dynamic property or not.
-     * @ param name Boolean value (String type)
+     * @param name Boolean value (String type)
      * @return Annotation list
      */
     public static List<EdmAnnotation<?>> createIsDecleardAnnotation(final String name) {
@@ -121,7 +121,7 @@ public final class CtlSchema {
 
     /**
      * Creates and returns the "Format" annotation.
-     * @ param name Format definition
+     * @param name Format definition
      * @return Annotation list
      */
     public static List<EdmAnnotation<?>> createFormatAnnotation(final String name) {

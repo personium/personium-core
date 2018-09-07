@@ -40,7 +40,7 @@ public class BoxRsCmp extends DavRsCmp {
      * @param cellRsCmp CellRsCmp
      * @param davCmp DavCmp
      * @param accessContext AccessContext
-     * @ param box box
+     * @param box box
      */
     public BoxRsCmp(final CellRsCmp cellRsCmp, final DavCmp davCmp, final AccessContext accessContext, final Box box) {
         super(cellRsCmp, davCmp);

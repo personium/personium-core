@@ -33,7 +33,7 @@ public class UniqueNameComposer {
 
     /**
      * Create a unique name through thread / process / server.
-     * @ param prefix Any string
+     * @param prefix Any string
      * @return unique name
      */
     public static String compose(String prefix) {

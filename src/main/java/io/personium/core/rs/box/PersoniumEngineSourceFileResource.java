@@ -34,8 +34,8 @@ public final class PersoniumEngineSourceFileResource extends DavFileResource {
 
     /**
      * constructor.
-     * @ param parent parent
-     * @ param davCmp parts
+     * @param parent parent
+     * @param davCmp parts
      */
     public PersoniumEngineSourceFileResource(final DavRsCmp parent, final DavCmp davCmp) {
         super(parent, davCmp);
@@ -43,7 +43,7 @@ public final class PersoniumEngineSourceFileResource extends DavFileResource {
 
     /**
      * Processing of ACL method Set ACL.
-     * @ param reader configuration XML
+     * @param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI

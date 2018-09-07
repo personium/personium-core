@@ -46,7 +46,7 @@ public class AuthResourceUtils {
 
     /**
      * JS source loading utility.
-     * @ param fileName JS source file name
+     * @param fileName JS source file name
      * @return String JS source
      */
     public static String getJavascript(String fileName) {
@@ -105,8 +105,8 @@ public class AuthResourceUtils {
 
     /**
      * Check whether the target of the transcell token and cell are equal.
-     * @ param cell target cell
-     * @ param tcToken Transcel token
+     * @param cell target cell
+     * @param tcToken Transcel token
      * @return boolean Returns true if the target of the token is cell
      * @throws MalformedURLException MalformedURLException
      */
@@ -132,7 +132,7 @@ public class AuthResourceUtils {
 
     /**
      * Process to check if an Account lock exists.
-     * @ param accountId account ID
+     * @param accountId account ID
      * Returns true if @return lock exists
      */
     public static Boolean isLockedAccount(String accountId) {
@@ -141,7 +141,7 @@ public class AuthResourceUtils {
 
     /**
      * Register Account lock.
-     * @ param accountId account ID
+     * @param accountId account ID
      */
     public static void registAccountLock(String accountId) {
         AccountLockManager.registAccountLockObjct(accountId);

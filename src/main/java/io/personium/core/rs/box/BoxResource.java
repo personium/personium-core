@@ -94,8 +94,8 @@ public class BoxResource {
      * @param cell CELL Object
      * @param boxName Box Name
      * @param cellRsCmp cellRsCmp
-     * @ param accessContext AccessContext object
-     * @ param jaxRsRequest HTTP request for JAX-RS
+     * @param accessContext AccessContext object
+     * @param jaxRsRequest HTTP request for JAX-RS
      */
     public BoxResource(final Cell cell, final String boxName, final AccessContext accessContext,
             final CellRsCmp cellRsCmp, Request jaxRsRequest) {
@@ -138,8 +138,8 @@ public class BoxResource {
 
     /**
      * Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
-     * @ param nextPath path name one down
-     * @ param request request
+     * @param nextPath path name one down
+     * @param request request
      * @return Jax-RS resource object responsible for subordinate path
      */
     @Path("{nextPath}")
@@ -333,7 +333,7 @@ public class BoxResource {
 
     /**
      * Processing of ACL method Set ACL.
-     * @ param reader configuration XML
+     * @param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -348,9 +348,9 @@ public class BoxResource {
      * Processing of MKCOL method.
      * @param uriInfo UriInfo
      * @param pCredHeader dcCredHeader
-     * @ param contentType Value of Content-Type header
-     * @ param contentLength Value of the Content-Length header
-     * @ param inStream InputStream of Http request
+     * @param contentType Value of Content-Type header
+     * @param contentLength Value of the Content-Length header
+     * @param inStream InputStream of Http request
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -421,7 +421,7 @@ public class BoxResource {
 
     /**
      * Processing of the MOVE method.
-     * @ param headers header information
+     * @param headers header information
      * @return JAX-RS response object
      */
     @WebDAVMethod.MOVE

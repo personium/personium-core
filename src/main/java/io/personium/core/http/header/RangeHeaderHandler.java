@@ -55,8 +55,8 @@ public class RangeHeaderHandler {
 
     /**
      * Pass the value of the Range header and the size of the target file and parse it to generate an object of this class.
-     * @ param rangeHeader Range header value (ex. bytes = 500 - 600, 601 - 999)
-     * @ param entitySize Range File size to be specified
+     * @param rangeHeader Range header value (ex. bytes = 500 - 600, 601 - 999)
+     * @param entitySize Range File size to be specified
      * @return Object of this class
      */
     public static final RangeHeaderHandler parse(final String rangeHeader, final long entitySize) {

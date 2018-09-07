@@ -1243,7 +1243,7 @@ public class DavCmpFsImpl implements DavCmp {
     /**
      * Search Es with BoxId.
      * @param cellObj Cell
-     * @ param boxId Box Id
+     * @param boxId Box Id
      * @return Search results
      */
     public static Map<String, Object> searchBox(final Cell cellObj, final String boxId) {

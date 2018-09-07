@@ -525,7 +525,7 @@ public class PersoniumUnitConfig {
 
     /**
      * Get personium-unit-config.properties in InputStream format.
-     * @ param configFilePath configuration file path
+     * @param configFilePath configuration file path
      * @return personium-unit-config.properties
      */
     protected InputStream getConfigFileInputStream(String configFilePath) {
@@ -553,7 +553,7 @@ public class PersoniumUnitConfig {
 
     /**
      * Acquire setting value.
-     * @ param key
+     * @param key
      * @return setting value
      */
     private String doGet(final String key) {
@@ -562,8 +562,8 @@ public class PersoniumUnitConfig {
 
     /**
      * Setting value setting.
-     * @ param key
-     * @ param value value
+     * @param key
+     * @param value value
      */
     private void doSet(final String key, final String value) {
         props.setProperty(key, value);
@@ -579,7 +579,7 @@ public class PersoniumUnitConfig {
 
     /**
      * Key Specify the character string to acquire setting information.
-     * @ param key setting key
+     * @param key setting key
      * @return setting value
      */
     public static String get(final String key) {
@@ -588,8 +588,8 @@ public class PersoniumUnitConfig {
 
     /**
      * Key Specify the character string and change the setting information.
-     * @ param key setting key
-     * @ param value value
+     * @param key setting key
+     * @param value value
      */
     public static void set(final String key, final String value) {
         singleton.doSet(key, value);
@@ -629,7 +629,7 @@ public class PersoniumUnitConfig {
 
     /**
      * Get the unit master token value.
-     * @ return Master token value
+     * @return Master token value
      */
     public static String getMasterToken() {
         return get(MASTER_TOKEN);
@@ -955,14 +955,14 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Get the set value of search result output upper limit of @ return Es.
+     * Get the set value of search result output upper limit of @return Es.
      */
     public static int getEsTopNum() {
         return Integer.parseInt(get(ES.TOP_NUM));
     }
 
     /**
-     * @ return blob The route (URL, PATH) to store the data.
+     * @return blob The route (URL, PATH) to store the data.
      */
     public static String getBlobStoreRoot() {
         return get(BlobStore.ROOT);
@@ -1067,7 +1067,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @ reccache memcached operation timeout value (ms).
+     * @reccache memcached operation timeout value (ms).
      */
     public static long getCacheMemcachedOpTimeout() {
         return Long.parseLong(get(Cache.MEMCACHED_OPTIMEOUT));
@@ -1319,9 +1319,9 @@ public class PersoniumUnitConfig {
      * eg limitExpression: "1, 2, 3, 4", arrayLength = 2 -> int [] {1, 2}
      * If the contents of the numerical list are shorter than the length specified by arrayLength, missing parts are padded with zeros. .
      * eg limitExpression: "1, 2", arrayLength = 4 → int [] {1, 2, 0, 0}
-     * @ param limitExpression Comma-separated numeric list (character string)
-     * @ param arrayLength The length of the array to return. If it is less than 0, it is the same as specifying an array of the number of elements obtained from limitExpression.
-     * @ return integer array
+     * @param limitExpression Comma-separated numeric list (character string)
+     * @param arrayLength The length of the array to return. If it is less than 0, it is the same as specifying an array of the number of elements obtained from limitExpression.
+     * @return integer array
      */
     private static int[] getPropertyLimits(String limitExpression, int arrayLength) {
         if (null != limitExpression) {

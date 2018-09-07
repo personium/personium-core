@@ -100,7 +100,7 @@ public class PersoniumEdmxFormatParser extends EdmxFormatParser {
 
     /**
      * Analysis of Edmx.
-     * @ param reader Reader object for Edmx for analysis
+     * @param reader Reader object for Edmx for analysis
      * @return EdmDataServices JAXB object of Edmx parsed
      */
     @Override

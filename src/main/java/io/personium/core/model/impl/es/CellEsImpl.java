@@ -811,7 +811,7 @@ public class CellEsImpl implements Cell {
      * Property value
      * @param dcFormat
      * Value of dcFormat
-     * @ return In case of format error, return false
+     * @return In case of format error, return false
      */
     private static boolean validatePropertyRegEx(String propValue, String dcFormat) {
         //Perform format check

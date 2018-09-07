@@ -77,7 +77,7 @@ public class ODataPropertyResource extends AbstractODataResource {
 
     /**
      * constructor.
-     * @ param entityResource parent resource
+     * @param entityResource parent resource
      * @param targetNavProp Navigation Property
      */
     public ODataPropertyResource(
@@ -103,10 +103,10 @@ public class ODataPropertyResource extends AbstractODataResource {
     /**
      * Processing to the POST method.
      * @param uriInfo UriInfo
-     * @ param accept Accept header
+     * @param accept Accept header
      * @param requestKey X-Personium-RequestKey Header
-     * @ param format $ format query
-     * @ param reader request body
+     * @param format $ format query
+     * @param reader request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -176,7 +176,7 @@ public class ODataPropertyResource extends AbstractODataResource {
 
     /**
      * Generate Entity data to be registered via NavigationProperty from the input stream.
-     * @ param reader input stream
+     * @param reader input stream
      * @return OEntityWrapper object generated from the input stream
      */
     OEntityWrapper createEntityFromInputStream(final Reader reader) {
@@ -191,7 +191,7 @@ public class ODataPropertyResource extends AbstractODataResource {
 
     /**
      * Generate Entity data to be registered via NavigationProperty from the input stream.
-     * @ param reader input stream
+     * @param reader input stream
      * @return OEntityWrapper object generated from the input stream
      */
     OEntityWrapper createEntityFromInputStream(
@@ -214,7 +214,7 @@ public class ODataPropertyResource extends AbstractODataResource {
 
     /**
      * Register Entity via NavigationProperty.
-     * @ param oew OEntityWrapper object for registration
+     * @param oew OEntityWrapper object for registration
      * @return Entity response generated from registered content
      */
     EntityResponse createEntity(OEntityWrapper oew) {
@@ -229,11 +229,11 @@ public class ODataPropertyResource extends AbstractODataResource {
     /**
      * Search processing by GET method for NavProp.
      * @param uriInfo UriInfo
-     * @ param accept Accept header
+     * @param accept Accept header
      * @param requestKey X-Personium-RequestKey Header
-     * @ param callback ?? What is this? JSONP?
-     * @ param skipToken ?? What is this?
-     * @ param q full-text search parameter
+     * @param callback ?? What is this? JSONP?
+     * @param skipToken ?? What is this?
+     * @param q full-text search parameter
      * @return JAX-RS Response
      */
     @GET

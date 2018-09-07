@@ -61,7 +61,7 @@ public class UserDataLinkDocHandler extends LinkDocHandler {
 
     /**
      * constructor.
-     * @ param searchHit Search result
+     * @param searchHit Search result
      */
     public UserDataLinkDocHandler(PersoniumSearchHit searchHit) {
         super(searchHit);

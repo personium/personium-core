@@ -36,7 +36,7 @@ public abstract class AccountLockManager extends LockManager {
     /**
      * Write AccountLock to memcached.
      * Lock time follows properties.
-     * @ param accountId Account ID that failed authentication
+     * @param accountId Account ID that failed authentication
      */
     public static void registAccountLockObjct(final String accountId) {
         String key =  CATEGORY_ACCOUNT_LOCK + accountId;
@@ -47,7 +47,7 @@ public abstract class AccountLockManager extends LockManager {
 
     /**
      * Check the status of AccountLock.
-     * @ param accountId account ID
+     * @param accountId account ID
      * @return TRUE: Lock / FALSE: Unlock
      */
     public static boolean hasLockObject(final String accountId) {

@@ -36,8 +36,8 @@ public class CellAccessor extends AbstractEntitySetAccessor {
 
     /**
      * constructor.
-     * @ param index index
-     * @ param name Type name
+     * @param index index
+     * @param name Type name
      * @param routingId routingId
      */
     public CellAccessor(EsIndex index, String name, String routingId) {
@@ -47,8 +47,8 @@ public class CellAccessor extends AbstractEntitySetAccessor {
     /**
      * Return the number of DavFiles under the cell.
      * TODO It will be deleted in response to core issue #71.
-     * @ param cellId Cell ID to delete
-     * @ param unitUserName unit user name
+     * @param cellId Cell ID to delete
+     * @param unitUserName unit user name
      * @return Number of DavFiles under cell
      */
     public long getDavFileTotalCount(String cellId, String unitUserName) {
@@ -66,10 +66,10 @@ public class CellAccessor extends AbstractEntitySetAccessor {
     /**
      * Return the DavFileID list under the cell.
      * TODO It will be deleted in response to core issue #71.
-     * @ param cellId Cell ID to delete
-     * @ param unitUserName unit user name
-     * @ param size Number of acquisitions
-     * @ param from acquisition start position
+     * @param cellId Cell ID to delete
+     * @param unitUserName unit user name
+     * @param size Number of acquisitions
+     * @param from acquisition start position
      * @return Number of DavFiles under cell
      */
     public List<String> getDavFileIdList(String cellId, String unitUserName, int size, int from) {

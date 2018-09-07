@@ -60,7 +60,7 @@ public abstract class ProgressManager {
 
     /**
      * Get asynchronous processing status.
-     * @ param fullKey Asynchronous processing status key
+     * @param fullKey Asynchronous processing status key
      * @return Progress
      */
     public static Progress getProgress(String fullKey) {
@@ -75,8 +75,8 @@ public abstract class ProgressManager {
 
     /**
      * Asynchronous processing status grading process.
-     * @ param key
-     * @ param progress Asynchronous processing status object
+     * @param key
+     * @param progress Asynchronous processing status object
      */
     public static void putProgress(String key, Progress progress) {
         singleton.doPutProgress(key, progress);
@@ -84,7 +84,7 @@ public abstract class ProgressManager {
 
     /**
      * Asynchronous processing status grading process.
-     * @ param key
+     * @param key
      */
     public static void deleteProgress(String key) {
         singleton.doDeleteProgress(key);

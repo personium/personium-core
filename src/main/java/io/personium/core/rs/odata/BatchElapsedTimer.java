@@ -49,9 +49,9 @@ public class BatchElapsedTimer {
 
     /**
      * constructor.
-     * @ param startTimeInMillis Process start time.
-     * @ param elapseTimeToBreakInMillis Elapsed time to timeout.
-     * @ param priority Whether to sleep to give Lock to another process
+     * @param startTimeInMillis Process start time.
+     * @param elapseTimeToBreakInMillis Elapsed time to timeout.
+     * @param priority Whether to sleep to give Lock to another process
      */
     public BatchElapsedTimer(long startTimeInMillis, long elapseTimeToBreakInMillis, BatchPriority priority) {
         breakTimeInMillis = startTimeInMillis + elapseTimeToBreakInMillis;
@@ -62,7 +62,7 @@ public class BatchElapsedTimer {
 
     /**
      * At the time of calling, it returns whether it is timeout or not.
-     * @ param mode Whether to sleep to give Lock to another process
+     * @param mode Whether to sleep to give Lock to another process
      * @return true: timeout time has passed. false: not timeout.
      */
     public boolean shouldBreak(Lock mode) {

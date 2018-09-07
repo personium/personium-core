@@ -28,8 +28,8 @@ public class ODataLinkAccessor extends DataSourceAccessor {
 
     /**
      * constructor.
-     * @ param index index
-     * @ param name Type name
+     * @param index index
+     * @param name Type name
      * @param routingId routingId
      */
     public ODataLinkAccessor(EsIndex index, String name, String routingId) {
@@ -38,8 +38,8 @@ public class ODataLinkAccessor extends DataSourceAccessor {
 
     /**
      * Register ODataLink data.
-     * @ param id ID of registration data
-     * @ param docHandler registration data
+     * @param id ID of registration data
+     * @param docHandler registration data
      * @return registration result
      */
     public PersoniumIndexResponse create(String id, LinkDocHandler docHandler) {
@@ -50,7 +50,7 @@ public class ODataLinkAccessor extends DataSourceAccessor {
 
     /**
      * Delete a document.
-     * @ param docHandler delete data
+     * @param docHandler delete data
      * @return response
      */
     public PersoniumDeleteResponse delete(final LinkDocHandler docHandler) {
@@ -59,8 +59,8 @@ public class ODataLinkAccessor extends DataSourceAccessor {
 
     /**
      * Delete ODataLink data.
-     * @ param docHandler delete data
-     * @ param version version information
+     * @param docHandler delete data
+     * @param version version information
      * @return Deletion result
      */
     public PersoniumDeleteResponse delete(final LinkDocHandler docHandler, long version) {

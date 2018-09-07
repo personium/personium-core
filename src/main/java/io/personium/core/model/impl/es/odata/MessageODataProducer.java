@@ -96,9 +96,9 @@ public class MessageODataProducer extends CellCtlODataProducer {
 
     /**
      * Pre-registration processing.
-     * @ param entitySetName Entity set name
-     * @ param o Entity entity to be registered
-     * @ param docHandler Entity dock handler to register
+     * @param entitySetName Entity set name
+     * @param o Entity entity to be registered
+     * @param docHandler Entity dock handler to register
      */
     @Override
     public void beforeCreate(final String entitySetName, final OEntity oEntity, final EntitySetDocHandler docHandler) {
@@ -122,8 +122,8 @@ public class MessageODataProducer extends CellCtlODataProducer {
     /**
      * Change the status of relation registration / deletion and message reception.
      * @param entitySet entitySetName
-     * @ param originalKey Key to be updated
-     * @ param status Message status
+     * @param originalKey Key to be updated
+     * @param status Message status
      * @return ETag
      */
     @SuppressWarnings("unchecked")
@@ -694,7 +694,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
 
     /**
      * Message status validation.
-     * @ param status Message status
+     * @param status Message status
      * @return boolean
      */
     protected boolean isValidMessageStatus(String status) {
@@ -705,7 +705,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
 
     /**
      * Status validation of incoming messages.
-     * @ param status Message status
+     * @param status Message status
      * @return boolean
      */
     protected boolean isValidCurrentStatus(String status) {
@@ -716,7 +716,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
     /**
      * Overwrite the status of the received message and the update date.
      * @param entitySetDocHandler DocHandler
-     * @ param status Message status
+     * @param status Message status
      */
     private void updateStatusOfEntitySetDocHandler(EntitySetDocHandler entitySetDocHandler, String status) {
         Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();

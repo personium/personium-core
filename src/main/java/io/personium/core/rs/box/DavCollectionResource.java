@@ -52,8 +52,8 @@ public class DavCollectionResource {
 
     /**
      * constructor.
-     * @ param parent parent
-     * @ param davCmp parts
+     * @param parent parent
+     * @param davCmp parts
      */
     public DavCollectionResource(final DavRsCmp parent, final DavCmp davCmp) {
         this.davRsCmp = new DavRsCmp(parent, davCmp);
@@ -134,8 +134,8 @@ public class DavCollectionResource {
 
     /**
      * Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
-     * @ param nextPath path name one down
-     * @ param request request
+     * @param nextPath path name one down
+     * @param request request
      * @return Jax-RS resource object responsible for subordinate path
      */
     @Path("{nextPath}")
@@ -158,7 +158,7 @@ public class DavCollectionResource {
 
     /**
      * Processing of ACL method Set ACL.
-     * @ param reader configuration XML
+     * @param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -192,7 +192,7 @@ public class DavCollectionResource {
 
     /**
      * Processing of the MOVE method.
-     * @ param headers header information
+     * @param headers header information
      * @return JAX-RS response object
      */
     @WriteAPI

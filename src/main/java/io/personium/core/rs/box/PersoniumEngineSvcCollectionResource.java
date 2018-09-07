@@ -100,10 +100,10 @@ public class PersoniumEngineSvcCollectionResource {
 
     /**
      * Processing of PROPFIND.
-     * @ param requestBodyXml request body
-     * @ param depth Depth header
-     * @ param contentLength Content-Length header
-     * @ param transferEncoding Transfer-Encoding header
+     * @param requestBodyXml request body
+     * @param depth Depth header
+     * @param contentLength Content-Length header
+     * @param transferEncoding Transfer-Encoding header
      * @return JAX-RS Response
      */
     @WebDAVMethod.PROPFIND
@@ -147,7 +147,7 @@ public class PersoniumEngineSvcCollectionResource {
 
     /**
      * Processing of PROPPATCH.
-     * @ param requestBodyXml request body
+     * @param requestBodyXml request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -161,7 +161,7 @@ public class PersoniumEngineSvcCollectionResource {
 
     /**
      * Processing of ACL method Set ACL.
-     * @ param reader configuration XML
+     * @param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -206,9 +206,9 @@ public class PersoniumEngineSvcCollectionResource {
 
     /**
      * relay_GET method.
-     * @ param path Path name
+     * @param path Path name
      * @param uriInfo URI
-     * @ param headers header
+     * @param headers header
      * @return JAX-RS Response
      */
     @Path("{path}")
@@ -223,10 +223,10 @@ public class PersoniumEngineSvcCollectionResource {
 
     /**
      * relay_POST method.
-     * @ param path Path name
+     * @param path Path name
      * @param uriInfo URI
-     * @ param headers header
-     * @ param is Request body
+     * @param headers header
+     * @param is Request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -243,10 +243,10 @@ public class PersoniumEngineSvcCollectionResource {
 
     /**
      * relay_PUT method.
-     * @ param path Path name
+     * @param path Path name
      * @param uriInfo URI
-     * @ param headers header
-     * @ param is Request body
+     * @param headers header
+     * @param is Request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -263,9 +263,9 @@ public class PersoniumEngineSvcCollectionResource {
 
     /**
      * relay_DELETE method.
-     * @ param path Path name
+     * @param path Path name
      * @param uriInfo URI
-     * @ param headers header
+     * @param headers header
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -328,11 +328,11 @@ public class PersoniumEngineSvcCollectionResource {
 
     /**
      * relay Common processing method.
-     * @ param method method
+     * @param method method
      * @param uriInfo URI
-     * @ param path Path name
-     * @ param headers header
-     * @ param is Request body
+     * @param path Path name
+     * @param headers header
+     * @param is Request body
      * @return JAX-RS Response
      */
     private Response relaycommon(
@@ -490,7 +490,7 @@ log.debug ("[EngineRelay]" + req.getMethod () + "" + req.getURI ());
 
     /**
      * Processing of the MOVE method.
-     * @ param headers header information
+     * @param headers header information
      * @return JAX-RS response object
      */
     @WriteAPI

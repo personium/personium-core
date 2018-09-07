@@ -54,8 +54,8 @@ public class PropertyLimitChecker {
 
         /**
          * constructor.
-         * @ param entityTypeName EntityType name
-         * @ param message Error Details
+         * @param entityTypeName EntityType name
+         * @param message Error Details
          */
         public CheckError(String entityTypeName, String message) {
             this.entityTypeName = entityTypeName;
@@ -72,7 +72,7 @@ public class PropertyLimitChecker {
 
         /**
          * It returns an error message.
-         * @ return error message
+         * @return error message
          */
         public String getMessage() {
             return message;
@@ -89,7 +89,7 @@ public class PropertyLimitChecker {
 
         /**
          * constructor.
-         * @ param message Message
+         * @param message Message
          */
         PropertyLimitException(String message) {
             super(message);
@@ -97,8 +97,8 @@ public class PropertyLimitChecker {
 
         /**
          * constructor.
-         * @ param entityTypeName EntityType name
-         * @ param message Message
+         * @param entityTypeName EntityType name
+         * @param message Message
          */
         PropertyLimitException(String entityTypeName, String message) {
             super(message);
@@ -115,7 +115,7 @@ public class PropertyLimitChecker {
 
         /**
          * Set the EntityType name.
-         * @ param entityTypeName EntityType name
+         * @param entityTypeName EntityType name
          */
         public void setEntityTypeName(String entityTypeName) {
             this.entityTypeName = entityTypeName;
@@ -129,7 +129,7 @@ public class PropertyLimitChecker {
     static class EntityTypeDepthExceedException extends PropertyLimitException {
         /**
          * constructor.
-         * @ param message Message
+         * @param message Message
          */
         EntityTypeDepthExceedException(String message) {
             super(message);
@@ -163,9 +163,9 @@ public class PropertyLimitChecker {
 
     /**
      * constructor.
-     * @ param metadata UserData metadata (before property update)
-     * @ param entityTypeName EntityType name to be added
-     * @ param dynamicPropCount Number of DynamicProperty added
+     * @param metadata UserData metadata (before property update)
+     * @param entityTypeName EntityType name to be added
+     * @param dynamicPropCount Number of DynamicProperty added
      */
     public PropertyLimitChecker(final EdmDataServices metadata,
             final String entityTypeName, final int dynamicPropCount) {
@@ -189,8 +189,8 @@ public class PropertyLimitChecker {
 
     /**
      * constructor.
-     * @ param metadata UserData metadata (before property update)
-     * @ param propHandler Handler for properties to add
+     * @param metadata UserData metadata (before property update)
+     * @param propHandler Handler for properties to add
      */
     public PropertyLimitChecker(final EdmDataServices metadata, PropertyDocHandler propHandler) {
         this();
@@ -299,7 +299,7 @@ public class PropertyLimitChecker {
 
     /**
      * Check the number of properties for the specified entity type.
-     * @ param entityTypeName Entity type name
+     * @param entityTypeName Entity type name
      * @return List of error information
      */
     public List<PropertyLimitChecker.CheckError> checkPropertyLimits(String entityTypeName) {
@@ -334,9 +334,9 @@ public class PropertyLimitChecker {
 
     /**
      * Property limit check routine at hierarchical level.
-     * @ param depth Depth of hierarchy (0 for the first hierarchy, 1 for the second hierarchy, ....)
-     * @ param entityTypeName EntityType name
-     * @ param properties Property in EntityType
+     * @param depth Depth of hierarchy (0 for the first hierarchy, 1 for the second hierarchy, ....)
+     * @param entityTypeName EntityType name
+     * @param properties Property in EntityType
      * @return Total number of properties under EntityType
      * @throws PropertyLimitException exception notifying that the number of properties limit has been exceeded
      */

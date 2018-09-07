@@ -228,7 +228,7 @@ public class UriUtils {
     /**
      * Creates and returns a UriInfo object with an arbitrary BaseUri.
      * @param uriInfo UriInfo
-     * @ param baseLevelsAbove How many layers above BaseUri from RequestUri
+     * @param baseLevelsAbove How many layers above BaseUri from RequestUri
      * @return UriInfo
      */
     public static UriInfo createUriInfo(final UriInfo uriInfo, final int baseLevelsAbove) {
@@ -239,8 +239,8 @@ public class UriUtils {
     /**
      * Creates and returns a UriInfo object with an arbitrary BaseUri.
      * @param uriInfo UriInfo
-     * @ param baseLevelsAbove How many layers above BaseUri from RequestUri
-     * @ param add Additional path information
+     * @param baseLevelsAbove How many layers above BaseUri from RequestUri
+     * @param add Additional path information
      * @return UriInfo
      */
     public static UriInfo createUriInfo(final UriInfo uriInfo, final int baseLevelsAbove, final String add) {
@@ -258,8 +258,8 @@ public class UriUtils {
         /**
          * Constructor.
          * @param uriInfo UriInfo
-         * @ param baseLevelsAbove How many hierarchical paths to route to
-         * @ param add Additional path information
+         * @param baseLevelsAbove How many hierarchical paths to route to
+         * @param add Additional path information
          */
         public PersoniumUriInfo(final UriInfo uriInfo, final int baseLevelsAbove, final String add) {
             this.core = uriInfo;

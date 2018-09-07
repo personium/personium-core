@@ -65,9 +65,9 @@ public class MemcachedClient implements CacheClient {
 
     /**
      * Get the cache of the specified key.
-     * @ param <T> Type to get
-     * @ param key Cache key
-     * @ param clazz ClassCastExcetpion occurred when there is a type or type problem to get
+     * @param <T> Type to get
+     * @param key Cache key
+     * @param clazz ClassCastExcetpion occurred when there is a type or type problem to get
      * @return When cached object / null cache does not exist
      */
     @Override
@@ -87,9 +87,9 @@ public class MemcachedClient implements CacheClient {
 
     /**
      * Cache objects only for a certain expiration date with the specified key.
-     * @ param key Key of the cache
-     * @ param expiresIn lifetime
-     * @ param object Object to cache
+     * @param key Key of the cache
+     * @param expiresIn lifetime
+     * @param object Object to cache
      * @return Returns True on successful processing / False on failure.
      */
     public Boolean add(String key, int expiresIn, Object object) {
@@ -108,8 +108,8 @@ public class MemcachedClient implements CacheClient {
 
     /**
      * Cache the object with the specified key.
-     * @ param key Key of the cache
-     * @ param object Object to cache
+     * @param key Key of the cache
+     * @param object Object to cache
      * @return Returns True on successful processing / False on failure.
      */
     public Boolean add(String key, Object object) {
@@ -118,9 +118,9 @@ public class MemcachedClient implements CacheClient {
 
     /**
      * Cache objects only for a certain expiration date with the specified key.
-     * @ param key Key of the cache
-     * @ param expiresIn lifetime
-     * @ param object Object to cache
+     * @param key Key of the cache
+     * @param expiresIn lifetime
+     * @param object Object to cache
      * @return Returns True on successful processing / False on failure.
      */
     @Override
@@ -163,7 +163,7 @@ public class MemcachedClient implements CacheClient {
 
     /**
      * Deletion of specified key cache.
-     * @ param key Cache key
+     * @param key Cache key
      */
     @Override
     public void delete(String key) {
@@ -181,8 +181,8 @@ public class MemcachedClient implements CacheClient {
 
     /**
      * Create a new object with the specified key.
-     * @ param key Cache key
-     * @ param initValue Initial value
+     * @param key Cache key
+     * @param initValue Initial value
      * @return Returns true if creation succeeded or already exists, false if it fails
      */
     public Boolean createLongValue(String key, long initValue) {
@@ -197,7 +197,7 @@ public class MemcachedClient implements CacheClient {
 
     /**
      * Returns the value of the specified key.
-     * @ param key Cache key
+     * @param key Cache key
      * @return Specified key value
      */
     public long getLongValue(String key) {
@@ -212,7 +212,7 @@ public class MemcachedClient implements CacheClient {
 
     /**
      * Increment the value of the specified key.
-     * @ param key Cache key
+     * @param key Cache key
      * @return Value after increment
      */
     public long incrementLongValue(String key) {
@@ -226,7 +226,7 @@ public class MemcachedClient implements CacheClient {
 
     /**
      * Decrement the value of the specified key.
-     * @ param key Cache key
+     * @param key Cache key
      * @return Value after decrementing
      */
     public long decrementLongValue(String key) {
@@ -244,7 +244,7 @@ public class MemcachedClient implements CacheClient {
 
     /**
      * Delete the value of the specified key.
-     * @ param key Cache key
+     * @param key Cache key
      */
     public void deleteLongValue(String key) {
         delete(key);
@@ -306,7 +306,7 @@ public class MemcachedClient implements CacheClient {
     public static class MemcachedClientException extends RuntimeException {
         /**
          * constructor.
-         * @ param cause root exception
+         * @param cause root exception
          */
         public MemcachedClientException(Throwable cause) {
             super(cause);

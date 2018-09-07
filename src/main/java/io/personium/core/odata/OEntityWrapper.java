@@ -42,7 +42,7 @@ public final class OEntityWrapper implements OEntity {
     /**
      * constructor.
      * @param uuid UUID
-     * @ param o Entity OEntity object
+     * @param o Entity OEntity object
      * @param etag ETag
      */
     public OEntityWrapper(final String uuid, final OEntity oEntity, final String etag) {
@@ -52,7 +52,7 @@ public final class OEntityWrapper implements OEntity {
     }
     /**
      * Specify the key to get your own metadata.
-     * @ param key Key of metadata
+     * @param key Key of metadata
      * @return metadata value
      */
     public Object get(final String key) {
@@ -60,8 +60,8 @@ public final class OEntityWrapper implements OEntity {
     }
     /**
      * Set up your own metadata.
-     * @ param key Key of metadata
-     * @ param val Value of metadata
+     * @param key Key of metadata
+     * @param val Value of metadata
      */
     public void put(final String key, final Object val) {
         this.metadata.put(key, val);
@@ -160,7 +160,7 @@ public final class OEntityWrapper implements OEntity {
 
     /**
      * Configure links.
-     * @ param paramManyToOneLinks link information
+     * @param paramManyToOneLinks link information
      */
     public void setManyToOneLinks(final Map<String, Object> paramManyToOneLinks) {
         this.manyToOneLinks = paramManyToOneLinks;
@@ -168,7 +168,7 @@ public final class OEntityWrapper implements OEntity {
 
     /**
      * Returns the UUID of link for the specified key.
-     * @ param key link key
+     * @param key link key
      * @return linkUUID
      */
     public String getLinkUuid(String key) {

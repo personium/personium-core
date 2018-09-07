@@ -40,8 +40,8 @@ public class StreamingOutputForDavFileWithRange extends StreamingOutputForDavFil
 
     /**
      * constructor.
-     * @ param fileFullPath Full path of the file to read
-     * @ param fileSize Size of the file to read
+     * @param fileFullPath Full path of the file to read
+     * @param fileSize Size of the file to read
      * @param range RangeHeader
      * @param cellId Cell ID
      * @param encryptionType encryption type

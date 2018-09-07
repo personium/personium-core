@@ -69,7 +69,7 @@ public class PasswordResource {
 
     /**
      * Change the password.
-     * @ return ODataEntityResource class object
+     * @return ODataEntityResource class object
      */
     @WriteAPI
     @PUT

@@ -89,10 +89,10 @@ public abstract class LockManager {
 
     /**
      * Get the lock.
-     * @ param category Category of lock
-     * @ param cellId Cell ID
-     * @ param boxId Box ID
-     * @ param nodeId ID of Node
+     * @param category Category of lock
+     * @param cellId Cell ID
+     * @param boxId Box ID
+     * @param nodeId ID of Node
      * @return Lock
      */
     public static Lock getLock(String category, String cellId, String boxId, String nodeId) {

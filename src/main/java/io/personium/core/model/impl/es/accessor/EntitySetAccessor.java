@@ -31,68 +31,68 @@ public interface EntitySetAccessor {
 
     /**
      * Get a document.
-     * @ param id Document ID
+     * @param id Document ID
      * @return response
      */
     PersoniumGetResponse get(String id);
 
     /**
      * Perform data registration with UUID.
-     * @ param docHandler registration data
+     * @param docHandler registration data
      * @return registration result
      */
     PersoniumIndexResponse create(EntitySetDocHandler docHandler);
 
     /**
      * Register data with ID specified.
-     * @ param id Registration ID
-     * @ param docHandler registration data
+     * @param id Registration ID
+     * @param docHandler registration data
      * @return registration result
      */
     PersoniumIndexResponse create(String id, EntitySetDocHandler docHandler);
 
     /**
      * Perform data update with version specification.
-     * @ param id ID of update data
-     * @ param docHandler registration data
-     * @ param version version information
+     * @param id ID of update data
+     * @param docHandler registration data
+     * @param version version information
      * @return Update result
      */
     PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler, long version);
 
     /**
      * Perform data update.
-     * @ param id ID of update data
-     * @ param docHandler registration data
+     * @param id ID of update data
+     * @param docHandler registration data
      * @return Update result
      */
     PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler);
 
     /**
      * Perform data deletion.
-     * @ param docHandler delete data
+     * @param docHandler delete data
      * @return Deletion result
      */
     PersoniumDeleteResponse delete(EntitySetDocHandler docHandler);
 
     /**
      * Get the number of documents.
-     * @ param query Query information
+     * @param query Query information
      * @return ES response
      */
     long count(Map<String, Object> query);
 
     /**
      * Search documents.
-     * @ param query Query information
+     * @param query Query information
      * @return ES response
      */
     PersoniumSearchResponse search(Map<String, Object> query);
 
     /**
      * Perform data deletion.
-     * @ param docHandler delete data
-     * @ param version version
+     * @param docHandler delete data
+     * @param version version
      * @return Deletion result
      */
     PersoniumDeleteResponse delete(EntitySetDocHandler docHandler, long version);

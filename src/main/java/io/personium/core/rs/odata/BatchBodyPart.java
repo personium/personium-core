@@ -64,7 +64,7 @@ public class BatchBodyPart {
 
     /**
      * Request body setter.
-     * @ param bodyParam request body
+     * @param bodyParam request body
      */
     public void setEntity(String bodyParam) {
         this.body = bodyParam;
@@ -130,7 +130,7 @@ public class BatchBodyPart {
 
     /**
      * Set the entity set name.
-     * @ param entitySetName Entity set name
+     * @param entitySetName Entity set name
      */
     public void setSourceEntitySetName(String entitySetName) {
         this.sourceEntitySetName = entitySetName;
@@ -172,7 +172,7 @@ public class BatchBodyPart {
 
     /**
      * Set the entity key.
-     * @ param entityKey entity key
+     * @param entityKey entity key
      */
     public void setSourceEntityKey(String entityKey) {
         this.sourceEntitySetKey = entityKey;
@@ -188,7 +188,7 @@ public class BatchBodyPart {
 
     /**
      * The setter of the beginning of the changeset.
-     * @ param flg true: beginning of changeset
+     * @param flg true: beginning of changeset
      */
     public void setbChangesetStart(Boolean flg) {
         this.bChangesetStart = flg;
@@ -204,7 +204,7 @@ public class BatchBodyPart {
 
     /**
      * The terminator flag setter of changeset.
-     * @ param flg true: termination of changeset
+     * @param flg true: termination of changeset
      */
     public void setChangesetEnd(Boolean flg) {
         this.bChangesetEnd = flg;
@@ -220,7 +220,7 @@ public class BatchBodyPart {
 
     /**
      * changeset String setter.
-     * @ param changesetStr changeset string
+     * @param changesetStr changeset string
      */
     public void setChangesetStr(String changesetStr) {
         this.changesetStr = changesetStr;
@@ -274,7 +274,7 @@ public class BatchBodyPart {
 
     /**
      * Sets whether this bulk request is trying to register Links.
-     * @ param isLinksRequest Links true for registration, false otherwise
+     * @param isLinksRequest Links true for registration, false otherwise
      */
     public void setIsLinksRequest(Boolean isLinksRequest) {
         this.isLinksRequest = isLinksRequest;
@@ -290,7 +290,7 @@ public class BatchBodyPart {
 
     /**
      * $ links Set the EntitySet name of the destination.
-     * @ param entitySetName $ links destination EntitySet name
+     * @param entitySetName $ links destination EntitySet name
      */
     public void setTargetEntitySetName(String entitySetName) {
         this.targetEntitySetName = entitySetName;
@@ -306,7 +306,7 @@ public class BatchBodyPart {
 
     /**
      * $ links Set the Entity key of the destination.
-     * @ param entityKey $ links destination Entity key
+     * @param entityKey $ links destination Entity key
      */
     public void setTargetEntityKey(String entityKey) {
         this.targetEntitySetKey = entityKey;
@@ -322,7 +322,7 @@ public class BatchBodyPart {
 
     /**
      * Set up a bulk request query.
-     * @ param query query
+     * @param query query
      */
     public void setRequestQuery(String query) {
         this.requestQuery = query;

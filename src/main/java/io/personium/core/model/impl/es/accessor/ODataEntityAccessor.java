@@ -25,8 +25,8 @@ public class ODataEntityAccessor extends AbstractEntitySetAccessor {
 
     /**
      * constructor.
-     * @ param index index
-     * @ param name Type name
+     * @param index index
+     * @param name Type name
      * @param routingId routingId
      */
     public ODataEntityAccessor(EsIndex index, String name, String routingId) {

@@ -76,7 +76,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     /**
      * constructor.
-     * @ param davRsCmp Resource of user data in charge of this schema
+     * @param davRsCmp Resource of user data in charge of this schema
      * @param odataSvcCollectionResource ODataSvcCollectionResource object
      */
     ODataSvcSchemaResource(
@@ -201,8 +201,8 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     /**
      * Partial update preprocessing.
-     * @ param o EntityWrapper OEntityWrapper object
-     * @ param o EntityKey The entityKey to delete
+     * @param o EntityWrapper OEntityWrapper object
+     * @param o EntityKey The entityKey to delete
      */
     @Override
     public void beforeMerge(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
@@ -218,8 +218,8 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     /**
      * Link registration preprocessing.
-     * @ param sourceEntity Linked entity
-     * @ param targetNavProp Navigation property to be linked
+     * @param sourceEntity Linked entity
+     * @param targetNavProp Navigation property to be linked
      */
     @Override
     public void beforeLinkCreate(OEntityId sourceEntity, String targetNavProp) {
@@ -229,8 +229,8 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     /**
      * Link acquisition preprocessing.
-     * @ param sourceEntity Linked entity
-     * @ param targetNavProp Navigation property to be linked
+     * @param sourceEntity Linked entity
+     * @param targetNavProp Navigation property to be linked
      */
     @Override
     public void beforeLinkGet(OEntityId sourceEntity, String targetNavProp) {
@@ -238,8 +238,8 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     /**
      * Link deletion preprocessing.
-     * @ param sourceEntity Linked entity
-     * @ param targetNavProp Navigation property to be linked
+     * @param sourceEntity Linked entity
+     * @param targetNavProp Navigation property to be linked
      */
     @Override
     public void beforeLinkDelete(OEntityId sourceEntity, String targetNavProp) {
@@ -250,7 +250,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
     /**
      * Check processing other than p: Format.
      * @param entitySetName entityset name
-     * @ param props property list
+     * @param props property list
      */
     @Override
     public void validate(String entitySetName, List<OProperty<?>> props) {
@@ -345,7 +345,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
      * Not Implemented. <br />
      * Currently unimplemented because it is only necessary for $ batch access control <br />
      * Returns whether the access context has permission to $ batch.
-     * @ param ac access context
+     * @param ac access context
      * @return true: The access context has permission to $ batch
      */
     @Override

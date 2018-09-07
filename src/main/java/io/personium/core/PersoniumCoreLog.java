@@ -318,8 +318,8 @@ public final class PersoniumCoreLog {
 
     /**
      * constructor.
-     * @ param severity error level
-     * @ param message error message
+     * @param severity error level
+     * @param message error message
      */
     PersoniumCoreLog(final String code,
             final Severity severity,
@@ -331,7 +331,7 @@ public final class PersoniumCoreLog {
 
     /**
      * Factory method.
-     * @ param code error code
+     * @param code error code
      * @return PersoniumCoreLog
      */
     public static PersoniumCoreLog create(String code) {
@@ -350,7 +350,7 @@ public final class PersoniumCoreLog {
 
     /**
      * Return error code.
-     * @ return error code
+     * @return error code
      */
     public String getCode() {
         return this.code;
@@ -358,7 +358,7 @@ public final class PersoniumCoreLog {
 
     /**
      * It creates and returns a message with a parameter substitution, and the expression of {1} {2} etc. on the error message is a keyword for parameter substitution.
-     * @ param params Additional message
+     * @param params Additional message
      * @return PersoniumCoreLog
      */
     public PersoniumCoreLog params(final Object... params) {
@@ -371,7 +371,7 @@ public final class PersoniumCoreLog {
 
     /**
      * Cause Create and return an exception added.
-     * @ param t cause exception
+     * @param t cause exception
      * @return PersoniumCoreException
      */
     public PersoniumCoreLog reason(final Throwable t) {

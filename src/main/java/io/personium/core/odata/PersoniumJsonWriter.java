@@ -55,7 +55,7 @@ public class PersoniumJsonWriter extends JsonWriter {
 
     /**
      * constructor.
-     * @ param writer writer
+     * @param writer writer
      */
     public PersoniumJsonWriter(Writer writer) {
         super(writer);
@@ -64,7 +64,7 @@ public class PersoniumJsonWriter extends JsonWriter {
 
     /**
      * Double type field output.
-     * @ param value field value
+     * @param value field value
      */
     public void writeNumber(double value) {
         try {
@@ -77,7 +77,7 @@ public class PersoniumJsonWriter extends JsonWriter {
     /**
      * Format Double value in default format.
      * Convert to fixed-point representation in a range where information does not occur
-     * @ param value Value to be formatted
+     * @param value Value to be formatted
      * @return shaping result
      */
     private String formatDoubleValue(double value) {

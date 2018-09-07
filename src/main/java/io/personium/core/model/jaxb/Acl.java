@@ -155,7 +155,7 @@ public final class Acl {
 
     /**
      * For AccessContext, what kind of privilege this ACL gives is returned.
-     * @ param ac AccessContext object
+     * @param ac AccessContext object
      * @return Privilege List
      */
     public List<String> allows(final AccessContext ac) {
@@ -176,9 +176,9 @@ public final class Acl {
 
     /**
      * For AccessContext, it returns whether this ACL gives a specific Privilege.
-     * @ param priv Privilege you want to check
-     * @ param ac AccessContext object
-     * @ param privilegeMap Privilege management
+     * @param priv Privilege you want to check
+     * @param ac AccessContext object
+     * @param privilegeMap Privilege management
      * @return True if given
      */
     public boolean allows(final Privilege priv, final AccessContext ac, Map<String, Privilege> privilegeMap) {

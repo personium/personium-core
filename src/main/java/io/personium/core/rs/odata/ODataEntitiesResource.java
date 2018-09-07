@@ -75,8 +75,8 @@ public final class ODataEntitiesResource extends AbstractODataResource {
 
     /**
      * constructor.
-     * @ param odataResource parent Resource
-     * @ param entitySetName Entity set name
+     * @param odataResource parent Resource
+     * @param entitySetName Entity set name
      */
     public ODataEntitiesResource(final ODataResource odataResource, final String entitySetName) {
         this.odataResource = odataResource;
@@ -87,11 +87,11 @@ public final class ODataEntitiesResource extends AbstractODataResource {
 
     /**
      * @param uriInfo UriInfo
-     * @ param accept Accept header
-     * @ param format $ format parameter
-     * @ param callback callback
-     * @ param skipToken skip token
-     * @ param q full-text search parameter
+     * @param accept Accept header
+     * @param format $ format parameter
+     * @param callback callback
+     * @param skipToken skip token
+     * @param q full-text search parameter
      * @return JAX-RS Response
      */
     @GET
@@ -160,7 +160,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
     /**
      * Ask Producer to get the request.
      * @param uriInfo UriInfo
-     * @ param fullTextSearchKeyword String Keyword to perform full text search
+     * @param fullTextSearchKeyword String Keyword to perform full text search
      * @return response
      */
     EntitiesResponse getEntities(UriInfo uriInfo, String fullTextSearchKeyword) {
@@ -174,9 +174,9 @@ public final class ODataEntitiesResource extends AbstractODataResource {
 
     /**
      * @param uriInfo UriInfo
-     * @ param accept Accept header
-     * @ param format $ format parameter
-     * @ param reader request body
+     * @param accept Accept header
+     * @param format $ format parameter
+     * @param reader request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -291,7 +291,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
 
     /**
      * Check processing other than p: Format.
-     * @ param props property list
+     * @param props property list
      */
     @Override
     public void validate(List<OProperty<?>> props) {
@@ -300,7 +300,7 @@ public final class ODataEntitiesResource extends AbstractODataResource {
 
     /**
      * Method execution feasibility check.
-     * @ param uriInfo Requested resource path
+     * @param uriInfo Requested resource path
      */
     private void checkNotAllowedMethod(UriInfo uriInfo) {
         //Method permission check

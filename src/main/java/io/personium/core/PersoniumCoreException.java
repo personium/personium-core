@@ -1013,10 +1013,10 @@ public class PersoniumCoreException extends RuntimeException {
 
     /**
      * constructor.
-     * @ param status HTTP response status
-     * @ param severity error level
-     * @ param code error code
-     * @ param message error message
+     * @param status HTTP response status
+     * @param severity error level
+     * @param code error code
+     * @param message error message
      */
     PersoniumCoreException(final String code,
             final Severity severity,
@@ -1032,10 +1032,10 @@ public class PersoniumCoreException extends RuntimeException {
 
     /**
      * constructor.
-     * @ param code error code
-     * @ param severity error level
-     * @ param message error message
-     * @ param status HTTP response status
+     * @param code error code
+     * @param severity error level
+     * @param message error message
+     * @param status HTTP response status
      */
     PersoniumCoreException(final String code,
             final Severity severity,
@@ -1074,7 +1074,7 @@ public class PersoniumCoreException extends RuntimeException {
 
     /**
      * Return error code.
-     * @ return error code
+     * @return error code
      */
     public String getCode() {
         return this.code;
@@ -1087,7 +1087,7 @@ public class PersoniumCoreException extends RuntimeException {
 
     /**
      * Cause Create and return an exception added.
-     * @ param t cause exception
+     * @param t cause exception
      * @return PersoniumCoreException
      */
     public PersoniumCoreException reason(final Throwable t) {
@@ -1098,7 +1098,7 @@ public class PersoniumCoreException extends RuntimeException {
 
     /**
      * It creates and returns a message with parameter substitution, and the expression such as $ 1 $ 2 on the error message is a keyword for parameter substitution.
-     * @ param params Additional message
+     * @param params Additional message
      * @return PersoniumCoreMessage
      */
     public PersoniumCoreException params(final Object... params) {
@@ -1115,7 +1115,7 @@ public class PersoniumCoreException extends RuntimeException {
 
     /**
      * Factory method.
-     * @ param code Message code
+     * @param code Message code
      * @return PersoniumCoreException
      */
     public static PersoniumCoreException create(String code) {
@@ -1136,7 +1136,7 @@ public class PersoniumCoreException extends RuntimeException {
 
     /**
      * Determination of log level from response code.
-     * @ param statusCode Status code
+     * @param statusCode Status code
      * @return Log level determined from status code
      */
     static Severity decideSeverity(int statusCode) {
@@ -1156,7 +1156,7 @@ public class PersoniumCoreException extends RuntimeException {
 
     /**
      * The parsing of the message code.
-     * @ param code Message code
+     * @param code Message code
      * @return -1 for status codes or log messages.
      */
     static int parseCode(String code) {

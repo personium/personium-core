@@ -106,7 +106,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * @ param dynamicFields Map of Dynamic Field
+     * @param dynamicFields Map of Dynamic Field
      */
     public void setDynamicFields(Map<String, Object> dynamicFields) {
         this.dynamicFields = dynamicFields;
@@ -120,7 +120,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * @ param hidden Fields Hidden Field Map
+     * @param hidden Fields Hidden Field Map
      */
     public void setHiddenFields(Map<String, Object> hiddenFields) {
         this.hiddenFields = hiddenFields;
@@ -162,7 +162,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Parse Source in Map format and map to itself.
-     * @ param source mapping format information for mapping
+     * @param source mapping format information for mapping
      */
     @SuppressWarnings("unchecked")
     protected void parseSource(Map<String, Object> source) {
@@ -182,7 +182,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Parsing Link field.
-     * @ param source parse source information in the form of Map
+     * @param source parse source information in the form of Map
      * @return Link information
      */
     @SuppressWarnings("unchecked")
@@ -234,7 +234,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
      * Constructor that creates DocHandler without ID from OEntityWrapper.
      * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     * @ param metadata schema information
+     * @param metadata schema information
      */
     public OEntityDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         initInstance(type, oEntityWrapper, metadata);
@@ -242,9 +242,9 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Create a DocHandler without ID from OEntityWrapper.
-     * @ param typeName ES type name
+     * @param typeName ES type name
      * @param oEntityWrapper OEntityWrapper
-     * @ param metadata schema information
+     * @param metadata schema information
      */
     @SuppressWarnings("unchecked")
     protected void initInstance(String typeName, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
@@ -351,8 +351,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Returns a property value object converted to an appropriate type according to the property definition of the schema.
-     * @ param prop property object
-     * Property definition for @ param edmType schema
+     * @param prop property object
+     * Property definition for @param edmType schema
      * @return Property value object converted to appropriate type
      */
     @SuppressWarnings("unchecked")
@@ -369,7 +369,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Set UnitUser name when accessing Cell.
-     * @ param hiddenFieldsMap map object of hiddenFields
+     * @param hiddenFieldsMap map object of hiddenFields
      */
     public void resolveUnitUserName(final Map<String, Object> hiddenFieldsMap) {
         if (hiddenFieldsMap == null) {
@@ -418,7 +418,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     /**
      * Convert one of the data in the array.
      * @param edmType EdmSimpleType
-     * @ param propValue Value to be converted
+     * @param propValue Value to be converted
      * @return Value after conversion
      */
     @SuppressWarnings("unchecked")
@@ -438,8 +438,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     /**
      * Get an array of ComplexType.
      * @param value OCollection
-     * @ param metadata schema information
-     * @ param complexTypeName Complex type name
+     * @param metadata schema information
+     * @param complexTypeName Complex type name
      * @return An array of SimpleType
      */
     protected List<Object> getComplexList(OCollection<OComplexObject> value,
@@ -468,7 +468,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Read and acquire properties of ComplexType.
-     * @ param property Property List
+     * @param property Property List
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -521,7 +521,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     /**
      * Creates and returns an OEntity from the Es JSON object.
      * @param entitySet entitySet
-     * @ return Converted OEntity object
+     * @return Converted OEntity object
      */
     public OEntityWrapper createOEntity(final EdmEntitySet entitySet) {
         return createOEntity(entitySet, null, null);
@@ -532,7 +532,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
      * @param entitySet entitySet
      * @param metadata metadata
      * @param relatedEntitiesList relatedEntitiesList
-     * @ return Converted OEntity object
+     * @return Converted OEntity object
      */
     public OEntityWrapper createOEntity(final EdmEntitySet entitySet,
             EdmDataServices metadata,
@@ -542,8 +542,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Return alias corresponding to property name or property name depending on the type of document handler.
-     * @ param entitySetName Entity set name
-     * @ param propertyName property name
+     * @param entitySetName Entity set name
+     * @param propertyName property name
      * @return Alias ​​corresponding to property name or property name
      */
     protected String getPropertyNameOrAlias(String entitySetName, String propertyName) {
@@ -559,8 +559,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
      * @param entitySet entitySet
      * @param metadata metadata
      * @param relatedEntitiesList relatedEntitiesList
-     * @ param selectQuery $ select query
-     * @ return Converted OEntity object
+     * @param selectQuery $ select query
+     * @return Converted OEntity object
      */
     public OEntityWrapper createOEntity(final EdmEntitySet entitySet,
             EdmDataServices metadata,
@@ -699,10 +699,10 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Add a simple type array element to the property.
-     * @ param properties Property summary
-     * @ param edmProp schema for additional properties
-     * @ param propValue Value of additional procedure
-     * Type information of type @ param edmType type
+     * @param properties Property summary
+     * @param edmProp schema for additional properties
+     * @param propValue Value of additional procedure
+     * Type information of type @param edmType type
      */
     @SuppressWarnings("unchecked")
     protected void addSimpleListProperty(List<OProperty<?>> properties,
@@ -727,11 +727,11 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Add Complex type array elements to the property.
-     * @ param metadata schema information
-     * @ param properties Property summary
-     * @ param edmProp schema for additional properties
-     * @ param propValue Value of additional procedure
-     * Type information of type @ param edmType type
+     * @param metadata schema information
+     * @param properties Property summary
+     * @param edmProp schema for additional properties
+     * @param propValue Value of additional procedure
+     * Type information of type @param edmType type
      */
     @SuppressWarnings("unchecked")
     protected void addComplexListProperty(EdmDataServices metadata,
@@ -761,10 +761,10 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Add properties of type SimpleType to property array.
-     * @ param properties Property array
-     * @ param prop Property to add
-     * @ param valO property's value
-     * @ param edmType type
+     * @param properties Property array
+     * @param prop Property to add
+     * @param valO property's value
+     * @param edmType type
      */
     protected void addSimpleTypeProperty(List<OProperty<?>> properties, EdmProperty prop, Object valO,
             EdmType edmType) {
@@ -813,9 +813,9 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Convert ComplexType type property to OProperty array.
-     * @ param metadata schema definition
-     * @ param prop property of type ComplexType
-     * @ param value Value of type ComplexType
+     * @param metadata schema definition
+     * @param prop property of type ComplexType
+     * @param value Value of type ComplexType
      * @return Array of OProperty
      */
     private OProperty<List<OProperty<?>>> createComplexTypeProperty(
@@ -833,9 +833,9 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Convert ComplexType type property to OProperty array.
-     * @ param metadata schema definition
-     * @ param prop property of type ComplexType
-     * @ param value Value of type ComplexType
+     * @param metadata schema definition
+     * @param prop property of type ComplexType
+     * @param value Value of type ComplexType
      * @return Array of OProperty
      */
     @SuppressWarnings("unchecked")
@@ -881,8 +881,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     /**
      * Get Alias ​​name from property name.
      * To manipulate user data, override this method and convert it to Alias.
-     * @ param propertyName property name
-     * @ param typeName ComplexType name to which this property belongs
+     * @param propertyName property name
+     * @param typeName ComplexType name to which this property belongs
      * @return Alias ​​name
      */
     protected String resolveComplexTypeAlias(String propertyName, String typeName) {
@@ -951,7 +951,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
     /**
      * Setter of entityTypeId.
-     * @ param entityTypeId ID of entityType
+     * @param entityTypeId ID of entityType
      */
     public void setEntityTypeId(String entityTypeId) {
         this.entityTypeId = entityTypeId;

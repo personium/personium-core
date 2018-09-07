@@ -29,9 +29,9 @@ public class ArchiveLogFile {
 
     /**
      * constructor.
-     * @ param created Created date and time
-     * @ param updated Modified date and time
-     * @ param size size
+     * @param created Created date and time
+     * @param updated Modified date and time
+     * @param size size
      * @param url URL
      */
     public ArchiveLogFile(long created, long updated, long size, String url) {

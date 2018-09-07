@@ -145,7 +145,7 @@ public class UnitCtlResource extends ODataResource {
     /**
      * Check processing required when updating.
      * @param oEntityWrapper OEntityWrapper
-     * @ param o EntityKey The entityKey to be updated
+     * @param o EntityKey The entityKey to be updated
      */
     @Override
     public void beforeUpdate(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
@@ -279,7 +279,7 @@ public class UnitCtlResource extends ODataResource {
      * Not Implemented. <br />
      * Currently unimplemented because it is only necessary for $ batch access control <br />
      * Returns whether the access context has permission to $ batch.
-     * @ param ac access context
+     * @param ac access context
      * @return true: The access context has permission to $ batch
      */
     @Override

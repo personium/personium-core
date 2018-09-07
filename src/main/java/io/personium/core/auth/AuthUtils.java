@@ -53,7 +53,7 @@ public final class AuthUtils {
 
     /**
      * Hash string of password string.
-     * @ param passwd raw password string
+     * @param passwd raw password string
      * @return hashed password string
      */
     public static String hashPassword(final String passwd) {

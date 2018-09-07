@@ -49,7 +49,7 @@ public class Lock implements Serializable {
 
     /**
      * Constructor (not disclosed).
-     * @ param key Key of lock
+     * @param key Key of lock
      */
     Lock(String fullKey, Long createdAt) {
         this.fullKey = fullKey;

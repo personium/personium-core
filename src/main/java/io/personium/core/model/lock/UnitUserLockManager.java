@@ -36,7 +36,7 @@ public abstract class UnitUserLockManager extends LockManager {
 
     /**
      * Check status of UnitUserLock.
-     * @ param unitUserName unit user name
+     * @param unitUserName unit user name
      * @return TRUE: Lock / FALSE: Unlock
      */
     public static boolean hasLockObject(final String unitUserName) {
@@ -52,7 +52,7 @@ public abstract class UnitUserLockManager extends LockManager {
 
     /**
      * Write UnitUserLock.
-     * @ param unitUserName Unit user name to be locked
+     * @param unitUserName Unit user name to be locked
      */
     public static void registLockObjct(final String unitUserName) {
         //Check if memcached has key
@@ -87,7 +87,7 @@ public abstract class UnitUserLockManager extends LockManager {
 
     /**
      * Release of UnitUserLock.
-     * @ param unitUserName unit user name
+     * @param unitUserName unit user name
      */
     public static void releaseLockObject(final String unitUserName) {
         String fullKey = LockKeyComposer.fullKeyFromCategoryAndKey(CATEGORY_UNITUSER_LOCK, unitUserName);

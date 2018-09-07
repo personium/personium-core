@@ -47,8 +47,8 @@ public class BatchBodyParser {
 
     /**
      * Parsing the request body of $ batch.
-     * @ param boundary Boundary string
-     * @ param reader request body
+     * @param boundary Boundary string
+     * @param reader request body
      * @param requestUriParam baseUri
      * @return BatchBodyPart list
      */
@@ -83,7 +83,7 @@ public class BatchBodyParser {
 
     /**
      * Get the request body of $ batch.
-     * @ param br Request body
+     * @param br Request body
      * @return request body (StringBuilder)
      * @throws IOException
      */
@@ -102,8 +102,8 @@ public class BatchBodyParser {
 
     /**
      * Get individual requests from $ batch 's request body and return them in the list.
-     * @ param body $ batch request body
-     * @ param boundaryStr Boundary string
+     * @param body $ batch request body
+     * @param boundaryStr Boundary string
      * @return BatchBodyPart list
      */
     private List<BatchBodyPart> getRequests(String body, String boundaryStr) {
@@ -134,7 +134,7 @@ public class BatchBodyParser {
 
         /**
          * constructor.
-         * @ param boundary Boundary string
+         * @param boundary Boundary string
          */
         BoundaryParser(BoundaryParser boundary, String boundaryStr) {
             this.parent = boundary;
@@ -143,7 +143,7 @@ public class BatchBodyParser {
 
         /**
          * Analyze the inside of the boundary.
-         * @ param boundary Body Body part of the boundary
+         * @param boundary Body Body part of the boundary
          * @return BatchBodyPart list
          */
         List<BatchBodyPart> parse(String boundaryBody) {
@@ -204,7 +204,7 @@ public class BatchBodyParser {
 
         /**
          * Get the request from the boundary and return it with BatchBodyPart type.
-         * @ param bodyPart Body part of the boundary
+         * @param bodyPart Body part of the boundary
          * @return BatchBodyPart
          */
         private BatchBodyPart getRequest(String bodyPart) {
@@ -320,7 +320,7 @@ public class BatchBodyParser {
 
         /**
          * Set the header and return the content type.
-         * @ param bodyLines Boundary contents
+         * @param bodyLines Boundary contents
          * @return Content type
          */
         private String getContentType(List<String> bodyLines) {
@@ -331,7 +331,7 @@ public class BatchBodyParser {
 
         /**
          * A header is acquired from the body part.
-         * @ param bodyLines body part
+         * @param bodyLines body part
          * @return header
          */
         private Map<String, String> getHeaders(List<String> bodyLines) {
@@ -350,7 +350,7 @@ public class BatchBodyParser {
 
         /**
          * Get the HTTP method.
-         * @ param line {method} {path} *
+         * @param line {method} {path} *
          * @return HTTP method string
          */
         private String getMethod(String line) {
@@ -369,7 +369,7 @@ public class BatchBodyParser {
 
         /**
          * Get the URI path of the request.
-         * @ param line {method} {URI path} *
+         * @param line {method} {URI path} *
          * @return Request URI path
          */
         private String getUri(String line) {
@@ -381,7 +381,7 @@ public class BatchBodyParser {
 
         /**
          * Get the relative path of the request.
-         * @ param line {method} {path} *
+         * @param line {method} {path} *
          * Relative path of @return request
          */
         private String getPath(String line) {
@@ -391,7 +391,7 @@ public class BatchBodyParser {
 
         /**
          * Get the relative path of the request.
-         * @ param line {method} {path} *
+         * @param line {method} {path} *
          * Relative path of @return request
          */
         private String getQuery(String line) {
@@ -404,8 +404,8 @@ public class BatchBodyParser {
 
         /**
          * Get the body from the body part of the boundary.
-         * @ param bodyLines body part
-         * @ param headersize Header size
+         * @param bodyLines body part
+         * @param headersize Header size
          * @return body
          */
         private String getBoundaryBody(List<String> bodyLines, int headersize) {
@@ -422,7 +422,7 @@ public class BatchBodyParser {
 
         /**
          * Get the boundary character string.
-         * @ param contentType Value of Content-Type
+         * @param contentType Value of Content-Type
          * @return Boundary string
          */
         private String getBoundaryStr(String contentType) {

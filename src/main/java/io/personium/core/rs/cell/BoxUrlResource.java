@@ -59,7 +59,7 @@ public class BoxUrlResource {
 
     /**
      * Box URL acquisition end point.
-     * @ param querySchema Schema URL of the Box to be acquired
+     * @param querySchema Schema URL of the Box to be acquired
      * @return BoxUrlResource object
      */
     @SuppressWarnings("unchecked")

@@ -83,7 +83,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
      * Constructor that creates DocHandler without ID from OEntityWrapper.
      * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     * @ param metadata schema information
+     * @param metadata schema information
      */
     public UserDataDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         initInstance(type, oEntityWrapper, metadata);
@@ -101,7 +101,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Set correspondence map of property name and alias.
-     * @ param value Correspondence between property name and alias Map
+     * @param value Correspondence between property name and alias Map
      */
     public void setPropertyAliasMap(Map<String, PropertyAlias> value) {
         this.propertyAliasMap = value;
@@ -117,7 +117,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Set the entity set name.
-     * @ param name Entity set name
+     * @param name Entity set name
      */
     public void setEntitySetName(String name) {
         this.entitySetName = name;
@@ -136,8 +136,8 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     /**
      * Get Alias ​​name from property name.
      * To manipulate user data, override this method and convert it to Alias.
-     * @ param propertyName property name
-     * @ param typeName ComplexType name to which this property belongs
+     * @param propertyName property name
+     * @param typeName ComplexType name to which this property belongs
      * @return Alias ​​name
      */
     @Override
@@ -236,8 +236,8 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     /**
      * Return a property value object converted to an appropriate type according to the property definition of the schema.
      * In the case of user data, convert the Boolean type property value to a character string.
-     * @ param prop property object
-     * Property definition for @ param edmType schema
+     * @param prop property object
+     * Property definition for @param edmType schema
      * @return Property value object converted to appropriate type
      */
     @Override
@@ -261,8 +261,8 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Convert the value of DynamicProperty.
-     * @ param key Key to be converted
-     * @ param value Value to convert
+     * @param key Key to be converted
+     * @param value Value to convert
      */
     public void convertDynamicPropertyValue(String key, Object value) {
         if (value != null && (value instanceof Boolean || value instanceof Double)) {
@@ -316,7 +316,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Parsing Link field.
-     * @ param source parse source information in the form of Map
+     * @param source parse source information in the form of Map
      * @return Link information
      */
     @Override
@@ -346,10 +346,10 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Convert the property name stored in static field to Alias.
-     * @ param entity type to which the entityType property is attached (EntityType or ComplexType)
-     * @ param entity name to which the entityName property is attached
-     * @ param entrySet static map map object stored in field
-     * @ return static field map object
+     * @param entity type to which the entityType property is attached (EntityType or ComplexType)
+     * @param entity name to which the entityName property is attached
+     * @param entrySet static map map object stored in field
+     * @return static field map object
      */
     @SuppressWarnings("unchecked")
     private Map<String, Object> getStaticFieldMap(
@@ -396,8 +396,8 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Get the property's Alias ​​name from the mapping data.
-     * @ param key Search key for mapping data
-     * @ param propertyName property name
+     * @param key Search key for mapping data
+     * @param propertyName property name
      * @return Alias ​​name
      */
     private String getAlias(String key, String propertyName) {
@@ -413,8 +413,8 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Get the ComplexType name specified in the type attribute value of the property from the mapping data.
-     * @ param key Search key for mapping data
-     * @ param propertyName property name
+     * @param key Search key for mapping data
+     * @param propertyName property name
      * @return ComplexType name
      */
     private String getComplexTypeName(String key) {

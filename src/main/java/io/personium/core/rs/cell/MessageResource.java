@@ -73,9 +73,9 @@ public class MessageResource extends ODataCtlResource {
 
     /**
      * Message transmission API.
-     * @ param version PCS version
+     * @param version PCS version
      * @param uriInfo UriInfo
-     * @ param reader request body
+     * @param reader request body
      * @return response
      */
     @WriteAPI
@@ -99,7 +99,7 @@ public class MessageResource extends ODataCtlResource {
     /**
      * Message receiving API.
      * @param uriInfo UriInfo
-     * @ param reader request body
+     * @param reader request body
      * @return response
      */
     @WriteAPI
@@ -121,8 +121,8 @@ public class MessageResource extends ODataCtlResource {
 
     /**
      * Message approval API.
-     * @ param key Message Id
-     * @ param reader request body
+     * @param key Message Id
+     * @param reader request body
      * @return response
      */
     @WriteAPI

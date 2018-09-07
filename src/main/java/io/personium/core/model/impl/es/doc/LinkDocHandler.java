@@ -98,7 +98,7 @@ public class LinkDocHandler implements EsDocHandler {
 
     /**
      * Constructor that generates LinkDocHandler from search result.
-     * @ param searchHit Search result data
+     * @param searchHit Search result data
      */
     public LinkDocHandler(final PersoniumSearchHit searchHit) {
         this.id = searchHit.getId();
@@ -270,7 +270,7 @@ public class LinkDocHandler implements EsDocHandler {
 
     /**
      * Get the document count of N: N links.
-     * @ param accessor link accessor
+     * @param accessor link accessor
      * @param srcHandler OEntityDocHandler
      * @param targetSetName targetSetName
      * @param targetEntityTypeId targetEntityTypeId
@@ -290,7 +290,7 @@ public class LinkDocHandler implements EsDocHandler {
 
     /**
      * Get a list of N: N links.
-     * @ param accessor link accessor
+     * @param accessor link accessor
      * @param srcHandler OEntityDocHandler
      * @param targetSetName targetSetName
      * @param targetEntityTypeId targetEntityTypeId
@@ -406,7 +406,7 @@ public class LinkDocHandler implements EsDocHandler {
 
     /**
      * Return the ID of the data associated with the specified entity type.
-     * @ param baseEntityType entity type
+     * @param baseEntityType entity type
      * @return ID Return null if it does not exist
      */
     public String getLinkedEntitytIdFromBaseEntityType(String baseEntityType) {
@@ -421,7 +421,7 @@ public class LinkDocHandler implements EsDocHandler {
 
     /**
      * Return ID of the specified entity type.
-     * @ param entityType entity type
+     * @param entityType entity type
      * @return ID Return null if it does not exist
      */
     public String getEntitytIdFromEntityType(String entityType) {
@@ -446,8 +446,8 @@ public class LinkDocHandler implements EsDocHandler {
         /**
          * constructor.
          * @param srcHandler OEntityDocHandler
-         * @ param targetSetName EntitySet name on the target side
-         * @ param targetEntityTypeId EntityTypeID of target side
+         * @param targetSetName EntitySet name on the target side
+         * @param targetEntityTypeId EntityTypeID of target side
          */
         public NtoNQueryParameter(
                 final EntitySetDocHandler srcHandler,
@@ -472,8 +472,8 @@ public class LinkDocHandler implements EsDocHandler {
 
         /**
          * Generate query information for obtaining a list of N: N links (no sorting).
-         * @ param size Number of items to be acquired
-         * @ param from fetch count
+         * @param size Number of items to be acquired
+         * @param from fetch count
          * @return ESQuery
          */
         public Map<String, Object> getSource(Integer size, Integer from) {
@@ -506,7 +506,7 @@ public class LinkDocHandler implements EsDocHandler {
 
         /**
          * Expand Generates query information for acquiring a list of N: N links at the time of acquiring target data.
-         * @ param size Number of items to be acquired
+         * @param size Number of items to be acquired
          * @return ESQuery
          */
         public Map<String, Object> getSourceForExpand(Integer size) {

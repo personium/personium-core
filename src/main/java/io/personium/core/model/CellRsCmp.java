@@ -121,8 +121,8 @@ public class CellRsCmp extends DavRsCmp {
 
     /**
      * Check ACL information and judge whether access is possible.
-     * @ param ac access context
-     * @ param privilege Privilege of ACL (read or write)
+     * @param ac access context
+     * @param privilege Privilege of ACL (read or write)
      * @return boolean
      */
     public boolean hasPrivilege(AccessContext ac, Privilege privilege) {

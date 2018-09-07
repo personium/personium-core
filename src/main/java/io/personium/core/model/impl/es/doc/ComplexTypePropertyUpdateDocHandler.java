@@ -31,7 +31,7 @@ public class ComplexTypePropertyUpdateDocHandler extends ComplexTypePropertyDocH
      * Constructor that creates DocHandler without ID from OEntityWrapper.
      * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     * @ param metadata schema information
+     * @param metadata schema information
      */
     public ComplexTypePropertyUpdateDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         super(type, oEntityWrapper, metadata);

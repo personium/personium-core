@@ -90,13 +90,13 @@ public final class PersoniumCoreAuthzException extends PersoniumCoreException {
 
     /**
      * constructor.
-     * @ param status HTTP response status
-     * @ param severity error level
-     * @ param code error code
-     * @ param message error message
-     * @ param error Error code of OAuth authentication error
-     * @ param realm To return the WWWW-Authenticate header, set the realm value here
-     * @ param authScheme AuthScheme type to allow authentication
+     * @param status HTTP response status
+     * @param severity error level
+     * @param code error code
+     * @param message error message
+     * @param error Error code of OAuth authentication error
+     * @param realm To return the WWWW-Authenticate header, set the realm value here
+     * @param authScheme AuthScheme type to allow authentication
      */
     PersoniumCoreAuthzException(final String code,
             final Severity severity,
@@ -123,7 +123,7 @@ public final class PersoniumCoreAuthzException extends PersoniumCoreException {
     /**
      * Set realm and create object.
      * @param realm2set realm
-     * @ param acceptableAuthScheme AuthScheme type to allow authentication
+     * @param acceptableAuthScheme AuthScheme type to allow authentication
      * @return CoreAuthnException
      */
     public PersoniumCoreAuthzException realm(String realm2set, AcceptableAuthScheme acceptableAuthScheme) {
@@ -158,7 +158,7 @@ public final class PersoniumCoreAuthzException extends PersoniumCoreException {
 
     /**
      * Cause Create and return an exception added.
-     * @ param t cause exception
+     * @param t cause exception
      * @return PersoniumCoreException
      */
     public PersoniumCoreException reason(final Throwable t) {

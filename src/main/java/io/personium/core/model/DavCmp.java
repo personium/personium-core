@@ -168,7 +168,7 @@ public interface DavCmp {
 
     /**
      * Returns the part responsible for the child path with the specified name.
-     * @ param name path component path name of child path
+     * @param name path component path name of child path
      * @return Parts responsible for child path
      */
     DavCmp getChild(String name);
@@ -222,7 +222,7 @@ public interface DavCmp {
 
     /**
      * Processing of MKCOL method.
-     * @ param type type
+     * @param type type
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder mkcol(String type);
@@ -236,8 +236,8 @@ public interface DavCmp {
 
     /**
      * File update processing by PUT method.
-     * @ param contentType Content-Type header
-     * @ param inputStream request body
+     * @param contentType Content-Type header
+     * @param inputStream request body
      * @param etag Etag
      * @return JAX-RS ResponseBuilder
      */
@@ -245,32 +245,32 @@ public interface DavCmp {
 
     /**
      * File creation processing by PUT method.
-     * @ param contentType Content-Type header
-     * @ param inputStream request body
+     * @param contentType Content-Type header
+     * @param inputStream request body
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder putForCreate(String contentType, InputStream inputStream);
 
     /**
      * Link with child resources.
-     * @ param name Path component name of child resource Component name
-     * @ param nodeId Node ID of child resource
-     * @ param asof Time to keep as update time
+     * @param name Path component name of child resource Component name
+     * @param nodeId Node ID of child resource
+     * @param asof Time to keep as update time
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder linkChild(String name, String nodeId, Long asof);
 
     /**
      * Delete association with child resource.
-     * @ param name child resource name
-     * @ param asof Time to leave as deletion time
+     * @param name child resource name
+     * @param asof Time to leave as deletion time
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder unlinkChild(String name, Long asof);
 
     /**
      * process PROPPATCH method.
-     * @ param propUpdate PROPPATCH request object
+     * @param propUpdate PROPPATCH request object
      * @param url URL
      * @return response object
      */
@@ -278,7 +278,7 @@ public interface DavCmp {
 
     /**
      * process DELETE method.
-     * @ param ifMatch If-Match header
+     * @param ifMatch If-Match header
      * @param recursive set true to process recursively
      * @return JAX-RS ResponseBuilder
      */
@@ -286,7 +286,7 @@ public interface DavCmp {
 
     /**
      * process GET method.
-     * @ param rangeHeaderField Range header
+     * @param rangeHeaderField Range header
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder get(String rangeHeaderField);
@@ -313,8 +313,8 @@ public interface DavCmp {
     /**
      * Move processing is performed.
      * @param etag ETag value
-     * @ param overwrite Whether to overwrite the destination resource
-     * @ param davDestination Hierarchy information of the destination
+     * @param overwrite Whether to overwrite the destination resource
+     * @param davDestination Hierarchy information of the destination
      * @return ResponseBuilder response
      */
     ResponseBuilder move(String etag, String overwrite, DavDestination davDestination);

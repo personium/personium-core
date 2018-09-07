@@ -54,7 +54,7 @@ public class HttpClientFactory {
 
     /**
      * Create an HTTPClient object.
-     * @ param type communication type
+     * @param type communication type
      * @return HttpClient class instance created
      */
     public static HttpClient create(final String type) {

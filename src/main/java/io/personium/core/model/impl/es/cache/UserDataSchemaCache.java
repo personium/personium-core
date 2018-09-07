@@ -43,7 +43,7 @@ public class UserDataSchemaCache {
 
     /**
      * Retrieves the schema information from the cache and returns the Map storing the schema information.
-     * @ param nodeId node ID
+     * @param nodeId node ID
      * @return A Map object containing schema information. It is null if it does not exist in the cache
      */
     public static Map<String, Object> get(String nodeId) {
@@ -63,8 +63,8 @@ public class UserDataSchemaCache {
 
     /**
      * Cache the schema information.
-     * @ param nodeId node ID
-     * @ param schema Map object containing schema information
+     * @param nodeId node ID
+     * @param schema Map object containing schema information
      */
     public static void cache(String nodeId, Map<String, Object> schema) {
         if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
@@ -75,7 +75,7 @@ public class UserDataSchemaCache {
 
     /**
      * Delete the cache information of the specified schema.
-     * @ param nodeId node ID
+     * @param nodeId node ID
      */
     public static void clear(String nodeId) {
         if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
@@ -86,7 +86,7 @@ public class UserDataSchemaCache {
 
     /**
      * Invalidate the cache information of the specified schema.
-     * @ param nodeId node ID
+     * @param nodeId node ID
      */
     public static void disable(String nodeId) {
         if (!PersoniumUnitConfig.isSchemaCacheEnabled()) {
@@ -100,7 +100,7 @@ public class UserDataSchemaCache {
 
     /**
      * Returns whether cache information is invalidated.
-     * @ param cache Cache information
+     * @param cache Cache information
      * @return true if disabled, false if enabled
      */
     public static boolean isDisabled(Map<String, Object> cache) {
@@ -117,8 +117,8 @@ public class UserDataSchemaCache {
 
     /**
      * It returns whether there was a change in the cache information.
-     * @ param nodeId node ID
-     * @ param cache Original cache information
+     * @param nodeId node ID
+     * @param cache Original cache information
      * @return true if there was a change, false if there is no change
      */
     @SuppressWarnings("unchecked")

@@ -61,7 +61,7 @@ public class EventResource {
 
     /**
      * Reception of events.
-     * @ param reader request body
+     * @param reader request body
      * @return JAXRS Response
      */
     @WriteAPI
@@ -107,7 +107,7 @@ public class EventResource {
 
     /**
      * Analyze the request body and obtain the Event object.
-     * @ param reader Http input stream
+     * @param reader Http input stream
      * @param requestKey
      * @return Analyzed Event object
      */
@@ -151,7 +151,7 @@ public class EventResource {
 
     /**
      * Validate each property value in Event.
-     * @ param event Event object
+     * @param event Event object
      */
     private void validateEventProperties(final PersoniumEvent event) {
         String type = event.getType();

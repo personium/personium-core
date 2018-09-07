@@ -44,7 +44,7 @@ public class ResourceUtils {
 
     /**
      * Get request body from Reader and make it JSONObject.
-     * @ param reader request body
+     * @param reader request body
      * @return JSONObject
      */
     public static JSONObject parseBodyAsJSON(Reader reader) {
@@ -70,8 +70,8 @@ public class ResourceUtils {
     /**
      * Check from the header information whether or not the request body exists <br />
      * * In this method, the request body is not read, and the presence or absence of the request body is judged from the header information.
-     * @ param contentLength Value of the Content-Length header
-     * @ param transferEncoding Value of Transfer-Encoding header
+     * @param contentLength Value of the Content-Length header
+     * @param transferEncoding Value of Transfer-Encoding header
      * @return true: request body exists false: request body does not exist
      */
     public static boolean hasApparentlyRequestBody(Long contentLength, String transferEncoding) {

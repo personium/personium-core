@@ -54,8 +54,8 @@ public class ArchiveLogCollection {
 
     /**
      * constructor.
-     * @ param cell Cell object to which the collection belongs
-     * @ param uriInfo collection URL information
+     * @param cell Cell object to which the collection belongs
+     * @param uriInfo collection URL information
      */
     public ArchiveLogCollection(Cell cell, UriInfo uriInfo) {
         //The creation date and update date of the archive collection is the creation date of the cell

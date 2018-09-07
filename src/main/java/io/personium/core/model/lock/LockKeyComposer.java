@@ -30,8 +30,8 @@ public class LockKeyComposer {
 
     /**
      * Generate a key for locking.
-     * @ param category category name of lock
-     * @ param key Information that contains the UUID to set as the lock key
+     * @param category category name of lock
+     * @param key Information that contains the UUID to set as the lock key
      * @return lock key
      */
     public static String fullKeyFromCategoryAndKey(String category, String key) {
@@ -43,10 +43,10 @@ public class LockKeyComposer {
 
     /**
      * Generate a key for locking.
-     * @ param category category name of lock
-     * @ param cellId Cell ID
-     * @ param boxId Box ID
-     * @ param nodeId ID of Node
+     * @param category category name of lock
+     * @param cellId Cell ID
+     * @param boxId Box ID
+     * @param nodeId ID of Node
      * @return lock key
      */
     public static String fullKeyFromCategoryAndKey(String category, String cellId, String boxId, String nodeId) {

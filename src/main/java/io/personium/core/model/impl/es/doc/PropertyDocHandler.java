@@ -48,7 +48,7 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
      * Constructor that creates DocHandler without ID from OEntityWrapper.
      * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     * @ param metadata schema information
+     * @param metadata schema information
      */
     public PropertyDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         this.propertyAliasMap = null;
@@ -58,11 +58,11 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * constructor.
-     * @ param cellId Cell ID
-     * @ param boxId Box ID
-     * @ param nodeId node ID
-     * @ param entityTypeId ID of the associated entity type
-     * @ param source static property field
+     * @param cellId Cell ID
+     * @param boxId Box ID
+     * @param nodeId node ID
+     * @param entityTypeId ID of the associated entity type
+     * @param source static property field
      */
     public PropertyDocHandler(String cellId,
             String boxId,
@@ -110,7 +110,7 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Set up a registered alias list.
-     * @ param map propertyMap to set
+     * @param map propertyMap to set
      */
     public void setEntityTypeMap(Map<String, String> map) {
         this.entityTypeMap = map;
@@ -126,7 +126,7 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Set up a registered alias list.
-     * @ param map set propertyAliasMap
+     * @param map set propertyAliasMap
      */
     public void setPropertyAliasMap(Map<String, PropertyAlias> map) {
         this.propertyAliasMap = map;
@@ -151,8 +151,8 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Set data for ES / MySQL registration to Map object.
-     * @ param property Alias ​​property Alias ​​information
-     * @ param key
+     * @param property Alias ​​property Alias ​​information
+     * @param key
      * @return Created Map object
      */
     protected Map<String, Object> setSource(String key, PropertyAlias propertyAlias) {
@@ -180,8 +180,8 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Get the property Alias ​​with the maximum value of registered property + 1.
-     * @ param entityTypeName EntityType name
-     * @ param dataType property data type name
+     * @param entityTypeName EntityType name
+     * @param dataType property data type name
      * @return Alias ​​of the assigned property name
      */
     protected String getNextAlias(String entityTypeName, String dataType) {
@@ -230,7 +230,7 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Alias ​​Gets index from string.
-     * @ param alias Alias ​​string
+     * @param alias Alias ​​string
      * @return index
      */
     protected int getAliasNumber(String alias) {

@@ -99,11 +99,11 @@ public class PersoniumFormatWriterFactory {
 
     /**
      * Getter of format writer.
-     * @ param <T> type
-     * @ param targetType Type of format writer
-     * @ param acceptTypes accept type
-     * @ param format Format
-     * @ param callback callback
+     * @param <T> type
+     * @param targetType Type of format writer
+     * @param acceptTypes accept type
+     * @param format Format
+     * @param callback callback
      * @return format writer
      */
     @SuppressWarnings("unchecked")
@@ -191,7 +191,7 @@ public class PersoniumFormatWriterFactory {
 
         /**
          * constructor.
-         * @ param callback callback
+         * @param callback callback
          */
         public JsonWriters(String callback) {
             this.callback = callback;

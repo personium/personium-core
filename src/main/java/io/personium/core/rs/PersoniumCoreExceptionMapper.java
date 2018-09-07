@@ -60,7 +60,7 @@ public final class PersoniumCoreExceptionMapper implements ExceptionMapper<Excep
         StringBuilder sb = new StringBuilder("[PR500-SV-9999] - Unknown Exception [" + id + "] ");
         sb.append(exception.getMessage());
         if (ste != null && ste.length > 0) {
-            sb.append(" @ ");
+            sb.append(" @");
             sb.append(ste[0].getClassName() + "#" + ste[0].getMethodName() + ": " + ste[0].getLineNumber());
         }
 

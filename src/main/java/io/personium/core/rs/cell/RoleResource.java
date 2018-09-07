@@ -60,7 +60,7 @@ public class RoleResource {
     /**
      * Role Root of the resource.
      * Returns a list of Box.
-     * @ param authzHeader Authorization header
+     * @param authzHeader Authorization header
      * @return JAX-RS Response Object
      */
 //    @Path("")

@@ -141,7 +141,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
      * Constructor 2.
      * Processes $ filter, $ skip, $ top, $ orderby, $ select.
      * $ expand is not supported.
-     * @ param entityType entity type
+     * @param entityType entity type
      */
     public EsQueryHandler(EdmEntityType entityType) {
         this.source = new HashMap<String, Object>();
@@ -150,8 +150,8 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     /**
      * Initialization.
-     * @ param queryInfo QueryInfo of OData 4 j.
-     * @ param implicitConds Implicit search condition.
+     * @param queryInfo QueryInfo of OData 4 j.
+     * @param implicitConds Implicit search condition.
      */
     public void initialize(QueryInfo queryInfo, List<Map<String, Object>> implicitConds) {
         List<Map<String, Object>> filters = new ArrayList<Map<String, Object>>();
@@ -210,7 +210,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * @ param top $ top value
+     * @param top $ top value
      */
     public void setTop(Integer top) {
         if (top != null) {
@@ -221,7 +221,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * @ param skip The value of $ skip
+     * @param skip The value of $ skip
      */
     public void setSkip(Integer skip) {
         if (skip != null) {
@@ -230,7 +230,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * @ param orderBy value of $ orderBy
+     * @param orderBy value of $ orderBy
      */
     public void setOrderBy(List<OrderByExpression> orderBy) {
         if (orderBy != null) {
@@ -248,7 +248,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * @ param selects $ select value
+     * @param selects $ select value
      */
     public void setSelect(List<EntitySimpleProperty> selects) {
         getSelectQuery(this.source, selects);
@@ -256,7 +256,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     /**
      * Assemble a query for ES search from the value of $ select.
-     * @ param baseSource Map containing input values
+     * @param baseSource Map containing input values
      * @param selects $select
      */
     public void getSelectQuery(Map<String, Object> baseSource,
@@ -297,7 +297,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     /**
      * Get the field name.
-     * @ param prop Property name
+     * @param prop Property name
      * @return field name
      */
     protected String getFieldName(String prop) {
@@ -307,7 +307,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     /**
      * Get search query.
-     * @ return search query.
+     * @return search query.
      */
     public Map<String, Object> getSource() {
         log.debug(this.source.toString());
@@ -358,7 +358,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     /**
      * Get $ orderby option.
-     * @ param option odata 4 j options
+     * @param option odata 4 j options
      * @return optionValue Obtained options
      */
     public String getOrderOption(Direction option) {
