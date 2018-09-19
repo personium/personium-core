@@ -18,8 +18,6 @@ package io.personium.core.model.ctl;
 
 import org.core4j.Enumerable;
 import org.odata4j.edm.EdmEntityType;
-import org.odata4j.edm.EdmProperty;
-import org.odata4j.edm.EdmSimpleType;
 
 /**
  * 外部Cell のEdm 定義体.
@@ -34,20 +32,11 @@ public class ExtCell {
     public static final String EDM_TYPE_NAME = "ExtCell";
 
     /**
-     * Urlプロパティの定義体.
-     */
-    public static final EdmProperty.Builder P_URL = EdmProperty
-            .newBuilder("Url")
-            .setNullable(false)
-            .setAnnotations(Common.P_FORMAT_CELL_URL)
-            .setType(EdmSimpleType.STRING);
-
-    /**
      * EntityType Builder.
      */
     public static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder()
             .setNamespace(Common.EDM_NS_CELL_CTL).setName(EDM_TYPE_NAME)
-            .addProperties(Enumerable.create(P_URL, Common.P_PUBLISHED, Common.P_UPDATED).toList())
-            .addKeys(P_URL.getName());
+            .addProperties(Enumerable.create(Common.P_URL, Common.P_PUBLISHED, Common.P_UPDATED).toList())
+            .addKeys(Common.P_URL.getName());
 
 }

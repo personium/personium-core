@@ -173,34 +173,36 @@ public class AccessContext {
      */
     public static AccessContext create(String authzHeaderValue,
             UriInfo requestURIInfo, String pCookiePeer, String pCookieAuthValue,
-            Cell cell, String baseUri, String host, String xPersoniumUnitUser) {
+            Cell cell, String baseUri, String headerHost, String xPersoniumUnitUser) {
         if (authzHeaderValue == null) {
             if (pCookiePeer == null || 0 == pCookiePeer.length()) {
                 return new AccessContext(TYPE_ANONYMOUS, cell, baseUri, requestURIInfo);
             }
             // クッキー認証の場合
             // クッキー内の値を復号化した値を取得
+            if (null == pCookieAuthValue) {
+                return new AccessContext(
+                        TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
+            }
+            // Cookie関連の処理はポート番号不要
+            String decodedCookieValue;
             try {
-                if (null == pCookieAuthValue) {
-                    return new AccessContext(
-                            TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
-                }
-                String decodedCookieValue = LocalToken.decode(pCookieAuthValue,
-                        UnitLocalUnitUserToken.getIvBytes(
-                                AccessContext.getCookieCryptKey(requestURIInfo.getBaseUri())));
-                int separatorIndex = decodedCookieValue.indexOf("\t");
-                String peer = decodedCookieValue.substring(0, separatorIndex);
-                // クッキー内の情報から authorizationHeader相当のトークンを取得
-                String authToken = decodedCookieValue.substring(separatorIndex + 1);
-                if (pCookiePeer.equals(peer)) {
-                    // 再帰呼び出しで適切な AccessContextを生成する。
-                    return create(OAuth2Helper.Scheme.BEARER + " " + authToken,
-                            requestURIInfo, null, null, cell, baseUri, host, xPersoniumUnitUser);
-                } else {
-                    return new AccessContext(
-                            TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
-                }
-            } catch (TokenParseException e) {
+                URI nonPortURI = new URI(headerHost.split(":")[0]);
+                decodedCookieValue = LocalToken.decode(pCookieAuthValue,
+                        UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(nonPortURI)));
+            } catch (URISyntaxException | TokenParseException e) {
+                return new AccessContext(
+                        TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
+            }
+            int separatorIndex = decodedCookieValue.indexOf("\t");
+            String peer = decodedCookieValue.substring(0, separatorIndex);
+            // クッキー内の情報から authorizationHeader相当のトークンを取得
+            String authToken = decodedCookieValue.substring(separatorIndex + 1);
+            if (pCookiePeer.equals(peer)) {
+                // 再帰呼び出しで適切な AccessContextを生成する。
+                return create(OAuth2Helper.Scheme.BEARER + " " + authToken,
+                        requestURIInfo, null, null, cell, baseUri, headerHost, xPersoniumUnitUser);
+            } else {
                 return new AccessContext(
                         TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
             }
@@ -216,7 +218,7 @@ public class AccessContext {
 
         } else if (authzHeaderValue.startsWith(OAuth2Helper.Scheme.BEARER)) {
             // OAuth2.0認証
-            return createBearerAuthz(authzHeaderValue, cell, baseUri, requestURIInfo, host, xPersoniumUnitUser);
+            return createBearerAuthz(authzHeaderValue, cell, headerHost, baseUri, requestURIInfo, headerHost, xPersoniumUnitUser);
         }
         return new AccessContext(TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.authenticationScheme);
     }
@@ -232,7 +234,7 @@ public class AccessContext {
    public static AccessContext createForWebSocket(
            String accessToken, Cell cell, String baseUri, String host) {
        String bearerAccessToken = OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + accessToken;
-       return createBearerAuthz(bearerAccessToken, cell, baseUri, null, host, null);
+       return createBearerAuthz(bearerAccessToken, cell, host, baseUri, null, host, null);
    }
 
     /**
@@ -671,7 +673,7 @@ public class AccessContext {
      * @return 生成されたAccessContextオブジェクト
      */
     private static AccessContext createBearerAuthz(String authzHeaderValue, Cell cell,
-            String baseUri, UriInfo uriInfo, String host, String xPersoniumUnitUser) {
+            String requestURIHost, String baseUri, UriInfo uriInfo, String host, String xPersoniumUnitUser) {
         // Bearer
         // 認証トークンの値が[Bearer ]で開始していなければ不正なトークンと判断する
         if (!authzHeaderValue.startsWith(OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX)) {
@@ -754,7 +756,16 @@ public class AccessContext {
             // TCATの場合はユニットユーザトークンである可能性をチェック
             // TCATがユニットユーザトークンである条件１：Targetが自分のユニットであること。
             // TCATがユニットユーザトークンである条件２：Issuerが設定に存在するUnitUserCellであること。
-            if (tca.getTarget().equals(baseUri) && PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), baseUri)) {
+
+            // TODO Issue-223 一時対処
+            String escapedBaseUri = baseUri;
+            if (requestURIHost.contains(".")) {
+                String cellName = requestURIHost.split("\\.")[0];
+                escapedBaseUri = baseUri.replaceFirst(cellName + "\\.", "");
+            }
+
+            if ((tca.getTarget().equals(baseUri) || tca.getTarget().equals(escapedBaseUri))
+                    && (PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), baseUri) || PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), escapedBaseUri))) {
                 // ユニットユーザトークンの処理
                 ret.accessType = TYPE_UNIT_USER;
                 ret.subject = tca.getSubject();

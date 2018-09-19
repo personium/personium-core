@@ -24,8 +24,6 @@ import java.util.regex.Pattern;
 
 import javax.ws.rs.core.Application;
 
-import io.personium.client.ODataBatchResponseParser;
-import io.personium.client.ODataResponse;
 import io.personium.test.jersey.box.odatacol.AbstractUserDataTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.utils.BatchUtils;

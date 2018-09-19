@@ -32,21 +32,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
 import javax.websocket.PongMessage;
 import javax.websocket.Session;
-import javax.websocket.server.PathParam;
-import javax.websocket.server.ServerEndpoint;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
@@ -59,9 +55,8 @@ import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
 
 /**
- * WebSocket Endpoint.
+ * WebSocket Service.
  */
-@ServerEndpoint(value = "/{cell}/__event")
 public class WebSocketService {
     /**
      * Subscribed condition Info which is used for filtering events.
@@ -146,19 +141,18 @@ public class WebSocketService {
         }
     }
 
-    /**
-     * This callback method is called when a client connects.
-     * Add session info in sessionMap, cellSessionIdMap.
-     * @param cellName cellName specified in url param
-     * @param session WebSocket session
-     */
-    @OnOpen
-    public void onOpen(@PathParam("cell") String cellName, Session session) {
+   /**
+    * This callback method is called when a client connects.
+    * Add session info in sessionMap, cellSessionIdMap.
+    * @param cellName cellName specified in url param
+    * @param session WebSocket session
+    */
+    public void onOpen(String cellName, Session session) {
         log.debug("ws: onOpen[" + cellName + "]: " + session.getId());
         Map<String, Object> userProperties = session.getUserProperties();
 
         synchronized (lockObj) {
-            Cell cell = ModelFactory.cell(cellName);
+            Cell cell = ModelFactory.cellFromName(cellName);
             if (cell != null) {
                 String cellId = cell.getId();
 
@@ -209,7 +203,6 @@ public class WebSocketService {
      * Delete data about disconnected session in cellSessionIdMap, sessionMap.
      * @param session WebSocket session
      */
-    @OnClose
     public void onClose(Session session) {
         log.debug("ws: onClose: " + session.getId());
         removeSessionInfo(session);
@@ -225,7 +218,6 @@ public class WebSocketService {
      * @param session sender session
      */
     @SuppressWarnings("unchecked")
-    @OnMessage
     public void onMessage(String text, Session session) {
         Map<String, Object> userProperties = session.getUserProperties();
         String cellId = (String) userProperties.get(KEY_PROPERTIES_CELL_ID);
@@ -428,7 +420,7 @@ public class WebSocketService {
                 long expireLimit = (expireTime - now.getTime()) / MILLISECS_IN_A_SEC;
                 result.put("ExpiresIn", expireLimit);
                 String cellName = null;
-                Cell cell = ModelFactory.cell(cellId, null);
+                Cell cell = ModelFactory.cellFromId(cellId);
                 if (cell != null) {
                     cellName = cell.getName();
                 }
@@ -460,7 +452,7 @@ public class WebSocketService {
         if (event.get("Type") != null && event.get("Object") != null && event.get("Info") != null) {
             try {
                 // TODO It may be better cellRsCmp is managed by HashMap
-                Cell cell = ModelFactory.cell(cellId, null);
+                Cell cell = ModelFactory.cellFromId(cellId);
                 AccessContext ac = createAccessContext(accessToken, cell.getName());
                 CellCmp cellCmp = ModelFactory.cellCmp(cell);
                 if (cellCmp.exists()) {
@@ -598,7 +590,7 @@ public class WebSocketService {
     static void sendEvent(PersoniumEvent event) {
         String cellId = event.getCellId();
         String cellName = null;
-        Cell cell = ModelFactory.cell(cellId, null);
+        Cell cell = ModelFactory.cellFromId(cellId);
         if (cell != null) {
             cellName = cell.getName();
         }
@@ -713,7 +705,7 @@ public class WebSocketService {
         log.debug("ws: checkAccessToken: cell= " + cellName);
 
         AccessContext result = null;
-        Cell cell = ModelFactory.cell(cellName);
+        Cell cell = ModelFactory.cellFromName(cellName);
 
         String baseUri = PersoniumUnitConfig.getBaseUrl();
         URI uri = URI.create(baseUri);
@@ -742,7 +734,7 @@ public class WebSocketService {
         if (accessToken == null || cellId == null) {
             result = false;
         } else {
-            Cell cell = ModelFactory.cell(cellId, null);
+            Cell cell = ModelFactory.cellFromId(cellId);
             AccessContext ac = createAccessContext(accessToken, cell.getName());
 
             try {

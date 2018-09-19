@@ -43,6 +43,53 @@ public class Box {
     private String id;
     private long published;
 
+    // Schema information
+
+    /**
+     * Edm.Entity Type name.
+     */
+    public static final String EDM_TYPE_NAME = "Box";
+
+    /** Extended schema Format schema-uri. */
+    public static final String P_FORMAT_PATTERN_SCHEMA_URI = "schema-uri";
+
+    /**
+     * Create the Annotation for Schema URI.
+     * @return EdmAnnotation
+     */
+    private static EdmAnnotation<?> createFormatSchemaUriAnnotation() {
+        return new EdmAnnotationAttribute(
+                Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
+                Common.P_FORMAT, P_FORMAT_PATTERN_SCHEMA_URI);
+    }
+
+    /**
+     * To get the Annotation for Schema.
+     * @param name UK Name
+     * @return Annotation List
+     */
+    private static List<EdmAnnotation<?>> createSchemaAnnotation(final String name) {
+        List<EdmAnnotation<?>> schemaAnnotation = CtlSchema.createNamedUkAnnotation(name);
+        schemaAnnotation.add(createFormatSchemaUriAnnotation());
+        return schemaAnnotation;
+    }
+
+    /**
+     * Schema Definition of property.
+     */
+    public static final EdmProperty.Builder P_SCHEMA = EdmProperty.newBuilder("Schema").setType(EdmSimpleType.STRING)
+            .setAnnotations(createSchemaAnnotation("uk_box_schema"))
+            .setNullable(true).setDefaultValue("null");
+
+    /**
+     * EntityType Builder.
+     */
+    public static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder()
+            .setNamespace(Common.EDM_NS_CELL_CTL).setName(EDM_TYPE_NAME)
+            .addProperties(Enumerable.create(Common.P_NAME, P_SCHEMA,
+                    Common.P_PUBLISHED, Common.P_UPDATED).toList())
+            .addKeys(Common.P_NAME.getName());
+
     /**
      * main box name.
      */
@@ -171,50 +218,12 @@ public class Box {
         return getCell().getUrl() + getName() + "/";
     }
 
-    // Schema information
-
     /**
-     * Edm.Entity Type name.
+     * Get cell base box url.
+     * Cell base url : "https://{cellname}.{domain}/{boxname}/...".
+     * @return cell base box url
      */
-    public static final String EDM_TYPE_NAME = "Box";
-
-    /** Extended schema Format schema-uri. */
-    public static final String P_FORMAT_PATTERN_SCHEMA_URI = "schema-uri";
-
-    /**
-     * Create the Annotation for Schema URI.
-     * @return EdmAnnotation
-     */
-    private static EdmAnnotation<?> createFormatSchemaUriAnnotation() {
-        return new EdmAnnotationAttribute(
-                Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
-                Common.P_FORMAT, P_FORMAT_PATTERN_SCHEMA_URI);
+    public String getCellBaseUrl() {
+        return getCell().getCellBaseUrl() + getName() + "/";
     }
-
-    /**
-     * To get the Annotation for Schema.
-     * @param name UK Name
-     * @return Annotation List
-     */
-    private static List<EdmAnnotation<?>> createSchemaAnnotation(final String name) {
-        List<EdmAnnotation<?>> schemaAnnotation = CtlSchema.createNamedUkAnnotation(name);
-        schemaAnnotation.add(createFormatSchemaUriAnnotation());
-        return schemaAnnotation;
-    }
-
-    /**
-     * Schema Definition of property.
-     */
-    public static final EdmProperty.Builder P_SCHEMA = EdmProperty.newBuilder("Schema").setType(EdmSimpleType.STRING)
-            .setAnnotations(createSchemaAnnotation("uk_box_schema"))
-            .setNullable(true).setDefaultValue("null");
-
-    /**
-     * EntityType Builder.
-     */
-    public static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder()
-            .setNamespace(Common.EDM_NS_CELL_CTL).setName(EDM_TYPE_NAME)
-            .addProperties(Enumerable.create(Common.P_NAME, P_SCHEMA,
-                    Common.P_PUBLISHED, Common.P_UPDATED).toList())
-            .addKeys(Common.P_NAME.getName());
 }

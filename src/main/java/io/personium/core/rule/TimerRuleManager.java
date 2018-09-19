@@ -29,10 +29,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.event.EventBus;
@@ -161,7 +161,7 @@ class TimerRuleManager {
             Map.Entry<String, List<TimerRuleInfo>> entry = iruleMap.next();
             String cellId = entry.getKey();
             List<TimerRuleInfo> ruleList = entry.getValue();
-            Cell cell = ModelFactory.cell(cellId, null);
+            Cell cell = ModelFactory.cellFromId(cellId);
             EventBus eventBus = cell.getEventBus();
             boolean validList = false;
 

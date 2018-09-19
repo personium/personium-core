@@ -19,6 +19,7 @@ package io.personium.core.rs.cell;
 import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_AN_HOUR;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
@@ -367,10 +368,10 @@ public class TokenEndPointResource {
      */
     private String clientAuth(final String clientId, final String clientSecret,
             final String authzHeader) {
-        String id = clientId;
-        String pw = clientSecret;
-        if (pw == null) {
-            pw = "";
+        String targetClientId = clientId;
+        String targetClientSecret = clientSecret;
+        if (targetClientSecret == null) {
+            targetClientSecret = "";
         }
 
         // authzHeaderのパース
@@ -379,8 +380,8 @@ public class TokenEndPointResource {
                     .parseBasicAuthzHeader(authzHeader);
             if (idpw != null) {
                 // authzHeaderの指定を優先
-                id = idpw[0];
-                pw = idpw[1];
+                targetClientId = idpw[0];
+                targetClientSecret = idpw[1];
             } else {
                 throw PersoniumCoreAuthnException.AUTH_HEADER_IS_INVALID
                         .realm(cell.getUrl());
@@ -391,7 +392,7 @@ public class TokenEndPointResource {
         // ・PWはSAMLトークンなので、これをパースする。
         TransCellAccessToken tcToken = null;
         try {
-            tcToken = TransCellAccessToken.parse(pw);
+            tcToken = TransCellAccessToken.parse(targetClientSecret);
         } catch (TokenParseException e) {
             // パースの失敗
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage())
@@ -417,16 +418,27 @@ public class TokenEndPointResource {
                     .getUrl());
         }
 
+        // TODO Issue-223 一時対処
         // ・IssuerがIDと等しいことを確認
-        if (!id.equals(tcToken.getIssuer())) {
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH
-                    .realm(cell.getUrl());
+        String normalizedClientId;
+        try {
+            normalizedClientId = UriUtils.convertCellBaseToDomainBase(targetClientId);
+        } catch (URISyntaxException e) {
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cell.getUrl());
+        }
+        if (!normalizedClientId.equals(tcToken.getIssuer())) {
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cell.getUrl());
         }
 
         // トークンのターゲットが自分でない場合はエラー応答
-        if (!tcToken.getTarget().equals(cell.getUrl())) {
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_TARGET_WRONG
-                    .realm(cell.getUrl());
+        String normalizedTarget;
+        try {
+            normalizedTarget = UriUtils.convertCellBaseToDomainBase(tcToken.getTarget());
+        } catch (URISyntaxException e) {
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_TARGET_WRONG.realm(cell.getUrl());
+        }
+        if (!normalizedTarget.equals(cell.getUrl())) {
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_TARGET_WRONG.realm(cell.getUrl());
         }
 
         // ロールが特殊(confidential)な値だったら#cを付与
@@ -436,11 +448,11 @@ public class TokenEndPointResource {
         for (Role role : tcToken.getRoles()) {
             if (confidentialRoleUrl.equals(role.createUrl())) {
                 // 認証成功。
-                return id + OAuth2Helper.Key.CONFIDENTIAL_MARKER;
+                return normalizedClientId + OAuth2Helper.Key.CONFIDENTIAL_MARKER;
             }
         }
         // 認証成功。
-        return id;
+        return normalizedClientId;
     }
 
     private Response receiveSaml2(final String target, final String owner,

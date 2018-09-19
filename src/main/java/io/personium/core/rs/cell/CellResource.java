@@ -40,6 +40,7 @@ import javax.ws.rs.core.StreamingOutput;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.wink.webdav.WebDAVMethod;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,7 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
+import io.personium.core.model.ctl.Common;
 import io.personium.core.model.lock.UnitUserLockManager;
 import io.personium.core.rs.box.BoxResource;
 import io.personium.core.utils.ResourceUtils;
@@ -67,6 +69,10 @@ import io.personium.core.utils.ResourceUtils;
  */
 public class CellResource {
     static Logger log = LoggerFactory.getLogger(CellResource.class);
+
+    /** Media-Type:personium metadata. */
+    private static final MediaType MEDIATYPE_PERSONIUM_METADATA = MediaType.valueOf(
+            PersoniumCoreUtils.ContentType.METADATA);
 
     Cell cell;
     CellCmp cellCmp;
@@ -146,9 +152,17 @@ public class CellResource {
      * @param httpHeaders Request headers
      * @return JAX-RS Response Object
      */
+    @SuppressWarnings("unchecked")
     @GET
-    public Response getSvcDoc(@Context HttpHeaders httpHeaders) {
-        if (httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_XML_TYPE)) {
+    public Response get(@Context HttpHeaders httpHeaders) {
+        if (httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_METADATA)) {
+            JSONObject responseJson = new JSONObject();
+            JSONObject cellMetadataJson = new JSONObject();
+            cellMetadataJson.put(Common.P_NAME.getName(), cell.getName());
+            cellMetadataJson.put(Common.P_URL, cell.getCellBaseUrl());
+            responseJson.put(Cell.EDM_TYPE_NAME, cellMetadataJson);
+            return Response.ok().entity(responseJson.toJSONString()).build();
+        } else if (httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_XML_TYPE)) {
             StringBuffer sb = new StringBuffer();
             sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             sb.append("<cell xmlns=\"urn:x-personium:xmlns\">");
