@@ -153,13 +153,13 @@ public class PluginFactory {
             obj = clazz.newInstance();
 
         } catch (ClassNotFoundException e) {
-            // クラスが存在しない
+            //Class does not exist
             e.printStackTrace();
         } catch (InstantiationException e) {
-            // インスタンス作成不可
+            //Instance can not be created
             e.printStackTrace();
         } catch (IllegalAccessException e) {
-            // 呼び出し:アクセス違反, 保護されている
+            //Invocation: Access violation, protected
             e.printStackTrace();
         }
         return obj;

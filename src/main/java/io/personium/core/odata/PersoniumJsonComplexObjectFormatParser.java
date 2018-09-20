@@ -67,8 +67,8 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
         implements FormatParser<OComplexObject> {
 
     /**
-     * コンストラクタ.
-     * @param s 設定情報
+     * constructor.
+     * @param s setting information
      */
     public PersoniumJsonComplexObjectFormatParser(Settings s) {
         super(s);
@@ -79,12 +79,12 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
         }
     }
 
-    /** 返却する型. */
+    /** Type to return.*/
     private EdmComplexType returnType = null;
 
     /**
-     * ComplexTypeObjectのパース.
-     * @param reader パース対象
+     * The parse of ComplexTypeObject.
+     * @param reader Perth target
      * @return OComplexObject
      */
     @Override
@@ -99,8 +99,8 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
     }
 
     /**
-     * ComplexTypeObjectのパース.
-     * @param jsr パース対象文字のJsonStreamReader
+     * The parse of ComplexTypeObject.
+     * @param jsr JsonStreamReader of parse target character
      * @return OComplexObject
      */
     public OComplexObject parseSingleObject(JsonStreamReader jsr) {
@@ -117,8 +117,8 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
     }
 
     /**
-     * ComplexTypeObjectのパース.
-     * @param jsr パース対象文字のJsonStreamReader
+     * The parse of ComplexTypeObject.
+     * @param jsr JsonStreamReader of parse target character
      * @param startPropertyEvent JsonEvent
      * @return OComplexObject
      */
@@ -129,9 +129,9 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
     }
 
     /**
-     * 不足分のComplexTypePropertyを追加する.
-     * @param props 追加対象Propertyリスト
-     * @param jsr パース対象文字のJsonStreamReader
+     * Add the shortcoming ComplexTypeProperty.
+     * @param props Property list to be added
+     * @param jsr JsonStreamReader of parse target character
      * @return OComplexObject
      */
     private OComplexObject eatProps(List<OProperty<?>> props, JsonStreamReader jsr) {
@@ -154,24 +154,24 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
     }
 
     /**
-     * プロパティの追加.
-     * @param props 追加対象Propertyリスト
-     * @param name 追加Property名
-     * @param jsr パース対象文字のJsonStreamReader
+     * Added properties.
+     * @param props Property list to be added
+     * @param name Additional Property Name
+     * @param jsr JsonStreamReader of parse target character
      */
     protected void addProperty(List<OProperty<?>> props, String name, JsonStreamReader jsr) {
         JsonEvent event = jsr.nextEvent();
 
-        // ComplexType定義からプロパティ定義を取得する
+        //Get property definition from ComplexType definition
         EdmProperty ep = returnType.findProperty(name);
 
         if (event.isEndProperty()) {
             if (ep == null) {
-                // プロパティ定義がComplexType定義上に存在しなければエラーとする
+                //If the property definition does not exist on the ComplexType definition, it is regarded as an error
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(name);
             }
             if (ep.getType().isSimple()) {
-                // 値チェック
+                //Value check
                 String propValue = event.asEndProperty().getValue();
                 if (propValue != null) {
                     if (ep.getType().equals(EdmSimpleType.BOOLEAN)
@@ -200,16 +200,16 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
                     }
                 }
 
-                // シンプル型（文字列や数値など）であればプロパティに追加する
+                //If it is a simple type (character string, number, etc.), it is added to the property
                 props.add(JsonTypeConverter.parse(name, (EdmSimpleType<?>) ep.getType(), propValue));
             } else {
-                // ComplexType型であれば再度パースを実施して、プロパティに追加する
+                //If it is ComplexType type, parse it again and add it to the property
                 JsonObjectPropertyValue val = getValue(event, name, jsr, ep);
                 if (val != null) {
                     props.add(OProperties.complex(name, (EdmComplexType) val.complexObject.getType(),
                             val.complexObject.getProperties()));
                 } else {
-                    // ComplexTypeの値がNullの場合
+                    //When the value of ComplexType is Null
                     EdmComplexType ct = getMetadata().findEdmComplexType(ep.getType().getFullyQualifiedTypeName());
                     props.add(OProperties.complex(name, ct, null));
                 }
@@ -217,18 +217,18 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
         } else if (event.isStartObject()) {
             JsonObjectPropertyValue val = getValue(event, name, jsr, ep);
             if (val.complexObject != null) {
-                // ComplexTypeデータであればプロパティに追加する
+                //If it is ComplexType data, it is added to the property
                 props.add(OProperties.complex(name, (EdmComplexType) val.complexObject.getType(),
                         val.complexObject.getProperties()));
             } else {
-                // ComplexTypeデータ以外はエラーとする
+                //Make errors other than ComplexType data
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(name);
             }
         } else if (event.isStartArray()) {
-            // 配列オブジェクトの場合
+            //For array objects
             JsonObjectPropertyValue val = new JsonObjectPropertyValue();
 
-            // スキーマ定義が存在してCollectionKindがNoneでなければ、配列としてパースする
+            //If the schema definition exists and CollectionKind is not None, parse it as an array
             if (null != ep && ep.getCollectionKind() != CollectionKind.NONE) {
                 val.collectionType = new EdmCollectionType(ep.getCollectionKind(), ep.getType());
                 PersoniumJsonCollectionFormatParser cfp = new PersoniumJsonCollectionFormatParser(val.collectionType,
@@ -236,7 +236,7 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
                 val.collection = cfp.parseCollection(jsr);
             }
 
-            // パースに成功した場合は、プロパティに追加する
+            //If parsing succeeds, add it to the property
             if (val.collectionType != null && val.collection != null) {
                 props.add(OProperties.collection(name, val.collectionType, val.collection));
             } else {
@@ -248,11 +248,11 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
     }
 
     /**
-     * JSONオブジェクトの値を取得する.
+     * Get the value of the JSON object.
      * @param event JsonEvent
-     * @param name プロパティ名
+     * @param name property name
      * @param jsr JsonStreamReader
-     * @param ep プロパティ定義
+     * @param ep Property Definition
      * @return JsonObjectPropertyValue
      */
     protected JsonObjectPropertyValue getValue(JsonEvent event,
@@ -265,22 +265,22 @@ public class PersoniumJsonComplexObjectFormatParser extends PersoniumJsonFormatP
             event = jsr.nextEvent();
             ensureStartProperty(event);
 
-            // スキーマ定義からComplexType定義を取得する
+            //Get ComplexType definition from schema definition
             EdmComplexType ct = getMetadata().findEdmComplexType(ep.getType().getFullyQualifiedTypeName());
 
             if (null != ct) {
-                // ComplexTypeが存在する場合は、パースを実施してComplexTypeObjectを取得する
+                //If there is a ComplexType, execute a parse and acquire a ComplexTypeObject
                 Settings s = new Settings(getVersion(), getMetadata(), null, null, null, false, ct);
                 PersoniumJsonComplexObjectFormatParser cofp = new PersoniumJsonComplexObjectFormatParser(s);
                 rt.complexObject = cofp.parseSingleObject(jsr, event);
             } else {
-                // ComplexTypeがスキーマ定義上に存在しなければエラーとする
+                //If ComplexType does not exist on the schema definition, it is regarded as an error
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(name);
             }
 
             ensureEndProperty(jsr.nextEvent());
         } else if (event.isEndProperty() && event.asEndProperty().getValue() == null) {
-            // ComplexTypeの値がNullの場合
+            //When the value of ComplexType is Null
             return null;
         } else {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(name);

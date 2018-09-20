@@ -22,7 +22,7 @@ import java.util.Enumeration;
 import java.util.UUID;
 
 /**
- * スレッド/プロセス/サーバ間を通じてユニークな名前を作成するためのユーティリティクラス.
+ * A utility class for creating unique names between threads / processes / servers.
  */
 public class UniqueNameComposer {
 
@@ -32,9 +32,9 @@ public class UniqueNameComposer {
     }
 
     /**
-     * スレッド/プロセス/サーバ間を通じてユニークな名前を作成する.
-     * @param prefix 任意の文字列
-     * @return ユニーク名
+     * Create a unique name through thread / process / server.
+     * @param prefix Any string
+     * @return unique name
      */
     public static String compose(String prefix) {
         String macAddress = getMacAddress();
@@ -44,12 +44,12 @@ public class UniqueNameComposer {
     }
 
     /**
-     * 実行中サーバの最初のネットワークインタフェースの Macアドレスを基にした文字列を返す。
-     * Macアドレスが取得できない場合、代替として現在日付の millisecondを 16進変換した文字列を返す。
-     * @return Macアドレスの文字列表現。ただしバイト間にデリミタは含まない。
+     * Returns a character string based on the Mac address of the first network interface of the running server.
+     * If the Mac address can not be acquired, it returns a character string obtained by converting millisecond of the current date into hexadecimal as an alternative.
+     * @return A string representation of the Mac address. However, delimiters are not included between bytes.
      */
     public static String getMacAddress() {
-        // 最初の NIC の MACアドレスを取得する。
+        //Get the MAC address of the first NIC.
         try {
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface
                     .getNetworkInterfaces();
@@ -64,10 +64,10 @@ public class UniqueNameComposer {
                     return buffer.toString();
                 }
             }
-            // nicが検出できないため、代替文字列を返す。
+            //Since nic can not be detected, it returns an alternate character string.
             return Long.toHexString(System.currentTimeMillis());
         } catch (SocketException e) {
-            // エラーで取得できないため、代替文字列を返す。
+            //Since it can not be acquired by error, it returns an alternate character string.
             return Long.toHexString(System.currentTimeMillis());
         }
     }

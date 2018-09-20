@@ -77,12 +77,12 @@ public class ODataMessageResource extends AbstractODataResource {
      */
     protected Response createMessage(UriInfo uriInfo, Reader reader, String operation) {
 
-        // response用URLに__ctlを追加する
+        //Add __ctl to response URL
         UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 2, "__ctl");
 
         EntityResponse res = createEntity(reader, messageResource);
 
-        // レスポンスボディを生成する
+        //Generate a response body
         OEntity ent = res.getEntity();
         MediaType outputFormat = MediaType.APPLICATION_JSON_TYPE;
         List<MediaType> contentTypes = new ArrayList<MediaType>();
@@ -90,7 +90,7 @@ public class ODataMessageResource extends AbstractODataResource {
         String key = AbstractODataResource.replaceDummyKeyToNull(ent.getEntityKey().toKeyString());
         String responseStr = renderEntityResponse(resUriInfo, res, "json", contentTypes);
 
-        // 制御コードのエスケープ処理
+        //Escape processing of control code
         responseStr = escapeResponsebody(responseStr);
 
         ResponseBuilder rb = getPostResponseBuilder(ent, outputFormat, responseStr, resUriInfo, key);

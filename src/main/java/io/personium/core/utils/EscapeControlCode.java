@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 制御コードのエスケープを行うクラス.
+ * Class for escaping control code.
  */
 public class EscapeControlCode {
 
@@ -31,9 +31,9 @@ public class EscapeControlCode {
     }
 
     /**
-     * 制御コードをエスケープする.
-     * @param input エスケープ対象の文字列
-     * @return 制御コードをエスケープした文字列
+     * Escape control code.
+     * @param input String to be escaped
+     * @return String escaping control code
      */
     public static String escape(String input) {
         String unicodePattern = "[\u0000-\u001F\u007F]";
@@ -50,9 +50,9 @@ public class EscapeControlCode {
     }
 
     /**
-     * 制御コードが含まれているかを判定する.
-     * @param input 判定する文字列
-     * @return true:制御コードが含まれている false:制御コードが含まれていない
+     * And determines whether or not a control code is included.
+     * @param input judgment character string
+     * @return true: Contains the control code false: contains no control code
      */
     public static boolean isContainsControlChar(String input) {
         String unicodePattern = "[\u0000-\u001F\u007F]";
@@ -65,9 +65,9 @@ public class EscapeControlCode {
     }
 
     /**
-     * 文字列をユニコード文字に変換する.
-     * @param convertString 変換対象の文字列
-     * @return ユニコード文字
+     * Converts a character string to a Unicode character.
+     * @param convertString String to be converted
+     * @return Unicode character
      */
     private static String convertToUnicode(String convertString) {
         StringBuilder sb = new StringBuilder();

@@ -28,28 +28,28 @@ import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
 
 /**
- * PersoniumEngineのソースファイルリソースに対応するJAX-RS Resource クラス.
+ * JAX-RS Resource class corresponding to Personium Engine source file resources.
  */
 public final class PersoniumEngineSourceFileResource extends DavFileResource {
 
     /**
      * constructor.
-     * @param parent 親
-     * @param davCmp 部品
+     * @param parent parent
+     * @param davCmp parts
      */
     public PersoniumEngineSourceFileResource(final DavRsCmp parent, final DavCmp davCmp) {
         super(parent, davCmp);
     }
 
     /**
-     * ACLメソッドの処理. ACLの設定を行う.
-     * @param reader 設定XML
+     * Processing of ACL method Set ACL.
+     * @param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
     @ACL
     public Response acl(final Reader reader) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
         throw PersoniumCoreException.Dav.METHOD_NOT_ALLOWED;
     }

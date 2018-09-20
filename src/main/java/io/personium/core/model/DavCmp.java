@@ -73,19 +73,19 @@ public interface DavCmp {
     String SERVICE_SRC_COLLECTION = "__src";
 
     /**
-     * DavNodeがDB上に存在するかどうか.
-     * @return 存在する場合はtrue
+     * Whether DavNode exists on the DB.
+     * @return true if it exists
      */
     boolean exists();
 
     /**
-     * Davの管理データ情報を最新化する.
+     * Update Dav's management data information.
      */
     void load();
 
     /**
-     * Davの管理データ情報を最新化する.<br />
-     * 管理データが存在しない場合はエラーとする.
+     * Update Dav's management data information <br />
+     * If there is no management data, it is an error.
      */
     void loadAndCheckDavInconsistency();
 
@@ -155,21 +155,21 @@ public interface DavCmp {
     boolean isCellLevel();
 
     /**
-     * スキーマ認証レベル設定のgetter.
-     * @return スキーマ認証レベル
+     * Getter for schema authentication level setting.
+     * @return schema authentication level
      */
     String getConfidentialLevel();
 
     /**
-     * ユニット昇格許可ユーザ設定取得のgetter.
-     * @return ユニット昇格許可ユーザ設定
+     * Getter for getting unit promotion permission user setting.
+     * @return unit promotion permission user setting
      */
     List<String> getOwnerRepresentativeAccounts();
 
     /**
-     * 指定した名前の子パスを担当する部品を返す.
-     * @param name 子供パスのパスコンポーネント名
-     * @return 子パスを担当する部品
+     * Returns the part responsible for the child path with the specified name.
+     * @param name path component path name of child path
+     * @return Parts responsible for child path
      */
     DavCmp getChild(String name);
 
@@ -179,39 +179,39 @@ public interface DavCmp {
     Map<String, DavCmp> getChildren();
 
     /**
-     * 親パスを担当する部品を返す.
-     * @return 親パスを担当する部品
+     * Returns the part responsible for the parent path.
+     * @return Parts responsible for parent path
      */
     DavCmp getParent();
 
     /**
-     * 子供パスの部品の数を返す.
-     * @return 子供パスの部品の数
+     * Returns the number of parts of the child pass.
+     * @return Number of parts of the child path
      */
     int getChildrenCount();
 
     /**
-     * タイプ文字列を返す.
-     * @return タイプ文字列
+     * Return type string.
+     * @return type string
      */
     String getType();
 
     /**
-     * このオブジェクトが担当するパス文字列を返す.
-     * @return このオブジェクトが担当するパス文字列
+     * Returns the path string that this object is responsible for.
+     * @return Path string responsible for this object
      */
     String getName();
 
 
     /**
-     * このオブジェクトのnodeIdを返す.
+     * Returns the nodeId of this object.
      * @return nodeId
      */
     String getId();
 
     /**
-     * 配下にデータがない場合はtrueを返す.
-     * @return 配下にデータがない場合はtrue.
+     * Returns true if there is no data below.
+     * True if there is no data under @return.
      */
     boolean isEmpty();
 
@@ -221,64 +221,64 @@ public interface DavCmp {
     void makeEmpty();
 
     /**
-     * MKCOLメソッドの処理.
-     * @param type タイプ
+     * Processing of MKCOL method.
+     * @param type type
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder mkcol(String type);
 
     /**
-     * ACLメソッドの処理.
+     * Processing of ACL method.
      * @param reader Reader
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder acl(Reader reader);
 
     /**
-     * PUTメソッドによるファイルの更新処理.
-     * @param contentType Content-Typeヘッダ
-     * @param inputStream リクエストボディ
+     * File update processing by PUT method.
+     * @param contentType Content-Type header
+     * @param inputStream request body
      * @param etag Etag
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder putForUpdate(String contentType, InputStream inputStream, String etag);
 
     /**
-     * PUTメソッドによるファイルの作成処理.
-     * @param contentType Content-Typeヘッダ
-     * @param inputStream リクエストボディ
+     * File creation processing by PUT method.
+     * @param contentType Content-Type header
+     * @param inputStream request body
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder putForCreate(String contentType, InputStream inputStream);
 
     /**
-     * 子リソースとの紐づける.
-     * @param name 子リソースのパスコンポーネント名
-     * @param nodeId 子リソースのノードID
-     * @param asof 更新時刻として残すべき時刻
+     * Link with child resources.
+     * @param name Path component name of child resource Component name
+     * @param nodeId Node ID of child resource
+     * @param asof Time to keep as update time
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder linkChild(String name, String nodeId, Long asof);
 
     /**
-     * 子リソースとの紐づきを削除する.
-     * @param name 子リソース名
-     * @param asof 削除時刻として残すべき時刻
+     * Delete association with child resource.
+     * @param name child resource name
+     * @param asof Time to leave as deletion time
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder unlinkChild(String name, Long asof);
 
     /**
      * process PROPPATCH method.
-     * @param propUpdate PROPPATCH要求オブジェクト
+     * @param propUpdate PROPPATCH request object
      * @param url URL
-     * @return 応答オブジェクト
+     * @return response object
      */
     Multistatus proppatch(Propertyupdate propUpdate, String url);
 
     /**
      * process DELETE method.
-     * @param ifMatch If-Matchヘッダ
+     * @param ifMatch If-Match header
      * @param recursive set true to process recursively
      * @return JAX-RS ResponseBuilder
      */
@@ -286,19 +286,19 @@ public interface DavCmp {
 
     /**
      * process GET method.
-     * @param rangeHeaderField Rangeヘッダ
+     * @param rangeHeaderField Range header
      * @return JAX-RS ResponseBuilder
      */
     ResponseBuilder get(String rangeHeaderField);
 
     /**
-     * データ操作用ODataProducerを返します.
+     * Return ODataProducer for data manipulation.
      * @return ODataProducer
      */
     PersoniumODataProducer getODataProducer();
 
     /**
-     * スキーマ操作用ODataProducerを返します.
+     * Return ODataProducer for schema operation.
      * @param cell Cell
      * @return ODataProducer
      */
@@ -311,25 +311,25 @@ public interface DavCmp {
 
 
     /**
-     * MOVE処理を行う.
+     * Move processing is performed.
      * @param etag ETag value
-     * @param overwrite 移動先のリソースを上書きするかどうか
-     * @param davDestination 移動先の階層情報
-     * @return ResponseBuilder レスポンス
+     * @param overwrite Whether to overwrite the destination resource
+     * @param davDestination Hierarchy information of the destination
+     * @return ResponseBuilder response
      */
     ResponseBuilder move(String etag, String overwrite, DavDestination davDestination);
 
     /**
-     * このDavNodeリソースのURLを返します.
-     * @return URL文字列
+     * Returns the URL of this DavNode resource.
+     * @return URL string
      */
     String getUrl();
 
     /**
-     * リソースに合わせてNotFoundの例外を返却する. <br />
-     * リソースによってメッセージがことなるため、各リソースのクラスはこのメソッドをオーバーライドしてメッセージを定義すること。 <br />
-     * メッセージの付加情報は、ここでは設定せずに呼び出し元で設定すること。
-     * @return NotFound例外
+     * Return NotFound exceptions according to resources <br />
+     * Since the messages depend on the resource, each resource class should override this method to define the message. <br />
+     * The additional information of the message should be set by the caller without setting it here.
+     * @return NotFound exception
      */
     PersoniumCoreException getNotFoundException();
 }

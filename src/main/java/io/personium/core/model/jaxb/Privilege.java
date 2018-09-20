@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.w3c.dom.Element;
 
 /**
- * D:privilege タグに対応するJAXBオブジェクト.
+ * D: JAXB object corresponding to the privilege tag.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(namespace = "DAV:", name = "privilege")

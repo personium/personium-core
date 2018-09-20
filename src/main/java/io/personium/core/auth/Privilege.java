@@ -77,9 +77,9 @@ public abstract class Privilege {
     }
 
     /**
-     * このPrivilegeが引数で指定されたPrivilegeを含むかどうかを返す.
-     * @param priv 対象Privilege
-     * @return 引数で指定されたPrivilegeを含む場合真
+     * Returns whether this Privilege contains the Privilege specified by its argument.
+     * @param priv Targets Privilege
+     * True if it contains the Privilege specified by the @return argument
      */
     public boolean includes(final Privilege priv) {
         if (this == priv) {
@@ -92,10 +92,10 @@ public abstract class Privilege {
     }
 
     /**
-     * 対応するPrivilegeクラスのPrivilegeを返却.
-     * @param <T> 戻り値のクラス
-     * @param clazz Privilegeが属するクラス
-     * @param privilegeName 取得するPrivilegeの名前
+     * Return Privilege of the corresponding Privilege class.
+     * @param <T> class of return value
+     * @param clazz class to which Privilege belongs
+     * @param privilegeName Name of Privilege to retrieve
      * @return .
      */
     @SuppressWarnings("unchecked")

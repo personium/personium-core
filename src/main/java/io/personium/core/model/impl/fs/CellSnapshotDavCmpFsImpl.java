@@ -154,13 +154,13 @@ public class CellSnapshotDavCmpFsImpl extends DavCmpFsImpl implements CellSnapsh
         // Load file info
         this.load();
 
-        // クリティカルなタイミング(ロック～ロードまでの間)でWebDavの管理データが削除された場合の対応
-        // WebDavの管理データがこの時点で存在しない場合は404エラーとする
+        //Correspondence when management data of WebDav is deleted at critical timing (between lock and load)
+        //If the management data of WebDav does not exist at this point, it is set to 404 error
         if (!this.exists()) {
             throw getNotFoundException().params(getUrl());
         }
 
-        // 指定etagがあり、かつそれが*ではなく内部データから導出されるものと異なるときはエラー
+        //If there is a specified etag and it is different from what is derived from internal data rather than *, an error
         if (etag != null && !"*".equals(etag) && !matchesETag(etag)) {
             throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;
         }

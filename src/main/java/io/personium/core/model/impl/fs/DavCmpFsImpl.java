@@ -203,24 +203,24 @@ public class DavCmpFsImpl implements DavCmp {
         } else if (DavCmp.TYPE_COL_BOX.equals(type)) {
             return !(this.getChildrenCount() > 0);
         } else if (DavCmp.TYPE_COL_ODATA.equals(type)) {
-            // Collectionに紐づくEntityTypeの一覧を取得する
-            // EntityTypeに紐づくリソース(AsssociationEndなど)はEntityTypeが必ず親となる関係であるため
-            // EntityTypeのみ検索すれば、EntityTypeに紐づくリソースまでチェックする必要はない
+            //Get a list of EntityType associated with Collection
+            //Resources linked to EntityType (AsssociationEnd, etc.) are relationships where EntityType is always parent
+            //If only EntityType is searched, it is unnecessary to check up to resources associated with EntityType
             UserSchemaODataProducer producer = new UserSchemaODataProducer(this.cell, this);
             CountResponse cr = producer.getEntitiesCount(EntityType.EDM_TYPE_NAME, null);
             if (cr.getCount() > 0) {
                 return false;
             }
-            // Collectionに紐づくComplexTypeの一覧を取得する
-            // ComplexTypeに紐づくリソース(ComplexTypeProperty)はComplexTypeが必ず親となる関係であるため
-            // ComplexTypeのみ検索すれば、ComplexTypeに紐づくリソースまでチェックする必要はない
+            //Acquire a list of ComplexType associated with Collection
+            //Since the ComplexType resource (ComplexTypeProperty) is a relationship in which ComplexType always becomes a parent
+            //If only ComplexType is searched, it is not necessary to check up to the resources associated with ComplexType
             cr = producer.getEntitiesCount(ComplexType.EDM_TYPE_NAME, null);
             return cr.getCount() < 1;
         } else if (DavCmp.TYPE_COL_SVC.equals(type)) {
             DavCmp svcSourceCol = this.getChild(SERVICE_SRC_COLLECTION);
             if (!svcSourceCol.exists()) {
-                // クリティカルなタイミングでServiceコレクションが削除された場合
-                // ServiceSourceコレクションが存在しないため空とみなす
+                //When the Service collection is deleted at critical timing
+                //Because the ServiceSource collection does not exist, it is regarded as empty
                 return true;
             }
             return !(svcSourceCol.getChildrenCount() > 0);
@@ -237,8 +237,8 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     * スキーマ認証のレベルを返す.
-     * @return スキーマ認証レベル
+     * Returns the level of schema authentication.
+     * @return schema authentication level
      */
     public String getConfidentialLevel() {
         if (acl == null) {
@@ -248,16 +248,16 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     * ユニット昇格許可ユーザ設定を返す.
-     * @return ユニット昇格許可ユーザ設定
+     * Return unit permission permission user setting.
+     * @return unit promotion permission user setting
      */
     public List<String> getOwnerRepresentativeAccounts() {
         return this.ownerRepresentativeAccounts;
     }
 
     /**
-     * Boxをロックする.
-     * @return 自ノードのロック
+     * Lock Box.
+     * @return Lock of own node
      */
     public Lock lock() {
         log.debug("lock:" + LockKeyComposer.fullKeyFromCategoryAndKey(Lock.CATEGORY_DAV, null, this.box.getId(), null));
@@ -342,7 +342,7 @@ public class DavCmpFsImpl implements DavCmp {
 //                Element element = parseProp(val);
 //                String elementNameSpace = element.getNamespaceURI();
 
-//                // ownerRepresentativeAccountsの取り出し
+//// Retrieve ownerRepresentativeAccounts
 //                if (Key.PROP_KEY_OWNER_REPRESENTIVE_ACCOUNTS.equals(keyQName)) {
 //                    NodeList accountNodeList = element.getElementsByTagNameNS(elementNameSpace,
 //                            Key.PROP_KEY_OWNER_REPRESENTIVE_ACCOUNT.getLocalPart());
@@ -356,20 +356,20 @@ public class DavCmpFsImpl implements DavCmp {
 
 
     /**
-     * Davの管理データ情報を最新化する.<br />
-     * 管理データが存在しない場合はエラーとする.
+     * Update Dav's management data information <br />
+     * If there is no management data, it is an error.
      */
     public final void loadAndCheckDavInconsistency() {
         load();
         if (this.metaFile == null) {
-            // Boxから辿ってidで検索して、Davデータに不整合があった場合
+            //When tracing from Box and searching by id, if there is inconsistency in Dav data
             throw PersoniumCoreException.Dav.DAV_INCONSISTENCY_FOUND;
         }
     }
 
     // TODO Interim correspondence.(For security reasons)
 //    private Element parseProp(String value) {
-//        // valをDOMでElement化
+//// Element val into DOM
 //        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 //        factory.setNamespaceAware(true);
 //        DocumentBuilder builder = null;
@@ -386,7 +386,7 @@ public class DavCmpFsImpl implements DavCmp {
 //    }
 
     /*
-     * proppatch メソッドへの対応. 保存の方式 key = namespaceUri + "@" + localName Value =
+     * Support for the proppatch method. Save method key = namespaceUri + "@" + localName Value =
      * inner XML String
      */
     @Override
@@ -400,12 +400,12 @@ public class DavCmpFsImpl implements DavCmp {
 
         // Lock
         Lock lock = this.lock();
-        // 更新処理
+        //Update processing
         try {
-            this.load(); // ロック後の最新情報取得
+            this.load(); //Acquire latest information after lock
 
             if (!this.exists()) {
-                // クリティカルなタイミング(初回ロード～ロック取得)で削除された場合は404エラーとする
+                //If it is deleted at critical timing (initial load to lock acquisition), it is set as 404 error
                 throw getNotFoundException().params(this.getUrl());
             }
 
@@ -517,19 +517,19 @@ public class DavCmpFsImpl implements DavCmp {
         // Locking
         Lock lock = this.lock();
         try {
-            // 新規作成時には、作成対象のDavNodeは存在しないため、親DavNodeをリロードして存在確認する。
-            // 親DavNodeが存在しない場合：他のリクエストによって削除されたたため、404を返却
-            // 親DavNodeが存在するが、作成対象のDavNodeが存在する場合：他のリクエストによって作成されたたｔめ、更新処理を実行
+            //When newly created, there is no DavNode to be created, so reload the parent DavNode to check its existence.
+            //When the parent DavNode does not exist: Because it was deleted by another request, 404 is returned
+            //If there is a parent DavNode, but there is a DavNode to be created: When created by another request, update processing is executed
             this.parent.load();
             if (!this.parent.exists()) {
                 throw PersoniumCoreException.Dav.HAS_NOT_PARENT.params(this.parent.getUrl());
             }
 
-            // 作成対象のDavNodeが存在する場合は更新処理
+            //When there is a DavNode to be created, update processing
             if (this.exists()) {
                 return this.doPutForUpdate(contentType, inputStream, null);
             }
-            // 作成対象のDavNodeが存在しない場合は新規作成処理
+            //When there is no DavNode to be created, a new creation process
             return this.doPutForCreate(contentType, inputStream);
         } finally {
             // UNLOCK
@@ -540,14 +540,14 @@ public class DavCmpFsImpl implements DavCmp {
 
     @Override
     public ResponseBuilder putForUpdate(final String contentType, final InputStream inputStream, String etag) {
-        // ロック
+        //Lock
         Lock lock = this.lock();
         try {
-            // 更新には、更新対象のDavNodeが存在するため、更新対象のDavNodeをリロードして存在確認する。
-            // 更新対象のDavNodeが存在しない場合：
-            // ・更新対象の親DavNodeが存在しない場合：親ごと消えているため404を返却
-            // ・更新対象の親DavNodeが存在する場合：他のリクエストによって削除されたたため、作成処理を実行
-            // 更新対象のDavNodeが存在する場合：更新処理を実行
+            //For updating, since there is a DavNode to be updated, reload the DavNode to be updated and confirm its existence.
+            //When there is no DavNode to be updated:
+            //· When there is no parent DavNode to be updated: Because the parent is missing, 404 is returned
+            //- When there is a parent DavNode to be updated: Because it was deleted by another request, creation processing is executed
+            //If there is a DavNode to be updated: Update processing is executed
             this.load();
             if (this.metaFile == null) {
                 this.parent.load();
@@ -558,7 +558,7 @@ public class DavCmpFsImpl implements DavCmp {
             }
             return this.doPutForUpdate(contentType, inputStream, etag);
         } finally {
-            // ロックを開放する
+            //Release the lock
             lock.release();
             log.debug("unlock2");
         }
@@ -613,19 +613,19 @@ public class DavCmpFsImpl implements DavCmp {
      * @return ResponseBuilder
      */
     protected ResponseBuilder doPutForUpdate(final String contentType, final InputStream inputStream, String etag) {
-        // 現在時刻を取得
+        //Get current time
         long now = new Date().getTime();
-        // 最新ノード情報をロード
-        // TODO 全体として２回ロードしてしまうので、遅延ロードの仕組みを検討
+        //Load latest node information
+        //Since it loads twice as TODO as a whole, consider the mechanism of lazy load
         this.load();
 
-        // クリティカルなタイミング(ロック～ロードまでの間)でWebDavの管理データが削除された場合の対応
-        // WebDavの管理データがこの時点で存在しない場合は404エラーとする
+        //Correspondence when management data of WebDav is deleted at critical timing (between lock and load)
+        //If the management data of WebDav does not exist at this point, it is set to 404 error
         if (!this.exists()) {
             throw getNotFoundException().params(getUrl());
         }
 
-        // 指定etagがあり、かつそれが*ではなく内部データから導出されるものと異なるときはエラー
+        //If there is a specified etag and it is different from what is derived from internal data rather than *, an error
         if (etag != null && !"*".equals(etag) && !matchesETag(etag)) {
             throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;
         }
@@ -677,27 +677,27 @@ public class DavCmpFsImpl implements DavCmp {
         long fileSize = getContentLength();
         String encryptionType = getEncryptionType();
 
-        // Rangeヘッダ解析処理
+        //Range header analysis processing
         final RangeHeaderHandler range = RangeHeaderHandler.parse(rangeHeaderField, fileSize);
 
         try {
 
-            // Rangeヘッダ指定の時とで処理の切り分け
+            //Differentiate between processing with Range header specification
             if (!range.isValid()) {
-                // ファイル全体返却
+                //Return whole file
                 StreamingOutput sout = new StreamingOutputForDavFile(fileFullPath, getCellId(), encryptionType);
                 res = davFileResponse(sout, fileSize, contentType);
             } else {
-                // Range対応部分レスポンス
+                //Partial response corresponding to Range
 
-                // Rangeヘッダの範囲チェック
+                //Range header range check
                 if (!range.isSatisfiable()) {
                     PersoniumCoreLog.Dav.REQUESTED_RANGE_NOT_SATISFIABLE.params(range.getRangeHeaderField()).writeLog();
                     throw PersoniumCoreException.Dav.REQUESTED_RANGE_NOT_SATISFIABLE;
                 }
 
                 if (range.getByteRangeSpecCount() > 1) {
-                    // MultiPartレスポンスには未対応
+                    //Not compatible with MultiPart response
                     throw PersoniumCoreException.Misc.NOT_IMPLEMENTED.params("Range-MultiPart");
                 } else {
                     StreamingOutput sout = new StreamingOutputForDavFileWithRange(
@@ -718,14 +718,14 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     * ファイルレスポンス処理.
+     * File response processing.
      * @param sout
-     *            StreamingOuputオブジェクト
+     * StreamingOut object
      * @param fileSize
-     *            ファイルサイズ
+     * file size
      * @param contentType
-     *            コンテントタイプ
-     * @return レスポンス
+     * Content type
+     * @return response
      */
     public ResponseBuilder davFileResponse(final StreamingOutput sout, long fileSize, String contentType) {
         return javax.ws.rs.core.Response.ok(sout).header(HttpHeaders.CONTENT_LENGTH, fileSize)
@@ -733,23 +733,23 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     * ファイルレスポンス処理.
+     * File response processing.
      * @param sout
-     *            StreamingOuputオブジェクト
+     * StreamingOut object
      * @param contentType
-     *            コンテントタイプ
+     * Content type
      * @param range
      *            RangeHeaderHandler
-     * @return レスポンス
+     * @return response
      */
     private ResponseBuilder davFileResponseForRange(final StreamingOutput sout, String contentType,
             final RangeHeaderHandler range) {
-        // MultiPartには対応しないため1個目のbyte-renge-setだけ処理する。
+        //Because it does not correspond to MultiPart, it processes only the first byte-renge-set.
         int rangeIndex = 0;
         List<ByteRangeSpec> brss = range.getByteRangeSpecList();
         final ByteRangeSpec brs = brss.get(rangeIndex);
 
-        // iPadのsafariにおいてChunkedのRangeレスポンスを処理できなかったので明にContent-Lengthを返却している。
+        //I have returned Content - Length to the clear because I can not process Chunked 's Range response in iPad' s safari.
         return javax.ws.rs.core.Response.status(HttpStatus.SC_PARTIAL_CONTENT).entity(sout)
                 .header(PersoniumCoreUtils.HttpHeaders.CONTENT_RANGE, brs.makeContentRangeHeaderField())
                 .header(HttpHeaders.CONTENT_LENGTH, brs.getContentLength())
@@ -792,24 +792,24 @@ public class DavCmpFsImpl implements DavCmp {
             throw new RuntimeException("Bug do not call this .");
         }
 
-        // ロック
+        //Lock
         Lock lock = this.lock();
         try {
-            // ここで改めて存在確認が必要。
-            // TODO 何等かの手段で、再ロード
+            //It is necessary to confirm the presence again here.
+            //TODO reload with some means
             this.parent.load();
             if (!this.parent.exists()) {
-                // クリティカルなタイミングで先に親を削除されてしまい、
-                // 親が存在しないので409エラーとする
+                //Parents are deleted first at critical timing,
+                //Since a parent does not exist, it is regarded as a 409 error
                 throw PersoniumCoreException.Dav.HAS_NOT_PARENT.params(this.parent.getUrl());
             }
             if (this.exists()) {
-                // クリティカルなタイミングで先にコレクションを作られてしまい、
-                // すでに存在するのでEXCEPTION
+                //The collection was made earlier with critical timing,
+                //Since it already exists, EXCEPTION
                 throw PersoniumCoreException.Dav.METHOD_NOT_ALLOWED;
             }
 
-            // コレクションの階層数のチェック
+            //Check number of hierarchies in collection
             DavCmpFsImpl current = this;
             int depth = 0;
             int maxDepth = PersoniumUnitConfig.getMaxCollectionDepth();
@@ -818,11 +818,11 @@ public class DavCmpFsImpl implements DavCmp {
                 depth++;
             }
             if (depth > maxDepth) {
-                // コレクション数の制限を超えたため、400エラーとする
+                //Since it exceeds the limit of the number of collections, it is set to 400 error
                 throw PersoniumCoreException.Dav.COLLECTION_DEPTH_ERROR;
             }
 
-            // 親コレクション内のコレクション・ファイル数のチェック
+            //Check number of collection files in parent collection
             checkChildResourceCount();
 
             // Create New Directory
@@ -831,7 +831,7 @@ public class DavCmpFsImpl implements DavCmp {
             this.metaFile = DavMetadataFile.prepareNewFile(this, type);
             this.metaFile.save();
 
-            // TODO ディレクトリとメタデータつくるだけでいい？
+            //Can I just create a TODO directory and metadata?
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -860,42 +860,42 @@ public class DavCmpFsImpl implements DavCmp {
     public ResponseBuilder move(String etag, String overwrite, DavDestination davDestination) {
         ResponseBuilder res = null;
 
-        // ロック
+        //Lock
         Lock lock = this.lock();
         try {
-            // 移動元リソースの存在チェック
+            //Existence check of source resource
             this.load();
             if (!this.exists()) {
-                // クリティカルなタイミング(初回ロード～ロック取得)で移動元を削除された場合。
-                // 移動元が存在しないため404エラーとする
+                //When the move source is deleted at critical timing (initial load ~ lock acquisition).
+                //Since there is no moving source, it is determined as a 404 error
                 throw getNotFoundException().params(this.getUrl());
             }
-            // 指定etagがあり、かつそれが*ではなく内部データから導出されるものと異なるときはエラー
+            //If there is a specified etag and it is different from what is derived from internal data rather than *, an error
             if (etag != null && !"*".equals(etag) && !matchesETag(etag)) {
                 throw PersoniumCoreException.Dav.ETAG_NOT_MATCH;
             }
 
-            // 移動元のDavNodeをリロードしたことにより親DavNodeが別のリソースに切り替わっている可能性があるため、リロードする。
-            // この際、親DavNodeが削除されている可能性もあるため、存在チェックを実施する。
+            //Since reloading the source DavNode may cause the parent DavNode to switch to another resource, reload.
+            //At this time, there is a possibility that the parent DavNode has been deleted, so existence check is executed.
             // this.parent.nodeId = this.metaFile.getParentId();
             // this.parent.load();
             // if (this.parent.metaFile == null) {
             // throw getNotFoundException().params(this.parent.getUrl());
             // }
 
-            // 移動先のロード
+            //Destination load
             davDestination.loadDestinationHierarchy();
-            // 移動先のバリデート
+            //Validate of destination
             davDestination.validateDestinationResource(overwrite, this);
 
-            // MOVEメソッドでは移動元と移動先のBoxが同じであるため、移動先のアクセスコンテキストを取得しても、
-            // 移動元のアクセスコンテキストを取得しても同じObjectが取得できる
-            // このため、移動先のアクセスコンテキストを用いている
+            //In the MOVE method, the source and the destination Box are the same, so even if you acquire the destination access context,
+            //Even if you acquire the access context of the source, you can get the same Object
+            //Therefore, we use the access context of the move destination
             AccessContext ac = davDestination.getDestinationRsCmp().getAccessContext();
-            // 移動先に対するアクセス制御
-            // 以下の理由により、ロック後に移動先に対するアクセス制御を行うこととした。
-            // 1.アクセス制御ではESへのアクセスは発生しないため、ロック中に実施してもロック期間の長さに与える影響は少ない。
-            // 2.ロック前に移動先のアクセス制御を行う場合、移動先の情報を取得する必要があり、ESへのリクエストが発生するため。
+            //Access control to the destination
+            //For the following reasons, access is controlled to the destination after locking.
+            //1. Since access to the ES does not occur in the access control, influence on the length of the lock period is small even if executed during locking.
+            //2. When performing access control of the move destination before locking, it is necessary to acquire the information of the move destination, and a request to the ES occurs.
             davDestination.getDestinationRsCmp().getParent().checkAccessContext(ac, BoxPrivilege.WRITE);
 
             File destDir = ((DavCmpFsImpl) davDestination.getDestinationCmp()).fsDir;
@@ -925,10 +925,10 @@ public class DavCmpFsImpl implements DavCmp {
      * Check number of collection/file in parent collection.
      */
     protected void checkChildResourceCount() {
-        // 親コレクション内のコレクション・ファイル数のチェック
+        //Check number of collection files in parent collection
         int maxChildResource = PersoniumUnitConfig.getMaxChildResourceCount();
         if (this.parent.getChildrenCount() >= maxChildResource) {
-            // コレクション内に作成可能なコレクション・ファイル数の制限を超えたため、400エラーとする
+            //The number of collection files that can be created in the collection exceeds the limit, so it is set to 400 error
             throw PersoniumCoreException.Dav.COLLECTION_CHILDRESOURCE_ERROR;
         }
     }
@@ -1017,8 +1017,8 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     * バイナリデータのアクセサのインスタンスを生成して返す.
-     * @return アクセサのインスタンス
+     * Creates and returns an instance of an accessor of binary data.
+     * @return instance of accessor
      */
     protected BinaryDataAccessor getBinaryDataAccessor() {
         String owner = cell.getOwner();
@@ -1081,22 +1081,22 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     private Acl translateAcl(JSONObject aclObj) {
-        // principalのhref の値を ロールID（__id）からロールリソースURLに変換する。
-        // base:xml値の設定
+        //Convert the value of href of principal from role ID (__ id) to role resource URL.
+        //base: setting xml value
         String baseUrlStr = createBaseUrlStr();
 
-        // TODO これはES検索が何度も走る重い処理であるため、必要になってはじめてやるべき
-        // ここからは、一旦、はずすべきか。
+        //TODO This is a heavy process that ES search runs many times, so you should do it when you need it
+        //From here, once should be removed.
         return this.roleIdToName(aclObj, baseUrlStr);
     }
 
     /**
-     * ロールIDからロールリソースURLを取得.
-     * jsonObjのロールIDをロールリソースURLに置換する
+     * Get role resource URL from role ID.
+     * Replace jsonObj's role ID with role resource URL
      * @param jsonObj
-     *            ID置換後のJSON
+     * JSON after ID replacement
      * @param baseUrlStr
-     *            xml:base値
+     * xml: base value
      */
     private Acl roleIdToName(Object jsonObj, String baseUrlStr) {
         Acl ret = Acl.fromJson(((JSONObject) jsonObj).toJSONString());
@@ -1104,19 +1104,19 @@ public class DavCmpFsImpl implements DavCmp {
         if (aceList == null) {
             return ret;
         }
-        // xml:base対応
+        //xml: base correspondence
         List<Ace> eraseList = new ArrayList<>();
         for (Ace ace : aceList) {
             String pHref = ace.getPrincipalHref();
             if (pHref != null) {
-                // ロールIDに該当するロール名が無かった場合はロールが削除済みと判断し、無視する。
+                //When there is no role name corresponding to the role ID, it is determined that the role has been deleted and it is ignored.
                 String roloResourceUrl = this.cell.roleIdToRoleResourceUrl(pHref);
                 log.debug("###" + pHref + ":" + roloResourceUrl);
                 if (roloResourceUrl == null) {
                     eraseList.add(ace);
                     continue;
                 }
-                // base:xml値からロールリソースURLの編集
+                //Edit role resource URL from base: xml value
                 roloResourceUrl = baseUrlToRoleResourceUrl(baseUrlStr, roloResourceUrl);
                 ace.setPrincipalHref(roloResourceUrl);
             }
@@ -1127,19 +1127,19 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     * PROPFINDのACL内のxml:base値を生成します.
+     * Generate an xml: base value in the ACL of PROPFIND.
      * @return
      */
     private String createBaseUrlStr() {
         String result = null;
         if (this.box != null) {
-            // Boxレベル以下のACLの場合、BoxリソースのURL
-            // セルURLは連結でスラッシュつけてるので、URLの最後がスラッシュだったら消す。
+            //For ACLs below the Box level, the URL of the Box resource
+            //Since cell URLs are attached with slashes in concatenation, erase the URL if it ends with a slash.
             result = String.format(Role.ROLE_RESOURCE_FORMAT, this.cell.getUrl().replaceFirst("/$", ""),
                     this.box.getName(), "");
         } else {
-            // CellレベルのACLの場合、デフォルトBoxのリソースURL
-            // セルURLは連結でスラッシュつけてるので、URLの最後がスラッシュだったら消す。
+            //In case of Cell level ACL, the resource URL of default box
+            //Since cell URLs are attached with slashes in concatenation, erase the URL if it ends with a slash.
             result = String.format(Role.ROLE_RESOURCE_FORMAT, this.cell.getUrl().replaceFirst("/$", ""),
                     Box.DEFAULT_BOX_NAME, "");
         }
@@ -1147,11 +1147,11 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     * xml:baseに従ってRoleResorceUrlの整形.
+     * Formatting RoleResorceUrl according to xml: base.
      * @param baseUrlStr
-     *            xml:baseの値
+     * Value of xml: base
      * @param roleResourceUrlStr
-     *            ロールリソースURL
+     * Role resource URL
      * @return
      */
     private String baseUrlToRoleResourceUrl(String baseUrlStr, String roleResourceUrlStr) {
@@ -1159,17 +1159,17 @@ public class DavCmpFsImpl implements DavCmp {
         Role baseUrl = null;
         Role roleResourceUrl = null;
         try {
-            // base:xmlはロールリソースURLではないため、ダミーで「__」を追加
+            //Since base: xml is not a role resource URL, add "__" as a dummy
             baseUrl = new Role(new URL(baseUrlStr + "__"));
             roleResourceUrl = new Role(new URL(roleResourceUrlStr));
         } catch (MalformedURLException e) {
             throw PersoniumCoreException.Dav.ROLE_NOT_FOUND.reason(e);
         }
         if (baseUrl.getBoxName().equals(roleResourceUrl.getBoxName())) {
-            // base:xmlのBOXとロールリソースURLのBOXが同じ場合
+            //When the BOX of base: xml and the BOX of the role resource URL are the same
             result = roleResourceUrl.getName();
         } else {
-            // base:xmlのBOXとロールリソースURLのBOXが異なる場合
+            //When the BOX of base: xml differs from the BOX of the role resource URL
             result = String.format(ACL_RELATIVE_PATH_FORMAT, roleResourceUrl.getBoxName(), roleResourceUrl.getName());
         }
         return result;
@@ -1241,10 +1241,10 @@ public class DavCmpFsImpl implements DavCmp {
     }
 
     /**
-     * BoxIdでEsを検索する.
+     * Search Es with BoxId.
      * @param cellObj Cell
-     * @param boxId ボックスId
-     * @return 検索結果
+     * @param boxId Box Id
+     * @return Search results
      */
     public static Map<String, Object> searchBox(final Cell cellObj, final String boxId) {
 

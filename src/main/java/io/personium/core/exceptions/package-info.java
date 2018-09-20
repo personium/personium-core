@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- * 例外クラス群.
+ * Exception class group.
  */
 package io.personium.core.exceptions;
 

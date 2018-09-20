@@ -68,16 +68,16 @@ import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.rs.odata.AbstractODataResource;
 
 /**
- * OEntityのDocHandler.
+ * DocHandler of OEntity.
  */
 public class OEntityDocHandler implements EntitySetDocHandler {
-    // ESのtype
+    //ES type
     String type;
-    // ESのid
+    //ES's id
     String id;
-    // ESのversion
+    //ES version
     Long version;
-    // UnitUser名
+    //UnitUser name
     String unitUserName;
 
     Map<String, Object> staticFields = new HashMap<String, Object>();
@@ -93,34 +93,34 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     int expandMaxNum;
 
     /**
-     * コンストラクタ.
+     * constructor.
      */
     public OEntityDocHandler() {
     }
 
     /**
-     * @return Dynamic Field の Map
+     * @return Map of Dynamic Field
      */
     public Map<String, Object> getDynamicFields() {
         return dynamicFields;
     }
 
     /**
-     * @param dynamicFields Dynamic Field の Map
+     * @param dynamicFields Map of Dynamic Field
      */
     public void setDynamicFields(Map<String, Object> dynamicFields) {
         this.dynamicFields = dynamicFields;
     }
 
     /**
-     * @return Hidden Field の Map
+     * @return Hidden Field Map
      */
     public Map<String, Object> getHiddenFields() {
         return hiddenFields;
     }
 
     /**
-     * @param hiddenFields Hidden Field の Map
+     * @param hidden Fields Hidden Field Map
      */
     public void setHiddenFields(Map<String, Object> hiddenFields) {
         this.hiddenFields = hiddenFields;
@@ -161,8 +161,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * Map形式のSourceをパースして自身にマッピングする.
-     * @param source Map形式のマッピング用情報
+     * Parse Source in Map format and map to itself.
+     * @param source mapping format information for mapping
      */
     @SuppressWarnings("unchecked")
     protected void parseSource(Map<String, Object> source) {
@@ -181,9 +181,9 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * Linkフィールドをパースする.
-     * @param source Map形式のパース元情報
-     * @return Link情報
+     * Parsing Link field.
+     * @param source parse source information in the form of Map
+     * @return Link information
      */
     @SuppressWarnings("unchecked")
     protected Map<String, Object> parseLinks(Map<String, Object> source) {
@@ -231,68 +231,68 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * OEntityWrapperから IDのないDocHandlerをつくるConstructor.
-     * @param type ESのtype名
+     * Constructor that creates DocHandler without ID from OEntityWrapper.
+     * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     * @param metadata スキーマ情報
+     * @param metadata schema information
      */
     public OEntityDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         initInstance(type, oEntityWrapper, metadata);
     }
 
     /**
-     * OEntityWrapperから IDのないDocHandlerをつくる.
-     * @param typeName ESのtype名
+     * Create a DocHandler without ID from OEntityWrapper.
+     * @param typeName ES type name
      * @param oEntityWrapper OEntityWrapper
-     * @param metadata スキーマ情報
+     * @param metadata schema information
      */
     @SuppressWarnings("unchecked")
     protected void initInstance(String typeName, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         this.type = typeName;
-        // 指定されたuuidをES IDとして設定する
+        //Set the specified uuid as ES ID
         this.id = oEntityWrapper.getUuid();
-        // OEntity Wrapperのときは Version, hiddenFieldをつめる
+        //When OEntity Wrapper is used, add Version, hidden field
         this.hiddenFields = oEntityWrapper.getMetadata();
-        // Cellへのアクセス時のみUnitUser名を設定する
+        //Set UnitUser name only when accessing Cell
         resolveUnitUserName();
         String etag = oEntityWrapper.getEtag();
         if (etag != null && etag.length() > 1) {
             this.version = Long.valueOf(etag.substring(0, etag.indexOf("-")));
         }
 
-        // スキーマ情報を取得
+        //Retrieve schema information
         EdmEntitySet entitySet = oEntityWrapper.getEntitySet();
         EdmEntityType eType = entitySet.getType();
 
-        // スキーマに定義されたNavPropを取得
+        //Get the NavProp defined in the schema
         List<EdmNavigationProperty> navProps = eType.getDeclaredNavigationProperties().toList();
         for (EdmNavigationProperty np : navProps) {
-            // NavPropそれぞれについて
+            //About each NavProp
             EdmMultiplicity mf = np.getFromRole().getMultiplicity();
             EdmMultiplicity mt = np.getToRole().getMultiplicity();
 
-            // AssociationのMultiplicityとして、こちら側がMANYで相手がONEのときは、
-            // NavigationPropertyの値（URL）から、lの項目を求めて詰める
+            //As Association's Multiplicity, when this side is MANY and the opponent is ONE,
+            //From the value (URL) of NavigationProperty, the item of l is determined and packed
             if (EdmMultiplicity.ONE.equals(mt) && EdmMultiplicity.MANY.equals(mf)) {
-                // TODO 未実装
+                //TODO not implemented yet
                 log.debug("many to one");
 
             }
         }
 
-        // やってきたすべてのプロパティに対して、
+        //For all properties that came up,
         for (OProperty<?> prop : oEntityWrapper.getProperties()) {
-            // スキーマに定義されているかを調べ、Dynamic PropertyかDeclared Propertyの処理切替をする
+            //Checks whether it is defined in the schema, and switches processing between Dynamic Property and Declared Property
             String propName = prop.getName();
             EdmProperty edmProperty = eType.findProperty(propName);
 
-            // 定義済みPropertyかDynamicPropertyかで処理を分岐
+            //Branch processing by predefined Property or DynamicProperty
             if (edmProperty != null) {
-                // スキーマ定義されたプロパティ
-                // TODO ここでやるかどうか不明だが、 スキーマ上定義された型にあったデータが来ているかのチェック
-                // もっと前段階でやっておくべき。
+                //Schema-defined properties
+                //TODO It is unknown whether to do here, but check whether data corresponding to the type defined in the schema is coming
+                //You should do it earlier.
 
-                // タイプごとに値を詰め替える.
+                //Refill the values ​​for each type.
                 Object value = prop.getValue();
                 if ("__published".equals(propName)) {
                     OProperty<LocalDateTime> propD = (OProperty<LocalDateTime>) prop;
@@ -306,7 +306,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
                     CollectionKind ck = edmProperty.getCollectionKind();
                     if (edmProperty.getType().isSimple()) {
                         if (ck.equals(CollectionKind.List)) {
-                            // 不正な型の場合はエラー
+                            //Error if invalid type
                             if (value == null || value instanceof OCollection<?>) {
                                 this.staticFields.put(prop.getName(),
                                         getSimpleList(edmProperty.getType(), (OCollection<OObject>) value));
@@ -316,25 +316,25 @@ public class OEntityDocHandler implements EntitySetDocHandler {
                         } else {
                             value = getSimpleValue(prop, edmProperty.getType());
 
-                            // PropertyがSimple型の場合はそのまま定義済み項目として追加する
+                            //If Property is Simple type, add it as defined item as it is
                             this.staticFields.put(prop.getName(), value);
                         }
                     } else {
                         String complexTypeName = edmProperty.getType().getFullyQualifiedTypeName();
                         if (ck.equals(CollectionKind.List)) {
-                            // CollectionKindがListの場合は、配列で追加する
+                            //If CollectionKind is List, add by array
                             this.staticFields.put(
                                     prop.getName(),
                                     getComplexList((OCollection<OComplexObject>) prop.getValue(), metadata,
                                             complexTypeName));
                         } else {
-                            // PropertyがComplex型の場合は再帰的にComplexTypeのプロパティを読み込み追加する
+                            //If Property is Complex type, read and add ComplexType property recursively
                             this.staticFields.put(prop.getName(), getComplexType(prop, metadata, complexTypeName));
                         }
                     }
                 }
             } else {
-                // Dynamicプロパティは、String,Integer,Float,Booleanを受ける
+                //Dynamic property receives String, Integer, Float, Boolean
                 Object propValue = prop.getValue();
                 if ("Edm.DateTime".equals(prop.getType().getFullyQualifiedTypeName())) {
                     OProperty<LocalDateTime> propD = (OProperty<LocalDateTime>) prop;
@@ -350,10 +350,10 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * スキーマのプロパティ定義に応じて適切な型に変換したプロパティ値オブジェクトを返す.
-     * @param prop プロパティオブジェクト
-     * @param edmType スキーマのプロパティ定義
-     * @return 適切な型に変換したプロパティ値オブジェクト
+     * Returns a property value object converted to an appropriate type according to the property definition of the schema.
+     * @param prop property object
+     * Property definition for @param edmType schema
+     * @return Property value object converted to appropriate type
      */
     @SuppressWarnings("unchecked")
     protected Object getSimpleValue(OProperty<?> prop, EdmType edmType) {
@@ -368,14 +368,14 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * Cellへのアクセス時にUnitUser名を設定する.
-     * @param hiddenFieldsMap hiddenFieldsのマップオブジェクト
+     * Set UnitUser name when accessing Cell.
+     * @param hiddenFieldsMap map object of hiddenFields
      */
     public void resolveUnitUserName(final Map<String, Object> hiddenFieldsMap) {
         if (hiddenFieldsMap == null) {
             return;
         }
-        // Adsアクセス用にUnitUser名を設定する
+        //Set UnitUser name for Ads access
         String owner = (String) hiddenFieldsMap.get("Owner");
         this.unitUserName = PersoniumUnitConfig.getEsUnitPrefix() + "_";
         if (owner == null) {
@@ -386,24 +386,24 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * Cellへのアクセス時にUnitUser名を設定する.
+     * Set UnitUser name when accessing Cell.
      */
     private void resolveUnitUserName() {
         this.resolveUnitUserName(this.hiddenFields);
     }
 
     /**
-     * SimpleTypeの配列を取得する.
+     * Get an array of SimpleType.
      * @param edmType EdmSimpleType
      * @param value OCollection
-     * @return SimpleTypeの配列
+     * @return An array of SimpleType
      */
     protected List<Object> getSimpleList(final EdmType edmType, final OCollection<OObject> value) {
         if (value == null) {
             return null;
         }
 
-        // CollectionKindがListの場合は、配列で追加する
+        //If CollectionKind is List, add by array
         Iterator<OObject> iterator = value.iterator();
         List<Object> list = new ArrayList<Object>();
         while (iterator.hasNext()) {
@@ -416,10 +416,10 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * 配列の一つのデータを変換する.
+     * Convert one of the data in the array.
      * @param edmType EdmSimpleType
-     * @param propValue 変換対象の値
-     * @return 変換後の値
+     * @param propValue Value to be converted
+     * @return Value after conversion
      */
     @SuppressWarnings("unchecked")
     protected Object convertSimpleListValue(final EdmType edmType, Object propValue) {
@@ -436,11 +436,11 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * ComplexTypeの配列を取得する.
+     * Get an array of ComplexType.
      * @param value OCollection
-     * @param metadata スキーマ情報
-     * @param complexTypeName コンプレックスタイプ名
-     * @return SimpleTypeの配列
+     * @param metadata schema information
+     * @param complexTypeName Complex type name
+     * @return An array of SimpleType
      */
     protected List<Object> getComplexList(OCollection<OComplexObject> value,
             EdmDataServices metadata,
@@ -457,7 +457,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * ComplexTypeのプロパティを読み込み取得する.
+     * Read and acquire properties of ComplexType.
      * @param property
      * @return
      */
@@ -467,26 +467,26 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * ComplexTypeのプロパティを読み込み取得する.
-     * @param property プロパティList
+     * Read and acquire properties of ComplexType.
+     * @param property Property List
      * @return
      */
     @SuppressWarnings("unchecked")
     private Object getComplexType(List<OProperty<?>> props, EdmDataServices metadata, String complexTypeName) {
-        // 指定されたPropertyの値を取得する
+        //Retrieve the value of the specified Property
         Map<String, Object> complex = new HashMap<String, Object>();
 
         if (props == null) {
             return null;
         }
 
-        // ComplexTypeのPropertyをHashに追加する
+        //Add Property of ComplexType to Hash
         for (OProperty<?> prop : props) {
             EdmProperty edmProp = metadata.findEdmComplexType(complexTypeName).findProperty(prop.getName());
             CollectionKind ck = edmProp.getCollectionKind();
             if (edmProp.getType().isSimple()) {
                 if (ck.equals(CollectionKind.List)) {
-                    // 不正な型の場合はエラー
+                    //Error if invalid type
                     if (prop.getValue() == null || prop.getValue() instanceof OCollection<?>) {
                         complex.put(prop.getName(),
                                 getSimpleList(edmProp.getType(), (OCollection<OObject>) prop.getValue()));
@@ -495,20 +495,20 @@ public class OEntityDocHandler implements EntitySetDocHandler {
                     }
                 } else {
                     Object value = getSimpleValue(prop, edmProp.getType());
-                    // PropertyがSimple型の場合はそのまま定義済み項目として追加する
+                    //If Property is Simple type, add it as defined item as it is
                     complex.put(prop.getName(), value);
                 }
             } else {
-                // PropertyがComplex型の場合は再帰的にComplexTypeのプロパティを読み込み追加する
+                //If Property is Complex type, read and add ComplexType property recursively
                 String propComplexTypeName = edmProp.getType().getFullyQualifiedTypeName();
                 if (ck.equals(CollectionKind.List)) {
-                    // CollectionKindがListの場合は、配列で追加する
+                    //If CollectionKind is List, add by array
                     complex.put(
                             prop.getName(),
                             getComplexList((OCollection<OComplexObject>) prop.getValue(),
                                     metadata, propComplexTypeName));
                 } else {
-                    // PropertyがComplex型の場合は再帰的にComplexTypeのプロパティを読み込み追加する
+                    //If Property is Complex type, read and add ComplexType property recursively
                     complex.put(prop.getName(),
                             getComplexType(prop, metadata, propComplexTypeName));
                 }
@@ -519,20 +519,20 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * EsのJSONオブジェクトからOEntityを作成して返す.
+     * Creates and returns an OEntity from the Es JSON object.
      * @param entitySet entitySet
-     * @return 変換されたOEntityオブジェクト
+     * @return Converted OEntity object
      */
     public OEntityWrapper createOEntity(final EdmEntitySet entitySet) {
         return createOEntity(entitySet, null, null);
     }
 
     /**
-     * EsのJSONオブジェクトからOEntityを作成して返す.
+     * Creates and returns an OEntity from the Es JSON object.
      * @param entitySet entitySet
      * @param metadata metadata
      * @param relatedEntitiesList relatedEntitiesList
-     * @return 変換されたOEntityオブジェクト
+     * @return Converted OEntity object
      */
     public OEntityWrapper createOEntity(final EdmEntitySet entitySet,
             EdmDataServices metadata,
@@ -541,10 +541,10 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * ドキュメントハンドラの種別によりプロパティ名またはプロパティ名に対応するエイリアスを返却する.
-     * @param entitySetName エンティティセット名
-     * @param propertyName プロパティ名
-     * @return プロパティ名またはプロパティ名に対応するエイリアス
+     * Return alias corresponding to property name or property name depending on the type of document handler.
+     * @param entitySetName Entity set name
+     * @param propertyName property name
+     * @return Alias ​​corresponding to property name or property name
      */
     protected String getPropertyNameOrAlias(String entitySetName, String propertyName) {
         return propertyName;
@@ -555,12 +555,12 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * EsのJSONオブジェクトからOEntityを作成して返す.
+     * Creates and returns an OEntity from the Es JSON object.
      * @param entitySet entitySet
      * @param metadata metadata
      * @param relatedEntitiesList relatedEntitiesList
-     * @param selectQuery $selectクエリ
-     * @return 変換されたOEntityオブジェクト
+     * @param selectQuery $ select query
+     * @return Converted OEntity object
      */
     public OEntityWrapper createOEntity(final EdmEntitySet entitySet,
             EdmDataServices metadata,
@@ -577,9 +577,9 @@ public class OEntityDocHandler implements EntitySetDocHandler {
             }
         }
 
-        // スキーマに従って Declared Propertyを生成
+        //Generate Declared Property according to schema
         for (EdmProperty prop : eType.getProperties()) {
-            // 予約項目の処理
+            //Processing of reserved items
             if ("__published".equals(prop.getName()) && this.published != null) {
                 properties.add(OProperties.datetime(prop.getName(), new LocalDateTime(this.published)));
                 continue;
@@ -588,7 +588,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
                 continue;
             }
 
-            // $selectクエリが指定された場合は、指定された項目もしくは主キー情報のみ追加する
+            //When a $ select query is specified, only the specified item or primary key information is added
             if (selectMap.size() != 0 && !selectMap.containsKey(prop.getName())
                     && !eType.getKeys().contains(prop.getName())) {
                 continue;
@@ -601,7 +601,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
                 isDynamic = true;
             }
 
-            // 値を取得
+            //Get value
             if (!this.staticFields.containsKey(getPropertyNameOrAlias(entitySet.getName(), prop.getName()))
                     && isDynamic) {
                 continue;
@@ -612,19 +612,19 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
             CollectionKind ck = prop.getCollectionKind();
             if (edmType.isSimple()) {
-                // 非予約項目の処理
+                //Processing of non reserved items
                 if (ck.equals(CollectionKind.List)) {
-                    // 配列要素の場合
+                    //For array elements
                     addSimpleListProperty(properties, prop, valO, edmType);
                 } else {
-                    // シンプル要素の場合
+                    //In case of simple element
                     addSimpleTypeProperty(properties, prop, valO, edmType);
                 }
             } else {
-                // ComplexType型のプロパティの場合
+                //For properties of type ComplexType
                 if (metadata != null) {
                     if (ck.equals(CollectionKind.List)) {
-                        // 配列要素の場合
+                        //For array elements
                         addComplexListProperty(metadata, properties, prop, valO, edmType);
                     } else {
                         properties.add(createComplexTypeProperty(metadata, prop, valO));
@@ -633,10 +633,10 @@ public class OEntityDocHandler implements EntitySetDocHandler {
             }
         }
 
-        // Navigation Propertyの生成処理
+        //Generation processing of Navigation Property
         int count = 0;
         List<OLink> links = new ArrayList<OLink>();
-        // スキーマに定義されたナビゲーションプロパティそれぞれについて
+        //About each navigation property defined in the schema
         for (EdmNavigationProperty enp : eType.getNavigationProperties()) {
             EdmAssociationEnd ae = enp.getToRole();
             String toTypeName = ae.getType().getName();
@@ -647,7 +647,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
                 relatedEntities = relatedEntitiesList.get(npName);
             }
             if (EdmMultiplicity.MANY.equals(ae.getMultiplicity())) {
-                // 相手先のMultiplicityがMANYであるときは
+                //When the opponent's Multiplicity is MANY
                 if (++count <= expandMaxNum && relatedEntities != null) {
                     lnk = OLinks.relatedEntitiesInline(toTypeName, npName, npName,
                             relatedEntities);
@@ -655,7 +655,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
                     lnk = OLinks.relatedEntities(toTypeName, npName, npName);
                 }
             } else {
-                // 相手先のMultiplicityがMANYでないとき。（ZEROまたはONE）
+                //When the opponent 's Multiplicity is not MANY. (ZERO or ONE)
                 if (++count <= expandMaxNum && relatedEntities != null) {
                     lnk = OLinks.relatedEntitiesInline(toTypeName, npName, npName,
                             relatedEntities);
@@ -666,12 +666,12 @@ public class OEntityDocHandler implements EntitySetDocHandler {
             links.add(lnk);
         }
 
-        // entityKeyの生成
+        //Generation of entityKey
         List<String> keys = eType.getKeys();
         List<String> kv = new ArrayList<String>();
         for (String key : keys) {
             kv.add(key);
-            // TODO キーがStringであることを仮定してしまってる。キーの値が文字列以外であるときは、その対応が必要。
+            //I assume that the TODO key is a String. If the value of the key is other than a character string, it is necessary to deal with it.
             String v = (String) this.staticFields.get(key);
             if (v == null) {
                 v = AbstractODataResource.DUMMY_KEY;
@@ -680,14 +680,14 @@ public class OEntityDocHandler implements EntitySetDocHandler {
         }
         OEntityKey entityKey = OEntityKey.create(kv);
 
-        // OEntityの生成
-        // TODO AtomPub系項目がダミー
+        //Generation of OEntity
+        //TODO AtomPub system item is dummy
         OEntity entity = OEntities.create(entitySet, entityKey, properties, links, "title", "categoryTerm");
 
-        // ETag や隠し項目が返せるようにするため、OEntityではなくOEntityWrapperにWrapする。
+        //Wrap it to OEntityWrapper instead of OEntity so that ETag and hidden items can be returned.
         String etag = this.createEtag();
         OEntityWrapper oew = new OEntityWrapper(this.id, entity, etag);
-        // 隠し項目の設定
+        //Setting hidden items
         if (this.hiddenFields != null) {
             for (Map.Entry<String, Object> entry : this.hiddenFields.entrySet()) {
                 oew.put(entry.getKey(), entry.getValue());
@@ -698,11 +698,11 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * シンプルタイプの配列要素をプロパティに追加する.
-     * @param properties プロパティ一覧
-     * @param edmProp 追加プロパティのスキーマ
-     * @param propValue 追加プロカティの値
-     * @param edmType タイプの型情報
+     * Add a simple type array element to the property.
+     * @param properties Property summary
+     * @param edmProp schema for additional properties
+     * @param propValue Value of additional procedure
+     * Type information of type @param edmType type
      */
     @SuppressWarnings("unchecked")
     protected void addSimpleListProperty(List<OProperty<?>> properties,
@@ -726,12 +726,12 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * Complexタイプの配列要素をプロパティに追加する.
-     * @param metadata スキーマ情報
-     * @param properties プロパティ一覧
-     * @param edmProp 追加プロパティのスキーマ
-     * @param propValue 追加プロカティの値
-     * @param edmType タイプの型情報
+     * Add Complex type array elements to the property.
+     * @param metadata schema information
+     * @param properties Property summary
+     * @param edmProp schema for additional properties
+     * @param propValue Value of additional procedure
+     * Type information of type @param edmType type
      */
     @SuppressWarnings("unchecked")
     protected void addComplexListProperty(EdmDataServices metadata,
@@ -742,29 +742,29 @@ public class OEntityDocHandler implements EntitySetDocHandler {
         EdmCollectionType collectionType = new EdmCollectionType(edmProp.getCollectionKind(), edmType);
         OCollection.Builder<OObject> builder = OCollections.<OObject>newBuilder(collectionType.getItemType());
 
-        // ComplexTypeの型情報を取得する
+        //Obtain type information of ComplexType
         EdmComplexType ct = metadata.findEdmComplexType(
                 collectionType.getItemType().getFullyQualifiedTypeName());
 
         if (propValue == null) {
             properties.add(OProperties.collection(edmProp.getName(), collectionType, null));
         } else {
-            // ComplexTypeプロパティを配列に追加する
+            //Add ComplexType property to array
             for (Object val : (ArrayList<Object>) propValue) {
                 builder.add(OComplexObjects.create(ct, getComplexTypePropList(metadata, edmProp, val)));
             }
 
-            // ComplexTypeの配列要素をプロパティに追加する
+            //Add an array element of ComplexType to the property
             properties.add(OProperties.collection(edmProp.getName(), collectionType, builder.build()));
         }
     }
 
     /**
-     * SimpleType型のプロパティをプロパティ配列に追加する.
-     * @param properties プロパティ配列
-     * @param prop 追加するプロパティ
-     * @param valO プロパティの値
-     * @param edmType タイプ
+     * Add properties of type SimpleType to property array.
+     * @param properties Property array
+     * @param prop Property to add
+     * @param valO property's value
+     * @param edmType type
      */
     protected void addSimpleTypeProperty(List<OProperty<?>> properties, EdmProperty prop, Object valO,
             EdmType edmType) {
@@ -778,8 +778,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
             if (valO == null) {
                 properties.add(OProperties.null_(prop.getName(), EdmSimpleType.DATETIME));
             } else {
-                // ユーザデータにInt型で表現できる範囲の値が入れられたとき、valOにはInteger型のオブジェクトが渡ってくる
-                // LocalDateTimeのコンストラクタにInteger型を渡した場合はエラーとなるため、Long型オブジェクトへ変換する
+                //When a value in a range that can be represented by Int type is entered in the user data, an Integer object is passed to valO
+                //When Integer type is passed to the constructor of LocalDateTime, it becomes an error, so it converts it to a long type object
                 Long longvalO = Long.valueOf(String.valueOf(valO));
                 properties.add(OProperties.datetime(prop.getName(), new LocalDateTime(longvalO)));
             }
@@ -802,7 +802,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
                 properties.add(OProperties.int32(prop.getName(), Integer.valueOf(String.valueOf(valO))));
             }
         } else if (edmType.equals(EdmSimpleType.BOOLEAN)) {
-            // ESにはValueを文字列で登録しているのでBooleanに変換する
+            //Since Value is registered as ES in ES, it is converted to Boolean
             if (valO == null) {
                 properties.add(OProperties.boolean_(prop.getName(), null));
             } else {
@@ -812,31 +812,31 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * ComplexType型のプロパティをOPropertyの配列に変換する.
-     * @param metadata スキーマ定義
-     * @param prop ComplexType型のプロパティ
-     * @param value ComplexType型の値
-     * @return OPropertyの配列
+     * Convert ComplexType type property to OProperty array.
+     * @param metadata schema definition
+     * @param prop property of type ComplexType
+     * @param value Value of type ComplexType
+     * @return Array of OProperty
      */
     private OProperty<List<OProperty<?>>> createComplexTypeProperty(
             EdmDataServices metadata,
             EdmProperty prop,
             Object value) {
-        // スキーマ定義からComplexType定義を取得する
+        //Get ComplexType definition from schema definition
         EdmComplexType edmComplexType = metadata.findEdmComplexType(prop.getType().getFullyQualifiedTypeName());
 
-        // ComplexTypeのプロパティを取得する
+        //Get properties of ComplexType
         List<OProperty<?>> props = getComplexTypePropList(metadata, prop, value);
 
         return OProperties.complex(prop.getName(), edmComplexType, props);
     }
 
     /**
-     * ComplexType型のプロパティをOPropertyの配列に変換する.
-     * @param metadata スキーマ定義
-     * @param prop ComplexType型のプロパティ
-     * @param value ComplexType型の値
-     * @return OPropertyの配列
+     * Convert ComplexType type property to OProperty array.
+     * @param metadata schema definition
+     * @param prop property of type ComplexType
+     * @param value Value of type ComplexType
+     * @return Array of OProperty
      */
     @SuppressWarnings("unchecked")
     protected List<OProperty<?>> getComplexTypePropList(EdmDataServices metadata,
@@ -848,7 +848,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
 
         List<OProperty<?>> props = new ArrayList<OProperty<?>>();
 
-        // スキーマ定義からComplexType定義を取得する
+        //Get ComplexType definition from schema definition
         EdmComplexType edmComplexType = metadata.findEdmComplexType(prop.getType().getFullyQualifiedTypeName());
 
         HashMap<String, Object> valMap = (HashMap<String, Object>) value;
@@ -858,17 +858,17 @@ public class OEntityDocHandler implements EntitySetDocHandler {
             EdmType edmType = propChild.getType();
             CollectionKind ck = propChild.getCollectionKind();
             if (edmType.isSimple()) {
-                // 非予約項目の処理
+                //Processing of non reserved items
                 if (ck.equals(CollectionKind.List)) {
-                    // 配列要素の場合
+                    //For array elements
                     addSimpleListProperty(props, propChild, valChild, edmType);
                 } else {
-                    // シンプル要素の場合
+                    //In case of simple element
                     addSimpleTypeProperty(props, propChild, valChild, edmType);
                 }
             } else {
                 if (ck.equals(CollectionKind.List)) {
-                    // 配列要素の場合
+                    //For array elements
                     addComplexListProperty(metadata, props, propChild, valChild, edmType);
                 } else {
                     props.add(createComplexTypeProperty(metadata, propChild, valChild));
@@ -879,11 +879,11 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * プロパティ名からAlias名を取得する.
-     * ユーザデータを操作する場合は、このメソッドをオーバーライドしてAliasへ変換する.
-     * @param propertyName プロパティ名
-     * @param typeName このプロパティが属するComplexType名
-     * @return Alias名
+     * Get Alias ​​name from property name.
+     * To manipulate user data, override this method and convert it to Alias.
+     * @param propertyName property name
+     * @param typeName ComplexType name to which this property belongs
+     * @return Alias ​​name
      */
     protected String resolveComplexTypeAlias(String propertyName, String typeName) {
         return propertyName;
@@ -899,8 +899,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     static Logger log = LoggerFactory.getLogger(OEntityDocHandler.class);
 
     /**
-     * 登録用データを取得する.
-     * @return 登録用データ
+     * Acquire registration data.
+     * @return Registration data
      */
     @Override
     public Map<String, Object> getSource() {
@@ -908,8 +908,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * 登録用データを取得する.
-     * @return 登録用データ
+     * Acquire registration data.
+     * @return Registration data
      */
     protected Map<String, Object> getCommonSource() {
         Map<String, Object> ret = new HashMap<String, Object>();
@@ -926,7 +926,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * データを特定のCellに紐付けたい時は設定する.
+     * Set it when you want to associate data with a specific Cell.
      * @param cellId CellId
      */
     public void setCellId(String cellId) {
@@ -934,7 +934,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * データを特定のBoxに紐付けたい時は設定する.
+     * Set it when you want to associate data with a specific Box.
      * @param boxId Box Id
      */
     public void setBoxId(String boxId) {
@@ -942,7 +942,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * データを特定のNodeに紐付けたい時は設定する.
+     * Set it when you want to associate data with a specific node.
      * @param nodeId Node Id
      */
     public void setNodeId(String nodeId) {
@@ -950,8 +950,8 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * entityTypeIdのセッター.
-     * @param entityTypeId entityTypeのID
+     * Setter of entityTypeId.
+     * @param entityTypeId ID of entityType
      */
     public void setEntityTypeId(String entityTypeId) {
         this.entityTypeId = entityTypeId;
@@ -965,7 +965,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * manyToOnelinkIdのセッター.
+     * Setter of manyToOnelinkId.
      * @param link manyToOnelinkId
      */
     public final void setManyToOnelinkId(Map<String, Object> link) {
@@ -973,7 +973,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * staticFieldsのセッター.
+     * A setter of staticFields.
      * @param staticFields staticFields
      */
     public final void setStaticFields(Map<String, Object> staticFields) {
@@ -1005,32 +1005,32 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * 更新日をLong形式で返します.
-     * @return 更新日のLong形式
+     * Returns the update date in Long format.
+     * @return Long format of update date
      */
     public Long getUpdated() {
         return this.updated;
     }
 
     /**
-     * 作成日をLong形式で返します.
-     * @return 作成日のLong形式
+     * Returns the created date in Long format.
+     * @return Created date in Long format
      */
     public Long getPublished() {
         return this.published;
     }
 
     /**
-     * $expand指定時の上限値を取得します.
-     * @return $expand指定時の上限値
+     * Get upper limit value when $ expand is specified.
+     * @return Upper limit when $ expand is specified
      */
     public int getExpandMaxNum() {
         return expandMaxNum;
     }
 
     /**
-     * $expand指定時の上限値を設定します.
-     * @param expandMaxNum $expand指定時の上限値
+     * Set the upper limit value when $ expand is specified.
+     * @param expandMaxNum upper limit when specifying $ expand
      */
     public void setExpandMaxNum(int expandMaxNum) {
         this.expandMaxNum = expandMaxNum;
@@ -1058,7 +1058,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * entityTypeIdのゲッター.
+     * Getter of entityTypeId.
      * @return EntityType Id
      */
     public final String getEntityTypeId() {
@@ -1066,7 +1066,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * manyToOnelinkIdのゲッター.
+     * Getter of manyToOnelinkId.
      * @return manyToOnelinkId
      */
     public final Map<String, Object> getManyToOnelinkId() {
@@ -1074,7 +1074,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * staticFieldsのゲッター.
+     * Getter of staticFields.
      * @return staticFields
      */
     public final Map<String, Object> getStaticFields() {
@@ -1082,67 +1082,67 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * UnitUserNameのゲッター.
-     * @return UnitUser名
+     * Getter of UnitUserName.
+     * @return UnitUser name
      */
     public final String getUnitUserName() {
         return this.unitUserName;
     }
 
     /**
-     * ES上のODataエンティティ格納においてDeclared Propertyを保存するJSONキー.
+     * JSON key that stores Declared Property in OData entity storage on ES.
      */
     public static final String KEY_STATIC_FIELDS = "s";
     /**
-     * ES上のODataエンティティ格納においてDynamic Propertyを保存するJSONキー.
+     * JSON key to store Dynamic Property in OData entity storage on ES.
      */
     public static final String KEY_DYNAMIC_FIELDS = "d";
     /**
-     * ES上のODataエンティティ格納において隠し項目を保存するJSONキー.
+     * JSON key to store hidden items in OData entity storage on ES.
      */
     public static final String KEY_HIDDEN_FIELDS = "h";
     /**
-     * ES上のODataエンティティ格納において更新日時を保存するJSONキー.
+     * JSON key that stores update date and time in OData entity storage on ES.
      */
     public static final String KEY_UPDATED = "u";
     /**
-     * ES上のODataエンティティ格納において作成日時を保存するJSONキー.
+     * JSON key that stores creation date and time in OData entity storage on ES.
      */
     public static final String KEY_PUBLISHED = "p";
     /**
-     * ES上のODataエンティティ格納においてCellの内部IDを保存するJSONキー.
+     * JSON key that stores the Cell's internal ID in OData entity storage on ES.
      */
     public static final String KEY_CELL_ID = "c";
     /**
-     * ES上のODataエンティティ格納においてBoxの内部IDを保存するJSONキー.
+     * JSON key to store Box's internal ID in OData entity storage on ES.
      */
     public static final String KEY_BOX_ID = "b";
     /**
-     * ES上のODataエンティティ格納においてコレクションのnodeidを保存するJSONキー.
+     * A JSON key that stores the nodeid of the collection in OData entity storage on the ES.
      */
     public static final String KEY_NODE_ID = "n";
     /**
-     * ES上のODataエンティティ格納においてEntityTypeの内部IDを保存するJSONキー.
+     * JSON key that stores internal ID of EntityType in OData entity storage on ES.
      */
     public static final String KEY_ENTITY_ID = "t";
     /**
-     * ES上のODataエンティティ格納においてn:1/1:1のLinkの先ドキュメント内部IDを保存するJSONキー.
+     * In OData entity storage on ES, JSON key that stores the destination document internal ID of n: 1: 1: 1 Link.
      */
     public static final String KEY_LINK = "l";
     /**
-     * ES上のODataエンティティ格納においてOwnerを保持するJSONをキー.
+     * Keys JSON holding Owner in OData entity storage on ES.
      */
     public static final String KEY_OWNER = "h.Owner.untouched";
 
     /**
-     * @return ACL設定情報
+     * @return ACL setting information
      */
     public Map<String, JSONObject> getAclFields() {
         return new HashMap<String, JSONObject>();
     }
 
     /**
-     * StaticFieldsの文字列表現を返す.
+     * Returns a string representation of StaticFields.
      * @return StaticFields
      */
     public String getStaticFieldsString() {
@@ -1150,7 +1150,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * DynamicFieldsの文字列表現を返す.
+     * Returns a string representation of DynamicFields.
      * @return DynamicFields
      */
     public String getDynamicFieldsString() {
@@ -1158,7 +1158,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * HiddenFieldsの文字列表現を返す.
+     * Returns a string representation of HiddenFields.
      * @return HiddenFields
      */
     public String getHiddenFieldsString() {
@@ -1166,7 +1166,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * ManyToOnelinkIdの文字列表現を返す.
+     * Returns a string representation of ManyToOnelinkId.
      * @return ManyToOnelinkId
      */
     public String getManyToOnelinkIdString() {

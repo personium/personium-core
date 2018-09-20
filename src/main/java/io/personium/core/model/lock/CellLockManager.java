@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * セルLockを管理するユーティリティ.
+ * Utility to manage cell lock.
  */
 public abstract class CellLockManager extends LockManager {
 
@@ -83,12 +83,12 @@ public abstract class CellLockManager extends LockManager {
     abstract Boolean putLock(String fullKey, Lock lock);
 
     /**
-     * 参照カウントオブジェクトのプレフィックス.
+     * Prefix of reference count object.
      */
     public static final String REFERENCE_COUNT_PREFIX = "CellAccessCount_";
 
     /**
-     * セルステータスオブジェクトのプレフィックス.
+     * Cell status object prefix.
      */
     public static final String CELL_STATUS_PREFIX = "CellStatus_";
 
@@ -117,7 +117,7 @@ public abstract class CellLockManager extends LockManager {
         String key =  CELL_STATUS_PREFIX + cellId;
         Boolean success = true;
         if (STATUS.NORMAL.equals(status)) {
-            // 通常状態に戻す場合はデータ自体を削除する
+            //When returning to the normal state, delete the data itself
             singleton.doDeleteCellStatus(key);
         } else {
             success = singleton.doSetCellStatus(key, status.getId());
@@ -127,9 +127,9 @@ public abstract class CellLockManager extends LockManager {
     }
 
     /**
-     * 指定したIDのセルに対する参照カウントを返す.
-     * @param cellId 参照カウントを取得する対象のセルID
-     * @return 指定したセルの参照カウント
+     * Returns the reference count for the cell with the specified ID.
+     * @param cellId Cell ID for which reference count is to be acquired
+     * @return Reference count for the specified cell
      */
     public static long getReferenceCount(String cellId) {
         String key =  REFERENCE_COUNT_PREFIX + cellId;
@@ -138,9 +138,9 @@ public abstract class CellLockManager extends LockManager {
     }
 
     /**
-     * 指定したセルの参照カウントをインクリメントする.
-     * @param cellId 対象のセルID
-     * @return インクリメント後の参照カウントの値
+     * Increment the reference count of the specified cell.
+     * @param cellId Target cell ID
+     * @return Value of reference count after increment
      */
     public static long incrementReferenceCount(String cellId) {
         String key =  REFERENCE_COUNT_PREFIX + cellId;
@@ -149,9 +149,9 @@ public abstract class CellLockManager extends LockManager {
     }
 
     /**
-     * 指定したセルの参照カウントをデクリメントする.
-     * @param cellId 対象のセルID
-     * @return デクリメント後の参照カウントの値
+     * Decrement the reference count of the specified cell.
+     * @param cellId Target cell ID
+     * @return Value of reference count after decrementing
      */
     public static long decrementReferenceCount(String cellId) {
         String key =  REFERENCE_COUNT_PREFIX + cellId;

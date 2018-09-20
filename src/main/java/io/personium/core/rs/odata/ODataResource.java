@@ -55,8 +55,8 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * OData のサービスを提供する JAX-RS Resource リソースのルート. Unit制御 ・ Cell制御 ・ User OData Schema・ User ODataの４種の用途で使う.
- * サブクラスを作って、コンストラクタでrootUrl, odataProducerを与える。 このクラスでスキーマチェックなど裏側の実装に依存しない処理はすべて済ませる。
+ * Route of JAX-RS Resource resource providing OData service Unit control · Cell control · User OData Schema · User OData It is used for 4 kinds of usage.
+ * Create a subclass and give rootUrl and odataProducer in the constructor. This class finishes all processing that does not depend on back side implementation, such as schema checking.
  */
 public abstract class ODataResource extends ODataCtlResource {
 
@@ -67,14 +67,14 @@ public abstract class ODataResource extends ODataCtlResource {
     AccessContext accessContext;
 
     /**
-     * ログ.
+     * log.
      */
     static Logger log = LoggerFactory.getLogger(ODataResource.class);
 
     /**
-     * コンストラクタ.
+     * constructor.
      * @param accessContext AccessContext
-     * @param rootUrl ルートURL
+     * @param rootUrl root URL
      * @param producer ODataProducer
      */
     public ODataResource(final AccessContext accessContext,
@@ -93,64 +93,64 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * 認証ヘッダのチェック処理.
+     * Check processing of authentication header.
      * @param ac accessContext
      * @param privilege Privilege
      */
     public abstract void checkAccessContext(AccessContext ac, Privilege privilege);
 
     /**
-     * 認証に使用できるAuth Schemeを取得する.
-     * @return 認証に使用できるAuth Scheme
+     * Obtain Auth Scheme that can be used for authentication.
+     * Autret Scheme that can be used for @return authentication
      */
     public abstract AcceptableAuthScheme getAcceptableAuthScheme();
 
     /**
-     * リソースに対するアクセス権限チェック処理.
+     * Access authority check processing for resources.
      * @param ac accessContext
      * @param privilege privilege
-     * @return アクセス可否
+     * @return Accessibility
      */
     public abstract boolean hasPrivilege(AccessContext ac, Privilege privilege);
 
     /**
-     * スキーマ認証のチェック処理.
+     * Schema authentication check processing.
      * @param ac accessContext
      */
     public abstract void checkSchemaAuth(AccessContext ac);
 
     /**
-     * Basic認証できるかのチェック処理（Batchリクエスト専用）.
+     * Check processing for basic authentication (Batch request only).
      * @param ac accessContext
      */
     public abstract void setBasicAuthenticateEnableInBatchRequest(AccessContext ac);
 
     /**
-     * エンティティ毎のアクセス可否判断.
+     * Judgment on accessibility for each entity.
      * @param ac accessContext
      * @param oew OEntityWrapper
      */
     public void checkAccessContextPerEntity(AccessContext ac, OEntityWrapper oew) {
-        // Unitレベルの場合だけチェックを実施する。
+        //Check only at Unit level.
     }
 
     /**
-     * AccessContextによる追加検索条件の定義. サブクラスで必要に応じて定義する。
+     * Definition of additional search conditions by AccessContext, defined as necessary in subclass.
      * @param ac accessContext
-     * @return $filterの文法？
+     * @return $ filter grammar?
      */
     public String defineAccessContextSearchContext(AccessContext ac) {
         return null;
     }
 
     /**
-     * OPTIONSメソッド.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
 //    @Path("")
     public Response optionsRoot() {
-        // アクセス制御
+        //Access control
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.GET
@@ -158,7 +158,7 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * OPTIONSメソッド.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     protected Response doGetOptionsMetadata() {
@@ -168,8 +168,8 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * $batchの処理を行う.
-     * @return レスポンス
+     * Perform $ batch processing.
+     * @return response
      */
     @Path("{first: \\$}batch")
     public ODataBatchResource processBatch() {
@@ -177,7 +177,7 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * サービスドキュメントを返す.
+     * Return the service document.
      * @param uriInfo UriInfo
      * @param format String
      * @param httpHeaders HttpHeaders
@@ -189,7 +189,7 @@ public abstract class ODataResource extends ODataCtlResource {
             @Context final UriInfo uriInfo,
             @QueryParam("$format") final String format,
             @Context HttpHeaders httpHeaders) {
-        // アクセス制御
+        //Access control
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
 
         StringWriter w = new StringWriter();
@@ -208,16 +208,16 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * metadataオブジェクトを取得する.
-     * @return EdmDataServices型のメタデータ
+     * Get the metadata object.
+     * @return Metadata of type EdmDataServices
      */
     public EdmDataServices getMetadataSource() {
         return this.metadata;
     }
 
     /**
-     * サービスメタデータリクエストに対応する.
-     * @return JAX-RS 応答オブジェクト
+     * Corresponds to the service metadata request.
+     * @return JAX-RS response object
      */
     protected Response doGetMetadata() {
 
@@ -229,8 +229,8 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * /{entitySet}というパスを処理する.
-     * @param entitySetName entitySet名を表すパス
+     * 
+     * @param entitySetName Path representing entitySet name
      * @param request Request
      * @return ODataEntitiesResource
      */
@@ -238,7 +238,7 @@ public abstract class ODataResource extends ODataCtlResource {
     public ODataEntitiesResource entities(
             @PathParam("entitySet") final String entitySetName,
             @Context Request request) {
-        // 存在しないエンティティセットを指定されたときは即刻エラー
+        //If an entity set that does not exist is specified, an immediate error
         EdmEntitySet eSet = this.metadata.findEdmEntitySet(entitySetName);
         if (eSet == null) {
             throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
@@ -251,18 +251,18 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * /{entitySet}({key})というパスを処理する.
-     * @param entitySetName entitySet名
-     * @param key キー文字列
+     * 
+     * @param entitySetName entitySet name
+     * @param key key string
      * @param request Request
-     * @return ODataEntityResourceクラスのオブジェクト
+     * @return ODataEntityResource class object
      */
     @Path("{entitySet}({key})")
     public ODataEntityResource entity(
             @PathParam("entitySet") final String entitySetName,
             @PathParam("key") final String key,
             @Context Request request) {
-        // 存在しないエンティティセットを指定されたときは即刻エラー
+        //If an entity set that does not exist is specified, an immediate error
         EdmEntitySet eSet = this.getMetadataSource().findEdmEntitySet(entitySetName);
         if (eSet == null) {
             throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
@@ -280,7 +280,7 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * このODataサービスのRootURLを返します.
+     * Returns the RootURL of this OData service.
      * @return Root Url of this OData Service
      */
     public String getRootUrl() {
@@ -288,7 +288,7 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * このODataサービスのODataProducerを返します.
+     * Returns the ODataProducer of this OData service.
      * @return ODataProducer of this OData Service
      */
     public PersoniumODataProducer getODataProducer() {
@@ -296,7 +296,7 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * Etagヘッダ値からETagの値を取り出します。
+     * Retrieve the ETag value from the Etag header value.
      * @param etagHeaderValue etagHeaderValue
      * @return etag
      */
@@ -306,7 +306,7 @@ public abstract class ODataResource extends ODataCtlResource {
         } else if ("*".equals(etagHeaderValue)) {
             return "*";
         }
-        // Weak形式 W/"()"
+        //Weak format W / "()"
         Pattern pattern = Pattern.compile("^W/\"(.+)\"$");
         Matcher m = pattern.matcher(etagHeaderValue);
 
@@ -318,7 +318,7 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * Etagヘッダ値を生成します。
+     * Generate Etag header value.
      * @param etag etag
      * @return etagHeaderValue
      */
@@ -327,29 +327,29 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * 処理するクラスのレベルとエンティティセット名から読み込みに必要な権限を返す.
-     * @param entitySetNameStr 対象のエンティティセット
-     * @return 処理に必要な権限
+     * Returns the privileges required for reading from the level of the class to be processed and the entity set name.
+     * @param entitySetNameStr target entity set
+     * Privileges required for @return processing
      */
     public abstract Privilege getNecessaryReadPrivilege(String entitySetNameStr);
 
     /**
-     * 処理するクラスのレベルとエンティティセット名から書き込みに必要な権限を返す.
-     * @param entitySetNameStr 対象のエンティティセット
-     * @return 処理に必要な権限
+     * Returns the authority required for writing from the level of the class to be processed and the entity set name.
+     * @param entitySetNameStr target entity set
+     * Privileges required for @return processing
      */
     public abstract Privilege getNecessaryWritePrivilege(String entitySetNameStr);
 
     /**
-     * 処理するクラスのレベルとエンティティセット名からOPTIONSに必要な権限を返す.
-     * @return 処理に必要な権限
+     * Returns the necessary authority for OPTIONS from the level of the class to be processed and the entity set name.
+     * Privileges required for @return processing
      */
     public abstract Privilege getNecessaryOptionsPrivilege();
 
     /**
-     * アクセスコンテキストが$batchしてよい権限を持っているかを返す.
-     * @param ac アクセスコンテキスト
-     * @return true: アクセスコンテキストが$batchしてよい権限を持っている
+     * Returns whether the access context has permission to $ batch.
+     * @param ac access context
+     * @return true: The access context has permission to $ batch
      */
     public abstract boolean hasPrivilegeForBatch(AccessContext ac);
 

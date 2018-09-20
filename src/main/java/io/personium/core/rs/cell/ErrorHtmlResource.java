@@ -53,7 +53,7 @@ public class ErrorHtmlResource {
             @QueryParam(Key.CODE) final String code,
             @Context final UriInfo uriInfo) {
 
-        // エラーHTMLの返却
+        //Error HTML return
         ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
         return rb.entity(this.htmlForCode(code)).build();
     }

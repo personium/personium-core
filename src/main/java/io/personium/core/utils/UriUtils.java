@@ -221,14 +221,14 @@ public class UriUtils {
      */
     public static String getUnitUrl(String cellUrl, int index) {
         String[] list = cellUrl.split(STRING_SLASH);
-        // 指定文字が最後から指定数で発見された文字より前の文字を切り出す
+        //Cut out the character before the character whose specified character was found by the specified number from the end
         return StringUtils.substringBeforeLast(cellUrl, list[list.length - index]);
     }
 
     /**
-     * 任意のBaseUriをもつUriInfoオブジェクトを生成して返します.
+     * Creates and returns a UriInfo object with an arbitrary BaseUri.
      * @param uriInfo UriInfo
-     * @param baseLevelsAbove BaseUriをRequestUriから何階層上にするか
+     * @param baseLevelsAbove How many layers above BaseUri from RequestUri
      * @return UriInfo
      */
     public static UriInfo createUriInfo(final UriInfo uriInfo, final int baseLevelsAbove) {
@@ -237,10 +237,10 @@ public class UriUtils {
     }
 
     /**
-     * 任意のBaseUriをもつUriInfoオブジェクトを生成して返します.
+     * Creates and returns a UriInfo object with an arbitrary BaseUri.
      * @param uriInfo UriInfo
-     * @param baseLevelsAbove BaseUriをRequestUriから何階層上にするか
-     * @param add 追加パス情報
+     * @param baseLevelsAbove How many layers above BaseUri from RequestUri
+     * @param add Additional path information
      * @return UriInfo
      */
     public static UriInfo createUriInfo(final UriInfo uriInfo, final int baseLevelsAbove, final String add) {
@@ -249,7 +249,7 @@ public class UriUtils {
     }
 
     /**
-     * 指定階層上のパスをBaseUri(ルート)とするUriInfoとして振る舞うUriInfoのWrapper.
+     * Wrapper of UriInfo that behaves as UriInfo with BaseUri (root) on the specified hierarchical level.
      */
     public static final class PersoniumUriInfo implements UriInfo {
         UriBuilder baseUriBuilder;
@@ -258,8 +258,8 @@ public class UriUtils {
         /**
          * Constructor.
          * @param uriInfo UriInfo
-         * @param baseLevelsAbove 何階層上のパスをルートとするか
-         * @param add 追加パス情報
+         * @param baseLevelsAbove How many hierarchical paths to route to
+         * @param add Additional path information
          */
         public PersoniumUriInfo(final UriInfo uriInfo, final int baseLevelsAbove, final String add) {
             this.core = uriInfo;

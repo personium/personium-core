@@ -28,81 +28,81 @@ import io.personium.core.model.ctl.Relation;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- * ODataResourceに対する事前処理や事後処理.
+ * Preprocessing and postprocessing for ODataResource.
  */
 public class ODataCtlResource {
     /**
-     * 作成前処理.
-     * @param oEntityWrapper OEntityWrapperオブジェクト
+     * Preprocessing process.
+     * @param o EntityWrapper OEntityWrapper object
      */
     public void beforeCreate(final OEntityWrapper oEntityWrapper) {
     }
 
     /**
-     * 更新前処理.
-     * @param oEntityWrapper OEntityWrapperオブジェクト
-     * @param oEntityKey 削除対象のentityKey
+     * Pre-update processing.
+     * @param o EntityWrapper OEntityWrapper object
+     * @param o EntityKey The entityKey to delete
      */
     public void beforeUpdate(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
     }
 
     /**
-     * 部分更新前処理.
-     * @param oEntityWrapper OEntityWrapperオブジェクト
-     * @param oEntityKey 削除対象のentityKey
+     * Partial update preprocessing.
+     * @param o EntityWrapper OEntityWrapper object
+     * @param o EntityKey The entityKey to delete
      */
     public void beforeMerge(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
         beforeUpdate(oEntityWrapper, oEntityKey);
     }
 
     /**
-     * 削除前処理.
-     * @param entitySetName entitySet名
-     * @param oEntityKey 削除対象のentityKey
+     * Pre-deletion process.
+     * @param entitySetName entitySet name
+     * @param o EntityKey The entityKey to delete
      */
     public void beforeDelete(final String entitySetName, final OEntityKey oEntityKey) {
     }
 
     /**
-     * 削除後処理.
-     * @param entitySetName entitySet名
-     * @param oEntityKey 削除対象のentityKey
+     * Processing after deletion.
+     * @param entitySetName entitySet name
+     * @param o EntityKey The entityKey to delete
      */
     public void afterDelete(final String entitySetName, final OEntityKey oEntityKey) {
     }
 
     /**
-     * リンク登録前処理.
-     * @param sourceEntity リンク対象のエンティティ
-     * @param targetNavProp リンク対象のナビゲーションプロパティ
+     * Link registration preprocessing.
+     * @param sourceEntity Linked entity
+     * @param targetNavProp Navigation property to be linked
      */
     public void beforeLinkCreate(OEntityId sourceEntity, String targetNavProp) {
-        // ExtRoleと_Relationの$links指定は不可（Relation:ExtRoleは1:Nの関係だから）
+        //$ Links specification of ExtRole and _Relation is not allowed (Relation: ExtRole is 1: N relation)
         checkNonSupportLinks(sourceEntity.getEntitySetName(), targetNavProp);
     }
 
     /**
-     * リンク取得前処理.
-     * @param sourceEntity リンク対象のエンティティ
-     * @param targetNavProp リンク対象のナビゲーションプロパティ
+     * Link acquisition preprocessing.
+     * @param sourceEntity Linked entity
+     * @param targetNavProp Navigation property to be linked
      */
     public void beforeLinkGet(OEntityId sourceEntity, String targetNavProp) {
     }
 
     /**
-     * リンク削除前処理.
-     * @param sourceEntity リンク対象のエンティティ
-     * @param targetNavProp リンク対象のナビゲーションプロパティ
+     * Link deletion preprocessing.
+     * @param sourceEntity Linked entity
+     * @param targetNavProp Navigation property to be linked
      */
     public void beforeLinkDelete(OEntityId sourceEntity, String targetNavProp) {
-        // ExtRoleと_Relationの$links指定は不可（Relation:ExtRoleは1:Nの関係だから）
+        //$ Links specification of ExtRole and _Relation is not allowed (Relation: ExtRole is 1: N relation)
         checkNonSupportLinks(sourceEntity.getEntitySetName(), targetNavProp);
     }
 
     /**
-     * p:Format以外のチェック処理.
+     * Check processing other than p: Format.
      * @param entitySetName target entityset name
-     * @param props プロパティ一覧
+     * @param props property list
      */
     public void validate(String entitySetName, List<OProperty<?>> props) {
     }

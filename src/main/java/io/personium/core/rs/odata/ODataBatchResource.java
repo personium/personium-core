@@ -73,19 +73,19 @@ import io.personium.core.rs.PersoniumCoreExceptionMapper;
 import io.personium.core.utils.UriUtils;
 
 /**
- * ODataBatchResourceクラス.
+ * The ODataBatchResource class.
  */
 public class ODataBatchResource extends AbstractODataResource {
 
     private static final String X_PERSONIUM_PRIORITY = "X-Personium-Priority";
 
     /**
-     * Lockを他プロセスに譲るためにスリープするか否か.
+     * Whether to sleep to give Lock to another process.
      */
     public enum BatchPriority {
-        /** Lockを他プロセスに譲らない. */
+        /** Do not give Lock to other processes.*/
         HIGH("high"),
-        /** Lockを他プロセスに譲る. */
+        /** Transfer Lock to another process.*/
         LOW("low");
 
         private String priority;
@@ -95,9 +95,9 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         * 文字列から列挙値を生成する(デフォルト値: LOW).
-         * @param val 文字列
-         * @return 列挙値
+         * Generate an enumerated value from a character string (default value: LOW).
+         * @param val String
+         * @return enumeration value
          */
         public static BatchPriority fromString(String val) {
             for (BatchPriority e : BatchPriority.values()) {
@@ -114,17 +114,17 @@ public class ODataBatchResource extends AbstractODataResource {
     ODataResource odataResource;
     LinkedHashMap<String, BulkRequest> bulkRequests = new LinkedHashMap<String, BulkRequest>();
 
-    // Batchリクエスト中にToo Many Concurrentが発生後の実行/スキップを制御するクラス
+    //Class that controls execution / skipping after occurrence of Too Many Concurrent during Batch request
     BatchRequestShutter shutter;
 
     Map<Privilege, BatchAccess> readAccess = new HashMap<Privilege, BatchAccess>();
     Map<Privilege, BatchAccess> writeAccess = new HashMap<Privilege, BatchAccess>();
 
-    // EntityType名とEntityTypeIDのマッピングデータ
+    //Mapping data of EntityType name and EntityTypeID
     Map<String, String> entityTypeIds;
 
     /**
-     * コンストラクタ.
+     * constructor.
      * @param odataResource ODataResource
      */
     public ODataBatchResource(final ODataResource odataResource) {
@@ -133,12 +133,12 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * バッチリクエストを処理する.
+     * Process batch request.
      * @param uriInfo uriInfo
      * @param headers headers
      * @param request request
      * @param reader reader
-     * @return レスポンス
+     * @return response
      */
     @WriteAPI
     @POST
@@ -149,10 +149,10 @@ public class ODataBatchResource extends AbstractODataResource {
             Reader reader) {
 
         long startTime = System.currentTimeMillis();
-        // タイムアウト時間 (personium-unit-config.properties io.personium.core.odata.batch.timeoutInSecで設定. 単位は秒)
+        //Timeout time (set by personium-unit-config.properties io.personium.core.odata.batch.timeoutInSec, in seconds)
         long batchTimeoutInSec = PersoniumUnitConfig.getOdataBatchRequestTimeoutInMillis();
 
-        // Lockを他プロセスに譲るためにスリープするか否かの拡張ヘッダの値を取得する
+        //In order to give Lock to another process, obtain the extension header value as to whether or not to sleep
         BatchPriority priority = BatchPriority.LOW;
         List<String> priorityHeaders = headers.getRequestHeader(X_PERSONIUM_PRIORITY);
         if (priorityHeaders != null) {
@@ -163,18 +163,18 @@ public class ODataBatchResource extends AbstractODataResource {
 
         checkAccessContext(this.odataResource.getAccessContext());
 
-        // TODO 不正なコンテントタイプが指定された場合エラーを返却する
+        //TODO Return an error if an incorrect content type is specified
         String boundary = headers.getMediaType().getParameters().get("boundary");
 
-        // リクエストボディのパース
+        //Parsing the request body
         BatchBodyParser parser = new BatchBodyParser();
         List<BatchBodyPart> bodyParts = parser.parse(boundary, reader, uriInfo.getRequestUri().toString());
         if (bodyParts == null || bodyParts.size() == 0) {
-            // パース処理失敗
+            //Parsing failed
             throw PersoniumCoreException.OData.BATCH_BODY_PARSE_ERROR;
         }
         if (bodyParts.size() > Integer.parseInt(PersoniumUnitConfig.getOdataBatchBulkRequestMaxSize())) {
-            // $Batchで指定されたリクエスト数が不正
+            //Invalid number of requests specified by $ Batch
             throw PersoniumCoreException.OData.TOO_MANY_REQUESTS.params(bodyParts.size());
         }
 
@@ -185,18 +185,18 @@ public class ODataBatchResource extends AbstractODataResource {
 
         StringBuilder responseBody = new StringBuilder();
 
-        // １件ずつリクエストを実行
+        //Execute request one by one
         for (BatchBodyPart bodyPart : bodyParts) {
             executePartRequest(responseBody, uriInfo, boundary, npBulkContexts, bodyPart);
         }
 
-        // POSTのbulk実行
+        //Bulk execution of POST
         checkAndExecBulk(responseBody, uriInfo, boundary, npBulkContexts);
 
-        // バウンダリ終端文字列
+        //Boundary termination string
         responseBody.append("--" + boundary + "--");
 
-        // レスポンス作成
+        //Response creation
         String contentType = ODataBatchProvider.MULTIPART_MIXED + "; boundary=" + boundary;
         return Response.status(HttpStatus.SC_ACCEPTED)
                 .header(HttpHeaders.CONTENT_TYPE, contentType)
@@ -206,7 +206,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * $batch内のタイムアウトレスポンスを設定する(Changeset).
+     * Set timeout response in $ batch (Changeset).
      */
     private void setChangesetTimeoutResponse(StringBuilder builder, String boundary, BatchBodyPart bodyPart) {
         BatchResponse res = getTimeoutResponse();
@@ -214,7 +214,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * $batch内のタイムアウトレスポンスを設定する.
+     * Set timeout response in $ batch.
      */
     private void setTimeoutResponse(StringBuilder builder, String boundary) {
         BatchResponse res = getTimeoutResponse();
@@ -222,7 +222,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * タイムアウトレスポンスを作成.
+     * Create timeout response.
      */
     private BatchResponse getTimeoutResponse() {
         BatchResponse res = new BatchResponse();
@@ -234,11 +234,11 @@ public class ODataBatchResource extends AbstractODataResource {
     private volatile boolean timedOut = false;
 
     /**
-     * timeout時間が経過しているか否かを判定する.<br />
-     * timerオブジェクトは、API呼び出し時にインスタンス化されていることが呼び出し条件.<br />
-     * modeがYIELDの場合、timeout時間が経過しているか判定前に、Lockを他プロセスに譲るためにスリープする.
-     * @param mode Lockを他プロセスに譲るためにスリープするか否か
-     * @return timeout時間が経過しているか否か
+     * Determine whether the timeout time has elapsed <br />
+     * Calling condition that timer object is instantiated at API call. <br />
+     * If mode is YIELD, it sleeps to give Lock to another process before judging whether timeout time has elapsed.
+     * @param mode Whether to sleep to give Lock to another process
+     * @return timeout Whether time has elapsed
      */
     private boolean isTimedOut(BatchElapsedTimer.Lock mode) {
         if (!timedOut) {
@@ -254,14 +254,14 @@ public class ODataBatchResource extends AbstractODataResource {
             String boundary,
             List<NavigationPropertyBulkContext> npBulkContexts,
             BatchBodyPart bodyPart) {
-        // ReadDeleteOnlyMode中はGETとDELETEメソッド以外は許可しないため、エラーレスポンスを設定する
+        //During ReadDeleteOnlyMode, except for GET and DELETE methods, we do not allow it, so set an error response
         if (!PersoniumReadDeleteModeManager.isAllowedMethod(bodyPart.getHttpMethod())) {
             BatchResponse res = new BatchResponse();
             res.setErrorResponse(PersoniumCoreException.Server.READ_DELETE_ONLY);
             responseBody.append(getChangesetResponseBody(boundary, bodyPart, res));
             return;
         }
-        // Batchリクエスト中にToo Many Concurrentが発生した以降の更新系リクエストレスポンスを設定する.
+        //Set up update request response after Too Many Concurrent occurred during Batch request.
         if (!shutter.accept(bodyPart.getHttpMethod())) {
             setChangesetTooManyConcurrentResponse(responseBody, boundary, bodyPart);
             return;
@@ -300,7 +300,7 @@ public class ODataBatchResource extends AbstractODataResource {
             }
         } else if (bodyPart.getHttpMethod().equals(HttpMethod.POST)) {
             if (bodyPart.hasNavigationProperty()) {
-                // NP経由ユーザデータ登録
+                //User data registration via NP
                 if (bulkRequests.size() != 0) {
                     if (!isTimedOut(BatchElapsedTimer.Lock.YIELD)) {
                         execBulk(responseBody, uriInfo, boundary);
@@ -330,10 +330,10 @@ public class ODataBatchResource extends AbstractODataResource {
                     }
                 }
             } else {
-                // ユーザデータ登録
+                //User data registration
                 if (!npBulkContexts.isEmpty()) {
                     if (!isTimedOut(BatchElapsedTimer.Lock.YIELD)) {
-                        // NP経由ユーザデータ登録のbulk実行
+                        //Execute bulk execution of user data registration via NP
                         execBulkRequestForNavigationProperty(npBulkContexts);
                         createNavigationPropertyBulkResponse(
                                 responseBody,
@@ -358,7 +358,7 @@ public class ODataBatchResource extends AbstractODataResource {
                 }
             }
         } else if (bodyPart.getHttpMethod().equals(HttpMethod.GET)) {
-            // POSTのbulk実行
+            //Bulk execution of POST
             checkAndExecBulk(responseBody, uriInfo, boundary, npBulkContexts);
             BatchResponse res = null;
             if (!isTimedOut(BatchElapsedTimer.Lock.HOLD)) {
@@ -372,7 +372,7 @@ public class ODataBatchResource extends AbstractODataResource {
                 setTimeoutResponse(responseBody, boundary);
             }
         } else if (bodyPart.getHttpMethod().equals(HttpMethod.PUT)) {
-            // POSTのbulk実行
+            //Bulk execution of POST
             checkAndExecBulk(responseBody, uriInfo, boundary, npBulkContexts);
             if (!isTimedOut(BatchElapsedTimer.Lock.YIELD)) {
                 if (!shutter.isShuttered()) {
@@ -385,7 +385,7 @@ public class ODataBatchResource extends AbstractODataResource {
                 setChangesetTimeoutResponse(responseBody, boundary, bodyPart);
             }
         } else if (bodyPart.getHttpMethod().equals(HttpMethod.DELETE)) {
-            // POSTのbulk実行
+            //Bulk execution of POST
             checkAndExecBulk(responseBody, uriInfo, boundary, npBulkContexts);
             if (!isTimedOut(BatchElapsedTimer.Lock.YIELD)) {
                 if (!shutter.isShuttered()) {
@@ -407,19 +407,19 @@ public class ODataBatchResource extends AbstractODataResource {
     private void setChangesetTooManyConcurrentResponse(StringBuilder responseBody,
             String boundary,
             BatchBodyPart bodyPart) {
-        // 直前のPOSTリクエストがTooManyConcurrentだったため、エラーレスポンスを作成する
+        //Since the last POST request was TooManyConcurrent, an error response is created
         BatchResponse res = new BatchResponse();
         res.setErrorResponse(PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS);
         responseBody.append(getChangesetResponseBody(boundary, bodyPart, res));
     }
 
     /**
-     * NP経由ユーザデータをバルク登録する.
-     * @param npBulkContexts NavigationPropertyコンテキストのリスト
+     * Bulk registration of user data via NP.
+     * @param npBulkContexts NavigationProperty List of contexts
      */
     private void execBulkRequestForNavigationProperty(List<NavigationPropertyBulkContext> npBulkContexts) {
-        // バルク登録用にコンテキストからBulkRequestを作成
-        // NP側のEntityTypeの存在チェック、バルクデータ内でのID競合チェックもここで行う
+        //Create BulkRequest from context for bulk registration
+        //Also check the existence of the EntityType on the NP side and check the ID conflict within the bulk data here
         LinkedHashMap<String, BulkRequest> npBulkRequests = new LinkedHashMap<String, BulkRequest>();
         for (NavigationPropertyBulkContext npBulkContext : npBulkContexts) {
             BatchBodyPart bodyPart = npBulkContext.getBodyPart();
@@ -434,8 +434,8 @@ public class ODataBatchResource extends AbstractODataResource {
 
             String targetEntitySetName = bodyPart.getTargetEntitySetName();
             bulkRequest = createBulkRequest(bodyPart, targetEntitySetName);
-            // データ内でのID競合チェック
-            // TODO 複合主キー対応、ユニークキーのチェック、NTKP対応
+            //ID conflict check in data
+            //TODO compound primary key correspondence, unique key check, NTKP compliant
             if (bulkRequest.getError() == null) {
                 EntitySetDocHandler docHandler = bulkRequest.getDocHandler();
                 key = docHandler.getEntityTypeId() + ":" + (String) docHandler.getStaticFields().get("__id");
@@ -451,7 +451,7 @@ public class ODataBatchResource extends AbstractODataResource {
         try {
             this.odataResource.getODataProducer().bulkCreateEntityViaNavigationProperty(npBulkContexts, npBulkRequests);
         } catch (PersoniumCoreException e) {
-            // 503が発生した後の処理を継続させるため、shutterにステータスを設定。
+            //To keep processing after 503 occurred, set the status to shutter.
             shutter.updateStatus(e);
             if (!PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS.equals(e)) {
                 throw e;
@@ -485,28 +485,28 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * 各リクエストのChangesetのレスポンスボディを作成する.
-     * @param boundaryStr バウンダリ文字列
+     * Create response body of Changeset of each request.
+     * @param boundaryStr Boundary string
      * @param bodyPart BatchBodyPart
-     * @param res レスポンス
-     * @return リクエストのレスポンスボディ
+     * @param res Response
+     * @return request response body
      */
     private String getChangesetResponseBody(String boundaryStr,
             BatchBodyPart bodyPart,
             BatchResponse res) {
         StringBuilder resBody = new StringBuilder();
 
-        // レスポンスボディ作成
-        // バウンダリ文字列
+        //Response body creation
+        //Boundary string
         if (bodyPart.isChangesetStart()) {
-            // レスポンスにバウンダリ文字列を追加
+            //Add boundary string to response
             resBody.append("--" + boundaryStr + "\n");
             resBody.append(HttpHeaders.CONTENT_TYPE + ": ");
             resBody.append(ODataBatchProvider.MULTIPART_MIXED + "; boundary="
                     + bodyPart.getChangesetStr() + "\n\n");
         }
 
-        // changeset文字列
+        //changeset String
         resBody.append("--" + bodyPart.getChangesetStr() + "\n");
         // ContentType
         resBody.append(HttpHeaders.CONTENT_TYPE + ": ");
@@ -514,22 +514,22 @@ public class ODataBatchResource extends AbstractODataResource {
         // Content-Transfer-Encoding
         resBody.append("Content-Transfer-Encoding: binary\n\n");
 
-        // HTTP/1.1 {レスポンスコード} {レスポンスコードの説明}
+        //HTTP / 1.1 {response code} {description of response code}
         resBody.append("HTTP/1.1 ");
         resBody.append(res.getResponseCode() + " ");
         resBody.append(res.getResponseMessage() + "\n");
-        // レスポンスヘッダ
+        //Response header
         for (String key : res.getHeaders().keySet()) {
             resBody.append(key + ": " + res.getHeaders().get(key) + "\n");
         }
         resBody.append("\n");
 
-        // レスポンスボディ
+        //Response body
         if (res.getBody() != null) {
             resBody.append(res.getBody() + "\n\n");
         }
 
-        // changeset終端文字列
+        //changeset Termination string
         if (bodyPart.isChangesetEnd()) {
             resBody.append("--" + bodyPart.getChangesetStr() + "--\n\n");
         }
@@ -538,32 +538,32 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * 各リクエストのGET, LISTのレスポンスボディを作成する.
-     * @param boundaryStr バウンダリ文字列
-     * @param res レスポンス
-     * @return リクエストのレスポンスボディ
+     * Create response body of GET, LIST of each request.
+     * @param boundaryStr Boundary string
+     * @param res Response
+     * @return request response body
      */
     private String getRetrieveResponseBody(String boundaryStr,
             BatchResponse res) {
         StringBuilder resBody = new StringBuilder();
 
-        // レスポンスボディ作成
-        // バウンダリ文字列
-        // レスポンスにバウンダリ文字列を追加
+        //Response body creation
+        //Boundary string
+        //Add boundary string to response
         resBody.append("--" + boundaryStr + "\n");
         resBody.append(HttpHeaders.CONTENT_TYPE + ": application/http\n\n");
 
-        // HTTP/1.1 {レスポンスコード} {レスポンスコードの説明}
+        //HTTP / 1.1 {response code} {description of response code}
         resBody.append("HTTP/1.1 ");
         resBody.append(res.getResponseCode() + " ");
         resBody.append(res.getResponseMessage() + "\n");
-        // レスポンスヘッダ
+        //Response header
         for (String key : res.getHeaders().keySet()) {
             resBody.append(key + ": " + res.getHeaders().get(key) + "\n");
         }
         resBody.append("\n");
 
-        // レスポンスボディ
+        //Response body
         if (res.getBody() != null) {
             resBody.append(res.getBody() + "\n\n");
         }
@@ -572,9 +572,9 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * 一覧取得か１件取得かを判定する.
-     * @param uri リクエストURI
-     * @return true: 一覧取得, false:１件取得
+     * Whether list acquisition or one acquisition is acquired is determined.
+     * @param uri request URI
+     * @return true: get list, false: get 1 case
      */
     private boolean isListRequst(BatchBodyPart bodyPart) {
         if (bodyPart.getEntityKeyWithParences() == null
@@ -585,7 +585,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * バッチリクエストの登録データをバルクリクエストに設定する.
+     * Set the registration data of the batch request to the bulk request.
      * @param bodyPart BatchBodyPart
      */
     private void setBulkRequestsForEntity(BatchBodyPart bodyPart) {
@@ -593,8 +593,8 @@ public class ODataBatchResource extends AbstractODataResource {
 
         BulkRequest bulkRequest = createBulkRequest(bodyPart, bodyPart.getEntitySetName());
         if (bulkRequest.getError() == null) {
-            // データ内でのID競合チェック
-            // TODO 複合主キー対応、ユニークキーのチェック、NTKP対応
+            //ID conflict check in data
+            //TODO compound primary key correspondence, unique key check, NTKP compliant
             EntitySetDocHandler docHandler = bulkRequest.getDocHandler();
             key = docHandler.getEntityTypeId() + ":" + (String) docHandler.getStaticFields().get("__id");
             if (bulkRequests.containsKey(key)) {
@@ -609,16 +609,16 @@ public class ODataBatchResource extends AbstractODataResource {
     private BulkRequest createBulkRequest(BatchBodyPart bodyPart, String entitySetName) {
         BulkRequest bulkRequest = new BulkRequest(bodyPart);
         try {
-            // アクセス制御
+            //Access control
             checkWriteAccessContext(bodyPart);
 
-            // 存在しないエンティティセットを指定されたときは404例外を発生する
+            //If an entity set that does not exist is specified, a 404 exception is raised
             EdmEntitySet eSet = this.odataResource.metadata.findEdmEntitySet(entitySetName);
             if (eSet == null) {
                 throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
             }
 
-            // リクエストボディを生成する
+            //Generate request body
             ODataEntitiesResource resource = new ODataEntitiesResource(this.odataResource, entitySetName);
             OEntity oEntity = resource.getOEntityWrapper(new StringReader(bodyPart.getEntity()),
                     this.odataResource, this.odataResource.metadata);
@@ -629,7 +629,7 @@ public class ODataBatchResource extends AbstractODataResource {
 
             this.odataResource.metadata = resource.getOdataProducer().getMetadata();
 
-            // ID指定がない場合はUUIDを払い出す
+            //Pay out UUID if ID is not specified
             if (docHandler.getId() == null) {
                 docHandler.setId(PersoniumUUID.randomUUID());
             }
@@ -646,10 +646,10 @@ public class ODataBatchResource extends AbstractODataResource {
             BatchBodyPart bodyPart,
             NavigationPropertyBulkContext npBulkContext) {
         OEntity ent = npBulkContext.getEntityResponse().getEntity();
-        // 現状は、ContentTypeはJSON固定
+        //Currently, ContentType is fixed to JSON
         String accept = bodyPart.getHttpHeaders().get(org.apache.http.HttpHeaders.ACCEPT);
         MediaType outputFormat = this.decideOutputFormat(accept, "json");
-        // Entity Responseをレンダー
+        //Render Entity Response
         List<MediaType> contentTypes = new ArrayList<MediaType>();
         contentTypes.add(outputFormat);
         UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
@@ -657,14 +657,14 @@ public class ODataBatchResource extends AbstractODataResource {
         String responseStr = renderEntityResponse(resUriInfo, npBulkContext.getEntityResponse(), "json",
                 contentTypes);
 
-        // ヘッダーの設定
+        //Header setting
         npBulkContext.setResponseHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         String entityName = bodyPart.getTargetNavigationProperty().substring(1) + key;
         npBulkContext.setResponseHeader(HttpHeaders.LOCATION,
                 resUriInfo.getBaseUri().toASCIIString() + entityName);
         npBulkContext.setResponseHeader(ODataConstants.Headers.DATA_SERVICE_VERSION,
                 ODataVersion.V2.asString);
-        // 応答にETAGを付与
+        //Give ETAG to response
         if (ent instanceof OEntityWrapper) {
             OEntityWrapper oew2 = (OEntityWrapper) ent;
             String etag = oew2.getEtag();
@@ -677,16 +677,16 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     private NavigationPropertyBulkContext createNavigationPropertyBulkContext(BatchBodyPart bodyPart) {
-        // アクセス制御
+        //Access control
         checkWriteAccessContext(bodyPart);
 
-        // 存在しないエンティティセットを指定されたときは404例外を発生する
+        //If an entity set that does not exist is specified, a 404 exception is raised
         EdmEntitySet eSet = this.odataResource.metadata.findEdmEntitySet(bodyPart.getEntitySetName());
         if (eSet == null) {
             throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
         }
 
-        // Navigationプロパティのスキーマ上の存在確認
+        //Confirm existence of Navigation property on schema
         ODataEntityResource entityResource = new ODataEntityResource(this.odataResource,
                 bodyPart.getEntitySetName(), bodyPart.getEntityKey());
         OEntityId oEntityId = entityResource.getOEntityId();
@@ -695,7 +695,7 @@ public class ODataBatchResource extends AbstractODataResource {
             throw PersoniumCoreException.OData.NOT_SUCH_NAVPROP;
         }
 
-        // リクエスト情報作成
+        //Request information creation
         StringReader requestReader = new StringReader(bodyPart.getEntity());
         OEntityWrapper oew = createEntityFromInputStream(
                 requestReader,
@@ -708,45 +708,45 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * NavigationProperty経由で登録するEntityデータを入力ストリームから生成する.
-     * @param reader 入力ストリーム
-     * @return 入力ストリームから生成したOEntityWrapperオブジェクト
+     * Generate Entity data to be registered via NavigationProperty from the input stream.
+     * @param reader input stream
+     * @return OEntityWrapper object generated from the input stream
      */
     OEntityWrapper createEntityFromInputStream(
             final Reader reader,
             EdmEntityType sourceEdmEntityType,
             OEntityKey sourceEntityKey,
             String targetEntitySetName) {
-        // 主キーのバリデート
+        //Primary key validation
         validatePrimaryKey(sourceEntityKey, sourceEdmEntityType);
 
-        // 登録すべきOEntityを作成
+        //Create OEntity to register
         setEntitySetName(targetEntitySetName);
         EdmDataServices metadata = this.odataResource.getODataProducer().getMetadata();
         OEntity newEnt = createRequestEntity(reader, null, metadata, targetEntitySetName);
 
-        // ラッパにくるむ. POSTでIf-Match等 ETagを受け取ることはないのでetagはnull。
+        //Wrapped in a trumpet. Since POST never receives ETags such as If-Match Etag is null.
         String uuid = PersoniumUUID.randomUUID();
         OEntityWrapper oew = new OEntityWrapper(uuid, newEnt, null);
         return oew;
     }
 
     /**
-     * NavigationProperty経由でEntityを登録する.
-     * @param oew 登録用OEntityWrapperオブジェクト
-     * @return 登録した内容から生成したEntityレスポンス
+     * Register Entity via NavigationProperty.
+     * @param oew OEntityWrapper object for registration
+     * @return Entity response generated from registered content
      */
     EntityResponse createEntity(OEntityWrapper oew) {
-        // 必要ならばメタ情報をつける処理
+        //Process of attaching meta information if necessary
         this.odataResource.beforeCreate(oew);
 
-        // Entityの作成を Producerに依頼.この中であわせて、存在確認もしてもらう。
+        //Ask Producer to create an Entity. In addition to this, we also ask for existence confirmation.
         EntityResponse res = this.odataResource.getODataProducer().createEntity(getEntitySetName(), oew);
         return res;
     }
 
     /**
-     * NP経由登録用のリンクの関連タイプ.
+     * Relation type of link for registration via NP.
      */
     public enum NavigationPropertyLinkType {
         /** 1:1 / 0..1:1 / 1:0..1 / 0..1:0..1 . */
@@ -760,7 +760,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * NP経由登録用クラス.
+     * Class for registration via NP.
      */
     public static class NavigationPropertyBulkContext {
         private OEntityWrapper oew;
@@ -779,7 +779,7 @@ public class ODataBatchResource extends AbstractODataResource {
         private Exception exception;
 
         /**
-         * コンストラクタ.
+         * constructor.
          * @param bodyPart BatchBodyPart
          */
         public NavigationPropertyBulkContext(BatchBodyPart bodyPart) {
@@ -787,11 +787,11 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         * コンストラクタ.
-         * @param bodyPart 登録するBatchBodyPart
-         * @param oew 登録するOEntity
-         * @param srcEntityId リンク元OEntityId
-         * @param tgtNavProp NavigationProperty名
+         * constructor.
+         * @param bodyPart Batch BodyPart to register
+         * @param oew Register OEntity
+         * @param srcEntityId Link OEntityId
+         * @param tgtNavProp NavigationProperty name
          */
         public NavigationPropertyBulkContext(
                 BatchBodyPart bodyPart,
@@ -808,23 +808,23 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         * 登録するOEntityを設定する.
-         * @param entity 設定するOEntity
+         * Set the OEntity to register.
+         * @param entity OEntity to set
          */
         public void setOEntityWrapper(OEntityWrapper entity) {
             this.oew = entity;
         }
 
         /**
-         * 登録するOEntityを取得する.
-         * @return 登録するOEntity
+         * Get the OEntity to register.
+         * @return OEntity to register
          */
         public OEntityWrapper getOEntityWrapper() {
             return this.oew;
         }
 
         /**
-         * 登録した結果のEntityResponseを取得する.
+         * Get the EntityResponse of the registered result.
          * @return EntityResponse
          */
         public EntityResponse getEntityResponse() {
@@ -832,141 +832,141 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         * 登録した結果のEntityResponseを設定する.
-         * @param entityResponse 登録した結果のEntityResponse
+         * Set EntityResponse of the registered result.
+         * @param entityResponse EntityResponse of the registered result
          */
         public void setEntityResponse(EntityResponse entityResponse) {
             this.entityResponse = entityResponse;
         }
 
         /**
-         * リンク元OEntityIdを取得する.
-         * @return リンク元OEntityId
+         * Get the link originator OEntityId.
+         * @return Link OEntityId
          */
         public OEntityId getSrcEntityId() {
             return this.srcEntityId;
         }
 
         /**
-         * NavigationProperty名を取得する.
-         * @return NavigationProperty名
+         * Gets the NavigationProperty name.
+         * @return NavigationProperty name
          */
         public String getTgtNavProp() {
             return this.tgtNavProp;
         }
 
         /**
-         * 登録するBatchBodyPartを取得する.
-         * @return 登録するBatchBodyPart
+         * Get the Batch BodyPart to register.
+         * @return register BatchBodyPart
          */
         public BatchBodyPart getBodyPart() {
             return this.bodyPart;
         }
 
         /**
-         * Batch用のレスポンスボディを取得する.
-         * @return Batch用のレスポンスボディ
+         * Acquire the response body for Batch.
+         * Response body for @return Batch
          */
         public BatchResponse getBatchResponse() {
             return this.res;
         }
 
         /**
-         * Batch用のレスポンスヘッダを設定する.
-         * @param key BatchResponseのヘッダのキー
-         * @param value BatchResponseのヘッダの値
+         * Set the response header for Batch.
+         * @param key Batch Response header key
+         * @param value The value of the header of BatchResponse
          */
         public void setResponseHeader(String key, String value) {
             this.res.setHeader(key, value);
         }
 
         /**
-         * Batch用のレスポンスボディを設定する.
-         * @param body BatchResponseのbody
+         * Set the response body for Batch.
+         * @param body BatchResponse body
          */
         public void setResponseBody(String body) {
             this.res.setBody(body);
         }
 
         /**
-         * Batch用のレスポンスコードを設定する.
-         * @param code BatchResponseのレスポンスコード
+         * Set the response code for Batch.
+         * @param code Response code of BatchResponse
          */
         public void setResponseCode(int code) {
             this.res.setResponseCode(code);
         }
 
         /**
-         * リンクの関連タイプを取得する.
-         * @return リンクの関連タイプ
+         * Get the link type of the link.
+         * @return Link type of association
          */
         public NavigationPropertyLinkType getLinkType() {
             return linkType;
         }
 
         /**
-         * リンクの関連タイプを設定する.
-         * @param linkType リンクの関連タイプ
+         * Set association type of link.
+         * @param linkType Link association type
          */
         public void setLinkType(NavigationPropertyLinkType linkType) {
             this.linkType = linkType;
         }
 
         /**
-         * リンクエンティティのコンテキスト情報を設定する.
-         * /EntityType('ID')/_NavigationProperty のEntityType側のコンテキスト
-         * @return リンクエンティティのコンテキスト情報
+         * Set the context information of the link entity.
+         * 
+         * @return Context information of the link entity
          */
         public EntitySetDocHandler getSourceDocHandler() {
             return sourceDocHandler;
         }
 
         /**
-         * リンクエンティティのコンテキスト情報を設定する.
-         * /EntityType('ID')/_NavigationProperty のEntityType側のコンテキスト
-         * @param sourceDocHandler リンクエンティティのコンテキスト情報
+         * Set the context information of the link entity.
+         * 
+         * @param sourceDocHandler Context information of the link entity
          */
         public void setSourceDocHandler(EntitySetDocHandler sourceDocHandler) {
             this.sourceDocHandler = sourceDocHandler;
         }
 
         /**
-         * 登録コンテキスト情報の取得する.
-         * /EntityType('ID')/_NavigationProperty の_NavigationProperty側のコンテキスト
-         * @return 登録コンテキスト情報
+         * Acquire registration context information.
+         * 
+         * @return registration context information
          */
         public EntitySetDocHandler getTargetDocHandler() {
             return targetDocHandler;
         }
 
         /**
-         * 登録コンテキスト情報を設定する.
-         * /EntityType('ID')/_NavigationProperty の_NavigationProperty側のコンテキスト
-         * @param targetDocHandler 登録コンテキスト情報
+         * Set registration context information.
+         * 
+         * @param targetDocHandler Registration context information
          */
         public void setTargetDocHandler(EntitySetDocHandler targetDocHandler) {
             this.targetDocHandler = targetDocHandler;
         }
 
         /**
-         * 登録するリンク情報を取得する.
-         * @return 登録するリンク情報
+         * Get link information to register.
+         * @return Link information to register
          */
         public LinkDocHandler getLinkDocHandler() {
             return linkDocHandler;
         }
 
         /**
-         * 登録するリンク情報を設定する.
-         * @param linkDocHandler 登録するリンク情報
+         * Set link information to be registered.
+         * @param linkDocHandler Link information to register
          */
         public void setLinkDocHandler(LinkDocHandler linkDocHandler) {
             this.linkDocHandler = linkDocHandler;
         }
 
         /**
-         * 例外情報を設定する.
-         * @param ex 例外情報
+         * Set exception information.
+         * @param ex exception information
          */
         public void setException(Exception ex) {
             this.exception = ex;
@@ -974,16 +974,16 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         * 処理中にエラーが発生したか.
-         * @return true: エラー発生, false: エラーなし
+         * Did an error occur during processing?
+         * @return true: error occurred, false: no error
          */
         public boolean isError() {
             return this.isError;
         }
 
         /**
-         * 処理中に発生したエラーの例外情報を取得する.
-         * @return 例外情報
+         * Acquire exception information on errors that occurred during processing.
+         * @return exception information
          */
         public Exception getException() {
             return this.exception;
@@ -991,10 +991,10 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * bulkリクエストのチェックと実行処理.
+     * bulk Request checking and execution processing.
      * @param uriInfo uriInfo
      * @param boundary boundary
-     * @param navigationPropertyBulkContexts ナビゲーションプロパティ経由登録リクエスト情報のリスト
+     * @param navigationPropertyBulkContexts List of registration request information via navigation properties
      */
     private void checkAndExecBulk(
             StringBuilder responseBody,
@@ -1012,7 +1012,7 @@ public class ODataBatchResource extends AbstractODataResource {
                             boundary,
                             navigationPropertyBulkContexts);
                 } else {
-                    // 前のブロックで503エラーが発生している場合
+                    //When a 503 error has occurred in the previous block
                     createTooManyConcurrentResponse(navigationPropertyBulkContexts);
                 }
             } else {
@@ -1032,7 +1032,7 @@ public class ODataBatchResource extends AbstractODataResource {
                     if (!shutter.isShuttered()) {
                         execBulk(responseBody, uriInfo, boundary);
                     } else {
-                        // 前のブロックで503エラーが発生している場合
+                        //When a 503 error has occurred in the previous block
                         createTooManyConcurrentResponse(responseBody, boundary);
                         bulkRequests.clear();
                     }
@@ -1041,7 +1041,7 @@ public class ODataBatchResource extends AbstractODataResource {
                         BatchResponse res = new BatchResponse();
                         Exception exception = PersoniumCoreException.Misc.SERVER_REQUEST_TIMEOUT;
                         res.setErrorResponse(exception);
-                        // レスポンスボディ作成
+                        //Response body creation
                         responseBody.append(getChangesetResponseBody(boundary, request.getValue().getBodyPart(), res));
                     }
                     bulkRequests.clear();
@@ -1051,22 +1051,22 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * bulkリクエストの実行処理.
-     * @param responseBody 結果格納用
+     * bulk Request execution processing.
+     * @param responseBody For storing results
      * @param uriInfo uriInfo
      * @param boundary boundary
      */
     private void execBulk(StringBuilder responseBody, UriInfo uriInfo, String boundary) {
         EntityResponse entityRes = null;
 
-        // データ登録を実行する
+        //Execute data registration
         String cellId = this.odataResource.accessContext.getCell().getId();
         List<EntityResponse> resultList = null;
         try {
             resultList = this.odataResource.getODataProducer().bulkCreateEntity(
                     this.odataResource.metadata, bulkRequests, cellId);
         } catch (PersoniumCoreException e) {
-            // 503が発生した後の処理を継続させるため、shutterにステータスを設定。
+            //To keep processing after 503 occurred, set the status to shutter.
             shutter.updateStatus(e);
             if (shutter.isShuttered()) {
                 createTooManyConcurrentResponse(responseBody, boundary);
@@ -1077,7 +1077,7 @@ public class ODataBatchResource extends AbstractODataResource {
             }
         }
 
-        // レスポンスを生成する
+        //Generate a response
         int index = 0;
         for (Entry<String, BulkRequest> request : bulkRequests.entrySet()) {
             BatchResponse res = new BatchResponse();
@@ -1085,14 +1085,14 @@ public class ODataBatchResource extends AbstractODataResource {
             if (exception != null) {
                 res.setErrorResponse(exception);
             } else {
-                // レスポンス作成
+                //Response creation
                 entityRes = resultList.get(index);
                 OEntity oEntity = entityRes.getEntity();
 
-                // ステータスコード
+                //Status code
                 res.setResponseCode(HttpStatus.SC_CREATED);
 
-                // ヘッダ情報
+                //Header information
                 String key = oEntity.getEntityKey().toKeyString();
                 res.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
                 res.setHeader(HttpHeaders.LOCATION, request.getValue().getBodyPart().getUri() + key);
@@ -1102,7 +1102,7 @@ public class ODataBatchResource extends AbstractODataResource {
                     res.setHeader(HttpHeaders.ETAG, "W/\"" + etag + "\"");
                 }
 
-                // ボディ情報
+                //Body information
                 UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
                 String format = AbstractODataResource.FORMAT_JSON;
                 List<MediaType> contentTypes = new ArrayList<MediaType>();
@@ -1111,14 +1111,14 @@ public class ODataBatchResource extends AbstractODataResource {
                 res.setBody(responseStr);
                 index++;
             }
-            // レスポンスボディ作成
+            //Response body creation
             responseBody.append(getChangesetResponseBody(boundary, request.getValue().getBodyPart(), res));
         }
         bulkRequests.clear();
     }
 
     /**
-     * POSTリクエスト用のToo Many Concurrentエラー レスポンスを作成する.
+     * Create a Too Many Concurrent error response for POST request.
      * @param responseBody
      * @param boundary
      */
@@ -1126,13 +1126,13 @@ public class ODataBatchResource extends AbstractODataResource {
         for (Entry<String, BulkRequest> request : bulkRequests.entrySet()) {
             BatchResponse res = new BatchResponse();
             res.setErrorResponse(PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS);
-            // レスポンスボディ作成
+            //Response body creation
             responseBody.append(getChangesetResponseBody(boundary, request.getValue().getBodyPart(), res));
         }
     }
 
     /**
-     * NP経由のPOSTリクエスト用のToo Many Concurrentエラー レスポンスを作成する.
+     * Create a Too Many Concurrent error response for POST request via NP.
      * @param responseBody
      * @param boundary
      */
@@ -1143,41 +1143,41 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * バッチリクエストの一覧取得処理.
+     * Batch request list acquisition processing.
      * @param uriInfo uriInfo
      * @param bodyPart BatchBodyPart
-     * @return レスポンス
+     * @return response
      */
     private BatchResponse list(UriInfo uriInfo, BatchBodyPart bodyPart) {
         BatchResponse res = new BatchResponse();
         EntitiesResponse entitiesResp = null;
         try {
-            // アクセス制御
+            //Access control
             checkReadAccessContext(bodyPart);
-            // NavigationProperty経由の一覧取得は 501
+            //List acquisition via NavigationProperty is 501
             if (bodyPart.hasNavigationProperty()) {
                 throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
             }
             ODataEntitiesResource entitiesResource = new ODataEntitiesResource(this.odataResource,
                     bodyPart.getEntitySetName());
 
-            // Entityの一覧取得
+            //Get Entity list
             String query = bodyPart.getRequestQuery();
             QueryInfo queryInfo = QueryParser.createQueryInfo(query);
             entitiesResp = entitiesResource.getEntities(queryInfo);
 
-            // レスポンス作成
+            //Response creation
             res.setResponseCode(HttpStatus.SC_OK);
-            // TODO 現状は、ContentTypeはJSON固定
+            //TODO Current status, ContentType is JSON fixed
             res.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
             res.setHeader(ODataConstants.Headers.DATA_SERVICE_VERSION, "2.0");
-            // レスポンスボディ
+            //Response body
             UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
             StringWriter sw = new StringWriter();
-            // TODO 制限事項でAcceptは無視してJSONで返却するため固定でJSONを指定する.
+            //It ignores Accept with TODO restrictions and returns it with JSON, so it specifies JSON as fixed.
             List<MediaType> acceptableMediaTypes = new ArrayList<MediaType>();
             acceptableMediaTypes.add(MediaType.APPLICATION_JSON_TYPE);
-            // TODO 制限事項でQueryは無視するため固定でnullを指定する.
+            //Since TODO restrictions ignore Query, it is fixed and null is specified.
             FormatWriter<EntitiesResponse> fw = PersoniumFormatWriterFactory.getFormatWriter(EntitiesResponse.class,
                     acceptableMediaTypes, null, null);
             UriInfo uriInfo2 = UriUtils.createUriInfo(resUriInfo, 1);
@@ -1195,33 +1195,33 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * バッチリクエストの一件取得処理.
+     * Process of obtaining one case of batch request.
      * @param uriInfo uriInfo
      * @param bodyPart BatchBodyPart
-     * @return レスポンス
+     * @return response
      */
     private BatchResponse retrieve(UriInfo uriInfo, BatchBodyPart bodyPart) {
         BatchResponse res = new BatchResponse();
         EntityResponse entityResp = null;
         try {
-            // アクセス制御
+            //Access control
             checkReadAccessContext(bodyPart);
 
             ODataEntityResource entityResource = new ODataEntityResource(this.odataResource,
                     bodyPart.getEntitySetName(), bodyPart.getEntityKey());
 
-            // Entityの一件取得
-            // TODO クエリ対応
+            //Entity get one case
+            //TODO query supported
             entityResp = entityResource.getEntity(null, null, null);
 
-            // レスポンス作成
+            //Response creation
             res.setResponseCode(HttpStatus.SC_OK);
-            // TODO 現状は、ContentTypeはJSON固定
+            //TODO Current status, ContentType is JSON fixed
             res.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
             res.setHeader(ODataConstants.Headers.DATA_SERVICE_VERSION, "2.0");
-            // レスポンスボディ
+            //Response body
             UriInfo resUriInfo = UriUtils.createUriInfo(uriInfo, 1);
-            // TODO 現状は、ContentTypeはJSON固定
+            //TODO Current status, ContentType is JSON fixed
             String format = AbstractODataResource.FORMAT_JSON;
             List<MediaType> contentTypes = new ArrayList<MediaType>();
             contentTypes.add(MediaType.APPLICATION_JSON_TYPE);
@@ -1236,26 +1236,26 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * バッチリクエストの更新処理.
+     * Update processing of batch request.
      * @param bodyPart BatchBodyPart
      */
     private BatchResponse update(BatchBodyPart bodyPart) {
         BatchResponse res = new BatchResponse();
         try {
-            // アクセス制御
+            //Access control
             checkWriteAccessContext(bodyPart);
 
             ODataEntityResource entityResource = new ODataEntityResource(this.odataResource,
                     bodyPart.getEntitySetName(), bodyPart.getEntityKey());
 
-            // Entityの更新
+            //Entity update
             Reader reader = new StringReader(bodyPart.getEntity());
             String ifMatch = bodyPart.getHttpHeaders().get(HttpHeaders.IF_MATCH);
             OEntityWrapper oew = entityResource.updateEntity(reader, ifMatch);
 
-            // レスポンス作成
-            // 特に例外があがらなければ、レスポンスを返す。
-            // oewに新たに登録されたETagを返す
+            //Response creation
+            //If there are no exceptions, return a response.
+            //Return ETag newly registered in oew
             String etag = oew.getEtag();
             res.setResponseCode(HttpStatus.SC_NO_CONTENT);
             res.setHeader(ODataConstants.Headers.DATA_SERVICE_VERSION, "2.0");
@@ -1269,24 +1269,24 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * バッチリクエストの削除処理.
+     * Batch request deletion processing.
      * @param bodyPart BatchBodyPart
      * @return BatchResponse
      */
     private BatchResponse delete(BatchBodyPart bodyPart) {
         BatchResponse res = new BatchResponse();
         try {
-            // アクセス制御
+            //Access control
             checkWriteAccessContext(bodyPart);
 
             ODataEntityResource entityResource = new ODataEntityResource(this.odataResource,
                     bodyPart.getEntitySetName(), bodyPart.getEntityKey());
 
-            // Entityの削除
+            //Delete Entity
             String ifMatch = bodyPart.getHttpHeaders().get(HttpHeaders.IF_MATCH);
             entityResource.deleteEntity(ifMatch);
 
-            // レスポンス作成
+            //Response creation
             res.setResponseCode(HttpStatus.SC_NO_CONTENT);
             res.setHeader(ODataConstants.Headers.DATA_SERVICE_VERSION, "2.0");
         } catch (Exception e) {
@@ -1298,7 +1298,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * バッチリクエストの$links登録処理.
+     * $ Link registration process of batch request.
      * @param uriInfo uriInfo
      * @param bodyPart BatchBodyPart
      * @return BatchResponse
@@ -1306,16 +1306,16 @@ public class ODataBatchResource extends AbstractODataResource {
     private BatchResponse createLinks(UriInfo uriInfo, BatchBodyPart bodyPart) {
         BatchResponse res = new BatchResponse();
         try {
-            // 存在しないエンティティセットを指定されたときは即刻エラー
+            //If an entity set that does not exist is specified, an immediate error
             EdmEntitySet eSet = this.odataResource.metadata.findEdmEntitySet(bodyPart.getEntitySetName());
             if (eSet == null) {
                 throw PersoniumCoreException.OData.NO_SUCH_ENTITY_SET;
             }
 
-            // アクセス制御
+            //Access control
             checkWriteAccessContext(bodyPart);
 
-            // $links の POSTでNav Propのキー指定があってはいけない。
+            //Do not specify Nav Prop key in POST of $ links.
             if (bodyPart.getTargetEntityKey().length() > 0) {
                 throw PersoniumCoreException.OData.KEY_FOR_NAVPROP_SHOULD_NOT_BE_SPECIFIED;
             }
@@ -1329,7 +1329,7 @@ public class ODataBatchResource extends AbstractODataResource {
 
             this.odataResource.getODataProducer().createLink(sourceEntityId, bodyPart.getTargetEntitySetName(),
                     targetEntityId);
-            // レスポンス作成
+            //Response creation
             res.setResponseCode(HttpStatus.SC_NO_CONTENT);
             res.setHeader(ODataConstants.Headers.DATA_SERVICE_VERSION, ODataVersion.V2.asString);
 
@@ -1342,33 +1342,33 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * $batchリクエストに対して行うアクセス制御.
-     * @param ac アクセスコンテキスト
+     * $ batch Access control done on request.
+     * @param ac access context
      */
     private void checkAccessContext(AccessContext ac) {
-        // スキーマ認証
+        //Schema authentication
         this.odataResource.checkSchemaAuth(this.odataResource.getAccessContext());
 
-        // ユニットユーザトークンチェック
+        //Unit user token check
         if (ac.isUnitUserToken()) {
             return;
         }
 
-        // Basic認証できるかチェック
+        //Check if basic authentication is possible
         this.odataResource.setBasicAuthenticateEnableInBatchRequest(ac);
 
-        // principalがALL以外の場合は、認証処理を行う
-        // なお、アクセス制御は$batchリクエスト内の各MIMEパートにて行っている
+        //If principal is other than ALL, authentication processing is performed
+        //Note that access control is performed in each MIME part in the $ batch request
         if (!this.odataResource.hasPrivilegeForBatch(ac)) {
-            // トークンの有効性チェック
-            // トークンがINVALIDでもACL設定でPrivilegeがallに設定されているとアクセスを許可する必要があるのでこのタイミングでチェック
+            //Check the validity of the token
+            //Even if the token is INVALID, if the ACL setting and Privilege is set to all, it is necessary to permit access, so check at this timing
             if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
                 ac.throwInvalidTokenException(this.odataResource.getAcceptableAuthScheme());
             } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
                 throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(ac.getRealm(),
                         this.odataResource.getAcceptableAuthScheme());
             }
-            // $batchとして許可しないprivilegeが指定された場合はここに到達するため403エラーとする
+            //If privilege not permitted as $ batch is specified, it is 403 because it reaches here
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
     }
@@ -1385,19 +1385,19 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         if (!this.odataResource.hasPrivilege(ac, privilege)) {
-            // $batchのリクエストに対し、すでに認証処理は実施済みのため、ここでは認可の判定のみ行う
+            //Authentication processing has already been executed for the $ batch request, so we only decide authorization here
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
 
     }
 
     /**
-     * $batch用writeアクセス制御.
+     * Write access control for $ batch.
      * @param bodyPart bodyPart
      */
     private void checkWriteAccessContext(BatchBodyPart bodyPart) {
 
-        // TODO EntitySet毎にPrivilegeの管理が必要
+        //Privilege management is required for every TODO EntitySet
 
         Privilege priv = this.odataResource.getNecessaryWritePrivilege(bodyPart.getEntitySetName());
 
@@ -1416,12 +1416,12 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * $batch用readアクセス制御.
+     * Read access control for $ batch.
      * @param bodyPart bodyPart
      */
     private void checkReadAccessContext(BatchBodyPart bodyPart) {
 
-        // TODO EntitySet毎にPrivilegeの管理が必要
+        //Privilege management is required for every TODO EntitySet
 
         Privilege priv = this.odataResource.getNecessaryReadPrivilege(bodyPart.getEntitySetName());
 
@@ -1440,20 +1440,20 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * リクエストパスのNavigationProperty指定値が正しい形式かどうかをチェックする.
+     * Check whether the NavigationProperty specification value of the request path is in the correct format.
      * @param bodyPart bodyPart
-     * @return 指定が正しい場合はtrueを、それ以外はfalseを返す
+     * Returns true if the @return specification is correct, false otherwise
      */
     private boolean isValidNavigationProperty(BatchBodyPart bodyPart) {
         if (bodyPart.hasNavigationProperty()
-                && bodyPart.getTargetNavigationProperty().indexOf("(") >= 0) { // キーありはNG
+                && bodyPart.getTargetNavigationProperty().indexOf("(") >= 0) { //With key is NG
             return false;
         }
         return true;
     }
 
     /**
-     * Batchアクセス情報を管理するクラス.
+     * Batch Class for managing access information.
      */
     static class BatchAccess {
         private PersoniumCoreException exception = null;
@@ -1471,7 +1471,7 @@ public class ODataBatchResource extends AbstractODataResource {
     }
 
     /**
-     * Batchリクエストのレスポンス情報クラス.
+     * Response information class of Batch request.
      */
     static class BatchResponse {
 
@@ -1480,32 +1480,32 @@ public class ODataBatchResource extends AbstractODataResource {
         private String body = null;
 
         /**
-         * BatchResponseのレスポンスコードを返却する.
-         * @return BatchResponseのレスポンスコード
+         * Return the response code of BatchResponse.
+         * @return Response code of BatchResponse
          */
         public int getResponseCode() {
             return responseCode;
         }
 
         /**
-         * BatchResponseのレスポンスコードを設定する.
-         * @param responseCode BatchResponseのレスポンスコード
+         * Set the response code of BatchResponse.
+         * @param responseCode Response code of BatchResponse
          */
         public void setResponseCode(int responseCode) {
             this.responseCode = responseCode;
         }
 
         /**
-         * BatchResponseのヘッダを返却する.
-         * @return BatchResponseのヘッダ
+         * Return the header of BatchResponse.
+         * @return BatchResponse header
          */
         public Map<String, String> getHeaders() {
             return headers;
         }
 
         /**
-         * レスポンスコードの説明を取得する.
-         * @return レスポンスコードの説明（例：OK, No Content）
+         * Get description of response code.
+         * @return Description of the response code (eg OK, No Content)
          */
         public String getResponseMessage() {
             String message = null;
@@ -1532,47 +1532,47 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         * BatchResponseのヘッダを設定する.
-         * @param key BatchResponseのヘッダのキー
-         * @param value BatchResponseのヘッダの値
+         * Set the header of BatchResponse.
+         * @param key Batch Response header key
+         * @param value The value of the header of BatchResponse
          */
         public void setHeader(String key, String value) {
             this.headers.put(key, value);
         }
 
         /**
-         * BatchResponseのボディを返却する.
-         * @return BatchResponseのボディ
+         * Return the body of BatchResponse.
+         * @return Body of BatchResponse
          */
         public String getBody() {
             return body;
         }
 
         /**
-         * BatchResponseのボディを設定する.
-         * @param body BatchResponseのボディ
+         * Set the body of BatchResponse.
+         * @param body Body of the BatchResponse
          */
         public void setBody(String body) {
             this.body = body;
         }
 
         /**
-         * エラー情報を設定.
+         * Set error information.
          * @param res BatchResponse
          * @param e PersoniumCoreException
          */
         void setErrorResponse(Exception e) {
-            // ログ出力
+            //Log output
             PersoniumCoreExceptionMapper mapper = new PersoniumCoreExceptionMapper();
             mapper.toResponse(e);
 
             if (e instanceof PersoniumCoreException) {
-                // レスポンス作成
+                //Response creation
                 setHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
                 setResponseCode(((PersoniumCoreException) e).getStatus());
                 setBody(createJsonBody((PersoniumCoreException) e));
             } else {
-                // レスポンス作成
+                //Response creation
                 setHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
                 setResponseCode(PersoniumCoreException.Server.UNKNOWN_ERROR.getStatus());
                 setBody(createJsonBody(PersoniumCoreException.Server.UNKNOWN_ERROR));
@@ -1580,9 +1580,9 @@ public class ODataBatchResource extends AbstractODataResource {
         }
 
         /**
-         * Json形式のエラーメッセージを作成する.
+         * Create an error message in Json format.
          * @param exception PersoniumCoreException
-         * @return レスポンスボディ用Json形式エラーメッセージ
+         * @return Json format error message for response body
          */
         private String createJsonBody(PersoniumCoreException exception) {
             String code = exception.getCode();

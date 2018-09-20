@@ -46,7 +46,7 @@ import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.utils.UriUtils;
 
 /**
- * ユニット制御のODataサービスむけODataProvider.
+ * ODataProvider for unit control OData service.
  */
 public class UnitCtlODataProducer extends EsODataProducer {
 
@@ -55,13 +55,13 @@ public class UnitCtlODataProducer extends EsODataProducer {
 
     /**
      * Constructor.
-     * @param ac アクセスコンテキスト
+     * @param ac access context
      */
     public UnitCtlODataProducer(AccessContext ac) {
         this.accesscontext = ac;
     }
 
-    // スキーマ情報
+    //Schema information
     private static EdmDataServices.Builder edmDataServices = CtlSchema.getEdmDataServicesForUnitCtl();
 
     /**
@@ -97,10 +97,10 @@ public class UnitCtlODataProducer extends EsODataProducer {
         ModelFactory.cellCmp(cell);
     }
     /**
-     * 実装サブクラスProducer更新処理を行いたいときは、ここをoverrideして子データの存在チェックし、結果を返すよう実装する。
-     * @param entitySetName エンティティセット名
-     * @param oEntityKey 更新対象のエンティティキー
-     * @param docHandler 更新対象のエンティティドックハンドラ
+     * Implementation subclass If you want to perform Producer update processing, implement override this to check existence of child data and return result.
+     * @param entitySetName Entity set name
+     * @param o EntityKey Entity key to be updated
+     * @param docHandler Entity dock handler to be updated
      */
     @Override
     public void beforeUpdate(final String entitySetName,
@@ -110,10 +110,10 @@ public class UnitCtlODataProducer extends EsODataProducer {
     }
 
     /**
-     * 実装サブクラスProducerが削除処理を行いたいときは、ここをoverrideして子データの存在チェックし、結果を返すよう実装する。
-     * @param entitySetName エンティティセット名
-     * @param oEntityKey 削除対象のエンティティキー
-     * @param docHandler 削除対象ドキュメント
+     * Implementation subclass If Producer wishes to perform deletion processing, it overrides here, checks the existence of child data, and implements it so as to return the result.
+     * @param entitySetName Entity set name
+     * @param o EntityKey Entity key to delete
+     * @param docHandler Document to be deleted
      */
     @Override
     public void beforeDelete(final String entitySetName, final OEntityKey oEntityKey,
@@ -123,7 +123,7 @@ public class UnitCtlODataProducer extends EsODataProducer {
 
     @Override
     public DataSourceAccessor getAccessorForIndex(final String entitySetName) {
-        return null; // 必要時に実装すること
+        return null; //Implementation when necessary
     }
 
     @Override
@@ -152,9 +152,9 @@ public class UnitCtlODataProducer extends EsODataProducer {
     }
 
     /**
-     * DocHandlerを取得する.
-     * @param searchHit 検索結果
-     * @param entitySetName エンティティセット名
+     * Get DocHandler.
+     * @param searchHit Search result
+     * @param entitySetName Entity set name
      * @return OEntityDocHandler
      */
     @Override
@@ -163,8 +163,8 @@ public class UnitCtlODataProducer extends EsODataProducer {
     }
 
     /**
-     * DocHandlerを取得する.
-     * @param type elasticsearchのType
+     * Get DocHandler.
+     * Type of @param type elasticsearch
      * @param oEntity OEntityWrapper
      * @return OEntityDocHandler
      */
@@ -174,9 +174,9 @@ public class UnitCtlODataProducer extends EsODataProducer {
     }
 
     /**
-     * DocHandlerを取得する.
+     * Get DocHandler.
      * @param response GetResponse
-     * @param entitySetName エンティティセット名
+     * @param entitySetName Entity set name
      * @return OEntityDocHandler
      */
     @Override
@@ -185,19 +185,19 @@ public class UnitCtlODataProducer extends EsODataProducer {
     }
 
     /**
-     * 不正なLink情報のチェックを行う.
-     * @param sourceEntity ソース側Entity
-     * @param targetEntity ターゲット側Entity
+     * Check unauthorized Link information.
+     * @param sourceEntity source side Entity
+     * @param targetEntity Target side Entity
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceEntity, EntitySetDocHandler targetEntity) {
     }
 
     /**
-     * 不正なLink情報のチェックを行う.
-     * @param sourceDocHandler ソース側Entity
-     * @param entity ターゲット側Entity
-     * @param targetEntitySetName ターゲットのEntitySet名
+     * Check unauthorized Link information.
+     * @param sourceDocHandler Source side Entity
+     * @param entity Target side Entity
+     * @param targetEntitySetName EntitySet name of the target
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceDocHandler, OEntity entity, String targetEntitySetName) {

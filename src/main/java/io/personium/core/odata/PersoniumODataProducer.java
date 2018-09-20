@@ -52,43 +52,43 @@ import io.personium.core.rs.odata.BulkRequest;
 import io.personium.core.rs.odata.ODataBatchResource.NavigationPropertyBulkContext;
 
 /**
- * ETag・主キー変更に対応させたODataProducer.
+ * ETag · ODataProducer corresponding to change of primary key.
  */
 public interface PersoniumODataProducer extends ODataProducer {
     /**
-     * ETag・主キー変更対応のEntity更新.
+     * ETag · Entity update corresponding to primary key change.
      * @param entitySetName entitySetName
-     * @param originalKey 更新対象キー
-     * @param oEntityWrapper データ（更新後キーも含む）
+     * @param originalKey Key to be updated
+     * @param o EntityWrapper data (including updated key)
      */
     void updateEntity(String entitySetName, OEntityKey originalKey, OEntityWrapper oEntityWrapper);
 
     /**
-     * Accountのパスワード変更.
+     * Account password change.
      * @param entitySetName entitySetName
-     * @param originalKey 更新対象キー
+     * @param originalKey Key to be updated
      * @param pCredHeader dcCredHeader
      */
     void updatePassword(EdmEntitySet entitySetName, OEntityKey originalKey, String pCredHeader);
 
     /**
-     * Accountの最終ログイン時刻変更.
+     * Change last login time of Account.
      * @param entitySetName entitySetName
-     * @param originalKey 更新対象キー
-     * @param accountId アカウントのID
+     * @param originalKey Key to be updated
+     * @param accountId Account ID
      */
     void updateLastAuthenticated(EdmEntitySet entitySetName, OEntityKey originalKey, String accountId);
 
     /**
-     * ETag・主キー変更対応のEntity MERGE.
+     * ETag · Entity MERGE for primary key change.
      * @param entitySetName entitySetName
-     * @param originalKey 更新対象キー
-     * @param oEntityWrapper データ（更新後キーも含む）
+     * @param originalKey Key to be updated
+     * @param o EntityWrapper data (including updated key)
      */
     void mergeEntity(String entitySetName, OEntityKey originalKey, OEntityWrapper oEntityWrapper);
 
     /**
-     * ETag対応のEntity削除.
+     * Entity deletion corresponding to ETag.
      * @param entitySetName entitySetName
      * @param entityKey entityKey
      * @param etag etag
@@ -96,31 +96,31 @@ public interface PersoniumODataProducer extends ODataProducer {
     void deleteEntity(String entitySetName, OEntityKey entityKey, String etag);
 
     /**
-     * EntitySet名とOEntityからEntitySetDocHandlerを生成して取得する.
-     * @param entitySetName EntitySet名
+     * EntitySetDocHandler is generated from EntitySet name and OEntity and acquired.
+     * @param entitySetName EntitySet name
      * @param entity OEntity
      * @return EntitySetDocHandler
      */
     EntitySetDocHandler getEntitySetDocHandler(String entitySetName, OEntity entity);
 
     /**
-     * 更新系の処理ハンドラ.
-     * @param entitySetName エンティティセット名
+     * Update processing handler.
+     * @param entitySetName Entity set name
      */
     void onChange(String entitySetName);
 
     /**
-     * バルク登録を実行する.
-     * @param metadata スキーマ情報
-     * @param bulkRequests 登録するEntitySetDocHandlerのリスト
-     * @param cellId セルID
+     * Perform bulk registration.
+     * @param metadata schema information
+     * @param bulkRequests List of EntitySetDocHandler to register
+     * @param cellId Cell ID
      * @return EntitiesResponse
      */
     List<EntityResponse> bulkCreateEntity(EdmDataServices metadata,
             LinkedHashMap<String, BulkRequest> bulkRequests, String cellId);
 
     /**
-     * NP経由でエンティティを登録後リンクを登録する.
+     * Register the link after registering the entity via NP.
      * @param sourceEntity sourceEntity
      * @param targetNavProp targetNavProp
      * @param oew oew
@@ -131,17 +131,17 @@ public interface PersoniumODataProducer extends ODataProducer {
             OEntity oew, String entity);
 
     /**
-     * NavigationProperty経由でエンティティを一括登録する.
-     * @param npBulkContexts 一括登録のコンテキスト
-     * @param npBulkRequests エンティティ一括登録用のリクエスト情報（bulkCreateEntity用）
+     * Register entities collectively via NavigationProperty.
+     * @param npBulkContexts Context of bulk registration
+     * @param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
      */
     void bulkCreateEntityViaNavigationProperty(List<NavigationPropertyBulkContext> npBulkContexts,
             LinkedHashMap<String, BulkRequest> npBulkRequests);
 
     /**
-     * NavigationProperty経由でエンティティを一括登録する際のリンク数の上限値チェックを行う.
-     * @param npBulkContexts 一括登録のコンテキスト
-     * @param npBulkRequests エンティティ一括登録用のリクエスト情報（bulkCreateEntity用）
+     * Check the upper limit of the number of links when registering entities collectively via NavigationProperty.
+     * @param npBulkContexts Context of bulk registration
+     * @param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
      */
     void checkLinksUpperLimitRecord(List<NavigationPropertyBulkContext> npBulkContexts,
             LinkedHashMap<String, BulkRequest> npBulkRequests);

@@ -23,26 +23,26 @@ import org.odata4j.expression.EntitySimpleProperty;
 import org.odata4j.producer.QueryInfo;
 
 /**
- * ODataのクエリハンドラー.
+ * OData's query handler.
  */
 public interface ODataQueryHandler {
 
     /**
-     * 初期化.
-     * @param queryInfo OData4jのQueryInfo.
-     * @param implicitConds 暗黙検索条件.
+     * Initialization.
+     * @param queryInfo QueryInfo of OData 4 j.
+     * @param implicitConds Implicit search condition.
      */
     void initialize(QueryInfo queryInfo, List<Map<String, Object>> implicitConds);
 
     /**
-     * 検索クエリを取得する.
-     * @return 検索クエリ
+     * Get search query.
+     * @return search query
      */
     Map<String, Object> getSource();
 
     /**
-     * $selectの値からES検索用のクエリを組立てる.
-     * @param baseSource 入力値を格納したMap
+     * Assemble a query for ES search from the value of $ select.
+     * @param baseSource Map containing input values
      * @param selects $select
      */
     void getSelectQuery(Map<String, Object> baseSource,

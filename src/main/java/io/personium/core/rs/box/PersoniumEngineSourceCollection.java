@@ -37,7 +37,7 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- * PersoniumEngineSourceCollectionResourceを担当するJAX-RSリソース.
+ * JAX-RS resource responsible for PersoniumEngineSourceCollectionResource.
  */
 public class PersoniumEngineSourceCollection {
 
@@ -45,18 +45,18 @@ public class PersoniumEngineSourceCollection {
 
     /**
      * constructor.
-     * @param parent 親リソース
-     * @param davCmp バックエンド実装に依存する処理を受け持つ部品
+     * @param parent parent resource
+     * @param davCmp Parts responsible for processing dependent on backend implementation
      */
     PersoniumEngineSourceCollection(final DavRsCmp parent, final DavCmp davCmp) {
         this.davRsCmp = new DavRsCmp(parent, davCmp);
     }
 
     /**
-     * 現在のリソースの一つ下位パスを担当するJax-RSリソースを返す.
-     * @param nextPath 一つ下のパス名
-     * @param request リクエスト
-     * @return 下位パスを担当するJax-RSリソースオブジェクト
+     * Returns a Jax-RS resource that is responsible for one lower-level path of the current resource.
+     * @param nextPath path name one down
+     * @param request request
+     * @return Jax-RS resource object responsible for subordinate path
      */
     @Path("{nextPath}")
     public Object nextPath(@PathParam("nextPath") final String nextPath,
@@ -70,7 +70,7 @@ public class PersoniumEngineSourceCollection {
             return new PersoniumEngineSourceFileResource(this.davRsCmp, nextCmp);
         }
 
-        // TODO Collectionタイプが不正な値の場合は5XX系で返却する
+        //If the TODO Collection type is incorrect value, return it with 5XX type
         return null;
     }
 
@@ -93,24 +93,24 @@ public class PersoniumEngineSourceCollection {
     }
 
     /**
-     * MOVEの処理. <br />
-     * __srcのMOVEは行えないため、一律400エラーとしている。
+     * MOVE processing. <br />
+     * Because __src MOVE can not be performed, it is set as uniform 400 errors.
      */
     @WebDAVMethod.MOVE
     public void move() {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(
                 this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
         throw PersoniumCoreException.Dav.SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_MOVE;
     }
 
     /**
-     * OPTIONSメソッドの処理.
-     * @return JAX-RS応答オブジェクト
+     * Processing of OPTIONS method.
+     * @return JAX-RS response object
      */
     @OPTIONS
     public Response options() {
-        // 移動元に対するアクセス制御
+        //Access control to move source
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
         return ResourceUtils.responseBuilderForOptions(
                 io.personium.common.utils.PersoniumCoreUtils.HttpMethod.PROPFIND

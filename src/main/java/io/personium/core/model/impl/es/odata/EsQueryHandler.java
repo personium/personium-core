@@ -98,13 +98,13 @@ import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 
 /**
- * ODataの$filterをはじめとするクエリをESのJSONベースQueryDSLに変換する.
- * $filterはOata4JではBoolCommonExpressionに変換される。
- * OData4JではExpressionの評価にはVisitorパターンを採用しており、
- * 本クラスはここでVisitorとして振る舞うべくExpressionVisitorを実装している。
- * ひと通りVisitを終えたのち、本オブジェクトにgetSource()すると、
- * ESのSearchRequestに渡すべきJSONが取得できる。
- * Personium.ioでサポートしていないクエリに関しては、例外をスローする。
+ * Converts the query including $ filter of OData to JSON based QueryDSL of ES.
+ * $ filter is converted to BoolCommonExpression in Oata4J.
+ * OData 4J adopts Visitor pattern for evaluation of Expression,
+ * This class implements ExpressionVisitor to act as Visitor here.
+ * After getting Visit, if you getSource () this object,
+ * You can get the JSON that should be passed to the SearchRequest of the ES.
+ * For queries not supported by Personium.io, throw an exception.
  */
 public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     private static final int DEFAULT_TOP_VALUE = PersoniumUnitConfig.getTopQueryDefaultSize();
@@ -114,21 +114,21 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     Stack<Map<String, Object>> stack = new Stack<Map<String, Object>>();
     Map<String, Object> orderBy;
     /**
-     * SORT_ASC 昇順.
+     * SORT_ASC Ascending order.
      */
     public static final String SORT_ASC = "asc";
     /**
-     * SORT_DESC 降順.
+     * SORT_DESC Descending order.
      */
     public static final String SORT_DESC = "desc";
 
     /**
-     * ログ.
+     * log.
      */
     static Logger log = LoggerFactory.getLogger(EsQueryHandler.class);
 
     /**
-     * コンストラクタ.
+     * constructor.
      */
     public EsQueryHandler() {
         this.source = new HashMap<String, Object>();
@@ -138,10 +138,10 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * コンストラクタ2.
-     * $filter, $skip, $top, $orderby, $select を処理する。
-     * $expand は対応していない。
-     * @param entityType エンティティタイプ
+     * Constructor 2.
+     * Processes $ filter, $ skip, $ top, $ orderby, $ select.
+     * $ expand is not supported.
+     * @param entityType entity type
      */
     public EsQueryHandler(EdmEntityType entityType) {
         this.source = new HashMap<String, Object>();
@@ -149,9 +149,9 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * 初期化.
-     * @param queryInfo OData4jのQueryInfo.
-     * @param implicitConds 暗黙検索条件.
+     * Initialization.
+     * @param queryInfo QueryInfo of OData 4 j.
+     * @param implicitConds Implicit search condition.
      */
     public void initialize(QueryInfo queryInfo, List<Map<String, Object>> implicitConds) {
         List<Map<String, Object>> filters = new ArrayList<Map<String, Object>>();
@@ -166,7 +166,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
             if (queryInfo.customOptions != null && !queryInfo.customOptions.isEmpty()) {
                 String keywords = queryInfo.customOptions.get("q");
                 if (keywords != null && !keywords.equals("")) {
-                    // 半角空白が指定された場合は、AND検索とする
+                    //When single-byte space is specified, it is set to AND search
                     for (String keyword : keywords.split(" ")) {
                         if (keyword.isEmpty()) {
                             continue;
@@ -199,18 +199,18 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
         }
         this.source.put("filter", filter);
 
-        // 暗黙条件の設定があるとき
+        //When there is setting of implicit condition
         if (implicitConds != null && implicitConds.size() != 0) {
             Map<String, Object> query = QueryMapFactory.filteredQuery(null, QueryMapFactory.mustQuery(implicitConds));
             this.source.put("query", query);
         }
 
-        // _versionを返却する
+        //Return _version
         this.source.put("version", true);
     }
 
     /**
-     * @param top $topの値
+     * @param top $ top value
      */
     public void setTop(Integer top) {
         if (top != null) {
@@ -221,7 +221,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * @param skip $skipの値
+     * @param skip The value of $ skip
      */
     public void setSkip(Integer skip) {
         if (skip != null) {
@@ -230,7 +230,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * @param orderBy $orderByの値
+     * @param orderBy value of $ orderBy
      */
     public void setOrderBy(List<OrderByExpression> orderBy) {
         if (orderBy != null) {
@@ -248,21 +248,21 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * @param selects $selectの値
+     * @param selects $ select value
      */
     public void setSelect(List<EntitySimpleProperty> selects) {
         getSelectQuery(this.source, selects);
     }
 
     /**
-     * $selectの値からES検索用のクエリを組立てる.
-     * @param baseSource 入力値を格納したMap
+     * Assemble a query for ES search from the value of $ select.
+     * @param baseSource Map containing input values
      * @param selects $select
      */
     public void getSelectQuery(Map<String, Object> baseSource,
             List<EntitySimpleProperty> selects) {
         if (selects != null && selects.size() > 0) {
-            // fieldsクエリの組立
+            //Assembling the fields query
             List<String> fields = new ArrayList<String>();
             fields.add(OEntityDocHandler.KEY_STATIC_FIELDS + "."
                     + Common.P_ID.getName());
@@ -276,7 +276,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
             for (EntitySimpleProperty select : selects) {
                 if (select == null) {
-                    // $selectで指定された値がプロパティ名でなかった場合
+                    //When the value specified by $ select is not a property name
                     throw PersoniumCoreException.OData.SELECT_PARSE_ERROR;
                 }
                 String prop = select.getPropertyName();
@@ -289,16 +289,16 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
                 }
             }
 
-            // selectのfield指定方法がEs0.19とEs1.X系とで異なる
-            // この部分の差異をHelperが対応する
+            //Select field designation method differs between Es0.19 and Es1.X systems
+            //The difference of this part corresponds to Helper
             EsQueryHandlerHelper.composeSourceFilter(baseSource, fields);
         }
     }
 
     /**
-     * フィールド名を取得する.
-     * @param prop プロパティ名
-     * @return フィールド名
+     * Get the field name.
+     * @param prop Property name
+     * @return field name
      */
     protected String getFieldName(String prop) {
         String fieldName = OEntityDocHandler.KEY_STATIC_FIELDS + "." + prop;
@@ -306,8 +306,8 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * 検索クエリを取得する.
-     * @return 検索クエリ.
+     * Get search query.
+     * @return search query.
      */
     public Map<String, Object> getSource() {
         log.debug(this.source.toString());
@@ -315,21 +315,21 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * 左辺処理前の共通処理.
+     * Common processing before left side processing.
      */
     @Override
     public void beforeDescend() {
     }
 
     /**
-     * 左辺、右辺の処理後の共通処理.
+     * Common processing after processing on left side and right side.
      */
     @Override
     public void afterDescend() {
     }
 
     /**
-     * 左辺処理後、右辺処理前の共通処理.
+     * Common processing before left side processing, right side processing after processing.
      */
     @Override
     public void betweenDescend() {
@@ -347,7 +347,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
             throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
 
-        // ソートクエリを設定する
+        //Set up sort queries
         String key = getSearchKey(expr.getExpression(), true);
 
         Map<String, Object> sortOption = new HashMap<String, Object>();
@@ -357,13 +357,13 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * $orderbyのオプションを取得する.
-     * @param option odata4jのオプション
-     * @return optionValue 取得したオプション
+     * Get $ orderby option.
+     * @param option odata 4 j options
+     * @return optionValue Obtained options
      */
     public String getOrderOption(Direction option) {
         String optionValue;
-        // デフォルト値は昇順(ASCENDING)
+        //The default value is ascending (ASCENDING)
         if (option == null || option.equals(Direction.ASCENDING)) {
             optionValue = SORT_ASC;
         } else {
@@ -409,32 +409,32 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * 完全一致検索時のvisit.
+     * Visit at exact match search.
      * @param expr EqExpression
      */
     @Override
     public void visit(EqExpression expr) {
         log.debug("visit(EqExpression expr)");
 
-        // $filterに指定された検索条件のプロパティが単純型ではない場合は、パースエラーとする。
+        //If the property of the search condition specified in $ filter is not a simple type, it is a parse error.
         if (!(expr.getLHS() instanceof EntitySimpleProperty)) {
             throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getLHS());
 
-        // $filterに指定されたプロパティの型と検索条件の値として指定されたデータ型の検証
+        //Validate the type of property specified in $ filter and the data type specified as the value of the search condition
         CommonExpression searchValue = expr.getRHS();
         FilterConditionValidator.validateFilterEqCondition(edmProperty, searchValue);
 
-        // 検索クエリを設定する
-        // 検索対象がnullの場合、{"missing":{"field":"xxx"}}を作成する
+        //Set up search queries
+        //If the search target is null, create {"missing": {"field": "xxx"}}
         if (expr.getRHS() instanceof NullLiteral) {
             Map<String, Object> missing = new HashMap<String, Object>();
             missing.put("field", getSearchKey(expr.getLHS(), true));
             this.current.put("missing", missing);
             this.current = stack.pop();
         } else {
-            // 検索対象がnull以外の場合、termクエリを作成する
+            //If the search target is not null, create a term query
             Map<String, Object> term = new HashMap<String, Object>();
             term.put(getSearchKey(expr.getLHS(), true), getSearchValue(expr.getRHS()));
             this.current.put("term", term);
@@ -443,13 +443,13 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * 検索条件に指定されたキーのスキーマ定義を取得する.
-     * 以下の場合はエラーとなる
+     * Gets the schema definition of the key specified in the search condition.
+     * An error occurs in the following cases
      * <ul>
-     * <li>__metadataが指定された場合</li>
-     * <li>未定義のPropertyが指定された場合</li>
-     * <li>Propretyの命名規約に従っていない名前が指定された場合 <br />
-     * (上記はPropertyとして登録できないため、スキーマ定義が取得できないことで書式エラーとみなす)</li>
+     * <li> When __ metadata is specified </ li>
+     * <li> When an undefined Property is specified </ li>
+     * <li> If a name that does not follow Proprety's naming convention is specified <br />
+     * (Since the above can not be registered as Property, it is regarded as a format error because the schema definition can not be acquired.) </ Li>
      * </ul>
      * @param searchKey
      * @return EdmProperty
@@ -464,9 +464,9 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * elasticsearchの検索文字列を返却する.
+     * Return search string of elasticsearch.
      * @param expr CommonExpression
-     * @return elasticsearchの検索文字列
+     * @return search string of elasticsearch
      */
     private Object getSearchValue(CommonExpression expr) {
         if (expr instanceof IntegralLiteral) {
@@ -495,22 +495,22 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * elasticsearchの検索キーを返却する.
+     * Return the search key of elasticsearch.
      * @param expr CommonExpression
-     * @return elasticsearchの検索キー
+     * Search key for @return elasticsearch
      */
     private String getSearchKey(CommonExpression expr) {
         return getSearchKey(expr, false);
     }
 
     /**
-     * elasticsearchの検索キーを返却する.
+     * Return the search key of elasticsearch.
      * @param expr CommonExpression
      * @param isUntouched isUntouched
-     * @return elasticsearchの検索キー
+     * Search key for @return elasticsearch
      */
     protected String getSearchKey(CommonExpression expr, Boolean isUntouched) {
-        // 検索キーとして設定を行う
+        //Set as search key
         String keyName = ((EntitySimpleProperty) expr).getPropertyName();
 
         // published, updated
@@ -520,10 +520,10 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
             return OEntityDocHandler.KEY_UPDATED;
         }
 
-        // スキーマ定義項目であればs.フィールド、定義外項目であればd.フィールドを検索する
+        //If it is a schema definition item, it is s field, if it is an undefined item d field is searched
         String fieldPrefix = OEntityDocHandler.KEY_STATIC_FIELDS + ".";
 
-        // untouchedフィールドの指定であれば、untouchedを返却する
+        //If untouched field is specified, untouched is returned
         if (isUntouched) {
             return fieldPrefix + keyName + ".untouched";
         } else {
@@ -567,7 +567,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * EntitySimplePropertyのvisit.
+     * Visit of EntitySimpleProperty.
      * @param expr EntitySimpleProperty
      */
     @Override
@@ -578,17 +578,17 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     public void visit(GeExpression expr) {
         log.debug("visit(GeExpression expr)");
 
-        // $filterに指定された検索条件のプロパティが単純型ではない場合は、パースエラーとする。
+        //If the property of the search condition specified in $ filter is not a simple type, it is a parse error.
         if (!(expr.getLHS() instanceof EntitySimpleProperty)) {
             throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getLHS());
 
-        // $filterに指定されたプロパティの型と検索条件の値として指定されたデータ型の検証
+        //Validate the type of property specified in $ filter and the data type specified as the value of the search condition
         CommonExpression searchValue = expr.getRHS();
         FilterConditionValidator.validateFilterOpCondition(edmProperty, searchValue);
 
-        // ESの Range filterを設定する
+        //Set the ES Range filter
         Map<String, Object> ge = new HashMap<String, Object>();
         Map<String, Object> property = new HashMap<String, Object>();
         ge.put("gte", getSearchValue(expr.getRHS()));
@@ -601,13 +601,13 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     public void visit(GtExpression expr) {
         log.debug("visit(GtExpression expr)");
 
-        // $filterに指定された検索条件のプロパティが単純型ではない場合は、パースエラーとする。
+        //If the property of the search condition specified in $ filter is not a simple type, it is a parse error.
         if (!(expr.getLHS() instanceof EntitySimpleProperty)) {
             throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getLHS());
 
-        // $filterに指定されたプロパティの型と検索条件の値として指定されたデータ型の検証
+        //Validate the type of property specified in $ filter and the data type specified as the value of the search condition
         CommonExpression searchValue = expr.getRHS();
         FilterConditionValidator.validateFilterOpCondition(edmProperty, searchValue);
 
@@ -666,17 +666,17 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     public void visit(LeExpression expr) {
         log.debug("visit(LeExpression expr)");
 
-        // $filterに指定された検索条件のプロパティが単純型ではない場合は、パースエラーとする。
+        //If the property of the search condition specified in $ filter is not a simple type, it is a parse error.
         if (!(expr.getLHS() instanceof EntitySimpleProperty)) {
             throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getLHS());
 
-        // $filterに指定されたプロパティの型と検索条件の値として指定されたデータ型の検証
+        //Validate the type of property specified in $ filter and the data type specified as the value of the search condition
         CommonExpression searchValue = expr.getRHS();
         FilterConditionValidator.validateFilterOpCondition(edmProperty, searchValue);
 
-        // ESの Range filterを設定する
+        //Set the ES Range filter
         Map<String, Object> le = new HashMap<String, Object>();
         Map<String, Object> property = new HashMap<String, Object>();
         le.put("lte", getSearchValue(expr.getRHS()));
@@ -694,17 +694,17 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     public void visit(LtExpression expr) {
         log.debug("visit(LtExpression expr)");
 
-        // $filterに指定された検索条件のプロパティが単純型ではない場合は、パースエラーとする。
+        //If the property of the search condition specified in $ filter is not a simple type, it is a parse error.
         if (!(expr.getLHS() instanceof EntitySimpleProperty)) {
             throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getLHS());
 
-        // $filterに指定されたプロパティの型と検索条件の値として指定されたデータ型の検証
+        //Validate the type of property specified in $ filter and the data type specified as the value of the search condition
         CommonExpression searchValue = expr.getRHS();
         FilterConditionValidator.validateFilterOpCondition(edmProperty, searchValue);
 
-        // ESの Range filterを設定する
+        //Set the ES Range filter
         Map<String, Object> lt = new HashMap<String, Object>();
         Map<String, Object> property = new HashMap<String, Object>();
         lt.put("lt", getSearchValue(expr.getRHS()));
@@ -725,18 +725,18 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
 
     @Override
     public void visit(NeExpression expr) {
-        // $filterに指定された検索条件のプロパティが単純型ではない場合は、パースエラーとする。
+        //If the property of the search condition specified in $ filter is not a simple type, it is a parse error.
         if (!(expr.getLHS() instanceof EntitySimpleProperty)) {
             throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getLHS());
 
-        // $filterに指定されたプロパティの型と検索条件の値として指定されたデータ型の検証
+        //Validate the type of property specified in $ filter and the data type specified as the value of the search condition
         CommonExpression searchValue = expr.getRHS();
         FilterConditionValidator.validateFilterEqCondition(edmProperty, searchValue);
 
-        // 検索クエリ(not filter)を設定する
-        // 検索対象がnullの場合、{"missing":{"field":"xxx"}}を作成する
+        //Set search queries (not filter)
+        //If the search target is null, create {"missing": {"field": "xxx"}}
         if (expr.getRHS() instanceof NullLiteral) {
             Map<String, Object> field = new HashMap<String, Object>();
             Map<String, Object> missing = new HashMap<String, Object>();
@@ -747,7 +747,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
             this.current.put("not", filter);
             this.current = stack.pop();
         } else {
-            // 検索対象がnull以外の場合、termクエリを作成する
+            //If the search target is not null, create a term query
             Map<String, Object> field = new HashMap<String, Object>();
             Map<String, Object> term = new HashMap<String, Object>();
             Map<String, Object> filter = new HashMap<String, Object>();
@@ -791,15 +791,15 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     public void visit(StartsWithMethodCallExpression expr) {
         log.debug("visit(StartsWithMethodCallExpression expr)");
 
-        // 左辺辺がプロパティ、右辺が文字列でない場合はパースエラーとする
+        //If the left side is a property and the right side is not a character string, it is assumed to be a parse error
         if (!(expr.getTarget() instanceof EntitySimpleProperty)) {
             throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getTarget());
-        // $filterに指定されたプロパティの型と検索条件の値として指定されたデータ型の検証
+        //Validate the type of property specified in $ filter and the data type specified as the value of the search condition
         FilterConditionValidator.validateFilterFuncCondition(edmProperty, expr.getValue());
 
-        // 検索クエリを設定する
+        //Set up search queries
         Map<String, Object> prefix = new HashMap<String, Object>();
 
         prefix.put(getSearchKey(expr.getTarget(), true), getSearchValue(expr.getValue()));
@@ -809,7 +809,7 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     }
 
     /**
-     * 文字列のvisit.
+     * String visit.
      * @param expr StringLiteral
      */
     @Override
@@ -830,15 +830,15 @@ public class EsQueryHandler implements ExpressionVisitor, ODataQueryHandler {
     public void visit(SubstringOfMethodCallExpression expr) {
         log.debug("visit(SubstringOfMethodCallExpression expr)");
 
-        // 左辺が文字列、右辺がプロパティでない場合はパースエラーとする
+        //If the left-hand side is a character string and the right-hand side is not a property, it will be a parse error
         if (!(expr.getTarget() instanceof EntitySimpleProperty)) {
             throw PersoniumCoreException.OData.FILTER_PARSE_ERROR;
         }
         EdmProperty edmProperty = getEdmProprety((EntitySimpleProperty) expr.getTarget());
-        // $filterに指定されたプロパティの型と検索条件の値として指定されたデータ型の検証
+        //Validate the type of property specified in $ filter and the data type specified as the value of the search condition
         FilterConditionValidator.validateFilterFuncCondition(edmProperty, expr.getValue());
 
-        // 検索クエリを設定する
+        //Set up search queries
         Map<String, Object> searchKey = new HashMap<String, Object>();
         Map<String, Object> query = new HashMap<String, Object>();
         Map<String, Object> text = new HashMap<String, Object>();

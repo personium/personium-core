@@ -40,15 +40,15 @@ import io.personium.core.model.ctl.Common;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- * ODataのEntityリソースのMERGEメソッドを扱うJAX-RS リソース.
+ * JAX-RS resource handling MERGE method of Entity resource of OData.
  */
 public class ODataMergeResource extends ODataEntityResource {
 
     /**
-     * コンストラクタ.
-     * @param odataResource 親リソースであるODataResource
+     * constructor.
+     * @param odataResource ODataResource which is the parent resource
      * @param entitySetName EntitySet Name
-     * @param keyString キー文字列
+     * @param keyString key string
      * @param oEntityKey OEntityKey object
      */
     public ODataMergeResource(ODataResource odataResource,
@@ -57,35 +57,35 @@ public class ODataMergeResource extends ODataEntityResource {
     }
 
     /**
-     * MERGE メソッドの処理.
-     * @param reader リクエストボディ
-     * @param accept Accept ヘッダ
-     * @param ifMatch If-Match ヘッダ
+     * Processing of MERGE method.
+     * @param reader request body
+     * @param accept Accept header
+     * @param ifMatch If-Match header
      * @return JAX-RSResponse
      */
     public Response merge(Reader reader,
             final String accept,
             final String ifMatch) {
-        // メソッド実行可否チェック
+        //Method execution feasibility check
         checkNotAllowedMethod();
 
-        // アクセス制御
+        //Access control
         getOdataResource().checkAccessContext(getAccessContext(),
                 getOdataResource().getNecessaryWritePrivilege(getEntitySetName()));
 
-        // リクエストからOEntityWrapperを作成する.
+        //Create an OEntityWrapper from the request.
         OEntity oe = this.createRequestEntity(reader, getOEntityKey());
         OEntityWrapper oew = new OEntityWrapper(null, oe, null);
 
-        // 必要ならばメタ情報をつける処理
+        //Process of attaching meta information if necessary
         getOdataResource().beforeMerge(oew, getOEntityKey());
 
-        // If-Matchヘッダで入力されたETagをMVCC用での衝突検知用にOEntityWrapperに設定する。
+        //Set the ETag entered in the If-Match header to OEntityWrapper for collision detection for MVCC.
         String etag = ODataResource.parseEtagHeader(ifMatch);
         oew.setEtag(etag);
 
-        // MERGE処理をODataProducerに依頼。
-        // こちらでリソースの存在確認もしてもらう。
+        //Ask MERGE processing to ODataProducer.
+        //We will also check the existence of resources here.
         getOdataProducer().mergeEntity(getEntitySetName(), getOEntityKey(), oew);
 
         // post event to eventBus
@@ -95,8 +95,8 @@ public class ODataMergeResource extends ODataEntityResource {
         String info = "204," + newKey;
         getOdataResource().postEvent(getEntitySetName(), object, info, PersoniumEventType.Operation.MERGE);
 
-        // 特に例外があがらなければ、レスポンスを返す。
-        // oewに新たに登録されたETagを返す
+        //If there are no exceptions, return a response.
+        //Return ETag newly registered in oew
         etag = oew.getEtag();
         return Response.noContent()
                 .header(HttpHeaders.ETAG, ODataResource.renderEtagHeader(etag))
@@ -106,26 +106,26 @@ public class ODataMergeResource extends ODataEntityResource {
     }
 
     /**
-     * スキーマ定義をもとにOPropertyにデフォルト値を設定. <br />
-     * MERGEの場合、キー, updated, published以外の項目にデフォルト値は設定しない
+     * Set default value to OProperty based on schema definition <br />
+     * For MERGE, do not set default values ​​for items other than key, updated, and published
      * @param ep EdmProperty
-     * @param propName プロパティ名
+     * @param propName property name
      * @param op OProperty
-     * @param metadata EdmDataServicesスキーマ定義
+     * @param metadata EdmDataServices schema definition
      * @return Oproperty
      */
     @Override
     protected OProperty<?> setDefaultValue(EdmProperty ep, String propName, OProperty<?> op, EdmDataServices metadata) {
 
         if (metadata != null) {
-            // スキーマ情報の取得
+            //Retrieving Schema Information
             EdmEntitySet edmEntitySet = metadata.findEdmEntitySet(getEntitySetName());
             EdmEntityType edmEntityType = edmEntitySet.getType();
-            // スキーマに定義されたキーリストを取得
+            //Retrieve the key list defined in the schema
             List<String> keysDefined = edmEntityType.getKeys();
             String epName = ep.getName();
 
-            // キー, updated, published以外の項目にデフォルト値は設定しない
+            //Do not set default values ​​for items other than key, updated, and published
             if (!keysDefined.contains(epName) && !Common.P_PUBLISHED.getName().equals(epName)
                     && !Common.P_UPDATED.getName().equals(epName)) {
                 return null;
@@ -136,37 +136,37 @@ public class ODataMergeResource extends ODataEntityResource {
     }
 
     /**
-     * ComplexTypeスキーマを参照して、必須チェックとデフォルト値の設定を行う.
-     * @param metadata スキーマ情報
-     * @param edmComplexType ComplexTypeのスキーマ情報
-     * @param complexProperties ComplexTypePropertyのList
-     * @return デフォルト値を設定したComplexTypeプロパティの一覧
+     * Refer to the ComplexType schema and set mandatory checks and default values.
+     * @param metadata schema information
+     * @param edmComplexType Schema information of ComplexType
+     * @param complexProperties List of ComplexTypeProperty
+     * @return List of ComplexType properties with default values
      */
     @Override
     protected List<OProperty<?>> createNewComplexProperties(EdmDataServices metadata,
             EdmComplexType edmComplexType,
             Map<String, OProperty<?>> complexProperties) {
-        // ComplexTypeスキーマを参照して、必須チェックとデフォルト値の設定を行う
+        //Refer to the ComplexType schema to set mandatory checks and default values
         List<OProperty<?>> newComplexProperties = new ArrayList<OProperty<?>>();
         for (EdmProperty ctp : edmComplexType.getProperties()) {
-            // プロパティ情報を取得する
+            //Acquire property information
             String compPropName = ctp.getName();
             OProperty<?> complexProperty = complexProperties.get(compPropName);
             if (ctp.getType().isSimple()) {
-                // シンプル型の場合
-                // MERGEの場合はデフォルト値を設定しない
+                //In case of simple type
+                //For MERGE, do not set default value
                 if (complexProperty == null) {
                     continue;
                 } else if (complexProperty.getValue() == null) {
-                    // Nullableチェック
+                    //Nullable check
                     complexProperty = setDefaultValue(ctp, compPropName, complexProperty);
                 }
             } else {
-                // Complex型の場合
+                //In case of Complex type
                 complexProperty = getComplexProperty(ctp, compPropName, complexProperty, metadata);
             }
             if (complexProperty != null) {
-                // MERGEリクエストでは、ComplexTypeのPropertyが指定されていない場合は無視する
+                //In the MERGE request, ignore the Property of ComplexType if it is not specified
                 newComplexProperties.add(complexProperty);
             }
         }

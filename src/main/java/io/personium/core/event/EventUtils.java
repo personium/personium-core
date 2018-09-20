@@ -27,11 +27,11 @@ import io.personium.core.model.file.BinaryDataAccessor;
 import io.personium.core.rs.cell.LogResource;
 
 /**
- * イベント用ユーティリティクラス.
+ * Utility class for events.
  */
 public class EventUtils {
 
-    /** CSV形式のMime-Type. */
+    /** Mime-Type in CSV format.*/
     public static final String TEXT_CSV = "text/csv";
 
     private static final int SUBDIR_NAME_LEN = 2;
@@ -40,10 +40,10 @@ public class EventUtils {
     }
 
     /**
-     * イベントバスで出力するログファイルのディレクトリパスを取得する.
-     * @param cellId Cellのuuid
-     * @param owner オーナー情報
-     * @return ログファイルのディレクトリ（存在しない場合はnullを返却）
+     * Get the directory path of the log file to be output on the event bus.
+     * @param cellId uuid of Cell
+     * @param owner owner information
+     * @return Directory of the log file (return null if it does not exist)
      */
     public static StringBuilder getEventLogDir(String cellId, String owner) {
 
@@ -78,23 +78,23 @@ public class EventUtils {
     }
 
     /**
-     * すべてのイベントログを削除する.
-     * @param cellId セルのID
-     * @param owner セルのオーナー（URL形式）
-     * @throws BinaryDataAccessException イベントログファイルの削除に失敗
+     * Delete all event logs.
+     * @param cellId ID of the cell
+     * @param owner Cell owner (URL format)
+     * @throws BinaryDataAccessException Failed to delete event log file
      */
     public static void deleteEventLog(String cellId, String owner) throws BinaryDataAccessException {
-        // ログの一覧を取得
+        //Retrieve log list
         List<String> logFiles = getLogFileList(cellId, owner);
         BinaryDataAccessor accessor = new BinaryDataAccessor("", null,
                 PersoniumUnitConfig.getPhysicalDeleteMode(), PersoniumUnitConfig.getFsyncEnabled());
 
-        // ファイル論理削除
+        //File logical deletion
         for (String logFile : logFiles) {
             accessor.deleteWithFullPath(logFile);
         }
 
-        // TODO archiveのメタデータ削除
+        //Delete metadata of TODO archive
 
     }
 
@@ -102,7 +102,7 @@ public class EventUtils {
         String logDir = EventUtils.getEventLogDir(cellId, owner).toString();
         List<String> logFiles = new ArrayList<String>();
 
-        // currentのログ一覧取得
+        //Acquire current log list
         StringBuilder sb = new StringBuilder(logDir);
         sb.append(LogResource.CURRENT_COLLECTION);
         sb.append(File.separator);
@@ -114,7 +114,7 @@ public class EventUtils {
             }
         }
 
-        // archiveのログ一覧取得
+        //Acquire archive log list
         sb = new StringBuilder(logDir);
         sb.append(LogResource.ARCHIVE_COLLECTION);
         sb.append(File.separator);

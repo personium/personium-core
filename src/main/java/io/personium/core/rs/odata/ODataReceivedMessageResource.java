@@ -88,7 +88,7 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
         body = ResourceUtils.parseBodyAsJSON(reader);
 
         String status = (String) body.get(ReceivedMessage.MESSAGE_COMMAND);
-        // ステータスのチェック
+        //Check status
         if (!ReceivedMessage.STATUS_UNREAD.equals(status)
                 && !ReceivedMessage.STATUS_READ.equals(status)
                 && !ReceivedMessage.STATUS_APPROVED.equals(status)
@@ -96,11 +96,11 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
             throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(ReceivedMessage.MESSAGE_COMMAND);
         }
 
-        // EdmEntitySetの取得
+        //Acquisition of EdmEntitySet
         EdmEntitySet edmEntitySet = getOdataProducer().getMetadata()
                 .getEdmEntitySet(ReceivedMessagePort.EDM_TYPE_NAME);
 
-        // OEntityKeyの作成
+        //Create OEntityKey
         OEntityKey oEntityKey;
         try {
             oEntityKey = OEntityKey.parse("('" + key + "')");
@@ -108,7 +108,7 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
             throw PersoniumCoreException.OData.ENTITY_KEY_PARSE_ERROR.reason(e);
         }
 
-        // ステータス更新、及び関係登録/削除をProducerに依頼
+        //Request Producer for status update and relationship registration / deletion
         String etag = ((MessageODataProducer) getOdataProducer()).changeStatusAndUpdateRelation(
                 edmEntitySet, oEntityKey, status);
 
@@ -150,7 +150,7 @@ public class ODataReceivedMessageResource extends ODataMessageResource {
                 String schema = (String) props.get(i).getValue();
                 Box box = getMessageResource().getAccessContext().getCell().getBoxForSchema(schema);
                 String boxName = box != null ? box.getName() : null; // CHECKSTYLE IGNORE - To eliminate useless code
-                // メッセージ受信でSchemaはデータとして保持しないため、削除する
+                //Since Schema is not retained as data in message reception, it is deleted
                 props.remove(i);
                 for (int j = 0; j < props.size(); j++) {
                     if (Common.P_BOX_NAME.getName().equals(props.get(j).getName())) {

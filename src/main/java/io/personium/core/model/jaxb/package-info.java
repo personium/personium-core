@@ -18,12 +18,12 @@
  * package to store JAXB objects.
  */
 // Package level annotation
-// このアノテーションで以下の名前空間のプレフィックスのマッピング設定する
+//Set prefix mapping for the following namespace with this annotation
 @javax.xml.bind.annotation.XmlSchema (
         xmlns = {
-                // "DAV:"はプレフィックス指定なしの場合、marshall実行時にJAXBが"ns1"のように機械的なプレフィックスを付けるため、空白文字を指定
+                //When "DAV:" is specified without prefix, JAXB adds a mechanical prefix like "ns1" when marshall is executed, so a blank character is specified
                 @javax.xml.bind.annotation.XmlNs(prefix = "", namespaceURI = "DAV:"),
-                // "urn:x-personium:xmlns"は"p"で固定
+                //"urn: x-personium: xmlns" is fixed with "p"
                 @javax.xml.bind.annotation.XmlNs(prefix = "p", namespaceURI = "urn:x-personium:xmlns")
         }
 )

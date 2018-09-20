@@ -23,19 +23,19 @@ import io.personium.common.es.util.PersoniumUUID;
 import io.personium.core.model.impl.es.doc.EntitySetDocHandler;
 
 /**
- * ODataEntityのアクセス処理の抽象クラス.
+ * Abstract class of access processing of ODataEntity.
  */
 public abstract class AbstractEntitySetAccessor extends DataSourceAccessor implements EntitySetAccessor {
 
     /**
-     * データ登録時に発生するSQLExceptionのSQLState.
+     * The SQLState of the SQLException that occurs when registering data.
      */
     protected static final String MYSQL_BAD_TABLE_ERROR = "42S02";
 
     /**
-     * コンストラクタ.
-     * @param index インデックス
-     * @param name タイプ名
+     * constructor.
+     * @param index index
+     * @param name Type name
      * @param routingId routingId
      */
     protected AbstractEntitySetAccessor(EsIndex index, String name, String routingId) {
@@ -43,9 +43,9 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     * UUIDでODataEntityのデータ登録を行う.
-     * @param docHandler 登録データ
-     * @return 登録結果
+     * Register data of ODataEntity with UUID.
+     * @param docHandler registration data
+     * @return registration result
      */
     @Override
     public PersoniumIndexResponse create(final EntitySetDocHandler docHandler) {
@@ -54,10 +54,10 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     * ODataEntityのデータ登録を行う.
-     * @param id 登録データのID
-     * @param docHandler 登録データ
-     * @return 登録結果
+     * Perform data registration of ODataEntity.
+     * @param id ID of registration data
+     * @param docHandler registration data
+     * @return registration result
      */
     public PersoniumIndexResponse create(String id, EntitySetDocHandler docHandler) {
         docHandler.setId(id);
@@ -66,10 +66,10 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     * Cellのデータ更新を行う.
-     * @param id 更新データのID
-     * @param docHandler 登録データ
-     * @return 更新結果
+     * Data of Cell is updated.
+     * @param id ID of update data
+     * @param docHandler registration data
+     * @return Update result
      */
     @Override
     public PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler) {
@@ -77,11 +77,11 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     * バージョン指定ありでODataEntityのデータ更新を行う.
-     * @param id 更新データのID
-     * @param docHandler 登録データ
-     * @param version バージョン情報
-     * @return 更新結果
+     * Perform data update of ODataEntity with version specification.
+     * @param id ID of update data
+     * @param docHandler registration data
+     * @param version version information
+     * @return Update result
      */
     public PersoniumIndexResponse update(String id, EntitySetDocHandler docHandler, long version) {
         PersoniumIndexResponse response = update(id, docHandler.getSource(), version);
@@ -89,9 +89,9 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     * ODataEntityのデータ削除を行う.
-     * @param docHandler 削除データ
-     * @return 削除結果
+     * Delete data of ODataEntity.
+     * @param docHandler delete data
+     * @return Deletion result
      */
     @Override
     public PersoniumDeleteResponse delete(final EntitySetDocHandler docHandler) {
@@ -99,10 +99,10 @@ public abstract class AbstractEntitySetAccessor extends DataSourceAccessor imple
     }
 
     /**
-     * ODataEntityのデータ削除を行う.
-     * @param docHandler 削除データ
-     * @param version バージョン情報
-     * @return 削除結果
+     * Delete data of ODataEntity.
+     * @param docHandler delete data
+     * @param version version information
+     * @return Deletion result
      */
     @Override
     public PersoniumDeleteResponse delete(EntitySetDocHandler docHandler, long version) {

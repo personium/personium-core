@@ -95,10 +95,10 @@ public class MessageODataProducer extends CellCtlODataProducer {
     }
 
     /**
-     * 登録前処理.
-     * @param entitySetName エンティティセット名
-     * @param oEntity 登録対象のエンティティ
-     * @param docHandler 登録対象のエンティティドックハンドラ
+     * Pre-registration processing.
+     * @param entitySetName Entity set name
+     * @param o Entity entity to be registered
+     * @param docHandler Entity dock handler to register
      */
     @Override
     public void beforeCreate(final String entitySetName, final OEntity oEntity, final EntitySetDocHandler docHandler) {
@@ -120,10 +120,10 @@ public class MessageODataProducer extends CellCtlODataProducer {
     }
 
     /**
-     * 関係登録/削除、及びメッセージ受信のステータスを変更する.
+     * Change the status of relation registration / deletion and message reception.
      * @param entitySet entitySetName
-     * @param originalKey 更新対象キー
-     * @param status メッセージステータス
+     * @param originalKey Key to be updated
+     * @param status Message status
      * @return ETag
      */
     @SuppressWarnings("unchecked")
@@ -131,7 +131,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
             final OEntityKey originalKey, final String status) {
         Lock lock = lock();
         try {
-            // ESから変更する受信メッセージ情報を取得する
+            //Acquire received message information to be changed from ES
             EntitySetDocHandler entitySetDocHandler = this.retrieveWithKey(entitySet, originalKey);
             if (entitySetDocHandler == null) {
                 throw PersoniumCoreException.OData.NO_SUCH_ENTITY;
@@ -143,7 +143,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
                     entitySet, entitySetDocHandler.getStaticFields(), entitySetDocHandler.getManyToOnelinkId());
             entitySetDocHandler.setStaticFields(staticFields);
 
-            // TypeとStatusのチェック
+            //Check Type and Status
             String type = (String) entitySetDocHandler.getStaticFields().get(ReceivedMessage.P_TYPE.getName());
             String currentStatus = (String) entitySetDocHandler.getStaticFields()
                     .get(ReceivedMessage.P_STATUS.getName());
@@ -224,13 +224,13 @@ public class MessageODataProducer extends CellCtlODataProducer {
                 }
             }
 
-            // 取得した受信メッセージのステータスと更新日を上書きする
+            //Overwrite the status and update date of the acquired received message
             updateStatusOfEntitySetDocHandler(entitySetDocHandler, status);
 
             // Remove _Box.Name
             entitySetDocHandler.getStaticFields().remove(Common.P_BOX_NAME.getName());
 
-            // ESに保存する
+            //Save to ES
             EntitySetAccessor esType = this.getAccessorForEntitySet(entitySet.getName());
             Long version = entitySetDocHandler.getVersion();
             PersoniumIndexResponse idxRes;
@@ -693,19 +693,19 @@ public class MessageODataProducer extends CellCtlODataProducer {
     }
 
     /**
-     * Messageのステータスバリデート.
-     * @param status メッセージステータス
+     * Message status validation.
+     * @param status Message status
      * @return boolean
      */
     protected boolean isValidMessageStatus(String status) {
-        // messageの場合のみバリデートをして、read / unread であればtrueを返却する
+        //Validate only for message and return true if read / unread
         return ReceivedMessage.STATUS_UNREAD.equals(status)
                 || ReceivedMessage.STATUS_READ.equals(status);
     }
 
     /**
-     * 受信メッセージのステータスバリデート.
-     * @param status メッセージステータス
+     * Status validation of incoming messages.
+     * @param status Message status
      * @return boolean
      */
     protected boolean isValidCurrentStatus(String status) {
@@ -714,17 +714,17 @@ public class MessageODataProducer extends CellCtlODataProducer {
     }
 
     /**
-     * 受信メッセージのステータスと更新日を上書きする.
+     * Overwrite the status of the received message and the update date.
      * @param entitySetDocHandler DocHandler
-     * @param status メッセージステータス
+     * @param status Message status
      */
     private void updateStatusOfEntitySetDocHandler(EntitySetDocHandler entitySetDocHandler, String status) {
         Map<String, Object> staticFields = entitySetDocHandler.getStaticFields();
-        // 変更するメッセージステータスをHashedCredentialへ上書きする
+        //Overwrite message status to be changed to HashedCredential
         staticFields.put(ReceivedMessage.P_STATUS.getName(), status);
         entitySetDocHandler.setStaticFields(staticFields);
 
-        // 現在時刻を取得して__updatedを上書きする
+        //Get current time and overwrite __updated
         long nowTimeMillis = System.currentTimeMillis();
         entitySetDocHandler.setUpdated(nowTimeMillis);
     }

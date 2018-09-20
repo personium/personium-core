@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- * Lock機構を提供するクラス群.
+ * Classes providing Lock mechanism.
  */
 package io.personium.core.model.lock;
 

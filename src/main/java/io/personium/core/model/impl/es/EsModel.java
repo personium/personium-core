@@ -36,41 +36,41 @@ import io.personium.core.model.impl.es.accessor.ODataLinkAccessor;
 import io.personium.core.model.impl.es.odata.UserDataODataProducer;
 
 /**
- * 本アプリでElasticSearchを扱うモデル.
+ * Model handling Elastic Search in this application.
  */
 public class EsModel {
 
     private static EsClient esClient;
 
     static {
-        // ESへの接続後にログを出力するハンドラを設定
+        //Set handler to output log after connecting to ES
         EsClient.setEventHandler(Event.connected, new EsClient.EventHandler() {
             @Override
             public void handleEvent(EsRequestLogInfo logInfo, Object... params) {
                 PersoniumCoreLog.Es.CONNECTED.params(params).writeLog();
             }
         });
-        // ESへの登録以外のリクエスト後にログを出力するハンドラを設定
+        //Set handler to output log after request other than ES registration
         EsClient.setEventHandler(Event.afterRequest, new EsClient.EventHandler() {
             @Override
             public void handleEvent(EsRequestLogInfo logInfo, Object... params) {
                 PersoniumCoreLog.Es.AFTER_REQUEST.params(params).writeLog();
             }
         });
-        // ESへのインデックス作成前にログを出力するハンドラを設定
+        //Set handler to output log before creating index to ES
         EsClient.setEventHandler(Event.creatingIndex, new EsClient.EventHandler() {
             @Override
             public void handleEvent(EsRequestLogInfo logInfo, Object... params) {
                 PersoniumCoreLog.Es.CREATING_INDEX.params(params).writeLog();
             }
         });
-        // ESへの登録リクエスト後にログを出力するハンドラを設定
+        //Set handler to output log after ES registration request
         EsClient.setEventHandler(Event.afterCreate, new EsClient.EventHandler() {
             @SuppressWarnings("unchecked")
             @Override
             public void handleEvent(EsRequestLogInfo logInfo, Object... params) {
                 if (logInfo == null) {
-                    return; // 出力情報がないためログは出力せずに終了する
+                    return; //Since there is no output information, log is not output and it ends
                 } else if (UserDataODataProducer.USER_ODATA_NAMESPACE.equals(logInfo.getType())) {
                     String uuid = "";
                     Map<String, Object> body = logInfo.getData();
@@ -98,16 +98,16 @@ public class EsModel {
     }
 
     /**
-     * ESクライアントオブジェクトを返す.
-     * @return クライアントオブジェクト
+     * Returns the ES client object.
+     * @return client object
      */
     public static EsClient client() {
         return esClient;
     }
 
     /**
-     * 管理用のIndex操作オブジェクトを返します.
-     * @return Indexオブジェクト
+     * Returns an Index operation object for management.
+     * @return Index object
      */
     public static EsIndex idxAdmin() {
         return esClient.idxAdmin(PersoniumUnitConfig.getEsUnitPrefix(),
@@ -116,9 +116,9 @@ public class EsModel {
     }
 
     /**
-     * UnitUser用のIndex操作オブジェクトを返します.
-     * @param userUri UnitUser名（URL)
-     * @return Indexオブジェクト
+     * Returns the Index operation object for UnitUser.
+     * @param userUri UnitUser name (URL)
+     * @return Index object
      */
     public static EsIndex idxUser(String userUri) {
         return esClient.idxUser(PersoniumUnitConfig.getEsUnitPrefix(),
@@ -128,9 +128,9 @@ public class EsModel {
     }
 
     /**
-     * ESのインデックス名から、UnitUser用のIndex操作オブジェクトを返します.
-     * @param indexName ESのインデックス名
-     * @return Indexオブジェクト
+     * Returns the Index operation object for UnitUser from the ES index name.
+     * @param indexName Index name of ES
+     * @return Index object
      */
     public static EsIndex idxUserWithUnitPrefix(String indexName) {
         return esClient.idxUser(indexName,
@@ -139,21 +139,21 @@ public class EsModel {
     }
 
     /**
-     * 指定された名前のIndex操作オブジェクトを返します.
-     * @param indexName index名
-     * @param typeName indexの種類
-     * @param routingId indexの種類
-     * @param times indexの種類
-     * @param interval indexの種類
-     * @return EsTypeオブジェクト
+     * Returns the Index operation object with the specified name.
+     * @param indexName index name
+     * @param typeName index type
+     * @param routingId type of index
+     * @param times index type
+     * @param interval index type
+     * @return EsType object
      */
     public static EsType type(String indexName, String typeName, String routingId, int times, int interval) {
         return esClient.type(indexName, typeName, routingId, times, interval);
     }
 
     /**
-     * Cell用のType操作オブジェクトを返します.
-     * @return Typeオブジェクト
+     * Returns Type operation object for Cell.
+     * @return Type object
      */
     public static EntitySetAccessor cell() {
         return new CellAccessor(idxAdmin(), Cell.EDM_TYPE_NAME, EsIndex.CELL_ROUTING_KEY_NAME);
@@ -170,19 +170,19 @@ public class EsModel {
     }
 
     /**
-     * Box用のType操作オブジェクトを返します.
+     * Returns Type operation object for Box.
      * @param cell Cell
-     * @return Typeオブジェクト
+     * @return Type object
      */
     public static EntitySetAccessor box(final Cell cell) {
         return cell(cell, Box.EDM_TYPE_NAME);
     }
 
     /**
-     * 指定タイプ名のUnit制御Type操作オブジェクトを返します.
-     * @param type タイプ名
+     * Unit control type type name Return Type Operation object.
+     * @param type Type name
      * @param cellId cellId
-     * @return Typeオブジェクト
+     * @return Type object
      */
     public static EntitySetAccessor unitCtl(final String type, final String cellId) {
         if ("Cell".equals(type)) {
@@ -193,10 +193,10 @@ public class EsModel {
     }
 
     /**
-     * 指定Cellの指定タイプ名のCell制御Type操作オブジェクトを返します.
+     * Returns the Cell control Type operation object with the specified type name of the specified Cell.
      * @param cell Cell
-     * @param type タイプ名
-     * @return Typeオブジェクト
+     * @param type Type name
+     * @return Type object
      */
     public static EntitySetAccessor cellCtl(final Cell cell, final String type) {
         return cell(cell, type);
@@ -208,18 +208,18 @@ public class EsModel {
     }
 
     /**
-     * Unit制御オブジェクト間リンク情報Typeの操作オブジェクトを返します.
+     * Unit Returns the operation object of link information type between control objects.
      * @param cellId cellId
-     * @return Typeオブジェクト
+     * @return Type object
      */
     public static ODataLinkAccessor unitCtlLink(String cellId) {
         return new ODataLinkAccessor(idxAdmin(), TYPE_CTL_LINK, cellId);
     }
 
     /**
-     * 指定CellのCell制御オブジェクト間リンク情報Typeの操作オブジェクトを返します.
+     * Returns the operation object of link information type between Cell control objects of specified Cell.
      * @param cell Cell
-     * @return Typeオブジェクト
+     * @return Type object
      */
     public static ODataLinkAccessor cellCtlLink(final Cell cell) {
         String userUri = cell.getOwner();
@@ -227,20 +227,20 @@ public class EsModel {
     }
 
     /**
-     * Link 情報を保存する Type名.
+     * Type name to save Link information.
      */
     public static final String TYPE_CTL_LINK = "link";
 
     /**
-     * Cell用のBulkDataAccessorを返します.
-     * @return Typeオブジェクト
+     * Returns BulkDataAccessor for Cell.
+     * @return Type object
      */
     public static DataSourceAccessor batch() {
         return new DataSourceAccessor(idxAdmin());
     }
 
     /**
-     * 指定CellのBulkDataAccessorを返します.
+     * Returns the BulkDataAccessor of the specified Cell.
      * @param cell Cell
      * @return BulkDataAccessor
      */
@@ -249,8 +249,8 @@ public class EsModel {
     }
 
     /**
-     * 指定UnitUser名のDataSourceAccessorを返します.
-     * @param unitUserName ユニットユーザー名
+     * Returns the DataSourceAccessor of the specified UnitUser name.
+     * @param unitUserName unit user name
      * @return DataSourceAccessor
      */
     public static DataSourceAccessor dsa(final String unitUserName) {
@@ -258,8 +258,8 @@ public class EsModel {
     }
 
     /**
-     * 指定ESインデックス名のDataSourceAccessorを返します.
-     * @param indexName ESのインデックス名
+     * Returns the DataSourceAccessor of the specified ES index name.
+     * @param indexName Index name of ES
      * @return DataSourceAccessor
      */
     public static DataSourceAccessor getDataSourceAccessorFromIndexName(final String indexName) {

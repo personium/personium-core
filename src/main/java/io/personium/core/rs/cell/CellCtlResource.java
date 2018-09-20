@@ -65,7 +65,7 @@ public final class CellCtlResource extends ODataResource {
     /**
      * constructor.
      * @param accessContext AccessContext
-     * @param pCredHeader X-Personium-Credentialヘッダ
+     * @param pCredHeader X-Personium-Credential header
      * @param davRsCmp davRsCmp
      */
     public CellCtlResource(final AccessContext accessContext, final String pCredHeader, DavRsCmp davRsCmp) {
@@ -81,8 +81,8 @@ public final class CellCtlResource extends ODataResource {
     }
 
     /**
-     * 認証に使用できるAuth Schemeを取得する.
-     * @return 認証に使用できるAuth Scheme
+     * Obtain Auth Scheme that can be used for authentication.
+     * Autret Scheme that can be used for @return authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {
@@ -119,8 +119,8 @@ public final class CellCtlResource extends ODataResource {
     }
 
     /**
-     * サービスメタデータリクエストに対応する.
-     * @return JAX-RS 応答オブジェクト
+     * Corresponds to the service metadata request.
+     * @return JAX-RS response object
      */
     @GET
     @Path("{first: \\$}metadata")
@@ -129,7 +129,7 @@ public final class CellCtlResource extends ODataResource {
     }
 
     /**
-     * OPTIONSメソッド.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
@@ -140,7 +140,7 @@ public final class CellCtlResource extends ODataResource {
 
     @Override
     public Privilege getNecessaryReadPrivilege(String entitySetNameStr) {
-        // セルレベルはエンティティセットごとに権限が異なる
+        //The cell level has different authority for each entity set
         if (Account.EDM_TYPE_NAME.equals(entitySetNameStr)) {
             return CellPrivilege.AUTH_READ;
         } else if (Role.EDM_TYPE_NAME.equals(entitySetNameStr)) {
@@ -166,7 +166,7 @@ public final class CellCtlResource extends ODataResource {
 
     @Override
     public Privilege getNecessaryWritePrivilege(String entitySetNameStr) {
-        // セルレベルはエンティティセットごとに権限が異なる
+        //The cell level has different authority for each entity set
         if (Account.EDM_TYPE_NAME.equals(entitySetNameStr)) {
             return CellPrivilege.AUTH;
         } else if (Role.EDM_TYPE_NAME.equals(entitySetNameStr)) {
@@ -196,15 +196,15 @@ public final class CellCtlResource extends ODataResource {
 
     @Override
     public void setBasicAuthenticateEnableInBatchRequest(AccessContext ac) {
-        // CellレベルAPIはバッチリクエストに対応していないため、ここでは何もしない
+        //Since the Cell level API does not support batch requests, we do not do anything here
     }
 
     /**
      * Not Implemented. <br />
-     * 現状、$batchのアクセス制御でのみ必要なメソッドのため未実装. <br />
-     * アクセスコンテキストが$batchしてよい権限を持っているかを返す.
-     * @param ac アクセスコンテキスト
-     * @return true: アクセスコンテキストが$batchしてよい権限を持っている
+     * Currently unimplemented because it is only necessary for $ batch access control <br />
+     * Returns whether the access context has permission to $ batch.
+     * @param ac access context
+     * @return true: The access context has permission to $ batch
      */
     @Override
     public boolean hasPrivilegeForBatch(AccessContext ac) {
