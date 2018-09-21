@@ -37,13 +37,7 @@ import org.glassfish.jersey.test.spi.TestContainerFactory;
  * Base test class for Personium that extended JerseyTest.
  */
 public class PersoniumTest extends JerseyTest {
-//    /**
-//     * Constructor.
-//     * @param application jax-rs application
-//     */
-//    public PersoniumTest() {
-//        super();
-//    }
+
     /**
      * Constructor.
      * @param application jax-rs application
@@ -54,8 +48,7 @@ public class PersoniumTest extends JerseyTest {
     }
 
     /**
-     * 標準だとHttpServletRequestやHttpServletResponseが取れないので
-     * grizzlyで代用する
+     * 標準だとHttpServletRequestやHttpServletResponseが取れないのでgrizzlyで代用する.
      */
     @Override
     protected TestContainerFactory getTestContainerFactory() throws TestContainerException {

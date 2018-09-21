@@ -302,7 +302,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
         List<OEntity> extCellEntities = response.getEntities();
         checkMaxDestinationsSize(response.getInlineCount());
         for (OEntity extCell : extCellEntities) {
-            extCellUrlList.add(extCell.getProperty(ExtCell.P_URL.getName()).getValue().toString());
+            extCellUrlList.add(extCell.getProperty(Common.P_URL.getName()).getValue().toString());
         }
         if (extCellUrlList.isEmpty()) {
             //If there is no ExtCell associated with the Relation specified by ToRelation, 400 error is returned

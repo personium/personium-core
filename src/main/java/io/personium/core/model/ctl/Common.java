@@ -212,6 +212,13 @@ public class Common {
      */
     public static final EdmProperty.Builder P_UPDATED = EdmProperty.newBuilder("__updated")
             .setType(EdmSimpleType.DATETIME).setDefaultValue(SYSUTCDATETIME).setPrecision(3);
+    /**
+     * Url property definition body.
+     */
+    public static final EdmProperty.Builder P_URL = EdmProperty.newBuilder("Url")
+            .setNullable(false)
+            .setAnnotations(Common.P_FORMAT_CELL_URL)
+            .setType(EdmSimpleType.STRING);
 
     static {
         P_FORMAT_NAME.add(createFormatNameAnnotation());
