@@ -110,7 +110,7 @@ public abstract class AbstractODataResource {
     /** $ format atom.*/
     public static final String FORMAT_ATOM = "atom";
 
-    /** Time when data was stored (set "PersoniumJsonFromatParser class" when "SYSUTCDATETIME ()" is specified as the request body).*/
+    /** Time when data was stored (set "PersoniumJsonFromatParser class" when "SYSUTCDATETIME ()" is specified as the request body). */
     private long currentTimeMillis = System.currentTimeMillis();
 
     /**
@@ -277,7 +277,7 @@ public abstract class AbstractODataResource {
      * Create an OEntity object from the input body.
      * Since this method can not apply the locking process, it does not check the existence of data.
      * @param reader request body
-     * @param o EntityKey The entityKey to update. Specify null when creating a new one
+     * @param oEntityKey The entityKey to update. Specify null when creating a new one
      * @return OData entity
      */
     protected OEntity createRequestEntity(final Reader reader, OEntityKey oEntityKey) {
@@ -290,7 +290,7 @@ public abstract class AbstractODataResource {
      * Create an OEntity object from the input body.
      * Since this method can not apply the locking process, it does not check the existence of data.
      * @param reader request body
-     * @param o EntityKey The entityKey to update. Specify null when creating a new one
+     * @param oEntityKey The entityKey to update. Specify null when creating a new one
      * @param metadata EdmDataServices schema definition
      * @return OData entity
      */
@@ -306,7 +306,7 @@ public abstract class AbstractODataResource {
      * Create an OEntity object from the input body.
      * Since this method can not apply the locking process, it does not check the existence of data.
      * @param reader request body
-     * @param o EntityKey The entityKey to update. Specify null when creating a new one
+     * @param oEntityKey The entityKey to update. Specify null when creating a new one
      * @param metadata EdmDataServices schema definition
      * @param entitySetNameParam EntitySet name
      * @return OData entity
@@ -478,7 +478,7 @@ public abstract class AbstractODataResource {
 
     /**
      * Primary Key Validate.
-     * @param o EntityKey Requested Key information
+     * @param oEntityKey Requested Key information
      * @param edmEntityType Schema information for EntityType
      */
     protected void validatePrimaryKey(OEntityKey oEntityKey, EdmEntityType edmEntityType) {

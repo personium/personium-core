@@ -27,7 +27,7 @@ public interface EventReceiver {
      * Subscribe.
      * @param queueName queue name
      */
-    void subscribe(final String queueName);
+    void subscribe(String queueName);
 
     /**
      * Receive.

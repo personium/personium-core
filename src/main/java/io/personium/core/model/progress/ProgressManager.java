@@ -16,8 +16,8 @@
  */
 package io.personium.core.model.progress;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
@@ -75,7 +75,7 @@ public abstract class ProgressManager {
 
     /**
      * Asynchronous processing status grading process.
-     * @param key
+     * @param key progress key
      * @param progress Asynchronous processing status object
      */
     public static void putProgress(String key, Progress progress) {
@@ -84,7 +84,7 @@ public abstract class ProgressManager {
 
     /**
      * Asynchronous processing status grading process.
-     * @param key
+     * @param key progress key
      */
     public static void deleteProgress(String key) {
         singleton.doDeleteProgress(key);

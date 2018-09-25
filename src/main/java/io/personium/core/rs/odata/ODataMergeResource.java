@@ -106,8 +106,8 @@ public class ODataMergeResource extends ODataEntityResource {
     }
 
     /**
-     * Set default value to OProperty based on schema definition <br />
-     * For MERGE, do not set default values ​​for items other than key, updated, and published
+     * Set default value to OProperty based on schema definition <br>
+     * For MERGE, do not set default values ​​for items other than key, updated, and published.
      * @param ep EdmProperty
      * @param propName property name
      * @param op OProperty

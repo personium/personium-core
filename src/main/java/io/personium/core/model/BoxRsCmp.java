@@ -112,6 +112,7 @@ public class BoxRsCmp extends DavRsCmp {
 
     /**
      * box Creates a response if the installation is not running or if it was executed but the cache expired.
+     * @param values bar install progress info
      * @return JSON object for response
      */
     @SuppressWarnings("unchecked")

@@ -126,7 +126,7 @@ public class AuthzEndPointResource {
     private final String passFormMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0002");
 
     /**
-     * Login form _ User ID · Password not yet entered.
+     * Login form _ User ID/Password not yet entered.
      */
     private final String noIdPassMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0003");
 
@@ -922,7 +922,7 @@ public class AuthzEndPointResource {
             return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.INVALID_REQUEST,
                     e.getMessage(), state, "code");
         }
-        //TODO box existence check ⇒ In some cases: Return token, if not: Create box (authorization check ⇒ Box import execution)
+        //TODO box existence check -> In some cases: Return token, if not: Create box (authorization check -> Box import execution)
         //However, it returns an error until Box import is implemented
 
         //Password authentication · Transcel token authentication · Cookie authentication separation
@@ -1104,7 +1104,7 @@ public class AuthzEndPointResource {
     private boolean checkAuthorization(final String clientId) {
         EntitySetAccessor boxAcceccor = EsModel.box(this.cell);
 
-        //{filter = {and = {filters = [{term = {c = 【CellID】}}, {term = {s.Schema.untouched = = [clientID]}}]}}}
+        //{filter = {and = {filters = [{term = {c = $CellID}}, {term = {s.Schema.untouched = = $clientID}}]}}}
         Map<String, Object> query1 = new HashMap<String, Object>();
         Map<String, Object> term1 = new HashMap<String, Object>();
         Map<String, Object> query2 = new HashMap<String, Object>();

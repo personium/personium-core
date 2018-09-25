@@ -914,7 +914,6 @@ public class ODataBatchResource extends AbstractODataResource {
 
         /**
          * Set the context information of the link entity.
-         * 
          * @return Context information of the link entity
          */
         public EntitySetDocHandler getSourceDocHandler() {
@@ -923,7 +922,6 @@ public class ODataBatchResource extends AbstractODataResource {
 
         /**
          * Set the context information of the link entity.
-         * 
          * @param sourceDocHandler Context information of the link entity
          */
         public void setSourceDocHandler(EntitySetDocHandler sourceDocHandler) {
@@ -932,7 +930,6 @@ public class ODataBatchResource extends AbstractODataResource {
 
         /**
          * Acquire registration context information.
-         * 
          * @return registration context information
          */
         public EntitySetDocHandler getTargetDocHandler() {
@@ -941,7 +938,6 @@ public class ODataBatchResource extends AbstractODataResource {
 
         /**
          * Set registration context information.
-         * 
          * @param targetDocHandler Registration context information
          */
         public void setTargetDocHandler(EntitySetDocHandler targetDocHandler) {

@@ -57,7 +57,7 @@ public class AuthResourceUtils {
         String rtnstr = null;
         try {
             in = PersoniumUnitConfig.class.getClassLoader().getResourceAsStream(fileName);
-	    /* Character code specification */
+            /* Character code specification */
             isr = new InputStreamReader(in, "UTF-8");
             reader = new BufferedReader(isr);
             StringBuffer buf = new StringBuffer();

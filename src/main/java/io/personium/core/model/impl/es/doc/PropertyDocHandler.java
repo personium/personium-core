@@ -151,8 +151,8 @@ public class PropertyDocHandler extends OEntityDocHandler implements EntitySetDo
 
     /**
      * Set data for ES / MySQL registration to Map object.
-     * @param property Alias ​​property Alias ​​information
-     * @param key
+     * @param propertyAlias ​​property Alias ​​information
+     * @param key property key
      * @return Created Map object
      */
     protected Map<String, Object> setSource(String key, PropertyAlias propertyAlias) {

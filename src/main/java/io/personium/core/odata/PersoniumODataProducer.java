@@ -59,7 +59,7 @@ public interface PersoniumODataProducer extends ODataProducer {
      * ETag · Entity update corresponding to primary key change.
      * @param entitySetName entitySetName
      * @param originalKey Key to be updated
-     * @param o EntityWrapper data (including updated key)
+     * @param oEntityWrapper data (including updated key)
      */
     void updateEntity(String entitySetName, OEntityKey originalKey, OEntityWrapper oEntityWrapper);
 
@@ -83,7 +83,7 @@ public interface PersoniumODataProducer extends ODataProducer {
      * ETag · Entity MERGE for primary key change.
      * @param entitySetName entitySetName
      * @param originalKey Key to be updated
-     * @param o EntityWrapper data (including updated key)
+     * @param oEntityWrapper data (including updated key)
      */
     void mergeEntity(String entitySetName, OEntityKey originalKey, OEntityWrapper oEntityWrapper);
 

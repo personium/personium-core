@@ -51,7 +51,7 @@ public final class ODataUtils {
     /** Maximum value of DateTime type (9999-12-31 T23: 59: 59.999).*/
     public static final long DATETIME_MAX = 253402300799999L;
 
-    /*Positive minimum value of Edm.Double type defined by * OData.*/
+    /** Positive minimum value of Edm.Double type defined by * OData.*/
     public static final double DOUBLE_POSITIVE_MIN_VALUE = 2.23e-308;
     /** The maximum positive value of Edm.Double type defined by OData.*/
     public static final double DOUBLE_POSITIVE_MAX_VALUE = 1.79e+308;
@@ -169,7 +169,8 @@ public final class ODataUtils {
                 baseProperty.put(key, value);
             } else {
                 Map<String, Object> nestMap = (Map<String, Object>) baseProperty.get(key);
-                if (nestMap == null) { //If the previous value of MERGE is null, you can not put the value you are MERGEing → Create an empty HashMap
+                // If the previous value of MERGE is null, you can not put the value you are MERGEing -> Create an empty HashMap
+                if (nestMap == null) {
                     nestMap = new HashMap<String, Object>();
                     baseProperty.put(key, nestMap);
                 }

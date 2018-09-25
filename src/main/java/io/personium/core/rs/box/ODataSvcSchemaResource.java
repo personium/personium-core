@@ -201,8 +201,8 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     /**
      * Partial update preprocessing.
-     * @param o EntityWrapper OEntityWrapper object
-     * @param o EntityKey The entityKey to delete
+     * @param oEntityWrapper OEntityWrapper object
+     * @param oEntityKey The entityKey to delete
      */
     @Override
     public void beforeMerge(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {

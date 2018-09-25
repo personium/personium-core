@@ -25,13 +25,13 @@ public interface EventSender {
      * Open connection.
      * @param queueName queue name to send event
      */
-    void open(final String queueName);
+    void open(String queueName);
 
     /**
      * Send event.
      * @param event event to send
      */
-    void send(final PersoniumEvent event);
+    void send(PersoniumEvent event);
 
     /**
      * Close connection.

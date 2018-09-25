@@ -651,7 +651,7 @@ public class UserSchemaODataProducer extends EsODataProducer {
     /**
      * Check if it supports change.
      * @param entitySetName Entity set name
-     * @param oedh Existing data existing in the data store
+     * @param oedhExisting data existing in the data store
      * @param originalManeToNoelinkId Link information existing in the data store
      * @param oedhNew request data
      */

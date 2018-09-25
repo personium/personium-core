@@ -211,7 +211,8 @@ public interface DavCmp {
 
     /**
      * Returns true if there is no data below.
-     * True if there is no data under @return.
+     * True if there is no data under
+     * @return .
      */
     boolean isEmpty();
 
