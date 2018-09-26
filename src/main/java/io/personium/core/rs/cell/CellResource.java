@@ -40,6 +40,7 @@ import javax.ws.rs.core.StreamingOutput;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.wink.webdav.WebDAVMethod;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,8 +148,11 @@ public class CellResource {
      * @return JAX-RS Response Object
      */
     @GET
-    public Response getSvcDoc(@Context HttpHeaders httpHeaders) {
-        if (httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_XML_TYPE)) {
+    public Response get(@Context HttpHeaders httpHeaders) {
+        if (httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_JSON_TYPE)) {
+            JSONObject responseJson = cellRsCmp.getCellMetadataJson();
+            return Response.ok().entity(responseJson.toJSONString()).build();
+        } else if (httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_XML_TYPE)) {
             StringBuffer sb = new StringBuffer();
             sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             sb.append("<cell xmlns=\"urn:x-personium:xmlns\">");

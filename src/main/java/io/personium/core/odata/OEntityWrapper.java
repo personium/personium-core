@@ -42,7 +42,7 @@ public final class OEntityWrapper implements OEntity {
     /**
      * constructor.
      * @param uuid UUID
-     * @param o Entity OEntity object
+     * @param oEntity OEntity object
      * @param etag ETag
      */
     public OEntityWrapper(final String uuid, final OEntity oEntity, final String etag) {

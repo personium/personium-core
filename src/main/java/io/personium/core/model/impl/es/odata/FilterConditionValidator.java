@@ -184,7 +184,8 @@ public class FilterConditionValidator {
     static class Int32Validator implements AbstractValidator {
         @Override
         public void validate(CommonExpression searchValue, String propertyName) {
-            long value = 0L; //Since Int64Literal # gerValue of odata4j returns a long type value, value is of type long.
+            //Since Int64Literal # gerValue of odata4j returns a long type value, value is of type long.
+            long value = 0L;
             if (searchValue instanceof IntegralLiteral) {
                 value = ((IntegralLiteral) searchValue).getValue();
             } else if (searchValue instanceof Int64Literal) {
@@ -224,7 +225,8 @@ public class FilterConditionValidator {
     static class SingleValidator implements AbstractValidator {
         @Override
         public void validate(CommonExpression searchValue, String propertyName) {
-            double value = 0D; //Since DoubleLiteral # gerValue of odata4j returns a double type value, value is of type double.
+            //Since DoubleLiteral # gerValue of odata4j returns a double type value, value is of type double.
+            double value = 0D;
             if (searchValue instanceof IntegralLiteral) {
                 value = ((IntegralLiteral) searchValue).getValue();
             } else if (searchValue instanceof Int64Literal) {
@@ -250,7 +252,8 @@ public class FilterConditionValidator {
     static class DateTimeValidator implements AbstractValidator {
         @Override
         public void validate(CommonExpression searchValue, String propertyName) {
-            long value = 0L; //Since Int64Literal # gerValue of odata4j returns a long type value, value is of type long.
+            //Since Int64Literal # gerValue of odata4j returns a long type value, value is of type long.
+            long value = 0L;
             if (searchValue instanceof IntegralLiteral) {
                 value = ((IntegralLiteral) searchValue).getValue();
             } else if (searchValue instanceof Int64Literal) {

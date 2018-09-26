@@ -396,7 +396,7 @@ public class PersoniumEngineSvcCollectionResource {
         }
 
         if (log.isDebugEnabled()) {
-log.debug ("[EngineRelay]" + req.getMethod () + "" + req.getURI ());
+            log.debug("[EngineRelay]" + req.getMethod() + " " + req.getURI());
             Header[] reqHeaders = req.getAllHeaders();
             for (int i = 0; i < reqHeaders.length; i++) {
                 log.debug("RelayHeader[" + reqHeaders[i].getName() + "] : " + reqHeaders[i].getValue());
@@ -435,7 +435,8 @@ log.debug ("[EngineRelay]" + req.getMethod () + "" + req.getURI ());
         //Add response header
         for (int i = 0; i < headersResEngine.length; i++) {
             //Do not relay Transfer-Encoding returned from Engine.
-            //Since Content-Length or Transfer-Encoding is appended according to the length of the response in the subsequent MW
+            //Since Content-Length or Transfer-Encoding is appended according to the length
+            //of the response in the subsequent MW.
             //In order to prevent it being doubly added, leave it out here.
             if ("Transfer-Encoding".equalsIgnoreCase(headersResEngine[i].getName())) {
                 continue;

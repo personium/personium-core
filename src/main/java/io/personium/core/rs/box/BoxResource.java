@@ -18,11 +18,8 @@ package io.personium.core.rs.box;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -66,7 +63,6 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
 import io.personium.core.model.progress.Progress;
-import io.personium.core.model.progress.ProgressInfo;
 import io.personium.core.model.progress.ProgressManager;
 import io.personium.core.rs.cell.CellCtlResource;
 import io.personium.core.rs.odata.ODataEntityResource;
@@ -236,13 +232,10 @@ public class BoxResource {
     @SuppressWarnings("unchecked")
     private JSONObject createNotRequestedResponse() {
         JSONObject response = new JSONObject();
-        response.put("status", ProgressInfo.STATUS.COMPLETED.value());
-        response.put("schema", this.getBox().getSchema());
-
-        SimpleDateFormat sdfIso8601ExtendedFormatUtc = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        sdfIso8601ExtendedFormatUtc.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String installedAt = sdfIso8601ExtendedFormatUtc.format(new Date(this.getBox().getPublished()));
-        response.put("installed_at", installedAt);
+        JSONObject boxMetadataJson = boxRsCmp.getBoxMetadataJson();
+        JSONObject cellMetadataJson = cellRsCmp.getCellMetadataJson();
+        response.putAll(boxMetadataJson);
+        response.putAll(cellMetadataJson);
         return response;
     }
 
@@ -253,17 +246,10 @@ public class BoxResource {
     @SuppressWarnings("unchecked")
     private JSONObject createResponse(JSONObject values) {
         JSONObject response = new JSONObject();
-        response.putAll(values);
-        response.remove("cell_id");
-        response.remove("box_id");
-        response.put("schema", this.getBox().getSchema());
-        ProgressInfo.STATUS status = ProgressInfo.STATUS.valueOf((String) values.get("status"));
-        if (status == ProgressInfo.STATUS.COMPLETED) {
-            response.remove("progress");
-            String startedAt = (String) response.remove("started_at");
-            response.put("installed_at", startedAt);
-        }
-        response.put("status", status.value());
+        JSONObject boxMetadataJson = boxRsCmp.getBoxMetadataJson(values);
+        JSONObject cellMetadataJson = cellRsCmp.getCellMetadataJson();
+        response.putAll(boxMetadataJson);
+        response.putAll(cellMetadataJson);
         return response;
     }
 

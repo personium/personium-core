@@ -97,7 +97,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
     /**
      * Pre-registration processing.
      * @param entitySetName Entity set name
-     * @param o Entity entity to be registered
+     * @param oEntity entity to be registered
      * @param docHandler Entity dock handler to register
      */
     @Override
@@ -305,7 +305,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
         }
 
         Map<String, Object> extCellKeyMap = new HashMap<>();
-        extCellKeyMap.put(ExtCell.P_URL.getName(), targetUrl);
+        extCellKeyMap.put(Common.P_URL.getName(), targetUrl);
         OEntityKey extCellKey = OEntityKey.create(extCellKeyMap);
         EdmEntitySet extCellEdmEntitySet = getMetadata().findEdmEntitySet(ExtCell.EDM_TYPE_NAME);
         EntitySetDocHandler extCellDocHandler = retrieveWithKey(extCellEdmEntitySet, extCellKey);
@@ -438,7 +438,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
         }
 
         Map<String, Object> extCellKeyMap = new HashMap<>();
-        extCellKeyMap.put(ExtCell.P_URL.getName(), targetUrl);
+        extCellKeyMap.put(Common.P_URL.getName(), targetUrl);
         OEntityKey extCellKey = OEntityKey.create(extCellKeyMap);
         EdmEntitySet extCellEdmEntitySet = getMetadata().findEdmEntitySet(ExtCell.EDM_TYPE_NAME);
         EntitySetDocHandler extCellDocHandler = retrieveWithKey(extCellEdmEntitySet, extCellKey);

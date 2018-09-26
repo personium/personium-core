@@ -85,7 +85,8 @@ public class DavPath {
     }
 
     /**
-     * Path of resource under @return Box
+     * Path of resource under.
+     * @return Box
      */
     public List<String> getResourcePath() {
         return this.resourcePath;

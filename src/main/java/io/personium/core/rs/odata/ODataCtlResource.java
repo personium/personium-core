@@ -33,23 +33,23 @@ import io.personium.core.odata.OEntityWrapper;
 public class ODataCtlResource {
     /**
      * Preprocessing process.
-     * @param o EntityWrapper OEntityWrapper object
+     * @param oEntityWrapper OEntityWrapper object
      */
     public void beforeCreate(final OEntityWrapper oEntityWrapper) {
     }
 
     /**
      * Pre-update processing.
-     * @param o EntityWrapper OEntityWrapper object
-     * @param o EntityKey The entityKey to delete
+     * @param oEntityWrapper OEntityWrapper object
+     * @param oEntityKey The entityKey to delete
      */
     public void beforeUpdate(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
     }
 
     /**
      * Partial update preprocessing.
-     * @param o EntityWrapper OEntityWrapper object
-     * @param o EntityKey The entityKey to delete
+     * @param oEntityWrapper OEntityWrapper object
+     * @param oEntityKey The entityKey to delete
      */
     public void beforeMerge(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
         beforeUpdate(oEntityWrapper, oEntityKey);
@@ -58,7 +58,7 @@ public class ODataCtlResource {
     /**
      * Pre-deletion process.
      * @param entitySetName entitySet name
-     * @param o EntityKey The entityKey to delete
+     * @param oEntityKey The entityKey to delete
      */
     public void beforeDelete(final String entitySetName, final OEntityKey oEntityKey) {
     }
@@ -66,7 +66,7 @@ public class ODataCtlResource {
     /**
      * Processing after deletion.
      * @param entitySetName entitySet name
-     * @param o EntityKey The entityKey to delete
+     * @param oEntityKey The entityKey to delete
      */
     public void afterDelete(final String entitySetName, final OEntityKey oEntityKey) {
     }

@@ -167,7 +167,7 @@ public class PersoniumUnitConfig {
      * Lock setting.
      */
     public static final class Lock {
-        /** Type of Lock Tolerance: memcached*/
+        /** Type of Lock Tolerance: memcached.*/
         public static final String TYPE = KEY_ROOT + "lock.type";
 
         /** Account lock expiration date (s).*/
@@ -276,16 +276,16 @@ public class PersoniumUnitConfig {
      * Setting around Cache.
      */
     public static final class Cache {
-        /** Type of Cache Tolerance: none / memcached*/
+        /** Type of Cache Tolerance: none/memcached.*/
         public static final String TYPE = KEY_ROOT + "cache.type";
 
-        /** Whether cell caching is enabled Tolerance: true / false*/
+        /** Whether cell caching is enabled Tolerance: true/false.*/
         public static final String CELL_CACHE_ENABLED = KEY_ROOT + "cache.cell.enabled";
 
-        /** Whether box caching is enabled Tolerance: true / false*/
+        /** Whether box caching is enabled Tolerance: true/false.*/
         public static final String BOX_CACHE_ENABLED = KEY_ROOT + "cache.box.enabled";
 
-        /** Whether schema caching is enabled Tolerance: true / false*/
+        /** Whether schema caching is enabled Tolerance: true/false.*/
         public static final String SCHEMA_CACHE_ENABLED = KEY_ROOT + "cache.schema.enabled";
 
         /** memcached host name.*/
@@ -1067,7 +1067,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @reccache memcached operation timeout value (ms).
+     * @return cache memcached operation timeout value (ms).
      */
     public static long getCacheMemcachedOpTimeout() {
         return Long.parseLong(get(Cache.MEMCACHED_OPTIMEOUT));

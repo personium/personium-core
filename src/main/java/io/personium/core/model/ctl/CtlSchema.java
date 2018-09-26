@@ -579,9 +579,10 @@ public final class CtlSchema {
         EdmAssociation.Builder ret = EdmAssociation
                 .newBuilder()
                 .setEnds(
+                        //For some reason I just can not use setType, setTypeName I also have to do.
                         EdmAssociationEnd.newBuilder()
                                 .setType(type1)
-                                .setTypeName(type1.getName()) //For some reason I just can not use setType, setTypeName I also have to do.
+                                .setTypeName(type1.getName())
                                 .setMultiplicity(type1Multiplicity)
                                 .setRole(type1EndRole),
                         EdmAssociationEnd.newBuilder()

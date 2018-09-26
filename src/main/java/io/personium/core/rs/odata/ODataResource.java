@@ -229,7 +229,6 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * 
      * @param entitySetName Path representing entitySet name
      * @param request Request
      * @return ODataEntitiesResource
@@ -251,7 +250,6 @@ public abstract class ODataResource extends ODataCtlResource {
     }
 
     /**
-     * 
      * @param entitySetName entitySet name
      * @param key key string
      * @param request Request

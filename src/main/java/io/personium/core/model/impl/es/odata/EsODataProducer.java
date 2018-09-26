@@ -251,7 +251,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     /**
      * Implementation subclass If you want to perform Producer registration processing, implement override this place and return the result.
      * @param entitySetName Entity set name
-     * @param o Entity entity to be registered
+     * @param oEntity entity to be registered
      * @param docHandler Entity dock handler to register
      */
     public void beforeCreate(final String entitySetName, final OEntity oEntity, final EntitySetDocHandler docHandler) {
@@ -260,7 +260,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     /**
      * Implementation subclass If you want to perform Producer update processing, implement override this to check existence of child data and return result.
      * @param entitySetName Entity set name
-     * @param o EntityKey Entity key to be updated
+     * @param oEntityKey Entity key to be updated
      * @param docHandler Entity dock handler to be updated
      */
     public void beforeUpdate(final String entitySetName,
@@ -271,7 +271,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     /**
      * Implementation subclass If Producer wishes to perform deletion processing, it overrides here, checks the existence of child data, and implements it so as to return the result.
      * @param entitySetName Entity set name
-     * @param o EntityKey Entity key to delete
+     * @param oEntityKey Entity key to delete
      * @param docHandler Document to be deleted
      */
     public void beforeDelete(final String entitySetName, final OEntityKey oEntityKey,
@@ -288,7 +288,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     /**
      * Implementation subclass If you want to perform Producer registration processing, implement override this place and return the result.
      * @param entitySetName Entity set name
-     * @param o Entity entity to be registered
+     * @param oEntity entity to be registered
      * @param docHandler Entity dock handler to register
      */
     public void afterCreate(final String entitySetName, final OEntity oEntity, final EntitySetDocHandler docHandler) {
@@ -475,7 +475,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     /**
      * Get an entity.
      * @param entitySet entity set
-     * @param o EntityKey entity key
+     * @param oEntityKey entity key
      * @return Acquisition result
      */
     protected EntitySetDocHandler retrieveWithKey(EdmEntitySet entitySet, OEntityKey oEntityKey) {
@@ -3493,7 +3493,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     /**
      * Check if it supports change.
      * @param entitySetName Entity set name
-     * @param oedh Existing data existing in the data store
+     * @param oedhExisting data existing in the data store
      * @param originalManeToNoelinkId Link information existing in the data store
      * @param oedhNew request data
      */

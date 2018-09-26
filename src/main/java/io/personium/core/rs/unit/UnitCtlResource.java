@@ -145,7 +145,7 @@ public class UnitCtlResource extends ODataResource {
     /**
      * Check processing required when updating.
      * @param oEntityWrapper OEntityWrapper
-     * @param o EntityKey The entityKey to be updated
+     * @param oEntityKey The entityKey to be updated
      */
     @Override
     public void beforeUpdate(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {

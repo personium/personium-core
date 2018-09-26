@@ -162,7 +162,7 @@ public class AccessContext {
     /**
      * Factory method, which creates and returns an object based on the value of the accessing Cell and Authorization header.
      * @param authzHeaderValue Authorization header value
-     * @param request URIInfo URI information of the request
+     * @param requestURIInfo URI information of the request
      * @param pCookiePeer The value of p_cookie_peer specified in the request parameter
      * @param pCookieAuthValue Value specified for p_cookie in cookie
      * @param cell Accessing Cell

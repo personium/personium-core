@@ -120,7 +120,7 @@ public class OEntityDocHandler implements EntitySetDocHandler {
     }
 
     /**
-     * @param hidden Fields Hidden Field Map
+     * @param hiddenFields Hidden Field Map
      */
     public void setHiddenFields(Map<String, Object> hiddenFields) {
         this.hiddenFields = hiddenFields;

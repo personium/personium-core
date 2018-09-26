@@ -29,6 +29,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.json.simple.JSONObject;
 import org.xml.sax.SAXException;
 
 import io.personium.core.PersoniumCoreAuthzException;
@@ -161,6 +162,20 @@ public class CellRsCmp extends DavRsCmp {
             }
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
+    }
+
+    /**
+     * Get cell info (name, url).
+     * @return cell info
+     */
+    @SuppressWarnings("unchecked")
+    public JSONObject getCellMetadataJson() {
+        JSONObject responseJson = new JSONObject();
+        JSONObject cellMetadataJson = new JSONObject();
+        cellMetadataJson.put("name", cell.getName());
+        cellMetadataJson.put("url", cell.getUrl());
+        responseJson.put("cell", cellMetadataJson);
+        return responseJson;
     }
 
     /**

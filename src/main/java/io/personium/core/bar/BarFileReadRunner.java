@@ -347,7 +347,7 @@ public class BarFileReadRunner implements Runnable {
      * bar Make settings for internal event output of installation processing status.
      */
     private void setEventBus() {
-        //The schema of the TODO Box and the subject's log are implemented at the time of formal correspondence of internal events
+        // The schema of the TODO Box and the subject's log are implemented at the time of formal correspondence of internal events
 
         String type = WebDAVMethod.MKCOL.toString();
         String object = UriUtils.SCHEME_LOCALCELL + ":/" + boxName;
@@ -1362,7 +1362,7 @@ public class BarFileReadRunner implements Runnable {
     /**
      * bar / 90_contents / {OdataCol_name} is checked to see if it is a correct definition.
      * @param entryName entry name (collection name)
-     * @param col Map Map object for collection
+     * @param colMap Map object for collection
      * @param doneKeys List of entries for processed OData collection
      * @return judgment processing result
      */

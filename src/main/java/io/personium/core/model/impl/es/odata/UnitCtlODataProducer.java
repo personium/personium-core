@@ -99,7 +99,7 @@ public class UnitCtlODataProducer extends EsODataProducer {
     /**
      * Implementation subclass If you want to perform Producer update processing, implement override this to check existence of child data and return result.
      * @param entitySetName Entity set name
-     * @param o EntityKey Entity key to be updated
+     * @param oEntityKey Entity key to be updated
      * @param docHandler Entity dock handler to be updated
      */
     @Override
@@ -112,7 +112,7 @@ public class UnitCtlODataProducer extends EsODataProducer {
     /**
      * Implementation subclass If Producer wishes to perform deletion processing, it overrides here, checks the existence of child data, and implements it so as to return the result.
      * @param entitySetName Entity set name
-     * @param o EntityKey Entity key to delete
+     * @param oEntityKey Entity key to delete
      * @param docHandler Document to be deleted
      */
     @Override

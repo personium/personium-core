@@ -25,13 +25,13 @@ public interface EventPublisher {
      * Open connection.
      * @param topic topic name
      */
-    void open(final String topic);
+    void open(String topic);
 
     /**
      * Send event to default topic.
      * @param event event to send
      */
-    void send(final PersoniumEvent event);
+    void send(PersoniumEvent event);
 
     /**
      * Close connection.

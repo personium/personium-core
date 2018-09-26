@@ -27,7 +27,7 @@ public interface EventSubscriber {
      * Subscribe.
      * @param topicName topic name
      */
-    void subscribe(final String topicName);
+    void subscribe(String topicName);
 
     /**
      * Receive.

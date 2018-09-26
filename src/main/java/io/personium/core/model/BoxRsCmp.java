@@ -16,13 +16,18 @@
  */
 package io.personium.core.model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.wink.webdav.model.Multistatus;
+import org.json.simple.JSONObject;
 
 import io.personium.core.auth.AccessContext;
+import io.personium.core.model.progress.ProgressInfo;
 import io.personium.core.utils.UriUtils;
 
 
@@ -80,6 +85,57 @@ public class BoxRsCmp extends DavRsCmp {
      */
     public AccessContext getAccessContext() {
         return this.accessContext;
+    }
+
+    /**
+     * box Creates a response if the installation is not running or if it was executed but the cache expired.
+     * @return JSON object for response
+     */
+    @SuppressWarnings("unchecked")
+    public JSONObject getBoxMetadataJson() {
+        JSONObject responseJson = new JSONObject();
+        JSONObject boxMetadataJson = new JSONObject();
+
+        boxMetadataJson.put("name", box.getName());
+        boxMetadataJson.put("url", box.getUrl());
+        boxMetadataJson.put("status", ProgressInfo.STATUS.COMPLETED.value());
+        boxMetadataJson.put("schema", this.getBox().getSchema());
+
+        SimpleDateFormat sdfIso8601ExtendedFormatUtc = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        sdfIso8601ExtendedFormatUtc.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String installedAt = sdfIso8601ExtendedFormatUtc.format(new Date(this.getBox().getPublished()));
+        boxMetadataJson.put("installed_at", installedAt);
+
+        responseJson.put("box", boxMetadataJson);
+        return responseJson;
+    }
+
+    /**
+     * box Creates a response if the installation is not running or if it was executed but the cache expired.
+     * @param values bar install progress info
+     * @return JSON object for response
+     */
+    @SuppressWarnings("unchecked")
+    public JSONObject getBoxMetadataJson(JSONObject values) {
+        JSONObject responseJson = new JSONObject();
+        JSONObject boxMetadataJson = new JSONObject();
+
+        boxMetadataJson.put("name", box.getName());
+        boxMetadataJson.put("url", box.getUrl());
+        boxMetadataJson.putAll(values);
+        boxMetadataJson.remove("cell_id");
+        boxMetadataJson.remove("box_id");
+        boxMetadataJson.put("schema", this.getBox().getSchema());
+        ProgressInfo.STATUS status = ProgressInfo.STATUS.valueOf((String) values.get("status"));
+        if (status == ProgressInfo.STATUS.COMPLETED) {
+            boxMetadataJson.remove("progress");
+            String startedAt = (String) boxMetadataJson.remove("started_at");
+            boxMetadataJson.put("installed_at", startedAt);
+        }
+        boxMetadataJson.put("status", status.value());
+
+        responseJson.put("box", boxMetadataJson);
+        return responseJson;
     }
 
     /**
