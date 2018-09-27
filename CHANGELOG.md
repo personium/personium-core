@@ -1,3 +1,10 @@
+## 1.6.16
+IMPROVEMENTS:
+* Change Servlet Spec from 3.0 to 3.1.([#6](https://github.com/personium/personium-core/issues/6))
+* English comments on major source files.([#244](https://github.com/personium/personium-core/issues/244))
+* Add API to return cell name(url) and box name(url).([#249](https://github.com/personium/personium-core/issues/249))
+* Change the Content-Type of box export.([#250](https://github.com/personium/personium-core/issues/250))
+
 ## 1.6.15
 IMPROVEMENTS:
 * Upgrade to JAX-RS 2.1.([#237](https://github.com/personium/personium-core/issues/237))
