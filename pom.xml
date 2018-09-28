@@ -71,25 +71,6 @@
             <version>3.1.0</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.wink</groupId>
-            <artifactId>wink-webdav</artifactId>
-            <version>1.4</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jaxrs_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-annotation_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.wink</groupId>
-                    <artifactId>wink-server</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpclient.version}</version>

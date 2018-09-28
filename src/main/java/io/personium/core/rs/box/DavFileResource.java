@@ -30,10 +30,11 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.apache.wink.webdav.WebDAVMethod;
-
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.MOVE;
+import io.personium.core.annotations.PROPFIND;
+import io.personium.core.annotations.PROPPATCH;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.event.EventBus;
@@ -168,7 +169,7 @@ public class DavFileResource {
      * @return JAX-RS response object
      */
     @WriteAPI
-    @WebDAVMethod.PROPPATCH
+    @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         // Access Control
         this.davRsCmp.checkAccessContext(
@@ -184,7 +185,7 @@ public class DavFileResource {
      * @param transferEncoding Transfer-Encoding Header
      * @return JAX-RS response object
      */
-    @WebDAVMethod.PROPFIND
+    @PROPFIND
     public Response propfind(final Reader requestBodyXml,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
@@ -214,7 +215,7 @@ public class DavFileResource {
      * @return JAX-RS response object
      */
     @WriteAPI
-    @WebDAVMethod.MOVE
+    @MOVE
     public Response move(
             @Context HttpHeaders headers) {
         // Access Control against the move source

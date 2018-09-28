@@ -21,13 +21,13 @@ import java.io.Reader;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.Response;
 
-import org.apache.wink.webdav.WebDAVMethod.PROPFIND;
-import org.apache.wink.webdav.WebDAVMethod.PROPPATCH;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.annotations.PROPFIND;
+import io.personium.core.annotations.PROPPATCH;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;

@@ -22,9 +22,8 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-import org.apache.wink.webdav.WebDAVMethod;
-
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.annotations.MKCOL;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
@@ -52,7 +51,7 @@ public class PersoniumEngineSourceNullResource extends NullResource {
      * @return JAX-RS Response
      */
     @Override
-    @WebDAVMethod.MKCOL
+    @MKCOL
     public Response mkcol(@HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             @HeaderParam("Content-Length") final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding,

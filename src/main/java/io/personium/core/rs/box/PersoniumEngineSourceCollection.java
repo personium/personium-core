@@ -27,10 +27,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-import org.apache.wink.webdav.WebDAVMethod;
-
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.annotations.MOVE;
+import io.personium.core.annotations.PROPFIND;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavRsCmp;
@@ -81,7 +81,7 @@ public class PersoniumEngineSourceCollection {
      * @param transferEncoding Transger-Encoding Header
      * @return JAX-RS Response
      */
-    @WebDAVMethod.PROPFIND
+    @PROPFIND
     public Response propfind(final Reader requestBodyXml,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
@@ -96,7 +96,7 @@ public class PersoniumEngineSourceCollection {
      * MOVE processing. <br />
      * Because __src MOVE can not be performed, it is set as uniform 400 errors.
      */
-    @WebDAVMethod.MOVE
+    @MOVE
     public void move() {
         //Access control
         this.davRsCmp.checkAccessContext(

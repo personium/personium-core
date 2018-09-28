@@ -33,7 +33,6 @@ import java.util.Set;
 
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.wink.webdav.WebDAVMethod;
 import org.apache.wink.webdav.model.Getcontenttype;
 import org.apache.wink.webdav.model.Multistatus;
 import org.apache.wink.webdav.model.Prop;
@@ -55,6 +54,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.PersoniumCoreUtils.HttpMethod;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.bar.jackson.IJSONMappedObjects;
@@ -188,7 +188,7 @@ public class BarFileInstallRunner implements Runnable {
      */
     private void setEventBus() {
         //The schema of the TODO Box and the subject's log are implemented at the time of formal correspondence of internal events
-        String type = WebDAVMethod.MKCOL.toString();
+        String type = HttpMethod.MKCOL;
         String object = UriUtils.SCHEME_LOCALCELL + ":/" + box.getName();
         String result = "";
         eventBuilder = new PersoniumEvent.Builder()

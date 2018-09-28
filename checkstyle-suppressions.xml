@@ -5,7 +5,7 @@
      "http://www.puppycrawl.com/dtds/suppressions_1_0.dtd">
 
 <suppressions>
-  <suppress checks="." files="net[\\/]oauth[\\/]"/>
+  <suppress checks="." files="org[\\/]apache[\\/]wink[\\/]"/>
   <suppress checks="Header" files="io[\\/]personium[\\/]core[\\/]odata[\\/]Personium.*\.java"/>
   <suppress checks="MethodName" files=".*Test\.java"/>
   <suppress checks="MagicNumber" files=".*Test\.java"/>

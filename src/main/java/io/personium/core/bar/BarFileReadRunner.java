@@ -45,7 +45,6 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CloseShieldInputStream;
-import org.apache.wink.webdav.WebDAVMethod;
 import org.apache.wink.webdav.model.Getcontenttype;
 import org.apache.wink.webdav.model.Multistatus;
 import org.apache.wink.webdav.model.Prop;
@@ -85,6 +84,7 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import io.personium.common.es.util.PersoniumUUID;
 import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.PersoniumCoreUtils.HttpMethod;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
@@ -349,7 +349,7 @@ public class BarFileReadRunner implements Runnable {
     private void setEventBus() {
         // The schema of the TODO Box and the subject's log are implemented at the time of formal correspondence of internal events
 
-        String type = WebDAVMethod.MKCOL.toString();
+        String type = HttpMethod.MKCOL;
         String object = UriUtils.SCHEME_LOCALCELL + ":/" + boxName;
         String result = "";
         this.eventBuilder = new PersoniumEvent.Builder()

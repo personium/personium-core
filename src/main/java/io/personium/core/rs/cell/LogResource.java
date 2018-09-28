@@ -46,7 +46,6 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
-import org.apache.wink.webdav.WebDAVMethod.PROPFIND;
 import org.apache.wink.webdav.model.Creationdate;
 import org.apache.wink.webdav.model.Getcontentlength;
 import org.apache.wink.webdav.model.Getcontenttype;
@@ -60,6 +59,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.annotations.PROPFIND;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;

@@ -38,7 +38,6 @@ import javax.ws.rs.core.StreamingOutput;
 import javax.xml.bind.JAXBException;
 
 import org.apache.http.HttpStatus;
-import org.apache.wink.webdav.WebDAVMethod;
 import org.apache.wink.webdav.model.Prop;
 import org.apache.wink.webdav.model.Propstat;
 import org.slf4j.Logger;
@@ -46,6 +45,10 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.MKCOL;
+import io.personium.core.annotations.MOVE;
+import io.personium.core.annotations.PROPFIND;
+import io.personium.core.annotations.PROPPATCH;
 import io.personium.core.annotations.REPORT;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
@@ -133,7 +136,7 @@ public class NullResource {
      * @return JAX-RS Response
      */
     @WriteAPI
-    @WebDAVMethod.MKCOL
+    @MKCOL
     public Response mkcol(@HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             @HeaderParam("Content-Length") final Long contentLength,
             @HeaderParam("Transfer-Encoding") final String transferEncoding,
@@ -261,7 +264,7 @@ public class NullResource {
      * 404 NOT FOUND is returned.
      * @return Jax-RS response object
      */
-    @WebDAVMethod.PROPFIND
+    @PROPFIND
     public final Response propfind() {
         //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
@@ -273,7 +276,7 @@ public class NullResource {
      * 404 NOT FOUND is returned.
      * @return Jax-RS response object
      */
-    @WebDAVMethod.PROPPATCH
+    @PROPPATCH
     public final Response proppatch() {
         //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
@@ -297,7 +300,7 @@ public class NullResource {
      * 404 NOT FOUND is returned.
      * @return Jax-RS response object
      */
-    @WebDAVMethod.MOVE
+    @MOVE
     public final Response move() {
         //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);

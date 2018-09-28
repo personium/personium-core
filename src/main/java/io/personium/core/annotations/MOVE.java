@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ import java.lang.annotation.Target;
 import javax.ws.rs.HttpMethod;
 
 /**
- * JaxRS annotation of PATCH method.
+ * The JaxRS annotation of the MOVE method.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@HttpMethod("PATCH")
-public @interface PATCH {
+@HttpMethod("MOVE")
+public @interface MOVE {
 
 }
