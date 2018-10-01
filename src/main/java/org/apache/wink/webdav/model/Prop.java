@@ -1,3 +1,24 @@
+/**
+ * personium.io
+ * Modifications copyright 2018 FUJITSU LIMITED
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * --------------------------------------------------
+ * This code is based on Prop.java of wink-webdav, and some modifications
+ * for personium.io are applied by us.
+ * --------------------------------------------------
+ * The copyright and the license text of the original code is as follows:
+ */
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -32,6 +53,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
@@ -58,18 +80,28 @@ import org.w3c.dom.Element;
 @XmlType(name = "", propOrder = {
 
 })
-@XmlRootElement(name = "prop")
+@XmlRootElement(namespace = "DAV:", name = "prop")
 public class Prop {
 
+    @XmlElement(namespace = "DAV:", name = "creationdate")
     protected Creationdate       creationdate;
+    @XmlElement(namespace = "DAV:", name = "displayname")
     protected Displayname        displayname;
+    @XmlElement(namespace = "DAV:", name = "getcontentlanguage")
     protected Getcontentlanguage getcontentlanguage;
+    @XmlElement(namespace = "DAV:", name = "getcontentlength")
     protected Getcontentlength   getcontentlength;
+    @XmlElement(namespace = "DAV:", name = "getcontenttype")
     protected Getcontenttype     getcontenttype;
+    @XmlElement(namespace = "DAV:", name = "getetag")
     protected Getetag            getetag;
+    @XmlElement(namespace = "DAV:", name = "getlastmodified")
     protected Getlastmodified    getlastmodified;
+    @XmlElement(namespace = "DAV:", name = "lockdiscovery")
     protected Lockdiscovery      lockdiscovery;
+    @XmlElement(namespace = "DAV:", name = "resourcetype")
     protected Resourcetype       resourcetype;
+    @XmlElement(namespace = "DAV:", name = "supportedlock")
     protected Supportedlock      supportedlock;
     @XmlAnyElement
     protected List<Element>      any;

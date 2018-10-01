@@ -1,3 +1,24 @@
+/**
+ * personium.io
+ * Modifications copyright 2018 FUJITSU LIMITED
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * --------------------------------------------------
+ * This code is based on Propstat.java of wink-webdav, and some modifications
+ * for personium.io are applied by us.
+ * --------------------------------------------------
+ * The copyright and the license text of the original code is as follows:
+ */
 /*******************************************************************************
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -52,14 +73,16 @@ import org.apache.wink.common.http.HttpStatus;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"prop", "status", "error", "responsedescription"})
-@XmlRootElement(name = "propstat")
+@XmlRootElement(namespace = "DAV:", name = "propstat")
 public class Propstat {
 
-    @XmlElement(required = true)
+    @XmlElement(namespace = "DAV:", name = "prop", required = true)
     protected Prop   prop;
-    @XmlElement(required = true)
+    @XmlElement(namespace = "DAV:", name = "status", required = true)
     protected String status;
+    @XmlElement(namespace = "DAV:", name = "error")
     protected Error  error;
+    @XmlElement(namespace = "DAV:", name = "responsedescription")
     protected String responsedescription;
 
     /**
