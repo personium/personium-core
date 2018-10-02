@@ -189,7 +189,7 @@ public class Response {
             if (pStatus == status && pError == error && // ... do not compare
                                                         // errors - only if both
                                                         // are null (the same)
-                ((pDescription == description) || (pDescription.equals(description)))) {
+                ((pDescription == description) || (pDescription.equals(description)))) { //NOPMD
                 return propstat;
             }
         }

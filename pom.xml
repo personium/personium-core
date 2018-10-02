@@ -384,9 +384,11 @@
                                 <exclude>**/jersey/cell/CellBulkDeletionTest.java</exclude>
                                 <exclude>**/jersey/cell/UnitUserCellCRUDTest.java</exclude>
                                 <exclude>**/jersey/cell/EventTest.java</exclude>
+                                <exclude>**/jersey/cell/CellRootGetTest.java</exclude>
                                 <exclude>**/jersey/cell/auth/AuthCheckTest.java</exclude>
                                 <exclude>**/jersey/cell/auth/AuthCookieTest.java</exclude>
                                 <exclude>**/jersey/cell/auth/AuthTest.java</exclude>
+                                <exclude>**/jersey/cell/auth/AuthzGetTest.java</exclude>
                                 <exclude>**/jersey/cell/auth/ImplicitFlowTest.java</exclude>
                                 <exclude>**/jersey/cell/auth/X509AuthTest.java</exclude>
                                 <exclude>**/jersey/cell/ctl/ExtCellReadTest.java</exclude>
@@ -544,15 +546,6 @@
                 <artifactId>jdepend-maven-plugin</artifactId>
                 <version>2.0</version>
             </plugin>
-            <!-- Error occurred. -->
-            <!-- Does not it correspond to lambda expression? -->
-            <!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>javancss-maven-plugin</artifactId>
-                <version>2.1</version>
-            </plugin>
-            -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>

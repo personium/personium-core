@@ -6,16 +6,16 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *  
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *  Unless required by applicable law or agreed to in writing,
  *  software distributed under the License is distributed on an
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  *  KIND, either express or implied.  See the License for the
  *  specific language governing permissions and limitations
  *  under the License.
- *  
+ *
  *******************************************************************************/
 
 package org.apache.wink.common.http;
@@ -300,7 +300,7 @@ public class HttpStatus implements Cloneable {
 
     /**
      * Gets HttpStatus for given status code.
-     * 
+     *
      * @param code status code
      * @return HttpStatus
      */
@@ -310,7 +310,7 @@ public class HttpStatus implements Cloneable {
 
     /**
      * Gets HttpStatus for given status line.
-     * 
+     *
      * @param statusLine status line
      * @return HttpStatus
      */
@@ -326,7 +326,7 @@ public class HttpStatus implements Cloneable {
 
     /**
      * Gets the status code.
-     * 
+     *
      * @return status code
      */
     public int getCode() {
@@ -335,7 +335,7 @@ public class HttpStatus implements Cloneable {
 
     /**
      * Gets the status message.
-     * 
+     *
      * @return status message
      */
     public String getMessage() {
@@ -344,7 +344,7 @@ public class HttpStatus implements Cloneable {
 
     /**
      * Gets the status line like <code>HTTP/1.1 404 Not Found</code>.
-     * 
+     *
      * @return the status line
      */
     public String getStatusLine() {
@@ -356,7 +356,7 @@ public class HttpStatus implements Cloneable {
 
     /**
      * Is this an error status.
-     * 
+     *
      * @return <code>true</code> if this status has code greater or equal to
      *         400.
      */
@@ -366,7 +366,7 @@ public class HttpStatus implements Cloneable {
 
     /**
      * Duplicates this status with another status message.
-     * 
+     *
      * @param message new status message
      * @return new HttpStatus
      */
@@ -397,7 +397,7 @@ public class HttpStatus implements Cloneable {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() { //NOPMD
         return super.hashCode();
     }
 }
