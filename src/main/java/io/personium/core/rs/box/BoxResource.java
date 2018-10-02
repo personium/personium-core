@@ -36,7 +36,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.http.HttpStatus;
-import org.apache.wink.webdav.WebDAVMethod;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -46,6 +45,10 @@ import org.slf4j.LoggerFactory;
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.MKCOL;
+import io.personium.core.annotations.MOVE;
+import io.personium.core.annotations.PROPFIND;
+import io.personium.core.annotations.PROPPATCH;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.BoxPrivilege;
@@ -284,7 +287,7 @@ public class BoxResource {
      * @param transferEncoding Transfer-Encoding Header
      * @return JAX-RS Response
      */
-    @WebDAVMethod.PROPFIND
+    @PROPFIND
     public Response propfind(final Reader requestBodyXml,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
@@ -301,7 +304,7 @@ public class BoxResource {
      * @return JAX-RS Response
      */
     @WriteAPI
-    @WebDAVMethod.PROPPATCH
+    @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
         this.boxRsCmp.checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
@@ -340,7 +343,7 @@ public class BoxResource {
      * @return JAX-RS Response
      */
     @WriteAPI
-    @WebDAVMethod.MKCOL
+    @MKCOL
     public Response mkcol(
             @Context final UriInfo uriInfo,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader,
@@ -410,7 +413,7 @@ public class BoxResource {
      * @param headers header information
      * @return JAX-RS response object
      */
-    @WebDAVMethod.MOVE
+    @MOVE
     public Response move(
             @Context HttpHeaders headers) {
 

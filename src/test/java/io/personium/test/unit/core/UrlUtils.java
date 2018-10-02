@@ -16,11 +16,12 @@
  */
 package io.personium.test.unit.core;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wink.common.internal.uri.UriEncoder;
 
 import io.personium.core.model.Box;
 import io.personium.core.model.ctl.ReceivedMessage;
@@ -357,7 +358,14 @@ public final class UrlUtils {
         if (query == null) {
             return String.format("%s/%s/__box", baseUrl, cellName);
         } else {
-            return String.format("%s/%s/__box?schema=%s", baseUrl, cellName, UriEncoder.encodeString(query));
+            String encodedQuery;
+            try {
+                encodedQuery = URLEncoder.encode(query, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                // Normally it does not occur.
+                return String.format("%s/%s/__box", baseUrl, cellName);
+            }
+            return String.format("%s/%s/__box?schema=%s", baseUrl, cellName, encodedQuery);
         }
     }
 

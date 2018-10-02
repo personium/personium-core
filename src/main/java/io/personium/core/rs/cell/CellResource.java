@@ -39,7 +39,6 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.wink.webdav.WebDAVMethod;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +49,8 @@ import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.PROPFIND;
+import io.personium.core.annotations.PROPPATCH;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
@@ -412,7 +413,7 @@ public class CellResource {
      * @param transferEncoding Transfer-Encoding Header
      * @return JAX-RS Response
      */
-    @WebDAVMethod.PROPFIND
+    @PROPFIND
     public Response propfind(final Reader requestBodyXml,
             @DefaultValue("0") @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
@@ -428,7 +429,7 @@ public class CellResource {
      * @param requestBodyXml Request Body
      * @return JAX-RS Response
      */
-    @WebDAVMethod.PROPPATCH
+    @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         AccessContext ac = this.cellRsCmp.getAccessContext();
         //Check the validity of the token

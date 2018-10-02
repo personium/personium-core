@@ -56,7 +56,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.wink.webdav.WebDAVMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +63,9 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.MOVE;
+import io.personium.core.annotations.PROPFIND;
+import io.personium.core.annotations.PROPPATCH;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.event.EventBus;
@@ -106,7 +108,7 @@ public class PersoniumEngineSvcCollectionResource {
      * @param transferEncoding Transfer-Encoding header
      * @return JAX-RS Response
      */
-    @WebDAVMethod.PROPFIND
+    @PROPFIND
     public Response propfind(final Reader requestBodyXml,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
@@ -151,7 +153,7 @@ public class PersoniumEngineSvcCollectionResource {
      * @return JAX-RS Response
      */
     @WriteAPI
-    @WebDAVMethod.PROPPATCH
+    @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
         this.davRsCmp.checkAccessContext(
@@ -495,7 +497,7 @@ public class PersoniumEngineSvcCollectionResource {
      * @return JAX-RS response object
      */
     @WriteAPI
-    @WebDAVMethod.MOVE
+    @MOVE
     public Response move(
             @Context HttpHeaders headers) {
         //Access control to move source (check parent's authority)

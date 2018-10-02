@@ -25,9 +25,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-import org.apache.wink.webdav.WebDAVMethod;
-
 import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.core.annotations.PROPFIND;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.CellSnapshotCellCmp;
@@ -74,7 +73,7 @@ public class CellSnapshotResource {
      * @param transferEncoding Transfer-Encoding Header
      * @return JAX-RS response object
      */
-    @WebDAVMethod.PROPFIND
+    @PROPFIND
     public Response propfind(Reader requestBodyXml,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) Long contentLength,
