@@ -33,7 +33,7 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.lock.AccountLockManager;
 
 /**
- * リソースクラスで汎用的に利用するメソッドを定義するユーティリティクラス.
+ * A utility class that defines methods that are generic to use in resource classes.
  */
 public class AuthResourceUtils {
     static Logger log = LoggerFactory.getLogger(AuthResourceUtils.class);
@@ -45,9 +45,9 @@ public class AuthResourceUtils {
     }
 
     /**
-     * JSソース読み込みユーティリティ.
-     * @param fileName JSソースファイル名
-     * @return String JSソース
+     * JS source loading utility.
+     * @param fileName JS source file name
+     * @return String JS source
      */
     public static String getJavascript(String fileName) {
 
@@ -57,7 +57,8 @@ public class AuthResourceUtils {
         String rtnstr = null;
         try {
             in = PersoniumUnitConfig.class.getClassLoader().getResourceAsStream(fileName);
-            isr = new InputStreamReader(in, "UTF-8"/* 文字コード指定 */);
+            /* Character code specification */
+            isr = new InputStreamReader(in, "UTF-8");
             reader = new BufferedReader(isr);
             StringBuffer buf = new StringBuffer();
             String str;
@@ -67,10 +68,10 @@ public class AuthResourceUtils {
             }
             rtnstr = buf.toString();
         } catch (UnsupportedEncodingException e) {
-            // TODO 自動生成された catch ブロック
+            //TODO Automatically generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO 自動生成された catch ブロック
+            //TODO Automatically generated catch block
             e.printStackTrace();
         } finally {
             if (in != null) {
@@ -103,10 +104,10 @@ public class AuthResourceUtils {
     }
 
     /**
-     * トランスセルトークンのターゲットと、cellが等しいかをチェックする.
-     * @param cell ターゲットのセル
-     * @param tcToken トランスセルトークン
-     * @return boolean トークンのターゲットがcellであればtrueを返す
+     * Check whether the target of the transcell token and cell are equal.
+     * @param cell target cell
+     * @param tcToken Transcel token
+     * @return boolean Returns true if the target of the token is cell
      * @throws MalformedURLException MalformedURLException
      */
     protected static boolean checkTargetUrl(Cell cell, TransCellAccessToken tcToken) throws MalformedURLException {
@@ -130,17 +131,17 @@ public class AuthResourceUtils {
     }
 
     /**
-     * Accountロックが存在するかのチェック処理.
-     * @param accountId アカウントID
-     * @return ロックが存在していればtrueを返却
+     * Process to check if an Account lock exists.
+     * @param accountId account ID
+     * Returns true if @return lock exists
      */
     public static Boolean isLockedAccount(String accountId) {
         return AccountLockManager.hasLockObject(accountId);
     }
 
     /**
-     * Accountロックを登録する.
-     * @param accountId アカウントID
+     * Register Account lock.
+     * @param accountId account ID
      */
     public static void registAccountLock(String accountId) {
         AccountLockManager.registAccountLockObjct(accountId);

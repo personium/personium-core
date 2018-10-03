@@ -33,7 +33,6 @@ import java.util.Set;
 
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.wink.webdav.WebDAVMethod;
 import org.apache.wink.webdav.model.Getcontenttype;
 import org.apache.wink.webdav.model.Multistatus;
 import org.apache.wink.webdav.model.Prop;
@@ -55,6 +54,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.common.utils.PersoniumCoreUtils.HttpMethod;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.bar.jackson.IJSONMappedObjects;
@@ -158,8 +158,8 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * Box情報をESへ登録する.
-     * @param json JSONファイルから読み込んだJSONオブジェクト
+     * Register Box information in ES.
+     * @param json JSON object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createBox(String boxName, String schema) {
@@ -172,10 +172,10 @@ public class BarFileInstallRunner implements Runnable {
                 entityResource.getOdataResource(),
                 CtlSchema.getEdmDataServicesForCellCtl().build());
 
-        // Boxの登録
+        //Register Box
         EntityResponse res = entityResource.getOdataProducer().createEntity(Box.EDM_TYPE_NAME, oew);
 
-        // Davの登録
+        //Register Dav
         box = new Box(entityResource.getAccessContext().getCell(), oew);
         boxCmp = ModelFactory.boxCmp(box);
 
@@ -184,11 +184,11 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * barインストール処理状況の内部イベント出力用の設定を行う.
+     * bar Make settings for internal event output of installation processing status.
      */
     private void setEventBus() {
-        // TODO Boxのスキーマとサブジェクトのログは内部イベントの正式対応時に実装する
-        String type = WebDAVMethod.MKCOL.toString();
+        //The schema of the TODO Box and the subject's log are implemented at the time of formal correspondence of internal events
+        String type = HttpMethod.MKCOL;
         String object = UriUtils.SCHEME_LOCALCELL + ":/" + box.getName();
         String result = "";
         eventBuilder = new PersoniumEvent.Builder()
@@ -264,7 +264,7 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * 処理が開始した情報をキャッシュに記録する.
+     * Record the information that started processing in the cache.
      */
     private void writeStartProgressCache() {
         writeOutputStream(false, "PL-BI-1000", UriUtils.SCHEME_LOCALCELL + ":/" + box.getName(), "");
@@ -272,7 +272,7 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * 処理が完了した情報をキャッシュに記録する.
+     * Record the processed information in the cache.
      */
     private void writeCompleteProgressCache() {
         writeOutputStream(false, BarFileUtils.CODE_BAR_INSTALL_COMPLETED,
@@ -324,8 +324,8 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * 10_$relations.jsonに定義されているRelation情報をESへ登録する.
-     * @param jsonMapObjects JSONファイルから読み込んだJSONMapオブジェクト
+     * Register the Relation information defined in 10 _ $ relations.json to the ES.
+     * @param jsonMapObjects JSONMap object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createRelations(JSONRelations jsonMapObjects) {
@@ -336,7 +336,7 @@ public class BarFileInstallRunner implements Runnable {
             entityResource.setEntitySetName(Relation.EDM_TYPE_NAME);
             OEntityWrapper oew = entityResource.getOEntityWrapper(stringReader,
                     entityResource.getOdataResource(), CtlSchema.getEdmDataServicesForCellCtl().build());
-            // Relationの登録
+            //Registration of Relation
             EntityResponse res = entityResource.getOdataProducer().createEntity(Relation.EDM_TYPE_NAME, oew);
             // post event
             postCellCtlCreateEvent(res);
@@ -344,8 +344,8 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * 20_$roles.jsonに定義されているRole情報をESへ登録する.
-     * @param jsonMapObjects JSONファイルから読み込んだJSONMapオブジェクト
+     * Register the Role information defined in 20 _ $ roles.json to the ES.
+     * @param jsonMapObjects JSONMap object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createRoles(JSONRoles jsonMapObjects) {
@@ -356,7 +356,7 @@ public class BarFileInstallRunner implements Runnable {
             entityResource.setEntitySetName(Role.EDM_TYPE_NAME);
             OEntityWrapper oew = entityResource.getOEntityWrapper(stringReader,
                     entityResource.getOdataResource(), CtlSchema.getEdmDataServicesForCellCtl().build());
-            // Roleの登録
+            //Register Role
             EntityResponse res = entityResource.getOdataProducer().createEntity(Role.EDM_TYPE_NAME, oew);
             // post event
             postCellCtlCreateEvent(res);
@@ -364,8 +364,8 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * 30_$extroles.jsonに定義されているExtRole情報をESへ登録する.
-     * @param jsonMapObjects JSONファイルから読み込んだJSONMapオブジェクト
+     * Register ExtRole information defined in 30 _ $ extroles.json in the ES.
+     * @param jsonMapObjects JSONMap object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createExtRoles(JSONExtRoles jsonMapObjects) {
@@ -378,7 +378,7 @@ public class BarFileInstallRunner implements Runnable {
             entityResource.setEntitySetName(ExtRole.EDM_TYPE_NAME);
             OEntityWrapper oew = entityResource.getOEntityWrapper(stringReader,
                     entityResource.getOdataResource(), CtlSchema.getEdmDataServicesForCellCtl().build());
-            // ExtRoleの登録
+            //Register ExtRole
             EntityResponse res = entityResource.getOdataProducer().createEntity(ExtRole.EDM_TYPE_NAME, oew);
             // post event
             postCellCtlCreateEvent(res);
@@ -386,8 +386,8 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * 50_rules.jsonに定義されているRule情報をESへ登録する.
-     * @param jsonMapObjects JSONファイルから読み込んだJSONMapオブジェクト
+     * Register the Rule information defined in 50_rules.json to the ES.
+     * @param jsonMapObjects JSONMap object read from JSON file
      */
     @SuppressWarnings("unchecked")
     private void createRules(JSONRules jsonMapObjects) {
@@ -396,11 +396,11 @@ public class BarFileInstallRunner implements Runnable {
             log.debug("createRules: " + json.toString());
             json.put("_Box.Name", box.getName());
             StringReader stringReader = new StringReader(json.toJSONString());
-            //EntityにRuleを登録して, afterCreateでRuleManagerにも登録
+            //Register Rule to Entity and also register to RuleManager with afterCreate
             entityResource.setEntitySetName(Rule.EDM_TYPE_NAME);
             OEntityWrapper oew = entityResource.getOEntityWrapper(stringReader,
                     entityResource.getOdataResource(), CtlSchema.getEdmDataServicesForCellCtl().build());
-            // Ruleの登録
+            //Register Rule
             EntityResponse res = entityResource.getOdataProducer().createEntity(Rule.EDM_TYPE_NAME, oew);
             // post event
             postCellCtlCreateEvent(res);
@@ -408,8 +408,8 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * 70_$links.jsonに定義されているリンク情報をESへ登録する.
-     * @param jsonMapObjects JSONファイルから読み込んだJSONMapオブジェクト
+     * Register the link information defined in 70 _ $ links.json to the ES.
+     * @param jsonMapObjects JSONMap object read from JSON file
      */
     private void createLinks(JSONLinks jsonMapObjects) {
         for (JSONLink jsonMapObject : jsonMapObjects.getLinks()) {
@@ -420,7 +420,7 @@ public class BarFileInstallRunner implements Runnable {
             OEntityId sourceEntity = OEntityIds.create(jsonMapObject.getFromType(), fromOEKey);
             String targetNavProp = jsonMapObject.getNavPropToType();
 
-            // リンク作成前処理
+            //Link creation preprocessing
             entityResource.getOdataResource().beforeLinkCreate(sourceEntity, targetNavProp);
 
             Map<String, String> toNameMap = jsonMapObject.getToName();
@@ -428,7 +428,7 @@ public class BarFileInstallRunner implements Runnable {
                     BarFileUtils.getComplexKeyName(jsonMapObject.getToType(), toNameMap, box.getName());
             OEntityKey toOEKey = OEntityKey.parse(tokey);
             OEntityId newTargetEntity = OEntityIds.create(jsonMapObject.getToType(), toOEKey);
-            // $linksの登録
+            //Register $ links
             entityResource.getOdataProducer().createLink(sourceEntity, targetNavProp, newTargetEntity);
 
             // post event
@@ -480,16 +480,16 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * 90_rootprops_xmlを解析してCollectoin/ACL/WebDAV等の登録処理を行う.
-     * @param rootPropsName 90_rootprops_xmlのbarファイル内パス名
-     * @param bufferedReader 入力ストリームReader
+     * Analyze 90_rootprops_xml and perform registration processing such as Collectoin / ACL / WebDAV.
+     * @param rootPropsName Path name in bar file of 90_rootprops_xml
+     * @param bufferedReader input stream Reader
      */
     protected void registXmlEntry(String rootPropsName, BufferedReader bufferedReader) {
         writeOutputStream(false, BarFileUtils.CODE_INSTALL_STARTED, rootPropsName);
         progressInfo.addDelta(1L);
         try {
-            // XMLパーサ(StAX,SAX,DOM)にInputStreamをそのまま渡すとファイル一覧の取得処理が
-            // 中断してしまうため暫定対処としてバッファに格納してからパースする
+            //If you pass InputStream to the XML parser (StAX, SAX, DOM) as is, the file list acquisition processing
+            //Because it will be interrupted, store it as a provisional countermeasure and then parse it
             StringBuffer buf = new StringBuffer();
             String str;
             while ((str = bufferedReader.readLine()) != null) {
@@ -498,8 +498,8 @@ public class BarFileInstallRunner implements Runnable {
 
             Multistatus multiStatus = Multistatus.unmarshal(new ByteArrayInputStream(buf.toString().getBytes()));
 
-            // 90_rootprops.xmlの定義内容について妥当性検証を行う。
-            // 事前に検証することで、ゴミデータが作られないようにする。
+            //Validate the definition contents of 90_rootprops.xml.
+            //By checking in advance, make sure that garbage data is not created.
             validateCollectionDefinitions(multiStatus, rootPropsName);
             for (Response response : multiStatus.getResponse()) {
                 String collectionType = DavCmp.TYPE_COL_WEBDAV;
@@ -537,7 +537,7 @@ public class BarFileInstallRunner implements Runnable {
                             }
                         }
                     }
-                    // prop配下確認
+                    //prop subordinate confirmation
                     Getcontenttype getContentType = prop.getGetcontenttype();
                     if (getContentType != null) {
                         contentType = getContentType.getValue();
@@ -569,12 +569,12 @@ public class BarFileInstallRunner implements Runnable {
                     if (!entryName.endsWith("/")) {
                         entryName += "/";
                     }
-                    // コレクションの場合、コレクション、ACL、PROPPATH登録
+                    //For collections, collection, ACL, PROPPATH registration
                     log.info(entryName);
                     createCollection(collectionUrl, entryName, this.box.getCell(), this.box, collectionType, aclElement,
                             propElements);
                 } else {
-                    // WebDAVファイル
+                    //WebDAV file
                     this.davFileContentTypeMap.put(entryName, contentType);
                     this.davFileAclMap.put(entryName, aclElement);
                     this.davFilePropsMap.put(entryName, propElements);
@@ -592,13 +592,13 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * 90_rootprops.xmlに定義されたpathの階層構造に矛盾がないことを検証する.
-     * @param multiStatus 90_rootprops.xmlから読み込んだJAXBオブジェクト
-     * @param rootPropsName 現在処理中のエントリ名(ログ出力用)
+     * Verify that there is no inconsistency in the hierarchical structure of path defined in 90_rootprops.xml.
+     * @param multiStatus 90 JOXB object read from 90 _rootprops.xml
+     * @param rootPropsName Name of the entry currently being processed (for log output)
      */
     private void validateCollectionDefinitions(Multistatus multiStatus, String rootPropsName) {
 
-        // XML定義を読み込んで、href要素のパス定義とタイプ（ODataコレクション/WebDAVコレクション/サービスコレクション、WebDAVファイル、サービスソース)を取得する。
+        //Read the XML definition and get the path definition and type of href element (OData collection / WebDAV collection / service collection, WebDAV file, service source).
         Map<String, String> pathMap = new LinkedHashMap<String, String>();
         for (Response response : multiStatus.getResponse()) {
             List<String> hrefs = response.getHref();
@@ -607,18 +607,18 @@ public class BarFileInstallRunner implements Runnable {
                 throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
             }
             String href = hrefs.get(0);
-            // href属性値がない場合は定義エラーとみなす。
+            //If there is no href attribute value, it is regarded as a definition error.
             if (href == null || href.length() == 0) {
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2009");
                 throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
             }
-            // href属性値としてlocalboxで始まらない場合は定義エラーとみなす。
+            //If it does not start with localbox as href attribute value, it is regarded as definition error.
             if (!href.startsWith(LOCALBOX_NO_SLUSH)) {
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail(
                         "PL-BI-2010", LOCALBOX_NO_SLUSH, href);
                 throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
             }
-            // 定義されたパスの種別を選別する。不正なパス種別が指定された場合は異常終了する（ログ出力は不要）。
+            //Select the type of the defined path. Abnormal termination (log output is unnecessary) when an incorrect path type is specified.
             String collectionType = getCollectionType(rootPropsName, response);
             switch (collectionType) {
                 case DavCmp.TYPE_COL_WEBDAV:
@@ -631,29 +631,29 @@ public class BarFileInstallRunner implements Runnable {
                 default:
                     break;
             }
-            // パス定義が重複している場合は同じデータが登録されてしまうため定義エラーとする。
-            // パス末尾の"/"指定有無の条件を無視するため、このタイミングでチェックする。
+            //If the path definitions are duplicated, the same data is registered, so it is defined as a definition error.
+            //In order to ignore the condition of "/" designation at the end of the path, check at this timing.
             if (pathMap.containsKey(href)) {
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2011", href);
                 throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
             }
             pathMap.put(href, collectionType);
         }
-        // 読み込んだパス定義をもとにCollectionパスの妥当性を検証する。
-        // ・共通：Boxルートの定義は必須とする
-        // ・共通： パス階層構造に矛盾がないこと
-        // ・ODataコレクションの場合： コレクション配下のパス定義が存在しないこと
-        // ・Serviceコレクションの場合： コレクション配下に "__src" のパス定義が存在すること
+        //Verify the validity of the Collection path based on the read path definition.
+        //· Common: Definition of Box route is mandatory
+        //· Common: There is no inconsistency in the path hierarchy structure
+        //· For OData collection: Path definition under collection does not exist
+        //· For Service collection: Path definition "__src" exists under collection
         Set<String> keySet = pathMap.keySet();
         for (Entry<String, String> entry : pathMap.entrySet()) {
             String href = entry.getKey();
             String currentCollectionType = entry.getValue();
             int upperPathposition = href.lastIndexOf("/");
-            if (upperPathposition < 0) { // "dcbox:"のパスはチェック対象外のためスキップする
+            if (upperPathposition < 0) { //Skip the path of "dcbox:" because it is not checked
                 continue;
             }
-            // チェック対象の上位階層がパス情報として定義されていない場合は定義エラーとする。
-            // Boxルートパスが定義されていない場合も同様に定義エラーとする。
+            //If an upper layer to be checked is not defined as path information, it is defined as a definition error.
+            //Even if the Box root path is not defined, definition error also occurs.
             String upper = href.substring(0, upperPathposition);
             if (!keySet.contains(upper)) {
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2012", upper);
@@ -662,22 +662,22 @@ public class BarFileInstallRunner implements Runnable {
             String upperCollectionType = pathMap.get(upper);
             String resourceName = href.substring(upperPathposition + 1, href.length());
             if (DavCmp.TYPE_COL_ODATA.equals(upperCollectionType)) {
-                // ODataコレクション：コレクション配下にコレクション／ファイルが定義されていた場合は定義エラーとする。
+                //OData collection: If a collection / file is defined under the collection, it is a definition error.
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2013", href);
                 throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
             } else if (DavCmp.TYPE_COL_SVC.equals(upperCollectionType)) {
-                // Serviceコレクション：コレクション配下にコレクション／ファイルが定義されていた場合は定義エラーとする。
-                // ただし、"__src"のみは例外として除外する。
+                //Service collection: If a collection / file is defined under the collection, it is a definition error.
+                //However, only "__ src" is excluded as an exception.
                 if (!("__src".equals(resourceName) && DavCmp.TYPE_COL_WEBDAV.equals(currentCollectionType))) {
                     PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2014", href);
                     throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
                 }
             } else if (DavCmp.TYPE_DAV_FILE.equals(upperCollectionType)) {
-                // WebDAVファイル／Serviceソース配下にコレクション／ファイルが定義されていた場合は定義エラーとする。
+                //If a collection / file is defined under the WebDAV file / Service source, it is a definition error.
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2015", href);
                 throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
             }
-            // カレントがServiceコレクションの場合、直下のパスに"__src"が定義されていない場合は定義エラーとする。
+            //If the current collection is a Service collection, if "__src" is not defined in the immediately following path, it is a definition error.
             if (DavCmp.TYPE_COL_SVC.equals(currentCollectionType)) {
                 String srcPath = href + "/__src";
                 if (!keySet.contains(srcPath) || !DavCmp.TYPE_COL_WEBDAV.equals(pathMap.get(srcPath))) {
@@ -686,7 +686,7 @@ public class BarFileInstallRunner implements Runnable {
                 }
             }
 
-            // リソース名として正しいことを確認する（コレクション／ファイルの名前フォーマットは共通）。
+            //Confirm that it is correct as a resource name (collection / file name format is common).
             if (!DavCommon.isValidResourceName(resourceName)) {
                 PersoniumBarException.Detail detail = new PersoniumBarException.Detail("PL-BI-2017", resourceName);
                 throw PersoniumBarException.INSTALLATION_FAILED.path(rootPropsName).detail(detail);
@@ -695,18 +695,18 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * 90_rootprops.xml内の各responseタグに定義されているパスのコレクション種別を取得する。
-     * @param rootPropsName 現在処理中のエントリ名(ログ出力用)
-     * @param response 処理対象のresponseタグ用JAXBオブジェクト
-     * @return 定義内容に応じたコレクション種別の値を返す。
-     *         WebDAVファイル、ServiceソースはWebDAVファイルとして返す。
-     *         許可されていないコレクションの種別が定義されていた場合は未定義として返す。
+     * Get the collection type of the path defined in each response tag in 90_rootprops.xml.
+     * @param rootPropsName Name of the entry currently being processed (for log output)
+     * @param response JAXB object for response tag to be processed
+     * @return Returns the value of the collection type according to the definition content.
+     * WebDAV file, Service source is returned as WebDAV file.
+     * If the type of unauthorized collection is defined, return it as undefined.
      */
     private String getCollectionType(String rootPropsName, Response response) {
-        // <propstat>要素の配下を辿って定義されているコレクションのタイプを取得する
-        // －prop/resourcetype/collecton のDOMノードパスが存在する場合はコレクション定義とみなす
-        // この際、"p:odata" または "p:service" のDOMノードパスが存在しない場合はWebDAVコレクション定義とみなす
-        // - 上記に当てはまらない場合はWebDAvファイルまたはサービスソースとみなす
+        //Get the type of the collection defined by following the <propstat> element
+        //If the DOM node path of -prop / resourcetype / collecton exists, it is regarded as a collection definition
+        //At this time, if there is no DOM node path of "p: odata" or "p: service", it is regarded as a WebDAV collection definition
+        //- If it does not apply to the above, it is regarded as a WebDAv file or service source
         for (Propstat propstat : response.getPropstat()) {
             Prop prop = propstat.getProp();
             Resourcetype resourceType = prop.getResourcetype();
@@ -731,11 +731,11 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * BoxにACLとPROPPATCH情報を登録.
+     * Register ACL and PROPPATCH information in Box.
      * @param targetBox box
      * @param aclElement ACL
-     * @param propElements PROPATCHで設定する内容
-     * @param boxUrl boxのURL
+     * @param propElements What to set with PROPATCH
+     * URL of @param boxUrl box
      */
     private void registBoxAclAndProppatch(Box targetBox, Element aclElement,
             List<Element> propElements, String boxUrl) {
@@ -743,7 +743,7 @@ public class BarFileInstallRunner implements Runnable {
             return;
         }
 
-        // ACL登録
+        //ACL registration
         if (aclElement != null) {
             StringBuffer sbAclXml = new StringBuffer();
             sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
@@ -752,7 +752,7 @@ public class BarFileInstallRunner implements Runnable {
             boxCmp.acl(aclXml);
         }
 
-        // PROPPATCH登録
+        //PROPPATCH registration
         registProppatch(boxCmp, propElements, boxUrl);
     }
 
@@ -828,7 +828,7 @@ public class BarFileInstallRunner implements Runnable {
 
         this.davCollectionMap.put(entryName, collectionCmp);
 
-        // ACL登録
+        //ACL registration
         if (aclElement != null) {
             StringBuffer sbAclXml = new StringBuffer();
             sbAclXml.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
@@ -837,18 +837,18 @@ public class BarFileInstallRunner implements Runnable {
             collectionCmp.acl(aclXml);
         }
 
-        // PROPPATCH登録
+        //PROPPATCH registration
         registProppatch(collectionCmp, propElements, collectionUrl);
     }
 
     /**
-     * 例外オブジェクトからメッセージを取得する.
-     * @param ex 例外オブジェクト
-     * @return メッセージ
+     * Get messages from exception objects.
+     * @param ex exception object
+     * @return message
      */
     private String getErrorMessage(Throwable ex) {
         String message = ex.getMessage();
-        // メッセージがない場合例外クラス名を返却する
+        //If there is no message Return exception class name
         if (message == null) {
             message = "throwed " + ex.getClass().getCanonicalName();
         }
@@ -856,26 +856,26 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * Httpレスポンス用メッセージの出力.
-     * @param isError エラー時の場合はtrueを、それ以外はfalseを指定する.
+     * Output of Http response message.
+     * @param isError Specify true on error, false otherwise.
      * @param code
-     *        メッセージコード(personium-messages.propertiesに定義されたメッセージコード)
+     * Message code (message code defined in personium-messages.properties)
      * @param path
-     *        処理対象リソースパス（ex. /bar/meta/roles.json)
+     * Process target resource path (ex. /Bar/meta/roles.json)
      */
     private void writeOutputStream(boolean isError, String code, String path) {
         writeOutputStream(isError, code, path, "");
     }
 
     /**
-     * barファイルインストールログ詳細の出力.
-     * @param isError エラー時の場合はtrueを、それ以外はfalseを指定する.
+     * bar File output of installation log details.
+     * @param isError Specify true on error, false otherwise.
      * @param code
-     *        メッセージコード(personium-messages.propertiesに定義されたメッセージコード)
+     * Message code (message code defined in personium-messages.properties)
      * @param path
-     *        処理対象リソースパス（ex. /bar/meta/roles.json)
+     * Process target resource path (ex. /Bar/meta/roles.json)
      * @param detail
-     *        処理失敗時の詳細情報(PL-BI-2xxx)
+     * Detailed information on processing failure (PL-BI-2xxx)
      */
     private void writeOutputStream(boolean isError, String code, String path, String detail) {
         String message = PersoniumCoreMessageUtils.getMessage(code);
@@ -892,7 +892,7 @@ public class BarFileInstallRunner implements Runnable {
     }
 
     /**
-     * barファイルインストールログ詳細の出力.
+     * bar File output of installation log details.
      * @param exception Personium bar exception
      */
     private void writeOutputStream(PersoniumBarException exception) {

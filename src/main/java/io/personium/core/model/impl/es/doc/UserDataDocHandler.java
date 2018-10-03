@@ -44,7 +44,7 @@ import io.personium.core.model.impl.es.odata.PropertyAlias;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- * OEntityのDocHandler.
+ * DocHandler of OEntity.
  */
 public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDocHandler {
 
@@ -52,7 +52,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     private String entitySetName;
 
     /**
-     * コンストラクタ.
+     * constructor.
      */
     public UserDataDocHandler() {
         this.propertyAliasMap = null;
@@ -60,7 +60,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * ESの1件取得結果からUserDataDocHandlerのインスタンスを生成するコンストラクタ.
+     * Constructor that creates an instance of UserDataDocHandler from the result of acquiring one ES.
      * @param getResponse .
      */
     public UserDataDocHandler(PersoniumGetResponse getResponse) {
@@ -70,7 +70,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * ESの検索結果からUserDataDocHandlerのインスタンスを生成するコンストラクタ.
+     * Constructor that creates an instance of UserDataDocHandler from the search result of ES.
      * @param searchHit .
      */
     public UserDataDocHandler(PersoniumSearchHit searchHit) {
@@ -80,10 +80,10 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * OEntityWrapperから IDのないDocHandlerをつくるConstructor.
-     * @param type ESのtype名
+     * Constructor that creates DocHandler without ID from OEntityWrapper.
+     * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     * @param metadata スキーマ情報
+     * @param metadata schema information
      */
     public UserDataDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         initInstance(type, oEntityWrapper, metadata);
@@ -92,32 +92,32 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * プロパティ名とエイリアスの対応Mapを返す.
-     * @return プロパティ名とエイリアスの対応Map
+     * Returns the correspondence Map of property name and alias.
+     * @return Correspondence between property names and aliases Map
      */
     public Map<String, PropertyAlias> getPropertyAliasMap() {
         return this.propertyAliasMap;
     }
 
     /**
-     * プロパティ名とエイリアスの対応Mapを設定する.
-     * @param value プロパティ名とエイリアスの対応Map
+     * Set correspondence map of property name and alias.
+     * @param value Correspondence between property name and alias Map
      */
     public void setPropertyAliasMap(Map<String, PropertyAlias> value) {
         this.propertyAliasMap = value;
     }
 
     /**
-     * エンティティセット名を返す.
-     * @return エンティティセット名
+     * Returns the entity set name.
+     * @return entity set name
      */
     public String getEntitySetName() {
         return this.entitySetName;
     }
 
     /**
-     * エンティティセット名を設定する.
-     * @param name エンティティセット名
+     * Set the entity set name.
+     * @param name Entity set name
      */
     public void setEntitySetName(String name) {
         this.entitySetName = name;
@@ -134,11 +134,11 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * プロパティ名からAlias名を取得する.
-     * ユーザデータを操作する場合は、このメソッドをオーバーライドしてAliasへ変換する.
-     * @param propertyName プロパティ名
-     * @param typeName このプロパティが属するComplexType名
-     * @return Alias名
+     * Get Alias ​​name from property name.
+     * To manipulate user data, override this method and convert it to Alias.
+     * @param propertyName property name
+     * @param typeName ComplexType name to which this property belongs
+     * @return Alias ​​name
      */
     @Override
     protected String resolveComplexTypeAlias(String propertyName, String typeName) {
@@ -153,7 +153,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
         EdmEntityType edmEntityType = metadata.findEdmEntitySet(entitySetName).getType();
         for (EdmProperty prop : edmEntityType.getProperties()) {
             String key = prop.getName();
-            // __id以外のプロパティ(__publishedなど)については変換をしないで捨てる
+            //Discard properties other than __id (such as __published) without converting
             if (!CtlSchema.P_ID.getName().equals(key) && key.startsWith("_")) {
                 continue;
             }
@@ -169,10 +169,10 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
 
             Object value = staticFields.get(getPropertyNameOrAlias(edmEntityType.getName(), key));
             if (prop.getType().isSimple() || value == null) {
-                // Simple型の場合はそのまま変換をおこなう
+                //In the case of the Simple type, conversion is performed as it is
                 staticFieldMap.put(key, value);
             } else {
-                // Complex型の場合は中の要素をさらに変換する
+                //In the case of Complex type, further convert the element in
                 EdmComplexType edmComplexType = metadata.findEdmComplexType(prop.getType().getFullyQualifiedTypeName());
                 if (CollectionKind.List == prop.getCollectionKind()) {
                     List<Map<String, Object>> complexList = new ArrayList<Map<String, Object>>();
@@ -209,7 +209,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
             if (prop.getType().isSimple() || value == null) {
                 complexMap.put(key, value);
             } else {
-                // Complex型の場合は中の要素をさらに変換する
+                //In the case of Complex type, further convert the element in
                 if (CollectionKind.List == prop.getCollectionKind()) {
                     List<Map<String, Object>> complexList = new ArrayList<Map<String, Object>>();
                     for (Map<String, Object> val : (List<Map<String, Object>>) value) {
@@ -234,11 +234,11 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * スキーマのプロパティ定義に応じて適切な型に変換したプロパティ値オブジェクトを返す.<br/>
-     * ユーザデータの場合はBoolean型のプロパティ値を文字列に変換する.
-     * @param prop プロパティオブジェクト
-     * @param edmType スキーマのプロパティ定義
-     * @return 適切な型に変換したプロパティ値オブジェクト
+     * Return a property value object converted to an appropriate type according to the property definition of the schema.
+     * In the case of user data, convert the Boolean type property value to a character string.
+     * @param prop property object
+     * Property definition for @param edmType schema
+     * @return Property value object converted to appropriate type
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -251,7 +251,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
             }
         }
 
-        // Boolean型/Double型のプロパティ値を文字列に変換する
+        //Convert Boolean / Double property values ​​to string
         if (prop.getValue() != null
                 && (edmType.equals(EdmSimpleType.BOOLEAN) || edmType.equals(EdmSimpleType.DOUBLE))) {
             return String.valueOf(prop.getValue());
@@ -260,9 +260,9 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * DynamicPropertyの値を変換する.
-     * @param key 変換対象のキー
-     * @param value 変換する値
+     * Convert the value of DynamicProperty.
+     * @param key Key to be converted
+     * @param value Value to convert
      */
     public void convertDynamicPropertyValue(String key, Object value) {
         if (value != null && (value instanceof Boolean || value instanceof Double)) {
@@ -273,7 +273,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     @Override
     protected Object convertSimpleListValue(final EdmType edmType, Object propValue) {
         Object convertValue = super.convertSimpleListValue(edmType, propValue);
-        // Boolean型/Double型のプロパティ値を文字列に変換する
+        //Convert Boolean / Double property values ​​to string
         if (propValue != null && (edmType.equals(EdmSimpleType.BOOLEAN) || edmType.equals(EdmSimpleType.DOUBLE))) {
             return String.valueOf(propValue);
         }
@@ -300,7 +300,7 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
         ret.put(KEY_NODE_ID, this.nodeId);
         ret.put(KEY_ENTITY_ID, this.entityTypeId);
 
-        // UserDataはリンクフィールドに文字列配列形式("EntityTypeID:UserDataID")でデータを保持するため、文字列配列に変換する
+        //UserData holds data in the link field in character array format ("EntityTypeID: UserDataID"), so it converts it to a string array
         List<String> linkList = toArrayManyToOnelink();
         ret.put("ll", linkList);
         return ret;
@@ -315,14 +315,14 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * Linkフィールドをパースする.
-     * @param source Map形式のパース元情報
-     * @return Link情報
+     * Parsing Link field.
+     * @param source parse source information in the form of Map
+     * @return Link information
      */
     @Override
     @SuppressWarnings("unchecked")
     protected Map<String, Object> parseLinks(Map<String, Object> source) {
-        // UserDataはリンクフィールドに文字列配列形式("EntityTypeID:UserDataID")でデータを保持しているため、Map形式に変換する
+        //Since UserData holds data in the string field format ("EntityTypeID: UserDataID") in the link field, it converts it to Map format
         Map<String, Object> linkMap = new HashMap<String, Object>();
         List<String>  linkList = (List<String>) source.get("ll");
         if (linkList != null) {
@@ -345,11 +345,11 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * static fieldに格納されているプロパティ名をAliasへ変換する.
-     * @param entityType プロパティが紐付いているエンティティタイプ（EntityType or ComplexType)
-     * @param entityName プロパティが紐付いているエンティティ名
-     * @param entrySet static fieldに格納されているマップオブジェクト
-     * @return static fieldマップオブジェクト
+     * Convert the property name stored in static field to Alias.
+     * @param entity type to which the entityType property is attached (EntityType or ComplexType)
+     * @param entity name to which the entityName property is attached
+     * @param entrySet static map map object stored in field
+     * @return static field map object
      */
     @SuppressWarnings("unchecked")
     private Map<String, Object> getStaticFieldMap(
@@ -395,10 +395,10 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * プロパティのAlias名をマッピングデータから取得する.
-     * @param key マッピングデータの検索キー
-     * @param propertyName プロパティ名
-     * @return Alias名
+     * Get the property's Alias ​​name from the mapping data.
+     * @param key Search key for mapping data
+     * @param propertyName property name
+     * @return Alias ​​name
      */
     private String getAlias(String key, String propertyName) {
         if (propertyName.startsWith("_")) {
@@ -412,10 +412,10 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     /**
-     * プロパティのtype属性値に指定されたComplexType名をマッピングデータから取得する.
-     * @param key マッピングデータの検索キー
-     * @param propertyName プロパティ名
-     * @return ComplexType名
+     * Get the ComplexType name specified in the type attribute value of the property from the mapping data.
+     * @param key Search key for mapping data
+     * @param propertyName property name
+     * @return ComplexType name
      */
     private String getComplexTypeName(String key) {
         PropertyAlias alias = this.propertyAliasMap.get(key);
@@ -426,8 +426,8 @@ public class UserDataDocHandler extends OEntityDocHandler implements EntitySetDo
     }
 
     private String getPropertyMapKey(String entityType, String name, String propertyName) {
-        // このメソッドが呼ばれる時点は、EntityType/ComplexTypeの判別が不可能なため、
-        // プロパティAliasのキーは、一律"_EntityType.Name"を使用する。
+        //Since it is impossible to determine EntityType / ComplexType when this method is called,
+        //The key of property Alias ​​uses uniform "_EntityType.Name".
         String key = "Name='" + propertyName + "'," + entityType + "='" + name + "'";
         return key;
     }

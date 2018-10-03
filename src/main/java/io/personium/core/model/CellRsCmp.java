@@ -29,6 +29,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.json.simple.JSONObject;
 import org.xml.sax.SAXException;
 
 import io.personium.core.PersoniumCoreAuthzException;
@@ -41,7 +42,7 @@ import io.personium.core.utils.HttpClientFactory;
 import io.personium.core.utils.UriUtils;
 
 /**
- * JaxRS Resource オブジェクトから処理の委譲を受けてDav関連の永続化を除く処理を行うクラス.
+ * A class that performs processing except delegation of processing from JaxRS Resource object excluding Dav related persistence.
  */
 public class CellRsCmp extends DavRsCmp {
 
@@ -89,24 +90,24 @@ public class CellRsCmp extends DavRsCmp {
     }
 
     /**
-     * このリソースのURLを返します.
-     * @return URL文字列
+     * Returns the URL of this resource.
+     * @return URL string
      */
     public String getUrl() {
         return this.cell.getUrl();
     }
 
     /**
-     * リソースが所属するCellを返す.
-     * @return Cellオブジェクト
+     * Returns the Cell to which the resource belongs.
+     * @return Cell object
      */
     public Cell getCell() {
         return this.cell;
     }
 
     /**
-     * リソースが所属するBoxを返す.
-     * @return Boxオブジェクト
+     * Returns the Box to which the resource belongs.
+     * @return Box object
      */
     public Box getBox() {
         return null;
@@ -120,14 +121,14 @@ public class CellRsCmp extends DavRsCmp {
     }
 
     /**
-     * ACL情報を確認し、アクセス可能か判断する.
-     * @param ac アクセスコンテキスト
-     * @param privilege ACLのプリビレッジ（readとかwrite）
+     * Check ACL information and judge whether access is possible.
+     * @param ac access context
+     * @param privilege Privilege of ACL (read or write)
      * @return boolean
      */
     public boolean hasPrivilege(AccessContext ac, Privilege privilege) {
 
-        // davCmpが無い（存在しないリソースが指定された）場合はそのリソースのACLチェック飛ばす
+        //If davCmp does not exist (resource that does not exist is specified) skip ACL check for that resource
         if (this.davCmp != null
                 && this.getAccessContext().requirePrivilege(this.davCmp.getAcl(), privilege, this.getCell().getUrl())) {
             return true;
@@ -146,13 +147,13 @@ public class CellRsCmp extends DavRsCmp {
             return;
         }
 
-        // Basic認証できるリソースかをチェック
+        //Check if basic authentication can be done
         this.accessContext.updateBasicAuthenticationStateForResource(null);
 
-        // アクセス権チェック
+        //Access right check
         if (!this.hasPrivilege(ac, privilege)) {
-            // トークンの有効性チェック
-            // トークンがINVALIDでもACL設定でPrivilegeがallに設定されているとアクセスを許可する必要があるのでこのタイミングでチェック
+            //Check the validity of the token
+            //Even if the token is INVALID, if the ACL setting and Privilege is set to all, it is necessary to permit access, so check at this timing
             if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
                 ac.throwInvalidTokenException(getAcceptableAuthScheme());
             } else if (AccessContext.TYPE_ANONYMOUS.equals(ac.getType())) {
@@ -161,6 +162,20 @@ public class CellRsCmp extends DavRsCmp {
             }
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
+    }
+
+    /**
+     * Get cell info (name, url).
+     * @return cell info
+     */
+    @SuppressWarnings("unchecked")
+    public JSONObject getCellMetadataJson() {
+        JSONObject responseJson = new JSONObject();
+        JSONObject cellMetadataJson = new JSONObject();
+        cellMetadataJson.put("name", cell.getName());
+        cellMetadataJson.put("url", cell.getUrl());
+        responseJson.put("cell", cellMetadataJson);
+        return responseJson;
     }
 
     /**
@@ -270,8 +285,8 @@ public class CellRsCmp extends DavRsCmp {
     }
 
     /**
-     * 認証に使用できるAuth Schemeを取得する.
-     * @return 認証に使用できるAuth Scheme
+     * Obtain Auth Scheme that can be used for authentication.
+     * Autret Scheme that can be used for @return authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {

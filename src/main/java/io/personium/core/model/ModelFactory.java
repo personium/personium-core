@@ -29,31 +29,31 @@ import io.personium.core.model.impl.fs.CellSnapshotCellCmpFsImpl;
 import io.personium.core.odata.PersoniumODataProducer;
 
 /**
- * モデルオブジェクトのファクトリークラス.
+ * Factory class of model object.
  */
 public final class ModelFactory {
     /**
-     * ダミーのコンストラクタ.
+     * Dummy constructor.
      */
     private ModelFactory() {
 
     }
 
 //    /**
-//     * Cell オブジェクトを生成して返します.
-//     * 該当するCellが存在しないときはnull
+//     * Generate and return a Cell object.
+//     * If the corresponding Cell does not exist, it is null
 //     * @param uriInfo UriInfo
-//     * @return Cellオブジェクト
+//     * @return Cell object
 //     */
 //    public static Cell cell(final UriInfo uriInfo) {
 //        return CellEsImpl.load(uriInfo);
 //    }
 
     /**
-     * Cell オブジェクトを生成して返します.
-     * 該当するCellが存在しないときはnull
+     * Generate and return a Cell object.
+     * If the corresponding Cell does not exist, it is null
      * @param id id
-     * @return Cellオブジェクト
+     * @return Cell object
      */
     public static Cell cellFromId(String id) {
         return CellEsImpl.loadFromId(id);
@@ -74,18 +74,18 @@ public final class ModelFactory {
     }
 
     /**
-     * Boxの内部実装モデルオブジェクトを生成して返します.
-     * @param box Boxクラス
-     * @return Boxの内部実装モデルオブジェクト
+     * Creates and returns an internal implementation model object of Box.
+     * @param box Box class
+     * @return Box's internal implementation model object
      */
     public static BoxCmp boxCmp(final Box box) {
         return new BoxCmpFsImpl(box);
     }
 
     /**
-     * Cellの内部実装モデルオブジェクトを生成して返します.
+     * Generate and return the Cell's internal implementation model object.
      * @param cell Cell
-     * @return Cellの内部実装モデルオブジェクト
+     * @return Cell's internal implementation model object
      */
     public static CellCmp cellCmp(final Cell cell) {
         return new CellCmpFsImpl(cell);
@@ -101,22 +101,22 @@ public final class ModelFactory {
     }
 
     /**
-     * ODataProducer のファクトリです.
+     * It is a factory of ODataProducer.
      */
     public static class ODataCtl {
         /**
-         * Unit管理エンティティを扱うODataProducerを返します.
-         * @param ac アクセスコンテキスト
-         * @return Unit管理エンティティを扱うODataProducer
+         * Returns the ODataProducer handling the Unit management entity.
+         * @param ac access context
+         * @return Unit ODataProducer handling management entities
          */
         public static PersoniumODataProducer unitCtl(AccessContext ac) {
             return new UnitCtlODataProducer(ac);
         }
 
         /**
-         * Cell管理エンティティを扱うODataProducerを返します.
-         * @param cell CellのCell
-         * @return Cell管理エンティティを扱うODataProducer
+         * Returns the ODataProducer handling the Cell management entity.
+         * @param cell Cell's Cell
+         * @return ODataProducer handling Cell management entities
          */
         public static PersoniumODataProducer cellCtl(final Cell cell) {
             return new CellCtlODataProducer(cell);
@@ -133,7 +133,7 @@ public final class ModelFactory {
         }
 
         /**
-         * ユーザデータschema のODataProducerを返します.
+         * Return ODataProducer of user data schema.
          * @param cell Cell
          * @param davCmp DavCmp
          * @return ODataProducer
@@ -143,7 +143,7 @@ public final class ModelFactory {
         }
 
         /**
-         * ユーザデータ のODataProducerを返します.
+         * Return ODataProducer of user data.
          * @param cell Cell
          * @param davCmp DavCmp
          * @return ODataProducer

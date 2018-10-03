@@ -49,7 +49,7 @@ import io.personium.core.utils.ODataUtils;
 public final class ODataProducerUtils {
 
     /**
-     * ログ.
+     * log.
      */
     static Logger log = LoggerFactory.getLogger(ODataProducerUtils.class);
 
@@ -57,11 +57,11 @@ public final class ODataProducerUtils {
     }
 
     /**
-     * Entity登録・更新時のデータの一意性チェックを行う.
+     * Perform uniqueness check of data at Entity registration / update.
      * @param producer
-     * @param newEntity 新しく登録・更新するEntity
-     * @param originalEntity もとのEntity
-     * @param originalKey 更新リクエストで指定されたキー名
+     * @param newEntity Entity to register / update newly
+     * @param originalEntity original Entity
+     * @param originalKey The key name specified in the update request
      */
     static void checkUniqueness(EsODataProducer producer, OEntityWrapper newEntity,
             OEntityWrapper originalEntity, OEntityKey originalKey) {
@@ -69,7 +69,7 @@ public final class ODataProducerUtils {
         if (originalEntity == null) {
             needsPkCheck = true;
         } else {
-            // originalKeyからoewのキーが変更になっているときのみ、キー変更による影響確認をする。
+            //Only when the key of oew is changed from originalKey, the influence by key change is confirmed.
             OEntityKey normNewKey = AbstractODataResource.normalizeOEntityKey(newEntity.getEntityKey(),
                     newEntity.getEntitySet());
             if (null == originalKey) {
@@ -79,7 +79,7 @@ public final class ODataProducerUtils {
                     originalKey, newEntity.getEntitySet());
             String newKeyStr = normNewKey.toKeyStringWithoutParentheses();
             String orgKeyStr = normOrgKey.toKeyStringWithoutParentheses();
-            // KEYを正規化した上で比較しなくてはならない。
+            //We have to normalize KEY and compare.
             log.debug("NWKEY:" + newKeyStr);
             log.debug("ORKEY:" + orgKeyStr);
             if (!newKeyStr.equals(orgKeyStr)) {
@@ -87,17 +87,17 @@ public final class ODataProducerUtils {
             }
         }
         if (needsPkCheck) {
-            // 主キーでの検索を行う。
+            //Perform a search with the primary key.
             EntitySetDocHandler hit = producer.retrieveWithKey(newEntity.getEntitySet(), newEntity.getEntityKey());
             if (hit != null) {
-                // データが存在したら CONFLICT エラーとする
+                //If data exists, it will be a CONFLICT error
                 throw PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS;
             }
         }
 
-        // UK 制約による一意性チェック
-        // UK 制約の抽出処理
-        // TODO スキーマ情報と共にキャッシュ(別メソッド化)
+        //Uniqueness check by UK constraint
+        //UK constraint extraction processing
+        //Caching (together with TODO schema information)
         Map<String, List<String>> uks = new HashMap<String, List<String>>();
         List<EdmProperty> listEdmProperties = newEntity.getEntityType().getProperties().toList();
         for (EdmProperty edmProp : listEdmProperties) {
@@ -116,14 +116,14 @@ public final class ODataProducerUtils {
             }
         }
 
-        // ここですべてのユニークキーでの検索を行い、データが存在しないことを確認する
+        //Here we perform a search with all the unique keys and confirm that there is no data
         for (Map.Entry<String, List<String>> uk : uks.entrySet()) {
             log.debug("checking uk : [" + uk.getKey() + "] = ");
             List<String> ukProps = uk.getValue();
             Set<OProperty<?>> ukSet = new HashSet<OProperty<?>>();
-            // UKは非null項目の一意性確保なので、全項目がnullであるものは、いくつあってもよい。
+            //Since UK ensures the uniqueness of non-null items, any number of items can be used in which all items are null.
             boolean allNull = true;
-            // UKを構成する全項目に変更がなかったときは、チェックを入れる必要がない。
+            //When there is no change in all the items making up the UK, there is no need to check it.
             boolean changed = false;
             for (String k : ukProps) {
                 log.debug("              - [" + k + "]");
@@ -139,18 +139,18 @@ public final class ODataProducerUtils {
                 }
                 ukSet.add(oProp);
             }
-            // UKを構成する全項目がNullであるときはチェック必要なし
+            //When all items constituting UK are Null, there is no need to check
             boolean needsUkCheck = !allNull;
             if (originalEntity != null && !changed) {
-                // 変更で、UKを構成する全項目の変更がないときはチェックの必要なし。
+                //With the change, when there is no change of all the items making up the UK, there is no need to check.
                 needsUkCheck = false;
             }
 
-            // 変更後キーがAllNullでなく、変更があったときのみ、チェック。
+            //Check only when there is a change, but not AllNull after change key.
             if (needsUkCheck) {
                 EntitySetDocHandler edh = producer.retrieveWithKey(newEntity.getEntitySet(), ukSet, null);
                 if (edh != null) {
-                    // データが存在したら CONFLICT エラーとする
+                    //If data exists, it will be a CONFLICT error
                     throw PersoniumCoreException.OData.ENTITY_ALREADY_EXISTS;
                 }
             }
@@ -210,7 +210,7 @@ public final class ODataProducerUtils {
     }
 
     /**
-     * linksKeyと親キーが等しいか比較する.
+     * Compare if linksKey and parent key are equal.
      * @param entity entity
      * @param linksKey linksKey
      * @return boolean
@@ -220,17 +220,17 @@ public final class ODataProducerUtils {
     }
 
     /**
-     * ESへのパスワード変更リクエストを生成する.
+     * Generate a password change request to ES.
      * @param oedhNew oedhNew
      * @param dcCredHeader dcCredHeader
      */
     public static void createRequestPassword(EntitySetDocHandler oedhNew, String dcCredHeader) {
-        // 更新前処理(Hash文字列化したパスワードを取得)
+        //Pre-update processing (obtain Hash string converted password)
         String hPassStr = AuthUtils.hashPassword(dcCredHeader, oedhNew.getType());
-        // 変更するパスワードをHashedCredentialへ上書きする
+        //Overwrite password to be changed to HashedCredential
         Map<String, Object> hiddenFields = oedhNew.getHiddenFields();
-        // X-Personium-Credentialの値をHashedCredentialのキーへputする
-        // 指定がない場合400エラーを返却する
+        //Put the value of X-Personium-Credential into the key of HashedCredential
+        //If there is no designation, return 400 error
         if (hPassStr != null) {
             hiddenFields.put("HashedCredential", hPassStr);
         } else {
@@ -238,18 +238,18 @@ public final class ODataProducerUtils {
         }
         oedhNew.setHiddenFields(hiddenFields);
 
-        // 現在時刻を取得して__updatedを上書きする
+        //Get current time and overwrite __updated
         long nowTimeMillis = System.currentTimeMillis();
         oedhNew.setUpdated(nowTimeMillis);
     }
 
     /**
-     * 引数で指定されたOEDHのdynamic fieldsとstatic fieldsの値をマージしてoedhNewを更新する.
-     * @param oedhExisting ベースにするOEDH
-     * @param oedhNew 追加するOEDH
+     * Merge the values ​​of dynamic fields and static fields of OEDH specified by argument and update oedhNew.
+     * @param oedhExisting base OEDH
+     * @param oedhNew Add OEDH
      */
     public static void mergeFields(EntitySetDocHandler oedhExisting, EntitySetDocHandler oedhNew) {
-        // static fieldsに登録済みのプロパティを追加
+        //Add registered properties to static fields
         oedhNew.setStaticFields(ODataUtils.getMergeFields(oedhExisting.getStaticFields(),
                 oedhNew.getStaticFields()));
     }

@@ -23,23 +23,23 @@ import org.odata4j.edm.EdmDataServices;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- * プロパティを更新する際に使用するDocHandler.
+ * A DocHandler to use when updating properties.
  */
 public class PropertyUpdateDocHandler extends PropertyDocHandler {
 
     /**
-     * OEntityWrapperから IDのないDocHandlerをつくるConstructor.
-     * @param type ESのtype名
+     * Constructor that creates DocHandler without ID from OEntityWrapper.
+     * @param type ES type name
      * @param oEntityWrapper OEntityWrapper
-     * @param metadata スキーマ情報
+     * @param metadata schema information
      */
     public PropertyUpdateDocHandler(String type, OEntityWrapper oEntityWrapper, EdmDataServices metadata) {
         super(type, oEntityWrapper, metadata);
     }
 
     /**
-     * ES/MySQL登録用データを取得する.
-     * @return 登録用データ
+     * Acquire ES / MySQL registration data.
+     * @return Registration data
      */
     @Override
     public Map<String, Object> getSource() {

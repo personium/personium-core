@@ -65,11 +65,11 @@ import io.personium.core.rs.odata.ODataEntityResource;
 import io.personium.core.rs.odata.ODataResource;
 
 /**
- * barファイルインストール処理を行うクラス.
+ * bar The class that performs the installation process.
  */
 public class BarFileInstaller {
     /**
-     * ログ用オブジェクト.
+     * Object for logging.
      */
     static Logger log = LoggerFactory.getLogger(BarFileInstaller.class);
 
@@ -86,11 +86,11 @@ public class BarFileInstaller {
     private JSONObject manifestJson;
 
     /**
-     * コンストラクタ.
+     * constructor.
      * @param cell
-     *            セルオブジェクト
+     * Cell object
      * @param boxName
-     *            ボックス名
+     * Box name
      * @param oDataEntityResource oDataEntityResource
      * @param uriInfo UriInfo
      */
@@ -106,28 +106,28 @@ public class BarFileInstaller {
     }
 
     /**
-     * barファイルインストールを行うメソッド.
+     * bar Method to perform file installation.
      * @param headers
-     *            Httpヘッダーを格納したMAP
+     * MAP storing Http header
      * @param inStream
-     *            Httpリクエストボディ用InputStream
-     * @param requestKey イベントログに出力するRequestKeyフィールドの値
-     * @return レスポンス
+     * InputStream for Http request body
+     * @param requestKey The value of the RequestKey field to be output to the event log
+     * @return response
      */
     public Response barFileInstall(Map<String, String> headers,
             InputStream inStream, String requestKey) {
 
-        // 事前チェック
+        //Advance check
         checkPreConditions(headers);
 
-        // barファイルの格納
+        //Store bar file
         File file = storeTemporaryBarFile(inStream);
         IOUtils.closeQuietly(inStream);
 
         // bar_version : 2
         try {
             if (execVer2Process(file, requestKey)) {
-                // レスポンスの返却
+                //Returning the response
                 ResponseBuilder res = Response.status(HttpStatus.SC_ACCEPTED);
                 res.header(HttpHeaders.LOCATION, this.cell.getUrl() + boxName);
                 return res.build();
@@ -139,20 +139,20 @@ public class BarFileInstaller {
 
         BarFileReadRunner runner = null;
         try {
-            // barファイルのバリデート
+            //Bar file validation
             long entryCount = checkBarFileContents(file);
 
-            // BoxおよびスキーマURLの重複チェック
+            //Duplicate check of Box and schema URL
             checkDuplicateBoxAndSchema((String) this.manifestJson.get("Schema"));
 
-            // Boxの作成
-            // ここまでのエラーは400番台のエラーとなり、Boxは作成されないため、Boxメタデータ（キャッシュ）には書き込まずに終了する。
+            //Create Box
+            //Errors so far are 400 series errors, Box is not created, so it does not write to Box metadata (cache) and ends.
             runner = new BarFileReadRunner(file, this.cell, this.boxName,
                     this.oDataEntityResource, this.oDataEntityResource.getOdataProducer(),
                     Box.EDM_TYPE_NAME, this.uriInfo, requestKey);
             runner.createBox(this.manifestJson);
 
-            // barファイル内のエントリ数を設定（この時点でProgressInfoを作成）
+            //bar Set the number of entries in the file (create ProgressInfo at this point)
             runner.setEntryCount(entryCount);
             runner.writeInitProgressCache();
 
@@ -170,10 +170,10 @@ public class BarFileInstaller {
             throw PersoniumCoreException.Server.UNKNOWN_ERROR;
         }
 
-        // 非同期実行
+        //Asynchronous execution
         PersoniumThread.BOX_IO.execute(runner);
 
-        // レスポンスの返却
+        //Returning the response
         ResponseBuilder res = Response.status(HttpStatus.SC_ACCEPTED);
         res.header(HttpHeaders.LOCATION, this.cell.getUrl() + boxName);
         return res.build();
@@ -209,7 +209,7 @@ public class BarFileInstaller {
             }
             checkBarFileSize(file);
             barFile.checkStructure();
-            // BoxおよびスキーマURLの重複チェック
+            //Duplicate check of Box and schema URL
             checkDuplicateBoxAndSchema(manifest.getSchema());
             // Use FileVisitor to check process recursively.
             BarFileCheckVisitor visitor = new BarFileCheckVisitor();
@@ -239,27 +239,27 @@ public class BarFileInstaller {
     }
 
     /**
-     * barインストール受付時の事前チェックを行うメソッド.
-     * @param headers HTTPヘッダー
+     * bar Method to pre-check at the time of acceptance of installation.
+     * @param headers HTTP header
      */
     private void checkPreConditions(Map<String, String> headers) {
-        // [403]アクセス制御
+        //[403] Access control
         AccessContext accessContext = this.oDataEntityResource.getAccessContext();
         ODataResource odataResource = this.oDataEntityResource.getOdataResource();
         odataResource.checkAccessContext(accessContext, CellPrivilege.BOX_BAR_INSTALL);
 
-        // [400]リクエストヘッダの形式チェック
+        //[400] Request header format check
         checkHeaders(headers);
 
     }
 
     /**
-     * Httpヘッダーのチェック.
+     * Http header check.
      * @param headers
-     *            Httpヘッダーを格納したMAP
+     * MAP storing Http header
      */
     private void checkHeaders(Map<String, String> headers) {
-        // Content-Type: application/zip固定
+        //Content-Type: fixed application / zip
         String contentType = headers.get(HttpHeaders.CONTENT_TYPE);
         if (!"application/zip".equals(contentType)) {
             throw PersoniumCoreException.BarInstall.REQUEST_HEADER_FORMAT_ERROR
@@ -268,7 +268,7 @@ public class BarFileInstaller {
     }
 
     /**
-     * システムプロパティに設定されているbarファイルの最大ファイルサイズ(MB)を取得する。
+     * Get the maximum file size (MB) of the bar file set in the system property.
      * @return io.personium.core.bar.file.maxSize
      */
     protected long getMaxBarFileSize() {
@@ -283,7 +283,7 @@ public class BarFileInstaller {
     }
 
     /**
-     * プロパティファイルからBARファイル内の最大ファイルサイズ(MB)を取得する。
+     * Get the maximum file size (MB) in the BAR file from the property file.
      * @return io.personium.core.bar.entry.maxSize
      */
     protected long getMaxBarEntryFileSize() {
@@ -300,22 +300,22 @@ public class BarFileInstaller {
     }
 
     /**
-     * ファイルディスクリプタの同期.
-     * @param fd ファイルディスクリプタ
-     * @throws SyncFailedException 同期に失敗
+     * Synchronization of file descriptors.
+     * @param fd file descriptor
+     * @throws SyncFailedException Synchronization failed
      */
     public void sync(FileDescriptor fd) throws SyncFailedException {
         fd.sync();
     }
 
     /**
-     * Httpリクエストボディからbarファイルを読み込み、一時領域へ格納する.
-     * @param inStream Httpリクエストボディ用InputStreamオブジェクト
-     * @return 一時領域に格納したbarファイルのFileオブジェクト
+     * Http Reads the bar file from the request body and stores it in the temporary area.
+     * @param inStream InputStream object for Http request body
+     * @return The File object of the bar file stored in the temporary area
      */
     private File storeTemporaryBarFile(InputStream inStream) {
 
-        // barファイル格納先のディレクトリが存在しなければ作成する。
+        //If there is no directory to store the bar file, it creates it.
         String unitUserName = BarFileUtils.getUnitUserName(this.cell.getOwner());
         File barFileDir = new File(new File(barTempDir, unitUserName), "bar");
         if (!barFileDir.exists() && !barFileDir.mkdirs()) {
@@ -323,13 +323,13 @@ public class BarFileInstaller {
             throw PersoniumCoreException.Server.FILE_SYSTEM_ERROR.params(message);
         }
 
-        // barファイルをNFS上に格納する。
+        //Store bar file on NFS.
         String prefix = this.cell.getId() + "_" + this.boxName;
         File barFile = null;
         OutputStream outStream = null;
         try {
             barFile = File.createTempFile(prefix, ".bar", barFileDir);
-            barFile.deleteOnExit(); // VM異常終了時に削除する設定
+            barFile.deleteOnExit(); //Delete setting to be deleted when abnormal termination of VM
             outStream = new FileOutputStream(barFile);
             IOUtils.copyLarge(inStream, outStream);
         } catch (IOException e) {
@@ -354,18 +354,18 @@ public class BarFileInstaller {
     }
 
     /**
-     * barファイルを読み込み、バリデーションを行うメソッド.
+     * bar A method that reads a file and validates it.
      * <ul>
-     * <li>barファイル内のエントリ数（ファイルのみ）をカウントする。</li>
-     * <li>barファイル内の各エントリのファイルサイズの上限値をチェックする。</li>
-     * <li>TODO barファイル内の各エントリの順序をチェックする。</li>
+     * <li> Count the number of entries (files only) in the bar file. </ li>
+     * <li> Check the upper limit of the file size of each entry in the bar file. </ li>
+     * <li> Check the order of each entry in TODO bar file. </ li>
      * </ul>.
-     * @param barFile 一時領域に保存したbarファイルのFileオブジェクト
-     * @returns barファイル内のエントリ（ファイル）数
+     * @param barFile The File object of the bar file saved in the temporary area
+     * @returns bar Number of entries (files) in the file
      */
     private long checkBarFileContents(File barFile) {
 
-        // barファイルサイズチェック
+        //bar File size check
         checkBarFileSize(barFile);
 
         ZipFile zipFile = null;
@@ -377,25 +377,25 @@ public class BarFileInstaller {
             String entryName = null;
             try {
                 long maxBarEntryFileSize = getMaxBarEntryFileSize();
-                // 必須ファイルチェック用のデータをセットアップ
+                //Setup data for mandatory file check
                 Map<String, String> requiredBarFiles = setupBarFileOrder();
                 while (entries.hasMoreElements()) {
                     zae = entries.nextElement();
                     entryName = zae.getName();
                     log.info("read: " + entryName);
                     if (!zae.isDirectory()) {
-                        // インストール進捗率算出用の母数としてbarファイル内のファイル数をカウント
+                        //Count the number of files in the bar file as the parameter for calculating the installation progress ratio
                         entryCount++;
 
-                        // barファイル内エントリのファイルサイズチェック
+                        //Check file size of entry in bar file
                         checkBarFileEntrySize(zae, entryName, maxBarEntryFileSize);
 
-                        // Box生成用にマニフェストファイルのみを読み込む。
+                        //Read only the manifest file for generating Box.
                         if (zae.getName().endsWith("/" + BarFileReadRunner.MANIFEST_JSON)) {
                             checkAndReadManifest(entryName, zae, zipFile);
                         }
                     }
-                    // barファイルの必須ファイルチェック（格納順はインストール時にチェックする）
+                    //Required file check of bar file (check the storage order at installation)
                     if (!checkBarFileStructures(zae, requiredBarFiles)) {
                         throw PersoniumCoreException.BarInstall.BAR_FILE_INVALID_STRUCTURES.params(entryName);
                     }
@@ -449,14 +449,14 @@ public class BarFileInstaller {
     }
 
     /**
-     * barファイル内エントリのファイルサイズチェック.
-     * @param zae barファイル内エントリ
-     * @param entryName エントリ名
-     * @param maxBarEntryFileSize エントリのファイルサイズ
+     * Check file size of entry in bar file.
+     * @param zae bar file entry
+     * @param entryName entry name
+     * @param maxBarEntryFileSize File size of entry
      */
     protected void checkBarFileEntrySize(ZipArchiveEntry zae, String entryName,
             long maxBarEntryFileSize) {
-        // [400]barファイル内エントリのファイルサイズが上限値を超えている
+        //[400] bar File size of file entry exceeds upper limit
         if (zae.getSize() > (long) (maxBarEntryFileSize * MB)) {
             String message = "Bar file entry size too large invalid file [%s: %sB]";
             log.info(String.format(message, entryName, String.valueOf(zae.getSize())));
@@ -466,11 +466,11 @@ public class BarFileInstaller {
     }
 
     /**
-     * barファイルサイズチェック.
-     * @param barFile barファイル
+     * bar File size check.
+     * @param barFile bar file
      */
     protected void checkBarFileSize(File barFile) {
-        // [400]barファイルのファイルサイズが上限値を超えている
+        //[400] bar file file size exceeds the upper limit
         long maxBarFileSize = getMaxBarFileSize();
         if (barFile.length() > (long) (maxBarFileSize * MB)) {
             String message = "Bar file size too large invalid file [%sB]";
@@ -481,7 +481,7 @@ public class BarFileInstaller {
     }
 
     /**
-     * barファイルの必須ファイル.
+     * Required file for bar file.
      */
     private Map<String, String> setupBarFileOrder() {
         Map<String, String> requiredBarFiles = new LinkedHashMap<String, String>();
@@ -493,7 +493,7 @@ public class BarFileInstaller {
     }
 
     /**
-     * barファイルの構造をチェックする.
+     * Check the structure of the bar file.
      */
     private boolean checkBarFileStructures(ZipArchiveEntry zae, Map<String, String> requiredBarFiles)
             throws UnsupportedEncodingException, ParseException {
@@ -506,21 +506,21 @@ public class BarFileInstaller {
     }
 
     /**
-     * インストール先Boxが既に登録されているかどうか、マニフェストに定義されているスキーマURLが既に登録されているかどうかをチェックする.
+     * Check whether the installation destination Box has already been registered and whether the schema URL defined in the manifest has already been registered.
      */
     private void checkDuplicateBoxAndSchema(String schema) {
         PersoniumODataProducer producer = oDataEntityResource.getOdataProducer();
 
-        // [400]既に同じscheme URLが設定されたBoxが存在している
-        // 同じスキーマURLを持つBoxを検索し、1件以上ヒットした場合はエラーとする。
+        //[400] A Box already having the same scheme URL exists
+        //Search for a Box with the same schema URL, and if it hits more than one hit it is an error.
         BoolCommonExpression filter = PersoniumOptionsQueryParser.parseFilter("Schema eq '" + schema + "'");
         QueryInfo query = new QueryInfo(null, null, null, filter, null, null, null, null, null);
         if (producer.getEntitiesCount(Box.EDM_TYPE_NAME, query).getCount() > 0) {
             throw PersoniumCoreException.BarInstall.BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS.params(schema);
         }
 
-        // [405]既に同名のBoxが存在している
-        // Box名のみで検索を行い、スキーマ有無に係わらず検索にヒットした場合はエラーとする。
+        //[405] Box of the same name already exists
+        //Search is performed by using only the Box name, and if a search is hit regardless of the presence or absence of the schema, it is an error.
         filter = PersoniumOptionsQueryParser.parseFilter("Name eq '" + this.boxName + "'");
         query = new QueryInfo(null, null, null, filter, null, null, null, null, null);
         if (producer.getEntitiesCount(Box.EDM_TYPE_NAME, query).getCount() > 0) {
@@ -531,15 +531,15 @@ public class BarFileInstaller {
     }
 
     /**
-     * セル名の取得.
-     * @return セル名
+     * Get cell name.
+     * @return cell name
      */
     public String getCellName() {
         return cell.getName();
     }
 
     /**
-     * ODataProducerの取得.
+     * Acquisition of ODataProducer.
      * @return ODataProducer
      */
     public PersoniumODataProducer getOdataProducer() {
@@ -547,7 +547,7 @@ public class BarFileInstaller {
     }
 
     /**
-     * ODataEntityResourceの取得.
+     * Acquisition of ODataEntityResource.
      * @return ODataEntityResource
      */
     public ODataEntityResource getODataEntityResource() {

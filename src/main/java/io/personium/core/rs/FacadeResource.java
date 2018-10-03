@@ -40,9 +40,9 @@ import io.personium.core.rs.unit.UnitResource;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- * すべてのリクエストの入り口となるJax-RS Resource.
- * ここでURL情報の取得、Authorizationヘッダの取得を行い、
- * これら情報はサブリソースに渡してゆく.
+ * Jax - RS Resource which will be the entrance of all requests.
+ * Here, acquisition of URL information and acquisition of Authorization header are performed,
+ * We pass these information to subresources.
  */
 @Path("")
 public class FacadeResource {
@@ -50,9 +50,9 @@ public class FacadeResource {
     /** Logger. */
     static Logger log = LoggerFactory.getLogger(FacadeResource.class);
 
-    /** クッキー認証の際、クッキー内に埋め込まれている情報のキー. */
+    /** For cookie authentication, the key of the information embedded in the cookie. */
     public static final String P_COOKIE_KEY = "p_cookie";
-    /** クッキー認証の際、クエリパラメタに指定されるキー. */
+    /** The key specified in the query parameter during cookie authentication. */
     public static final String COOKIE_PEER_QUERY_KEY = "p_cookie_peer";
 
 //    /**
@@ -105,10 +105,10 @@ public class FacadeResource {
 //    }
 
     /**
-     * @param cookieAuthValue クッキー内の p_cookieキーに指定された値
-     * @param cookiePeer p_cookie_peerクエリに指定された値
-     * @param headerAuthz Authorization ヘッダ
-     * @param headerHost Host ヘッダ
+     * @param cookieAuthValue The value specified for the p_cookie key in the cookie
+     * @param cookiePeer p_cookie_peer Value specified in the query
+     * @param headerAuthz Authorization header
+     * @param headerHost Host header
      * @param uriInfo UriInfo
      * @param headerPersoniumUnitUser X-Personium-UnitUser header
      * @param headerPersoniumRequestKey X-Personium-RequestKey header
@@ -116,7 +116,7 @@ public class FacadeResource {
      * @param headerPersoniumRuleChain X-Personium-RuleChain header
      * @param headerPersoniumVia X-Personium-Via header
      * @param httpServletRequest HttpServletRequest
-     * @return CellResourceオブジェクトまたはResponseオブジェクト
+     * @return CellResource object or Response object
      */
     @Path("/")
     public Object facade(
@@ -169,13 +169,13 @@ public class FacadeResource {
     }
 
 //    /**
-//     * @param cookieAuthValue クッキー内の p_cookieキーに指定された値
-//     * @param cookiePeer p_cookie_peerクエリに指定された値
-//     * @param authzHeaderValue Authorization ヘッダ
-//     * @param host Host ヘッダ
-//     * @param xPersoniumUnitUser ヘッダ
+//     * @param cookieAuthValue The value specified for the p_cookie key in the cookie
+//     * @param cookiePeer p_cookie_peer Value specified in the query
+//     * @param authzHeaderValue Authorization header
+//     * @param host Host header
+//     * @param xPersoniumUnitUser header
 //     * @param uriInfo UriInfo
-//     * @return UnitCtlResourceオブジェクト
+//     * @return UnitCtlResource object
 //     */
 //    @Path("__ctl")
 //    public final UnitCtlResource ctl(
@@ -192,11 +192,11 @@ public class FacadeResource {
 //    }
 //
 //    /**
-//     * @param authzHeaderValue Authorization ヘッダ
-//     * @param host Host ヘッダ
-//     * @param xPersoniumUnitUser ヘッダ
+//     * @param authzHeaderValue Authorization header
+//     * @param host Host header
+//     * @param xPersoniumUnitUser header
 //     * @param uriInfo UriInfo
-//     * @return UnitCtlResourceオブジェクト
+//     * @return UnitCtlResource object
 //     */
 //    @Path("__status")
 //    public final StatusResource status(
@@ -210,8 +210,8 @@ public class FacadeResource {
 //    static final String CROSSDOMAIN_XML = PersoniumCoreUtils.readStringResource("crossdomain.xml", CharEncoding.UTF_8);
 //
 //    /**
-//     * Crossdomain.xmlを返します。
-//     * @return Crossdomain.xmlの文字列.
+//     * Returns Crossdomain.xml.
+//     * @return String of Crossdomain.xml.
 //     */
 //    @Path("crossdomain.xml")
 //    @Produces(MediaType.APPLICATION_XML)

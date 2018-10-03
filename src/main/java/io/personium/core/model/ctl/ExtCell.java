@@ -20,14 +20,14 @@ import org.core4j.Enumerable;
 import org.odata4j.edm.EdmEntityType;
 
 /**
- * 外部Cell のEdm 定義体.
+ * Edm definition of external Cell.
  */
 public class ExtCell {
     private ExtCell() {
     }
 
     /**
-     * Edm EntityType名.
+     * Edm EntityType name.
      */
     public static final String EDM_TYPE_NAME = "ExtCell";
 

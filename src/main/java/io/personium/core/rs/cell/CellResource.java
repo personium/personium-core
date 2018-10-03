@@ -39,7 +39,6 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.wink.webdav.WebDAVMethod;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +49,8 @@ import io.personium.core.PersoniumCoreAuthzException;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.PROPFIND;
+import io.personium.core.annotations.PROPPATCH;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
@@ -95,7 +96,7 @@ public class CellResource {
             final String ruleChain,
             final String via,
             HttpServletRequest httpServletRequest) {
-        // Cellが存在しないときは例外
+        //Exception when Cell does not exist
         this.accessContext = accessContext;
         this.cell = this.accessContext.getCell();
         if (this.cell == null) {
@@ -103,7 +104,7 @@ public class CellResource {
         }
         this.cellCmp = ModelFactory.cellCmp(this.cell);
         if (!this.cellCmp.exists()) {
-            // クリティカルなタイミングでCellが削除された場合
+            //When Cell is deleted at critical timing
             throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
         }
 
@@ -155,12 +156,8 @@ public class CellResource {
     @SuppressWarnings("unchecked")
     @GET
     public Response get(@Context HttpHeaders httpHeaders) {
-        if (httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_METADATA)) {
-            JSONObject responseJson = new JSONObject();
-            JSONObject cellMetadataJson = new JSONObject();
-            cellMetadataJson.put(Common.P_NAME.getName(), cell.getName());
-            cellMetadataJson.put(Common.P_URL, cell.getCellBaseUrl());
-            responseJson.put(Cell.EDM_TYPE_NAME, cellMetadataJson);
+        if (httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_JSON_TYPE)) {
+            JSONObject responseJson = cellRsCmp.getCellMetadataJson();
             return Response.ok().entity(responseJson.toJSONString()).build();
         } else if (httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_XML_TYPE)) {
             StringBuffer sb = new StringBuffer();
@@ -199,13 +196,13 @@ public class CellResource {
     @DELETE
     public Response cellBulkDeletion(
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE) final String recursiveHeader) {
-        // X-Personium-Recursiveヘッダの指定が"true"でない場合はエラーとする
+        //If the specification of the X-Personium-Recursive header is not "true", it is an error
         if (!"true".equals(recursiveHeader)) {
             throw PersoniumCoreException.Misc.PRECONDITION_FAILED.params(
                     PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RECURSIVE);
         }
-        // アクセス権限の確認を実施する
-        // ユニットマスター、ユニットユーザ、ユニットローカルユニットユーザ以外は権限エラーとする
+        //Confirm the access authority
+        //Unit Master, Unit User, Unit Local Unit User except authority error
         String cellOwner = this.cell.getOwner();
         checkAccessContextForCellBulkDeletion(cellOwner);
 
@@ -252,7 +249,7 @@ public class CellResource {
     }
 
     /**
-     * @param pCredHeader pCredHeader X-Personium-Credentialヘッダ
+     * @param pCredHeader pCredHeader X-Personium-Credential header
      * @return CellCtlResource
      */
     @Path("__ctl")
@@ -262,7 +259,7 @@ public class CellResource {
     }
 
     /**
-     * パスワード変更APIのエンドポイント.
+     * Endpoint of password change API.
      * @param pCredHeader pCredHeader
      * @return Response
      */
@@ -273,12 +270,12 @@ public class CellResource {
     }
 
     /**
-     * 認証のエンドポイント .
+     * Endpoint of authentication.
      * <ul>
-     * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
-     * <li>scopeがなければCellLocalを発行する。</li>
+     * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
+     * <li> Issue CellLocal if scope does not exist. </ li>
      * </ul>
-     * @return TokenEndPointResourceオブジェクト
+     * @return TokenEndPointResource object
      */
     @Path("__token")
     public TokenEndPointResource auth() {
@@ -286,11 +283,11 @@ public class CellResource {
     }
 
     /**
-     * ImplicitFlow認証のエンドポイント .
+     * ImplicitFlow Endpoint of authentication.
      * <ul>
-     * <li>p_targetにURLが書いてあれば、そのCELLをTARGETのCELLとしてtransCellTokenを発行する。</li>
+     * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
      * </ul>
-     * @return AuthzEndPointResourceオブジェクト
+     * @return AuthzEndPointResource object
      */
     @Path("__authz")
     public AuthzEndPointResource authz() {
@@ -298,8 +295,8 @@ public class CellResource {
     }
 
     /**
-     * Htmlによるエラー応答のエンドポイント .
-     * @return AuthzEndPointResourceオブジェクト
+     * Endpoint of error response by Html.
+     * @return AuthzEndPointResource object
      */
     @Path("__html/error")
     public ErrorHtmlResource errorHtml() {
@@ -307,8 +304,8 @@ public class CellResource {
     }
 
     /**
-     * ロールのエンドポイント .
-     * @return RoleResourceオブジェクト
+     * The endpoint of the role.
+     * @return RoleResource object
      */
     @Path("__role")
     public RoleResource role() {
@@ -316,8 +313,8 @@ public class CellResource {
     }
 
     /**
-     * BoxURL取得のエンドポイント .
-     * @return BoxUrlResourceオブジェクト
+     * Box URL acquisition end point.
+     * @return BoxUrlResource object
      */
     @Path("__box")
     public BoxUrlResource boxUrl() {
@@ -325,8 +322,8 @@ public class CellResource {
     }
 
     /**
-     * イベントAPIのエンドポイント.
-     * @return EventResourceオブジェクト
+     * Event API endpoint.
+     * @return EventResource object
      */
     @Path("__event")
     public EventResource event() {
@@ -334,8 +331,8 @@ public class CellResource {
     }
 
     /**
-     * ログ取り出しのエンドポイント .
-     * @return JAXRS応答
+     * Endpoint of log retrieval.
+     * @return JAXRS response
      */
     @Path("__log")
     public LogResource log() {
@@ -352,8 +349,8 @@ public class CellResource {
     }
 
     /**
-     * デフォルトボックスへのアクセス.
-     * @param jaxRsRequest JAX-RS用HTTPリクエスト
+     * Access to the default box.
+     * @param jaxRsRequest HTTP request for JAX-RS
      * @return BoxResource Object
      */
     @Path("__")
@@ -363,8 +360,8 @@ public class CellResource {
     }
 
     /**
-     * メッセージ送信のエンドポイント .
-     * @return MessageResourceオブジェクト
+     * Endpoint of message transmission.
+     * @return MessageResource object
      */
     @Path("__message")
     public MessageResource message() {
@@ -402,9 +399,9 @@ public class CellResource {
     }
 
     /**
-     * 次のパスをBoxResourceへ渡すメソッド.
-     * @param boxName Boxパス名
-     * @param jaxRsRequest JAX-RS用HTTPリクエスト
+     * A method that passes the following path to BoxResource.
+     * @param boxName Box path name
+     * @param jaxRsRequest HTTP request for JAX-RS
      * @return BoxResource Object
      */
     @Path("{box: [^\\/]+}")
@@ -415,14 +412,14 @@ public class CellResource {
     }
 
     /**
-     * PROPFINDメソッドの処理.
+     * Processing of the PROPFIND method.
      * @param requestBodyXml Request Body
      * @param depth Depth Header
      * @param contentLength Content-Length Header
      * @param transferEncoding Transfer-Encoding Header
      * @return JAX-RS Response
      */
-    @WebDAVMethod.PROPFIND
+    @PROPFIND
     public Response propfind(final Reader requestBodyXml,
             @DefaultValue("0") @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
@@ -434,15 +431,15 @@ public class CellResource {
     }
 
     /**
-     * PROPPATCHメソッドの処理.
+     * Processing of the PROPPATCH method.
      * @param requestBodyXml Request Body
      * @return JAX-RS Response
      */
-    @WebDAVMethod.PROPPATCH
+    @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
         AccessContext ac = this.cellRsCmp.getAccessContext();
-        // トークンの有効性チェック
-        // トークンがINVALIDでもACL設定でPrivilegeがallに設定されているとアクセスを許可する必要があるのでこのタイミングでチェック
+        //Check the validity of the token
+        //Even if the token is INVALID, if the ACL setting and Privilege is set to all, it is necessary to permit access, so check at this timing
         ac.updateBasicAuthenticationStateForResource(null);
         if (AccessContext.TYPE_INVALID.equals(ac.getType())) {
             ac.throwInvalidTokenException(this.cellRsCmp.getAcceptableAuthScheme());
@@ -451,7 +448,7 @@ public class CellResource {
                     this.cellRsCmp.getAcceptableAuthScheme());
         }
 
-        // アクセス制御 CellレベルPROPPATCHはユニットユーザのみ可能とする
+        //Access control Cell level PROPPATCH is allowed only for unit users
         if (!ac.isUnitUserToken()) {
             throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
         }
@@ -459,25 +456,25 @@ public class CellResource {
     }
 
     /**
-     * ACLメソッドの処理.
-     * @param reader 設定XML
+     * Processing of ACL method.
+     * @param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
     @ACL
     public Response acl(final Reader reader) {
-        // アクセス制御
+        //Access control
         this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.ACL);
         return this.cellRsCmp.doAcl(reader);
     }
 
     /**
-     * OPTIONSメソッド.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
     public Response options() {
-        // アクセス制御
+        //Access control
         this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.SOCIAL_READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.POST,

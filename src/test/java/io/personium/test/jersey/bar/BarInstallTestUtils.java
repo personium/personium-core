@@ -246,23 +246,23 @@ public class BarInstallTestUtils {
         waitBoxInstallCompleted(location);
         PersoniumResponse res = ODataCommon.getOdataResource(location);
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-        JSONObject bodyJson = (JSONObject) ((JSONObject) res.bodyAsJson());
+        JSONObject boxJson = (JSONObject) res.bodyAsJson().get("box");
 
-        assertEquals(status.value(), bodyJson.get("status"));
-        assertEquals(schemaUrl, bodyJson.get("schema"));
+        assertEquals(status.value(), boxJson.get("status"));
+        assertEquals(schemaUrl, boxJson.get("schema"));
         if (ProgressInfo.STATUS.FAILED == status) {
-            assertNotNull(bodyJson.get("started_at"));
-            assertNull(bodyJson.get("installed_at"));
-            assertNotNull(bodyJson.get("progress"));
-            assertNotNull(bodyJson.get("message"));
-            assertNotNull(((JSONObject) bodyJson.get("message")).get("code"));
-            assertNotNull(((JSONObject) bodyJson.get("message")).get("message"));
-            assertNotNull(((JSONObject) ((JSONObject) bodyJson.get("message")).get("message")).get("value"));
-            assertNotNull(((JSONObject) ((JSONObject) bodyJson.get("message")).get("message")).get("lang"));
+            assertNotNull(boxJson.get("started_at"));
+            assertNull(boxJson.get("installed_at"));
+            assertNotNull(boxJson.get("progress"));
+            assertNotNull(boxJson.get("message"));
+            assertNotNull(((JSONObject) boxJson.get("message")).get("code"));
+            assertNotNull(((JSONObject) boxJson.get("message")).get("message"));
+            assertNotNull(((JSONObject) ((JSONObject) boxJson.get("message")).get("message")).get("value"));
+            assertNotNull(((JSONObject) ((JSONObject) boxJson.get("message")).get("message")).get("lang"));
         } else {
-            assertNull(bodyJson.get("started_at"));
-            assertNotNull(bodyJson.get("installed_at"));
-            assertNull(bodyJson.get("progress"));
+            assertNull(boxJson.get("started_at"));
+            assertNotNull(boxJson.get("installed_at"));
+            assertNull(boxJson.get("progress"));
         }
     }
 
@@ -271,9 +271,6 @@ public class BarInstallTestUtils {
      * @param location Location
      */
     public static void waitBoxInstallCompleted(String location) {
-        PersoniumResponse response = null;
-        JSONObject bodyJson = null;
-
         long startTime = System.currentTimeMillis();
         while (true) {
             try {
@@ -281,15 +278,15 @@ public class BarInstallTestUtils {
             } catch (InterruptedException e) {
                 log.info("Interrupted: " + e.getMessage());
             }
-            response = ODataCommon.getOdataResource(location);
+            PersoniumResponse response = ODataCommon.getOdataResource(location);
             if (HttpStatus.SC_OK == response.getStatusCode()) {
-                bodyJson = (JSONObject) ((JSONObject) response.bodyAsJson());
-                if (!ProgressInfo.STATUS.PROCESSING.value().equals(bodyJson.get("status"))) {
+                JSONObject boxJson = (JSONObject) response.bodyAsJson().get("box");
+                if (!ProgressInfo.STATUS.PROCESSING.value().equals(boxJson.get("status"))) {
                     return;
                 }
-                assertNull(bodyJson.get("installed_at"));
-                assertNotNull(bodyJson.get("progress"));
-                assertNotNull(bodyJson.get("started_at"));
+                assertNull(boxJson.get("installed_at"));
+                assertNotNull(boxJson.get("progress"));
+                assertNotNull(boxJson.get("started_at"));
             }
             if (System.currentTimeMillis() - startTime > BAR_INSTALL_TIMEOUT) {
                 fail("Failed to bar file install: takes too much time. [" + BAR_INSTALL_TIMEOUT + "millis]");

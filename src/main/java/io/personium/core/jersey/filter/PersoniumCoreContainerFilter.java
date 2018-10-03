@@ -48,7 +48,7 @@ import io.personium.core.model.lock.CellLockManager;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- * 本アプリのリクエスト及びレスポンスに対してかけるフィルター.
+ * Filter applied to request and response of this application.
  */
 @Provider
 @PreMatching
@@ -59,7 +59,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     /** 1day. */
     private static final int ONE_DAY_SECONDS = 86400;
 
-    // Acceptヘッダーが取り得る値の正規表現
+    //Regular expression of possible values ​​of Accept header
     static Pattern acceptHeaderValueRegex = Pattern.compile("\\A\\p{ASCII}*\\z");
 
     @Context
@@ -84,7 +84,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
             }
         }
 
-        // リクエストの時間をセッションに保存する
+        //Save the time of the request in the session
         long requestTime = System.currentTimeMillis();
         requestContext.setProperty("requestTime", requestTime);
 
@@ -96,8 +96,8 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         checkAcceptHeader(headers);
         replaceAcceptHeader(headers);
 
-        // PCSの動作モードがReadDeleteOnlyモードの場合は、参照系リクエストのみ許可する
-        // 許可されていない場合は例外を発生させてExceptionMapperにて処理する
+        //When the operation mode of the PCS is the ReadDeleteOnly mode, only the reference system request is permitted
+        //If it is not permitted, raise an exception and process it with ExceptionMapper
         PersoniumReadDeleteModeManager.checkReadDeleteOnlyMode(
                 requestContext.getMethod(), requestContext.getUriInfo().getPathSegments());
     }
@@ -110,9 +110,9 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
             CellLockManager.decrementReferenceCount(cellId);
         }
 
-        // 全てのレスポンスに共通するヘッダを追加する
+        //Add a header common to all responses
         addResponseHeaders(requestContext.getHeaders(), responseContext);
-        // レスポンスログを出力
+        //Output response log
         Long requestTime = (Long) requestContext.getProperty("requestTime");
         responseLog(requestTime, responseContext.getStatus());
     }
@@ -135,7 +135,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
 
         for (String overrideHeader : overrideHeaderList) {
             int idx = overrideHeader.indexOf(":");
-            // :がなかったり先頭にある場合は不正ヘッダなので無視
+            //:: Ignoring since it is an illegal header when there is not at the beginning
             if (idx < 1) {
                 continue;
             }
@@ -173,7 +173,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         }
         if (xForwardedPath != null) {
             baseUriBuilder.replacePath("/");
-            // クエリを含んでいる場合は、クエリを削除してリクエストパスに設定する
+            //If it contains a query, delete the query and set it in the request path
             if (xForwardedPath.contains("?")) {
                 xForwardedPath = xForwardedPath.substring(0, xForwardedPath.indexOf("?"));
             }
@@ -183,8 +183,8 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     }
 
     /**
-     * 認証なしOPTIONメソッドのチェック.
-     * @param request フィルタ前リクエスト
+     * Authentication None OPTION Method check.
+     * @param request pre-filter request
      */
     private void checkOptionsMethod(String method, MultivaluedMap<String, String> headers) {
         String authValue = headers.getFirst(org.apache.http.HttpHeaders.AUTHORIZATION);
@@ -203,19 +203,19 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
                     io.personium.common.utils.PersoniumCoreUtils.HttpMethod.ACL
                     ).build();
 
-            // 例外を発行することでServletへ制御を渡さない
+            //Do not pass control to the servlet by issuing an exception
             throw new WebApplicationException(res);
         }
     }
 
     /**
-     * リクエストヘッダーの値をチェックする.
-     * 現在は、Acceptヘッダーのみ(US-ASCII文字以外かどうか)をチェックする
-     * @param request フィルター前リクエスト
+     * Check the value of the request header.
+     * Currently check only the Accept header (whether it is a US-ASCII character or not)
+     * @param request pre-filter request
      */
     private void checkAcceptHeader(MultivaluedMap<String, String> headers) {
-        // Jersey1.10では、Acceptヘッダーのキー名と値にUS-ASCII文字以外が含まれる場合に異常終了するため以下を対処
-        // －値に含まれる場合は、400エラーとする。
+        //In Jersey 1.10, if the key name and the value of the Accept header contain non-US-ASCII characters, it ends abnormally.
+        //- If it is included in the value, it is 400 error.
         String acceptValue = headers.getFirst(org.apache.http.HttpHeaders.ACCEPT);
         if (acceptValue != null && !acceptHeaderValueRegex.matcher(acceptValue).matches()) {
             PersoniumCoreException exception = PersoniumCoreException.OData.BAD_REQUEST_HEADER_VALUE.params(
@@ -225,8 +225,8 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     }
 
     private void replaceAcceptHeader(MultivaluedMap<String, String> headers) {
-        // Jersey1.10では、Acceptヘッダーのキー名と値にUS-ASCII文字以外が含まれる場合に異常終了するため以下を対処
-        // －キー名に含まれる場合は、その指定を無効（Accept:*/*)とする（Jerseryで組み込み済み）。
+        //In Jersey 1.10, if the key name and the value of the Accept header contain non-US-ASCII characters, it ends abnormally.
+        //- If it is included in the key name, its designation is invalid (Accept: * / *) (already built in Jersery).
         for (String key : headers.keySet()) {
             if (key.contains(org.apache.http.HttpHeaders.ACCEPT)
                     && !acceptHeaderValueRegex.matcher(key).matches()) {
@@ -236,7 +236,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     }
 
     /**
-     * 全てのレスポンスに共通するレスポンスヘッダーを追加する.
+     * Add a response header common to all responses.
      * Access-Control-Allow-Origin, Access-Control-Allow-Headers<br/>
      * X-Personium-Version<br/>
      * @param requestHeaders
@@ -278,7 +278,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     }
 
     /**
-     * リクエストログ出力.
+     * Request log output.
      * @param request
      * @param response
      */
@@ -296,7 +296,7 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
     }
 
     /**
-     * レスポンスログ出力.
+     * Response log output.
      * @param response
      */
     private void responseLog(Long requestTime, int responseStatus) {
@@ -305,9 +305,9 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         sb.append(responseStatus);
         sb.append(" ");
 
-        // レスポンスの時間を記録する
+        //Record the response time
         long responseTime = System.currentTimeMillis();
-        // レスポンスとリクエストの時間差を出力する
+        //Output time difference between response and request
         sb.append((responseTime - requestTime) + "ms");
         log.info(sb.toString());
     }

@@ -56,7 +56,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.wink.webdav.WebDAVMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +63,9 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.annotations.ACL;
+import io.personium.core.annotations.MOVE;
+import io.personium.core.annotations.PROPFIND;
+import io.personium.core.annotations.PROPPATCH;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
 import io.personium.core.event.EventBus;
@@ -78,7 +80,7 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * PersoniumEngineSvcCollectionResourceを担当するJAX-RSリソース.
+ * JAX-RS resource responsible for PersoniumEngineSvcCollectionResource.
  */
 public class PersoniumEngineSvcCollectionResource {
     private static Logger log = LoggerFactory.getLogger(PersoniumEngineSvcCollectionResource.class);
@@ -99,14 +101,14 @@ public class PersoniumEngineSvcCollectionResource {
     }
 
     /**
-     * PROPFINDの処理.
-     * @param requestBodyXml リクエストボディ
-     * @param depth Depthヘッダ
-     * @param contentLength Content-Length ヘッダ
-     * @param transferEncoding Transfer-Encoding ヘッダ
+     * Processing of PROPFIND.
+     * @param requestBodyXml request body
+     * @param depth Depth header
+     * @param contentLength Content-Length header
+     * @param transferEncoding Transfer-Encoding header
      * @return JAX-RS Response
      */
-    @WebDAVMethod.PROPFIND
+    @PROPFIND
     public Response propfind(final Reader requestBodyXml,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final Long contentLength,
@@ -146,39 +148,39 @@ public class PersoniumEngineSvcCollectionResource {
     }
 
     /**
-     * PROPPATCHの処理.
-     * @param requestBodyXml リクエストボディ
+     * Processing of PROPPATCH.
+     * @param requestBodyXml request body
      * @return JAX-RS Response
      */
     @WriteAPI
-    @WebDAVMethod.PROPPATCH
+    @PROPPATCH
     public Response proppatch(final Reader requestBodyXml) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(
                 this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
         return this.davRsCmp.doProppatch(requestBodyXml);
     }
 
     /**
-     * ACLメソッドの処理. ACLの設定を行う.
-     * @param reader 設定XML
+     * Processing of ACL method Set ACL.
+     * @param reader configuration XML
      * @return JAX-RS Response
      */
     @WriteAPI
     @ACL
     public Response acl(final Reader reader) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
         return this.davCmp.acl(reader).build();
     }
 
     /**
-     * OPTIONSメソッド.
+     * OPTIONS method.
      * @return JAX-RS Response
      */
     @OPTIONS
     public Response options() {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ);
         return ResourceUtils.responseBuilderForOptions(
                 HttpMethod.DELETE,
@@ -190,7 +192,7 @@ public class PersoniumEngineSvcCollectionResource {
     }
 
     /**
-     * サービスソースを担当するJax-RSリソースを返す.
+     * Returns the Jax-RS resource responsible for the service source.
      * @return DavFileResource
      */
     @Path("__src")
@@ -199,16 +201,16 @@ public class PersoniumEngineSvcCollectionResource {
         if (nextCmp.exists()) {
             return new PersoniumEngineSourceCollection(this.davRsCmp, nextCmp);
         } else {
-            // サービスソースコレクションが存在しないため404エラーとする
+            //Since the service source collection does not exist, it is regarded as a 404 error
             throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(nextCmp.getUrl());
         }
     }
 
     /**
-     * relay_GETメソッド.
-     * @param path パス名
+     * relay_GET method.
+     * @param path Path name
      * @param uriInfo URI
-     * @param headers ヘッダ
+     * @param headers header
      * @return JAX-RS Response
      */
     @Path("{path}")
@@ -216,17 +218,17 @@ public class PersoniumEngineSvcCollectionResource {
     public Response relayget(@PathParam("path") String path,
             @Context final UriInfo uriInfo,
             @Context HttpHeaders headers) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.EXEC);
         return relaycommon(HttpMethod.GET, uriInfo, path, headers, null);
     }
 
     /**
-     * relay_POSTメソッド.
-     * @param path パス名
+     * relay_POST method.
+     * @param path Path name
      * @param uriInfo URI
-     * @param headers ヘッダ
-     * @param is リクエストボディ
+     * @param headers header
+     * @param is Request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -236,17 +238,17 @@ public class PersoniumEngineSvcCollectionResource {
             @Context final UriInfo uriInfo,
             @Context HttpHeaders headers,
             final InputStream is) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.EXEC);
         return relaycommon(HttpMethod.POST, uriInfo, path, headers, is);
     }
 
     /**
-     * relay_PUTメソッド.
-     * @param path パス名
+     * relay_PUT method.
+     * @param path Path name
      * @param uriInfo URI
-     * @param headers ヘッダ
-     * @param is リクエストボディ
+     * @param headers header
+     * @param is Request body
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -256,16 +258,16 @@ public class PersoniumEngineSvcCollectionResource {
             @Context final UriInfo uriInfo,
             @Context HttpHeaders headers,
             final InputStream is) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.EXEC);
         return relaycommon(HttpMethod.PUT, uriInfo, path, headers, is);
     }
 
     /**
-     * relay_DELETEメソッド.
-     * @param path パス名
+     * relay_DELETE method.
+     * @param path Path name
      * @param uriInfo URI
-     * @param headers ヘッダ
+     * @param headers header
      * @return JAX-RS Response
      */
     @WriteAPI
@@ -274,7 +276,7 @@ public class PersoniumEngineSvcCollectionResource {
     public Response relaydelete(@PathParam("path") String path,
             @Context final UriInfo uriInfo,
             @Context HttpHeaders headers) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.EXEC);
         return relaycommon(HttpMethod.DELETE, uriInfo, path, headers, null);
     }
@@ -327,12 +329,12 @@ public class PersoniumEngineSvcCollectionResource {
     }
 
     /**
-     * relay共通処理のメソッド.
-     * @param method メソッド
+     * relay Common processing method.
+     * @param method method
      * @param uriInfo URI
-     * @param path パス名
-     * @param headers ヘッダ
-     * @param is リクエストボディ
+     * @param path Path name
+     * @param headers header
+     * @param is Request body
      * @return JAX-RS Response
      */
     private Response relaycommon(
@@ -345,10 +347,10 @@ public class PersoniumEngineSvcCollectionResource {
         // url to request to engine
         URI requestUrl = createRequestUrl(path);
 
-        // baseUrlを取得
+        //Get baseUrl
         String baseUrl = uriInfo.getBaseUri().toString();
 
-        // リクエストヘッダを取得し、以下内容を追加
+        //Acquire request header, add content below
         HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_DEFAULT);
         HttpUriRequest req = null;
         if (method.equals(HttpMethod.POST)) {
@@ -380,7 +382,7 @@ public class PersoniumEngineSvcCollectionResource {
         }
         req.addHeader("X-Personium-Box-Schema", this.davRsCmp.getBox().getSchema());
 
-        // リレイまでのヘッダを追加
+        //Add header to relay
         MultivaluedMap<String, String> multivalueHeaders = headers.getRequestHeaders();
         for (Iterator<Entry<String, List<String>>> it = multivalueHeaders.entrySet().iterator(); it.hasNext();) {
             Entry<String, List<String>> entry = it.next();
@@ -396,7 +398,7 @@ public class PersoniumEngineSvcCollectionResource {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("【EngineRelay】 " + req.getMethod() + "  " + req.getURI());
+            log.debug("[EngineRelay]" + req.getMethod() + " " + req.getURI());
             Header[] reqHeaders = req.getAllHeaders();
             for (int i = 0; i < reqHeaders.length; i++) {
                 log.debug("RelayHeader[" + reqHeaders[i].getName() + "] : " + reqHeaders[i].getValue());
@@ -407,7 +409,7 @@ public class PersoniumEngineSvcCollectionResource {
         PersoniumEvent event = createEvent(path);
         EventBus eventBus = this.davRsCmp.getAccessContext().getCell().getEventBus();
 
-        // Engineにリクエストを投げる
+        //Throw a request to the Engine
         HttpResponse objResponse = null;
         try {
             objResponse = client.execute(req);
@@ -429,19 +431,20 @@ public class PersoniumEngineSvcCollectionResource {
             throw PersoniumCoreException.ServiceCollection.SC_ENGINE_CONNECTION_ERROR.reason(ioe);
         }
 
-        // ステータスコードを追加
+        //Add status code
         ResponseBuilder res = Response.status(objResponse.getStatusLine().getStatusCode());
         Header[] headersResEngine = objResponse.getAllHeaders();
-        // レスポンスヘッダを追加
+        //Add response header
         for (int i = 0; i < headersResEngine.length; i++) {
-            // Engineから返却されたTransfer-Encodingはリレーしない。
-            // 後続のMWにてレスポンスの長さに応じてContent-LengthまたはTransfer-Encodingが付加されるので
-            // 2重に付加されてしまうのを防ぐため、ここでは外しておく。
+            //Do not relay Transfer-Encoding returned from Engine.
+            //Since Content-Length or Transfer-Encoding is appended according to the length
+            //of the response in the subsequent MW.
+            //In order to prevent it being doubly added, leave it out here.
             if ("Transfer-Encoding".equalsIgnoreCase(headersResEngine[i].getName())) {
                 continue;
             }
-            // Engineから返却されたDateはリレーしない。
-            // WebサーバのMWがJettyの場合は2重に付加されてしまうため。
+            //Do not relay Date returned from Engine.
+            //If MW of Web server is Jetty it will be doubly added.
             if (HttpHeaders.DATE.equalsIgnoreCase(headersResEngine[i].getName())) {
                 continue;
             }
@@ -450,7 +453,7 @@ public class PersoniumEngineSvcCollectionResource {
 
         InputStream isResBody = null;
 
-        // レスポンスボディを追加
+        //Add response body
         HttpEntity entity = objResponse.getEntity();
         if (entity != null) {
             try {
@@ -465,7 +468,7 @@ public class PersoniumEngineSvcCollectionResource {
             final InputStream isInvariable = isResBody;
             final HttpClient httpClient = client;
             final HttpResponse httpResponse = objResponse;
-            // 処理結果を出力
+            //Output processing result
             StreamingOutput strOutput = new StreamingOutput() {
                 @Override
                 public void write(final OutputStream os) throws IOException {
@@ -484,20 +487,20 @@ public class PersoniumEngineSvcCollectionResource {
             res.entity(strOutput);
         }
 
-        // レスポンス返却
+        //Response return
         return res.build();
     }
 
     /**
-     * MOVEメソッドの処理.
-     * @param headers ヘッダ情報
-     * @return JAX-RS応答オブジェクト
+     * Processing of the MOVE method.
+     * @param headers header information
+     * @return JAX-RS response object
      */
     @WriteAPI
-    @WebDAVMethod.MOVE
+    @MOVE
     public Response move(
             @Context HttpHeaders headers) {
-        // 移動元に対するアクセス制御(親の権限をチェックする)
+        //Access control to move source (check parent's authority)
         this.davRsCmp.getParent().checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE);
         return new DavMoveResource(this.davRsCmp.getParent(), this.davRsCmp.getDavCmp(), headers).doMove();
     }

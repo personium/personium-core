@@ -50,11 +50,11 @@ import io.personium.core.model.Cell;
 import io.personium.core.odata.OEntityWrapper;
 
 /**
- * 制御エンティティ群のスキーマ情報.
+ * Schema information of the control entity group.
  */
 public final class CtlSchema {
     /**
-     * コンストラクタは非公開.
+     * The constructor is private.
      */
     private CtlSchema() {
     }
@@ -94,9 +94,9 @@ public final class CtlSchema {
     }
 
     /**
-     * 複合Uniqueキー制約（PersoniumによるCSDL拡張）のためのCSDL拡張アノテーションを作成して返します.
-     * @param name UK名
-     * @return Annotationのリスト
+     * Creates and returns a CSDL extension annotation for a compound Unique Key constraint (CSDL extension by Personium).
+     * @param name UK name
+     * @return Annotation list
      */
     public static List<EdmAnnotation<?>> createNamedUkAnnotation(final String name) {
         List<EdmAnnotation<?>> ret = new ArrayList<EdmAnnotation<?>>();
@@ -107,9 +107,9 @@ public final class CtlSchema {
     }
 
     /**
-     * 動的プロパティか否かのアノテーションを作成して返します.
-     * @param name 真偽値(String型)
-     * @return Annotationのリスト
+     * Creates and returns an annotation of dynamic property or not.
+     * @param name Boolean value (String type)
+     * @return Annotation list
      */
     public static List<EdmAnnotation<?>> createIsDecleardAnnotation(final String name) {
         List<EdmAnnotation<?>> ret = new ArrayList<EdmAnnotation<?>>();
@@ -120,9 +120,9 @@ public final class CtlSchema {
     }
 
     /**
-     * "Format"のアノテーションを作成して返します.
-     * @param name フォーマット定義
-     * @return Annotationのリスト
+     * Creates and returns the "Format" annotation.
+     * @param name Format definition
+     * @return Annotation list
      */
     public static List<EdmAnnotation<?>> createFormatAnnotation(final String name) {
         List<EdmAnnotation<?>> ret = new ArrayList<EdmAnnotation<?>>();
@@ -133,25 +133,25 @@ public final class CtlSchema {
     }
 
     /**
-     * UnitCtlデータサービスののEdmDataServices オブジェクトを返します.
+     * Returns the EdmDataServices object of the UnitCtl data service.
      * @return EdmDataServices.Builder Object
      */
     public static EdmDataServices.Builder getEdmDataServicesForUnitCtl() {
-        // Entity Type のリスト
+        //List of Entity Types
         EdmEntityType.Builder[] typeList = new EdmEntityType.Builder[] {Cell.EDM_TYPE_BUILDER };
 
-        // Associationの定義
+        //Definition of Association
         EdmAssociation.Builder[] assocs = new EdmAssociation.Builder[] {};
 
         return createDataServices(Common.EDM_NS_UNIT_CTL, typeList, assocs);
     }
 
     /**
-     * CellCtlデータサービスのEdmDataServices オブジェクトを返します.
+     * Returns the CellCtl data service's EdmDataServices object.
      * @return EdmDataServices Object
      */
     public static EdmDataServices.Builder getEdmDataServicesForCellCtl() {
-        // Entity Type のリスト
+        //List of Entity Types
         EdmEntityType.Builder[] typeList = new EdmEntityType.Builder[] {
                 Role.EDM_TYPE_BUILDER,
                 Box.EDM_TYPE_BUILDER,
@@ -163,7 +163,7 @@ public final class CtlSchema {
                 SentMessage.EDM_TYPE_BUILDER,
                 Rule.EDM_TYPE_BUILDER};
 
-        // Associationの定義
+        //Definition of Association
         EdmAssociation.Builder[] assocs = new EdmAssociation.Builder[] {
                 // Box : Role = 0-1 : many
                 associate(Common.EDM_NS_CELL_CTL,
@@ -264,7 +264,7 @@ public final class CtlSchema {
         return createDataServices(Common.EDM_NS_CELL_CTL, typeList, assocs, complexList);
     }
 
-    /** Associationの定義. */
+    /** Definition of Association.*/
     private static final EdmAssociation.Builder[] SCHEMA_ASSOCS = new EdmAssociation.Builder[] {
             associate(Common.EDM_NS_ODATA_SVC_SCHEMA,
                     EntityType.EDM_TYPE_BUILDER, AssociationEnd.EDM_TYPE_BUILDER,
@@ -284,7 +284,7 @@ public final class CtlSchema {
                     EdmMultiplicity.ONE, EdmMultiplicity.MANY, null, null)
     };
 
-    /** Entity Type のリスト. */
+    /** List of Entity Types.*/
     private static final EdmEntityType.Builder[] SCHEMA_TYPELIST = new EdmEntityType.Builder[] {
             EntityType.EDM_TYPE_BUILDER,
             AssociationEnd.EDM_TYPE_BUILDER,
@@ -294,7 +294,7 @@ public final class CtlSchema {
     };
 
     /**
-     * ODataSvcSchemaデータサービスののEdmDataServices オブジェクトを返します.
+     * Returns the EdmDataServices object of ODataSvcSchema data service.
      * @return EdmDataServices.Builder Object
      */
     public static EdmDataServices.Builder getEdmDataServicesForODataSvcSchema() {
@@ -302,7 +302,7 @@ public final class CtlSchema {
     }
 
     /**
-     * UserCtlデータサービスのEdmDataServices オブジェクトを返します.
+     * Returns the EdmDataServices object of the UserCtl data service.
      * @param nodeId nodeId
      * @param typeEntities EntityType
      * @param assEndEntities AssociationEnd
@@ -317,18 +317,18 @@ public final class CtlSchema {
             List<OEntity> propEntities,
             List<OEntity> complexEntities,
             List<OEntity> complexPropEntities) {
-        // Entity Type のリスト
+        //List of Entity Types
         List<EdmEntityType.Builder> typeList = new ArrayList<EdmEntityType.Builder>();
         Map<String, EdmEntityType.Builder> typeMap = new HashMap<String, EdmEntityType.Builder>();
 
-        // Propertyは__id,__published__updated
+        //Property is __id, __ published__updated
         List<EdmProperty.Builder> properties =
                 Enumerable.create(P_ID,
                         Common.P_PUBLISHED,
                         Common.P_UPDATED)
                         .toList();
         for (OEntity oe : typeEntities) {
-            // EntityTypeの名前を取得する
+            //Get name of EntityType
             List<OProperty<?>> p = oe.getProperties();
             String entityTypeName = "";
             for (OProperty<?> op : p) {
@@ -339,7 +339,7 @@ public final class CtlSchema {
             }
             List<EdmProperty.Builder> propList = getProperties(nodeId, entityTypeName, propEntities, complexEntities);
 
-            // 作成した情報を元にEdmEntityTypeを作成
+            //Create EdmEntityType based on created information
             EdmEntityType.Builder builder = EdmEntityType.newBuilder()
                     .setNamespace(nodeId)
                     .setName(entityTypeName)
@@ -351,7 +351,7 @@ public final class CtlSchema {
             typeMap.put(((OEntityWrapper) oe).getUuid(), builder);
         }
 
-        // Associationの定義
+        //Definition of Association
         List<EdmAssociation.Builder> assocs = new ArrayList<EdmAssociation.Builder>();
         Map<String, OEntity> assocMap = new HashMap<String, OEntity>();
         List<String> assocList = new ArrayList<String>();
@@ -359,28 +359,28 @@ public final class CtlSchema {
             assocMap.put(((OEntityWrapper) as).getUuid(), as);
         }
         for (OEntity as : assEndEntities) {
-            // 自分のAssociationEndの情報を取得する
+            //Get information on your AssociationEnd
             OEntityWrapper asWrapper = (OEntityWrapper) as;
             String selfId = asWrapper.getUuid();
             String selfAssociationEndName = (String) as
                     .getProperty(AssociationEnd.P_ASSOCIATION_NAME.getName()).getValue();
             EdmMultiplicity selfMultiplicity = EdmMultiplicity.fromSymbolString((String) as.getProperty(
                     AssociationEnd.P_MULTIPLICITY.getName()).getValue());
-            // リンク情報から取得する
+            //Acquire from link information
             String selfEntityTypeLinkId = asWrapper.getLinkUuid(EntityType.EDM_TYPE_NAME);
             String associationEndLinkId = asWrapper.getLinkUuid(AssociationEnd.EDM_TYPE_NAME);
 
-            // AssoicationEndまたは、EntityTypeがリンクされていない場合はコンティニュー
+            //Asso- cationEnd or Continue if EntityType is not linked
             if (associationEndLinkId == null || selfEntityTypeLinkId == null) {
                 continue;
             }
 
-            // 既にリンク先としてAssociationEndのリンクが作成されている場合は対象外とする
+            //If AssociationEnd's link has already been created as a link destination, it is excluded
             if (assocList.contains(associationEndLinkId + selfId)) {
                 continue;
             }
 
-            // リンク先のAssociationEndの情報をassociationEndLinkIdをもとに取得する
+            //Acquire the information of AssociationEnd of link destination based on associationEndLinkId
             OEntity targetAssocOentity = assocMap.get(associationEndLinkId);
             if (targetAssocOentity == null) {
                 continue;
@@ -389,17 +389,17 @@ public final class CtlSchema {
                     .getProperty(AssociationEnd.P_ASSOCIATION_NAME.getName()).getValue();
             EdmMultiplicity targetMulitplicity = EdmMultiplicity.fromSymbolString((String) targetAssocOentity
                     .getProperty(AssociationEnd.P_MULTIPLICITY.getName()).getValue());
-            // リンク情報から取得する
+            //Acquire from link information
             Object targetEntityTypeLinkId = ((OEntityWrapper) targetAssocOentity).getLinkUuid(EntityType.EDM_TYPE_NAME);
 
-            // リンクのEntityTypeのIDから、自分とリンク先のEntityTypeBuilderを取得する
+            //Get yourself and linked EntityTypeBuilder from the EntityType ID of the link
             EdmEntityType.Builder selfEntityType = typeMap.get(selfEntityTypeLinkId);
             EdmEntityType.Builder targetEntityType = typeMap.get(targetEntityTypeLinkId);
 
             if (selfEntityType == null || targetEntityType == null) {
                 continue;
             }
-            // AssociationEndを設定する
+            //Set AssociationEnd
             String selfRoleName = selfEntityType.getName() + ":" + selfAssociationEndName;
             String targetRoleName = targetEntityType.getName() + ":" + targetAssociationEndName;
             assocs.add(associate(nodeId, selfEntityType, targetEntityType, selfRoleName,
@@ -407,12 +407,12 @@ public final class CtlSchema {
             assocList.add(selfId + associationEndLinkId);
         }
 
-        // ComplexType のリスト
+        //List of ComplexType
         List<EdmComplexType.Builder> complexList = new ArrayList<EdmComplexType.Builder>();
         Map<String, EdmComplexType.Builder> complexMap = new HashMap<String, EdmComplexType.Builder>();
-        // Propertyは__id,__published__updated
+        //Property is __id, __ published__updated
         for (OEntity oe : complexEntities) {
-            // Propertyの名前を取得する
+            //Get the name of Property
             List<OProperty<?>> p = oe.getProperties();
             String complexName = "";
             for (OProperty<?> op : p) {
@@ -429,7 +429,7 @@ public final class CtlSchema {
             List<EdmProperty.Builder> complexPropNames = getComplexTypeProperties(nodeId, complexName,
                     complexPropEntities, complexEntities);
 
-            // 作成した情報を元にEdmComplexTypeを作成
+            //Create EdmComplexType based on created information
             EdmComplexType.Builder builder = EdmComplexType.newBuilder().setNamespace(nodeId).setName(complexName)
                     .addProperties(complexPropNames);
             complexList.add(builder);
@@ -456,22 +456,22 @@ public final class CtlSchema {
             final EdmEntityType.Builder[] typeList,
             final EdmAssociation.Builder[] assocs,
             final EdmComplexType.Builder[] complexList) {
-        // EntitySet の Map
+        //EntitySet Map
         Map<String, EdmEntitySet.Builder> setMap = new HashMap<String, EdmEntitySet.Builder>();
         for (EdmEntityType.Builder type : typeList) {
             setMap.put(type.getName(), type2set(type));
         }
 
-        // AssociationSetは機械的に定義
+        //AssociationSet is defined mechanically
         EdmAssociationSet.Builder[] assocSets = assoc2set(setMap, assocs);
 
-        // EntityContainerは機械的に定義
+        //EntityContainer is defined mechanically
         EdmEntityContainer.Builder ec = EdmEntityContainer.newBuilder()
                 .setName(edmNs).setIsDefault(true)
                 .addEntitySets(Enumerable.create(setMap.values()).toList())
                 .addAssociationSets(Enumerable.create(assocSets).toList());
 
-        // Schemaは機械的に定義
+        //Schema is defined mechanically
         EdmSchema.Builder schema = EdmSchema.newBuilder().addEntityTypes(Enumerable.create(typeList).toList())
                 .addAssociations(Enumerable.create(assocs).toList()).setNamespace(edmNs).addEntityContainers(ec);
         if (complexList != null) {
@@ -579,9 +579,10 @@ public final class CtlSchema {
         EdmAssociation.Builder ret = EdmAssociation
                 .newBuilder()
                 .setEnds(
+                        //For some reason I just can not use setType, setTypeName I also have to do.
                         EdmAssociationEnd.newBuilder()
                                 .setType(type1)
-                                .setTypeName(type1.getName()) // なぜか setTypeをしただけだと使えず、setTypeNameもしないといけない。
+                                .setTypeName(type1.getName())
                                 .setMultiplicity(type1Multiplicity)
                                 .setRole(type1EndRole),
                         EdmAssociationEnd.newBuilder()
@@ -612,7 +613,7 @@ public final class CtlSchema {
             np2 = np2.setAnnotations(type2NavPropAnnotations);
         }
         type1.addNavigationProperties(np1);
-        // type1とtype2が同一のとき、すなわち自己参照のときは、２重でナビゲーションプロパティを登録したくない。
+        //When type1 and type2 are the same, that is, when self-referencing, we do not want to register the navigation property with duplex.
         if (type1 != type2) {
             type2.addNavigationProperties(np2);
         }
@@ -656,7 +657,7 @@ public final class CtlSchema {
             } else {
                 property.setCollectionKind(CollectionKind.valueOf((String) propValue));
             }
-            // TODO IsKey、UniqueKeyはPCSの拡張項目のため、EdmPropertyでは扱えない。
+            //TODO IsKey, UniqueKey is an extension item of PCS and can not be handled by EdmProperty.
             list.add(property);
         }
         return list;

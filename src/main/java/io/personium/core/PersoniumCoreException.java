@@ -30,236 +30,236 @@ import io.personium.core.utils.EscapeControlCode;
 import io.personium.plugin.base.PluginMessageUtils.Severity;
 
 /**
- * ログメッセージ作成クラス.
+ * Log message creation class.
  */
 @SuppressWarnings("serial")
 public class PersoniumCoreException extends RuntimeException {
 
     /**
-     * OData関連.
+     * OData related.
      */
     public static class OData {
         /**
-         * JSONのパースに失敗したとき.
+         * When JSON parsing fails.
          */
         public static final PersoniumCoreException JSON_PARSE_ERROR = create("PR400-OD-0001");
         /**
-         * クエリのパースに失敗.
+         * Failure in parsing the query.
          */
         public static final PersoniumCoreException QUERY_PARSE_ERROR = create("PR400-OD-0002");
         /**
-         * $fileterのパースに失敗.
+         * Failure parsing $ fileter.
          */
         public static final PersoniumCoreException FILTER_PARSE_ERROR = create("PR400-OD-0003");
         /**
-         * EntityKeyのパースに失敗.
+         * Failed to parse EntityKey.
          */
         public static final PersoniumCoreException ENTITY_KEY_PARSE_ERROR = create("PR400-OD-0004");
 
         /**
-         * $formatに指定された値が不正.
+         * The value specified for $ format is invalid.
          */
         public static final PersoniumCoreException FORMAT_INVALID_ERROR = create("PR400-OD-0005");
         /**
-         * リクエストデータのフォーマットが不正.
-         * {0}プロパティ名
+         * The request data format is invalid.
+         * {0} Property name
          */
         public static final PersoniumCoreException REQUEST_FIELD_FORMAT_ERROR = create("PR400-OD-0006");
         /**
-         * リクエストボディのフィールド名が不正.
-         * {0}:詳細メッセージ
-         * 管理情報を更新しようとした時と、スキーマに存在しない値を設定しようとした時に発生
-         * 注）このエラーはメッセージをソースで管理することになるため、今後はこれを使わないこと。
+         * The field name of the request body is invalid.
+         * {0}: Detailed message
+         * Occurs when you try to update the management information and when you try to set a value that does not exist in the schema
+         * Note) Since this error will manage messages by source, do not use this in the future.
          */
         public static final PersoniumCoreException FIELED_INVALID_ERROR = create("PR400-OD-0007");
         /**
-         * 該当Associationが存在しない.
+         * The corresponding Association does not exist.
          */
         public static final PersoniumCoreException NO_SUCH_ASSOCIATION = create("PR400-OD-0008");
         /**
-         * リクエストボディの必須項目が無い.
-         * {0}:プロパティ名
+         * There is no essential item of the request body.
+         * {0}: Property name
          */
         public static final PersoniumCoreException INPUT_REQUIRED_FIELD_MISSING = create("PR400-OD-0009");
         /**
-         * リクエストボディの必須項目が無い.
+         * There is no essential item of the request body.
          */
         public static final PersoniumCoreException KEY_FOR_NAVPROP_SHOULD_NOT_BE_SPECIFIED = create("PR400-OD-0010");
         /**
-         * リクエストURLのKey指定が無い.
+         * There is no Key specification of the request URL.
          */
         public static final PersoniumCoreException KEY_FOR_NAVPROP_SHOULD_BE_SPECIFIED = create("PR400-OD-0011");
         /**
-         * 文字種が不正.
-         * {0}:プロパティ名
+         * Character type is invalid.
+         * {0}: Property name
          */
         public static final PersoniumCoreException INVALID_TYPE_ERROR = create("PR400-OD-0012");
         /**
-         * $inlinecountに指定された値が不正.
-         * {0}:inlinecountで指定された値
+         * The value specified for $ inlinecount is invalid.
+         * {0}: value specified by inlinecount
          */
         public static final PersoniumCoreException INLINECOUNT_PARSE_ERROR = create("PR400-OD-0013");
         /**
-         * 指定されたプロパティが存在しない.
+         * The specified property does not exist.
          */
         public static final PersoniumCoreException UNKNOWN_PROPERTY_APPOINTED = create("PR400-OD-0014");
         /**
-         * $orderbyのパースに失敗.
+         * Failure in parsing $ orderby.
          */
         public static final PersoniumCoreException ORDERBY_PARSE_ERROR = create("PR400-OD-0015");
         /**
-         * 単一Keyにnullが指定された.
+         * A single key was specified as null.
          */
         public static final PersoniumCoreException NULL_SINGLE_KEY = create("PR400-OD-0016");
         /**
-         * $selectのパースに失敗.
+         * Failure in parsing $ select.
          */
         public static final PersoniumCoreException SELECT_PARSE_ERROR = create("PR400-OD-0017");
         /**
-         * AssociationEndの更新がリクエストされた.
+         * An update of AssociationEnd was requested.
          */
         public static final PersoniumCoreException NOT_PUT_ASSOCIATIONEND = create("PR400-OD-0019");
         /**
-         * 登録するデータの型がelasticsearchに登録済みのデータ型と異なる.
+         * The type of data to be registered is different from the data type registered in elasticsearch.
          */
         public static final PersoniumCoreException SCHEMA_MISMATCH = create("PR400-OD-0020");
         /**
-         * $batchのボディのFormatが不正.
-         * ヘッダの指定誤り
-         * {0}:ヘッダ名
+         * The body format of $ batch is invalid.
+         * Incorrect designation of header
+         * {0}: header name
          */
         public static final PersoniumCoreException BATCH_BODY_FORMAT_HEADER_ERROR = create("PR400-OD-0021");
         /**
-         * $batchのボディのFormatが不正.
-         * changesetのネストが指定されていた場合
+         * The body format of $ batch is invalid.
+         * When nesting of changeset is specified
          */
         public static final PersoniumCoreException BATCH_BODY_FORMAT_CHANGESET_NEST_ERROR = create("PR400-OD-0022");
         /**
-         * $batchのボディのパースに失敗した場合.
+         * When parsing $ batch's body fails.
          */
         public static final PersoniumCoreException BATCH_BODY_PARSE_ERROR = create("PR400-OD-0023");
         /**
-         * 更新リクエストでボディのNTKPに指定されたリソースが存在しない場合.
-         * {0}：NTKPで指定された値
+         * The resource specified in the NTKP of the body does not exist in the update request.
+         * {0}: value specified by NTKP
          */
         public static final PersoniumCoreException BODY_NTKP_NOT_FOUND_ERROR = create("PR400-OD-0024");
         /**
-         * $expandで指定されたNTKPがリソースとして存在しない場合.
-         * {0}：$expandで指定された値
+         * The NTKP specified by $ expand does not exist as a resource.
+         * {0}: value specified by $ expand
          */
         public static final PersoniumCoreException EXPAND_NTKP_NOT_FOUND_ERROR = create("PR400-OD-0025");
         /**
-         * $expandのパースに失敗.
+         * Failed to parse $ expand.
          */
         public static final PersoniumCoreException EXPAND_PARSE_ERROR = create("PR400-OD-0026");
         /**
-         * すでに別のスキーマ型のIndexが作成されている場合.
+         * The index of another schema type has already been created.
          */
         public static final PersoniumCoreException ANOTHRE_SCHEMA_TYPE_ALREADY_EXISTS = create("PR400-OD-0027");
         /**
-         * $linksのEntityKeyのパースに失敗.
+         * Failure parsing EntityKey of $ links.
          */
         public static final PersoniumCoreException ENTITY_KEY_LINKS_PARSE_ERROR = create("PR400-OD-0028");
         /**
-         * クエリに指定された値が不正.
+         * The value specified for the query is invalid.
          */
         public static final PersoniumCoreException QUERY_INVALID_ERROR = create("PR400-OD-0029");
         /**
-         * $Batchで指定されたリクエスト数が不正.
+         * The number of requests specified by $ Batch is invalid.
          */
         public static final PersoniumCoreException TOO_MANY_REQUESTS = create("PR400-OD-0030");
         /**
-         * $links登録で1:1を指定.
+         * Specify 1: 1 in $ link registration.
          */
         public static final PersoniumCoreException INVALID_MULTIPLICITY = create("PR400-OD-0031");
 
         /**
-         * EnitityTypeの階層数、内包プロパティ数の制限を超えた.
+         * The number of hierarchies of EnitityType and the number of contained properties exceeded the limit.
          */
         public static final PersoniumCoreException ENTITYTYPE_STRUCTUAL_LIMITATION_EXCEEDED = create("PR400-OD-0032");
 
         /**
-         * EnitityType数の制限を超えた.
+         * The limit of the number of EnitityTypes has been exceeded.
          */
         public static final PersoniumCoreException ENTITYTYPE_COUNT_LIMITATION_EXCEEDED = create("PR400-OD-0033");
 
         /**
-         * $batchのボディのFormatが不正.
-         * リクエストパスの指定誤り
-         * {0}:リクエストパス
+         * The body format of $ batch is invalid.
+         * Request path specification error
+         * {0}: Request path
          */
         public static final PersoniumCoreException BATCH_BODY_FORMAT_PATH_ERROR = create("PR400-OD-0034");
 
         /**
-         * $batchのボディのFormatが不正.
-         * $batchで受付できないメソッドを指定された
-         * {0}:メソッド
+         * The body format of $ batch is invalid.
+         * A method that can not be accepted with $ batch is specified
+         * {0}: method
          */
         public static final PersoniumCoreException BATCH_BODY_FORMAT_METHOD_ERROR = create("PR400-OD-0035");
 
         /**
-         * クエリのパースに失敗.
-         * {0}:失敗したクエリ
+         * Failure in parsing the query.
+         * {0}: Failed query
          */
         public static final PersoniumCoreException QUERY_PARSE_ERROR_WITH_PARAM = create("PR400-OD-0036");
 
         /**
-         * $batch内全体で指定された$topの値の合計が上限値を超えた.
+         * The sum of the values ​​of $ top specified in the entire $ batch exceeded the upper limit.
          */
         public static final PersoniumCoreException BATCH_TOTAL_TOP_COUNT_LIMITATION_EXCEEDED = create("PR400-OD-0037");
 
         /**
-         * $linksが作成可能な最大件数をオーバー.
+         * $ links is over the maximum number that can be created.
          */
         public static final PersoniumCoreException LINK_UPPER_LIMIT_RECORD_EXEED = create("PR400-OD-0038");
 
         /**
-         * 指定された$expandの値の合計が上限値を超えた.
+         * The sum of the values ​​of the specified $ expand exceeded the upper limit.
          */
         public static final PersoniumCoreException EXPAND_COUNT_LIMITATION_EXCEEDED = create("PR400-OD-0039");
 
         /**
-         * $orderbyクエリに配列型のプロパティが指定された.
+         * An array type property was specified in the $ orderby query.
          */
         public static final PersoniumCoreException CANNOT_SPECIFY_THE_LIST_TYPE_TO_ORDERBY = create("PR400-OD-0040");
 
         /**
-         * リクエストヘッダー{0}の値{1}が正しくない.
+         * The value {1} of the request header {0} is incorrect.
          */
         public static final PersoniumCoreException BAD_REQUEST_HEADER_VALUE = create("PR400-OD-0041");
 
         /**
-         * 未サポートの操作が実行された 詳細：{0}.
+         * Unsupported operation was performed Details: {0}.
          */
         public static final PersoniumCoreException OPERATION_NOT_SUPPORTED = create("PR400-OD-0042");
 
         /**
-         * 未知の演算子が指定された場合.
+         * An unknown operator is specified.
          */
         public static final PersoniumCoreException UNSUPPORTED_QUERY_OPERATOR = create("PR400-OD-0043");
 
         /**
-         * 未知の関数が指定された場合.
+         * An unknown function is specified.
          */
         public static final PersoniumCoreException UNSUPPORTED_QUERY_FUNCTION = create("PR400-OD-0044");
 
         /**
-         * 未知のプロパティを指定した場合.
+         * When unknown property is specified.
          */
         public static final PersoniumCoreException UNKNOWN_QUERY_KEY = create("PR400-OD-0045");
 
         /**
-         * プロパティのデータ型とは異なる書式の値が指定された場合.
+         * A value of a format different from the data type of the property is specified.
          */
         public static final PersoniumCoreException OPERATOR_AND_OPERAND_TYPE_MISMATCHED = create("PR400-OD-0046");
 
         /**
-         * プロパティのデータ型の範囲外の値が指定された場合.
+         * A value outside the range of the property's data type is specified.
          */
         public static final PersoniumCoreException UNSUPPORTED_OPERAND_FORMAT = create("PR400-OD-0047");
 
         /**
-         * 検索値のアンエスケープができなかった場合.
+         * Unable to unseal search value.
          */
         public static final PersoniumCoreException OPERATOR_AND_OPERAND_UNABLE_TO_UNESCAPE = create("PR400-OD-0048");
 
@@ -275,51 +275,51 @@ public class PersoniumCoreException extends RuntimeException {
         public static final PersoniumCoreException SCHEMA_URI_FORMAT_ERROR = create("PR400-OD-0050");
 
         /**
-         * 該当EntitySetが存在しない.
+         * The corresponding EntitySet does not exist.
          */
         public static final PersoniumCoreException NO_SUCH_ENTITY_SET = create("PR404-OD-0001");
         /**
-         * 該当Entityが存在しない.
+         * The corresponding Entity does not exist.
          */
         public static final PersoniumCoreException NO_SUCH_ENTITY = create("PR404-OD-0002");
         /**
-         * 該当リソースが存在しない.
+         * The corresponding resource does not exist.
          */
         public static final PersoniumCoreException NOT_FOUND = create("PR404-OD-0000");
         /**
-         * 該当Navigation Propertyが存在しない.
+         * The corresponding Navigation Property does not exist.
          */
         public static final PersoniumCoreException NOT_SUCH_NAVPROP = create("PR404-OD-0003");
         /**
-         * 関係するデータが存在するエンティティへの操作.
+         * Operation on the entity where the relevant data resides.
          */
         public static final PersoniumCoreException CONFLICT_HAS_RELATED = create("PR409-OD-0001");
         /**
-         * リンクが既に存在する.
+         * Link already exists.
          */
         public static final PersoniumCoreException CONFLICT_LINKS = create("PR409-OD-0002");
         /**
-         * エンティティが既に存在する.
+         * Entity already exists.
          */
         public static final PersoniumCoreException ENTITY_ALREADY_EXISTS = create("PR409-OD-0003");
         /**
-         * 複合キーのエンティティに対して$linksを削除した時に同名のエンティティが既に存在する.
+         * An entity with the same name already exists when deleting $ links for a compound key entity.
          */
         public static final PersoniumCoreException CONFLICT_UNLINKED_ENTITY = create("PR409-OD-0004");
         /**
-         * 単一キーのエンティティに対して$linksを追加した時に同名のエンティティが既に存在する.
+         * An entity with the same name already exists when adding $ links to a single key entity.
          */
         public static final PersoniumCoreException CONFLICT_DUPLICATED_ENTITY = create("PR409-OD-0005");
         /**
-         * AssociationEndのLink登録時にすでに同一の関連が存在する.
+         * AssociationEnd already has the same relation when registering Link.
          */
         public static final PersoniumCoreException CONFLICT_DUPLICATED_ENTITY_RELATION = create("PR409-OD-0006");
         /**
-         * If-Matchヘッダの指定が無い.
+         * There is no specification of If-Match header.
          */
         public static final PersoniumCoreException HEADER_NOT_EXIST = create("PR412-OD-0001");
         /**
-         * 該当EntityのEtagがマッチしない.
+         * Etag of the corresponding Entity does not match.
          */
         public static final PersoniumCoreException ETAG_NOT_MATCH = create("PR412-OD-0002");
         /**
@@ -327,145 +327,145 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException CONFLICT_NP = create("PR412-OD-0003");
         /**
-         * 未サポートのメディアタイプが指定された.
+         * An unsupported media type was specified.
          */
         public static final PersoniumCoreException UNSUPPORTED_MEDIA_TYPE = create("PR415-OD-0001");
         /**
-         * プロパティ名の重複を検出した.
+         * Duplicate property name was detected.
          */
         public static final PersoniumCoreException DUPLICATED_PROPERTY_NAME = create("PR500-OD-0001");
         /**
-         * 内部データの矛盾を検出した.
+         * Inconsistency of internal data was detected.
          */
         public static final PersoniumCoreException DETECTED_INTERNAL_DATA_CONFLICT = create("PR500-OD-0002");
     }
 
     /**
-     * WebDAV関連.
-     * TODO WebDavのエラーはWebDavの仕様に合わせて実装する。
+     * WebDAV related.
+     * TODO WebDav errors are implemented according to WebDav specifications.
      */
     public static class Dav {
 
         /**
-         * XMLのパースに失敗したとき.
+         * When XML parsing fails.
          */
         public static final PersoniumCoreException XML_ERROR = create("PR400-DV-0001");
         /**
-         * XMLの内容がおかしいとき.
+         * When the content of XML is wrong.
          */
         public static final PersoniumCoreException XML_CONTENT_ERROR = create("PR400-DV-0002");
         /**
-         * Depthが0,1,infinity以外のとき.
-         * {0}:Depthヘッダの値
+         * Depth is other than 0, 1, infinity.
+         * {0}: Depth header value
          */
         public static final PersoniumCoreException INVALID_DEPTH_HEADER = create("PR400-DV-0003");
         /**
-         * ROLEが存在しない時.
+         * When ROLE does not exist.
          */
         public static final PersoniumCoreException ROLE_NOT_FOUND = create("PR400-DV-0004");
         /**
-         * Roleと紐付くBOXが存在しないとき.
+         * When there is no BOX associated with Role.
          * {0}:BOX URL
          */
         public static final PersoniumCoreException BOX_LINKED_BY_ROLE_NOT_FOUND = create("PR400-DV-0005");
         /**
-         * XMLのバリデートに失敗したとき.
+         * When XML validation fails.
          */
         public static final PersoniumCoreException XML_VALIDATE_ERROR = create("PR400-DV-0006");
         /**
-         * コレクションの子要素が多すぎる場合.
+         * There are too many child elements of the collection.
          */
         public static final PersoniumCoreException COLLECTION_CHILDRESOURCE_ERROR = create("PR400-DV-0007");
         /**
-         * コレクションの階層が深すぎる場合.
+         * The collection hierarchy is too deep.
          */
         public static final PersoniumCoreException COLLECTION_DEPTH_ERROR = create("PR400-DV-0008");
         /**
-         * ヘッダに不正な値が設定されている場合.
-         * {0}:ヘッダのキー
-         * {1}:ヘッダの値
+         * Invalid value is set in header.
+         * {0}: Header key
+         * {1}: value of header
          */
         public static final PersoniumCoreException INVALID_REQUEST_HEADER = create("PR400-DV-0009");
         /**
-         * 必須ヘッダの指定が無い場合.
-         * {0}:ヘッダのキー
+         * When mandatory header is not specified.
+         * {0}: Header key
          */
         public static final PersoniumCoreException REQUIRED_REQUEST_HEADER_NOT_EXIST = create("PR400-DV-0010");
         /**
-         * 移動元のリソースとして__srcが指定された場合.
+         * __Src is specified as the source resource.
          */
         public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_MOVE =
                 create("PR400-DV-0011");
         /**
-         * 移動先のリソースとして、既存のリソースが指定された場合.
+         * When an existing resource is designated as the resource of the move destination.
          */
         public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_OVERWRITE = create("PR400-DV-0012");
         /**
-         * 移動先のリソースとして、ODataコレクション配下のパスが指定された場合.
+         * When the path under the OData collection is specified as the destination resource.
          */
         public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_ODATA_COLLECTION =
                 create("PR400-DV-0013");
         /**
-         * 移動先のリソースとして、ファイル配下のパスが指定された場合.
+         * When the path under the file is specified as the destination resource.
          */
         public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_FILE = create("PR400-DV-0014");
         /**
-         * BoxはMOVEメソッドでの移動対象とはできない.
+         * Box can not be moved in the MOVE method.
          */
         public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_BOX = create("PR400-DV-0015");
         /**
-         * 移動先のリソースとして、Serviceコレクション配下のパスが指定された場合.
+         * When the path under the Service collection is specified as the destination resource.
          */
         public static final PersoniumCoreException RESOURCE_PROHIBITED_TO_MOVE_SERVICE_COLLECTION =
                 create("PR400-DV-0016");
         /**
-         * 移動先のリソースとして__srcが指定された場合.
+         * When __src is specified as the destination resource.
          */
         public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_OVERWRITE =
                 create("PR400-DV-0017");
         /**
-         * 移動元がコレクションで、移動先のリソースとしてサービスソースコレクションが指定された場合.
+         * The source is a collection and the service source collection is specified as the destination resource.
          */
         public static final PersoniumCoreException SERVICE_SOURCE_COLLECTION_PROHIBITED_TO_CONTAIN_COLLECTION =
                 create("PR400-DV-0018");
 
         /**
-         * リソースが存在しないとき.
+         * When the resource does not exist.
          */
         public static final PersoniumCoreException RESOURCE_NOT_FOUND = create("PR404-DV-0001");
         /**
-         * BOXが存在しないとき.
-         * {0}:BOX名
+         * When there is no BOX.
+         * {0}: BOX name
          */
         public static final PersoniumCoreException BOX_NOT_FOUND = create("PR404-DV-0002");
         /**
-         * CELLが存在しないとき.
+         * When CELL does not exist.
          */
         public static final PersoniumCoreException CELL_NOT_FOUND = create("PR404-DV-0003");
         /**
-         * メソッドが受け付けられないとき.
+         * When the method is not accepted.
          */
         public static final PersoniumCoreException METHOD_NOT_ALLOWED = create("PR405-DV-0001");
         /**
-         * Depthがinfinityのとき.
+         * When Depth is infinity.
          */
         public static final PersoniumCoreException PROPFIND_FINITE_DEPTH = create("PR403-DV-0001");
         /**
-         * コレクション削除時に子リソースがある場合は削除失敗.
+         * Delete failed if there is a child resource at the time of collection deletion.
          */
         public static final PersoniumCoreException HAS_CHILDREN = create("PR403-DV-0003");
         /**
-         * コレクション・ファイル名が不正なとき.
+         * When collection file name is invalid.
          */
         public static final PersoniumCoreException RESOURCE_NAME_INVALID = create("PR403-DV-0004");
         /**
-         * 移動元と移動先が同じ場合.
-         * {0}:Destination ヘッダの値
+         * When source and destination are the same.
+         * {0}: value of Destination header
          */
         public static final PersoniumCoreException DESTINATION_EQUALS_SOURCE_URL = create("PR403-DV-0005");
 
         /**
-         * コレクション・ファイルのPUT・MKCOL・MOVE時に親リソースが存在しない時.
+         * When the parent resource does not exist at PUT, MKCOL, MOVE of the collection file.
          */
         public static final PersoniumCoreException HAS_NOT_PARENT = create("PR409-DV-0001");
         /**
@@ -475,78 +475,78 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException FILE_ALREADY_EXISTS = create("PR409-DV-0002");
         /**
-         * 該当リソースのEtagがマッチしない.
+         * The Etag of the corresponding resource does not match.
          */
         public static final PersoniumCoreException ETAG_NOT_MATCH = create("PR412-DV-0001");
         /**
-         * Overwriteヘッダで"F"が指定されたが移動先のリソースが既に存在する時.
+         * When "F" is specified in the Overwrite header but the resource of the destination already exists.
          */
         public static final PersoniumCoreException DESTINATION_ALREADY_EXISTS = create("PR412-DV-0002");
         /**
-         * Rangeヘッダ指定誤り.
+         * Range header specification error.
          */
         public static final PersoniumCoreException REQUESTED_RANGE_NOT_SATISFIABLE = create("PR416-DV-0001");
         /**
-         * ファイルシステムの矛盾を検知.
+         * Detects file system inconsistency.
          */
         public static final PersoniumCoreException FS_INCONSISTENCY_FOUND = create("PR500-DV-0001");
         /**
-         * Boxから辿ってidで検索して、Davデータに不整合があった場合.
+         * When tracing from Box and searching by id, there is inconsistency in Dav data.
          */
         public static final PersoniumCoreException DAV_INCONSISTENCY_FOUND = create("PR500-DV-0002");
         /**
-         * Boxから辿ってidで検索して、Davデータに不整合があった場合.
+         * When tracing from Box and searching by id, there is inconsistency in Dav data.
          */
         public static final PersoniumCoreException DAV_UNAVAILABLE = create("PR503-DV-0001");
     }
 
     /**
-     * サービスコレクションのエラー.
+     * Service collection error.
      */
     public static class ServiceCollection {
         /**
-         * Personium-Engineの接続に失敗した場合.
+         * Personium-Engine connection failed.
          */
         public static final PersoniumCoreException SC_ENGINE_CONNECTION_ERROR = create("PR500-SC-0001");
         /**
-         * ファイルのオープンに失敗した場合(未使用_実装内容に言及しているため、使用しないこと).
+         * Failure to open the file (unused _ as it refers to the implementation content, so do not use it).
          */
         public static final PersoniumCoreException SC_FILE_OPEN_ERROR = create("PR500-SC-0002");
         /**
-         * ファイルのクローズに失敗した場合(未使用_実装内容に言及しているため、使用しないこと).
+         * Failed to close the file (unused _ as it refers to the implementation content, so do not use it).
          */
         public static final PersoniumCoreException SC_FILE_CLOSE_ERROR = create("PR500-SC-0003");
 
         /**
-         * ファイルのクローズに失敗した場合(未使用_実装内容に言及しているため、使用しないこと).
+         * Failed to close the file (unused _ as it refers to the implementation content, so do not use it).
          */
         public static final PersoniumCoreException SC_IO_ERROR = create("PR500-SC-0004");
         /**
-         * その他のエラー.
+         * Other errors.
          */
         public static final PersoniumCoreException SC_UNKNOWN_ERROR = create("PR500-SC-0005");
         /**
-         * サービス呼出しで不正なHTTPレスポンスが返却された場合のエラー.
+         * Error when incorrect HTTP response is returned in service invocation.
          */
         public static final PersoniumCoreException SC_INVALID_HTTP_RESPONSE_ERROR = create("PR500-SC-0006");
     }
 
     /**
-     * SentMessage受信API呼出し時のエラー.
+     * Error when calling SentMessage receive API.
      */
     public static class SentMessage {
         /**
-         * ToRelationに指定されたリソースが存在しない場合.
-         * {0}：指定された値
+         * The resource specified for ToRelation does not exist.
+         * {0}: specified value
          */
         public static final PersoniumCoreException TO_RELATION_NOT_FOUND_ERROR = create("PR400-SM-0001");
         /**
-         * ToRelationに指定されたリソースに紐付くExtCellが存在しない場合.
-         * {0}：指定された値
+         * When there is no ExtCell associated with the resource specified for ToRelation.
+         * {0}: specified value
          */
         public static final PersoniumCoreException RELATED_EXTCELL_NOT_FOUND_ERROR = create("PR400-SM-0002");
         /**
-         * 送信先URLが最大送信許可数を超えた場合.
+         * When the destination URL exceeds the maximum transmission permitted number.
          */
         public static final PersoniumCoreException OVER_MAX_SENT_NUM = create("PR400-SM-0003");
         /**
@@ -556,21 +556,21 @@ public class PersoniumCoreException extends RuntimeException {
         public static final PersoniumCoreException BOX_THAT_MATCHES_SCHEMA_NOT_EXISTS = create("PR400-SM-0004");
 
         /**
-         * リクエストに失敗した場合.
+         * If the request fails.
          */
         public static final PersoniumCoreException SM_CONNECTION_ERROR = create("PR500-SM-0001");
         /**
-         * ボディのパースに失敗した場合.
+         * When the body parsing fails.
          */
         public static final PersoniumCoreException SM_BODY_PARSE_ERROR = create("PR500-SM-0002");
     }
 
     /**
-     * ReceiveMessageAPI呼出し時のエラー.
+     * Error when ReceiveMessageAPI call.
      */
     public static class ReceivedMessage {
         /**
-         * メッセージの関係登録で既に関係が存在する.
+         * A relation already exists in relation relation registration of a message.
          */
         public static final PersoniumCoreException REQUEST_RELATION_EXISTS_ERROR = create("PR400-RM-0001");
         /**
@@ -586,249 +586,249 @@ public class PersoniumCoreException extends RuntimeException {
 
 // unnecessary.
 //        /**
-//         * メッセージのRequestRelationのパースに失敗.
+//* Failed to parse the RequestRelation of the message.
 //         */
 //        public static final PersoniumCoreException REQUEST_RELATION_PARSE_ERROR = create("PR409-RM-0001");
 
         /**
-         * 関係削除対象のRelationが存在しない.
+         * There is no Relation subject to relation deletion.
          */
         public static final PersoniumCoreException REQUEST_RELATION_DOES_NOT_EXISTS = create("PR409-RM-0002");
 
 // unnecessary.
 //        /**
-//         * メッセージのRequestRelationTargetのパースに失敗.
+//* Failed to parse the RequestRelationTarget of the message.
 //         */
 //        public static final PersoniumCoreException REQUEST_RELATION_TARGET_PARSE_ERROR = create("PR409-RM-0003");
 
         /**
-         * 関係削除対象のExtCellが存在しない.
+         * There is no ExtCell subject to relationship deletion.
          */
         public static final PersoniumCoreException REQUEST_RELATION_TARGET_DOES_NOT_EXISTS = create("PR409-RM-0004");
 
         /**
-         * RequestRelationとRequestRelationTargetのリンク情報が存在しない.
+         * Link information of RequestRelation and RequestRelationTarget does not exist.
          */
         public static final PersoniumCoreException LINK_DOES_NOT_EXISTS = create("PR409-RM-0005");
     }
 
     /**
-     * サーバ内部エラー.
-     * サーバ側の障害やバグにより処理を続行できないときに投げる. 問題の原因を表すようなものとする。 基本的にののカテゴリの例外発生時にはWARN以上のログ出力となる
+     * Server internal error.
+     * Throw when a process can not be continued due to a server side failure or bug, which is to indicate the cause of the problem. Basically, when exceptions occur in category of WARN or more log output
      */
     public static class Server {
         /**
-         * 原因不明のエラー.
+         * Unknown error.
          */
         public static final PersoniumCoreException UNKNOWN_ERROR = create("PR500-SV-0000");
         /**
-         * データストアへの接続に失敗したとき.
+         * When connection to the data store fails.
          */
         public static final PersoniumCoreException DATA_STORE_CONNECTION_ERROR = create("PR500-SV-0001");
         /**
-         * データストア関連の不明なエラー.
+         * Unknown data store related error.
          */
         public static final PersoniumCoreException DATA_STORE_UNKNOWN_ERROR = create("PR500-SV-0002");
         /**
-         * ESへのリクエストでリトライオーバーしたとき.
+         * When retrying over with a request to ES.
          */
         public static final PersoniumCoreException ES_RETRY_OVER = create("PR500-SV-0003");
         /**
-         * ファイルシステムに異常が発生したとき.
+         * When an error occurs in the file system.
          */
         public static final PersoniumCoreException FILE_SYSTEM_ERROR = create("PR500-SV-0004");
         /**
-         * データストアの検索に失敗.
+         * Data store search failed.
          */
         public static final PersoniumCoreException DATA_STORE_SEARCH_ERROR = create("PR500-SV-0005");
         /**
-         * データストアの更新に失敗し、ロールバックにも失敗した.
+         * Data store update failed, rollback failed as well.
          */
         public static final PersoniumCoreException DATA_STORE_UPDATE_ROLLBACK_ERROR = create("PR500-SV-0006");
         /**
-         * データストアの更新に失敗し、ロールバックが成功した.
+         * Data store update failed, rollback succeeded.
          */
         public static final PersoniumCoreException DATA_STORE_UPDATE_ERROR_ROLLBACKED = create("PR500-SV-0007");
 
         /**
-         * memcachedへの接続に失敗したとき.
+         * When connection to memcached fails.
          */
         public static final PersoniumCoreException SERVER_CONNECTION_ERROR = create("PR503-SV-0002");
         /**
-         * Memcachedのロックステータス取得に失敗したとき.
+         * Memcached failed to acquire lock status.
          */
         public static final PersoniumCoreException GET_LOCK_STATE_ERROR = create("PR503-SV-0003");
         /**
-         * ユニットユーザ単位のデータリストア中のとき.
+         * When restoring data per unit user.
          */
         public static final PersoniumCoreException SERVICE_MENTENANCE_RESTORE = create("PR503-SV-0004");
         /**
-         * ReadDeleteOnlyモード状態のとき.
+         * ReadDeleteOnly mode state.
          */
         public static final PersoniumCoreException READ_DELETE_ONLY = create("PR503-SV-0005");
         /**
-         * Adsへの接続に失敗したとき.
+         * Failed to connect to Ads.
          */
         public static final PersoniumCoreException ADS_CONNECTION_ERROR = create("PR503-SV-0006");
     }
 
     /**
-     * NetWork関連エラー.
+     * NetWork related error.
      */
     public static class NetWork {
         /**
-         * NetWork関連エラー.
+         * NetWork related error.
          */
         public static final PersoniumCoreException NETWORK_ERROR = create("PR500-NW-0000");
         /**
-         * HTTPリクエストに失敗.
+         * HTTP request failed.
          */
         public static final PersoniumCoreException HTTP_REQUEST_FAILED = create("PR500-NW-0001");
         /**
-         * 接続先が想定外の応答を返却.
+         * The connection destination returns an unexpected response.
          */
         public static final PersoniumCoreException UNEXPECTED_RESPONSE = create("PR500-NW-0002");
         /**
-         * 接続先が想定外の値を返却.
+         * The connection destination returns an unexpected value.
          */
         public static final PersoniumCoreException UNEXPECTED_VALUE = create("PR500-NW-0003");
     }
 
     /**
-     * 認証系エラー.
+     * Authentication error.
      */
     public static class Auth {
         /**
-         * パスワード文字列が不正.
+         * Invalid password string.
          */
         public static final PersoniumCoreException PASSWORD_INVALID = create("PR400-AU-0001");
         /**
-         * リクエストパラメータが不正.
+         * Request parameter is invalid.
          */
         public static final PersoniumCoreException REQUEST_PARAM_INVALID = create("PR400-AU-0002");
         /**
-         * パスワード文字列が不正.
+         * Invalid password string.
          */
         public static final PersoniumCoreException P_CREDENTIAL_REQUIRED = create("PR400-AU-0003");
 
         /**
-         * ユニットユーザアクセスではない.
+         * It is not unit user access.
          */
         public static final PersoniumCoreException UNITUSER_ACCESS_REQUIRED = create("PR403-AU-0001");
         /**
-         * 必要な権限が無い.
+         * There is no necessary authority.
          */
         public static final PersoniumCoreException NECESSARY_PRIVILEGE_LACKING = create("PR403-AU-0002");
         /**
-         * 認証ヘッダに指定されたユニットユーザではアクセセスできない.
+         * It can not be accessed by the unit user specified in the authentication header.
          */
         public static final PersoniumCoreException NOT_YOURS = create("PR403-AU-0003");
         /**
-         * スキーマ認証が必要.
+         * Schema authentication is required.
          */
         public static final PersoniumCoreException SCHEMA_AUTH_REQUIRED = create("PR403-AU-0004");
         /**
-         * このスキーマ認証ではアクセスできない.
+         * It can not be accessed with this schema authentication.
          */
         public static final PersoniumCoreException SCHEMA_MISMATCH = create("PR403-AU-0005");
         /**
-         * スキーマ認証レベルが不足.
+         * Schema authentication level is insufficient.
          */
         public static final PersoniumCoreException INSUFFICIENT_SCHEMA_AUTHZ_LEVEL = create("PR403-AU-0006");
         /**
-         * ルートCA証明書の設定エラー.
+         * Error setting root CA certificate.
          */
         public static final PersoniumCoreException ROOT_CA_CRT_SETTING_ERROR = create("PR500-AN-0001");
         /**
-         * リクエストパラメータが不正.
+         * Request parameter is invalid.
          */
         public static final PersoniumCoreException REQUEST_PARAM_CLIENTID_INVALID = create("PR400-AZ-0002");
         /**
-         * リクエストパラメータが不正.
+         * Request parameter is invalid.
          */
         public static final PersoniumCoreException REQUEST_PARAM_REDIRECT_INVALID = create("PR400-AZ-0003");
         /**
-         * JSONのパースに失敗したとき.
+         * When JSON parsing fails.
          */
         public static final PersoniumCoreException JSON_PARSE_ERROR = create("PR400-AZ-0005");
         /**
-         * JSONのEncodeに失敗したとき.
+         * When JSON Encode fails.
          */
         public static final PersoniumCoreException IDTOKEN_ENCODED_INVALID = create("PR400-AZ-0006");
 
     }
 
     /**
-     * Event関連エラー.
+     * Event related error.
      */
     public static class Event {
         /**
-         * JSONパースに失敗.
+         * Failure in JSON Perth.
          */
         public static final PersoniumCoreException JSON_PARSE_ERROR = create("PR400-EV-0001");
         /**
-         * X-Personium-RequestKey の値が不正.
+         * The value of X-Personium-RequestKey is invalid.
          */
         public static final PersoniumCoreException X_PERSONIUM_REQUESTKEY_INVALID = create("PR400-EV-0002");
         /**
-         * リクエストボディの必須項目が無い.
-         * {0}:プロパティ名
+         * There is no essential item of the request body.
+         * {0}: Property name
          */
         public static final PersoniumCoreException INPUT_REQUIRED_FIELD_MISSING = create("PR400-EV-0003");
         /**
-         * リクエストデータのフォーマットが不正.
-         * {0}プロパティ名
+         * The request data format is invalid.
+         * {0} Property name
          */
         public static final PersoniumCoreException REQUEST_FIELD_FORMAT_ERROR = create("PR400-EV-0004");
         /**
-         * Httpレスポンスの出力に失敗したとき.
+         * Http response output failed.
          */
         public static final PersoniumCoreException EVENT_RESPONSE_FAILED = create("PR500-EV-0001");
         /**
-         * 圧縮されたイベントログファイルがオープンできないとき.
+         * When the compressed event log file can not be opened.
          */
         public static final PersoniumCoreException ARCHIVE_FILE_CANNOT_OPEN = create("PR500-EV-0002");
 
     }
 
     /**
-     * barファイルインストール関連エラー.
+     * bar File installation related error.
      */
     public static class BarInstall {
         /**
-         * リクエストヘッダーの値が不正なとき.
+         * When the value of the request header is invalid.
          */
         public static final PersoniumCoreException REQUEST_HEADER_FORMAT_ERROR = create("PR400-BI-0001");
         /**
-         * Barファイルのファイルサイズが上限値を超えているとき.
+         * When the file size of the Bar file exceeds the upper limit value.
          */
         public static final PersoniumCoreException BAR_FILE_SIZE_TOO_LARGE = create("PR400-BI-0002");
         /**
-         * Barファイル内エントリのファイルサイズが上限値を超えているとき.
+         * When the file size of the entry in the Bar file exceeds the upper limit value.
          */
         public static final PersoniumCoreException BAR_FILE_ENTRY_SIZE_TOO_LARGE = create("PR400-BI-0003");
         /**
-         * インストール対象のBoxがBox Schemaとして登録済みのとき.
+         * When the Box to be installed has been registered as Box Schema.
          */
         public static final PersoniumCoreException BAR_FILE_BOX_SCHEMA_ALREADY_EXISTS = create("PR400-BI-0004");
         /**
-         * Barファイルのファイルサイズが上限値を超えているとき.
+         * When the file size of the Bar file exceeds the upper limit value.
          */
         public static final PersoniumCoreException BAR_FILE_SIZE_INVALID = create("PR400-BI-0005");
         /**
-         * JSONファイルの形式が不正なとき.
+         * When JSON file format is invalid.
          */
         public static final PersoniumCoreException JSON_FILE_FORMAT_ERROR = create("PR400-BI-0006");
         /**
-         * barファイルがオープンできないとき.
+         * bar When the file can not be opened.
          */
         public static final PersoniumCoreException BAR_FILE_CANNOT_OPEN = create("PR400-BI-0007");
         /**
-         * barファイルが読み込めないとき.
+         * When the bar file can not be read.
          */
         public static final PersoniumCoreException BAR_FILE_CANNOT_READ = create("PR400-BI-0008");
         /**
-         * barファイルの構造が正しくないとき.
+         * When the structure of the bar file is incorrect.
          */
         public static final PersoniumCoreException BAR_FILE_INVALID_STRUCTURES = create("PR400-BI-0009");
         /**
@@ -836,11 +836,11 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException BAR_FILE_STRUCTURE_AND_VERSION_MISMATCH = create("PR400-BI-0010");
         /**
-         * インストール対象のBoxが登録済みのとき.
+         * When the Box to be installed is registered.
          */
         public static final PersoniumCoreException BAR_FILE_BOX_ALREADY_EXISTS = create("PR405-BI-0001");
         /**
-         * Httpレスポンスの出力に失敗したとき.
+         * Http response output failed.
          */
         public static final PersoniumCoreException BAR_FILE_RESPONSE_FAILED = create("PR500-BI-0001");
     }
@@ -872,7 +872,7 @@ public class PersoniumCoreException extends RuntimeException {
     }
 
     /**
-     * その他エラー.
+     * Other error.
      */
     public static class Misc {
         /**
@@ -886,12 +886,12 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException NOT_FOUND = create("PR404-MC-0001");
         /**
-         * メソッドが受け付けられないとき.
+         * When the method is not accepted.
          */
         public static final PersoniumCoreException METHOD_NOT_ALLOWED = create("PR405-MC-0001");
         /**
-         * サーバ内の処理中にキャンセルされた場合。
-         * $batchのタイムアウトで使用。
+         * Canceled while processing in the server.
+         * Used with $ batch timeout.
          */
         public static final PersoniumCoreException SERVER_REQUEST_TIMEOUT = create("PR408-MC-0001");
         /**
@@ -904,7 +904,7 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException EXPORT_CELL_EXISTS = create("PR409-MC-0002");
         /**
-         * ヘッダの前提条件指定が満たされていないとき.
+         * When the prerequisite specification of the header is not satisfied.
          */
         public static final PersoniumCoreException PRECONDITION_FAILED = create("PR412-MC-0001");
         /**
@@ -914,16 +914,16 @@ public class PersoniumCoreException extends RuntimeException {
         public static final PersoniumCoreException UNSUPPORTED_MEDIA_TYPE_NO_PARAMS = create("PR415-MC-0001");
 
         /**
-         * メソッドが未実装のとき.
+         * When the method is not implemented yet.
          */
         public static final PersoniumCoreException METHOD_NOT_IMPLEMENTED = create("PR501-MC-0001");
         /**
-         * 未実装機能.
+         * Unimplemented function.
          */
         public static final PersoniumCoreException NOT_IMPLEMENTED = create("PR501-MC-0002");
         /**
-         * 同時リクエストが多すぎるとき.
-         * 排他制御のタイムアウトで使用。
+         * When there are too many concurrent requests.
+         * Used with exclusive control timeout.
          */
         public static final PersoniumCoreException TOO_MANY_CONCURRENT_REQUESTS = create("PR503-SV-0001");
 
@@ -981,11 +981,11 @@ public class PersoniumCoreException extends RuntimeException {
     }
 
     /**
-     * Pluginエラー.
+     * Plugin error.
      */
     public static class Plugin {
         /**
-         * プラグイン内部でキャッチされず、外に出てきてしまった非チェック例外に対応.
+         * It corresponds to the non-checked exception which came out outside without being caught inside the plug-in.
          */
         public static final PersoniumCoreException UNEXPECTED_ERROR = create("PR500-PL-0001");
 
@@ -997,8 +997,8 @@ public class PersoniumCoreException extends RuntimeException {
     int status;
 
     /**
-     * インナークラスを強制的にロードする.
-     * エラー分類のインナークラスが追加になったらここに追加すること.
+     * Force load inner class.
+     * Add an inner class of error classification here if it is added.
      */
     public static void loadConfig() {
         new OData();
@@ -1012,11 +1012,11 @@ public class PersoniumCoreException extends RuntimeException {
     }
 
     /**
-     * コンストラクタ.
-     * @param status HTTPレスポンスステータス
-     * @param severityエラーレベル
-     * @param code エラーコード
-     * @param message エラーメッセージ
+     * constructor.
+     * @param status HTTP response status
+     * @param severity error level
+     * @param code error code
+     * @param message error message
      */
     PersoniumCoreException(final String code,
             final Severity severity,
@@ -1031,11 +1031,11 @@ public class PersoniumCoreException extends RuntimeException {
     }
 
     /**
-     * コンストラクタ.
-     * @param code エラーコード
-     * @param severityエラーレベル
-     * @param message エラーメッセージ
-     * @param status HTTPレスポンスステータス
+     * constructor.
+     * @param code error code
+     * @param severity error level
+     * @param message error message
+     * @param status HTTP response status
      */
     PersoniumCoreException(final String code,
             final Severity severity,
@@ -1045,11 +1045,11 @@ public class PersoniumCoreException extends RuntimeException {
     }
 
     /**
-     * レスポンスオブジェクトの作成.
-     * @return JAX-RS応答オブジェクト
+     * Create a response object.
+     * @return JAX-RS response object
      */
     public Response createResponse() {
-        // TODO エラー時、JSONを固定で指定しているが制限解除時にContent-Typeを指定するようにする！！
+        //When TODO error, specify JSON as fixed, but specify Content-Type when canceling restriction! !
         return Response.status(status)
                 .entity(new ODataErrorMessage(code, message))
                 .type(MediaType.valueOf(MediaType.APPLICATION_JSON))
@@ -1057,24 +1057,24 @@ public class PersoniumCoreException extends RuntimeException {
     }
 
     /**
-     * ログレベルを返却する.
-     * @return ログレベル
+     * Return the log level.
+     * @return log level
      */
     public Severity getSeverity() {
         return this.severity;
     }
 
     /**
-     * HTTPステータスコードを返却する.
-     * @return HTTPステータスコード
+     * Return the HTTP status code.
+     * @return HTTP status code
      */
     public int getStatus() {
         return this.status;
     }
 
     /**
-     * エラーコードを返却する.
-     * @return エラーコード
+     * Return error code.
+     * @return error code
      */
     public String getCode() {
         return this.code;
@@ -1086,78 +1086,78 @@ public class PersoniumCoreException extends RuntimeException {
     }
 
     /**
-     * 原因例外を追加したものを作成して返します.
-     * @param t 原因例外
+     * Cause Create and return an exception added.
+     * @param t cause exception
      * @return PersoniumCoreException
      */
     public PersoniumCoreException reason(final Throwable t) {
-        // クローンを作成
+        //Make a clone
         PersoniumCoreException ret = new PersoniumCoreException(this.code, this.severity, this.message, this.status, t);
         return ret;
     }
 
     /**
-     * メッセージをパラメタ置換したものを作成して返します. エラーメッセージ上の $1 $2 等の表現がパラメタ置換用キーワードです。
-     * @param params 付加メッセージ
+     * It creates and returns a message with parameter substitution, and the expression such as $ 1 $ 2 on the error message is a keyword for parameter substitution.
+     * @param params Additional message
      * @return PersoniumCoreMessage
      */
     public PersoniumCoreException params(final Object... params) {
-        // 置換メッセージ作成
+        //Replacement message creation
         String ms = MessageFormat.format(this.message, params);
 
-        // 制御コードのエスケープ処理
+        //Escape processing of control code
         ms = EscapeControlCode.escape(ms);
 
-        // メッセージ置換クローンを作成
+        //Create a message replacement clone
         PersoniumCoreException ret = new PersoniumCoreException(this.code, this.severity, ms, this.status);
         return ret;
     }
 
     /**
-     * ファクトリーメソッド.
-     * @param code メッセージコード
+     * Factory method.
+     * @param code Message code
      * @return PersoniumCoreException
      */
     public static PersoniumCoreException create(String code) {
         int statusCode = parseCode(code);
 
-        // ログレベルの取得
+        //Acquire log level
         Severity severity = PersoniumCoreMessageUtils.getSeverity(code);
         if (severity == null) {
-            // ログレベルが設定されていなかったらレスポンスコードから自動的に判定する。
+            //If the log level is not set, it is automatically judged from the response code.
             severity = decideSeverity(statusCode);
         }
 
-        // ログメッセージの取得
+        //Obtaining log messages
         String message = PersoniumCoreMessageUtils.getMessage(code);
 
         return new PersoniumCoreException(code, severity, message, statusCode);
     }
 
     /**
-     * レスポンスコードからログレベルの判定.
-     * @param statusCode ステータスコード
-     * @return ステータスコードから判定されたログレベル
+     * Determination of log level from response code.
+     * @param statusCode Status code
+     * @return Log level determined from status code
      */
     static Severity decideSeverity(int statusCode) {
-        // 設定が省略されている場合はエラーコードからログレベルを取得
+        //If setting is omitted, obtain log level from error code
         if (statusCode >= HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-            // 500系の場合はウォーニング（500以上はまとめてウォーニング）
+            //In the case of 500 series, warning (500 or more are collectively warnings)
             return Severity.WARN;
         } else if (statusCode >= HttpStatus.SC_BAD_REQUEST) {
-            // 400系の場合はインフォ
+            //Info for 400 series
             return Severity.INFO;
         } else {
-            // それ以外の場合は考えられないのでウォーニング.
-            // 200系とか300系をPersoniumCoreExceptionで処理する場合はログレベル設定をちゃんと書きましょう.
+            //In other cases it is impossible to think about warning.
+            //When processing 200 series or 300 series with Personium Core Exception let's write the log level setting properly.
             return Severity.WARN;
         }
     }
 
     /**
-     * メッセージコードのパース.
-     * @param code メッセージコード
-     * @return ステータスコードまたはログメッセージの場合は-1。
+     * The parsing of the message code.
+     * @param code Message code
+     * @return -1 for status codes or log messages.
      */
     static int parseCode(String code) {
         Pattern p = Pattern.compile("^PR(\\d{3})-\\w{2}-\\d{4}$");

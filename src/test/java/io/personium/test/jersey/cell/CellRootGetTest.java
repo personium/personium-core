@@ -26,6 +26,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpStatus;
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -109,6 +110,27 @@ public class CellRootGetTest extends AbstractCase {
 
         assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is(MediaType.APPLICATION_XML));
         assertTrue(pattern.matcher(res.getBody()).matches());
+    }
+
+    /**
+     * Normal test.
+     * Get metadata json.
+     */
+    @Test
+    public void normal_get_json() {
+        TResponse res = Http.request("cell/cell-root-get.txt")
+                .with("cell", Setup.TEST_CELL1)
+                .with("accept", MediaType.APPLICATION_JSON)
+                .returns().debug().statusCode(HttpStatus.SC_OK);
+
+        String cellName = Setup.TEST_CELL1;
+        String cellUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
+
+        JSONObject bodyJson = res.bodyAsJson();
+        JSONObject cellJson = (JSONObject) bodyJson.get("cell");
+        assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is(MediaType.APPLICATION_JSON));
+        assertThat(cellJson.get("name"), is(cellName));
+        assertThat(cellJson.get("url"), is(cellUrl));
     }
 
     /**

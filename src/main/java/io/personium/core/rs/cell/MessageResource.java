@@ -46,7 +46,7 @@ import io.personium.core.rs.odata.ODataReceivedMessageResource;
 import io.personium.core.rs.odata.ODataSentMessageResource;
 
 /**
- * JAX-RS Resource handling DC Message Level Api. /__messageというパスにきたときの処理.
+ * JAX-RS Resource handling DC Message Level Api. / Processing when the message comes to the message __ message.
  */
 public class MessageResource extends ODataCtlResource {
     static Logger log = LoggerFactory.getLogger(MessageResource.class);
@@ -72,11 +72,11 @@ public class MessageResource extends ODataCtlResource {
     }
 
     /**
-     * メッセージ送信API.
-     * @param version PCSバージョン
+     * Message transmission API.
+     * @param version PCS version
      * @param uriInfo UriInfo
-     * @param reader リクエストボディ
-     * @return レスポンス
+     * @param reader request body
+     * @return response
      */
     @WriteAPI
     @POST
@@ -85,10 +85,10 @@ public class MessageResource extends ODataCtlResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VERSION) final String version,
             @Context final UriInfo uriInfo,
             final Reader reader) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.accessContext, CellPrivilege.MESSAGE);
 
-        // データ登録
+        //Data registration
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
         ODataSentMessageResource resource = new ODataSentMessageResource(
                 this, producer, SentMessagePort.EDM_TYPE_NAME, version);
@@ -97,10 +97,10 @@ public class MessageResource extends ODataCtlResource {
     }
 
     /**
-     * メッセージ受信API.
+     * Message receiving API.
      * @param uriInfo UriInfo
-     * @param reader リクエストボディ
-     * @return レスポンス
+     * @param reader request body
+     * @return response
      */
     @WriteAPI
     @POST
@@ -108,10 +108,10 @@ public class MessageResource extends ODataCtlResource {
     public Response messagesPort(
             @Context final UriInfo uriInfo,
             final Reader reader) {
-        // アクセス制御
+        //Access control
         this.accessContext.checkCellIssueToken(this.davRsCmp.getAcceptableAuthScheme());
 
-        // 受信メッセージの登録
+        //Register incoming message
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
         ODataReceivedMessageResource resource = new ODataReceivedMessageResource(
                 this, producer, ReceivedMessagePort.EDM_TYPE_NAME);
@@ -120,20 +120,20 @@ public class MessageResource extends ODataCtlResource {
     }
 
     /**
-     * メッセージ承認API.
-     * @param key メッセージId
-     * @param reader リクエストボディ
-     * @return レスポンス
+     * Message approval API.
+     * @param key Message Id
+     * @param reader request body
+     * @return response
      */
     @WriteAPI
     @POST
     @Path("received/{key}")
     public Response messagesApprove(@PathParam("key") final String key,
             final Reader reader) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.accessContext, CellPrivilege.MESSAGE);
 
-        // 受信メッセージの承認
+        //Approve received messages
         PersoniumODataProducer producer = ModelFactory.ODataCtl.message(this.accessContext.getCell(), this.davRsCmp);
         ODataReceivedMessageResource resource = new ODataReceivedMessageResource(
                 this, producer, ReceivedMessagePort.EDM_TYPE_NAME);

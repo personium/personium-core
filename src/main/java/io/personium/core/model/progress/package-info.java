@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 /**
- * 非同期処理機構を提供するクラス群.
+ * Classes providing asynchronous processing mechanisms.
  */
 package io.personium.core.model.progress;
 

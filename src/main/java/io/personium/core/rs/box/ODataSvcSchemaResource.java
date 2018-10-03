@@ -66,7 +66,7 @@ import io.personium.core.utils.ODataUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * ODataSvcSchemaResourceを担当するJAX-RSリソース.
+ * JAX-RS resource in charge of ODataSvcSchemaResource.
  */
 public final class ODataSvcSchemaResource extends ODataResource {
     private static final MediaType APPLICATION_ATOMSVC_XML_MEDIATYPE =
@@ -76,7 +76,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     /**
      * constructor.
-     * @param davRsCmp このスキーマが担当するユーザデータのResource
+     * @param davRsCmp Resource of user data in charge of this schema
      * @param odataSvcCollectionResource ODataSvcCollectionResource object
      */
     ODataSvcSchemaResource(
@@ -95,8 +95,8 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     /**
-     * 認証に使用できるAuth Schemeを取得する.
-     * @return 認証に使用できるAuth Scheme
+     * Obtain Auth Scheme that can be used for authentication.
+     * Autret Scheme that can be used for @return authentication
      */
     @Override
     public AcceptableAuthScheme getAcceptableAuthScheme() {
@@ -113,11 +113,11 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     /**
-     * サービスメタデータリクエストに対応する.
+     * Corresponds to the service metadata request.
      * @param uriInfo UriInfo
      * @param format String
      * @param httpHeaders HttpHeaders
-     * @return JAX-RS 応答オブジェクト
+     * @return JAX-RS response object
      */
     @Override
     @GET
@@ -125,13 +125,13 @@ public final class ODataSvcSchemaResource extends ODataResource {
     public Response getRoot(@Context final UriInfo uriInfo,
             @QueryParam("$format") final String format,
             @Context HttpHeaders httpHeaders) {
-        // アクセス制御
+        //Access control
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
-        // $format と Acceptヘッダの内容から、
-        // SchemaのAtom ServiceDocumentを返すべきか
-        // データのEDMXを返すべきかをを判定する。
+        //From the contents of $ format and Accept header,
+        //Should Schema's Atom ServiceDocument be returned?
+        //It is judged whether EDMX of data should be returned or not.
         if ("atomsvc".equals(format) || isAtomSvcRequest(httpHeaders)) {
-            // SchemaのAtom ServiceDocumentを返す
+            //Return Schema's Atom ServiceDocument
             EdmDataServices edmDataServices = CtlSchema.getEdmDataServicesForODataSvcSchema().build();
 
             StringWriter w = new StringWriter();
@@ -143,7 +143,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
                     .build();
         }
 
-        // データのEDMXを返す
+        //Return EDMX of data
         ODataProducer userDataODataProducer = this.odataSvcCollectionResource.getODataProducer();
         EdmDataServices dataEdmDataSearvices = userDataODataProducer.getMetadata();
         StringWriter w = new StringWriter();
@@ -158,16 +158,16 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     /**
-     * サービスメタデータリクエストに対応する.
-     * @return JAX-RS 応答オブジェクト
+     * Corresponds to the service metadata request.
+     * @return JAX-RS response object
      */
     @GET
     @Path("{first: \\$}metadata")
     public Response getMetadata() {
-        // アクセス制御
+        //Access control
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
-        // スキーマのEDMXを返す
-        // Authヘッダチェック
+        //Return EDMX of the schema
+        //Auth header check
         return super.doGetMetadata();
     }
 
@@ -179,7 +179,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
     @OPTIONS
 //    @Path("")
     public Response optionsRoot() {
-        // アクセス制御
+        //Access control
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ);
         return super.doGetOptionsMetadata();
     }
@@ -200,15 +200,15 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     /**
-     * 部分更新前処理.
-     * @param oEntityWrapper OEntityWrapperオブジェクト
-     * @param oEntityKey 削除対象のentityKey
+     * Partial update preprocessing.
+     * @param oEntityWrapper OEntityWrapper object
+     * @param oEntityKey The entityKey to delete
      */
     @Override
     public void beforeMerge(final OEntityWrapper oEntityWrapper, final OEntityKey oEntityKey) {
-        // 未対応のEntityTypeかチェックする
+        //Check if EntityType is not supported
         String entityTypeName = oEntityWrapper.getEntitySetName();
-        // PropertyとComplexTypeとComplexTypePropertyの更新は未対応のため501を返却する
+        //Updates of Property, ComplexType and ComplexTypeProperty are not supported and therefore return 501
         if (entityTypeName.equals(Property.EDM_TYPE_NAME)
                 || entityTypeName.equals(ComplexType.EDM_TYPE_NAME)
                 || entityTypeName.equals(ComplexTypeProperty.EDM_TYPE_NAME)) {
@@ -217,40 +217,40 @@ public final class ODataSvcSchemaResource extends ODataResource {
     }
 
     /**
-     * リンク登録前処理.
-     * @param sourceEntity リンク対象のエンティティ
-     * @param targetNavProp リンク対象のナビゲーションプロパティ
+     * Link registration preprocessing.
+     * @param sourceEntity Linked entity
+     * @param targetNavProp Navigation property to be linked
      */
     @Override
     public void beforeLinkCreate(OEntityId sourceEntity, String targetNavProp) {
-        // 未対応のEntityTypeかチェックする
+        //Check if EntityType is not supported
         checkNonSupportLinks(sourceEntity.getEntitySetName(), targetNavProp);
     }
 
     /**
-     * リンク取得前処理.
-     * @param sourceEntity リンク対象のエンティティ
-     * @param targetNavProp リンク対象のナビゲーションプロパティ
+     * Link acquisition preprocessing.
+     * @param sourceEntity Linked entity
+     * @param targetNavProp Navigation property to be linked
      */
     @Override
     public void beforeLinkGet(OEntityId sourceEntity, String targetNavProp) {
     }
 
     /**
-     * リンク削除前処理.
-     * @param sourceEntity リンク対象のエンティティ
-     * @param targetNavProp リンク対象のナビゲーションプロパティ
+     * Link deletion preprocessing.
+     * @param sourceEntity Linked entity
+     * @param targetNavProp Navigation property to be linked
      */
     @Override
     public void beforeLinkDelete(OEntityId sourceEntity, String targetNavProp) {
-        // 未対応のEntityTypeかチェックする
+        //Check if EntityType is not supported
         checkNonSupportLinks(sourceEntity.getEntitySetName(), targetNavProp);
     }
 
     /**
-     * p:Format以外のチェック処理.
+     * Check processing other than p: Format.
      * @param entitySetName entityset name
-     * @param props プロパティ一覧
+     * @param props property list
      */
     @Override
     public void validate(String entitySetName, List<OProperty<?>> props) {
@@ -259,12 +259,12 @@ public final class ODataSvcSchemaResource extends ODataResource {
             if (property.getValue() == null) {
                 continue;
             }
-            // プロパティ名と値を取得
+            //Get property name and value
             String propValue = property.getValue().toString();
             String propName = property.getName();
 
             if (propName.equals(Property.P_TYPE.getName())) {
-                // Typeのバリデート
+                //Type validation
                 // Edm.Boolean / Edm.String / Edm.Single / Edm.Int32 / Edm.Double / Edm.DateTime
                 type = propValue;
                 if (!propValue.equals(EdmSimpleType.STRING.getFullyQualifiedTypeName())
@@ -273,7 +273,7 @@ public final class ODataSvcSchemaResource extends ODataResource {
                         && !propValue.equals(EdmSimpleType.INT32.getFullyQualifiedTypeName())
                         && !propValue.equals(EdmSimpleType.DOUBLE.getFullyQualifiedTypeName())
                         && !propValue.equals(EdmSimpleType.DATETIME.getFullyQualifiedTypeName())) {
-                    // 登録済みのComplexTypeのチェック
+                    //Check registered ComplexType
                     BoolCommonExpression filter = PersoniumOptionsQueryParser.parseFilter(
                             "Name eq '" + propValue + "'");
                     QueryInfo query = new QueryInfo(null, null, null, filter, null, null, null, null, null);
@@ -283,15 +283,15 @@ public final class ODataSvcSchemaResource extends ODataResource {
                     }
                 }
             } else if (propName.equals(Property.P_COLLECTION_KIND.getName())) {
-                // CollectionKindのバリデート
+                //CollectionKind's Validate
                 // None / List
                 if (!propValue.equals(Property.COLLECTION_KIND_NONE)
                         && !propValue.equals(CollectionKind.List.toString())) {
                     throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propName);
                 }
             } else if (propName.equals(Property.P_DEFAULT_VALUE.getName())) {
-                // DefaultValueのバリデート
-                // Typeの値によってチェック内容を切り替える
+                //Validate of DefaultValue
+                //Switch check contents according to Type value
                 boolean result = false;
                 if (type.equals(EdmSimpleType.BOOLEAN.getFullyQualifiedTypeName())) {
                     result = ODataUtils.validateBoolean(propValue);
@@ -317,9 +317,9 @@ public final class ODataSvcSchemaResource extends ODataResource {
         if (targetNavProp.startsWith("_")) {
             targetNavProp = targetNavProp.substring(1);
         }
-        // EntityTypeとAssociationEndの$links指定は不可（EntityType:AssociationEndは1:Nの関係だから）
-        // EntityTypeとPropertyの$links指定は不可（EntityType:Propertyは1:Nの関係だから）
-        // ComplexTypeとComplexTypePropertyの$links指定は不可（ComplexType:ComplexTypePropertyは1:Nの関係だから）
+        //$ Link specification of EntityType and AssociationEnd is not allowed (EntityType: AssociationEnd is 1: N relation)
+        //$ Links specification of EntityType and Property is not possible (EntityType: Property is 1: N relation)
+        //$ Links specification of ComplexType and ComplexTypeProperty is not allowed (ComplexType: ComplexTypeProperty is 1: N relation)
         if ((sourceEntity.equals(EntityType.EDM_TYPE_NAME) //NOPMD -To maintain readability
                         && targetNavProp.equals(AssociationEnd.EDM_TYPE_NAME))
                 || (sourceEntity.equals(AssociationEnd.EDM_TYPE_NAME) //NOPMD
@@ -338,15 +338,15 @@ public final class ODataSvcSchemaResource extends ODataResource {
 
     @Override
     public void setBasicAuthenticateEnableInBatchRequest(AccessContext ac) {
-        // スキーマレベルAPIはバッチリクエストに対応していないため、ここでは何もしない
+        //Because the schema level API does not support batch requests, we do not do anything here
     }
 
     /**
      * Not Implemented. <br />
-     * 現状、$batchのアクセス制御でのみ必要なメソッドのため未実装. <br />
-     * アクセスコンテキストが$batchしてよい権限を持っているかを返す.
-     * @param ac アクセスコンテキスト
-     * @return true: アクセスコンテキストが$batchしてよい権限を持っている
+     * Currently unimplemented because it is only necessary for $ batch access control <br />
+     * Returns whether the access context has permission to $ batch.
+     * @param ac access context
+     * @return true: The access context has permission to $ batch
      */
     @Override
     public boolean hasPrivilegeForBatch(AccessContext ac) {

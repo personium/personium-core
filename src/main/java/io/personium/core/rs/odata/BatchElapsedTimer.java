@@ -24,7 +24,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.rs.odata.ODataBatchResource.BatchPriority;
 
 /**
- * Batchのタイムアウト制御用クラス.
+ * Class for timeout control of Batch.
  */
 public class BatchElapsedTimer {
     private static Logger log = LoggerFactory.getLogger(BatchElapsedTimer.class);
@@ -38,20 +38,20 @@ public class BatchElapsedTimer {
     private long sleepInterval = PersoniumUnitConfig.getOdataBatchSleepIntervalInMillis();
 
     /**
-     * Lockを他プロセスに譲るためにスリープするか否かを指定するための列挙型.
+     * An enumeration type for specifying whether to sleep or not to give Lock to another process.
      */
     public enum Lock {
-        /** Lockを他プロセスに譲るためにスリープする. */
+        /** Sleep to give Lock to another process.*/
         YIELD,
-        /** スリープせずにLockの取得を試みる. */
+        /** Attempt to acquire Lock without sleeping.*/
         HOLD
     }
 
     /**
-     * コンストラクタ.
-     * @param startTimeInMillis 処理開始時間.
-     * @param elapseTimeToBreakInMillis タイムアウトまでの経過時間.
-     * @param priority Lockを他プロセスに譲るためにスリープするか否か
+     * constructor.
+     * @param startTimeInMillis Process start time.
+     * @param elapseTimeToBreakInMillis Elapsed time to timeout.
+     * @param priority Whether to sleep to give Lock to another process
      */
     public BatchElapsedTimer(long startTimeInMillis, long elapseTimeToBreakInMillis, BatchPriority priority) {
         breakTimeInMillis = startTimeInMillis + elapseTimeToBreakInMillis;
@@ -61,15 +61,15 @@ public class BatchElapsedTimer {
     }
 
     /**
-     * 呼び出し時に、timeoutしているか否かを返す。
-     * @param mode Lockを他プロセスに譲るためにスリープするか否か
-     * @return true: timeout時間が経過した。false: timeoutしていない。
+     * At the time of calling, it returns whether it is timeout or not.
+     * @param mode Whether to sleep to give Lock to another process
+     * @return true: timeout time has passed. false: not timeout.
      */
     public boolean shouldBreak(Lock mode) {
         long current = System.currentTimeMillis();
         if (BatchPriority.LOW == priority && Lock.YIELD.equals(mode)
                 && lastSleepTimeStamp + sleepInterval < current) {
-            // 前回スリープしてから指定時間経過している場合は、Lockを他プロセスに譲るためにスリープする
+            //If the specified time has elapsed since sleeping last time, sleep to Lock to give it to another process
             try {
                 Thread.sleep(sleep);
             } catch (InterruptedException e) {
@@ -80,13 +80,13 @@ public class BatchElapsedTimer {
             lastSleepTimeStamp = current;
         }
 
-        // timeout時間が経過したかを判定
+        //Determine whether the timeout time has elapsed
         return breakTimeInMillis < current;
     }
 
     /**
-     * タイムアウト設定値を取得する.
-     * @return タイムアウト設定値
+     * Get the timeout setting value.
+     * @return timeout setting value
      */
     public long getElapseTimeToBreak() {
         return elapseTimeToBreak;

@@ -54,9 +54,9 @@ import io.personium.core.utils.UriUtils;
 
 /**
  * Access context information.
- * Authorization ヘッダから取り出した情報に基づいて 誰がどいう役割で、どういうアプリからアクセスしているのかといったAccess文脈情報を 生成し、これをこのオブジェクトに保持する。
- * ACLとの突合でpermissionを生成する。 cell, id, pw → AC AC → Token(issuer, subj, roles) Token → AC AC + ACL → permissions
- * なお、本クラスでは認証・認可のチェック結果を保持しており、これらの情報を扱う場所によって対処方法が異なるため、安易に例外はスローしないこと。
+ * Based on the information extracted from the Authorization header, Access context information such as who the role is and what kind of application is accessed is generated and held in this object.
+ * Generate permission by matching with ACL. cell, id, pw → AC AC → Token (issuer, subj, roles) Token → AC AC + ACL → permissions
+ * In addition, this class holds the check result of authentication and authorization, and the coping method differs depending on the place to handle these information, so do not throw exceptions easily.
  */
 public class AccessContext {
 
@@ -102,25 +102,25 @@ public class AccessContext {
      * Cause of invalid token.
      */
     private enum InvalidReason {
-        /** 有効期限切れ. */
+        /** Expired.*/
         expired,
-        /** Authentication Schemeが無効. */
+        /** Authentication Scheme is invalid.*/
         authenticationScheme,
-        /** ベーシック認証ヘッダのフォーマットが無効. */
+        /** The format of basic authentication header is invalid.*/
         basicAuthFormat,
-        /** ベーシック認証できないリソースに対してベーシック認証しようとした. */
+        /** Basic authentication was attempted against resources that can not be authenticated.*/
         basicNotAllowed,
-        /** ベーシック認証エラー. */
+        /** Basic authentication error.*/
         basicAuthError,
-        /** 認証エラー(Accountロック中). */
+        /** Authentication error (Account locked).*/
         basicAuthErrorInAccountLock,
-        /** Cookie認証エラー. */
+        /** Cookie authentication error.*/
         cookieAuthError,
-        /** トークンパースエラー. */
+        /** Token parsing error.*/
         tokenParseError,
-        /** トークン署名エラー. */
+        /** Token signature error.*/
         tokenDsigError,
-        /** リフレッシュトークンでのアクセス. */
+        /** Access with refresh token.*/
         refreshToken,
     }
 
@@ -160,16 +160,16 @@ public class AccessContext {
     }
 
     /**
-     * ファクトリメソッド. アクセスしているCellとAuthorizationヘッダの値を元にオブジェクトを生成して返します.
-     * @param authzHeaderValue Authorizationヘッダの値
-     * @param requestURIInfo リクエストのURI情報
-     * @param pCookiePeer リクエストパラメタに指定された p_cookie_peerの値
-     * @param pCookieAuthValue クッキー内 p_cookieに指定されている値
-     * @param cell アクセスしているCell
-     * @param baseUri アクセスしているbaseUri
-     * @param host リクエストヘッダのHostの値
-     * @param xPersoniumUnitUser X-Personium-UnitUserヘッダ
-     * @return 生成されたAccessContextオブジェクト
+     * Factory method, which creates and returns an object based on the value of the accessing Cell and Authorization header.
+     * @param authzHeaderValue Authorization header value
+     * @param requestURIInfo URI information of the request
+     * @param pCookiePeer The value of p_cookie_peer specified in the request parameter
+     * @param pCookieAuthValue Value specified for p_cookie in cookie
+     * @param cell Accessing Cell
+     * @param baseUri accessing baseUri
+     * @param host The value of Host in the request header
+     * @param xPersoniumUnitUser X-Personium-UnitUser header
+     * @return Generated AccessContext object
      */
     public static AccessContext create(String authzHeaderValue,
             UriInfo requestURIInfo, String pCookiePeer, String pCookieAuthValue,
@@ -178,13 +178,13 @@ public class AccessContext {
             if (pCookiePeer == null || 0 == pCookiePeer.length()) {
                 return new AccessContext(TYPE_ANONYMOUS, cell, baseUri, requestURIInfo);
             }
-            // クッキー認証の場合
-            // クッキー内の値を復号化した値を取得
+            //Cookie authentication
+            //Get decrypted value of cookie value
             if (null == pCookieAuthValue) {
                 return new AccessContext(
                         TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
             }
-            // Cookie関連の処理はポート番号不要
+            // Cookie related processing requires no port number.
             String decodedCookieValue;
             try {
                 URI nonPortURI = new URI(headerHost.split(":")[0]);
@@ -196,10 +196,10 @@ public class AccessContext {
             }
             int separatorIndex = decodedCookieValue.indexOf("\t");
             String peer = decodedCookieValue.substring(0, separatorIndex);
-            // クッキー内の情報から authorizationHeader相当のトークンを取得
+            //Obtain authorizationHeader equivalent token from information in cookie
             String authToken = decodedCookieValue.substring(separatorIndex + 1);
             if (pCookiePeer.equals(peer)) {
-                // 再帰呼び出しで適切な AccessContextを生成する。
+                //Generate appropriate AccessContext with recursive call.
                 return create(OAuth2Helper.Scheme.BEARER + " " + authToken,
                         requestURIInfo, null, null, cell, baseUri, headerHost, xPersoniumUnitUser);
             } else {
@@ -208,16 +208,16 @@ public class AccessContext {
             }
         }
 
-        // TODO V1.1 ここはキャッシュできる部分。ここでキャッシュから取得すればいい。
+        //TODO V1.1 Here is the part that can be cached. You can get it from the cache here.
 
-        // まずは認証方式によって分岐
+        //First branch depending on the authentication method
 
         if (authzHeaderValue.startsWith(OAuth2Helper.Scheme.BASIC)) {
-            // Basic認証
+            //Basic authentication
             return createBasicAuthz(authzHeaderValue, cell, baseUri, requestURIInfo);
 
         } else if (authzHeaderValue.startsWith(OAuth2Helper.Scheme.BEARER)) {
-            // OAuth2.0認証
+            //OAuth 2.0 authentication
             return createBearerAuthz(authzHeaderValue, cell, headerHost, baseUri, requestURIInfo, headerHost, xPersoniumUnitUser);
         }
         return new AccessContext(TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.authenticationScheme);
@@ -319,57 +319,57 @@ public class AccessContext {
     }
 
     /**
-     * 親のACL情報とマージし、アクセス可能か判断する.
-     * @param acl リソースに設定されているALC
-     * @param resourcePrivilege リソースにアクセスするために必要なPrivilege
-     * @param cellUrl セルURL
+     * Merge with the parent's ACL information and judge whether access is possible.
+     * @param acl ALC set in the resource
+     * @param resourcePrivilege Privilege required to access the resource
+     * @param cellUrl Cell URL
      * @return boolean
      */
     public boolean requirePrivilege(Acl acl, Privilege resourcePrivilege, String cellUrl) {
-        // ACLが未設定だったらアクセス不可
+        //No access if ACL is not set
         if (acl == null || acl.getAceList() == null) {
             return false;
         }
-        // Privilegeが未定義だったらアクセス不可
+        //No access if Privilege is undefined
         if (resourcePrivilege == null) {
             return false;
         }
 
-        // ACLからROLE情報を取得し、権限を取得
+        //Acquire ROLE information from ACL and obtain authority
         if (acl.getAceList() == null) {
             return false;
         }
         for (Ace ace : acl.getAceList()) {
-            // 空のaceが設定されている場合はチェックの必要がないためがcontinueする
+            //When an empty ace is set, it continues because there is no need for checking
             if (ace.getGrantedPrivilegeList().size() == 0 && ace.getPrincipalHref() == null) {
                 continue;
             }
-            // Principalがallの場合、アクセス可
+            //Accessible when Principal is all
             if (ace.getPrincipalAll() != null) {
                 if (requireAcePrivilege(ace.getGrantedPrivilegeList(), resourcePrivilege)) {
                     return true;
                 }
                 continue;
             }
-            // Accountに紐付いたRoleが存在しない場合は、アクセス不可
+            //If a Role associated with Account does not exist, it is not accessible
             if (this.roles == null) {
                 return false;
             }
 
             for (Role role : this.roles) {
-                // 相対パスロールURL対応
+                //Relative path roll URL correspondence
                 String principalHref = getPrincipalHrefUrl(acl.getBase(), ace.getPrincipalHref());
                 if (principalHref == null) {
                     return false;
                 }
 
-                // ロールに対応している設定を検出
+                //Detect setting corresponding to role
                 if (role.localCreateUrl(cellUrl).equals(principalHref)) {
-                    // Rootが設定されているかどうかの確認
+                    //Confirm whether Root is set
                     if (ace.getGrantedPrivilegeList().contains(CellPrivilege.ROOT.getName())) {
                         return true;
                     }
-                    // ロールに対応している設定を検出
+                    //Detect setting corresponding to role
                     if (requireAcePrivilege(ace.getGrantedPrivilegeList(), resourcePrivilege)) {
                        return true;
                     }
@@ -380,8 +380,8 @@ public class AccessContext {
     }
 
     /**
-     * アクセス制御を行う(マスタートークン、ユニットユーザトークン、ユニットローカルユニットユーザトークンのみアクセス可能とする).
-     * @return アクセス可能かどうか
+     * Perform access control (only master token, unit user token, unit local unit user token accessible).
+     * @return Whether access is possible
      */
     public boolean isUnitUserToken() {
         String type = getType();
@@ -390,16 +390,16 @@ public class AccessContext {
             return true;
         } else if ((TYPE_UNIT_USER.equals(type) || TYPE_UNIT_LOCAL.equals(type))
                 && getSubject().equals(getCell().getOwner())) {
-            // ↑ユニットユーザ、ユニットローカルユニットユーザの場合は処理対象のセルオーナーとトークンに含まれるユニットユーザ名が一致した場合のみ有効。
+            //↑ Unit user, Unit For local unit users, this is valid only when the unit owner name included in the token and the cell owner to be processed match.
             return true;
         }
         return false;
     }
 
     /**
-     * アクセス制御を行う(マスタートークン、ユニットユーザトークン、ユニットローカルユニットユーザトークンのみアクセス可能とする).
-     * @param resourcePrivilege 必要な権限
-     * @return アクセス可能かどうか
+     * Perform access control (only master token, unit user token, unit local unit user token accessible).
+     * @param resourcePrivilege Required authority
+     * @return Whether access is possible
      */
     public boolean isUnitUserToken(Privilege resourcePrivilege) {
         String type = getType();
@@ -423,13 +423,13 @@ public class AccessContext {
     }
 
     /**
-     * アクセス制御を行う(SubjectがCELLのトークンのみアクセス可能とする).
-     * @param acceptableAuthScheme Basic認証を許可しないリソースからの呼び出しであるかどうか
+     * Access control is performed (Subject can access only token of CELL).
+     * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
     public void checkCellIssueToken(AcceptableAuthScheme acceptableAuthScheme) {
         if (TYPE_TRANS.equals(this.getType())
                 && this.getSubject().equals(this.getIssuer())) {
-            // トークンのISSUER（発行者）とSubject（トークンの持ち主）が一致した場合のみ有効。
+            //Valid only when the token ISSUER (issuer) and Subject (token owner) match.
             return;
 
         } else if (TYPE_INVALID.equals(this.getType())) {
@@ -444,13 +444,13 @@ public class AccessContext {
     }
 
     /**
-     * トークンが自分セルローカルトークンか確認する.
+     * Make sure the token is your local cell token.
      * @param cellname cell
-     * @param acceptableAuthScheme Basic認証を許可しないリソースからの呼び出しであるかどうか
+     * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
     public void checkMyLocalToken(Cell cellname, AcceptableAuthScheme acceptableAuthScheme) {
-        // 不正なトークンorトークン指定がない場合401を返却
-        // 自分セルローカルトークン以外のトークンの場合403を返却
+        //Returning 401 if there is no illegal token or token designation
+        //Returning 403 for a token other than your own cell local token
         if (TYPE_INVALID.equals(this.getType())) {
             this.throwInvalidTokenException(acceptableAuthScheme);
         } else if (TYPE_ANONYMOUS.equals(this.getType())
@@ -463,44 +463,44 @@ public class AccessContext {
     }
 
     /**
-     * スキーマ設定をチェックしアクセス可能か判断する.
-     * @param settingConfidentialLevel スキーマレベル設定
+     * Schema setting is checked to judge whether access is possible.
+     * @param settingConfidentialLevel Schema level setting
      * @param box box
-     * @param acceptableAuthScheme Basic認証を許可しないリソースからの呼び出しであるかどうか
+     * @param acceptableAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
     public void checkSchemaAccess(String settingConfidentialLevel, Box box, AcceptableAuthScheme acceptableAuthScheme) {
-        // マスタートークンかユニットユーザ、ユニットローカルユニットユーザの場合はスキーマ認証をスルー。
+        //If you are a master token or unit user, unit local unit user pass through schema authentication.
         if (this.isUnitUserToken()) {
             return;
         }
 
         String tokenConfidentialLevel = this.getConfidentialLevel();
 
-        // スキーマ認証レベルが未設定（空）かNONEの場合はスキーマ認証チェック不要。
+        //If the schema authentication level is not set (empty) or NONE, schema authentication check is unnecessary.
         if ("".equals(settingConfidentialLevel) || OAuth2Helper.SchemaLevel.NONE.equals(settingConfidentialLevel)) {
             return;
         }
 
-        // トークンの有効性チェック
-        // トークンがINVALIDでもスキーマレベル設定が未設定だとアクセスを許可する必要があるのでこのタイミングでチェック
+        //Check the validity of the token
+        //If the token is INVALID but the schema level setting has not been set, it is necessary to permit access, so check at this timing
         if (TYPE_INVALID.equals(this.getType())) {
             this.throwInvalidTokenException(acceptableAuthScheme);
         } else if (TYPE_ANONYMOUS.equals(this.getType())) {
             throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), acceptableAuthScheme);
         }
 
-        // トークン内のスキーマチェック(Boxレベル以下かつマスタートークン以外のアクセスの場合のみ)
+        //Schema check in token (only for access below Box level and other than Master Token)
         checkSchemaMatches(box);
 
         if (OAuth2Helper.SchemaLevel.PUBLIC.equals(settingConfidentialLevel)) {
-            // 設定がPUBLICの場合はトークン（ac）のスキーマがPUBLICとCONFIDENTIALならOK
+            //If the setting is PUBLIC, it is OK if the schema of the token (ac) is PUBLIC and CONFIDENTIAL
             if (OAuth2Helper.SchemaLevel.PUBLIC.equals(tokenConfidentialLevel)
                     || OAuth2Helper.SchemaLevel.CONFIDENTIAL.equals(tokenConfidentialLevel)) {
                 return;
             }
         } else if (OAuth2Helper.SchemaLevel.CONFIDENTIAL.equals(settingConfidentialLevel)
                 && OAuth2Helper.SchemaLevel.CONFIDENTIAL.equals(tokenConfidentialLevel)) {
-            // 設定がCONFIDENTIALの場合はトークン（ac）のスキーマがCONFIDENTIALならOK
+            //When the setting is CONFIDENTIAL, it is OK if the schema of the token (ac) is CONFIDENTIAL
             return;
         }
         throw PersoniumCoreException.Auth.INSUFFICIENT_SCHEMA_AUTHZ_LEVEL;
@@ -528,30 +528,30 @@ public class AccessContext {
     }
 
     /**
-     * Basic認証できるかどうかチェックし、Basic認証できない場合は、コンテキストにBasic認証不可の状態を設定する.<br />
-     * 本メソッドではチェックのみを行い、実際に認証エラーとするかどうかは構造のアクセス権限チェック処理に任せる。
-     * @param box Boxオブジェクト(Cellレベルの場合はnullを指定)
+     * If basic authentication can not be done, it is checked whether basic authentication can be performed or not, and the state of Basic authentication disabled is set in context. <br />
+     * In this method, only checking is performed, and whether or not it is actually an authentication error is left to the access right check process of the structure.
+     * @param box Box object (specify null for Cell level)
      */
     public void updateBasicAuthenticationStateForResource(Box box) {
-        // Basic認証でなければチェック不要
+        //No check unless it is basic authentication
         if (!TYPE_BASIC.equals(this.getType())) {
             return;
         }
 
-        // Basic認証できるリソースであるかチェックする
+        //Check if it is a resource that can be authenticated as Basic
         if (box == null) {
             invalidateBasicAuthentication();
             return;
         }
 
-        // メインボックスはスキーマを持っているがBasic認証可能
+        //The main box has a schema but basic authentication is possible
         if (Role.DEFAULT_BOX_NAME.equals(box.getName())) {
             return;
         }
 
-        // スキーマ有のBox配下のリソースであるかチェックする
+        //Check if it is a resource under Box with schema
         String boxSchema = box.getSchema();
-        // ボックスのスキーマが設定されている場合はBasic認証を受け付けない
+        //If the schema of the box is set, Basic authentication is not accepted
         if (boxSchema != null && boxSchema.length() > 0) {
             invalidateBasicAuthentication();
             return;
@@ -559,8 +559,8 @@ public class AccessContext {
     }
 
     /**
-     * 無効なトークンの例外を投げ分ける.
-     * @param allowedAuthScheme Basic認証を許可しないリソースからの呼び出しであるかどうか
+     * Throw invalid token exceptions.
+     * @param allowedAuthScheme Whether it is a call from a resource that does not allow basic authentication
      */
     public void throwInvalidTokenException(AcceptableAuthScheme allowedAuthScheme) {
         String realm = getRealm();
@@ -593,36 +593,36 @@ public class AccessContext {
     }
 
     /**
-     * クッキー認証の際の、トークン暗号化・複合化のキーを生成する.
-     * @param uri リクエストURI
-     * @return 暗号化・複合化に用いるためのキー
+     * Generate the key for token encryption / decryption at the time of cookie authentication.
+     * @param uri request URI
+     * @return Key used for encryption / decryption
      */
     public static String getCookieCryptKey(URI uri) {
-        // PCSではステートレスアクセスなので、ユーザ毎にキーを変更することは難しいため、
-        // URIのホスト名を基にキーを生成する。
-        // ホスト名を加工する。
+        //Because PCS is stateless access, it is difficult to change the key for each user,
+        //Generate a key based on the host name of URI.
+        //Process the host name.
         return uri.getHost().replaceAll("[aiueo]", "#");
     }
 
     /**
-     * realm情報(CellのURL)を生成する.
-     * @return realm情報
+     * Realm information (URL of Cell) is generated.
+     * @return realm information
      */
     public String getRealm() {
         return getRealm(this.baseUri, this.cell);
     }
 
     /**
-     * ファクトリメソッド. アクセスしているCellとAuthorizationヘッダの値を元にBasic認証にてオブジェクトを生成して返します.
-     * @param authzHeaderValue Authorizationヘッダの値
-     * @param cell アクセスしているCell
-     * @param baseUri アクセスしているbaseUri
+     * Factory method. It creates and returns an object by basic authentication based on the value of Cell and Authorization header being accessed.
+     * @param authzHeaderValue Authorization header value
+     * @param cell Accessing Cell
+     * @param baseUri accessing baseUri
      * @param uriInfo uri info
-     * @return 生成されたAccessContextオブジェクト
+     * @return Generated AccessContext object
      */
     private static AccessContext createBasicAuthz(String authzHeaderValue, Cell cell, String baseUri, UriInfo uriInfo) {
 
-        // Unitコントロールへのアクセスの場合は、Basic認証不可
+        //Basic authentication is not possible for access to Unit control
         if (cell == null) {
             return new AccessContext(TYPE_INVALID, null, baseUri, uriInfo, InvalidReason.basicAuthError);
         }
@@ -640,58 +640,58 @@ public class AccessContext {
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthFormat);
         }
 
-        // Accountのロックチェック
+        //Account lock check
         String accountId = oew.getUuid();
         Boolean isLock = AuthResourceUtils.isLockedAccount(accountId);
         if (isLock) {
-            // memcachedのロック時間を更新
+            //Update lock time of memcached
             AuthResourceUtils.registAccountLock(accountId);
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthErrorInAccountLock);
         }
 
         boolean authnSuccess = cell.authenticateAccount(oew, password);
         if (!authnSuccess) {
-            // memcachedにロックを作成
+            //Make lock on memcached
             AuthResourceUtils.registAccountLock(accountId);
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.basicAuthError);
         }
-        // 認証して成功なら
+        //If authentication succeeds
         AccessContext ret = new AccessContext(TYPE_BASIC, cell, baseUri, uriInfo);
         ret.subject = username;
-        // ロール情報を取得
+        //Acquire role information
         ret.roles = cell.getRoleListForAccount(username);
         return ret;
     }
 
     /**
-     * ファクトリメソッド. アクセスしているCellとAuthorizationヘッダの値を元にBearer認証にてオブジェクトを生成して返します.
-     * @param authzHeaderValue Authorizationヘッダの値
-     * @param cell アクセスしているCell
-     * @param baseUri アクセスしているbaseUri
+     * Factory method, which creates and returns an object by Bearer authentication based on the value of Cell and Authorization header being accessed.
+     * @param authzHeaderValue Authorization header value
+     * @param cell Accessing Cell
+     * @param baseUri accessing baseUri
      * @param uriInfo uri info
-     * @param xPersoniumUnitUser X-Personium-UnitUserヘッダ
-     * @return 生成されたAccessContextオブジェクト
+     * @param xPersoniumUnitUser X-Personium-UnitUser header
+     * @return Generated AccessContext object
      */
     private static AccessContext createBearerAuthz(String authzHeaderValue, Cell cell,
             String requestURIHost, String baseUri, UriInfo uriInfo, String host, String xPersoniumUnitUser) {
         // Bearer
-        // 認証トークンの値が[Bearer ]で開始していなければ不正なトークンと判断する
+        //If the value of the authentication token does not start with [Bearer], it is determined to be an invalid token
         if (!authzHeaderValue.startsWith(OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX)) {
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.tokenParseError);
         }
         String accessToken = authzHeaderValue.substring(OAuth2Helper.Scheme.BEARER.length() + 1);
-        // マスタートークンの検出
-        // マスタートークン指定で、X-Personium-UnitUserヘッダがなかった場合はマスタートークン扱い
+        //Detection of master token
+        //In the master token specification, if there is no X-Personium-UnitUser header, it is treated as a master token
         if (PersoniumUnitConfig.getMasterToken().equals(accessToken) && xPersoniumUnitUser == null) {
             AccessContext ret = new AccessContext(TYPE_UNIT_MASTER, cell, baseUri, uriInfo);
             return ret;
         } else if (PersoniumUnitConfig.getMasterToken().equals(accessToken) && xPersoniumUnitUser != null) {
-            // X-Personium-UnitUserヘッダ指定だとマスターからユニットユーザトークンへの降格
+            //Demote from master to unit user token with X-Personium-UnitUser header specification
             AccessContext ret = new AccessContext(TYPE_UNIT_USER, cell, baseUri, uriInfo);
             ret.subject = xPersoniumUnitUser;
             return ret;
         }
-        // 以降、Cellレベル。
+        //Since, Cell level.
         AbstractOAuth2Token tk = null;
         try {
             String issuer = null;
@@ -700,26 +700,26 @@ public class AccessContext {
             }
             tk = AbstractOAuth2Token.parse(accessToken, issuer, host);
         } catch (TokenParseException e) {
-            // パースに失敗したので
+            //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.tokenParseError);
         } catch (TokenDsigException e) {
-            // 証明書検証に失敗したので
+            //Because certificate validation failed
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.tokenDsigError);
         } catch (TokenRootCrtException e) {
-            // ルートCA証明書の設定エラー
+            //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
             throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
         }
         log.debug(tk.getClass().getCanonicalName());
-        // AccessTokenではない場合、すなわちリフレッシュトークン。
+        //If it is not an AccessToken, ie a refresh token.
         if (!(tk instanceof IAccessToken) || tk instanceof TransCellRefreshToken) {
-            // リフレッシュトークンでのアクセスは認めない。
+            //Access by refresh token is not permitted.
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.refreshToken);
         }
 
-        // トークンの有効期限チェック
+        //Checking the validity of tokens
         if (tk.isExpired()) {
             return new AccessContext(TYPE_INVALID, cell, baseUri, uriInfo, InvalidReason.expired);
         }
@@ -727,20 +727,20 @@ public class AccessContext {
         AccessContext ret = new AccessContext(null, cell, baseUri, uriInfo);
         if (tk instanceof AccountAccessToken) {
             ret.accessType = TYPE_LOCAL;
-            // ロール情報をとってくる。
+            //Retrieve role information.
             String acct = tk.getSubject();
             ret.roles = cell.getRoleListForAccount(acct);
             if (ret.roles == null) {
                 throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(baseUri, cell),
                         AcceptableAuthScheme.BEARER);
             }
-            // AccessContextではSubjectはURLに正規化。
+            //In AccessContext, Subject is normalized to URL.
             ret.subject = cell.getUrl() + "#" + tk.getSubject();
             ret.issuer = tk.getIssuer();
         } else if (tk instanceof CellLocalAccessToken) {
             CellLocalAccessToken clat = (CellLocalAccessToken) tk;
             ret.accessType = TYPE_LOCAL;
-            // ロール情報を取得して詰める。
+            //Acquire roll information and pack it.
             ret.roles = clat.getRoles();
             ret.subject = tk.getSubject();
             ret.issuer = tk.getIssuer();
@@ -748,14 +748,14 @@ public class AccessContext {
             ret.accessType = TYPE_UNIT_LOCAL;
             ret.subject = tk.getSubject();
             ret.issuer = tk.getIssuer();
-            // ユニットローカルユニットユーザトークンはスキーマ認証関係無いのでここで復帰
+            //Unit local unit user token does not concern schema authentication, so return here
             return ret;
         } else {
             TransCellAccessToken tca = (TransCellAccessToken) tk;
 
-            // TCATの場合はユニットユーザトークンである可能性をチェック
-            // TCATがユニットユーザトークンである条件１：Targetが自分のユニットであること。
-            // TCATがユニットユーザトークンである条件２：Issuerが設定に存在するUnitUserCellであること。
+            //In the case of TCAT, check the possibility of being a unit user token
+            //TCAT is unit user token Condition 1: Target is your own unit.
+            //TCAT is unit user token Condition 2: Issuer is UnitUserCell which exists in the setting.
 
             // TODO Issue-223 一時対処
             String escapedBaseUri = baseUri;
@@ -766,12 +766,12 @@ public class AccessContext {
 
             if ((tca.getTarget().equals(baseUri) || tca.getTarget().equals(escapedBaseUri))
                     && (PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), baseUri) || PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), escapedBaseUri))) {
-                // ユニットユーザトークンの処理
+                //Processing unit user tokens
                 ret.accessType = TYPE_UNIT_USER;
                 ret.subject = tca.getSubject();
                 ret.issuer = tca.getIssuer();
 
-                // ロール情報をとってきて、ユニットアドミンロールがついていた場合、ユニットアドミンに昇格させる。
+                //Take role information and if you have unit admin roll, promote to unit admin.
                 List<Role> roles = tca.getRoles();
                 Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.DEFAULT_BOX_NAME, null, tca.getIssuer());
                 String unitAdminRoleUrl = unitAdminRole.createUrl();
@@ -804,18 +804,18 @@ public class AccessContext {
                 }
                 ret.unitUserRole = unitUserRole;
 
-                // ユニットユーザトークンはスキーマ認証関係無いのでここで復帰
+                //Unit user token does not concern schema authentication, so return here
                 return ret;
             } else if (cell == null) {
-                // ユニットレベルでCellが空のトークンを許すのはマスタートークンと、ユニットユーザトークンだけなので無効なトークン扱いにする。
+                //Because only the master token and the unit user token allow tokens with Cell empty at unit level, treat them as invalid tokens.
                 throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
             } else {
-                // TCATの処理
+                //TCAT processing
                 ret.accessType = TYPE_TRANS;
                 ret.subject = tca.getSubject();
                 ret.issuer = tca.getIssuer();
 
-                // トークンに対応するRoleの取得
+                //Obtaining the Role corresponding to the token
                 ret.roles = cell.getRoleListHere((TransCellAccessToken) tk);
             }
         }
@@ -833,18 +833,18 @@ public class AccessContext {
     }
 
     /**
-     * 必要な権限がACLのPrivilegeに設定されているかチェックする.
-     * @param acePrivileges ACEに設定されたPrivilege設定のリスト
-     * @param resourcePrivilege 必要な権限
-     * @return チェック可否
+     * It checks whether necessary privilege is set to Privilege of ACL.
+     * @param acePrivileges List of Privilege settings configured on the ACE
+     * @param resourcePrivilege Required authority
+     * @return Checkability
      */
     private boolean requireAcePrivilege(List<String> acePrivileges, Privilege resourcePrivilege) {
         for (String aclPrivilege : acePrivileges) {
             Privilege priv = Privilege.get(resourcePrivilege.getClass(), aclPrivilege);
             if (priv != null
                     && priv.includes(resourcePrivilege)) {
-                // メモ
-                // Privilege.get(${ACLの設定}).includes(${リソースにアクセスするために必要な値})) {
+                //Notes
+                //Privilege.get ($ {setting the ACL}) includes ($ {necessary value to access the resource})) {
                 return true;
             }
         }
@@ -852,15 +852,15 @@ public class AccessContext {
     }
 
     /**
-     * 設定ロールURLの相対パス解決.
-     * @param base ACLのxml:base属性の値
-     * @param principalHref ACLのprincipal-Href
+     * Relative path resolution of configuration role URL.
+     * The value of the xml: base attribute of the @param base ACL
+     * @param principal Href principal-Href of ACL
      * @return
      */
     private String getPrincipalHrefUrl(String base, String principalHref) {
         String result = null;
         if (base != null && !"".equals(base)) {
-            // 相対パスの解決
+            //Relative path resolution
             try {
                 URI url = new URI(base);
                 result = url.resolve(principalHref).toString();
@@ -868,14 +868,14 @@ public class AccessContext {
                 return null;
             }
         } else {
-            // xml:baseが未設定の場合、hrefにフルパス設定されていると扱う
+            //If xml: base is not set, treat it as full path setting to href
             result = principalHref;
         }
         return result;
     }
 
     /**
-     * コンテキストにBasic認証不可の状態を設定する.
+     * Set basic authentication invalid state in the context.
      */
     private void invalidateBasicAuthentication() {
         this.accessType = TYPE_INVALID;
@@ -885,11 +885,11 @@ public class AccessContext {
     }
 
     /**
-     * realm情報(CellのURL)を生成する(内部用).
-     * @return realm情報
+     * Generate realm information (Cell's URL) (internal use).
+     * @return realm information
      */
     private static String getRealm(String baseUri, Cell cellobj) {
-        // ユニットコントロールリソースの場合はcellがnullになるため判定が必要
+        //In case of unit control resource cell needs to be judged because it becomes null
         String realm = baseUri;
         if (null != cellobj) {
             realm = cellobj.getUrl();

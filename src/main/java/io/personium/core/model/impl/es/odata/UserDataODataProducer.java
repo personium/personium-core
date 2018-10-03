@@ -77,19 +77,19 @@ import io.personium.core.utils.EscapeControlCode;
 import net.spy.memcached.internal.CheckedOperationTimeoutException;
 
 /**
- * ユーザデータのODataサービスむけODataProvider.
+ * ODataProvider for user data OData service.
  */
 public class UserDataODataProducer extends EsODataProducer {
 
     static Logger log = LoggerFactory.getLogger(UserDataODataProducer.class);
 
     /**
-     * ユーザODataの名前空間名.
+     * The namespace name of user OData.
      */
     public static final String USER_ODATA_NAMESPACE = "UserData";
 
     /**
-     * スキーマ定義.
+     * Schema definition.
      */
     private EdmDataServices metadata = null;
 
@@ -112,12 +112,12 @@ public class UserDataODataProducer extends EsODataProducer {
         this.davCmp = davCmp;
     }
 
-    // スキーマ情報
+    //Schema information
     private static EdmDataServices.Builder schemaEdmDataServices = CtlSchema.getEdmDataServicesForODataSvcSchema();
 
     @Override
     public DataSourceAccessor getAccessorForIndex(final String entitySetName) {
-        return null; // 必要時に実装すること
+        return null; //Implementation when necessary
     }
 
     @Override
@@ -141,9 +141,9 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     * 実装サブクラスProducerが特定のEntityTypeに紐付くようにしたいときは、ここをoverrideしてEntityTypeIdを返すように実装する。
-     * @param entityTypeName EntityType名
-     * @return EntityTypeIdを返す
+     * Implementation subclass If you want Producer to be associated with a specific EntityType, implement it to override here and return EntityTypeId.
+     * @param entityTypeName EntityType name
+     * Return @return EntityTypeId
      */
     @Override
     public String getEntityTypeId(final String entityTypeName) {
@@ -151,8 +151,8 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     * DocHandlerを取得する.
-     * @param type elasticsearchのType
+     * Get DocHandler.
+     * Type of @param type elasticsearch
      * @param oEntity OEntityWrapper
      * @return EntitySetDocHandler
      */
@@ -191,7 +191,7 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     * ユーザスキーマ取得..
+     * Get user schema ..
      * @return EdmDataServices edmDataServices
      */
     @Override
@@ -211,8 +211,8 @@ public class UserDataODataProducer extends EsODataProducer {
             Map<String, Object> cacheSchema = createUserDataSchemaCache();
 
             if (cacheSchema != null) {
-                // メタデータ取得中に別リクエストでキャッシュが作成している可能性があるため
-                // キャッシュ情報を再度取得して存在していない場合のみ、キャッシュに登録する
+                //Because there is a possibility that the cache is created by another request while acquiring metadata
+                //Only when the cache information is again acquired and does not exist, it is registered in the cache
                 Map<String, Object> latestCache = UserDataSchemaCache.get(this.getNodeId());
                 if (latestCache == null) {
                     try {
@@ -230,8 +230,8 @@ public class UserDataODataProducer extends EsODataProducer {
             this.metadata = getMetadataFromDataSource();
             Map<String, Object> cacheSchema = createUserDataSchemaCache();
 
-            // メタデータ取得中に別リクエストでキャッシュを変更している可能性があるため、
-            // キャッシュ情報が変更されていない場合のみ、キャッシュに登録する
+            //Since there is a possibility that the cache has been changed by another request during metadata acquisition,
+            //Only when the cache information has not been changed is registered in the cache
             if (cacheSchema != null && !UserDataSchemaCache.isChanged(this.getNodeId(), cache)) {
                 try {
                     UserDataSchemaCache.cache(this.getNodeId(), cacheSchema);
@@ -246,9 +246,9 @@ public class UserDataODataProducer extends EsODataProducer {
             this.entityTypeIds = (Map<String, String>) cache.get("entityTypeIds");
             setPropertyAliasMap((Map<String, PropertyAlias>) cache.get("propertyAliasMap"));
             setEntityTypeMap((Map<String, String>) cache.get("entityTypeMap"));
-            // 取得した情報を設定する
-            // XMLパーサ(StAX,SAX,DOM)にInputStreamをそのまま渡すとファイル一覧の取得処理が
-            // 中断してしまうため暫定対処としてバッファに格納してからパースする
+            //Set acquired information
+            //If you pass InputStream to the XML parser (StAX, SAX, DOM) as is, the file list acquisition processing
+            //Because it will be interrupted, store it as a provisional countermeasure and then parse it
             EdmDataServices metacache = null;
             try {
                 StringReader sr = new StringReader((String) cache.get("edmx"));
@@ -261,7 +261,7 @@ public class UserDataODataProducer extends EsODataProducer {
                 log.info("XMLParseException: " + ex.getMessage(), ex.fillInStackTrace());
                 throw ex;
             } catch (StackOverflowError tw) {
-                // ComplexTypeの循環参照時にStackOverFlowErrorが発生する
+                //StackOverFlowError occurs when circular reference of ComplexType is made
                 log.info("XMLParseException: " + tw.getMessage(), tw.fillInStackTrace());
                 throw tw;
             }
@@ -270,7 +270,7 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     private Map<String, Object> createUserDataSchemaCache() {
-        // キャッシュしてみる
+        //I try to cache
         Map<String, Object> cache;
         cache = new HashMap<String, Object>();
         cache.put("entityTypeIds", this.entityTypeIds);
@@ -285,7 +285,7 @@ public class UserDataODataProducer extends EsODataProducer {
             return null;
         }
 
-        // 制御コードが含まれていた場合は、キャッシュしない(エスケープ・アンエスケープの必要があるため)
+        //If a control code is included, it is not cached (because escape / unescape is required)
         if (EscapeControlCode.isContainsControlChar(w.toString())) {
             return null;
         }
@@ -295,11 +295,11 @@ public class UserDataODataProducer extends EsODataProducer {
 
     private EdmDataServices getMetadataFromDataSource() {
 
-        // データ取得件数はエンティティタイプの最大数と1エンティティタイプ内の最大プロパティ数
+        //The number of data acquisition is the maximum number of entity types and the maximum number of properties within one entity type
         int schemaPropertyGetCount =
                 PersoniumUnitConfig.getUserdataMaxEntityCount() * PersoniumUnitConfig.getMaxPropertyCountInEntityType();
 
-        // ソート条件としてNameを指定する
+        //Specify Name as the sorting condition
         List<OrderByExpression> orderBy = OptionsQueryParser.parseOrderBy("Name");
         QueryInfo queryInfo = new QueryInfo(InlineCount.NONE, schemaPropertyGetCount,
                 null, null, orderBy, null, null, null, null);
@@ -338,7 +338,7 @@ public class UserDataODataProducer extends EsODataProducer {
         setPropertyAliasMap(userSchemaODataProducer.getPropertyAliasMap());
         setEntityTypeMap(userSchemaODataProducer.getEntityTypeMap());
 
-        // 取得した情報を設定する
+        //Set acquired information
         EdmDataServices edmDataService = CtlSchema.getEdmDataServicesForUserData(USER_ODATA_NAMESPACE,
                 typeResponse.getEntities(),
                 assoEndResponse.getEntities(), propertyResponse.getEntities(), complexTypeResponse.getEntities(),
@@ -362,16 +362,16 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     * Linksのkey情報を取得する.
-     * @param entityTypeName EntityType名
-     * @return linksのkey情報を返す
+     * Get key information of Links.
+     * @param entityTypeName EntityType name
+     * Return key information of @return links
      */
     public String getLinkskey(String entityTypeName) {
         return this.getEntityTypeId(entityTypeName);
     }
 
     /**
-     * 実装サブクラスProducerが特定のEntityTypeに紐付くようにしたいときは、ここをoverrideしてLinkDocHandlerを返すように実装する。
+     * Implementation subclass If you want Producer to be associated with a specific EntityType, implement it to override here and return LinkDocHandler.
      * @param src srcEntitySetDocHandler
      * @param tgt tgtEntitySetDocHandler
      * @return LinkDocHandler
@@ -401,8 +401,8 @@ public class UserDataODataProducer extends EsODataProducer {
     @Override
     public void beforeBulkCreate(final LinkedHashMap<String, BulkRequest> bulkRequests) {
 
-        // 登録済みでないdynamic propertyのPropertyを作成し、
-        // リクエスト情報のdynamic propertyフィールドからstatic propertyフィールドに移動する
+        //Create Property of dynamic property not registered,
+        //Move from the dynamic property field of the request information to the static property field
         for (Entry<String, BulkRequest> request : bulkRequests.entrySet()) {
 
             if (request.getValue().getError() != null) {
@@ -421,7 +421,7 @@ public class UserDataODataProducer extends EsODataProducer {
             if (dynamicProperties != null) {
                 List<String> createdProperties = new ArrayList<String>();
 
-                // 登録済みのdynamic propertiesのリストを作成する。
+                //Create a list of registered dynamic properties.
                 for (Map.Entry<String, Object> entry : dynamicProperties.entrySet()) {
                     String propertyName = entry.getKey();
                     String key = String.format("Name='%s',_EntityType.Name='%s'", propertyName, entityTypeName);
@@ -431,7 +431,7 @@ public class UserDataODataProducer extends EsODataProducer {
                     docHandler.getStaticFields().put(propertyName, entry.getValue());
                 }
 
-                // EntrySetのループ内では削除できないため、まとめて削除する。
+                //Since it can not be deleted within the EntrySet loop, it is deleted together.
                 if (!createdProperties.isEmpty()) {
                     for (String propertyName : createdProperties) {
                         dynamicProperties.remove(propertyName);
@@ -439,21 +439,21 @@ public class UserDataODataProducer extends EsODataProducer {
                 }
             }
 
-            // 動的プロパティ作成時にエラーが発生した場合は、該当リクエストのみ、エラーを設定する
+            //If an error occurs during dynamic property creation, only the corresponding request, an error is set
             try {
                 createDynamicPropertyEntity(docHandler);
             } catch (PersoniumCoreException e) {
                 request.getValue().setError(e);
             }
 
-            // 追加したProperty情報をdocHandlerに反映
+            //Reflected added Property information in docHandler
             docHandler.setPropertyAliasMap(this.getPropertyAliasMap());
         }
     }
 
     /**
-     * 動的プロパティのEntity作成を行う.
-     * @param docHandler 登録対象のエンティティドックハンドラ
+     * Entity of dynamic property is created.
+     * @param docHandler Entity dock handler to register
      */
     public void createDynamicPropertyEntity(final EntitySetDocHandler docHandler) {
         EntitySetAccessor accessor = EsModel.cellCtl(cell, Property.EDM_TYPE_NAME);
@@ -487,8 +487,8 @@ public class UserDataODataProducer extends EsODataProducer {
         }
 
         if (dynamicProperties.size() != 0) {
-            // 同一EntityTypeに、同名のPropertyが登録済みかをチェックする
-            // 同名のPropertyが登録済みの場合は、503エラーとする
+            //It is checked whether Property of the same name has been registered in the same EntityType
+            //If Property of the same name has already been registered, it is set as 503 error
             Map<String, Object> queryMap = createDynamicPropertyCountQuery(docHandler, propertyDocHandlerList);
             long count = accessor.count(queryMap);
             if (0 != count) {
@@ -506,25 +506,25 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     * NavigationProperty経由でエンティティを一括登録する際のリンク数の上限値チェックを行う.
-     * @param npBulkContexts 一括登録のコンテキスト
-     * @param npBulkRequests エンティティ一括登録用のリクエスト情報（bulkCreateEntity用）
+     * Check the upper limit of the number of links when registering entities collectively via NavigationProperty.
+     * @param npBulkContexts Context of bulk registration
+     * @param npBulkRequests Request information for entity batch registration (for bulkCreateEntity)
      */
     @Override
     public void checkLinksUpperLimitRecord(List<NavigationPropertyBulkContext> npBulkContexts,
             LinkedHashMap<String, BulkRequest> npBulkRequests) {
 
-        // 1. リクエスト情報を解析
-        // ソース側 type、ソース側 キー、ターゲット側 typeごとにリクエスト情報をグループ化
+        //1. Analyze request information
+        //Group request information for each source side type, source side key, target side type
         LinkedHashMap<String, BatchLinkContext> batchLinkContexts =
                 new LinkedHashMap<String, BatchLinkContext>();
         for (NavigationPropertyBulkContext npBulkContext : npBulkContexts) {
             if (npBulkContext.isError()) {
-                // 既にエラーが発生している場合は上限値チェックは実施しない
+                //If an error has already occurred, do not check the upper limit value
                 continue;
             }
             if (NavigationPropertyLinkType.manyToMany != npBulkContext.getLinkType()) {
-                // N:N以外の関連の場合は上限値チェックは実施しない
+                //In the case of relation other than N: N, upper limit check is not carried out
                 continue;
             }
 
@@ -539,8 +539,8 @@ public class UserDataODataProducer extends EsODataProducer {
             }
         }
 
-        // 2. ESに登録済みの件数を取得
-        // ソース側 type、ソース側 キー、ターゲット側 typeごとにESに登録済みの件数を取得
+        //2. Acquire number of entries registered in ES
+        //Acquire number registered for ES on source side type, source side key, target side type for each type
         ODataLinkAccessor accessor = getAccessorForLink();
         for (Entry<String, BatchLinkContext> entry : batchLinkContexts.entrySet()) {
             BatchLinkContext batchLinkContext = entry.getValue();
@@ -553,44 +553,44 @@ public class UserDataODataProducer extends EsODataProducer {
             log.info("Registered links count: key [" + entry.getKey() + "] count [" + count + "]");
         }
 
-        // 3. リクエスト解析＋上限値チェック
+        //3. Request analysis + upper limit check
         int contextIndex = 0;
         for (BulkRequest npBulkRequest : npBulkRequests.values()) {
             NavigationPropertyBulkContext npBulkContext = npBulkContexts.get(contextIndex++);
             if (npBulkContext.isError()) {
-                // 既にエラーが発生している場合は上限値チェックは実施しない
+                //If an error has already occurred, do not check the upper limit value
                 continue;
             }
             if (NavigationPropertyLinkType.manyToMany != npBulkContext.getLinkType()) {
-                // N:N以外の関連の場合は上限値チェックは実施しない
+                //In the case of relation other than N: N, upper limit check is not carried out
                 continue;
             }
 
             String bulkLinkContextsKey = getBatchLinkContextsKey(npBulkContext);
             BatchLinkContext batchLinkContext = batchLinkContexts.get(bulkLinkContextsKey);
             if (batchLinkContext.getRegistCount() >= PersoniumUnitConfig.getLinksNtoNMaxSize()) {
-                // リンクの上限値を超えている場合
+                //When it exceeds the upper limit value of link
                 npBulkRequest.setError(PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED);
                 npBulkContext.setException(PersoniumCoreException.OData.LINK_UPPER_LIMIT_RECORD_EXEED);
             } else {
-                // 正常な場合は解析済み件数をインクリメントする
+                //When it is normal, the number of analyzed items is incremented
                 batchLinkContext.incrementRegistCount();
             }
         }
     }
 
     /**
-     * BatchLinkContextのマップのキーを生成する.
-     * @param npBulkContext 一括登録のコンテキスト
-     * @return BatchLinkContextのマップのキー
+     * Generate key of map of BatchLinkContext.
+     * @param npBulkContext Context of bulk registration
+     * @return BatchLinkContext map key
      */
     private String getBatchLinkContextsKey(NavigationPropertyBulkContext npBulkContext) {
         EntitySetDocHandler srcDocHandler = npBulkContext.getSourceDocHandler();
         String targetEntityTypeName = npBulkContext.getOEntityWrapper().getEntitySetName();
         String targetEntityTypeId = getEntityTypeId(targetEntityTypeName);
 
-        // EntityTypeのIDをキーに含めているので、ユーザOData以外はnullになる可能性がある
-        // このため、ユーザOData以外は未対応
+        //Since the ID of the EntityType is included in the key, there is a possibility that it may become null except for the user OData
+        //Therefore, other than user OData is not supported
         return srcDocHandler.getEntityTypeId() + ":" + srcDocHandler.getId() + ":"
                 + targetEntityTypeId;
 
@@ -600,19 +600,19 @@ public class UserDataODataProducer extends EsODataProducer {
             List<PropertyDocHandler> propertyDocHandlerList) {
         Map<String, Object> queryMap = new HashMap<String, Object>();
 
-        // Cell,Box,NodeIDのクエリを作成する
+        //Create a query for Cell, Box, NodeID
         Map<String, Object> query = QueryMapFactory.filteredQuery(null,
             QueryMapFactory.mustQuery(getImplicitFilters(null)));
 
         queryMap.put("query", query);
 
-        // EntityType名のクエリを作成する
+        //Create a query for EntityType name
         List<Map<String, Object>> andList = new ArrayList<Map<String, Object>>();
         Map<String, Object> entityMap = QueryMapFactory.termQuery(OEntityDocHandler.KEY_LINK + "."
                 + EntityType.EDM_TYPE_NAME, docHandler.getEntityTypeId());
         andList.add(entityMap);
 
-        // Property名のクエリを作成する
+        //Create a query for Property Name
         List<Map<String, Object>> orList = new ArrayList<Map<String, Object>>();
         for (PropertyDocHandler propertyDocHandler : propertyDocHandlerList) {
             Map<String, Object> propertyNameMap = QueryMapFactory.termQuery(OEntityDocHandler.KEY_STATIC_FIELDS
@@ -630,7 +630,7 @@ public class UserDataODataProducer extends EsODataProducer {
     }
 
     /**
-     * EntityType名とUUIDのマッピングデータ.
+     * Mapping data of EntityType name and UUID.
      */
     private Map<String, String> entityTypeIds = new HashMap<String, String>();
 
@@ -644,7 +644,7 @@ public class UserDataODataProducer extends EsODataProducer {
     @Override
     protected boolean checkUniquenessEntityKey(final String entitySetName, final EntitySetDocHandler tgt,
             final String linksKey, final EntitySetAccessor esType) {
-        // UserDataの場合は、__idで一意性が確保されているためリンク削除後に同一データが存在するかの一意性チェックは不要
+        //In the case of UserData, since uniqueness is secured by __ id, uniqueness check as to whether the same data exist after link deletion is unnecessary
         return true;
     }
 
@@ -652,36 +652,36 @@ public class UserDataODataProducer extends EsODataProducer {
     protected boolean checkUniquenessEntityKeyForAddLink(final String entitySetName,
             final EntitySetDocHandler src, final EntitySetDocHandler tgt,
             final String linksKey, final EntitySetAccessor esType) {
-        // UserDataの場合は、__idで一意性が確保されているためリンク登録後に同一データが存在するかの一意性チェックは不要
+        //In the case of UserData, since uniqueness is secured by __ id, uniqueness check as to whether identical data exist after link registration is unnecessary
         return true;
     }
 
     @Override
     public void setNavigationTargetKeyProperty(EdmEntitySet eSet, EntitySetDocHandler oedh) {
-        // UserDataにおけるNTKP（_Box.Nameのような関連データをプロパティで指定する方法）は未実装であるため処理不要
+        //NTKP in UserData (method of specifying related data like _Box.Name by property) is not implemented and processing is unnecessary
     }
 
     @Override
     public Map<String, Object> getLinkFieldsQuery(String entityTypeId, String id) {
-        // { "term" : { "ll" : "EntityTypeの内部ID:UserDataの内部ID" }}
+        //{"term": {"ll": "Internal ID of EntityType: internal ID of UserData"}}
         return QueryMapFactory.termQuery("ll",
                 String.format("%s:%s", entityTypeId, id));
     }
 
     /**
-     * 不正なLink情報のチェックを行う.
-     * @param sourceEntity ソース側Entity
-     * @param targetEntity ターゲット側Entity
+     * Check unauthorized Link information.
+     * @param sourceEntity source side Entity
+     * @param targetEntity Target side Entity
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceEntity, EntitySetDocHandler targetEntity) {
     }
 
     /**
-     * 不正なLink情報のチェックを行う.
-     * @param sourceDocHandler ソース側Entity
-     * @param entity ターゲット側Entity
-     * @param targetEntitySetName ターゲットのEntitySet名
+     * Check unauthorized Link information.
+     * @param sourceDocHandler Source side Entity
+     * @param entity Target side Entity
+     * @param targetEntitySetName EntitySet name of the target
      */
     @Override
     protected void checkInvalidLinks(EntitySetDocHandler sourceDocHandler, OEntity entity, String targetEntitySetName) {

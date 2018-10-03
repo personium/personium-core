@@ -45,13 +45,13 @@ import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.Privilege;
 
 /**
- * ACLを表すモデルオブジェクト.
- * WebDAV ACLの D:acl タグに対応したJAXBオブジェクトとしても振る舞い、
- * ACLメソッドで受けるXMLをそのまま unmarshall してオブジェクト生成可能。
- * 一方で、JSONへの シリアライズ及び JSONからのデシリアライズもサポートし、
- * ElasticSearchをはじめとするJSONベースの永続化機構での利用を可能とする。
- * また、AccessContextオブジェクトに本オブジェクトを与えることで、
- * 与えられるべきPrivilege一覧を生成する。
+ * A model object representing an ACL.
+ * It behaves as a JAXB object corresponding to the D: acl tag of WebDAV ACL,
+ * Object creation is possible by directly unmarshalling the XML received by the ACL method.
+ * On the other hand, it also supports serialization to JSON and deserialization from JSON,
+ * It can be used in JSON - based persistence mechanism including ElasticSearch.
+ * By giving this object to the AccessContext object,
+ * Generate Privilege list to be given.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 //@XmlType(name = "", propOrder = { "aces" })
@@ -68,7 +68,7 @@ public final class Acl {
     @XmlAttribute(namespace = PersoniumCoreUtils.XmlConst.NS_PERSONIUM)
     String requireSchemaAuthz;
 
-    /** Aceタグ. */
+    /** Ace tag.*/
     @XmlElements({ @XmlElement(namespace = "DAV:", name = "ace", type = Ace.class) })
     List<Ace> aces = new ArrayList<Ace>();
 
@@ -113,8 +113,8 @@ public final class Acl {
     }
 
     /**
-     * JSON化する.
-     * @return Mapオブジェクト
+     * Make it JSON.
+     * @return Map object
      */
     public String toJSON() {
         StringWriter sw = new StringWriter();
@@ -154,8 +154,8 @@ public final class Acl {
     }
 
     /**
-     * AccessContextに対して、このACLがどのようなPrivilegeを与えるかを返す.
-     * @param ac AccessContextオブジェクト
+     * For AccessContext, what kind of privilege this ACL gives is returned.
+     * @param ac AccessContext object
      * @return Privilege List
      */
     public List<String> allows(final AccessContext ac) {
@@ -175,11 +175,11 @@ public final class Acl {
     }
 
     /**
-     * AccessContextに対して、このACLが特定のPrivilegeを与えるかどうかを返す.
-     * @param priv チェックしたいPrivilege
-     * @param ac AccessContextオブジェクト
-     * @param privilegeMap Privilege管理
-     * @return 与える場合は真
+     * For AccessContext, it returns whether this ACL gives a specific Privilege.
+     * @param priv Privilege you want to check
+     * @param ac AccessContext object
+     * @param privilegeMap Privilege management
+     * @return True if given
      */
     public boolean allows(final Privilege priv, final AccessContext ac, Map<String, Privilege> privilegeMap) {
         List<String> privs = this.allows(ac);

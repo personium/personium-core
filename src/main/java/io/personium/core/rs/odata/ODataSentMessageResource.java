@@ -130,15 +130,15 @@ public class ODataSentMessageResource extends ODataMessageResource {
         EdmCollectionType collectionType = new EdmCollectionType(SentMessage.P_RESULT.getCollectionKind(),
                 SentMessage.P_RESULT.getType());
 
-        // 受信APIの呼び出し、呼出し結果を送信メッセージのResultsにセット
+        //Call reception API, call result set to Results of outgoing message
         OCollection.Builder<OObject> builder = requestReceivedMessage(collectionType, id);
 
-        // ComplexTypeの配列要素をプロパティに追加する
+        //Add an array element of ComplexType to the property
         props.add(OProperties.collection(SentMessage.P_RESULT.getName(), collectionType, builder.build()));
 
         for (int i = 0; i < props.size(); i++) {
             if (SentMessagePort.P_BOX_BOUND.getName().equals(props.get(i).getName())) {
-                // メッセージ送信でBoxBoundはデータとして保持しないため、削除する
+                //Since Box Bound is not retained as data in message transmission, it is deleted
                 props.remove(i);
             } else if (Common.P_BOX_NAME.getName().equals(props.get(i).getName())) {
                 String schema = getMessageResource().getAccessContext().getSchema();
@@ -147,7 +147,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
                 // Replace with BoxName obtained from schema
                 props.set(i, OProperties.string(Common.P_BOX_NAME.getName(), boxName));
             } else if (SentMessagePort.P_RESULT.getName().equals(props.get(i).getName())) {
-                // メッセージ受信でResultはデータとして保持しているため置き換える
+                //In the message reception, since Result is held as data, it is replaced
                 props.set(i, OProperties.collection(SentMessage.P_RESULT.getName(),
                         collectionType, builder.build()));
             }
@@ -180,36 +180,36 @@ public class ODataSentMessageResource extends ODataMessageResource {
             String idKey) {
 
         OCollection.Builder<OObject> builder = OCollections.<OObject>newBuilder(collectionType.getItemType());
-        // ComplexTypeの型情報を取得する
+        //Obtain type information of ComplexType
         EdmComplexType ct = SentMessage.COMPLEX_TYPE_RESULT.build();
 
         String fromCellUrl = getMessageResource().getAccessContext().getCell().getUrl();
         String schema = getMessageResource().getAccessContext().getSchema();
 
-        // 宛先リスト作成
+        //Destination list creation
         List<String> toList = createRequestUrl();
 
-        // リクエストの件数分繰り返し
+        //Repeat for the number of requests
         for (String toCellUrl : toList) {
             List<OProperty<?>> result = null;
             toCellUrl = formatCellUrl(toCellUrl);
 
-            // 受信API呼出しのトークン作成
+            //Create token for receive API call
             TransCellAccessToken token = new TransCellAccessToken(
                     fromCellUrl, fromCellUrl, toCellUrl, new ArrayList<Role>(), schema);
 
-            // ('ID')からIDを抜き出す
+            //Extract ID from (ID)
             Pattern formatPattern = Pattern.compile("\\('(.+)'\\)");
             Matcher formatMatcher = formatPattern.matcher(idKey);
             formatMatcher.matches();
             String id = formatMatcher.group(1);
-            // 受信API呼出しのリクエストボディ作成
+            //Request body creation for receive API call
             JSONObject requestBody = createRequestJsonBody(fromCellUrl, toCellUrl, toList, id);
 
-            // 受信API呼出し
+            //Receive API call
             result = requestHttpReceivedMessage(token, toCellUrl, requestBody);
 
-            // 呼出し結果を配列に追加する
+            //Add the call result to the array
             builder.add(OComplexObjects.create(ct, result));
         }
 
@@ -228,7 +228,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
         requestToStr = getPropMap().get(SentMessage.P_TO.getName());
         requestToRelationStr = getPropMap().get(SentMessage.P_TO_RELATION.getName());
 
-        // リクエストボディのTo項目からCellURLを取得
+        //Get CellURL from To item of request body
         if (requestToStr != null) {
             String[] uriList = requestToStr.split(",");
             for (String uri : uriList) {
@@ -236,20 +236,20 @@ public class ODataSentMessageResource extends ODataMessageResource {
             }
         }
 
-        // リクエストボディのToRelation項目からCellURLを取得する
+        //Get CellURL from ToRelation item of request body
         if (requestToRelationStr != null) {
             List<String> extCellUrlList = getExtCellListFromToRelation(requestToRelationStr);
             toList.addAll(extCellUrlList);
         }
 
         List<String> formatToList = new ArrayList<String>();
-        // 宛先リストの整形
+        //Format the destination list
         for (String to : toList) {
-            // 末尾に"/"を追加
+            //Add "/" to the end
             if (!to.endsWith("/")) {
                 to += "/";
             }
-            // ToとToRelationで重複している送信先を省く
+            //Omit duplicate destinations in To and ToRelation
             if (!formatToList.contains(to)) {
                 formatToList.add(to);
             }
@@ -292,20 +292,20 @@ public class ODataSentMessageResource extends ODataMessageResource {
                     query);
         } catch (PersoniumCoreException e) {
             if (PersoniumCoreException.OData.NO_SUCH_ENTITY.getCode().equals(e.getCode())) {
-                // ToRelationで指定されたRelationが存在しない場合は400エラーを返却
+                //If Relation specified by ToRelation does not exist, return 400 error
                 throw PersoniumCoreException.SentMessage.TO_RELATION_NOT_FOUND_ERROR.params(toRelation);
             } else {
                 throw e;
             }
         }
-        // ToRelationから取得したExtCellのURLを追加する
+        //Add URL of ExtCell obtained from ToRelation
         List<OEntity> extCellEntities = response.getEntities();
         checkMaxDestinationsSize(response.getInlineCount());
         for (OEntity extCell : extCellEntities) {
             extCellUrlList.add(extCell.getProperty(Common.P_URL.getName()).getValue().toString());
         }
         if (extCellUrlList.isEmpty()) {
-            // ToRelationで指定されたRelationに紐付くExtCellが存在しない場合は400エラーを返却
+            //If there is no ExtCell associated with the Relation specified by ToRelation, 400 error is returned
             throw PersoniumCoreException.SentMessage.RELATED_EXTCELL_NOT_FOUND_ERROR.params(toRelation);
         }
         return extCellUrlList;
@@ -336,7 +336,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
         String type = propMap.get(SentMessage.P_TYPE.getName());
         boolean boxBound = Boolean.parseBoolean(propMap.get(SentMessagePort.P_BOX_BOUND.getName()));
 
-        // Statusの設定
+        //Status setting
         String status = null;
         if (ReceivedMessage.TYPE_MESSAGE.equals(type)) {
             status = ReceivedMessage.STATUS_UNREAD;
@@ -344,7 +344,7 @@ public class ODataSentMessageResource extends ODataMessageResource {
             status = ReceivedMessage.STATUS_NONE;
         }
 
-        // MulticastToの設定
+        //MulticastTo setting
         String multicastTo = null;
         StringBuilder sbMulticastTo = null;
         for (String to : toList) {
@@ -429,11 +429,11 @@ public class ODataSentMessageResource extends ODataMessageResource {
             JSONObject jsonBody) {
         String requestUrl = requestCellUrl + "__message/port";
 
-        // リクエストヘッダを取得し、以下内容を追加
+        //Acquire request header, add content below
         HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
         HttpPost req = new HttpPost(requestUrl);
 
-        // リクエストボディ
+        //Request body
         StringEntity body = null;
         try {
             body = new StringEntity(
@@ -448,12 +448,12 @@ public class ODataSentMessageResource extends ODataMessageResource {
         req.addHeader(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + token.toTokenString());
         req.addHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
 
-        // リクエストを投げる
+        //Throw a request
         HttpResponse objResponse = null;
         try {
             objResponse = client.execute(req);
 
-            // リクエスト結果の作成
+            //Create Request Result
             String statusCode = Integer.toString(objResponse.getStatusLine().getStatusCode());
             List<OProperty<?>> properties = new ArrayList<OProperty<?>>();
             properties.add(OProperties.string(SentMessage.P_RESULT_TO.getName(), requestCellUrl));
@@ -650,9 +650,9 @@ public class ODataSentMessageResource extends ODataMessageResource {
     }
 
     /**
-     * To-ToRelationのバリデート.
-     * @param to 送信先セルURL
-     * @param toRelation 送信対象の関係名
+     * Validate of To-ToRelation.
+     * @param to Destination cell URL
+     * @param toRelation Relation name to send
      */
     private void validateToAndToRelation(String to, String toRelation) {
         if (to == null && toRelation == null) {

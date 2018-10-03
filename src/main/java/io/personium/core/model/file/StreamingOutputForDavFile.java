@@ -35,29 +35,29 @@ import org.slf4j.LoggerFactory;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
- * Davファイルの内容を Responseに返却する際に利用する StreamingOutputクラス. 内部的には、読み込み専用にハードリンクを作成し、出力完了後に削除する。
+ * StreamingOutput class to use when returning the contents of the Dav file to Response Internally create a hard link for reading only and delete it after completion of output.
  */
 public class StreamingOutputForDavFile implements StreamingOutput {
 
     private static Logger logger = LoggerFactory.getLogger(StreamingOutputForDavFile.class);
 
     /**
-     * Davファイルの読み書き時、ハードリンク作成/ファイル名改変時の最大リトライ回数.
+     * Maximum number of retries at the time of reading / writing Dav file, hard link creation / file name modification.
      */
     private static int maxRetryCount = PersoniumUnitConfig.getDavFileOperationRetryCount();
 
     /**
-     * Davファイルの読み書き時、ハードリンク作成/ファイル名改変時のリトライ間隔(msec).
+     * Retry interval (msec) at the time of reading / writing Dav file, hard link creation / file name modification.
      */
     private static long retryInterval = PersoniumUnitConfig.getDavFileOperationRetryInterval();
 
     /**
-     * 読み込み用のハードリンクのパス.
+     * The hard link path for loading.
      */
     Path hardLinkPath = null;
 
     /**
-     * 読み込み用のハードリンクからの入力ストリーム.
+     * Input stream from the hard link for reading.
      */
     InputStream hardLinkInput = null;
 
@@ -74,25 +74,25 @@ public class StreamingOutputForDavFile implements StreamingOutput {
             throw new BinaryDataNotFoundException(fileFullPath);
         }
 
-        // 読み込み専用のハードリンクを作成するため、ユニーク名を生成。
+        //Generate a unique name to create a read-only hard link.
         String hardLinkName = UniqueNameComposer.compose(fileFullPath);
 
         for (int i = 0; i < maxRetryCount; i++) {
             try {
                 synchronized (fileFullPath) {
-                    // ハードリンクを作成.
+                    //Create a hard link.
                     hardLinkPath = Files.createLink(Paths.get(hardLinkName), Paths.get(fileFullPath));
                 }
-                // ハードリンクからの入力ストリームを取得
+                //Get input stream from hard link
                 InputStream inputStream;
                 // Perform decryption.
                 DataCryptor cryptor = new DataCryptor(cellId);
                 inputStream = cryptor.decode(new FileInputStream(hardLinkPath.toFile()), encryptionType);
                 hardLinkInput = new BufferedInputStream(inputStream);
-                // 成功したら終了
+                //End if successful
                 return;
             } catch (IOException e) {
-                // 指定回数まではリトライする。
+                //Retry until the specified number of times.
                 logger.debug(String.format("Creating hard link %s failed. Will try again.", hardLinkName));
                 try {
                     Thread.sleep(retryInterval);
@@ -117,7 +117,7 @@ public class StreamingOutputForDavFile implements StreamingOutput {
             IOUtils.copy(hardLinkInput, output);
         } finally {
             IOUtils.closeQuietly(hardLinkInput);
-            // 後始末。自分用の読み込みハードリンクを削除する。
+            //Cleanup. Delete the reading hard link for yourself.
             Files.delete(hardLinkPath);
         }
     }

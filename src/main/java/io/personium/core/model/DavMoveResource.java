@@ -28,7 +28,7 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 
 /**
- * JaxRS Resource オブジェクトから処理の委譲を受けてDavのMoveに関する処理を行うクラス.
+ * A class that performs processing relating to Move of Dav after receiving processing delegation from the JaxRS Resource object.
  */
 public class DavMoveResource extends DavRsCmp {
 
@@ -38,14 +38,14 @@ public class DavMoveResource extends DavRsCmp {
     private String ifMatch = null;
 
     /**
-     * コンストラクタ.
-     * @param parent 親リソース
-     * @param davCmp バックエンド実装に依存する処理を受け持つ部品
-     * @param headers リクエストヘッダ情報
+     * constructor.
+     * @param parent parent resource
+     * @param davCmp Parts responsible for processing dependent on backend implementation
+     * @param headers Request header information
      */
     public DavMoveResource(DavRsCmp parent, DavCmp davCmp, HttpHeaders headers) {
         super(parent, davCmp);
-        // リクエストヘッダから、移動に必要な情報を取得する
+        //From the request header, obtain information necessary for movement
         depth = getFirstHeader(headers, org.apache.http.HttpHeaders.DEPTH, DavCommon.DEPTH_INFINITY);
         overwrite = getFirstHeader(headers, org.apache.http.HttpHeaders.OVERWRITE, DavCommon.OVERWRITE_FALSE);
         destination = getFirstHeader(headers, org.apache.http.HttpHeaders.DESTINATION);
@@ -53,107 +53,107 @@ public class DavMoveResource extends DavRsCmp {
     }
 
     /**
-     * MOVEメソッドの処理.
-     * @return JAX-RS応答オブジェクト
+     * Processing of the MOVE method.
+     * @return JAX-RS response object
      */
     public Response doMove() {
 
-        // リクエストヘッダのバリデート
+        //Request header validation
         validateHeaders();
 
-        // 移動先のBox情報を取得する
+        //Acquire the destination Box information
         BoxRsCmp boxRsCmp = getBoxRsCmp();
 
-        // 移動先の情報を生成
+        //Generate destination information
         DavDestination davDestination;
         try {
             davDestination = new DavDestination(destination, this.getAccessContext().getBaseUri(), boxRsCmp);
         } catch (URISyntaxException e) {
-            // URI 形式でない
+            //Not in URI format
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(org.apache.http.HttpHeaders.DESTINATION,
                     destination);
         }
 
-        // データの更新・削除
+        //Update / delete data
         ResponseBuilder response = this.davCmp.move(this.ifMatch, this.overwrite, davDestination);
 
         return response.build();
     }
 
     private BoxRsCmp getBoxRsCmp() {
-        // 最上位にあるBoxのリソース情報を取得する
+        //Acquire the resource information of the topmost Box
         DavRsCmp davRsCmp = this;
         for (int i = 0; i <= PersoniumUnitConfig.getMaxCollectionDepth(); i++) {
             DavRsCmp parent = davRsCmp.getParent();
             if (null == parent) {
                 break;
             }
-            // Boxが取れない場合は終了
+            //End if Box can not be taken
             if (null == parent.getBox()) {
                 break;
             }
             davRsCmp = parent;
         }
 
-        // 最上位までたどった結果をBoxとして扱う
+        //Treat the results as far as the top as Box
         BoxRsCmp boxRsCmp = (BoxRsCmp) davRsCmp;
         return boxRsCmp;
     }
 
     /**
-     * Moveメソッドに関するヘッダのバリデートを行う. <br />
-     * バリデートに失敗した場合は、例外をスローする.
-     * @param headers ヘッダ情報
+     * Validate the header of the Move method <br />
+     * If validation fails, throw an exception.
+     * @param headers header information
      */
     void validateHeaders() {
-        // Depth ヘッダ
+        //Depth header
         if (!DavCommon.DEPTH_INFINITY.equalsIgnoreCase(depth)) {
             throw PersoniumCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
         }
 
-        // Overwrite ヘッダ
+        //Overwrite header
         if (!DavCommon.OVERWRITE_FALSE.equalsIgnoreCase(overwrite)
                 && !DavCommon.OVERWRITE_TRUE.equalsIgnoreCase(overwrite)) {
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     org.apache.http.HttpHeaders.OVERWRITE, overwrite);
         }
 
-        // Destination ヘッダ
+        //Destination header
         if (destination == null || destination.length() <= 0) {
             throw PersoniumCoreException.Dav.REQUIRED_REQUEST_HEADER_NOT_EXIST
                     .params(org.apache.http.HttpHeaders.DESTINATION);
         }
 
         if (this.getUrl().equals(destination)) {
-            // 移動元と移動先が等しい場合はエラーとする
+            //If the source and the destination are the same, an error is assumed
             throw PersoniumCoreException.Dav.DESTINATION_EQUALS_SOURCE_URL.params(destination);
         }
 
         DavPath destinationPath = getDestination();
         if (!this.getAccessContext().getBaseUri().equals(destinationPath.getBaseUri())) {
-            // スキーマ、ホストが移動元、移動先で異なる場合はエラーとする
+            //If the schema and the host are different from the source and the destination, an error is assumed
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     org.apache.http.HttpHeaders.DESTINATION, destination);
         }
 
         if (!this.getCell().getName().equals(destinationPath.getCellName())
                 || !this.getBox().getName().equals(destinationPath.getBoxName())) {
-            // Cell、Box が移動元、移動先で異なる場合はエラーとする
+            //If Cell and Box are different between the source and the destination, an error is assumed
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(
                     org.apache.http.HttpHeaders.DESTINATION, destination);
         }
     }
 
     /**
-     * 移動先のオブジェクのパス情報を作成して返却する.
-     * @return DavPath 移動先のリソースパスを管理するオブジェクト
+     * Create and return path information of the destination object.
+     * @return DavPath Object managing the resource path of the destination
      */
     private DavPath getDestination() {
         URI destUri;
         try {
             destUri = new URI(destination);
         } catch (URISyntaxException e) {
-            // URI 形式でない
+            //Not in URI format
             throw PersoniumCoreException.Dav.INVALID_REQUEST_HEADER.params(org.apache.http.HttpHeaders.DESTINATION,
                     destination);
         }
@@ -161,23 +161,23 @@ public class DavMoveResource extends DavRsCmp {
     }
 
     /**
-     * ヘッダ情報から指定されたキーのヘッダを取得する. <br />
-     * 存在しない場合はnullを返却する.
-     * @param headers ヘッダ情報
-     * @param key 取得するヘッダのキー
-     * @return 指定されたキーのヘッダ
+     * Get the header of the specified key from the header information <br />
+     * If it does not exist, return null.
+     * @param headers header information
+     * @param key The key of the header to be acquired
+     * @return Header of the specified key
      */
     private String getFirstHeader(HttpHeaders headers, String key) {
         return this.getFirstHeader(headers, key, null);
     }
 
     /**
-     * ヘッダ情報から指定されたキーのヘッダを取得する. <br />
-     * 存在しない場合はnullを返却する.
-     * @param headers ヘッダ情報
-     * @param key 取得するヘッダのキー
-     * @param defaultValue ヘッダが存在しない場合のデフォルト値
-     * @return 指定されたキーのヘッダ
+     * Get the header of the specified key from the header information <br />
+     * If it does not exist, return null.
+     * @param headers header information
+     * @param key The key of the header to be acquired
+     * @param defaultValue Default value if header does not exist
+     * @return Header of the specified key
      */
     private String getFirstHeader(HttpHeaders headers, String key, String defaultValue) {
         List<String> header = headers.getRequestHeader(key);

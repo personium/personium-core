@@ -47,26 +47,26 @@ import io.personium.core.utils.ODataUtils;
  */
 public final class ExpandEntitiesMapCreator {
 
-    // Expandで指定されたナビゲーションプロパティ名の一覧
+    //List of navigation property names specified by Expand
     private List<String> navigationPropertyList = new ArrayList<String>();
 
-    // Expand元のエンティティタイプ型
+    //Expand The original entity type type
     private EdmEntityType edmBaseEntityType;
 
-    // Expandエンティティの最大取得件数
+    //Expand Maximum number of acquisition entities
     private int expandMaxNum;
 
-    // データID毎のキャッシュ
+    //Caching for each data ID
     private Map<String, Map<String, List<OEntity>>> relatedEntitiesListCache;
 
-    // リンク先データIDからリンク元IDを取得するためのマップ
+    //Map for acquiring link source ID from link destination data ID
     private Map<String, List<String>> baseDataIdMap;
 
     /**
-     * コンストラクタ.
-     * @param queryInfo クエリ情報
-     * @param baseEntityType Expand元のエンティティタイプ型
-     * @param expandMaxNum Expandエンティティの最大取得件数
+     * constructor.
+     * @param queryInfo query information
+     * @param baseEntityType Expand The original entity type type
+     * @param expandMaxNum Expand Maximum number of acquired entities
      */
     public ExpandEntitiesMapCreator(final QueryInfo queryInfo,
             final EdmEntityType baseEntityType,
@@ -86,7 +86,7 @@ public final class ExpandEntitiesMapCreator {
         for (EntitySimpleProperty qinfo : queryInfo.expand) {
             String navigationPropertyName = qinfo.getPropertyName();
             EdmNavigationProperty edmNavProp = edmType.findNavigationProperty(navigationPropertyName);
-            // スキーマに存在しないNavigationPropertyを指定した場合はエラーとする
+            //If NavigationProperty that does not exist in the schema is specified, it is an error
             if (edmNavProp == null) {
                 throw PersoniumCoreException.OData.EXPAND_NTKP_NOT_FOUND_ERROR.params(navigationPropertyName);
             }
@@ -95,8 +95,8 @@ public final class ExpandEntitiesMapCreator {
     }
 
     /**
-     * 指定されたエンティティのキャッシュを作成する.
-     * @param baseEntity Expand元のエンティティ
+     * Create a cache of the specified entity.
+     * @param baseEntity Expand The original entity
      * @param producer producer
      */
     public void setCache(EntitySetDocHandler baseEntity, EsODataProducer producer) {
@@ -106,21 +106,21 @@ public final class ExpandEntitiesMapCreator {
     }
 
     /**
-     * 指定されたエンティティのキャッシュを作成する.
-     * @param baseEntityList Expand元のエンティティ一覧
+     * Create a cache of the specified entity.
+     * @param baseEntityList Expand The original entity list
      * @param producer producer
      */
     public void setCache(List<EntitySetDocHandler> baseEntityList, EsODataProducer producer) {
-        // キャッシュのクリア
+        //Clear cache
         this.relatedEntitiesListCache = new HashMap<String, Map<String, List<OEntity>>>();
         this.baseDataIdMap = new HashMap<String, List<String>>();
 
-        // キャッシュ対象がないときは空の状態で完了
+        //When there is no cache target, it is completed in an empty state
         if (baseEntityList.isEmpty()) {
             return;
         }
 
-        // Expand指定がない場合は、全データに空キャッシュを設定
+        //If Expand is not specified, empty cache is set for all data
         if (this.navigationPropertyList.isEmpty()) {
             for (EntitySetDocHandler baseEntity : baseEntityList) {
                 String id = baseEntity.getId();
@@ -130,7 +130,7 @@ public final class ExpandEntitiesMapCreator {
             return;
         }
 
-        // N : N の関係の場合はLinkテーブルからリンク先エンティティIDを検索して、取得対象エンティティID一覧に追加する
+        //In the case of N: N relationship, the link destination entity ID is searched from the Link table and added to the acquisition target entity ID list
         List<String> relatedEntityIdList = new ArrayList<String>();
         List<String> entityTypeListForLinkTable = getEntityTypeListForLinkTable();
         if (!entityTypeListForLinkTable.isEmpty()) {
@@ -139,12 +139,12 @@ public final class ExpandEntitiesMapCreator {
             relatedEntityIdList.addAll(idList);
         }
 
-        // N : 1 / 1 : 1の関係の場合は自データにリンク先エンティティID情報が存在するので、取得対象エンティティID一覧に追加する
-        // 1 : N の場合は実データ取得時に検索条件として自データのIDを指定するため、取得対象エンティティID一覧には追加しない
+        //In the case of N: 1/1: 1 relationship, since the link destination entity ID information exists in the own data, it is added to the acquisition target entity ID list
+        //In the case of 1: N, since the ID of its own data is specified as the search condition at the time of actual data acquisition, it is not added to the acquisition target entity ID list
         List<String> idList = getEntityIdListFromBaseData(producer, baseEntityList);
         relatedEntityIdList.addAll(idList);
 
-        // ID一覧を使ってexpandデータを取得する
+        //Retrieve expanded data using ID list
         String baseEntityTypeName = this.edmBaseEntityType.getName();
         String baseEntityLinksKey = producer.getLinkskey(baseEntityTypeName);
         PersoniumMultiSearchResponse multiSearchResponse = getRelatedEntities(producer,
@@ -152,7 +152,7 @@ public final class ExpandEntitiesMapCreator {
                 baseEntityLinksKey,
                 baseEntityList);
 
-        // 有効なexpandクエリに対して、空リストを追加する
+        //Add an empty list to a valid expanded query
         for (EntitySetDocHandler baseEntity : baseEntityList) {
             String id = baseEntity.getId();
             Map<String, List<OEntity>> relatedEntitiesList = new HashMap<String, List<OEntity>>();
@@ -162,16 +162,16 @@ public final class ExpandEntitiesMapCreator {
             }
             this.relatedEntitiesListCache.put(id, relatedEntitiesList);
         }
-        // expand先データが存在しなかった場合は空リストのみキャッシュにセットして終了
+        //If the expanded data does not exist, only the empty list is set in the cache and the process is terminated
         if (multiSearchResponse == null) {
             return;
         }
 
-        // 検索結果をrelatedEntitieslistに追加する
+        //Add search results to relatedEntitieslist
         for (PersoniumItem item : multiSearchResponse) {
             PersoniumSearchHit[] searchHits = item.getSearchHits();
             for (PersoniumSearchHit hit : searchHits) {
-                // 取得データのDocHandlerを生成する
+                //Generate DocHandler of acquired data
                 Map<String, String> entityTypeNameMap = producer.getEntityTypeMap();
                 Map<String, Object> source = hit.getSource();
                 String entityTypeName;
@@ -184,7 +184,7 @@ public final class ExpandEntitiesMapCreator {
                 }
                 EntitySetDocHandler docHandler = producer.getDocHandler(hit, entityTypeName);
 
-                // ベースデータに紐付くデータのみ返却データに追加する
+                //Only data associated with the base data is added to the returned data
                 List<String> baseEntityIds;
                 if (docHandler.getManyToOnelinkId().containsKey(baseEntityLinksKey)) {
                     baseEntityIds = new ArrayList<String>();
@@ -196,23 +196,23 @@ public final class ExpandEntitiesMapCreator {
                     }
                 }
 
-                // DocHander生成
+                //Generate DocHander
                 EdmEntitySet edmEntitySet = producer.getMetadata().getEdmEntitySet(entityTypeName);
                 producer.setNavigationTargetKeyProperty(edmEntitySet, docHandler);
                 OEntity relatedEntity = docHandler.createOEntity(edmEntitySet);
 
-                // エンティティタイプ名からNavigationProperty名を取得
+                //Get NavigationProperty name from entity type name
                 Map<String, String> entityTypeNameNavPropNameMap = getEntityTypeNameNavPropNameMap();
                 String navPropName = entityTypeNameNavPropNameMap.get(entityTypeName);
 
-                // リンク元一覧に含まれないエンティティはキャッシュ対象外とする
+                //Entities not included in the link source list are excluded from the cache
                 for (String baseEntityId : baseEntityIds) {
                     if (this.relatedEntitiesListCache.containsKey(baseEntityId)) {
                         Map<String, List<OEntity>> relatedEntitiesList = this.relatedEntitiesListCache
                                 .get(baseEntityId);
                         List<OEntity> expandOEntityList = relatedEntitiesList.get(navPropName);
 
-                        // cacheにExpand対象のエンティティ一覧を追加
+                        //Add entity list for Expand to cache
                         if (expandOEntityList.size() <= this.expandMaxNum) {
                             expandOEntityList.add(relatedEntity);
                             relatedEntitiesList.put(navPropName, expandOEntityList);
@@ -224,10 +224,10 @@ public final class ExpandEntitiesMapCreator {
     }
 
     /**
-     * $expand指定されたEntityを取得する.
-     * @param baseEntity Expand元のエンティティ
+     * $ expand Gets the specified Entity.
+     * @param baseEntity Expand The original entity
      * @param producer producer
-     * @return OEntityリスト
+     * @return OEntity list
      */
     public Map<String, List<OEntity>> create(EntitySetDocHandler baseEntity,
             EsODataProducer producer) {
@@ -240,17 +240,17 @@ public final class ExpandEntitiesMapCreator {
     }
 
     /**
-     * Linkテーブル検索対象のエンティティタイプ一覧を返却する.
-     * @return Linkテーブル検索対象のエンティティタイプ一覧
+     * Link table Return the list of entity types to be searched.
+     * @return Link table List of entity types to search for
      */
     private List<String> getEntityTypeListForLinkTable() {
         List<String> entityTypeListForLinkTable = new ArrayList<String>();
         for (String expandEntity : this.navigationPropertyList) {
-            // Multiplicityを取得
+            //Get Multiplicity
             EdmNavigationProperty edmNavProp = this.edmBaseEntityType.findNavigationProperty(expandEntity);
             int cardinality = ODataUtils.Cardinality.forEdmNavigationProperty(edmNavProp);
 
-            // N:Nの場合はLinkテーブル検索対象となるため、エンティティタイプ名をリストに追加する
+            //In the case of N: N, since the Link table is to be searched, the entity type name is added to the list
             if (ODataUtils.Cardinality.MANY_MANY == cardinality) {
                 String entityTypeName = edmNavProp.getToRole().getType().getName();
                 entityTypeListForLinkTable.add(entityTypeName);
@@ -260,36 +260,36 @@ public final class ExpandEntitiesMapCreator {
     }
 
     /**
-     * Linkテーブルからリンク先エンティティIDを検索して、リンク先データのID一覧を返却する.
-     * @param baseEntity リンク元エンティティ
+     * Search the link destination entity ID from the Link table and return the ID list of the link destination data.
+     * @param baseEntity source entity
      * @param producer EsODataProducer
-     * @param entityTypeListForLinkTable 検索対象のエンティティタイプ一覧
-     * @return リンク先データのID一覧
+     * @param entityTypeListForLinkTable Entity type list to be searched
+     * @return ID list of linked data
      */
     private List<String> getRelatedEntityIdListFromLinkTable(List<EntitySetDocHandler> baseEntityList,
             EsODataProducer producer,
             List<String> entityTypeListForLinkTable) {
         List<String> relatedEntityIdList = new ArrayList<String>();
 
-        // ユーザデータの場合はエンティティタイプIDを利用するが、管理リソースの場合はエンティティタイプ名を利用する
+        //In the case of user data, the entity type ID is used, but in the case of the managed resource, the entity type name is used
         EntitySetDocHandler baseEntity = baseEntityList.get(0);
         String linksKey = baseEntity.getEntityTypeId();
         if (linksKey == null) {
             linksKey = baseEntity.getType();
         }
 
-        // Linkテーブル検索用のクエリ一覧を作成
+        //Create a query list for Link table search
         List<Map<String, Object>> queries =
                 createLinkTableSearchQueries(producer, entityTypeListForLinkTable, baseEntityList);
         if (queries.isEmpty()) {
             return relatedEntityIdList;
         }
 
-        // Linkテーブルの検索(multisearch)
+        //Link table search (multisearch)
         ODataLinkAccessor accessor = producer.getAccessorForLink();
         PersoniumMultiSearchResponse multiSearchResponse = accessor.multiSearch(queries);
 
-        // リンク先データのID一覧に追加
+        //Add to ID list of linked data
         for (PersoniumItem item : multiSearchResponse.getResponses()) {
             PersoniumSearchHit[] searchHits = item.getSearchHits();
             for (PersoniumSearchHit hit : searchHits) {
@@ -308,18 +308,18 @@ public final class ExpandEntitiesMapCreator {
     }
 
     /**
-     * N:NのLinkテーブル検索用のクエリ一覧を作成.
+     * Create a query list for N: N Link table search.
      * @param producer EsODataProducer
-     * @param entityTypeListForLinkTable 検索対象のエンティティタイプ一覧
-     * @param baseEntityList リンク元エンティティ一覧
-     * @return Linkテーブル検索用クエリ一覧
+     * @param entityTypeListForLinkTable Entity type list to be searched
+     * @param baseEntityList Source entity list
+     * @return Link Query list for table search
      */
     private List<Map<String, Object>> createLinkTableSearchQueries(EsODataProducer producer,
             List<String> entityTypeListForLinkTable,
             List<EntitySetDocHandler> baseEntityList) {
         List<Map<String, Object>> queries = new ArrayList<Map<String, Object>>();
 
-        // cell / box / node指定と上記クエリをand条件
+        //cell / box / node designation and the above query and condition
         Map<String, Object> implicitFilters = getImplicitFilters(producer);
 
         for (EntitySetDocHandler baseDocHandler : baseEntityList) {
@@ -345,19 +345,19 @@ public final class ExpandEntitiesMapCreator {
     }
 
     /**
-     * N:1 / 1:1 のリンク元データからリンク先データのID一覧を取得する.
+     * N: Obtain ID list of link destination data from link source data of 1/1: 1.
      * @param producer EsODataProducer
-     * @return Linkテーブル検索対象のエンティティタイプ一覧
+     * @return Link table List of entity types to search for
      */
     private List<String> getEntityIdListFromBaseData(EsODataProducer producer,
             List<EntitySetDocHandler> baseEntityList) {
         List<String> idList = new ArrayList<String>();
         for (String expandEntity : this.navigationPropertyList) {
-            // Multiplicityを取得
+            //Get Multiplicity
             EdmNavigationProperty edmNaviProp = this.edmBaseEntityType.findNavigationProperty(expandEntity);
             int cardinality = ODataUtils.Cardinality.forEdmNavigationProperty(edmNaviProp);
 
-            // N:1 / 1:1 の場合は自データにリンク先データのID情報が存在するため、エンティティID一覧に追加する
+            //In the case of N: 1/1: 1, since the ID information of the link destination data exists in the own data, it is added to the entity ID list
             if (ODataUtils.Cardinality.MANY_ONE == cardinality
                     || ODataUtils.Cardinality.ONE_ONE == cardinality) {
                 String expandEntityTypeName = edmNaviProp.getToRole().getType().getName();
@@ -405,11 +405,11 @@ public final class ExpandEntitiesMapCreator {
         List<String> oneManyEntityTypes = new ArrayList<String>();
         List<String> idsEntityTypes = new ArrayList<String>();
         for (String expandEntity : this.navigationPropertyList) {
-            // Multiplicityを取得
+            //Get Multiplicity
             EdmNavigationProperty edmNaviProp = this.edmBaseEntityType.findNavigationProperty(expandEntity);
             int cardinality = ODataUtils.Cardinality.forEdmNavigationProperty(edmNaviProp);
 
-            // N:1 / 1:1 の場合は自データにリンク先データのID情報が存在するため、エンティティID一覧に追加する
+            //In the case of N: 1/1: 1, since the ID information of the link destination data exists in the own data, it is added to the entity ID list
             if (ODataUtils.Cardinality.MANY_ONE == cardinality
                     || ODataUtils.Cardinality.ONE_ONE == cardinality
                     || ODataUtils.Cardinality.MANY_MANY == cardinality) {
@@ -423,10 +423,10 @@ public final class ExpandEntitiesMapCreator {
             }
         }
         List<Map<String, Object>> queries = new ArrayList<Map<String, Object>>();
-        // cell / box / node指定と上記クエリをand条件
+        //cell / box / node designation and the above query and condition
         Map<String, Object> implicitFilters = getImplicitFilters(producer);
 
-        // 1:N検索用のクエリを追加
+        //1: N query added for search
         for (EntitySetDocHandler baseDataDocHandler : baseEntityList) {
             for (String entityType : oneManyEntityTypes) {
                 String baseDataId = baseDataDocHandler.getId();
@@ -454,7 +454,7 @@ public final class ExpandEntitiesMapCreator {
             }
         }
 
-        // N:N / N:1 / 1:1 はIDが判明しているため、IDSクエリの検索用クエリを追加
+        //Since ID is known for N: N / N: 1/1: 1, add search query for IDS query
         if (!expandEntityIdList.isEmpty()) {
             Map<String, Object> source = new HashMap<String, Object>();
 
@@ -465,7 +465,7 @@ public final class ExpandEntitiesMapCreator {
             valuesQuery.put("values", expandEntityIdList);
             mustQueries.add(idsQuery);
 
-            // Boxの情報を取得する際にIDのみの指定ではdavのデータと2件取れてしまうため、Type情報を指定しておく
+            //In case of acquiring Box information, it is possible to retrieve two pieces of data of dav by designating only ID, so type information is specified
             Map<String, Object> typesQuery = new HashMap<String, Object>();
             Map<String, Object> typesBoolQuery = new HashMap<String, Object>();
             List<Map<String, Object>> shouldQueries = new ArrayList<Map<String, Object>>();
@@ -492,7 +492,7 @@ public final class ExpandEntitiesMapCreator {
     }
 
     /**
-     * expandクエリで指定されたエンティティタイプ名をナビゲーションプロパティ名と対応付けるためのMapを設定する.
+     * Set a Map to associate the entity type name specified in the expand query with the navigation property name.
      */
     private Map<String, String> getEntityTypeNameNavPropNameMap() {
         Map<String, String> map = new HashMap<String, String>();

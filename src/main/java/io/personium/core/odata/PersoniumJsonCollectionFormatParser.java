@@ -58,7 +58,7 @@ import io.personium.core.odata.PersoniumJsonStreamReaderFactory.JsonValueEvent;
 import io.personium.core.utils.ODataUtils;
 
 /**
- * OCollectionのパーサー.
+ * OCollection's parser.
  */
 public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatParser implements
         FormatParser<OCollection<? extends OObject>> {
@@ -68,10 +68,10 @@ public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatPars
     private String propertyName;
 
     /**
-     * コンストラクタ.
-     * @param collectionType コレクションタイプ
-     * @param md スキーマ情報
-     * @param name プロパティ名
+     * constructor.
+     * @param collectionType Collection type
+     * @param md schema information
+     * @param name property name
      */
     public PersoniumJsonCollectionFormatParser(EdmCollectionType collectionType, EdmDataServices md, String name) {
         super(null);
@@ -93,7 +93,7 @@ public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatPars
     }
 
     /**
-     * Collectionのパース.
+     * Perth of Collection.
      * @param jsr JsonStreamReader
      * @return OCollection
      */
@@ -102,15 +102,15 @@ public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatPars
         OCollection.Builder<OObject> c = newCollectionBuilder();
 
         if (this.returnType.getItemType().isSimple()) {
-            // 配列の型がシンプル型の場合はOSimpleObjectとしてパースする
+            //Parse as OSimpleObject if array type is simple type
             parseCollectionOfSimple(c, jsr);
         } else {
-            // 配列の型がシンプル型でなければ、対応する型のパーサーを取得してComplexObjectとしてパースする
+            //If the type of the array is not a simple type, obtain a parser of the corresponding type and parse it as a ComplexObject
             EdmComplexType ct = getMetadata().findEdmComplexType(
                     this.returnType.getItemType().getFullyQualifiedTypeName());
 
             if (null != ct) {
-                // ComplexTypeが存在する場合は、パースを実施してComplexTypeObjectを取得する
+                //If there is a ComplexType, execute a parse and acquire a ComplexTypeObject
                 Settings s = new Settings(getVersion(), getMetadata(),
                         getEntitySetName(), getEntityKey(), null, false, ct);
                 PersoniumJsonComplexObjectFormatParser cofp = new PersoniumJsonComplexObjectFormatParser(s);
@@ -124,7 +124,7 @@ public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatPars
                 }
 
             } else {
-                // ComplexTypeがスキーマ定義上に存在しなければエラーとする
+                //If ComplexType does not exist on the schema definition, it is regarded as an error
                 throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(propertyName);
             }
 
@@ -135,7 +135,7 @@ public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatPars
     }
 
     /**
-     * シンプル型の配列に対するパース処理.
+     * Parsing for simple type array.
      * @param builder OCollection.Builder
      * @param jsr JsonStreamReader
      */
@@ -181,7 +181,7 @@ public class PersoniumJsonCollectionFormatParser extends PersoniumJsonFormatPars
     }
 
     /**
-     * コレクションビルダーを作成する.
+     * Create a collection builder.
      * @return OCollection.Builder
      */
     protected OCollection.Builder<OObject> newCollectionBuilder() {

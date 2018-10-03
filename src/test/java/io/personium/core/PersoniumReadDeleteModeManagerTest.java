@@ -17,6 +17,8 @@
 package io.personium.core;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,6 @@ import java.util.List;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.PathSegment;
 
-import org.apache.wink.common.internal.PathSegmentImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
@@ -370,7 +371,9 @@ public class PersoniumReadDeleteModeManagerTest {
     private List<PathSegment> getPathSegmentList(String[] pathSegmentList) {
         List<PathSegment> pathSegment = new ArrayList<PathSegment>();
         for (String path : pathSegmentList) {
-            pathSegment.add(new PathSegmentImpl(path));
+            PathSegment pathSegmentMock = mock(PathSegment.class);
+            doReturn(path).when(pathSegmentMock).getPath();
+            pathSegment.add(pathSegmentMock);
         }
         return pathSegment;
     }

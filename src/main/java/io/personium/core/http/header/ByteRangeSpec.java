@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * ByteRangeSpecを管理するための入れ物.
+ * Container for managing ByteRangeSpec.
  */
 public class ByteRangeSpec {
     private long entitySize;
@@ -34,10 +34,10 @@ public class ByteRangeSpec {
     }
 
     /**
-     * byte-range-specをパースして構文上正しければ本オブジェクトを返す. 不正な場合はnullを返す.
-     * @param byteRangeSpecString byte-range-specの文字列
-     * @param entitySize Range対象のファイルサイズ
-     * @return 本オブジェクト
+     * If byte-range-spec is parsed and syntactically correct, this object is returned, and if it is invalid, null is returned.
+     * @param byteRangeSpecString String of byte-range-spec
+     * @param entitySize Range Target file size
+     * @return this object
      */
     static final ByteRangeSpec parse(final String byteRangeSpecString, final long entitySize) {
         String firstBytePosString;
@@ -45,7 +45,7 @@ public class ByteRangeSpec {
         long firstBytePosLong;
         long lastBytePosLong;
 
-        // 開始、終端の取得
+        //Getting start and end
         String regexByteRangeSpec = "^([^-]*)-([^-]*)$";
         Pattern pByteRangeSpec = Pattern.compile(regexByteRangeSpec);
         Matcher mByteRangeSpec = pByteRangeSpec.matcher(byteRangeSpecString);
@@ -55,12 +55,12 @@ public class ByteRangeSpec {
         firstBytePosString = mByteRangeSpec.group(1).trim();
         lastBytePosString = mByteRangeSpec.group(2).trim();
 
-        // 開始、終端両方省略されてる場合は無効
+        //Invalid if both start and end are omitted
         if (firstBytePosString.equals("") && lastBytePosString.equals("")) {
             return null;
         }
         if (lastBytePosString.equals("")) {
-            // 終端が省略されている場合はファイルサイズまでを終端とする
+            //When the termination is omitted, the processing is terminated up to the file size
             lastBytePosLong = entitySize - 1;
         } else {
             try {
@@ -69,7 +69,7 @@ public class ByteRangeSpec {
                 return null;
             }
         }
-        // 開始省略されてて終端の指定があったら（最後-終端）から最後まで
+        //Start omitted If there is a termination designation (last - last) until the end
         if (firstBytePosString.equals("")) {
             firstBytePosLong = entitySize - lastBytePosLong;
             if (firstBytePosLong < 0) {
@@ -77,7 +77,7 @@ public class ByteRangeSpec {
             }
             lastBytePosLong = entitySize - 1;
         } else {
-            // 数値かどうかチェック
+            //Check if it is a number
             try {
                 firstBytePosLong = Long.parseLong(firstBytePosString);
             } catch (NumberFormatException e) {
@@ -85,12 +85,12 @@ public class ByteRangeSpec {
             }
         }
 
-        // Rangeの開始と終端の位置が反転してたらRangeヘッダ無効
+        //If the start and end positions of the Range are reversed, the Range header invalid
         if (firstBytePosLong > lastBytePosLong) {
             return null;
         }
 
-        // 終端がエンティティサイズより大きい場合は、終端の値はエンティティサイズ-1の値
+        //If the termination is greater than the entity size, the terminating value is a value of entity size -1
         if (lastBytePosLong >= entitySize) {
             lastBytePosLong = entitySize - 1;
         }
@@ -99,7 +99,7 @@ public class ByteRangeSpec {
     }
 
     /**
-     * Rangeの開始位置がファイルの範囲内かチェックして範囲内の場合はtrue返す.
+     * Returns true if the starting position of the Range is within the range of the file or checked and is within the range.
      * @return bool
      */
     public boolean isInEntitySize() {
@@ -126,7 +126,7 @@ public class ByteRangeSpec {
     }
 
     /**
-     * Rangeの指定を考慮したContentLengthの返却.
+     * Returning ContentLength considering specification of Range.
      * @return long contentLength
      */
     public long getContentLength() {
@@ -134,11 +134,11 @@ public class ByteRangeSpec {
     }
 
     /**
-     * Rangeの値をContent-Rangeヘッダの値に整形.
-     * @return Content-Rangeヘッダの値
+     * Format the value of Range to the value of Content - Range header.
+     * @return Value of the Content-Range header
      */
     public String makeContentRangeHeaderField() {
-        // Content-Rangeヘッダのフォーマットで返す
+        //Return in the format of Content - Range header
         return String.format("bytes %s-%s/%s", this.getFirstBytePos(), this.getLastBytePos(), this.entitySize);
     }
 }

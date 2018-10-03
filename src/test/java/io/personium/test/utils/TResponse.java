@@ -33,7 +33,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.wink.common.internal.MultivaluedMapImpl;
+import org.glassfish.jersey.internal.util.collection.MultivaluedStringMap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -52,7 +52,7 @@ public final class TResponse {
     private static Logger log = LoggerFactory.getLogger(TResponse.class);
 
     int statusCode;
-    MultivaluedMap<String, String> headers = new MultivaluedMapImpl<String, String>();
+    MultivaluedMap<String, String> headers = new MultivaluedStringMap();
 
     StringWriter bodyWriter = new StringWriter();
 

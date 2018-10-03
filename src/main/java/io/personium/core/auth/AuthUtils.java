@@ -39,22 +39,22 @@ import io.personium.plugin.base.auth.AuthConst;
 import io.personium.plugin.base.auth.AuthPlugin;
 
 /**
- * 認証関連のユーティリティ.
+ * Authentication related utilities.
  */
 public final class AuthUtils {
     private static final String MD_ALGORITHM = "SHA-256";
-    /** パスワード最小長. */
+    /** Password minimum length.*/
     private static final int MIN_PASSWORD_LENGTH = 6;
-    /** パスワード最大長. */
+    /** Password maximum length.*/
     private static final int MAX_PASSWORD_LENGTH = 32;
 
     private AuthUtils() {
     }
 
     /**
-     * パスワード文字列のHash文字列化を行う.
-     * @param passwd 生パスワード文字列
-     * @return ハッシュされたパスワード文字列
+     * Hash string of password string.
+     * @param passwd raw password string
+     * @return hashed password string
      */
     public static String hashPassword(final String passwd) {
         if (passwd == null) {
@@ -67,7 +67,7 @@ public final class AuthUtils {
         try {
             MessageDigest md = MessageDigest.getInstance(MD_ALGORITHM);
             byte[] digestBytes = md.digest(str2hash.getBytes(CharEncoding.UTF_8));
-            // そちらのほうがデータ効率は良いが、DC0との互換性のためにこの実装としている。
+            //Although its data efficiency is better, this implementation is made for compatibility with DC 0.
             return PersoniumCoreUtils.byteArray2HexString(digestBytes);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);

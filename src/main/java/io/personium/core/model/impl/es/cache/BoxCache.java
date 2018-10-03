@@ -30,7 +30,7 @@ import io.personium.core.utils.MemcachedClient;
 import io.personium.core.utils.MemcachedClient.MemcachedClientException;
 
 /**
- * Boxのキャッシュを扱うクラス.
+ * Class handling Box caching.
  */
 public class BoxCache {
     static Logger log = LoggerFactory.getLogger(BoxCache.class);
@@ -44,10 +44,10 @@ public class BoxCache {
     }
 
     /**
-     * Box情報をキャッシュから取得し、Boxオブジェクトを返す.
-     * @param boxName Box名
-     * @param cell Cellオブジェクト
-     * @return Boxオブジェクト。キャッシュに存在しない場合はnull
+     * Get Box information from cache and return Box object.
+     * @param boxName Box name
+     * @param cell Cell object
+     * @return Box object. It is null if it does not exist in the cache
      */
     public static Box get(String boxName, Cell cell) {
         if (!PersoniumUnitConfig.isBoxCacheEnabled()) {
@@ -59,7 +59,7 @@ public class BoxCache {
         try {
             obj = getMcdClient().get(cacheKey(boxName, cell), HashMap.class);
         } catch (MemcachedClientException e) {
-            // キャッシュのアクセスに失敗した場合は、DBからデータを取得させるためnullを返却
+            //If cache access fails, return null to get data from DB
             log.info("Failed to get BoxCache.");
         }
         if (obj == null) {
@@ -74,8 +74,8 @@ public class BoxCache {
     }
 
     /**
-     * Boxをキャッシュする.
-     * @param box Boxオブジェクト
+     * Cache Box.
+     * @param box Box object
      */
     public static void cache(Box box) {
         if (!PersoniumUnitConfig.isBoxCacheEnabled()) {
@@ -93,9 +93,9 @@ public class BoxCache {
     }
 
     /**
-     * 指定したBox名のキャッシュ情報を削除する.
-     * @param boxName Box名
-     * @param cell Cellオブジェクト
+     * Delete the cache information of the specified Box name.
+     * @param boxName Box name
+     * @param cell Cell object
      */
     public static void clear(String boxName, Cell cell) {
         if (!PersoniumUnitConfig.isBoxCacheEnabled()) {

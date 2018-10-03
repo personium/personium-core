@@ -46,7 +46,6 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
-import org.apache.wink.webdav.WebDAVMethod.PROPFIND;
 import org.apache.wink.webdav.model.Creationdate;
 import org.apache.wink.webdav.model.Getcontentlength;
 import org.apache.wink.webdav.model.Getcontenttype;
@@ -60,6 +59,7 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.annotations.PROPFIND;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
@@ -71,13 +71,13 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- * イベントログ用JAX-RS Resource.
+ * JAX-RS Resource for event log.
  */
 public class LogResource {
 
-    /** archiveコレクション名. */
+    /** archive Collection name.*/
     public static final String ARCHIVE_COLLECTION = "archive";
-    /** currentコレクション名. */
+    /** current Collection name.*/
     public static final String CURRENT_COLLECTION = "current";
 
     private static final String DEFAULT_LOG = "default.log";
@@ -101,23 +101,23 @@ public class LogResource {
     }
 
     /**
-     * カレントのイベントログファイルの一覧を取得する.
+     * Get the list of the current event log files.
      * @return JAX-RS Response Object
      */
     @Path(CURRENT_COLLECTION)
     @PROPFIND
     public final Response currentPropfind() {
-        // 現状はカレントログの一覧取得は未実装のため、501を返却する
+        //Since current list acquisition of current log is not implemented yet, return 501
         throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
     }
 
     /**
-     * アーカイブのイベントログファイルの一覧を取得する.
+     * Obtain a list of archive event log files.
      * @param requestBodyXml Request Body
-     * @param uriInfo リクエストURL情報
-     * @param contentLength contentlengthヘッダの内容
-     * @param transferEncoding Transfer-Encodingヘッダの内容
-     * @param depth Depthヘッダの内容
+     * @param uriInfo request URL information
+     * @param contentLength contentlength Content of header
+     * @param transferEncoding Contents of Transfer-Encoding header
+     * @param depth Depth header content
      * @return JAX-RS Response Object
      */
     @Path(ARCHIVE_COLLECTION)
@@ -129,11 +129,11 @@ public class LogResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.DEPTH) final String depth
             ) {
 
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG_READ);
 
-        // Depthヘッダの有効な値は 0, 1
-        // infinityの場合はサポートしないので403で返す
+        //Valid values ​​of Depth header are 0, 1
+        //Since it does not support when infinity, return it with 403
         if ("infinity".equals(depth)) {
             throw PersoniumCoreException.Dav.PROPFIND_FINITE_DEPTH;
         } else if (depth == null) {
@@ -142,8 +142,8 @@ public class LogResource {
             throw PersoniumCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
         }
 
-        // リクエストボディをパースして pfオブジェクトを作成する
-        // ボディが空の場合はallpropが設定されたのと同じ処理をする
+        //Parse the request body and create a pf object
+        //If the body is empty, do the same processing as setting allprop
         Propfind propfind = null;
         if (ResourceUtils.hasApparentlyRequestBody(contentLength, transferEncoding)) {
             BufferedReader br = null;
@@ -158,11 +158,11 @@ public class LogResource {
             throw PersoniumCoreException.Dav.XML_CONTENT_ERROR;
         }
 
-        // archiveコレクションと配下のファイルの情報を収集する
+        //Collect information on the archive collection and files under it
         ArchiveLogCollection archiveLogCollection = new ArchiveLogCollection(this.cell, uriInfo);
         archiveLogCollection.createFileInformation();
 
-        // レスポンス生成
+        //Response generation
         final Multistatus multiStatus = createMultiStatus(depth, archiveLogCollection);
         StreamingOutput str = new StreamingOutput() {
             @Override
@@ -179,7 +179,7 @@ public class LogResource {
         final Multistatus multiStatus = of.createMultistatus();
         List<org.apache.wink.webdav.model.Response> responseList = multiStatus.getResponse();
 
-        // Archiveコレクションの情報をレスポンスに追加する
+        //Add information on the Archive collection to the response
         org.apache.wink.webdav.model.Response collectionResponse =
                 this.createPropfindResponse(
                         archiveLogCollection.getCreated(),
@@ -188,7 +188,7 @@ public class LogResource {
                         null);
         responseList.add(collectionResponse);
 
-        // Depthが1の場合は、ログファイルの情報をレスポンスに追加する
+        //When Depth is 1, information of the log file is added to the response
         if ("1".equals(depth)) {
             for (ArchiveLogFile archiveFile : archiveLogCollection.getArchivefileList()) {
                 org.apache.wink.webdav.model.Response fileResponse =
@@ -205,42 +205,42 @@ public class LogResource {
     }
 
     /**
-     * PROPFINDのレスポンスを作成する.
+     * Create a response of PROPFIND.
      */
     org.apache.wink.webdav.model.Response createPropfindResponse(long created, long updated, String href, Long size) {
-        // hrefを追加
+        //Add href
         ObjectFactory of = new ObjectFactory();
         org.apache.wink.webdav.model.Response ret = of.createResponse();
         ret.getHref().add(href);
 
-        // creationdateを追加
+        //Add creationdate
         Creationdate cd = of.createCreationdate();
         cd.setValue(new Date(created));
         ret.setPropertyOk(cd);
 
-        // getlastmodifiedを追加
+        //Added getlastmodified
         Getlastmodified lm = of.createGetlastmodified();
         lm.setValue(new Date(updated));
         ret.setPropertyOk(lm);
 
         if (size != null) {
-            // ログファイルの場合
-            // getcontentlengthを追加
+            //For log files
+            //Add getcontentlength
             Getcontentlength contentLength = of.createGetcontentlength();
             contentLength.setValue(String.valueOf(size));
             ret.setPropertyOk(contentLength);
 
-            // getcontenttypeは"text/csv"固定で追加
+            //getcontenttype added with "text / csv" fixed
             Getcontenttype contentType = of.createGetcontenttype();
             contentType.setValue(EventUtils.TEXT_CSV);
             ret.setPropertyOk(contentType);
 
-            // 空のresourcetypeを追加
+            //Add empty resourcetype
             Resourcetype colRt = of.createResourcetype();
             ret.setPropertyOk(colRt);
         } else {
-            // ログコレクションの場合
-            // resourcetypeはWebDavコレクション固定で追加
+            //For log collection
+            //resourcetype added with fixed WebDav collection
             Resourcetype colRt = of.createResourcetype();
             colRt.setCollection(of.createCollection());
             ret.setPropertyOk(colRt);
@@ -250,9 +250,9 @@ public class LogResource {
     }
 
     /**
-     * イベントログファイルを取得する.
-     * @param ifNoneMatch If-None-Matchヘッダ
-     * @param logCollection Collection名
+     * Get event log file.
+     * @param ifNoneMatch If-None-Match header
+     * @param logCollection Collection name
      * @param fileName fileName
      * @return JAXRS Response
      */
@@ -262,15 +262,15 @@ public class LogResource {
             @PathParam("logCollection") final String logCollection,
             @PathParam("filename") final String fileName) {
 
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG_READ);
 
-        // イベントログのCollection名のチェック
+        //Check the collection name of the event log
         if (!isValidLogCollection(logCollection)) {
             throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(logCollection);
         }
 
-        // ファイル名がdefault.log以外の場合は404を返却
+        //If the file name is other than default.log, return 404
         if (!isValidLogFile(logCollection, fileName)) {
             throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(fileName);
         }
@@ -278,7 +278,7 @@ public class LogResource {
         String cellId = davRsCmp.getCell().getId();
         String owner = davRsCmp.getCell().getOwner();
 
-        // ログファイルのパスを取得
+        //Get the path of the log file
         StringBuilder logFileName = EventUtils.getEventLogDir(cellId, owner);
         logFileName.append(logCollection);
         logFileName.append(File.separator);
@@ -290,7 +290,7 @@ public class LogResource {
         if (CURRENT_COLLECTION.equals(logCollection)) {
             File logFile = new File(logFileName);
             if (!logFile.isFile() || !logFile.canRead()) {
-                // 何らかの理由でログが読み込めない場合でも、レスポンスボディが空で、SC_OKを返す。
+                //Even if the log can not be read for some reason, the response body is empty and SC_OK is returned.
                 return getEmptyResponse();
             }
             try {
@@ -310,8 +310,8 @@ public class LogResource {
                         new FileInputStream(archiveLogFileName));
                 bis = new BufferedInputStream(zipArchiveInputStream);
 
-                // ファイル内のentryを取り出す
-                // 圧縮ログファイル内には1ファイルのみ格納されていることを前提としている
+                //Retrieve the entry in the file
+                //It is assumed that only one file is stored in the compression log file
                 ZipArchiveEntry nextZipEntry = zipArchiveInputStream.getNextZipEntry();
                 if (nextZipEntry == null) {
                     IOUtils.closeQuietly(bis);
@@ -319,7 +319,7 @@ public class LogResource {
                 }
                 return createResponse(bis);
             } catch (FileNotFoundException e1) {
-                // 圧縮ファイルが存在しない場合は404エラーを返却
+                //If compressed file does not exist, return 404 error
                 String[] split = archiveLogFileName.split(File.separator);
                 throw PersoniumCoreException.Dav.RESOURCE_NOT_FOUND.params(split[split.length - 1]);
             } catch (IOException e) {
@@ -330,7 +330,7 @@ public class LogResource {
     }
 
     private Response createResponse(final InputStream isInvariable) {
-        // ステータスコードを追加
+        //Add status code
         ResponseBuilder res = Response.status(HttpStatus.SC_OK);
         res.header(HttpHeaders.CONTENT_TYPE, EventUtils.TEXT_CSV);
         res.entity(isInvariable);
@@ -338,11 +338,11 @@ public class LogResource {
     }
 
     /**
-     * イベントログが存在しない場合に返却する空レスポンスを取得する.
-     * @return 空レスポンス
+     * Acquire an empty response to be returned when there is no event log.
+     * @return empty response
      */
     private Response getEmptyResponse() {
-        // レスポンスの返却
+        //Returning the response
         ResponseBuilder res = Response.status(HttpStatus.SC_OK);
         res.header(HttpHeaders.CONTENT_TYPE, EventUtils.TEXT_CSV);
 
@@ -352,8 +352,8 @@ public class LogResource {
     }
 
     /**
-     * ログファイル削除.
-     * @return レスポンス
+     * Delete log file.
+     * @return response
      */
     @Path("{logCollection}/{filename}")
     @WriteAPI
@@ -363,9 +363,9 @@ public class LogResource {
     }
 
     /**
-     * イベントログのCollection名チェック.
-     * @param collectionName Collection名 ( "current" or "archive" )
-     * @return true: 正しい、false: 誤り
+     * Collection name check of event log.
+     * @param collectionName Collection name ("current" or "archive")
+     * @return true: correct, false: error
      */
     protected boolean isValidLogCollection(String collectionName) {
         return CURRENT_COLLECTION.equals(collectionName)
@@ -373,19 +373,19 @@ public class LogResource {
     }
 
     /**
-     * イベントログのファイル名チェック.
+     * File name check of event log.
      * <ul>
-     * <li>current: "default.log" 固定
-     * <li>archive: "default.log." で始まるファイル名（実際にファイルがなければ404だが、ここではファイル名チェックのみ)
+     * <li> current: "default.log" fixed
+     * <li> archive: File name starting with "default.log." (404 if there is no actual file, but here only the file name check)
      * </ul>
-     * @param collectionName Collection名 ( "current" or "archive" )
-     * @param fileName ファイル名 ( "default.log" or "default.log.*" )
-     * @return true: 正しい、false: 誤り
+     * @param collectionName Collection name ("current" or "archive")
+     * @param fileName File name ("default.log" or "default.log. *")
+     * @return true: correct, false: error
      */
     protected boolean isValidLogFile(String collectionName, String fileName) {
         if (CURRENT_COLLECTION.equals(collectionName)) {
             return DEFAULT_LOG.equals(fileName);
-        } else { // コレクション名の例外は除外済み
+        } else { //Collection name exceptions excluded
             return fileName != null && fileName.startsWith(DEFAULT_LOG + ".");
         }
     }

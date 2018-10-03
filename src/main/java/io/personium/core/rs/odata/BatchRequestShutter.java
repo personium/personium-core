@@ -21,23 +21,23 @@ import javax.ws.rs.HttpMethod;
 import io.personium.core.PersoniumCoreException;
 
 /**
- * Batchリクエスト中にToo Many Concurrentが発生後の実行/スキップを制御するクラス.
+ * Class that controls execution / skipping after Too Many Concurrent occurs during Batch request.
  */
 public class BatchRequestShutter {
 
     private boolean shuttered = false;
 
     /**
-     * Too Many Concurrent発生後の場合true, それ以外はfalse.
-     * @return Too Many Concurrent発生後の場合true, それ以外はfalse
+     * Too Many Conflict True if occurred, false otherwise.
+     * @return Too Many Conflict true, false otherwise
      */
     public boolean isShuttered() {
         return shuttered;
     }
 
     /**
-     * Batchリクエスト中にToo Many Concurrentが発生したかどうかのステータスを更新する.
-     * @param e 発生した例外
+     * Update status of whether Too Many Concurrent occurred during Batch request.
+     * @param e Exception raised
      */
     public void updateStatus(Exception e) {
         if (PersoniumCoreException.Misc.TOO_MANY_CONCURRENT_REQUESTS.equals(e)) {
@@ -46,10 +46,10 @@ public class BatchRequestShutter {
     }
 
     /**
-     * Batch内の個々のリクエスを実行してよいかを判定する. <br />
-     * Batchリクエスト中ですでにToo Many Concurrentが発生し、かつ、更新系メソッドの場合は実行不可とする.
-     * @param httpMethod メソッド名
-     * @return true: 実行可能, false: 実行不可
+     * Determine if you can execute individual requests in Batch <br />
+     * If Too Many Concurrent has already occurred in the Batch request and it is an update method it is not possible to execute it.
+     * @param httpMethod method name
+     * @return true: executable, false: not executable
      */
     public boolean accept(String httpMethod) {
         if (!isShuttered()) {

@@ -21,13 +21,13 @@ import java.io.Reader;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.Response;
 
-import org.apache.wink.webdav.WebDAVMethod.PROPFIND;
-import org.apache.wink.webdav.WebDAVMethod.PROPPATCH;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.annotations.PROPFIND;
+import io.personium.core.annotations.PROPPATCH;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
@@ -38,7 +38,7 @@ import io.personium.core.model.DavRsCmp;
 import io.personium.core.utils.ResourceUtils;
 
 /**
- * イベントバス用JAX-RS Resource.
+ * JAX-RS Resource for event bus.
  */
 public class EventResource {
     Cell cell;
@@ -60,17 +60,17 @@ public class EventResource {
     }
 
     /**
-     * イベントの受付.
-     * @param reader リクエストボディ
+     * Reception of events.
+     * @param reader request body
      * @return JAXRS Response
      */
     @WriteAPI
     @POST
     public final Response receiveEvent(final Reader reader) {
-        // アクセス制御
+        //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.EVENT);
 
-        // リクエストボディを解析してEventオブジェクトを取得する
+        //Analyze the request body and obtain the Event object
         PersoniumEvent event = getRequestBody(reader);
         validateEventProperties(event);
 
@@ -78,38 +78,38 @@ public class EventResource {
         EventBus eventBus = this.cell.getEventBus();
         eventBus.post(event);
 
-        // レスポンス返却
+        //Response return
         return Response.ok().build();
     }
 
     /**
-     * ログ設定更新.
-     * @return レスポンス
+     * Log setting update.
+     * @return response
      */
     @WriteAPI
     @PROPPATCH
     public final Response updateLogSettings() {
-        // TODO アクセス制御
+        //TODO access control
         // this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG);
         throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
     }
 
     /**
-     * ログ設定取得.
-     * @return レスポンス
+     * Acquire log setting.
+     * @return response
      */
     @PROPFIND
     public final Response getLogSettings() {
-        // TODO アクセス制御
+        //TODO access control
         // this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.LOG_READ);
         throw PersoniumCoreException.Misc.METHOD_NOT_IMPLEMENTED;
     }
 
     /**
-     * リクエストボディを解析してEventオブジェクトを取得する.
-     * @param reader Http入力ストリーム
+     * Analyze the request body and obtain the Event object.
+     * @param reader Http input stream
      * @param requestKey
-     * @return 解析したEventオブジェクト
+     * @return Analyzed Event object
      */
     private PersoniumEvent getRequestBody(final Reader reader) {
         JSONObject body;
@@ -150,8 +150,8 @@ public class EventResource {
     }
 
     /**
-     * Event内の各プロパティ値をバリデートする.
-     * @param event Eventオブジェクト
+     * Validate each property value in Event.
+     * @param event Event object
      */
     private void validateEventProperties(final PersoniumEvent event) {
         String type = event.getType();
