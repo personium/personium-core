@@ -882,6 +882,10 @@ public class PersoniumCoreException extends RuntimeException {
          */
         public static final PersoniumCoreException NOT_FOUND_IN_SNAPSHOT = create("PR400-MC-0001");
         /**
+         * Path based CellUrl access is not allowed.
+         */
+        public static final PersoniumCoreException PATH_BASED_ACCESS_NOT_ALLOWED = create("PR400-MC-0002");
+        /**
          * Unexpected URI.
          */
         public static final PersoniumCoreException NOT_FOUND = create("PR404-MC-0001");

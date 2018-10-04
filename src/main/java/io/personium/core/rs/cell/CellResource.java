@@ -59,7 +59,6 @@ import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
-import io.personium.core.model.ctl.Common;
 import io.personium.core.model.lock.UnitUserLockManager;
 import io.personium.core.rs.box.BoxResource;
 import io.personium.core.utils.ResourceUtils;
@@ -70,10 +69,6 @@ import io.personium.core.utils.ResourceUtils;
  */
 public class CellResource {
     static Logger log = LoggerFactory.getLogger(CellResource.class);
-
-    /** Media-Type:personium metadata. */
-    private static final MediaType MEDIATYPE_PERSONIUM_METADATA = MediaType.valueOf(
-            PersoniumCoreUtils.ContentType.METADATA);
 
     Cell cell;
     CellCmp cellCmp;
@@ -142,18 +137,11 @@ public class CellResource {
         }
     }
 
-    /*
-     * static private Cache cache = CacheManager.getInstance().getCache("box-cache"); static {
-     * cache.addPropertyChangeListener(new PropertyChangeListener() {
-     * @Override public void propertyChange(PropertyChangeEvent arg0) {
-     * System.out.println(arg0.toString()); } }); }
-     */
     /**
      * handler for GET Method.
      * @param httpHeaders Request headers
      * @return JAX-RS Response Object
      */
-    @SuppressWarnings("unchecked")
     @GET
     public Response get(@Context HttpHeaders httpHeaders) {
         if (httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_JSON_TYPE)) {

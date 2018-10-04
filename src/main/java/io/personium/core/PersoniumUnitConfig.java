@@ -72,6 +72,9 @@ public class PersoniumUnitConfig {
     /** Path key for UnitUrl. */
     public static final String UNIT_PATH = KEY_ROOT + "unitPath";
 
+    /** URL format to access cell (true: path based(default) false: per cell fqdn). */
+    public static final String PATH_BASED_CELL_URL_ENABLED = KEY_ROOT + "pathBasedCellUrl.enabled";
+
     /** Plugin path setting key.*/
     public static final String PLUGIN_PATH = KEY_ROOT + "plugin.path";
 
@@ -669,6 +672,14 @@ public class PersoniumUnitConfig {
      */
     public static String getUnitPath() {
         return get(UNIT_PATH);
+    }
+
+    /**
+     * URL format to access cell.
+     * @return true: path based. false: per cell fqdn.
+     */
+    public static boolean isPathBasedCellUrlEnabled() {
+        return Boolean.parseBoolean(get(PATH_BASED_CELL_URL_ENABLED));
     }
 
     /**

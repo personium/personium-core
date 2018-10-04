@@ -246,16 +246,20 @@ public class CellEsImpl implements Cell {
      */
     @Override
     public String getUrl() {
-        return this.url;
+        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
+            return this.url;
+        } else {
+            return getFqdnBaseUrl();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getCellBaseUrl() {
+    public String getFqdnBaseUrl() {
         try {
-            return UriUtils.convertDomainBaseToCellBase(url);
+            return UriUtils.convertPathBaseToFqdnBase(url);
         } catch (URISyntaxException e) {
             // Usually it does not occur.
             throw PersoniumCoreException.Server.UNKNOWN_ERROR;

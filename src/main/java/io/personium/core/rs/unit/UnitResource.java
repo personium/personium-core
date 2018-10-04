@@ -30,6 +30,7 @@ import org.apache.commons.codec.CharEncoding;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.Cell;
 import io.personium.core.model.ModelFactory;
@@ -53,8 +54,6 @@ public class UnitResource {
     private String headerHost;
     /** Header : X-Personium-UnitUser. */
     private String headerPersoniumUnitUser;
-//    /** Request uri host. */
-//    private String requestURIHost;
     /** UriInfo. */
     private UriInfo uriInfo;
     /** Request uri base. */
@@ -68,7 +67,6 @@ public class UnitResource {
      * @param headerHost Header : Host
      * @param headerPersoniumUnitUser Header : X-Personium-UnitUser
      * @param uriInfo UriInfo
-     * @param requestBaseUri Request uri base
      */
     public UnitResource(String cookieAuthValue, String cookiePeer, String headerAuthz, String headerHost,
             String headerPersoniumUnitUser, UriInfo uriInfo) {
@@ -77,7 +75,6 @@ public class UnitResource {
         this.headerAuthz = headerAuthz;
         this.headerHost = headerHost;
         this.headerPersoniumUnitUser = headerPersoniumUnitUser;
-//        this.requestURIHost = requestURIHost;
         this.uriInfo = uriInfo;
         this.requestBaseUri = uriInfo.getBaseUri().toString();
     }
@@ -99,6 +96,11 @@ public class UnitResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VIA) final String xPersoniumVia,
             @Context HttpServletRequest httpServletRequest,
             @PathParam("cellName") String cellName) {
+
+        if (!PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
+            throw PersoniumCoreException.Misc.PATH_BASED_ACCESS_NOT_ALLOWED;
+        }
+
         Cell cell = ModelFactory.cellFromName(cellName);
         AccessContext ac = AccessContext.create(headerAuthz,
                 uriInfo, cookiePeer, cookieAuthValue, cell, requestBaseUri,

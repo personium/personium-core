@@ -131,12 +131,18 @@ public class FacadeResource {
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VIA) final String headerPersoniumVia,
             @Context final UriInfo uriInfo,
             @Context HttpServletRequest httpServletRequest) {
-        String accessUrl = uriInfo.getBaseUri().toString();
-        String configUrl = PersoniumUnitConfig.getBaseUrl();
-        if (!accessUrl.contains(".")) {
+
+        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
             return new UnitResource(cookieAuthValue, cookiePeer, headerAuthz, headerHost,
                     headerPersoniumUnitUser, uriInfo);
         }
+
+        String accessUrl = uriInfo.getBaseUri().toString();
+        String configUrl = PersoniumUnitConfig.getBaseUrl();
+//        if (!accessUrl.contains(".")) {
+//            return new UnitResource(cookieAuthValue, cookiePeer, headerAuthz, headerHost,
+//                    headerPersoniumUnitUser, uriInfo);
+//        }
         // {CellName}.{FQDN}アクセスの場合のみCellResourceに処理を渡す
 //        String requestURIHost = uriInfo.getBaseUri().getHost();
         String cellName = headerHost.split("\\.")[0];

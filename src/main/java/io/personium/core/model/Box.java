@@ -224,6 +224,6 @@ public class Box {
      * @return cell base box url
      */
     public String getCellBaseUrl() {
-        return getCell().getCellBaseUrl() + getName() + "/";
+        return getCell().getFqdnBaseUrl() + getName() + "/";
     }
 }

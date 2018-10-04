@@ -65,7 +65,6 @@ import io.personium.core.model.BoxRsCmp;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellRsCmp;
 import io.personium.core.model.ModelFactory;
-import io.personium.core.model.ctl.Common;
 import io.personium.core.model.progress.Progress;
 import io.personium.core.model.progress.ProgressManager;
 import io.personium.core.rs.cell.CellCtlResource;
@@ -79,9 +78,6 @@ import io.personium.core.utils.UriUtils;
 public class BoxResource {
     static Logger log = LoggerFactory.getLogger(BoxResource.class);
 
-    /** Media-Type:personium metadata. */
-    private static final MediaType MEDIATYPE_PERSONIUM_METADATA = MediaType.valueOf(
-            PersoniumCoreUtils.ContentType.METADATA);
     /** Media-Type:personium bar file. */
     private static final MediaType MEDIATYPE_PERSONIUM_BAR = MediaType.valueOf(BarFile.CONTENT_TYPE);
 
@@ -170,21 +166,9 @@ public class BoxResource {
      * @param httpHeaders Headers
      * @return JAX-RS Response
      */
-    @SuppressWarnings("unchecked")
     @GET
     public Response get(@Context HttpHeaders httpHeaders) {
-        if (httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_METADATA)) {
-            JSONObject responseJson = new JSONObject();
-            JSONObject cellMetadataJson = new JSONObject();
-            JSONObject boxMetadataJson = new JSONObject();
-            cellMetadataJson.put(Common.P_NAME.getName(), cell.getName());
-            cellMetadataJson.put(Common.P_URL, cell.getCellBaseUrl());
-            boxMetadataJson.put(Common.P_NAME.getName(), box.getName());
-            boxMetadataJson.put(Common.P_URL, box.getCellBaseUrl());
-            responseJson.put(Cell.EDM_TYPE_NAME, cellMetadataJson);
-            responseJson.put(Box.EDM_TYPE_NAME, boxMetadataJson);
-            return Response.ok().entity(responseJson.toJSONString()).build();
-        } else if (httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_BAR)) {
+        if (httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_BAR)) {
             return getBarFile();
         } else {
             return getMetadata();

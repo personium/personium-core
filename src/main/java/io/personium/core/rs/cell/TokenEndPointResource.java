@@ -422,7 +422,7 @@ public class TokenEndPointResource {
         // Confirm that Issuer is equal to ID
         String normalizedClientId;
         try {
-            normalizedClientId = UriUtils.convertCellBaseToDomainBase(targetClientId);
+            normalizedClientId = UriUtils.convertFqdnBaseToPathBase(targetClientId);
         } catch (URISyntaxException e) {
             throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cell.getUrl());
         }
@@ -433,7 +433,7 @@ public class TokenEndPointResource {
         // If the target of the token is not yourself, an error response
         String normalizedTarget;
         try {
-            normalizedTarget = UriUtils.convertCellBaseToDomainBase(tcToken.getTarget());
+            normalizedTarget = UriUtils.convertFqdnBaseToPathBase(tcToken.getTarget());
         } catch (URISyntaxException e) {
             throw PersoniumCoreAuthnException.CLIENT_SECRET_TARGET_WRONG.realm(cell.getUrl());
         }

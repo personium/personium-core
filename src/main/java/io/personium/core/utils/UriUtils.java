@@ -28,6 +28,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 
@@ -238,7 +240,7 @@ public class UriUtils {
      * @return Converted url
      * @throws URISyntaxException Source url is not URI
      */
-    public static String convertCellBaseToDomainBase(String sourceUrl) throws URISyntaxException {
+    public static String convertFqdnBaseToPathBase(String sourceUrl) throws URISyntaxException {
         String convertedUrl = sourceUrl;
         URI uri = new URI(sourceUrl);
         String configFqdn = PersoniumCoreUtils.getFQDN();
@@ -253,10 +255,12 @@ public class UriUtils {
 
         UriBuilder uriBuilder = UriBuilder.fromUri(uri);
         uriBuilder.host(configFqdn);
-        uriBuilder.path(pathBuilder.toString());
+        uriBuilder.replacePath(pathBuilder.toString());
         convertedUrl = uriBuilder.build().toString();
         return convertedUrl;
     }
+
+    static Logger log = LoggerFactory.getLogger(UriUtils.class);
 
     /**
      * "https://{domain}/{cellname}/..." to "https://{cellname}.{domain}/...".
@@ -264,7 +268,7 @@ public class UriUtils {
      * @return Converted url
      * @throws URISyntaxException Source url is not URI
      */
-    public static String convertDomainBaseToCellBase(String sourceUrl) throws URISyntaxException {
+    public static String convertPathBaseToFqdnBase(String sourceUrl) throws URISyntaxException {
         String convertedUrl = sourceUrl;
         URI uri = new URI(sourceUrl);
         String configFqdn = PersoniumCoreUtils.getFQDN();
@@ -282,7 +286,7 @@ public class UriUtils {
 
         UriBuilder uriBuilder = UriBuilder.fromUri(uri);
         uriBuilder.host(hostBuilder.toString());
-        uriBuilder.path(path);
+        uriBuilder.replacePath(path);
         convertedUrl = uriBuilder.build().toString();
         return convertedUrl;
     }

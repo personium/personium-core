@@ -167,7 +167,7 @@ public class AccessContext {
      * @param pCookieAuthValue Value specified for p_cookie in cookie
      * @param cell Accessing Cell
      * @param baseUri accessing baseUri
-     * @param host The value of Host in the request header
+     * @param headerHost The value of Host in the request header
      * @param xPersoniumUnitUser X-Personium-UnitUser header
      * @return Generated AccessContext object
      */
