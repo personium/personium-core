@@ -95,16 +95,16 @@ public class Setup extends AbstractCase {
     public static final String TEST_CELL_SCHEMA2 = "schema2";
 
     /** EventLog用テストセルの名前. */
-    public static final String TEST_CELL_EVENTLOG = "eventLogTestCell";
+    public static final String TEST_CELL_EVENTLOG = "eventlogtestcell";
 
     /** Basic認証用のテストセルの名前. */
-    public static final String TEST_CELL_BASIC = "basicTestSetupCell";
+    public static final String TEST_CELL_BASIC = "basictestsetupcell";
 
     /** OpenID Connect認証用のテストセルの名前. */
-    public static final String TEST_CELL_OIDC = "OidcTestSetupCell";
+    public static final String TEST_CELL_OIDC = "oidctestsetupcell";
 
     /** $filterテスト用セル名. */
-    public static final String TEST_CELL_FILTER = "filterTypeValidateTest";
+    public static final String TEST_CELL_FILTER = "filtertypevalidatetest";
 
     /** テストセル１>テストボックス１の名前. */
     public static final String TEST_BOX1 = "box1";
