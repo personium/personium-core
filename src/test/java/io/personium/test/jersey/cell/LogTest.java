@@ -150,7 +150,7 @@ public class LogTest extends ODataCommon {
     public final void デフォルトログが存在しないときにファイルに対するGETで200が返却されること() {
         try {
             // Cell作成
-            CellUtils.create("TestCellForLogNotFound", MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+            CellUtils.create("testcellforlognotfound", MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
 
             TResponse response = Http.request("cell/log-get.txt")
                     .with("METHOD", HttpMethod.GET)
@@ -167,7 +167,7 @@ public class LogTest extends ODataCommon {
             assertEquals(0, responseBody.length());
         } finally {
             // Cell削除
-            CellUtils.delete(MASTER_TOKEN_NAME, "TestCellForLogNotFound");
+            CellUtils.delete(MASTER_TOKEN_NAME, "testcellforlognotfound");
         }
 
     }

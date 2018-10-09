@@ -186,7 +186,7 @@ public class BoxUrlTest extends ODataCommon {
             HashMap<String, String> requestheaders = new HashMap<String, String>();
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
-            res = rest.del(UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
+            res = rest.del(UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxurltestschema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_METHOD_NOT_ALLOWED, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreException.Misc.METHOD_NOT_ALLOWED;
@@ -251,7 +251,7 @@ public class BoxUrlTest extends ODataCommon {
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
 
             res = rest.getAcceptEncodingGzip(
-                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
+                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxurltestschema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
@@ -308,7 +308,7 @@ public class BoxUrlTest extends ODataCommon {
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
             res = rest.getAcceptEncodingGzip(
-                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
+                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxurltestschema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
@@ -347,7 +347,7 @@ public class BoxUrlTest extends ODataCommon {
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
             res = rest.getAcceptEncodingGzip(
-                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
+                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxurltestschema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
@@ -386,7 +386,7 @@ public class BoxUrlTest extends ODataCommon {
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
             res = rest.getAcceptEncodingGzip(
-                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
+                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxurltestschema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
@@ -423,7 +423,7 @@ public class BoxUrlTest extends ODataCommon {
             HashMap<String, String> requestheaders = new HashMap<String, String>();
 
             res = rest.getAcceptEncodingGzip(
-                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
+                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxurltestschema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
@@ -470,7 +470,7 @@ public class BoxUrlTest extends ODataCommon {
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
             res = rest.getAcceptEncodingGzip(
-                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
+                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxurltestschema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
@@ -517,7 +517,7 @@ public class BoxUrlTest extends ODataCommon {
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
             res = rest.getAcceptEncodingGzip(
-                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
+                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxurltestschema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
@@ -555,7 +555,7 @@ public class BoxUrlTest extends ODataCommon {
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer test");
 
             res = rest.getAcceptEncodingGzip(
-                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
+                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxurltestschema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
@@ -593,7 +593,7 @@ public class BoxUrlTest extends ODataCommon {
             requestheaders.put(HttpHeaders.AUTHORIZATION, "Bearer test");
 
             res = rest.getAcceptEncodingGzip(
-                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxUrlTestSchema")),
+                    UrlUtils.boxUrl(Setup.TEST_CELL1, UrlUtils.cellRoot("boxurltestschema")),
                     requestheaders);
             assertEquals(HttpStatus.SC_UNAUTHORIZED, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreAuthzException.TOKEN_PARSE_ERROR;
@@ -632,7 +632,7 @@ public class BoxUrlTest extends ODataCommon {
                     + getSchemaToken("client"));
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
+                    UrlUtils.cellRoot("boxurltestschema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
@@ -672,7 +672,7 @@ public class BoxUrlTest extends ODataCommon {
                     + getSchemaToken("client"));
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
+                    UrlUtils.cellRoot("boxurltestschema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
@@ -712,7 +712,7 @@ public class BoxUrlTest extends ODataCommon {
                     + getSchemaToken("client"));
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
+                    UrlUtils.cellRoot("boxurltestschema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
@@ -752,7 +752,7 @@ public class BoxUrlTest extends ODataCommon {
                     + getSchemaToken(OAuth2Helper.Key.CONFIDENTIAL_ROLE_NAME));
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
+                    UrlUtils.cellRoot("boxurltestschema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
@@ -791,7 +791,7 @@ public class BoxUrlTest extends ODataCommon {
                     + getSchemaAuthz(Setup.TEST_CELL_SCHEMA1));
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
+                    UrlUtils.cellRoot("boxurltestschema")), requestheaders);
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.bodyAsJson().get("Url"));
@@ -832,7 +832,7 @@ public class BoxUrlTest extends ODataCommon {
                     + getSchemaAuthz(Setup.TEST_CELL_SCHEMA1));
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
+                    UrlUtils.cellRoot("boxurltestschema")), requestheaders);
 
             assertEquals(HttpStatus.SC_OK, res.getStatusCode());
             assertEquals(UrlUtils.boxRoot(Setup.TEST_CELL1, "boxUrlTest/"), res.getFirstHeader(HttpHeaders.LOCATION));
@@ -873,7 +873,7 @@ public class BoxUrlTest extends ODataCommon {
                     + getSchemaAuthz(Setup.TEST_CELL_SCHEMA1));
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
+                    UrlUtils.cellRoot("boxurltestschema")), requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreException.Auth.SCHEMA_MISMATCH;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
@@ -913,7 +913,7 @@ public class BoxUrlTest extends ODataCommon {
                     + getSchemaAuthz(Setup.TEST_CELL_SCHEMA1));
 
             res = rest.getAcceptEncodingGzip(UrlUtils.boxUrl(Setup.TEST_CELL1,
-                    UrlUtils.cellRoot("boxUrlTestSchema")), requestheaders);
+                    UrlUtils.cellRoot("boxurltestschema")), requestheaders);
             assertEquals(HttpStatus.SC_FORBIDDEN, res.getStatusCode());
             PersoniumCoreException e = PersoniumCoreException.Auth.SCHEMA_MISMATCH;
             checkErrorResponse(res.bodyAsJson(), e.getCode(), e.getMessage());
@@ -1396,18 +1396,18 @@ public class BoxUrlTest extends ODataCommon {
         // アカウント削除
         try {
             rest = new PersoniumRestAdapter();
-            rest.del(UrlUtils.cellCtl("boxUrlTestSchema", "Account", "account1"), requestheaders);
+            rest.del(UrlUtils.cellCtl("boxurltestschema", "Account", "account1"), requestheaders);
         } catch (PersoniumException e) {
-            System.out.println("boxUrlTestSchema/__ctl/Account('account1') delete Fail : " + e.getMessage());
+            System.out.println("boxurltestschema/__ctl/Account('account1') delete Fail : " + e.getMessage());
         }
 
         // アプリセル削除
         try {
             rest = new PersoniumRestAdapter();
-            rest.del(UrlUtils.unitCtl("Cell", "boxUrlTestSchema"), requestheaders);
+            rest.del(UrlUtils.unitCtl("Cell", "boxurltestschema"), requestheaders);
 
         } catch (PersoniumException e) {
-            System.out.println("boxUrlTestSchema delete Fail : " + e.getMessage());
+            System.out.println("boxurltestschema delete Fail : " + e.getMessage());
         }
         return token;
     }
@@ -1426,7 +1426,7 @@ public class BoxUrlTest extends ODataCommon {
             requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
             JSONObject body = new JSONObject();
             body.put("Name", "boxUrlTest");
-            body.put("Schema", UrlUtils.cellRoot("boxUrlTestSchema"));
+            body.put("Schema", UrlUtils.cellRoot("boxurltestschema"));
             res = rest.post(UrlUtils.cellCtl(Setup.TEST_CELL1, "Box"), body.toJSONString(), requestheaders);
             assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
 
@@ -1469,7 +1469,7 @@ public class BoxUrlTest extends ODataCommon {
         JSONObject body = new JSONObject();
         HashMap<String, String> requestheaders = new HashMap<String, String>();
 
-        body.put("Name", "boxUrlTestSchema");
+        body.put("Name", "boxurltestschema");
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         res = rest.post(UrlUtils.unitCtl("Cell"), body.toJSONString(), requestheaders);
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
@@ -1485,7 +1485,7 @@ public class BoxUrlTest extends ODataCommon {
         body.put("Name", "account1");
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         requestheaders.put("X-Personium-Credential", "password1");
-        res = rest.post(UrlUtils.cellCtl("boxUrlTestSchema", "Account"), body.toJSONString(), requestheaders);
+        res = rest.post(UrlUtils.cellCtl("boxurltestschema", "Account"), body.toJSONString(), requestheaders);
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
     }
 
@@ -1498,7 +1498,7 @@ public class BoxUrlTest extends ODataCommon {
 
         body.put("Name", roleName);
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        res = rest.post(UrlUtils.cellCtl("boxUrlTestSchema", "Role"), body.toJSONString(), requestheaders);
+        res = rest.post(UrlUtils.cellCtl("boxurltestschema", "Role"), body.toJSONString(), requestheaders);
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
     }
 
@@ -1509,15 +1509,15 @@ public class BoxUrlTest extends ODataCommon {
 
         requestheaders.put(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
         String linkBody = String.format("{\"uri\":\"%s\"}",
-                UrlUtils.getBaseUrl() + "/boxUrlTestSchema/__ctl/Role('" + roleName + "')");
-        res = rest.post(UrlUtils.getBaseUrl() + "/boxUrlTestSchema/__ctl/Account('account1')/$links/_Role",
+                UrlUtils.getBaseUrl() + "/boxurltestschema/__ctl/Role('" + roleName + "')");
+        res = rest.post(UrlUtils.getBaseUrl() + "/boxurltestschema/__ctl/Account('account1')/$links/_Role",
                 linkBody, requestheaders);
         assertEquals(HttpStatus.SC_NO_CONTENT, res.getStatusCode());
     }
 
     private String getSchemaAuthz(String cell) throws PersoniumException {
         if (cell == null) {
-            cell = "boxUrlTestSchema";
+            cell = "boxurltestschema";
         }
         PersoniumRestAdapter rest = new PersoniumRestAdapter();
         PersoniumResponse res = null;
@@ -1548,10 +1548,10 @@ public class BoxUrlTest extends ODataCommon {
 
         // アカウントとロールのリンク削除
         try {
-            rest.del(UrlUtils.getBaseUrl() + "/boxUrlTestSchema/__ctl/Account('account1')/$links/_Role('"
+            rest.del(UrlUtils.getBaseUrl() + "/boxurltestschema/__ctl/Account('account1')/$links/_Role('"
                     + roleName + "')", requestheaders);
         } catch (PersoniumException e) {
-            System.out.println("/boxUrlTestSchema/__ctl/Account('account1')/$links/_Role('"
+            System.out.println("/boxurltestschema/__ctl/Account('account1')/$links/_Role('"
                     + roleName + "') delete Fail : " + e.getMessage());
         }
     }
@@ -1563,9 +1563,9 @@ public class BoxUrlTest extends ODataCommon {
 
         // ロール削除
         try {
-            rest.del(UrlUtils.cellCtl("boxUrlTestSchema", "Role", roleName), requestheaders);
+            rest.del(UrlUtils.cellCtl("boxurltestschema", "Role", roleName), requestheaders);
         } catch (PersoniumException e) {
-            System.out.println("/boxUrlTestSchema/__ctl/Role('" + roleName + "') delete Fail : " + e.getMessage());
+            System.out.println("/boxurltestschema/__ctl/Role('" + roleName + "') delete Fail : " + e.getMessage());
         }
 
     }

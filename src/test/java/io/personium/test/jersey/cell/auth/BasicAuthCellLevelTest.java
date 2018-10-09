@@ -388,7 +388,7 @@ public class BasicAuthCellLevelTest extends PersoniumTest {
      */
     @Test
     public final void Basic認証ーCell再帰削除() throws PersoniumException {
-        String testCell = "BasicTestCellForBulkDeletion";
+        String testCell = "basictestcellforbulkdeletion";
         try {
             // 事前準備
             CellUtils.bulkDeletion(AbstractCase.BEARER_MASTER_TOKEN, testCell);

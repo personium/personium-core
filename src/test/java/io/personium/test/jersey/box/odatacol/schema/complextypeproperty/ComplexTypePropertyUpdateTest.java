@@ -69,7 +69,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void ComplexTypePropertyのTypeをInt32からDoubleに変更できること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -160,7 +160,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ComplexTypePropertyのTypeをInt32からDoubleに変更できること_Propertyが複数ある場合() throws ParseException {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName1 = "property1";
@@ -281,7 +281,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ComplexTypePropertyのTypeをInt32からDoubleに変更できること_4階層目() throws ParseException {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName1 = "property1";
@@ -395,7 +395,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void ComplexTypePropertyの更新前のTypeがInt32以外の場合400エラーとなること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -463,7 +463,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void ComplexTypePropertyの更新後のTypeがDouble以外の場合400エラーとなること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -532,7 +532,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ComplexTypePropertyの更新でTypeプロパティを省略した場合400エラーとなること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -603,7 +603,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ComplexTypePropertyの更新でNameプロパティを省略した場合400エラーとなること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -673,7 +673,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void ComplexTypePropertyの更新でNameプロパティを変更できること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String complexTypeName = "complex";
@@ -743,7 +743,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ComplexTypePropertyの更新でNameプロパティを変更できること_4階層目() throws ParseException {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName1 = "property1";
@@ -854,7 +854,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void ComplexTypePropertyの更新でNameプロパティを複数回変更できること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String complexTypeName = "complex";
@@ -927,7 +927,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void ComplexTypePropertyの更新でNameプロパティを同名に変更できること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String complexTypeName = "complex";
@@ -980,7 +980,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void 存在しないComplexTypePropertyを変更できないこと() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String complexTypeName = "complex";
@@ -1018,7 +1018,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ComplexTypePropertyの更新で_ComplexType_Nameプロパティを省略した場合400エラーとなること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -1088,7 +1088,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void ComplexTypePropertyの更新で_ComplexType_Nameプロパティを変更しようとした場合400エラーとなること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -1159,7 +1159,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void ComplexTypePropertyのNullableを変更しようとした場合に400エラーとなること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -1229,7 +1229,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ComplexTypePropertyの更新前のNullableがtrueでNullableを省略した場合にTypeのみ更新されること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -1296,7 +1296,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ComplexTypePropertyの更新前のNullableがfalseでNullableを省略した場合に400エラーとなること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -1369,7 +1369,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void ComplexTypePropertyのDefaultValueを変更しようとした場合に400エラーとなること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -1439,7 +1439,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ComplexTypePropertyの更新前のDefaultValueがnullでDefaultValueを省略した場合にTypeのみ更新されること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -1506,7 +1506,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ComplexTypePropertyの更新前のDefaultValueがnull以外でDefaultValueを省略した場合に400エラーとなること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -1579,7 +1579,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void ComplexTypePropertyのCollectionKindを変更しようとした場合に400エラーとなること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -1649,7 +1649,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ComplexTypePropertyの更新前のCollectionKindがNoneでCollectionKindを省略した場合にTypeのみ更新されること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";
@@ -1716,7 +1716,7 @@ public class ComplexTypePropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void ComplexTypePropertyの更新前のCollectionKindがListでCollectionKindを省略した場合に400エラーとなること() {
-        String cellName = "complexTypePropertyUpdateTestCell";
+        String cellName = "complextypepropertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "property";

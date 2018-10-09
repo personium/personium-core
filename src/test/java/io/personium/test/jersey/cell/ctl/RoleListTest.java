@@ -40,7 +40,7 @@ import io.personium.test.utils.TResponse;
 @Category({Unit.class, Integration.class, Regression.class })
 public class RoleListTest extends ODataCommon {
 
-    private static String cellName = "testRoleCell";
+    private static String cellName = "testrolecell";
     private static String testRoleName = "testrole";
     private static final String ROLE_TYPE = "CellCtl.Role";
 

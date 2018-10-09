@@ -241,7 +241,7 @@ public class AccessContextTest {
     public void AuthorizationHeaderなしでのULUUTのcookie認証によるAccessContext生成の正常系テスト() {
         Cell cell = (Cell) mock(Cell.class);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
-        when(cell.getOwner()).thenReturn("cellOwner");
+        when(cell.getOwner()).thenReturn("cellowner");
 
         UriInfo uriInfo =  new TestUriInfo();
 
@@ -273,7 +273,7 @@ public class AccessContextTest {
 
         Cell cell = (Cell) mock(Cell.class);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
-        when(cell.getOwner()).thenReturn("cellOwner");
+        when(cell.getOwner()).thenReturn("cellowner");
         when(cell.getUrl()).thenReturn(uriInfo.getBaseUri().getHost()  + ":"  + uriInfo.getBaseUri().getPort());
 
         // Token発行処理
@@ -302,7 +302,7 @@ public class AccessContextTest {
     public void BASIC認証AuthorizationHeaderとcookie認証情報が同時に指定された場合のAccessContext生成の正常系テスト() {
         Cell cell = (Cell) mock(Cell.class);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
-        when(cell.getOwner()).thenReturn("cellOwner");
+        when(cell.getOwner()).thenReturn("cellowner");
 
         UriInfo uriInfo =  new TestUriInfo();
 
@@ -336,7 +336,7 @@ public class AccessContextTest {
     public void マスタトークン認証AuthorizationHeaderとcookie認証情報が同時に指定された場合のAccessContext生成の正常系テスト() {
         Cell cell = (Cell) mock(Cell.class);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
-        when(cell.getOwner()).thenReturn("cellOwner");
+        when(cell.getOwner()).thenReturn("cellowner");
 
         UriInfo uriInfo =  new TestUriInfo();
 

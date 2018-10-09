@@ -152,7 +152,7 @@ public class UserDataCreateTest extends AbstractUserDataTest {
         String userDataId = "userdata001";
         JSONObject body = new JSONObject();
         body.put("__id", userDataId);
-        String cellPath = "diffCell" + DATE;
+        String cellPath = "diffcell" + DATE;
 
         // 前準備
         try {

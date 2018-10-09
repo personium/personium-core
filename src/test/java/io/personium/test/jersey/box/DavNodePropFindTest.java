@@ -54,7 +54,7 @@ import io.personium.test.utils.TResponse;
 public class DavNodePropFindTest extends PersoniumTest {
 
     private static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
-    private static final String CELL_NAME = "davTestCell";
+    private static final String CELL_NAME = "davtestcell";
     private static final String BOX_NAME = "davTestBox";
 
     /**

@@ -67,10 +67,10 @@ import io.personium.test.utils.TResponse;
 @Category({Unit.class, Integration.class, Regression.class })
 public class UnitUserCellTest extends PersoniumTest {
 
-    private static final String UNIT_USER_CELL = "UnitUserCell";
+    private static final String UNIT_USER_CELL = "unitusercell";
     private static final String UNIT_USER_ACCOUNT = "UnitUserName";
     private static final String UNIT_USER_ACCOUNT_PASS = "password";
-    private static final String CREATE_CELL = "createCell";
+    private static final String CREATE_CELL = "createcell";
 
     private static String unitAdminRole;
     private static String contentsReaderRole;

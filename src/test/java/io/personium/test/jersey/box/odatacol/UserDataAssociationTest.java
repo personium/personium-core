@@ -63,7 +63,7 @@ import io.personium.test.utils.UserDataUtils;
 public class UserDataAssociationTest extends PersoniumTest {
 
     String masterToken = Setup.MASTER_TOKEN_NAME;
-    String cellName = "userDataAssociationTestCell";
+    String cellName = "userdataassociationtestcell";
     String boxName = "box";
     String colName = "col";
 

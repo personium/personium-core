@@ -72,7 +72,7 @@ import io.personium.test.utils.UserDataUtils;
 public class AclAlterSchemaTest extends PersoniumTest {
 
     private static final String PASSWORD = "password";
-    private static final String CELL_NAME = "AclAlterSchemaTestCell";
+    private static final String CELL_NAME = "aclalterschematestcell";
     private static final String BOX_NAME = "box1";
     private static final String COL_NAME = "setodata";
     private static final String MASTER_TOKEN = AbstractCase.MASTER_TOKEN_NAME;

@@ -75,7 +75,7 @@ public class CollectionLimitTest extends PersoniumTest {
     @Test
     public final void 階層チェックのテスト() {
         // propertyで指定した階層数を超えた場合、エラーとなることを確認する。
-        String cellName = "collectionLimitCell";
+        String cellName = "collectionlimitcell";
         String boxName = "box1";
         String colNamePrefix = "col";
         try {
@@ -116,7 +116,7 @@ public class CollectionLimitTest extends PersoniumTest {
      */
     @Test
     public final void 階層チェックのテスト_WebDavファイルの追加() {
-        String cellName = "collectionLimitCell";
+        String cellName = "collectionlimitcell";
         String boxName = "box1";
         String colNamePrefix = "col";
         try {
@@ -159,7 +159,7 @@ public class CollectionLimitTest extends PersoniumTest {
     @Test
     public final void コレクション配下のコレクション最大数チェックのテスト() {
         // propertyで指定した要素数を超えた場合、エラーとなることを確認する。
-        String cellName = "collectionLimitCell";
+        String cellName = "collectionlimitcell";
         String boxName = "box1";
         String colNamePrefix = "col";
         try {
@@ -203,7 +203,7 @@ public class CollectionLimitTest extends PersoniumTest {
     @Test
     public final void コレクション配下のファイル最大数チェックのテスト() {
         // propertyで指定した要素数を超えた場合、エラーとなることを確認する。
-        String cellName = "collectionLimitCell";
+        String cellName = "collectionlimitcell";
         String boxName = "box1";
         String davFileNamePrefix = "davFile";
         try {
@@ -249,7 +249,7 @@ public class CollectionLimitTest extends PersoniumTest {
         // 本テストでは子要素の最大数：10 コレクションの最大階層数：5の設定となっていることを前提とし、
         // 階層数:6のBarファイルを登録して、エラーとなることを確認する。
         final String barFilePath = "/V1_1_2_bar_webdav_hierarchy_error.bar";
-        String cellName = "collectionLimitCell";
+        String cellName = "collectionlimitcell";
         String box = INSTALL_TARGET;
 
         try {
@@ -284,7 +284,7 @@ public class CollectionLimitTest extends PersoniumTest {
         // 本テストでは子要素の最大数：10 コレクションの最大階層数：5の設定となっていることを前提とし、
         // 階層数:5のコレクション配下にWebDavファイルが存在するBarファイルを登録して、正常終了することを確認する。
         final String barFilePath = "/V1_1_2_bar_webdav_into_max_hierarchy.bar";
-        String cellName = "collectionLimitCell";
+        String cellName = "collectionlimitcell";
         String box = INSTALL_TARGET;
 
         try {
@@ -319,7 +319,7 @@ public class CollectionLimitTest extends PersoniumTest {
         // 本テストでは子要素の最大数：20 コレクションの最大階層数：5の設定となっていることを前提とし、
         // WebDavコレクションの子要素数21(全てWebDavコレクション)のBarファイルを登録して、エラーとなることを確認する。
         final String barFilePath = "/V1_1_2_bar_webdav_collection_count_error.bar";
-        String cellName = "collectionLimitCell";
+        String cellName = "collectionlimitcell";
         String box = INSTALL_TARGET;
 
         try {
@@ -354,7 +354,7 @@ public class CollectionLimitTest extends PersoniumTest {
         // 本テストでは子要素の最大数：20 コレクションの最大階層数：5の設定となっていることを前提とし、
         // WebDavコレクションの子要素数21(全てWebDavファイル)のBarファイルを登録して、エラーとなることを確認する。
         final String barFilePath = "/V1_1_2_bar_webdav_file_count_error.bar";
-        String cellName = "collectionLimitCell";
+        String cellName = "collectionlimitcell";
         String box = INSTALL_TARGET;
 
         try {

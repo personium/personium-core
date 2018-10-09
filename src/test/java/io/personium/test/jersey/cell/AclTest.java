@@ -1138,7 +1138,7 @@ public class AclTest extends AbstractCase {
      */
     @Test
     public final void 認証で使用されたAccountに対象のRoleが存在しないかつ権限が設定されていないRoleが紐ついている場合にリクエストを実行した場合_403が返却されること() {
-        String cellName = "cellAclTest";
+        String cellName = "cellacltest";
         String account = "accountAclTest";
         String role1 = "roleAclTest1";
         String role2 = "roleAclTest2";
@@ -1643,10 +1643,10 @@ public class AclTest extends AbstractCase {
             // OK: ROOT
             apvRes4 = ReceivedMessageUtils.approve(account.get(10), TEST_CELL1, uuid, HttpStatus.SC_NO_CONTENT);
             // Relation-ExtCell $links削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
                     Relation.EDM_TYPE_NAME, "user", null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // ExtCell削除
-            ExtCellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1, UrlUtils.cellRoot("targetCell"));
+            ExtCellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1, UrlUtils.cellRoot("targetcell"));
             if (rcvRes2 != null) {
                 ODataCommon.deleteOdataResource(rcvRes2.getLocationHeader());
                 rcvRes2 = ReceivedMessageUtils.receive(null, TEST_CELL1, body, HttpStatus.SC_CREATED);
@@ -1657,13 +1657,13 @@ public class AclTest extends AbstractCase {
             // OK: message+social
             apvRes5 = ReceivedMessageUtils.approve(account.get(18), TEST_CELL1, uuid, HttpStatus.SC_NO_CONTENT);
             // Relation-ExtCell $links削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
                     Relation.EDM_TYPE_NAME, "user", null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // Relation削除
             RelationUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "user", null, -1);
             // ExtCell削除
             ExtCellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1,
-                    UrlUtils.cellRoot("targetCell"));
+                    UrlUtils.cellRoot("targetcell"));
 
             // 受信メッセージ(req.relation.break)
             body = getReceivedMessageBody("request", "relation.remove", "12345678901234567890123456789014");
@@ -1726,13 +1726,13 @@ public class AclTest extends AbstractCase {
                 ODataCommon.deleteOdataResource(apvRes7.getLocationHeader());
             }
             // Relation-ExtCell $links削除
-            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetCell")),
+            LinksUtils.deleteLinksExtCell(TEST_CELL1, PersoniumCoreUtils.encodeUrlComp(UrlUtils.cellRoot("targetcell")),
                     Relation.EDM_TYPE_NAME, "user", null, AbstractCase.MASTER_TOKEN_NAME, -1);
             // Relation削除
             RelationUtils.delete(TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "user", null, -1);
             // ExtCell削除
             ExtCellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, TEST_CELL1,
-                    UrlUtils.cellRoot("targetCell"));
+                    UrlUtils.cellRoot("targetcell"));
         }
     }
 
@@ -1761,7 +1761,7 @@ public class AclTest extends AbstractCase {
             JSONObject requestObject = new JSONObject();
             requestObject.put("RequestType", requestType);
             requestObject.put("Name", "user");
-            requestObject.put("TargetUrl", UrlUtils.cellRoot("targetCell"));
+            requestObject.put("TargetUrl", UrlUtils.cellRoot("targetcell"));
             JSONArray requestObjects = new JSONArray();
             requestObjects.add(requestObject);
             body.put("RequestObjects", requestObjects);
@@ -1817,9 +1817,9 @@ public class AclTest extends AbstractCase {
 
     private void extCellAclTest(List<String> account) {
 
-        String testCell1 = "extCellAclTest1";
-        String testCell2 = "extCellAclTest2";
-        String testCell3 = "extCellAclTest3";
+        String testCell1 = "extcellacltest1";
+        String testCell2 = "extcellacltest2";
+        String testCell3 = "extcellacltest3";
 
         String extCellUrl = UrlUtils.cellRoot(testCell1);
         String extCellUrl2 = UrlUtils.cellRoot(testCell2);

@@ -97,7 +97,7 @@ public class BarInstallUserDataLinksLimitTest extends PersoniumTest {
      */
     @Test
     public final void barファイルインストールでAST対ASTのユーザデータLinkの登録が上限値を超えた場合異常終了すること() {
-        final String reqCell = "BoxInstallLinksLimitCell";
+        final String reqCell = "boxinstalllinkslimitcell";
         final String reqPath = INSTALL_TARGET;
         final String odataColName = "col1";
         final String srcEntityName = "entity1";
@@ -165,7 +165,7 @@ public class BarInstallUserDataLinksLimitTest extends PersoniumTest {
         // Linkの関係がAST対ASTの場合のみ、Linkの数の上限値を設けるようにしている。
         // 本テストでは、Linkの関係がONE対ASTの場合に上限値が有効にならないことを観点にしている。
 
-        final String reqCell = "BoxInstallLinksLimitCell";
+        final String reqCell = "boxinstalllinkslimitcell";
         final String reqPath = INSTALL_TARGET;
         final String odataColName = "col1";
         final String srcEntityName = "entity1";

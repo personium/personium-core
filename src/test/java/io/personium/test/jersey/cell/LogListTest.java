@@ -156,7 +156,7 @@ public class LogListTest extends ODataCommon {
      */
     @Test
     public final void アーカイブログファイル一覧取得_アーカイブディレクトリが存在しない場合にコレクション情報のみ取得できること() {
-        String cellName = "archiveDirectoryNotCreatedCell";
+        String cellName = "archivedirectorynotcreatedcell";
         try {
             CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
             TResponse response = ResourceUtils.logCollectionPropfind(cellName, ARCHIVE_COLLECTION, "0",
@@ -174,7 +174,7 @@ public class LogListTest extends ODataCommon {
      */
     @Test
     public final void アーカイブログファイル一覧取得_アーカイブディレクトリが存在しない場合にDepthヘッダに1を指定してコレクション情報のみ取得できること() {
-        String cellName = "archiveDirectoryNotCreatedCell";
+        String cellName = "archivedirectorynotcreatedcell";
         try {
             CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
             TResponse response = ResourceUtils.logCollectionPropfind(cellName, ARCHIVE_COLLECTION, "1",

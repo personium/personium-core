@@ -58,7 +58,7 @@ import io.personium.test.utils.UserDataUtils;
 public class UserDataCreateWithNPLimitTest extends PersoniumTest {
 
     String masterToken = Setup.MASTER_TOKEN_NAME;
-    String cellName = "userDataListWithNpLimitTestCell";
+    String cellName = "userdatalistwithnplimittestcell";
     String boxName = "box";
     String colName = "col";
 

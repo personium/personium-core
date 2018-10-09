@@ -218,7 +218,8 @@ public class AccessContext {
 
         } else if (authzHeaderValue.startsWith(OAuth2Helper.Scheme.BEARER)) {
             //OAuth 2.0 authentication
-            return createBearerAuthz(authzHeaderValue, cell, headerHost, baseUri, requestURIInfo, headerHost, xPersoniumUnitUser);
+            return createBearerAuthz(authzHeaderValue, cell, headerHost, baseUri,
+                    requestURIInfo, headerHost, xPersoniumUnitUser);
         }
         return new AccessContext(TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.authenticationScheme);
     }
@@ -752,71 +753,9 @@ public class AccessContext {
             return ret;
         } else {
             TransCellAccessToken tca = (TransCellAccessToken) tk;
-
-            //In the case of TCAT, check the possibility of being a unit user token
-            //TCAT is unit user token Condition 1: Target is your own unit.
-            //TCAT is unit user token Condition 2: Issuer is UnitUserCell which exists in the setting.
-
-            // TODO Issue-223 一時対処
-            String escapedBaseUri = baseUri;
-            if (requestURIHost.contains(".")) {
-                String cellName = requestURIHost.split("\\.")[0];
-                escapedBaseUri = baseUri.replaceFirst(cellName + "\\.", "");
-            }
-
-            if ((tca.getTarget().equals(baseUri) || tca.getTarget().equals(escapedBaseUri))
-                    && (PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), baseUri) || PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), escapedBaseUri))) {
-                //Processing unit user tokens
-                ret.accessType = TYPE_UNIT_USER;
-                ret.subject = tca.getSubject();
-                ret.issuer = tca.getIssuer();
-
-                //Take role information and if you have unit admin roll, promote to unit admin.
-                List<Role> roles = tca.getRoles();
-                Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.DEFAULT_BOX_NAME, null, tca.getIssuer());
-                String unitAdminRoleUrl = unitAdminRole.createUrl();
-                Role cellContentsReaderRole = new Role(ROLE_CELL_CONTENTS_READER, Box.DEFAULT_BOX_NAME,
-                        null, tca.getIssuer());
-                String cellContentsReaderUrl = cellContentsReaderRole.createUrl();
-                Role cellContentsAdminRole = new Role(ROLE_CELL_CONTENTS_ADMIN, Box.DEFAULT_BOX_NAME,
-                        null, tca.getIssuer());
-                String cellContentsAdminUrl = cellContentsAdminRole.createUrl();
-
-                String unitUserRole = null;
-                for (Role role : roles) {
-                    String roleUrl = role.createUrl();
-                    if (unitAdminRoleUrl.equals(roleUrl)) {
-                        if (xPersoniumUnitUser == null) {
-                            // If there is no X-Personium-UnitUser header, UnitAdmin
-                            ret = new AccessContext(TYPE_UNIT_ADMIN, cell, baseUri, uriInfo);
-                        } else {
-                            // If there is an X-Personium-UnitUser header, UnitUser
-                            ret.subject = xPersoniumUnitUser;
-                        }
-                    } else if (cellContentsReaderUrl.equals(roleUrl) && unitUserRole == null) {
-                        // If roles are not set, set the CellContentsReader role.
-                        // To preferentially set the CellContentsAdmin role.
-                        unitUserRole = ROLE_CELL_CONTENTS_READER;
-                    } else if (cellContentsAdminUrl.equals(roleUrl)) {
-                        // Set the CellContentsAdmin role.
-                        unitUserRole = ROLE_CELL_CONTENTS_ADMIN;
-                    }
-                }
-                ret.unitUserRole = unitUserRole;
-
-                //Unit user token does not concern schema authentication, so return here
+            ret = createAccessContext(cell, requestURIHost, baseUri, uriInfo, xPersoniumUnitUser, tca);
+            if (TYPE_UNIT_USER.equals(ret.accessType)) {
                 return ret;
-            } else if (cell == null) {
-                //Because only the master token and the unit user token allow tokens with Cell empty at unit level, treat them as invalid tokens.
-                throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
-            } else {
-                //TCAT processing
-                ret.accessType = TYPE_TRANS;
-                ret.subject = tca.getSubject();
-                ret.issuer = tca.getIssuer();
-
-                //Obtaining the Role corresponding to the token
-                ret.roles = cell.getRoleListHere((TransCellAccessToken) tk);
             }
         }
         ret.schema = tk.getSchema();
@@ -895,6 +834,89 @@ public class AccessContext {
             realm = cellobj.getUrl();
         }
         return realm;
+    }
+
+    /**
+     * Creates and returns AccessContext object by TransCellAccesToken.
+     * @param cell Accessing Cell
+     * @param requestURIHost
+     * @param baseUri accessing baseUri
+     * @param uriInfo uri info
+     * @param xPersoniumUnitUser X-Personium-UnitUser header
+     * @param tca based token
+     * @return Generated AccessContext object
+     */
+    private static AccessContext createAccessContext(Cell cell, String requestURIHost,
+            String baseUri, UriInfo uriInfo, String xPersoniumUnitUser, TransCellAccessToken tca) {
+        AccessContext ret = new AccessContext(null, cell, baseUri, uriInfo);
+
+        //In the case of TCAT, check the possibility of being a unit user token
+        //TCAT is unit user token Condition 1: Target is your own unit.
+        //TCAT is unit user token Condition 2: Issuer is UnitUserCell which exists in the setting.
+
+        // TODO Issue-223 一時対処
+        String escapedBaseUri = baseUri;
+        if (requestURIHost.contains(".")) {
+            String cellName = requestURIHost.split("\\.")[0];
+            escapedBaseUri = baseUri.replaceFirst(cellName + "\\.", "");
+        }
+
+        if ((tca.getTarget().equals(baseUri) || tca.getTarget().equals(escapedBaseUri))
+                && (PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), baseUri)
+                        || PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), escapedBaseUri))) {
+            //Processing unit user tokens
+            ret.accessType = TYPE_UNIT_USER;
+            ret.subject = tca.getSubject();
+            ret.issuer = tca.getIssuer();
+
+            //Take role information and if you have unit admin roll, promote to unit admin.
+            List<Role> roles = tca.getRoles();
+            Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.DEFAULT_BOX_NAME, null, tca.getIssuer());
+            String unitAdminRoleUrl = unitAdminRole.createUrl();
+            Role cellContentsReaderRole = new Role(ROLE_CELL_CONTENTS_READER, Box.DEFAULT_BOX_NAME,
+                    null, tca.getIssuer());
+            String cellContentsReaderUrl = cellContentsReaderRole.createUrl();
+            Role cellContentsAdminRole = new Role(ROLE_CELL_CONTENTS_ADMIN, Box.DEFAULT_BOX_NAME,
+                    null, tca.getIssuer());
+            String cellContentsAdminUrl = cellContentsAdminRole.createUrl();
+
+            String unitUserRole = null;
+            for (Role role : roles) {
+                String roleUrl = role.createUrl();
+                if (unitAdminRoleUrl.equals(roleUrl)) {
+                    if (xPersoniumUnitUser == null) {
+                        // If there is no X-Personium-UnitUser header, UnitAdmin
+                        ret = new AccessContext(TYPE_UNIT_ADMIN, cell, baseUri, uriInfo);
+                    } else {
+                        // If there is an X-Personium-UnitUser header, UnitUser
+                        ret.subject = xPersoniumUnitUser;
+                    }
+                } else if (cellContentsReaderUrl.equals(roleUrl) && unitUserRole == null) {
+                    // If roles are not set, set the CellContentsReader role.
+                    // To preferentially set the CellContentsAdmin role.
+                    unitUserRole = ROLE_CELL_CONTENTS_READER;
+                } else if (cellContentsAdminUrl.equals(roleUrl)) {
+                    // Set the CellContentsAdmin role.
+                    unitUserRole = ROLE_CELL_CONTENTS_ADMIN;
+                }
+            }
+            ret.unitUserRole = unitUserRole;
+
+            //Unit user token does not concern schema authentication, so return here
+            return ret;
+        } else if (cell == null) {
+            //Because only the master token and the unit user token allow tokens with Cell empty at unit level, treat them as invalid tokens.
+            throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
+        } else {
+            //TCAT processing
+            ret.accessType = TYPE_TRANS;
+            ret.subject = tca.getSubject();
+            ret.issuer = tca.getIssuer();
+
+            //Obtaining the Role corresponding to the token
+            ret.roles = cell.getRoleListHere(tca);
+            return ret;
+        }
     }
 
 }

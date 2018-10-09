@@ -93,7 +93,7 @@ public class ReadTest extends AbstractCase {
     @Before
     public final void initCell() {
         // DBサーバーを共有した際、同時にテストを行うと、同じCell名では409となってしまうため、一意にするため、Cell名に時間をセット
-        String cellName = "cellName";
+        String cellName = "cellname";
         cellName = cellName + Long.toString(Calendar.getInstance().getTimeInMillis());
 
         // Cellを作成
@@ -130,7 +130,7 @@ public class ReadTest extends AbstractCase {
     public final void Cell登録直後にCellが参照できること() {
         // Cellを作成
         PersoniumResponse res;
-        res = createCell("testSoonGetCell");
+        res = createCell("testsoongetcell");
         assertEquals(HttpStatus.SC_CREATED, res.getStatusCode());
         // Cell作成のレスポンスチェック
         // LOCATIONヘッダを取得

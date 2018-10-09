@@ -66,7 +66,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void PropertyのTypeをInt32からDoubleに変更できること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -150,7 +150,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void PropertyのTypeをInt32からDoubleに変更できること_Propertyが複数ある内の2番目() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName1 = "property1";
@@ -250,7 +250,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void Propertyの更新前のTypeがInt32以外の場合400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -315,7 +315,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void Propertyの更新後のTypeがDouble以外の場合400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -381,7 +381,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新でTypeプロパティを省略した場合400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -447,7 +447,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新でNameプロパティを省略した場合400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -514,7 +514,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新でNameプロパティを変更できること() throws ParseException {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -602,7 +602,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新でNameプロパティを複数回変更できること() throws ParseException {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -693,7 +693,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void 存在しないPropretyが変更できないこと() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -734,7 +734,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void Propertyの更新でNameプロパティを同名に変更できること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -795,7 +795,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新で_EntityType_Nameプロパティを省略した場合400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -860,7 +860,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void Propertyの更新で_EntityType_Nameプロパティを変更しようとした場合400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -930,7 +930,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void DynamicPropertyの更新でNameプロパティを変更できないこと() throws ParseException {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -994,7 +994,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void PropertyのNullableを変更しようとした場合に400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1059,7 +1059,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新前のNullableがtrueでNullableを省略した場合にTypeのみ更新されること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1126,7 +1126,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新前のNullableがfalseでNullableを省略した場合に400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1195,7 +1195,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void PropertyのDefaultValueを変更しようとした場合に400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1259,7 +1259,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新前のDefaultValueがnullでDefaultValueを省略した場合にTypeのみ更新されること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1326,7 +1326,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新前のDefaultValueがnull以外でDefaultValueを省略した場合に400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1395,7 +1395,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void PropertyのCollectionKindを変更しようとした場合に400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1459,7 +1459,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新前のCollectionKindがNoneでCollectionKindを省略した場合にTypeのみ更新されること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1526,7 +1526,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新前のCollectionKindがListでCollectionKindを省略した場合に400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1595,7 +1595,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void PropertyのIsKeyを変更しようとした場合に400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1660,7 +1660,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新前のIsKeyがfalseでIsKeyを省略した場合にTypeのみ更新されること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1727,7 +1727,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新前のIsKeyがtrueでIsKeyを省略した場合に400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1796,7 +1796,7 @@ public class PropertyUpdateTest extends ODataCommon {
      */
     @Test
     public final void PropertyのUniqueKeyを変更しようとした場合に400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1861,7 +1861,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新前のUniqueKeyがnullでUniqueKeyを省略した場合にTypeのみ更新されること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";
@@ -1928,7 +1928,7 @@ public class PropertyUpdateTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Propertyの更新前のUniqueKeyがnull以外でUniqueKeyを省略した場合に400エラーとなること() {
-        String cellName = "propertyUpdateTestCell";
+        String cellName = "propertyupdatetestcell";
         String boxName = "box";
         String colName = "collection";
         String propertyName = "propertyToBeUpdated";

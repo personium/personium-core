@@ -187,7 +187,7 @@ public class AuthCheckTest extends PersoniumTest {
     public final void スキーマありのボックスと結びつくロールのトランスセル確認() throws TokenParseException,
             TokenDsigException, TokenRootCrtException {
 
-        String testCellName = "AuthCheckTest-cell";
+        String testCellName = "authchecktest-cell";
         String boxNameWithScheme = "box2";
         String userName = "user2";
         String pass = "password";
@@ -260,7 +260,7 @@ public class AuthCheckTest extends PersoniumTest {
     public final void スキーマなしのボックスと結びつくロールのトランスセルの確認() throws TokenParseException,
             TokenDsigException, TokenRootCrtException {
 
-        String testCellName = "AuthCheckTest-cell";
+        String testCellName = "authchecktest-cell";
         String boxNameNoneScheme = "box1";
         String userName = "user1";
         String pass = "password";
@@ -915,7 +915,7 @@ public class AuthCheckTest extends PersoniumTest {
      */
     @Test
     public final void CellACLを設定後にロール削除してCellレベル操作で403が返却されること() {
-        String cellName = "aclRoletest";
+        String cellName = "aclroletest";
         String userName = "user";
         String pass = "password";
         String roleName = "testRole";
@@ -957,7 +957,7 @@ public class AuthCheckTest extends PersoniumTest {
      */
     @Test
     public final void CellACLを設定後にロールをリネームしてCellレベル操作で200が返却されること() {
-        String cellName = "aclRoletest";
+        String cellName = "aclroletest";
         String userName = "user";
         String pass = "password";
         String roleName = "testRole";
@@ -1000,7 +1000,7 @@ public class AuthCheckTest extends PersoniumTest {
      */
     @Test
     public final void CellACLを設定後にロール削除_再作成してCellレベル操作で403が返却されること() {
-        String cellName = "aclRoletest";
+        String cellName = "aclroletest";
         String userName = "user";
         String pass = "password";
         String roleName = "testRole";

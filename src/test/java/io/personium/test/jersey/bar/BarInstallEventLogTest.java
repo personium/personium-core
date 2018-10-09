@@ -71,7 +71,7 @@ public class BarInstallEventLogTest extends PersoniumTest {
     private static final String BAR_FILE_MINIMUM = "/V1_1_2_bar_minimum.bar";
     private static final String DEFAULT_LOG = "default.log";
     private static final String CURRENT_COLLECTION = "current";
-    private static final String UNIT_USER_CELL = "UnitUserCell";
+    private static final String UNIT_USER_CELL = "unitusercell";
 
     private static final String DEFAULT_SCHEMA_URL = "https://fqdn/testcell1/";
 
@@ -241,7 +241,7 @@ public class BarInstallEventLogTest extends PersoniumTest {
             lines.remove(count);
 
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1000",
-                    UrlUtils.getBaseUrl() + "/UnitUserCell/installBox", "Bar installation started.");
+                    UrlUtils.getBaseUrl() + "/unitusercell/installBox", "Bar installation started.");
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1001",
                     "bar/00_meta/00_manifest.json", "Installation started.");
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1003",
@@ -251,7 +251,7 @@ public class BarInstallEventLogTest extends PersoniumTest {
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-1003",
                     "bar/00_meta/90_rootprops.xml", "Installation completed.");
             checkResponseLog(lines, "[INFO ]", "false", "PL-BI-0000",
-                    UrlUtils.getBaseUrl() + "/UnitUserCell/installBox", "Bar installation completed.");
+                    UrlUtils.getBaseUrl() + "/unitusercell/installBox", "Bar installation completed.");
             response.statusCode(HttpStatus.SC_OK);
         } finally {
             cleanup();
