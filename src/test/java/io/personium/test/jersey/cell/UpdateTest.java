@@ -465,7 +465,7 @@ public class UpdateTest extends AbstractCase {
 
         // リクエストボディを生成
         JSONObject requestBody = new JSONObject();
-        this.cellNameToDelete = "abcdefghijklmnopqrstuvwxyz0123456789-_";
+        this.cellNameToDelete = "abcdefghijklmnopqrstuvwxyz0123456789-";
         requestBody.put("Name", this.cellNameToDelete);
 
         res = updateCell(headers, requestBody);

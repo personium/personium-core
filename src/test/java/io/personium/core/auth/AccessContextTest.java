@@ -256,7 +256,7 @@ public class AccessContextTest {
         String cookieValue = dcCookiePeer + "\t" + tokenString;
         // ヘッダに返却するdc-cookie値は、暗号化する
         String encodedCookieValue = LocalToken.encode(cookieValue,
-                UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(uriInfo.getBaseUri())));
+                UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost())));
 
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(null, uriInfo, dcCookiePeer, encodedCookieValue,
@@ -287,7 +287,7 @@ public class AccessContextTest {
         String cookieValue = dcCookiePeer + "\t" + tokenString;
         // ヘッダに返却するdc-cookie値は、暗号化する
         String encodedCookieValue = LocalToken.encode(cookieValue,
-                UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(uriInfo.getBaseUri())));
+                UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost())));
 
         // 第1引数は AuthHeader, 第2引数は UriInfo, 第3引数は cookie_peer, 第4引数は cookie内の暗号化されたトークン情報
         AccessContext accessContext = AccessContext.create(null, uriInfo, dcCookiePeer, encodedCookieValue,
@@ -317,7 +317,7 @@ public class AccessContextTest {
         String cookieValue = dcCookiePeer + "\t" + tokenString;
         // ヘッダに返却するdc-cookie値は、暗号化する
         String encodedCookieValue = LocalToken.encode(cookieValue,
-                UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(uriInfo.getBaseUri())));
+                UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost())));
 
         String basicAuth = "Basic "
                 + PersoniumCoreUtils.encodeBase64Url("user:pass".getBytes());
@@ -351,7 +351,7 @@ public class AccessContextTest {
         String cookieValue = dcCookiePeer + "\t" + tokenString;
         // ヘッダに返却するdc-cookie値は、暗号化する
         String encodedCookieValue = LocalToken.encode(cookieValue,
-                UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(uriInfo.getBaseUri())));
+                UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost())));
 
         String masterTokenAuth = "Bearer " + MASTER_TOKEN;
 

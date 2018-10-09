@@ -418,7 +418,6 @@ public class TokenEndPointResource {
                     .getUrl());
         }
 
-        // TODO Issue-223 一時対処
         // Confirm that Issuer is equal to ID
         String normalizedClientId;
         try {
@@ -660,7 +659,7 @@ public class TokenEndPointResource {
             //The p_cookie value to return to the header is encrypted
             String encodedCookieValue = LocalToken.encode(cookieValue,
                     UnitLocalUnitUserToken.getIvBytes(AccessContext
-                            .getCookieCryptKey(requestURIInfo.getBaseUri())));
+                            .getCookieCryptKey(requestURIInfo.getBaseUri().getHost())));
             //Specify cookie version (0)
             int version = 0;
             String path = getCookiePath();

@@ -426,6 +426,18 @@ public class ODataCommon extends AbstractCase {
     }
 
     /**
+     * Cell名がA～Zのパターンのテスト.
+     * @param req PersoniumRequestオブジェクト
+     */
+    public void cellErrorNameUpperCase(PersoniumRequest req) {
+        String name = "CELLNAME";
+        cellErrorInvalidName(req, name);
+
+        // ボディのチェック
+        checkErrorResponse(res.bodyAsJson(), "PR400-OD-0006");
+    }
+
+    /**
      * Cell名がa～zと0～9と‐と_以外のパターンのテスト.
      * @param req DcRequestオブジェクト
      */

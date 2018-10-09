@@ -842,7 +842,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
 
         try {
             // データ作成
-            createExpandData("expandTestCell", "box", "odata");
+            createExpandData("expandtestcell", "box", "odata");
 
             // $expandを指定してデータを取得
             // プロパティの上限数に合わせて2プロパティずつ確認

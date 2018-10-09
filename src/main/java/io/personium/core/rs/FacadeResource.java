@@ -139,16 +139,12 @@ public class FacadeResource {
 
         String accessUrl = uriInfo.getBaseUri().toString();
         String configUrl = PersoniumUnitConfig.getBaseUrl();
-//        if (!accessUrl.contains(".")) {
-//            return new UnitResource(cookieAuthValue, cookiePeer, headerAuthz, headerHost,
-//                    headerPersoniumUnitUser, uriInfo);
-//        }
-        // {CellName}.{FQDN}アクセスの場合のみCellResourceに処理を渡す
-//        String requestURIHost = uriInfo.getBaseUri().getHost();
-        String cellName = headerHost.split("\\.")[0];
-        // CellName部分を除いたURLがConfigと一致するか
-        String escapeUrl = accessUrl.replaceFirst(cellName + "\\.", "");
-        if (configUrl.equals(escapeUrl)) {
+        if (configUrl.equals(accessUrl)) {
+            return new UnitResource(cookieAuthValue, cookiePeer, headerAuthz, headerHost,
+                    headerPersoniumUnitUser, uriInfo);
+        } else {
+            // {CellName}.{FQDN} access
+            String cellName = headerHost.split("\\.")[0];
             Cell cell = ModelFactory.cellFromName(cellName);
             AccessContext ac = AccessContext.create(headerAuthz, uriInfo, cookiePeer, cookieAuthValue, cell,
                     uriInfo.getBaseUri().toString(), headerHost, headerPersoniumUnitUser);
@@ -168,9 +164,6 @@ public class FacadeResource {
             }
             return new CellResource(ac, headerPersoniumRequestKey,
                     headerPersoniumEventId, headerPersoniumRuleChain, headerPersoniumVia, httpServletRequest);
-        } else {
-            return new UnitResource(cookieAuthValue, cookiePeer, headerAuthz, headerHost,
-                    headerPersoniumUnitUser, uriInfo);
         }
     }
 

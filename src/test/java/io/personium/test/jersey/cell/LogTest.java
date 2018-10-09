@@ -155,7 +155,7 @@ public class LogTest extends ODataCommon {
             TResponse response = Http.request("cell/log-get.txt")
                     .with("METHOD", HttpMethod.GET)
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                    .with("cellPath", "TestCellForLogNotFound")
+                    .with("cellPath", "testcellforlognotfound")
                     .with("collection", CURRENT_COLLECTION)
                     .with("fileName", DEFAULT_LOG)
                     .with("ifNoneMatch", "*")
@@ -341,7 +341,7 @@ public class LogTest extends ODataCommon {
     @SuppressWarnings("unchecked")
     @Test
     public final void Cellを削除しcurrentのログが削除されること() throws InterruptedException {
-        String cellName = "logtest_cell";
+        String cellName = "logtest-cell";
 
         JSONObject body = new JSONObject();
         body.put("Type", "POST");
@@ -396,7 +396,7 @@ public class LogTest extends ODataCommon {
     @Test
     public final void Owner情報がURL形式ではない場合にログに対する操作がひととおり行えること()
             throws InterruptedException {
-        String cellName = "logtest_ownercell";
+        String cellName = "logtest-ownercell";
         String ownerName = "dd4b407a-5b39-4c97-9fd5-5e2be9de06cf";
 
         JSONObject body = new JSONObject();

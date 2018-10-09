@@ -377,7 +377,7 @@ public class AuthzEndPointResource {
         try {
             String decodedCookieValue = LocalToken.decode(pCookie,
                     UnitLocalUnitUserToken.getIvBytes(
-                            AccessContext.getCookieCryptKey(uriInfo.getBaseUri())));
+                            AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost())));
             int separatorIndex = decodedCookieValue.indexOf("\t");
             //Obtain authorizationHeader equivalent token from information in cookie
             String authToken = decodedCookieValue.substring(separatorIndex + 1);

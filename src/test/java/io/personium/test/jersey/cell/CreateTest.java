@@ -20,8 +20,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
 
-import javax.ws.rs.HttpMethod;
-
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.junit.After;
@@ -47,7 +45,6 @@ import io.personium.test.unit.core.UrlUtils;
 public class CreateTest extends ODataCommon {
 
     private static String cellNameLower = "cellname";
-    private static String cellNameUpper = "CELLNAME";
 
     /**
      * コンストラクタ. テスト対象のパッケージをsuperに渡す必要がある
@@ -63,7 +60,6 @@ public class CreateTest extends ODataCommon {
     public static void beforeClass() {
         // DBサーバーを共有した際、同時にテストを行うと、同じCell名では409となってしまうため、一意にするため、Cell名に時間をセット
         cellNameLower = cellNameLower + Long.toString(Calendar.getInstance().getTimeInMillis());
-        cellNameUpper = cellNameUpper + Long.toString(Calendar.getInstance().getTimeInMillis());
     }
 
     /**
@@ -157,6 +153,15 @@ public class CreateTest extends ODataCommon {
     public final void Cellの作成のNameが129文字のパターンのテスト() {
         PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellErrorName129(req);
+    }
+
+    /**
+     * Cellの作成のNameが"A～Z"のパターンのテスト.
+     */
+    @Test
+    public final void Cellの作成のNameが大文字のパターンのテスト() {
+        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
+        cellErrorNameUpperCase(req);
     }
 
     /**
@@ -265,51 +270,6 @@ public class CreateTest extends ODataCommon {
     public final void Cellの作成で小文字のCell名を登録した後に同じ小文字のCell名を登録した場合_409となることを確認() {
         PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
         cellConflict(req, cellNameLower);
-    }
-
-    /**
-     * Cellの作成で大文字のCell名を登録した後に同じ大文字のCell名を登録した場合、409となることを確認するテスト.
-     */
-    @Test
-    public final void Cellの作成で大文字のCell名を登録した後に同じ大文字のCell名を登録した場合_409となることを確認() {
-        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
-        cellConflict(req, cellNameUpper);
-    }
-
-    /**
-     * Cellの作成で小文字のCell名を登録した後に大文字で同じCell名を登録した場合、201となることを確認するテスト.
-     */
-    @Test
-    public final void Cellの作成で小文字のCell名を登録した後に大文字で同じCell名を登録した場合_201となることを確認() {
-        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
-        cellCreateResCheck(req, HttpMethod.POST, UrlUtils.unitCtl(Cell.EDM_TYPE_NAME), cellNameLower, cellNameUpper);
-    }
-
-    /**
-     * Cellの作成で大文字のCell名を登録した後に小文字で同じCell名を登録した場合、201となることを確認するテスト.
-     */
-    @Test
-    public final void Cellの作成で大文字のCell名を登録した後に小文字で同じCell名を登録した場合_201となることを確認() {
-        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
-        cellCreateResCheck(req, HttpMethod.POST, UrlUtils.unitCtl(Cell.EDM_TYPE_NAME), cellNameUpper, cellNameLower);
-    }
-
-    /**
-     * 大文字Cell名で作成したCellに対してCellレベルAPIが利用できること.
-     */
-    @Test
-    public final void 大文字Cell名で作成したCellに対してCellレベルAPIが利用できること() {
-        // 大文字Cell名のCellを作成
-        PersoniumRequest req = PersoniumRequest.post(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
-        cellNormal(req, cellNameUpper);
-
-        // 大文字Cell名を指定してBoxの一覧取得を実行
-        req = PersoniumRequest.get(UrlUtils.cellCtl(cellNameUpper, "Box"));
-        req.header(HttpHeaders.AUTHORIZATION, BEARER_MASTER_TOKEN);
-        PersoniumResponse response = request(req);
-
-        // 200になることを確認
-        assertEquals(HttpStatus.SC_OK, response.getStatusCode());
     }
 
     /**

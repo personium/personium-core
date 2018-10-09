@@ -187,10 +187,10 @@ public class AccessContext {
             // Cookie related processing requires no port number.
             String decodedCookieValue;
             try {
-                URI nonPortURI = new URI(headerHost.split(":")[0]);
+                String nonPortHost = headerHost.split(":")[0];
                 decodedCookieValue = LocalToken.decode(pCookieAuthValue,
-                        UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(nonPortURI)));
-            } catch (URISyntaxException | TokenParseException e) {
+                        UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(nonPortHost)));
+            } catch (TokenParseException e) {
                 return new AccessContext(
                         TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
             }
@@ -595,14 +595,14 @@ public class AccessContext {
 
     /**
      * Generate the key for token encryption / decryption at the time of cookie authentication.
-     * @param uri request URI
+     * @param host request host
      * @return Key used for encryption / decryption
      */
-    public static String getCookieCryptKey(URI uri) {
+    public static String getCookieCryptKey(String host) {
         //Because PCS is stateless access, it is difficult to change the key for each user,
         //Generate a key based on the host name of URI.
         //Process the host name.
-        return uri.getHost().replaceAll("[aiueo]", "#");
+        return host.replaceAll("[aiueo]", "#");
     }
 
     /**
@@ -854,7 +854,6 @@ public class AccessContext {
         //TCAT is unit user token Condition 1: Target is your own unit.
         //TCAT is unit user token Condition 2: Issuer is UnitUserCell which exists in the setting.
 
-        // TODO Issue-223 一時対処
         String escapedBaseUri = baseUri;
         if (requestURIHost.contains(".")) {
             String cellName = requestURIHost.split("\\.")[0];
