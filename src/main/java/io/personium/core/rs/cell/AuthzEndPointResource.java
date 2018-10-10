@@ -336,7 +336,7 @@ public class AuthzEndPointResource {
                     e.getMessage(), state, "code");
         }
 
-        //Password authentication 揃 Transcel token authentication 揃 Cookie authentication separation
+        //Password authentication / Transcel token authentication / Cookie authentication separation
         if (username != null || password != null) {
             //TODO Return error because it is not yet implemented
             return this.returnErrorRedirectCodeGrant(redirectUriStr, OAuth2Helper.Error.UNSUPPORTED_GRANT_TYPE,
@@ -925,7 +925,7 @@ public class AuthzEndPointResource {
         //TODO box existence check -> In some cases: Return token, if not: Create box (authorization check -> Box import execution)
         //However, it returns an error until Box import is implemented
 
-        //Password authentication 揃 Transcel token authentication 揃 Cookie authentication separation
+        //Password authentication / Transcel token authentication / Cookie authentication separation
         if (username != null || password != null) {
             //When there is a setting in either user ID or password
             Response response = this.handleImplicitFlowPassWord(pTarget, redirectUriStr, clientId,
@@ -1202,12 +1202,14 @@ public class AuthzEndPointResource {
         //Compare client_id and redirect_uri, and if the cells are different, an authentication error
         //Comparison of cell URLs
         if (!objClientId.getAuthority().equals(objRedirectUri.getAuthority())
+                || rPaths.length == 0
                 || !cPaths[0].equals(rPaths[0])) {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_REDIRECT_INVALID;
         }
 
         //Compare the client_id with the name of the requested cell, and an error if the cells are the same
-        if (cPaths[0].equals(this.cell.getName())) {
+        if (cPaths.length == 0
+                || cPaths[0].equals(this.cell.getName())) {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
         }
 
