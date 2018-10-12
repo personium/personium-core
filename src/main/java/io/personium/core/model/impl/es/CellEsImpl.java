@@ -17,7 +17,7 @@
 package io.personium.core.model.impl.es;
 
 import java.net.MalformedURLException;
-import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,10 +26,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-
-import org.apache.commons.lang.StringUtils;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityKey;
 import org.odata4j.core.OProperty;
@@ -91,6 +87,12 @@ import net.spy.memcached.internal.CheckedOperationTimeoutException;
  * Cell object implemented using ElasticSearch.
  */
 public class CellEsImpl implements Cell {
+    /** logger. */
+    static Logger log = LoggerFactory.getLogger(CellEsImpl.class);
+
+    /** Es search result output upper limit. */
+    private static final int TOP_NUM = PersoniumUnitConfig.getEsTopNum();
+
     private String id;
     private String name;
     private String url;
@@ -98,154 +100,27 @@ public class CellEsImpl implements Cell {
     private Long published;
     private Map<String, Object> json;
 
-    /** Es search result output upper limit.*/
-    private static final int TOP_NUM = PersoniumUnitConfig.getEsTopNum();
-
-    /** logger. */
-    static Logger log = LoggerFactory.getLogger(CellEsImpl.class);
-
     /**
      * constructor.
      */
     public CellEsImpl() {
-
-    }
-
-    @Override
-    public EventBus getEventBus() {
-        return new EventBus(this);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        CellCtlODataProducer producer = new CellCtlODataProducer(this);
-        // check no box exists.
-        QueryInfo queryInfo = new QueryInfo(InlineCount.ALLPAGES, null, null, null, null, null, null, null, null);
-        if (producer.getEntitiesCount(Box.EDM_TYPE_NAME, queryInfo).getCount() > 0) {
-            return false;
-        }
-
-        // check that Main Box is empty
-        Box defaultBox = this.getBoxForName(Box.DEFAULT_BOX_NAME);
-        BoxCmp defaultBoxCmp = ModelFactory.boxCmp(defaultBox);
-        if (!defaultBoxCmp.isEmpty()) {
-            return false;
-        }
-
-        // check that no Cell Control Object exists
-        //In order to improve the TODO performance, change the type so as to check the value of c: (uuid of the cell) in the Type traversal
-        if (producer.getEntitiesCount(Account.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(Role.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(ExtCell.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(ExtRole.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(Relation.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(SentMessage.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(ReceivedMessage.EDM_TYPE_NAME, queryInfo).getCount() > 0
-                || producer.getEntitiesCount(Rule.EDM_TYPE_NAME, queryInfo).getCount() > 0) {
-            return false;
-        }
-        // TODO check EventLog
-        return true;
-    }
-
-    @Override
-    public Box getBoxForName(String boxName) {
-        if (Box.DEFAULT_BOX_NAME.equals(boxName)) {
-            return new Box(this, null);
-        }
-
-        //Check the format of the Box name specified in URl. In case of invalid Because none of Box exists, return null
-        if (!validatePropertyRegEx(boxName, Common.PATTERN_NAME)) {
-            return null;
-        }
-        //Attempt to acquire the cached Box.
-        Box cachedBox = BoxCache.get(boxName, this);
-        if (cachedBox != null) {
-            return cachedBox;
-        }
-
-        Box loadedBox = null;
-        try {
-            ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
-            EntityResponse er = op.getEntity(Box.EDM_TYPE_NAME, OEntityKey.create(boxName), null);
-            loadedBox = new Box(this, er.getEntity());
-            BoxCache.cache(loadedBox);
-            return loadedBox;
-        } catch (RuntimeException e) {
-            if (e.getCause() instanceof CheckedOperationTimeoutException) {
-                return loadedBox;
-            } else {
-                return null;
-            }
-        }
-    }
-
-    @Override
-    public Box getBoxForSchema(String boxSchema) {
-        //Retrieving the schema name list (including aliases)
-        List<String> boxSchemas = UriUtils.getUrlVariations(this.getUnitUrl(), boxSchema);
-
-        ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
-        for (int i = 0; i < boxSchemas.size(); i++) {
-            BoolCommonExpression filter = OptionsQueryParser.parseFilter("Schema eq '" + boxSchemas.get(i) + "'");
-            QueryInfo qi = QueryInfo.newBuilder().setFilter(filter).build();
-            try {
-                EntitiesResponse er = op.getEntities(Box.EDM_TYPE_NAME, qi);
-                List<OEntity> entList = er.getEntities();
-                if (entList.size() == 1) {
-                    return new Box(this, entList.get(0));
-                }
-                continue;
-            } catch (RuntimeException e) {
-                return null;
-            }
-        }
-        return null;
     }
 
     /**
-     * Load cell info.
-     * @param uriInfo UriInfo
-     * @return CellObject. If Cell does not exist, it returns null.
-     */
-    public static Cell load(UriInfo uriInfo) {
-        URI reqUri = uriInfo.getRequestUri();
-        URI baseUri = uriInfo.getBaseUri();
-
-        String rPath = reqUri.getPath();
-        String bPath = baseUri.getPath();
-        rPath = rPath.substring(bPath.length());
-        String[] paths = StringUtils.split(rPath, "/");
-
-        CellEsImpl cell = (CellEsImpl) findCell("s.Name.untouched", paths[0]);
-        if (cell != null) {
-            cell.url = getBaseUri(uriInfo, cell.name);
-            cell.owner = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), cell.owner);
-        }
-        return cell;
-    }
-
-    /**
-     * Load cell info.
+     * Load cell info from id..
      * @param id cell id
-     * @param uriInfo UriInfo
      * @return CellObject. If Cell does not exist, it returns null.
      */
-    public static Cell load(String id, UriInfo uriInfo) {
+    public static Cell loadFromId(String id) {
         log.debug(id);
         EntitySetAccessor esCells = EsModel.cell();
         PersoniumGetResponse resp = esCells.get(id);
         if (resp.exists()) {
-            CellEsImpl ret = new CellEsImpl();
-            ret.setJson(resp.getSource());
-            ret.id = resp.getId();
-            if (uriInfo != null) {
-                ret.url = getBaseUri(uriInfo, ret.name);
-                ret.owner = UriUtils.convertSchemeFromLocalUnitToHttp(ret.getUnitUrl(), ret.owner);
-            } else {
-                ret.url = PersoniumUnitConfig.getBaseUrl() + ret.name + "/";
-            }
-            return ret;
+            CellEsImpl cell = new CellEsImpl();
+            cell.setJson(resp.getSource());
+            cell.id = resp.getId();
+            cell.url = PersoniumUnitConfig.getBaseUrl() + cell.name + "/";
+            return cell;
         } else {
             return null;
         }
@@ -257,19 +132,13 @@ public class CellEsImpl implements Cell {
      * @param cellName target cell name
      * @return cell
      */
-    public static Cell load(String cellName) {
-        return findCell("s.Name.untouched", cellName);
-    }
-
-    private static String getBaseUri(final UriInfo uriInfo, String cellName) {
-        //Create URL and set
-        StringBuilder urlSb = new StringBuilder();
-        UriBuilder uriBuilder = uriInfo.getBaseUriBuilder();
-        uriBuilder.scheme(PersoniumUnitConfig.getUnitScheme());
-        urlSb.append(uriBuilder.build().toASCIIString());
-        urlSb.append(cellName);
-        urlSb.append("/");
-        return urlSb.toString();
+    public static Cell loadFromName(String cellName) {
+        CellEsImpl cell = (CellEsImpl) findCell("s.Name.untouched", cellName);
+        if (cell != null) {
+            cell.url = PersoniumUnitConfig.getBaseUrl() + cell.name + "/";
+            cell.owner = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), cell.owner);
+        }
+        return cell;
     }
 
     /**
@@ -336,23 +205,277 @@ public class CellEsImpl implements Cell {
     }
 
     /**
-     * Set members of objects from Map.
-     * @param json
-     * Actually Map
+     * Check the value of property item with regular expression.
+     * @param propValue
+     * Property value
+     * @param dcFormat
+     * Value of dcFormat
+     * @return In case of format error, return false
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void setJson(Map json) {
-        this.json = json;
-        if (this.json == null) {
-            return;
+    private static boolean validatePropertyRegEx(String propValue, String dcFormat) {
+        //Perform format check
+        Pattern pattern = Pattern.compile(dcFormat);
+        Matcher matcher = pattern.matcher(propValue);
+        if (!matcher.matches()) {
+            return false;
         }
-        Map<String, String> urlJson = (Map<String, String>) json.get("s");
-        Map<String, String> hJson = (Map<String, String>) json.get("h");
-        this.published = (Long) json.get("p");
-        this.name = urlJson.get("Name");
-        // TODO At this timing owner's localunit/http convert should be done.
-        // It is necessary to modify the source code so that UnitUrl can be read at this timing.
-        this.owner = hJson.get("Owner");
+        return true;
+    }
+
+    /**
+     * Get the Cell name.
+     * @return Cell Name
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Returns the internal ID of this Cell.
+     * @return internal identity string
+     */
+    @Override
+    public String getId() {
+        return this.id;
+    }
+
+    /**
+     * Returns the URL of this Cell.
+     * @return URL string
+     */
+    @Override
+    public String getUrl() {
+        if (PersoniumUnitConfig.isPathBasedCellUrlEnabled()) {
+            return this.url;
+        } else {
+            return getFqdnBaseUrl();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getFqdnBaseUrl() {
+        try {
+            return UriUtils.convertPathBaseToFqdnBase(url);
+        } catch (URISyntaxException e) {
+            // Usually it does not occur.
+            throw PersoniumCoreException.Server.UNKNOWN_ERROR;
+        }
+    }
+
+    /**
+     * Returns the Unit URL of this Cell.
+     * @return unitUrl string
+     */
+    @Override
+    public String getUnitUrl() {
+        return UriUtils.getUnitUrl(this.getUrl());
+    }
+
+    @Override
+    public String getOwner() {
+        return this.owner;
+    }
+
+    @Override
+    public String getDataBundleNameWithOutPrefix() {
+        String unitUserName;
+        if (this.owner == null) {
+            unitUserName = AccessContext.TYPE_ANONYMOUS;
+        } else {
+            unitUserName = IndexNameEncoder.encodeEsIndexName(owner);
+        }
+        return unitUserName;
+    }
+
+    @Override
+    public String getDataBundleName() {
+        String unitUserName = PersoniumUnitConfig.getEsUnitPrefix() + "_" + getDataBundleNameWithOutPrefix();
+        return unitUserName;
+    }
+
+    @Override
+    public EventBus getEventBus() {
+        return new EventBus(this);
+    }
+
+    /**
+     * Return the creation time of Cell.
+     * @return Cell creation time
+     */
+    @Override
+    public long getPublished() {
+        return this.published;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        CellCtlODataProducer producer = new CellCtlODataProducer(this);
+        // check no box exists.
+        QueryInfo queryInfo = new QueryInfo(InlineCount.ALLPAGES, null, null, null, null, null, null, null, null);
+        if (producer.getEntitiesCount(Box.EDM_TYPE_NAME, queryInfo).getCount() > 0) {
+            return false;
+        }
+
+        // check that Main Box is empty
+        Box defaultBox = this.getBoxForName(Box.DEFAULT_BOX_NAME);
+        BoxCmp defaultBoxCmp = ModelFactory.boxCmp(defaultBox);
+        if (!defaultBoxCmp.isEmpty()) {
+            return false;
+        }
+
+        // check that no Cell Control Object exists
+        //In order to improve the TODO performance, change the type so as to check the value of c: (uuid of the cell) in the Type traversal
+        if (producer.getEntitiesCount(Account.EDM_TYPE_NAME, queryInfo).getCount() > 0
+                || producer.getEntitiesCount(Role.EDM_TYPE_NAME, queryInfo).getCount() > 0
+                || producer.getEntitiesCount(ExtCell.EDM_TYPE_NAME, queryInfo).getCount() > 0
+                || producer.getEntitiesCount(ExtRole.EDM_TYPE_NAME, queryInfo).getCount() > 0
+                || producer.getEntitiesCount(Relation.EDM_TYPE_NAME, queryInfo).getCount() > 0
+                || producer.getEntitiesCount(SentMessage.EDM_TYPE_NAME, queryInfo).getCount() > 0
+                || producer.getEntitiesCount(ReceivedMessage.EDM_TYPE_NAME, queryInfo).getCount() > 0
+                || producer.getEntitiesCount(Rule.EDM_TYPE_NAME, queryInfo).getCount() > 0) {
+            return false;
+        }
+        // TODO check EventLog
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void makeEmpty() {
+        String unitUserNameWithOutPrefix = this.getDataBundleNameWithOutPrefix();
+        String cellInfoLog = String.format(" CellId:[%s], CellName:[%s], CellUnitUserName:[%s]", this.getId(),
+                this.getName(), this.getDataBundleName());
+        //--------------------
+        // WebDav file.
+        //--------------------
+        // Delete cell snapshot file.
+        CellSnapshotCellCmp snapshotCmp = ModelFactory.cellSnapshotCellCmp(this);
+        try {
+            snapshotCmp.delete(null, true);
+        } catch (PersoniumCoreException e) {
+            // If the deletion fails, output a log and continue processing.
+            log.warn("Delete CellSnapshot Failed." + cellInfoLog, e);
+        }
+        log.info("CellSnapshotFile Deletion End.");
+
+        // Delete event log file.
+        try {
+            EventUtils.deleteEventLog(this.getId(), this.getOwner());
+        } catch (BinaryDataAccessException e) {
+            // If the deletion fails, output a log and continue processing.
+            log.warn("Delete EventLog Failed." + cellInfoLog, e);
+        }
+        log.info("EventLog Deletion End.");
+
+        // Delete dav file.
+        CellCmp cellCmp = ModelFactory.cellCmp(this);
+        try {
+            cellCmp.delete(null, true);
+        } catch (PersoniumCoreException e) {
+            // If the deletion fails, output a log and continue processing.
+            log.warn("Delete DavFile Failed." + cellInfoLog, e);
+        }
+        log.info("DavFile Deletion End.");
+
+        //--------------------
+        // OData.
+        //--------------------
+        // Delete all entities under the cell.
+        CellDataAccessor cellDataAccessor = EsModel.cellData(unitUserNameWithOutPrefix, this.getId());
+        cellDataAccessor.bulkDeleteCell();
+        log.info("Cell Entity Resource Deletion End.");
+    }
+
+    @Override
+    public void delete(boolean recursive, String unitUserName) {
+        //Check the number of accesses to Cell and lock access
+        int maxLoopCount = PersoniumUnitConfig.getCellLockRetryTimes();
+        long interval = PersoniumUnitConfig.getCellLockRetryInterval();
+        waitCellAccessible(this.id, maxLoopCount, interval);
+
+        CellLockManager.setCellStatus(this.id, CellLockManager.STATUS.BULK_DELETION);
+
+        // Delete cell entity.
+        CellAccessor cellAccessor = (CellAccessor) EsModel.cell();
+        CellDocHandler docHandler = new CellDocHandler(cellAccessor.get(this.getId()));
+        try {
+            cellAccessor.delete(docHandler);
+            log.info("Cell Entity Deletion End.");
+        } finally {
+            CellCache.clear(this.getName());
+            CellLockManager.setCellStatus(this.getId(), CellLockManager.STATUS.NORMAL);
+        }
+
+        // Make this cell empty asynchronously.
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                makeEmpty();
+            }
+        });
+        thread.start();
+
+    }
+
+    @Override
+    public Box getBoxForName(String boxName) {
+        if (Box.DEFAULT_BOX_NAME.equals(boxName)) {
+            return new Box(this, null);
+        }
+
+        //Check the format of the Box name specified in URl. In case of invalid Because none of Box exists, return null
+        if (!validatePropertyRegEx(boxName, Common.PATTERN_NAME)) {
+            return null;
+        }
+        //Attempt to acquire the cached Box.
+        Box cachedBox = BoxCache.get(boxName, this);
+        if (cachedBox != null) {
+            return cachedBox;
+        }
+
+        Box loadedBox = null;
+        try {
+            ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
+            EntityResponse er = op.getEntity(Box.EDM_TYPE_NAME, OEntityKey.create(boxName), null);
+            loadedBox = new Box(this, er.getEntity());
+            BoxCache.cache(loadedBox);
+            return loadedBox;
+        } catch (RuntimeException e) {
+            if (e.getCause() instanceof CheckedOperationTimeoutException) {
+                return loadedBox;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    @Override
+    public Box getBoxForSchema(String boxSchema) {
+        //Retrieving the schema name list (including aliases)
+        List<String> boxSchemas = UriUtils.getUrlVariations(this.getUnitUrl(), boxSchema);
+
+        ODataProducer op = ModelFactory.ODataCtl.cellCtl(this);
+        for (int i = 0; i < boxSchemas.size(); i++) {
+            BoolCommonExpression filter = OptionsQueryParser.parseFilter("Schema eq '" + boxSchemas.get(i) + "'");
+            QueryInfo qi = QueryInfo.newBuilder().setFilter(filter).build();
+            try {
+                EntitiesResponse er = op.getEntities(Box.EDM_TYPE_NAME, qi);
+                List<OEntity> entList = er.getEntities();
+                if (entList.size() == 1) {
+                    return new Box(this, entList.get(0));
+                }
+                continue;
+            } catch (RuntimeException e) {
+                return null;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -450,7 +573,7 @@ public class CellEsImpl implements Cell {
             Map<String, Object> src = gRes.getSource();
             Map<String, Object> s = (Map<String, Object>) src.get("s");
             Map<String, Object> l = (Map<String, Object>) src.get("l");
-            String roleName = (String) s.get(KEY_NAME);
+            String roleName = (String) s.get(Common.P_NAME.getName());
             String boxId = (String) l.get(Box.EDM_TYPE_NAME);
             String boxName = null;
             String schema = null;
@@ -463,8 +586,8 @@ public class CellEsImpl implements Cell {
                 }
                 Map<String, Object> boxsrc = getRes.getSource();
                 Map<String, Object> boxs = (Map<String, Object>) boxsrc.get("s");
-                boxName = (String) boxs.get(KEY_NAME);
-                schema = (String) boxs.get(KEY_SCHEMA);
+                boxName = (String) boxs.get(Common.P_NAME.getName());
+                schema = (String) boxs.get(Box.P_SCHEMA.getName());
             }
             Role roleObj = new Role(roleName, boxName, schema, this.getUrl());
 
@@ -486,6 +609,145 @@ public class CellEsImpl implements Cell {
         this.addRoleListExtCelltoRelationAndExtRole(token, ret);
 
         return ret;
+    }
+
+    @Override
+    public String roleIdToRoleResourceUrl(String roleId) {
+        CellCtlODataProducer ccop = new CellCtlODataProducer(this);
+        OEntity oe = ccop.getEntityByInternalId(Role.EDM_TYPE_NAME, roleId);
+        if (oe == null) {
+            //If the role does not exist, it returns null.
+            return null;
+        }
+
+        String boxName = (String) oe.getProperty("_Box.Name").getValue();
+        OProperty<?> schemaProp = oe.getProperty("_Box.Schema");
+        String schema = null;
+        if (schemaProp != null) {
+            schema = (String) schemaProp.getValue();
+        }
+        String roleName = (String) oe.getProperty("Name").getValue();
+        Role roleObj = new Role(roleName, boxName, schema, this.getUrl());
+        return roleObj.createUrl();
+    }
+
+    @Override
+    public String roleResourceUrlToId(String roleUrl, String baseUrl) {
+        EntitySetAccessor roleType = EsModel.cellCtl(this, Role.EDM_TYPE_NAME);
+
+        //The roleName corresponds to the URL
+        URL rUrl = null;
+        try {
+            //Correspondence of xml: base
+            if (baseUrl != null && !"".equals(baseUrl)) {
+                //URL relative path correspondence
+                rUrl = new URL(new URL(baseUrl), roleUrl);
+            } else {
+                rUrl = new URL(roleUrl);
+            }
+        } catch (MalformedURLException e) {
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND.reason(e);
+        }
+
+        Role role = null;
+        try {
+            role = new Role(rUrl);
+        } catch (MalformedURLException e) {
+            log.info("Role URL:" + rUrl.toString());
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
+        }
+
+        //It is not permitted to designate the cell URL portion of the role resource different from the cell URL of the ACL setting target
+        if (!(this.getUrl().equals(role.getBaseUrl()))) {
+            PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Cell different").writeLog();
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
+        }
+        //Search for Role
+        List<Map<String, Object>> queries = new ArrayList<Map<String, Object>>();
+        queries.add(QueryMapFactory.termQuery("c", this.getId()));
+        queries.add(QueryMapFactory.termQuery("s." + Common.P_NAME.getName() + ".untouched", role.getName()));
+
+        Map<String, Object> query = QueryMapFactory.filteredQuery(null, QueryMapFactory.mustQuery(queries));
+
+        List<Map<String, Object>> filters = new ArrayList<Map<String, Object>>();
+        if (!(Box.DEFAULT_BOX_NAME.equals(role.getBoxName()))) {
+            //Add search queries when Role is tied to a box
+            Box targetBox = this.getBoxForName(role.getBoxName());
+            if (targetBox == null) {
+                throw PersoniumCoreException.Dav.BOX_LINKED_BY_ROLE_NOT_FOUND.params(baseUrl);
+            }
+            String boxId = targetBox.getId();
+            filters.add(QueryMapFactory.termQuery("l." + Box.EDM_TYPE_NAME, boxId));
+        } else {
+            //Addition of null search query even when Role is not tied to a box
+            filters.add(QueryMapFactory.missingFilter("l." + Box.EDM_TYPE_NAME));
+        }
+
+        Map<String, Object> source = new HashMap<String, Object>();
+        if (!filters.isEmpty()) {
+            source.put("filter", QueryMapFactory.andFilter(filters));
+        }
+        source.put("query", query);
+        PersoniumSearchHits hits = roleType.search(source).getHits();
+
+        //Null if target Role does not exist
+        if (hits == null || hits.getCount() == 0) {
+            PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Not Hit").writeLog();
+            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
+        }
+        //If more than one target Role is acquired, set as internal error
+        if (hits.getAllPages() > 1) {
+            PersoniumCoreLog.OData.FOUND_MULTIPLE_RECORDS.params(hits.getAllPages()).writeLog();
+            throw PersoniumCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT;
+        }
+
+        PersoniumSearchHit hit = hits.getHits()[0];
+        return hit.getId();
+    }
+
+    /**
+     * Set the internal ID of this Cell.
+     * @param id
+     * Internal ID string
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * Set members of objects from Map.
+     * @param json
+     * Actually Map
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void setJson(Map json) {
+        this.json = json;
+        if (this.json == null) {
+            return;
+        }
+        Map<String, String> urlJson = (Map<String, String>) json.get("s");
+        Map<String, String> hJson = (Map<String, String>) json.get("h");
+        this.published = (Long) json.get("p");
+        this.name = urlJson.get("Name");
+        // TODO At this timing owner's localunit/http convert should be done.
+        // It is necessary to modify the source code so that UnitUrl can be read at this timing.
+        this.owner = hJson.get("Owner");
+    }
+
+    private void waitCellAccessible(String cellId, int maxLoopCount, long interval) {
+        for (int loopCount = 0; loopCount < maxLoopCount; loopCount++) {
+            long count = CellLockManager.getReferenceCount(cellId);
+            //Since it includes my request, it becomes larger than 1 if there are other requests
+            if (count <= 1) {
+                return;
+            }
+            try {
+                Thread.sleep(interval);
+            } catch (InterruptedException e) {
+                throw PersoniumCoreException.Misc.CONFLICT_CELLACCESS;
+            }
+        }
+        throw PersoniumCoreException.Misc.CONFLICT_CELLACCESS;
     }
 
     /**
@@ -712,312 +974,17 @@ public class CellEsImpl implements Cell {
         Map<String, Object> src = gRes.getSource();
         Map<String, Object> s = (Map<String, Object>) src.get("s");
         Map<String, Object> l = (Map<String, Object>) src.get("l");
-        String roleName = (String) s.get(KEY_NAME);
-        String schema = (String) s.get(KEY_SCHEMA);
+        String roleName = (String) s.get(Common.P_NAME.getName());
+        String schema = (String) s.get(Box.P_SCHEMA.getName());
         String boxId = (String) l.get(Box.EDM_TYPE_NAME);
         String boxName = null;
         if (boxId != null) {
             //Search Box
             Map<String, Object> boxsrc = DavCmpFsImpl.searchBox(this, boxId);
             Map<String, Object> boxs = (Map<String, Object>) boxsrc.get("s");
-            boxName = (String) boxs.get(KEY_NAME);
+            boxName = (String) boxs.get(Common.P_NAME.getName());
         }
 
         roles.add(new Role(roleName, boxName, schema, this.url));
-    }
-
-    @Override
-    public String getOwner() {
-        return this.owner;
-    }
-
-    @Override
-    public String getDataBundleNameWithOutPrefix() {
-        String unitUserName;
-        if (this.owner == null) {
-            unitUserName = AccessContext.TYPE_ANONYMOUS;
-        } else {
-            unitUserName = IndexNameEncoder.encodeEsIndexName(owner);
-        }
-        return unitUserName;
-    }
-
-    @Override
-    public String getDataBundleName() {
-        String unitUserName = PersoniumUnitConfig.getEsUnitPrefix() + "_" + getDataBundleNameWithOutPrefix();
-        return unitUserName;
-    }
-
-    /**
-     * Get the Cell name.
-     * @return Cell Name
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Returns the internal ID of this Cell.
-     * @return internal identity string
-     */
-    @Override
-    public String getId() {
-        return this.id;
-    }
-
-    /**
-     * Set the internal ID of this Cell.
-     * @param id
-     * Internal ID string
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * Returns the URL of this Cell.
-     * @return URL string
-     */
-    @Override
-    public String getUrl() {
-        return this.url;
-    }
-
-    /**
-     * Set the URL of this Cell.
-     * @param url
-     * URL string
-     */
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    /**
-     * Returns the Unit URL of this Cell.
-     * @return unitUrl string
-     */
-    @Override
-    public String getUnitUrl() {
-        return UriUtils.getUnitUrl(this.getUrl());
-    }
-
-    static final String KEY_NAME = "Name";
-    static final String KEY_SCHEMA = "Schema";
-
-    /**
-     * Check the value of property item with regular expression.
-     * @param propValue
-     * Property value
-     * @param dcFormat
-     * Value of dcFormat
-     * @return In case of format error, return false
-     */
-    private static boolean validatePropertyRegEx(String propValue, String dcFormat) {
-        //Perform format check
-        Pattern pattern = Pattern.compile(dcFormat);
-        Matcher matcher = pattern.matcher(propValue);
-        if (!matcher.matches()) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Return the creation time of Cell.
-     * @return Cell creation time
-     */
-    public long getPublished() {
-        return this.published;
-    }
-
-    @Override
-    public String roleIdToRoleResourceUrl(String roleId) {
-        CellCtlODataProducer ccop = new CellCtlODataProducer(this);
-        OEntity oe = ccop.getEntityByInternalId(Role.EDM_TYPE_NAME, roleId);
-        if (oe == null) {
-            //If the role does not exist, it returns null.
-            return null;
-        }
-
-        String boxName = (String) oe.getProperty("_Box.Name").getValue();
-        OProperty<?> schemaProp = oe.getProperty("_Box.Schema");
-        String schema = null;
-        if (schemaProp != null) {
-            schema = (String) schemaProp.getValue();
-        }
-        String roleName = (String) oe.getProperty("Name").getValue();
-        Role roleObj = new Role(roleName, boxName, schema, this.getUrl());
-        return roleObj.createUrl();
-    }
-
-    @Override
-    public String roleResourceUrlToId(String roleUrl, String baseUrl) {
-        EntitySetAccessor roleType = EsModel.cellCtl(this, Role.EDM_TYPE_NAME);
-
-        //The roleName corresponds to the URL
-        URL rUrl = null;
-        try {
-            //Correspondence of xml: base
-            if (baseUrl != null && !"".equals(baseUrl)) {
-                //URL relative path correspondence
-                rUrl = new URL(new URL(baseUrl), roleUrl);
-            } else {
-                rUrl = new URL(roleUrl);
-            }
-        } catch (MalformedURLException e) {
-            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND.reason(e);
-        }
-
-        Role role = null;
-        try {
-            role = new Role(rUrl);
-        } catch (MalformedURLException e) {
-            log.info("Role URL:" + rUrl.toString());
-            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
-        }
-
-        //It is not permitted to designate the cell URL portion of the role resource different from the cell URL of the ACL setting target
-        if (!(this.getUrl().equals(role.getBaseUrl()))) {
-            PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Cell different").writeLog();
-            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
-        }
-        //Search for Role
-        List<Map<String, Object>> queries = new ArrayList<Map<String, Object>>();
-        queries.add(QueryMapFactory.termQuery("c", this.getId()));
-        queries.add(QueryMapFactory.termQuery("s." + KEY_NAME + ".untouched", role.getName()));
-
-        Map<String, Object> query = QueryMapFactory.filteredQuery(null, QueryMapFactory.mustQuery(queries));
-
-        List<Map<String, Object>> filters = new ArrayList<Map<String, Object>>();
-        if (!(Box.DEFAULT_BOX_NAME.equals(role.getBoxName()))) {
-            //Add search queries when Role is tied to a box
-            Box targetBox = this.getBoxForName(role.getBoxName());
-            if (targetBox == null) {
-                throw PersoniumCoreException.Dav.BOX_LINKED_BY_ROLE_NOT_FOUND.params(baseUrl);
-            }
-            String boxId = targetBox.getId();
-            filters.add(QueryMapFactory.termQuery("l." + Box.EDM_TYPE_NAME, boxId));
-        } else {
-            //Addition of null search query even when Role is not tied to a box
-            filters.add(QueryMapFactory.missingFilter("l." + Box.EDM_TYPE_NAME));
-        }
-
-        Map<String, Object> source = new HashMap<String, Object>();
-        if (!filters.isEmpty()) {
-            source.put("filter", QueryMapFactory.andFilter(filters));
-        }
-        source.put("query", query);
-        PersoniumSearchHits hits = roleType.search(source).getHits();
-
-        //Null if target Role does not exist
-        if (hits == null || hits.getCount() == 0) {
-            PersoniumCoreLog.Dav.ROLE_NOT_FOUND.params("Not Hit").writeLog();
-            throw PersoniumCoreException.Dav.ROLE_NOT_FOUND;
-        }
-        //If more than one target Role is acquired, set as internal error
-        if (hits.getAllPages() > 1) {
-            PersoniumCoreLog.OData.FOUND_MULTIPLE_RECORDS.params(hits.getAllPages()).writeLog();
-            throw PersoniumCoreException.OData.DETECTED_INTERNAL_DATA_CONFLICT;
-        }
-
-        PersoniumSearchHit hit = hits.getHits()[0];
-        return hit.getId();
-    }
-
-    @Override
-    public void delete(boolean recursive, String unitUserName) {
-        //Check the number of accesses to Cell and lock access
-        int maxLoopCount = PersoniumUnitConfig.getCellLockRetryTimes();
-        long interval = PersoniumUnitConfig.getCellLockRetryInterval();
-        waitCellAccessible(this.id, maxLoopCount, interval);
-
-        CellLockManager.setCellStatus(this.id, CellLockManager.STATUS.BULK_DELETION);
-
-        // Delete cell entity.
-        CellAccessor cellAccessor = (CellAccessor) EsModel.cell();
-        CellDocHandler docHandler = new CellDocHandler(cellAccessor.get(this.getId()));
-        try {
-            cellAccessor.delete(docHandler);
-            log.info("Cell Entity Deletion End.");
-        } finally {
-            CellCache.clear(this.getName());
-            CellLockManager.setCellStatus(this.getId(), CellLockManager.STATUS.NORMAL);
-        }
-
-        // Make this cell empty asynchronously.
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                makeEmpty();
-            }
-        });
-        thread.start();
-
-    }
-
-    private void waitCellAccessible(String cellId, int maxLoopCount, long interval) {
-        for (int loopCount = 0; loopCount < maxLoopCount; loopCount++) {
-            long count = CellLockManager.getReferenceCount(cellId);
-            //Since it includes my request, it becomes larger than 1 if there are other requests
-            if (count <= 1) {
-                return;
-            }
-            try {
-                Thread.sleep(interval);
-            } catch (InterruptedException e) {
-                throw PersoniumCoreException.Misc.CONFLICT_CELLACCESS;
-            }
-        }
-        throw PersoniumCoreException.Misc.CONFLICT_CELLACCESS;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void makeEmpty() {
-        String unitUserNameWithOutPrefix = this.getDataBundleNameWithOutPrefix();
-        String cellInfoLog = String.format(" CellId:[%s], CellName:[%s], CellUnitUserName:[%s]", this.getId(),
-                this.getName(), this.getDataBundleName());
-        //--------------------
-        // WebDav file.
-        //--------------------
-        // Delete cell snapshot file.
-        CellSnapshotCellCmp snapshotCmp = ModelFactory.cellSnapshotCellCmp(this);
-        try {
-            snapshotCmp.delete(null, true);
-        } catch (PersoniumCoreException e) {
-            // If the deletion fails, output a log and continue processing.
-            log.warn("Delete CellSnapshot Failed." + cellInfoLog, e);
-        }
-        log.info("CellSnapshotFile Deletion End.");
-
-        // Delete event log file.
-        try {
-            EventUtils.deleteEventLog(this.getId(), this.getOwner());
-        } catch (BinaryDataAccessException e) {
-            // If the deletion fails, output a log and continue processing.
-            log.warn("Delete EventLog Failed." + cellInfoLog, e);
-        }
-        log.info("EventLog Deletion End.");
-
-        // Delete dav file.
-        CellCmp cellCmp = ModelFactory.cellCmp(this);
-        try {
-            cellCmp.delete(null, true);
-        } catch (PersoniumCoreException e) {
-            // If the deletion fails, output a log and continue processing.
-            log.warn("Delete DavFile Failed." + cellInfoLog, e);
-        }
-        log.info("DavFile Deletion End.");
-
-        //--------------------
-        // OData.
-        //--------------------
-        // Delete all entities under the cell.
-        CellDataAccessor cellDataAccessor = EsModel.cellData(unitUserNameWithOutPrefix, this.getId());
-        cellDataAccessor.bulkDeleteCell();
-        log.info("Cell Entity Resource Deletion End.");
     }
 }

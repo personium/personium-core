@@ -2948,7 +2948,7 @@ public class MessageSentTest extends ODataCommon {
     public void error_send_boxbound_message_box_not_exists_on_sender() {
         String targetCellName = Setup.TEST_CELL2;
         String srcCellName = TEST_CELL1;
-        String appCellName = "testSchema001";
+        String appCellName = "testschema001";
 
         // Set request body
         JSONObject body = new JSONObject();
@@ -3043,7 +3043,7 @@ public class MessageSentTest extends ODataCommon {
     public void error_send_boxbound_message_box_not_exists_on_receiver() {
         String targetCellName = Setup.TEST_CELL2;
         String srcCellName = TEST_CELL1;
-        String appCellName = "testSchema001";
+        String appCellName = "testschema001";
 
         // Set request body
         JSONObject body = new JSONObject();

@@ -22,7 +22,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.odata4j.core.OEntityKey;
@@ -55,7 +54,6 @@ import io.personium.core.utils.UriUtils;
  * Jax-RS Resource handling Personium Unit Level Api.
  */
 public class UnitCtlResource extends ODataResource {
-    UriInfo uriInfo;
 
     static Logger log = LoggerFactory.getLogger(UnitCtlResource.class);
 
@@ -67,12 +65,10 @@ public class UnitCtlResource extends ODataResource {
     /**
      * constructor.
      * @param accessContext AccessContext
-     * @param uriInfo UriInfo
      */
-    public UnitCtlResource(AccessContext accessContext, UriInfo uriInfo) {
+    public UnitCtlResource(AccessContext accessContext) {
         super(accessContext, UriUtils.SCHEME_UNIT_URI + "__ctl/",
                 ModelFactory.ODataCtl.unitCtl(accessContext));
-        this.uriInfo = uriInfo;
         checkReferenceMode(accessContext);
     }
 
@@ -173,7 +169,7 @@ public class UnitCtlResource extends ODataResource {
 
         if (Cell.EDM_TYPE_NAME.equals(entitySetName)) {
             String cellId = oew.getUuid();
-            cell = ModelFactory.cell(cellId, uriInfo);
+            cell = ModelFactory.cellFromId(cellId);
 
             //409 error if Cell is not empty
             if (!cell.isEmpty()) {

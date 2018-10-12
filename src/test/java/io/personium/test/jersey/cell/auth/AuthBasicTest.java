@@ -68,7 +68,7 @@ public class AuthBasicTest extends PersoniumTest {
 
     static final String TEST_CELL1 = Setup.TEST_CELL1;
     // スキーマ情報なしBox作成用のCell
-    static final String MY_CELL = "basicAuthenticationCell";
+    static final String MY_CELL = "basicauthenticationcell";
     static final String TEST_BOX1 = Setup.TEST_BOX1;
     static final String TEST_ODATA = Setup.TEST_ODATA;
     static final String TEST_ACCOUNT = "account4";

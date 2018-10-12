@@ -61,7 +61,7 @@ import io.personium.test.utils.TResponse;
 public class MoveCollectionAccessControlTest extends PersoniumTest {
 
     private static final String PASSWORD = "password";
-    private static final String CELL_NAME = "MoveCollectionAclTestCell";
+    private static final String CELL_NAME = "movecollectionacltestcell";
     private static final String BOX_NAME = "box1";
     private static final String SRC_COL_NAME = "srcCollection";
     private static final String DST_COL_NAME = "dstCollection";

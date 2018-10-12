@@ -167,40 +167,42 @@ public class AccessContext {
      * @param pCookieAuthValue Value specified for p_cookie in cookie
      * @param cell Accessing Cell
      * @param baseUri accessing baseUri
-     * @param host The value of Host in the request header
+     * @param headerHost The value of Host in the request header
      * @param xPersoniumUnitUser X-Personium-UnitUser header
      * @return Generated AccessContext object
      */
     public static AccessContext create(String authzHeaderValue,
             UriInfo requestURIInfo, String pCookiePeer, String pCookieAuthValue,
-            Cell cell, String baseUri, String host, String xPersoniumUnitUser) {
+            Cell cell, String baseUri, String headerHost, String xPersoniumUnitUser) {
         if (authzHeaderValue == null) {
             if (pCookiePeer == null || 0 == pCookiePeer.length()) {
                 return new AccessContext(TYPE_ANONYMOUS, cell, baseUri, requestURIInfo);
             }
             //Cookie authentication
             //Get decrypted value of cookie value
+            if (null == pCookieAuthValue) {
+                return new AccessContext(
+                        TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
+            }
+            // Cookie related processing requires no port number.
+            String decodedCookieValue;
             try {
-                if (null == pCookieAuthValue) {
-                    return new AccessContext(
-                            TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
-                }
-                String decodedCookieValue = LocalToken.decode(pCookieAuthValue,
-                        UnitLocalUnitUserToken.getIvBytes(
-                                AccessContext.getCookieCryptKey(requestURIInfo.getBaseUri())));
-                int separatorIndex = decodedCookieValue.indexOf("\t");
-                String peer = decodedCookieValue.substring(0, separatorIndex);
-                //Obtain authorizationHeader equivalent token from information in cookie
-                String authToken = decodedCookieValue.substring(separatorIndex + 1);
-                if (pCookiePeer.equals(peer)) {
-                    //Generate appropriate AccessContext with recursive call.
-                    return create(OAuth2Helper.Scheme.BEARER + " " + authToken,
-                            requestURIInfo, null, null, cell, baseUri, host, xPersoniumUnitUser);
-                } else {
-                    return new AccessContext(
-                            TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
-                }
+                String nonPortHost = headerHost.split(":")[0];
+                decodedCookieValue = LocalToken.decode(pCookieAuthValue,
+                        UnitLocalUnitUserToken.getIvBytes(AccessContext.getCookieCryptKey(nonPortHost)));
             } catch (TokenParseException e) {
+                return new AccessContext(
+                        TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
+            }
+            int separatorIndex = decodedCookieValue.indexOf("\t");
+            String peer = decodedCookieValue.substring(0, separatorIndex);
+            //Obtain authorizationHeader equivalent token from information in cookie
+            String authToken = decodedCookieValue.substring(separatorIndex + 1);
+            if (pCookiePeer.equals(peer)) {
+                //Generate appropriate AccessContext with recursive call.
+                return create(OAuth2Helper.Scheme.BEARER + " " + authToken,
+                        requestURIInfo, null, null, cell, baseUri, headerHost, xPersoniumUnitUser);
+            } else {
                 return new AccessContext(
                         TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.cookieAuthError);
             }
@@ -216,7 +218,8 @@ public class AccessContext {
 
         } else if (authzHeaderValue.startsWith(OAuth2Helper.Scheme.BEARER)) {
             //OAuth 2.0 authentication
-            return createBearerAuthz(authzHeaderValue, cell, baseUri, requestURIInfo, host, xPersoniumUnitUser);
+            return createBearerAuthz(authzHeaderValue, cell, headerHost, baseUri,
+                    requestURIInfo, headerHost, xPersoniumUnitUser);
         }
         return new AccessContext(TYPE_INVALID, cell, baseUri, requestURIInfo, InvalidReason.authenticationScheme);
     }
@@ -232,7 +235,7 @@ public class AccessContext {
    public static AccessContext createForWebSocket(
            String accessToken, Cell cell, String baseUri, String host) {
        String bearerAccessToken = OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + accessToken;
-       return createBearerAuthz(bearerAccessToken, cell, baseUri, null, host, null);
+       return createBearerAuthz(bearerAccessToken, cell, host, baseUri, null, host, null);
    }
 
     /**
@@ -592,14 +595,14 @@ public class AccessContext {
 
     /**
      * Generate the key for token encryption / decryption at the time of cookie authentication.
-     * @param uri request URI
+     * @param host request host
      * @return Key used for encryption / decryption
      */
-    public static String getCookieCryptKey(URI uri) {
+    public static String getCookieCryptKey(String host) {
         //Because PCS is stateless access, it is difficult to change the key for each user,
         //Generate a key based on the host name of URI.
         //Process the host name.
-        return uri.getHost().replaceAll("[aiueo]", "#");
+        return host.replaceAll("[aiueo]", "#");
     }
 
     /**
@@ -671,7 +674,7 @@ public class AccessContext {
      * @return Generated AccessContext object
      */
     private static AccessContext createBearerAuthz(String authzHeaderValue, Cell cell,
-            String baseUri, UriInfo uriInfo, String host, String xPersoniumUnitUser) {
+            String requestURIHost, String baseUri, UriInfo uriInfo, String host, String xPersoniumUnitUser) {
         // Bearer
         //If the value of the authentication token does not start with [Bearer], it is determined to be an invalid token
         if (!authzHeaderValue.startsWith(OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX)) {
@@ -750,62 +753,9 @@ public class AccessContext {
             return ret;
         } else {
             TransCellAccessToken tca = (TransCellAccessToken) tk;
-
-            //In the case of TCAT, check the possibility of being a unit user token
-            //TCAT is unit user token Condition 1: Target is your own unit.
-            //TCAT is unit user token Condition 2: Issuer is UnitUserCell which exists in the setting.
-            if (tca.getTarget().equals(baseUri) && PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), baseUri)) {
-                //Processing unit user tokens
-                ret.accessType = TYPE_UNIT_USER;
-                ret.subject = tca.getSubject();
-                ret.issuer = tca.getIssuer();
-
-                //Take role information and if you have unit admin roll, promote to unit admin.
-                List<Role> roles = tca.getRoles();
-                Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.DEFAULT_BOX_NAME, null, tca.getIssuer());
-                String unitAdminRoleUrl = unitAdminRole.createUrl();
-                Role cellContentsReaderRole = new Role(ROLE_CELL_CONTENTS_READER, Box.DEFAULT_BOX_NAME,
-                        null, tca.getIssuer());
-                String cellContentsReaderUrl = cellContentsReaderRole.createUrl();
-                Role cellContentsAdminRole = new Role(ROLE_CELL_CONTENTS_ADMIN, Box.DEFAULT_BOX_NAME,
-                        null, tca.getIssuer());
-                String cellContentsAdminUrl = cellContentsAdminRole.createUrl();
-
-                String unitUserRole = null;
-                for (Role role : roles) {
-                    String roleUrl = role.createUrl();
-                    if (unitAdminRoleUrl.equals(roleUrl)) {
-                        if (xPersoniumUnitUser == null) {
-                            // If there is no X-Personium-UnitUser header, UnitAdmin
-                            ret = new AccessContext(TYPE_UNIT_ADMIN, cell, baseUri, uriInfo);
-                        } else {
-                            // If there is an X-Personium-UnitUser header, UnitUser
-                            ret.subject = xPersoniumUnitUser;
-                        }
-                    } else if (cellContentsReaderUrl.equals(roleUrl) && unitUserRole == null) {
-                        // If roles are not set, set the CellContentsReader role.
-                        // To preferentially set the CellContentsAdmin role.
-                        unitUserRole = ROLE_CELL_CONTENTS_READER;
-                    } else if (cellContentsAdminUrl.equals(roleUrl)) {
-                        // Set the CellContentsAdmin role.
-                        unitUserRole = ROLE_CELL_CONTENTS_ADMIN;
-                    }
-                }
-                ret.unitUserRole = unitUserRole;
-
-                //Unit user token does not concern schema authentication, so return here
+            ret = createAccessContext(cell, requestURIHost, baseUri, uriInfo, xPersoniumUnitUser, tca);
+            if (TYPE_UNIT_USER.equals(ret.accessType)) {
                 return ret;
-            } else if (cell == null) {
-                //Because only the master token and the unit user token allow tokens with Cell empty at unit level, treat them as invalid tokens.
-                throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
-            } else {
-                //TCAT processing
-                ret.accessType = TYPE_TRANS;
-                ret.subject = tca.getSubject();
-                ret.issuer = tca.getIssuer();
-
-                //Obtaining the Role corresponding to the token
-                ret.roles = cell.getRoleListHere((TransCellAccessToken) tk);
             }
         }
         ret.schema = tk.getSchema();
@@ -884,6 +834,88 @@ public class AccessContext {
             realm = cellobj.getUrl();
         }
         return realm;
+    }
+
+    /**
+     * Creates and returns AccessContext object by TransCellAccesToken.
+     * @param cell Accessing Cell
+     * @param requestURIHost
+     * @param baseUri accessing baseUri
+     * @param uriInfo uri info
+     * @param xPersoniumUnitUser X-Personium-UnitUser header
+     * @param tca based token
+     * @return Generated AccessContext object
+     */
+    private static AccessContext createAccessContext(Cell cell, String requestURIHost,
+            String baseUri, UriInfo uriInfo, String xPersoniumUnitUser, TransCellAccessToken tca) {
+        AccessContext ret = new AccessContext(null, cell, baseUri, uriInfo);
+
+        //In the case of TCAT, check the possibility of being a unit user token
+        //TCAT is unit user token Condition 1: Target is your own unit.
+        //TCAT is unit user token Condition 2: Issuer is UnitUserCell which exists in the setting.
+
+        String escapedBaseUri = baseUri;
+        if (requestURIHost.contains(".")) {
+            String cellName = requestURIHost.split("\\.")[0];
+            escapedBaseUri = baseUri.replaceFirst(cellName + "\\.", "");
+        }
+
+        if ((tca.getTarget().equals(baseUri) || tca.getTarget().equals(escapedBaseUri))
+                && (PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), baseUri)
+                        || PersoniumUnitConfig.checkUnitUserIssuers(tca.getIssuer(), escapedBaseUri))) {
+            //Processing unit user tokens
+            ret.accessType = TYPE_UNIT_USER;
+            ret.subject = tca.getSubject();
+            ret.issuer = tca.getIssuer();
+
+            //Take role information and if you have unit admin roll, promote to unit admin.
+            List<Role> roles = tca.getRoles();
+            Role unitAdminRole = new Role(ROLE_UNIT_ADMIN, Box.DEFAULT_BOX_NAME, null, tca.getIssuer());
+            String unitAdminRoleUrl = unitAdminRole.createUrl();
+            Role cellContentsReaderRole = new Role(ROLE_CELL_CONTENTS_READER, Box.DEFAULT_BOX_NAME,
+                    null, tca.getIssuer());
+            String cellContentsReaderUrl = cellContentsReaderRole.createUrl();
+            Role cellContentsAdminRole = new Role(ROLE_CELL_CONTENTS_ADMIN, Box.DEFAULT_BOX_NAME,
+                    null, tca.getIssuer());
+            String cellContentsAdminUrl = cellContentsAdminRole.createUrl();
+
+            String unitUserRole = null;
+            for (Role role : roles) {
+                String roleUrl = role.createUrl();
+                if (unitAdminRoleUrl.equals(roleUrl)) {
+                    if (xPersoniumUnitUser == null) {
+                        // If there is no X-Personium-UnitUser header, UnitAdmin
+                        ret = new AccessContext(TYPE_UNIT_ADMIN, cell, baseUri, uriInfo);
+                    } else {
+                        // If there is an X-Personium-UnitUser header, UnitUser
+                        ret.subject = xPersoniumUnitUser;
+                    }
+                } else if (cellContentsReaderUrl.equals(roleUrl) && unitUserRole == null) {
+                    // If roles are not set, set the CellContentsReader role.
+                    // To preferentially set the CellContentsAdmin role.
+                    unitUserRole = ROLE_CELL_CONTENTS_READER;
+                } else if (cellContentsAdminUrl.equals(roleUrl)) {
+                    // Set the CellContentsAdmin role.
+                    unitUserRole = ROLE_CELL_CONTENTS_ADMIN;
+                }
+            }
+            ret.unitUserRole = unitUserRole;
+
+            //Unit user token does not concern schema authentication, so return here
+            return ret;
+        } else if (cell == null) {
+            //Because only the master token and the unit user token allow tokens with Cell empty at unit level, treat them as invalid tokens.
+            throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
+        } else {
+            //TCAT processing
+            ret.accessType = TYPE_TRANS;
+            ret.subject = tca.getSubject();
+            ret.issuer = tca.getIssuer();
+
+            //Obtaining the Role corresponding to the token
+            ret.roles = cell.getRoleListHere(tca);
+            return ret;
+        }
     }
 
 }

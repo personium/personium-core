@@ -59,7 +59,7 @@ import io.personium.test.utils.TResponse;
 public class MyPasswordTest extends PersoniumTest {
 
     private static final String MASTER_TOKEN = AbstractCase.MASTER_TOKEN_NAME;
-    private static final String UNIT_USER_CELL = "UnitUserCell";
+    private static final String UNIT_USER_CELL = "unitusercell";
 
     /**
      * コンストラクタ.

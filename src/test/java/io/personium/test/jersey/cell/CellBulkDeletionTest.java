@@ -76,7 +76,7 @@ public class CellBulkDeletionTest extends AbstractCase {
     @Test
     public final void セル一括削除を実行してセルを削除できること() {
         // テスト用セル準備 ---------------------
-        String cellName = "CellBulkDeletionTest";
+        String cellName = "cellbulkdeletiontest";
         String boxName = "testBox";
         String davFileName = "testFile";
 
@@ -131,7 +131,7 @@ public class CellBulkDeletionTest extends AbstractCase {
     @Test
     public final void セル一括削除時にX_PERSONIUM_Recursiveヘッダを指定しないで412が返却されること() {
         // セルを作成する
-        String cellName = "CellBulkDeletionTest";
+        String cellName = "cellbulkdeletiontest";
         CellUtils.create(cellName, MASTER_TOKEN_NAME, -1);
 
         // セルの一括削除APIを実行する
@@ -159,7 +159,7 @@ public class CellBulkDeletionTest extends AbstractCase {
     @Test
     public final void セル一括削除時にX_PERSONIUM_Recursiveヘッダにfalseを指定して412が返却されること() {
         // セルを作成する
-        String cellName = "CellBulkDeletionTest";
+        String cellName = "cellbulkdeletiontest";
         CellUtils.create(cellName, MASTER_TOKEN_NAME, -1);
 
         // セルの一括削除APIを実行する
@@ -188,7 +188,7 @@ public class CellBulkDeletionTest extends AbstractCase {
     @Test
     public final void セル一括削除時にユニットユーザの認証トークンを指定してセルが削除できること() {
         // セルを作成する
-        String cellName = "CellBulkDeletionTest";
+        String cellName = "cellbulkdeletiontest";
         // マスタートークンでX-Personium-UnitUserヘッダを指定すると指定した値のOwnerでセルが作成される。
         CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, Setup.OWNER_VET, HttpStatus.SC_CREATED);
 
@@ -215,7 +215,7 @@ public class CellBulkDeletionTest extends AbstractCase {
     @Test
     public final void セル一括削除時に異なるセルのユニットユーザの認証トークンを指定して403が返却されること() {
         // セルを作成する
-        String cellName = "CellBulkDeletionTest";
+        String cellName = "cellbulkdeletiontest";
         // マスタートークンでX-Personium-UnitUserヘッダを指定すると指定した値のOwnerでセルが作成される。
         CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, Setup.OWNER_VET, HttpStatus.SC_CREATED);
 
@@ -254,7 +254,7 @@ public class CellBulkDeletionTest extends AbstractCase {
                 .returns();
 
         // セルを作成する
-        String cellName = "CellBulkDeletionTest";
+        String cellName = "cellbulkdeletiontest";
         try {
             // トークンの中身の取得・検証
             JSONObject json = res.bodyAsJson();

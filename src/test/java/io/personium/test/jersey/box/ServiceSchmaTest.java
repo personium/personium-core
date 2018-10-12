@@ -187,7 +187,7 @@ public class ServiceSchmaTest extends PersoniumTest {
     public final void Nameが大文字小文字のみ異なるComplexTypeが存在する場合にユーザODataスキーマのComokexTypeリストが正しく生成されていること()
             throws SAXException, ParserConfigurationException, IOException {
         String token = AbstractCase.MASTER_TOKEN_NAME;
-        String cellName = "edmSchemaTestCell";
+        String cellName = "edmschematestcell";
         String boxName = "TestBox";
         String colName = "TestCol";
         String entityTypeName = "TestEntityType";

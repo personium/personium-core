@@ -51,7 +51,7 @@ import io.personium.test.utils.TResponse;
 @Category({Unit.class, Integration.class, Regression.class })
 public class MoveLimitTest extends PersoniumTest {
     private static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
-    private static final String CELL_NAME = "MoveFileLimitTestCell";
+    private static final String CELL_NAME = "movefilelimittestcell";
     private static final String BOX_NAME = "box1";
     private static final String SRC_COL_NAME = "srcCol";
     private static final String DST_COL_NAME = "dstCol";

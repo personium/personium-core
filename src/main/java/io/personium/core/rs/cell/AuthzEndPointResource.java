@@ -377,7 +377,7 @@ public class AuthzEndPointResource {
         try {
             String decodedCookieValue = LocalToken.decode(pCookie,
                     UnitLocalUnitUserToken.getIvBytes(
-                            AccessContext.getCookieCryptKey(uriInfo.getBaseUri())));
+                            AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost())));
             int separatorIndex = decodedCookieValue.indexOf("\t");
             //Obtain authorizationHeader equivalent token from information in cookie
             String authToken = decodedCookieValue.substring(separatorIndex + 1);
@@ -1104,11 +1104,20 @@ public class AuthzEndPointResource {
     private boolean checkAuthorization(final String clientId) {
         EntitySetAccessor boxAcceccor = EsModel.box(this.cell);
 
-        //{filter = {and = {filters = [{term = {c = $CellID}}, {term = {s.Schema.untouched = = $clientID}}]}}}
+        // {filter={and={filters=[{term={c=$CELL_ID}, {term={s.Schema.untouched=$CLIENT_ID}]}}}
+        // {filter={and={filters=[
+        //     {term={c=$CELL_ID}},
+        //     {or={filters=[
+        //         {term={s.Schema.untouched=$CLIENT_ID}},
+        //         {term={s.Schema.untouched=$NORMALIZED_CLIENT_ID}}
+        //     ]}}
+        // ]}}}
         Map<String, Object> query1 = new HashMap<String, Object>();
         Map<String, Object> term1 = new HashMap<String, Object>();
         Map<String, Object> query2 = new HashMap<String, Object>();
         Map<String, Object> term2 = new HashMap<String, Object>();
+//        Map<String, Object> query3 = new HashMap<String, Object>();
+//        Map<String, Object> term3 = new HashMap<String, Object>();
         List<Map<String, Object>> filtersList = new ArrayList<Map<String, Object>>();
         List<Map<String, Object>> queriesList = new ArrayList<Map<String, Object>>();
         Map<String, Object> filters = new HashMap<String, Object>();
@@ -1118,8 +1127,14 @@ public class AuthzEndPointResource {
         query1.put("c", this.cell.getId());
         term1.put("term", query1);
 
-        query2.put(OEntityDocHandler.KEY_STATIC_FIELDS + "." + Box.P_SCHEMA.getName() + ".untouched", clientId);
+        String boxSchemaKey = OEntityDocHandler.KEY_STATIC_FIELDS + "." + Box.P_SCHEMA.getName() + ".untouched";
+        query2.put(boxSchemaKey, clientId);
         term2.put("term", query2);
+
+        // TODO Issue-223
+//        String normalizedCelientId = UriUtils.convertCellBaseToDomainBase(clientId);
+//        query3.put(boxSchemaKey, normalizedCelientId);
+//        term3.put("term", query3);
 
         queriesList.add(term1);
         filtersList.add(term2);

@@ -23,6 +23,7 @@ import java.util.List;
 import org.core4j.Enumerable;
 import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmProperty;
+import org.odata4j.edm.EdmSimpleType;
 
 import io.personium.common.auth.token.IExtRoleContainingToken;
 import io.personium.common.auth.token.Role;
@@ -35,9 +36,7 @@ import io.personium.core.odata.OEntityWrapper;
  */
 public interface Cell {
 
-    /**
-     * Edm.Entity Type Name.
-     */
+    /** Edm.Entity Type Name. */
     String EDM_TYPE_NAME = "Cell";
 
     /** Status normal. */
@@ -48,23 +47,20 @@ public interface Cell {
     /** Error file name. */
     String IMPORT_ERROR_FILE_NAME = "import.error";
 
-    /**
-     * Property List.
-     */
+    /** Definition field of Name property. */
+    EdmProperty.Builder P_NAME = EdmProperty.newBuilder("Name").setType(EdmSimpleType.STRING)
+            .setNullable(false).setAnnotations(Common.P_FORMAT_CELL_NAME);
+
+    /** Property List. */
     List<EdmProperty.Builder> PROPS = Collections.unmodifiableList(Arrays.asList(
-            new EdmProperty.Builder[] {
-                    Common.P_NAME, Common.P_PUBLISHED, Common.P_UPDATED}
+            new EdmProperty.Builder[] {P_NAME, Common.P_PUBLISHED, Common.P_UPDATED}
             ));
-    /**
-     * Key List.
-     */
+    /** Key List. */
     List<String> KEYS = Collections.unmodifiableList(Arrays.asList(
-            new String[] {Common.P_NAME.getName()}
+            new String[] {P_NAME.getName()}
             ));;
 
-    /**
-     * EntityType Builder of the Cell.
-     */
+    /** EntityType Builder of the Cell. */
     EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder().setNamespace(Common.EDM_NS_UNIT_CTL)
             .setName(EDM_TYPE_NAME).addProperties(Enumerable.create(PROPS).toList()).addKeys(KEYS);
 
@@ -85,6 +81,13 @@ public interface Cell {
      * @return URL string
      */
     String getUrl();
+
+    /**
+     * returns Cell base URL string for this cell.
+     * Cell base url : "https://{cellname}.{domain}/...".
+     * @return Cell base URL string
+     */
+    String getFqdnBaseUrl();
 
     /**
      * returns Unit URL string for this cell.
@@ -171,8 +174,6 @@ public interface Cell {
      */
     boolean authenticateAccount(OEntityWrapper oew, String password);
 
-    // public abstract void createAccount(String username, String schema) throws Cell.ManipulationException;
-    // public abstract void createConnector(String name, String schema) throws Cell.ManipulationException;
     /**
      * @param username access account id
      * @return List of Roles

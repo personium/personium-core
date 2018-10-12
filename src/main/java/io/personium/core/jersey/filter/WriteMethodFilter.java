@@ -59,7 +59,7 @@ public class WriteMethodFilter implements ContainerRequestFilter  {
             }
         }
         String cellName = path;
-        Cell cell = ModelFactory.cell(cellName);
+        Cell cell = ModelFactory.cellFromName(cellName);
         if (cell != null) {
             CellLockManager.STATUS lockStatus = CellLockManager.getCellStatus(cell.getId());
             // If the lock status of Cell is "export", "import", do not allow access.

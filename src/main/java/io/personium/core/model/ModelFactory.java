@@ -16,8 +16,6 @@
  */
 package io.personium.core.model;
 
-import javax.ws.rs.core.UriInfo;
-
 import io.personium.core.auth.AccessContext;
 import io.personium.core.model.impl.es.CellEsImpl;
 import io.personium.core.model.impl.es.odata.CellCtlODataProducer;
@@ -41,26 +39,29 @@ public final class ModelFactory {
 
     }
 
-    /**
-     * Generate and return a Cell object.
-     * If the corresponding Cell does not exist, it is null
-     * @param uriInfo UriInfo
-     * @return Cell object
-     */
-    public static Cell cell(final UriInfo uriInfo) {
-        return CellEsImpl.load(uriInfo);
-    }
+//    /**
+//     * Generate and return a Cell object.
+//     * If the corresponding Cell does not exist, it is null
+//     * @param uriInfo UriInfo
+//     * @return Cell object
+//     */
+//    public static Cell cell(final UriInfo uriInfo) {
+//        return CellEsImpl.load(uriInfo);
+//    }
 
     /**
      * Generate and return a Cell object.
      * If the corresponding Cell does not exist, it is null
      * @param id id
-     * @param uriInfo UriInfo
      * @return Cell object
      */
-    public static Cell cell(final String id, final UriInfo uriInfo) {
-        return CellEsImpl.load(id, uriInfo);
+    public static Cell cellFromId(String id) {
+        return CellEsImpl.loadFromId(id);
     }
+
+//    public static Cell cell(String cellName, String baseUrl) {
+//        return CellEsImpl.load(cellName, baseUrl);
+//    }
 
     /**
      * Get cell from the specified cell name.
@@ -68,8 +69,8 @@ public final class ModelFactory {
      * @param cellName target cell name
      * @return cell
      */
-    public static Cell cell(String cellName) {
-        return CellEsImpl.load(cellName);
+    public static Cell cellFromName(String cellName) {
+        return CellEsImpl.loadFromName(cellName);
     }
 
     /**

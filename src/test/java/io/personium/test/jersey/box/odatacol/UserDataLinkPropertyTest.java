@@ -53,7 +53,7 @@ import io.personium.test.utils.UserDataUtils;
 @Category({Unit.class, Integration.class, Regression.class })
 public class UserDataLinkPropertyTest extends AbstractUserDataTest {
 
-    private static final String CELL = "UserDataLinkPropertyTest" + "_cell";
+    private static final String CELL = "userdatalinkpropertytest-cell";
     private static final String BOX = "box";
     private static final String COL = "COL";
     private static final String PARENT_ENTITY = "parentEntity";

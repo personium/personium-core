@@ -221,7 +221,7 @@ public class RuleManager {
             return;
         }
 
-        Cell cell = ModelFactory.cell(cellId, null);
+        Cell cell = ModelFactory.cellFromId(cellId);
         if (cell == null) {
             return;
         }
@@ -442,7 +442,7 @@ public class RuleManager {
             logger.info("id=" + oew.getUuid());
 
             // Cell object
-            Cell cell = ModelFactory.cell(oew.getUuid(), null);
+            Cell cell = ModelFactory.cellFromId(oew.getUuid());
 
             // load Rules for cell
             loadRule(cell);
@@ -573,7 +573,7 @@ public class RuleManager {
 
         Cell cell = null;
         try {
-            cell = ModelFactory.cell(event.getCellId(), null);
+            cell = ModelFactory.cellFromId(event.getCellId());
         } catch (Exception e) {
             cell = null;
         }

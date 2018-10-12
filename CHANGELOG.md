@@ -9,7 +9,6 @@
 IMPROVEMENTS:
 * Upgrade to JAX-RS 2.1.([#237](https://github.com/personium/personium-core/issues/237))
 * Make default value of "relayhtmlurl" and "authorizationhtmlurl" configurable in the personium-unit-config.properties file.([#240](https://github.com/personium/personium-core/issues/240))
-* Unit-level restriction against two cell properties, relayhtmlurl and authorizationhtmlurl.([#241](https://github.com/personium/personium-core/issues/241))
 
 ## 1.6.14
 IMPROVEMENTS:

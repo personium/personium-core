@@ -92,7 +92,7 @@ public class UnitCtlODataProducer extends EsODataProducer {
         if (!Cell.EDM_TYPE_NAME.equals(entitySetName)) {
             return;
         }
-        Cell cell = ModelFactory.cell(((OEntityWrapper) oEntity).getUuid(), null);
+        Cell cell = ModelFactory.cellFromId(((OEntityWrapper) oEntity).getUuid());
         // Init Cell Cmp (create metadata if not exist.)
         ModelFactory.cellCmp(cell);
     }

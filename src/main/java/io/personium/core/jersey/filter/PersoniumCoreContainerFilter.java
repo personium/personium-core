@@ -70,8 +70,10 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         String method = requestContext.getMethod();
         MultivaluedMap<String, String> headers = requestContext.getHeaders();
 
+        // Info log.
         requestLog(method, requestContext.getUriInfo().getRequestUri().toString());
-        log.debug("Reqeust Headers");
+        // Debug log.
+        log.debug("== Reqeust Headers");
         if (headers != null) {
             for (String key : headers.keySet()) {
                 StringBuilder sb = new StringBuilder();

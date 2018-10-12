@@ -40,6 +40,8 @@ public class Common {
     private static final String REGEX_NAME = "[a-zA-Z0-9][a-zA-Z0-9-_]{0,127}";
     /** Regular expression in name with sign. */
     private static final String REGEX_NAME_WITH_SIGN = "[a-zA-Z0-9][a-zA-Z0-9-_!$*=^`{|}~.@]{0,127}";
+    /** Regular expression in cell name. */
+    private static final String REGEX_CELL_NAME = "[a-z0-9][a-z0-9-]{0,127}";
     /** Regular expression in snapshot file name. */
     private static final String REGEX_SNAPSHOT_NAME = "[a-zA-Z0-9-_]{1,192}";
     /** Regular expression in relation name. */
@@ -81,6 +83,8 @@ public class Common {
     public static final String PATTERN_SNAPSHOT_NAME = "^" + REGEX_SNAPSHOT_NAME + "$";
     /** Pattern name with sign. */
     public static final String PATTERN_NAME_WITH_SIGN = "^" + REGEX_NAME_WITH_SIGN + "$";
+    /** Pattern cell name. */
+    public static final String PATTERN_CELL_NAME = "^" + REGEX_CELL_NAME + "$";
     /** Pattern relation name. */
     public static final String PATTERN_RELATION_NAME = "^" + REGEX_RELATION_NAME + "$";
     /** String containing "__relation/__/".<br>
@@ -153,6 +157,10 @@ public class Common {
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_NAME_WITH_SIGN = new ArrayList<EdmAnnotation<?>>();
     /**
+     * Definition of p: Format for Cell Name field.
+     */
+    public static final List<EdmAnnotation<?>> P_FORMAT_CELL_NAME = new ArrayList<EdmAnnotation<?>>();
+    /**
      * Definition of p: Format for Relation Name field.
      */
     public static final List<EdmAnnotation<?>> P_FORMAT_RELATION_NAME = new ArrayList<EdmAnnotation<?>>();
@@ -212,8 +220,9 @@ public class Common {
      */
     public static final EdmProperty.Builder P_UPDATED = EdmProperty.newBuilder("__updated")
             .setType(EdmSimpleType.DATETIME).setDefaultValue(SYSUTCDATETIME).setPrecision(3);
+
     /**
-     * Url property definition body.
+     * Url property.
      */
     public static final EdmProperty.Builder P_URL = EdmProperty.newBuilder("Url")
             .setNullable(false)
@@ -223,6 +232,7 @@ public class Common {
     static {
         P_FORMAT_NAME.add(createFormatNameAnnotation());
         P_FORMAT_NAME_WITH_SIGN.add(createFormatNameWithSignAnnotation());
+        P_FORMAT_CELL_NAME.add(createFormatCellNameAnnotation());
         P_FORMAT_URI.add(createFormatUriAnnotation());
         P_FORMAT_CELL_URL.add(createFormatCellUrlAnnotation());
         P_FORMAT_MULTIPLICITY.add(createFormatMultiplicityAnnotation());
@@ -249,6 +259,16 @@ public class Common {
         return new EdmAnnotationAttribute(
                 P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
                 P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_NAME_WITH_SIGN + "')");
+    }
+
+    /**
+     * Return p: Format Annotation for Cell Name item.
+     * @return EdmAnnotation
+     */
+    private static EdmAnnotation<?> createFormatCellNameAnnotation() {
+        return new EdmAnnotationAttribute(
+                P_NAMESPACE.getUri(), P_NAMESPACE.getPrefix(),
+                P_FORMAT, P_FORMAT_PATTERN_REGEX + "('" + Common.PATTERN_CELL_NAME + "')");
     }
 
     /**

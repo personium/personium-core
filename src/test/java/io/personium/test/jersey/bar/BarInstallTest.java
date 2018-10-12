@@ -173,7 +173,7 @@ public class BarInstallTest extends PersoniumTest {
         String reqCell = Setup.TEST_CELL1;
         try {
             // Delete link.
-            String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellName/__role/__/role2");
+            String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellname/__role/__/role2");
             String key = "Name='role1',_Box.Name='" + INSTALL_TARGET + "'";
             String navKey = "ExtRole='" + extRole + "'"
                     + ",_Relation.Name='relation1',_Relation._Box.Name='" + INSTALL_TARGET + "'";
@@ -195,7 +195,7 @@ public class BarInstallTest extends PersoniumTest {
 
         try {
             // Delete ExtRole.
-            String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellName/__role/__/role2");
+            String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellname/__role/__/role2");
             Http.request("cell/extRole/extRole-delete.txt")
                     .with("token", AbstractCase.MASTER_TOKEN_NAME)
                     .with("cellPath", Setup.TEST_CELL1)
@@ -216,7 +216,7 @@ public class BarInstallTest extends PersoniumTest {
      */
     @Test
     public final void 存在しないセルに対してbarインストールを実行し404エラーとなること() {
-        String reqCell = "dummyCell";
+        String reqCell = "dummycell";
         String reqPath = "box";
 
         TResponse res = null;
@@ -239,7 +239,7 @@ public class BarInstallTest extends PersoniumTest {
     @Test
     public final void Owner情報にシャープが含まれないセルに対してbarインストールを実行し正しくインストールできること() {
 
-        String cellName = "barInstallTest_ownercell";
+        String cellName = "barinstalltest-ownercell";
         String ownerName = "http://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
         String reqPath = INSTALL_TARGET;
@@ -492,7 +492,7 @@ public class BarInstallTest extends PersoniumTest {
         String reqPath = INSTALL_TARGET;
         String user = "testuser";
         String password = "password";
-        String testCell = "dummyCell00";
+        String testCell = "dummycell00";
         String odataColName = "odatacol1";
 
         TResponse res = null;
@@ -531,7 +531,7 @@ public class BarInstallTest extends PersoniumTest {
         final String reqPath = INSTALL_TARGET;
         final String user = "testuser";
         final String password = "password";
-        final String testCell = "dummyCell00";
+        final String testCell = "dummycell00";
         final String odataColName = "odatacol1";
 
         TResponse res = null;
@@ -570,7 +570,7 @@ public class BarInstallTest extends PersoniumTest {
         final String reqCell = Setup.TEST_CELL1;
         final String reqPath = INSTALL_TARGET;
         final String user = "testuser";
-        final String testCell = "dummyCell00";
+        final String testCell = "dummycell00";
         final String odataColName = "odatacol1";
 
         TResponse res = null;
@@ -646,7 +646,7 @@ public class BarInstallTest extends PersoniumTest {
                 "Name='relation1',_Box.Name='" + INSTALL_TARGET + "'", Role.EDM_TYPE_NAME,
                 role1, AbstractCase.MASTER_TOKEN_NAME, -1);
         // Role <--> ExtRole
-        String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellName/__role/__/role2");
+        String extRole = PersoniumCoreUtils.encodeUrlComp("https://fqdn/cellname/__role/__/role2");
         LinksUtils.deleteLinks(Setup.TEST_CELL1, Role.EDM_TYPE_NAME, role1, ExtRole.EDM_TYPE_NAME,
                 "ExtRole='" + extRole + "'" + ",_Relation.Name='relation1',_Relation._Box.Name='"
                 + INSTALL_TARGET + "'",
@@ -1811,7 +1811,7 @@ public class BarInstallTest extends PersoniumTest {
      */
     @Test
     public final void 存在するBoxに対して権限なしの自分セルローカルトークンでbarInstarllを実施して403が返却されること() {
-        String reqCellName = "boxInstallTestCell";
+        String reqCellName = "boxinstalltestcell";
         String reqBoxName = INSTALL_TARGET;
         String userName = "boxInstallTestAccount";
         String password = "password27";
@@ -1847,7 +1847,7 @@ public class BarInstallTest extends PersoniumTest {
      */
     @Test
     public final void 存在するスキーマ付Boxに対して権限ありの自分セルローカルトークンでbarInstarllを実施して400が返却されること() {
-        String reqCellName = "boxInstallTestCell";
+        String reqCellName = "boxinstalltestcell";
         String reqBoxName = INSTALL_TARGET;
         String userName = "boxInstallTestAccount";
         String password = "password27";
@@ -1885,7 +1885,7 @@ public class BarInstallTest extends PersoniumTest {
      */
     @Test
     public final void 存在するスキーマなしBoxに対して権限ありの自分セルローカルトークンでbarInstarllを実施して405が返却されること() {
-        String reqCellName = "boxInstallTestCell";
+        String reqCellName = "boxinstalltestcell";
         String reqBoxName = INSTALL_TARGET;
         String userName = "boxInstallTestAccount";
         String password = "password27";
@@ -1983,8 +1983,8 @@ public class BarInstallTest extends PersoniumTest {
      */
     @Test
     public final void 別のセル配下のBoxで参照しているスキーマURLを指定してBoxインストールしても正常終了すること() {
-        String cell1Name = "barInstallTest_ownercell_1";
-        String cell2Name = "barInstallTest_ownercell_2";
+        String cell1Name = "barinstalltest-ownercell-1";
+        String cell2Name = "barinstalltest-ownercell-2";
         String ownerName = "http://xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
         TResponse res = null;

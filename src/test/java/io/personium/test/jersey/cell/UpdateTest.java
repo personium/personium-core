@@ -465,7 +465,7 @@ public class UpdateTest extends AbstractCase {
 
         // リクエストボディを生成
         JSONObject requestBody = new JSONObject();
-        this.cellNameToDelete = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
+        this.cellNameToDelete = "abcdefghijklmnopqrstuvwxyz0123456789-";
         requestBody.put("Name", this.cellNameToDelete);
 
         res = updateCell(headers, requestBody);
@@ -997,7 +997,7 @@ public class UpdateTest extends AbstractCase {
         headers.put(HttpHeaders.CONTENT_TYPE, "image/jpeg");
 
         // DBサーバーを共有した際、同時にテストを行うと、同じCell名では409となってしまうため、一意にするため、Cell名に時間をセット
-        String conflictName = "conflictName" + Long.toString(Calendar.getInstance().getTimeInMillis());
+        String conflictName = "conflictname" + Long.toString(Calendar.getInstance().getTimeInMillis());
 
         // リクエストボディを生成
         JSONObject requestBody = new JSONObject();

@@ -56,7 +56,7 @@ import io.personium.test.utils.UserDataUtils;
 public class UserDataWithNPDeclaredDoublePropertyTest extends ODataCommon {
 
     /** テストセル. */
-    public static final String CELL_NAME = "UserDataWithNPDoubleTest";
+    public static final String CELL_NAME = "userdatawithnpdoubletest";
     /** テストボックス. */
     public static final String BOX_NAME = "box";
     /** テストコレクション. */

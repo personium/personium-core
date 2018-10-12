@@ -76,7 +76,7 @@ public class UserDataDeepComplexTypeTest extends PersoniumTest {
     public final void 複数階層あるデータに対して1階層目のデータをMERGEして_正常に更新できること() {
 
         String token = AbstractCase.MASTER_TOKEN_NAME;
-        String cellName = "userDataDeepComplexTypeTestCell";
+        String cellName = "userdatadeepcomplextypetestcell";
         String boxName = "box";
         String odataColName = "col";
         String entityTypeName = "entity";
@@ -144,7 +144,7 @@ public class UserDataDeepComplexTypeTest extends PersoniumTest {
     public final void 複数階層あるデータに対して2階層目のデータをMERGEして_正常に更新できること() {
 
         String token = AbstractCase.MASTER_TOKEN_NAME;
-        String cellName = "userDataDeepComplexTypeTestCell";
+        String cellName = "userdatadeepcomplextypetestcell";
         String boxName = "box";
         String odataColName = "col";
         String entityTypeName = "entity";
@@ -248,7 +248,7 @@ public class UserDataDeepComplexTypeTest extends PersoniumTest {
     public final void 複数階層あるデータに対して4階層目のデータをMERGEして_正常に更新できること() {
 
         String token = AbstractCase.MASTER_TOKEN_NAME;
-        String cellName = "userDataDeepComplexTypeTestCell";
+        String cellName = "userdatadeepcomplextypetestcell";
         String boxName = "box";
         String odataColName = "col";
         String entityTypeName = "entity";
@@ -378,7 +378,7 @@ public class UserDataDeepComplexTypeTest extends PersoniumTest {
     public final void 複数階層あるデータに対してZeroToZeroのNP経由登録して_ソース側のデータに変更がないこと() {
 
         String token = AbstractCase.MASTER_TOKEN_NAME;
-        String cellName = "userDataDeepComplexTypeTestCell";
+        String cellName = "userdatadeepcomplextypetestcell";
         String boxName = "box";
         String odataColName = "col";
         String entityTypeName = "entity";
@@ -428,7 +428,7 @@ public class UserDataDeepComplexTypeTest extends PersoniumTest {
     public final void 複数階層あるデータに対してZeroToManyのNP経由登録して_ソース側のデータに変更がないこと() {
 
         String token = AbstractCase.MASTER_TOKEN_NAME;
-        String cellName = "userDataDeepComplexTypeTestCell";
+        String cellName = "userdatadeepcomplextypetestcell";
         String boxName = "box";
         String odataColName = "col";
         String entityTypeName = "entity";
@@ -478,7 +478,7 @@ public class UserDataDeepComplexTypeTest extends PersoniumTest {
     public final void 複数階層あるデータに対してManyToZeroのNP経由登録して_ソース側のデータに変更がないこと() {
 
         String token = AbstractCase.MASTER_TOKEN_NAME;
-        String cellName = "userDataDeepComplexTypeTestCell";
+        String cellName = "userdatadeepcomplextypetestcell";
         String boxName = "box";
         String odataColName = "col";
         String entityTypeName = "entity";
@@ -528,7 +528,7 @@ public class UserDataDeepComplexTypeTest extends PersoniumTest {
     public final void 複数階層あるデータに対してManyToManyのNP経由登録して_ソース側のデータに変更がないこと() {
 
         String token = AbstractCase.MASTER_TOKEN_NAME;
-        String cellName = "userDataDeepComplexTypeTestCell";
+        String cellName = "userdatadeepcomplextypetestcell";
         String boxName = "box";
         String odataColName = "col";
         String entityTypeName = "entity";

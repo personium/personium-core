@@ -78,7 +78,7 @@ public class UnitCtlResourceTest {
         URI uri = new URI("");
         doReturn(uri).when(uriInfo).getBaseUri();
         AccessContext accessContext = PowerMockito.mock(AccessContext.class);
-        unitCtlResource = spy(new UnitCtlResource(accessContext, uriInfo));
+        unitCtlResource = spy(new UnitCtlResource(accessContext));
 
         doReturn(accessContext).when(unitCtlResource).getAccessContext();
         doReturn(AccessContext.TYPE_UNIT_USER).when(accessContext).getType();
@@ -117,7 +117,7 @@ public class UnitCtlResourceTest {
         URI uri = new URI("");
         doReturn(uri).when(uriInfo).getBaseUri();
         AccessContext accessContext = PowerMockito.mock(AccessContext.class);
-        unitCtlResource = spy(new UnitCtlResource(accessContext, uriInfo));
+        unitCtlResource = spy(new UnitCtlResource(accessContext));
 
         doReturn(accessContext).when(unitCtlResource).getAccessContext();
         doReturn(AccessContext.TYPE_UNIT_USER).when(accessContext).getType();
@@ -150,7 +150,7 @@ public class UnitCtlResourceTest {
         URI uri = new URI("");
         doReturn(uri).when(uriInfo).getBaseUri();
         AccessContext accessContext = PowerMockito.mock(AccessContext.class);
-        unitCtlResource = spy(new UnitCtlResource(accessContext, uriInfo));
+        unitCtlResource = spy(new UnitCtlResource(accessContext));
 
         doReturn(accessContext).when(unitCtlResource).getAccessContext();
         doReturn(AccessContext.TYPE_UNIT_MASTER).when(accessContext).getType();
@@ -181,7 +181,7 @@ public class UnitCtlResourceTest {
         UriInfo uriInfo = mock(UriInfo.class);
         URI uri = new URI("");
         doReturn(uri).when(uriInfo).getBaseUri();
-        unitCtlResource = spy(new UnitCtlResource(ac, uriInfo));
+        unitCtlResource = spy(new UnitCtlResource(ac));
 
         doReturn(AccessContext.TYPE_UNIT_MASTER).when(ac).getType();
 
@@ -208,7 +208,7 @@ public class UnitCtlResourceTest {
         UriInfo uriInfo = mock(UriInfo.class);
         URI uri = new URI("");
         doReturn(uri).when(uriInfo).getBaseUri();
-        unitCtlResource = spy(new UnitCtlResource(ac, uriInfo));
+        unitCtlResource = spy(new UnitCtlResource(ac));
 
         doReturn(AccessContext.TYPE_INVALID).when(ac).getType();
         doReturn(null).when(unitCtlResource).getAcceptableAuthScheme();
@@ -244,7 +244,7 @@ public class UnitCtlResourceTest {
         UriInfo uriInfo = mock(UriInfo.class);
         URI uri = new URI("");
         doReturn(uri).when(uriInfo).getBaseUri();
-        unitCtlResource = spy(new UnitCtlResource(ac, uriInfo));
+        unitCtlResource = spy(new UnitCtlResource(ac));
 
         doReturn(AccessContext.TYPE_ANONYMOUS).when(ac).getType();
         doReturn(null).when(unitCtlResource).getAcceptableAuthScheme();
@@ -280,7 +280,7 @@ public class UnitCtlResourceTest {
         UriInfo uriInfo = mock(UriInfo.class);
         URI uri = new URI("");
         doReturn(uri).when(uriInfo).getBaseUri();
-        unitCtlResource = spy(new UnitCtlResource(ac, uriInfo));
+        unitCtlResource = spy(new UnitCtlResource(ac));
 
         doReturn(AccessContext.TYPE_LOCAL).when(ac).getType();
 
@@ -314,7 +314,7 @@ public class UnitCtlResourceTest {
         UriInfo uriInfo = mock(UriInfo.class);
         URI uri = new URI("");
         doReturn(uri).when(uriInfo).getBaseUri();
-        unitCtlResource = spy(new UnitCtlResource(ac, uriInfo));
+        unitCtlResource = spy(new UnitCtlResource(ac));
 
         Map<String, Object> meta = new HashMap<>();
         meta.put("Owner", "personium-localunit:/admincell/#admin");
@@ -353,7 +353,7 @@ public class UnitCtlResourceTest {
         UriInfo uriInfo = mock(UriInfo.class);
         URI uri = new URI("");
         doReturn(uri).when(uriInfo).getBaseUri();
-        unitCtlResource = spy(new UnitCtlResource(ac, uriInfo));
+        unitCtlResource = spy(new UnitCtlResource(ac));
 
         Map<String, Object> meta = new HashMap<>();
         meta.put("Owner", "personium-localunit:/admincell/#admin");
@@ -394,7 +394,7 @@ public class UnitCtlResourceTest {
         UriInfo uriInfo = mock(UriInfo.class);
         URI uri = new URI("");
         doReturn(uri).when(uriInfo).getBaseUri();
-        unitCtlResource = spy(new UnitCtlResource(ac, uriInfo));
+        unitCtlResource = spy(new UnitCtlResource(ac));
 
         Map<String, Object> meta = new HashMap<>();
         meta.put("Owner", "personium-localunit:/admincell/#admin");

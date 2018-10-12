@@ -792,12 +792,12 @@ public class UserDataExpandTest extends AbstractUserDataTest {
 
         try {
             // データ作成
-            createExpandData("expandTestCell", "box", "odata");
+            createExpandData("expandtestcell", "box", "odata");
 
             // $expandを指定してデータを取得
             // プロパティの上限数に合わせて2プロパティずつ確認
             String expands = String.format("?\\$expand=_%s,_%s", target0101Entity, target01NEntity);
-            TResponse response = UserDataUtils.getWithQuery("expandTestCell", MASTER_TOKEN_NAME, "box", "odata",
+            TResponse response = UserDataUtils.getWithQuery("expandtestcell", MASTER_TOKEN_NAME, "box", "odata",
                     baseEntity, expands, "fromId1", HttpStatus.SC_OK);
             JSONObject body = (JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results");
 
@@ -808,7 +808,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
 
             // $expandを指定してデータを取得
             expands = String.format("?\\$expand=_%s,_%s", targetN01Entity, targetNNEntity);
-            response = UserDataUtils.getWithQuery("expandTestCell", MASTER_TOKEN_NAME, "box", "odata",
+            response = UserDataUtils.getWithQuery("expandtestcell", MASTER_TOKEN_NAME, "box", "odata",
                     baseEntity, expands, "fromId1", HttpStatus.SC_OK);
             body = (JSONObject) ((JSONObject) response.bodyAsJson().get("d")).get("results");
 
@@ -820,11 +820,11 @@ public class UserDataExpandTest extends AbstractUserDataTest {
             // $expandクエリとその他のクエリを組み合わせても取得可能か
             expands = String.format("\\$expand=_%s,_%s", targetN01Entity, targetNNEntity);
             String query = "?\\$select=__id&" + expands;
-            response = UserDataUtils.getWithQuery("expandTestCell", MASTER_TOKEN_NAME, "box", "odata",
+            response = UserDataUtils.getWithQuery("expandtestcell", MASTER_TOKEN_NAME, "box", "odata",
                     baseEntity, query, "fromId1", HttpStatus.SC_OK);
 
         } finally {
-            Setup.cellBulkDeletion("expandTestCell");
+            Setup.cellBulkDeletion("expandtestcell");
         }
     }
 
@@ -842,12 +842,12 @@ public class UserDataExpandTest extends AbstractUserDataTest {
 
         try {
             // データ作成
-            createExpandData("expandTestCell", "box", "odata");
+            createExpandData("expandtestcell", "box", "odata");
 
             // $expandを指定してデータを取得
             // プロパティの上限数に合わせて2プロパティずつ確認
             String expands = String.format("_%s,_%s", target0101Entity, target01NEntity);
-            TResponse response = listUserODataWithExpand("expandTestCell", "box", "odata", baseEntity,
+            TResponse response = listUserODataWithExpand("expandtestcell", "box", "odata", baseEntity,
                     expands, top, HttpStatus.SC_OK);
             JSONArray body = (JSONArray) ((JSONObject) response.bodyAsJson().get("d")).get("results");
             assertEquals(2, body.size());
@@ -868,7 +868,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
 
             // $expandを指定してデータを取得
             expands = String.format("_%s,_%s", targetN01Entity, targetNNEntity);
-            response = listUserODataWithExpand("expandTestCell", "box", "odata", baseEntity,
+            response = listUserODataWithExpand("expandtestcell", "box", "odata", baseEntity,
                     expands, top, HttpStatus.SC_OK);
             body = (JSONArray) ((JSONObject) response.bodyAsJson().get("d")).get("results");
             assertEquals(2, body.size());
@@ -891,10 +891,10 @@ public class UserDataExpandTest extends AbstractUserDataTest {
             String query = "?\\$orderby=__id&\\$top=10&\\$select=__id&"
                     + "\\$filter=startswith(__id,%27fromId1%27)&\\$inlinecount=allpages&\\$expand=" + expands;
             UserDataUtils
-                    .list("expandTestCell", "box", "odata", baseEntity, query, MASTER_TOKEN_NAME, HttpStatus.SC_OK);
+                    .list("expandtestcell", "box", "odata", baseEntity, query, MASTER_TOKEN_NAME, HttpStatus.SC_OK);
 
         } finally {
-            Setup.cellBulkDeletion("expandTestCell");
+            Setup.cellBulkDeletion("expandtestcell");
         }
     }
 
@@ -1023,7 +1023,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
     @Test
     public final void 一件取得でexpandに最大プロパティ数を指定した場合正常に取得できること() {
         String token = MASTER_TOKEN_NAME;
-        String cellName = "expand_property_max_num_test_cell";
+        String cellName = "expand-property-max-num-test-cell";
         String boxName = "box";
         String colName = "col";
         String fromEntity = "fromEntity";
@@ -1087,7 +1087,7 @@ public class UserDataExpandTest extends AbstractUserDataTest {
     @Test
     public final void 一件取得でexpandに最大プロパティ数を超える値を指定した場合400エラーとなること() {
         String token = MASTER_TOKEN_NAME;
-        String cellName = "expand_property_max_num_test_cell";
+        String cellName = "expand-property-max-num-test-cell";
         String boxName = "box";
         String colName = "col";
         String fromEntity = "fromEntity";

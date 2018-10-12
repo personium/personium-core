@@ -137,12 +137,6 @@ public class CellResource {
         }
     }
 
-    /*
-     * static private Cache cache = CacheManager.getInstance().getCache("box-cache"); static {
-     * cache.addPropertyChangeListener(new PropertyChangeListener() {
-     * @Override public void propertyChange(PropertyChangeEvent arg0) {
-     * System.out.println(arg0.toString()); } }); }
-     */
     /**
      * handler for GET Method.
      * @param httpHeaders Request headers

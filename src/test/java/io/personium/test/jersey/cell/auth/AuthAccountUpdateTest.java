@@ -63,7 +63,7 @@ public class AuthAccountUpdateTest extends PersoniumTest {
      */
     @Test
     public final void 自分セルローカルトークン_RoleとリンクされたAccountを使用してトークン認証後Account名を変更した場合401エラーとなること_Cellレベル() {
-        String cellName = "testCell001";
+        String cellName = "testcell001";
         String accountName = "testUser001";
         String accountNameUpdated = "testUser001_updated";
         String pass = "password";

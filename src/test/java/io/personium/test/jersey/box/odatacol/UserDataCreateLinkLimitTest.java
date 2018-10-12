@@ -57,7 +57,7 @@ import io.personium.test.utils.UserDataUtils;
 public class UserDataCreateLinkLimitTest extends PersoniumTest {
 
     String masterToken = Setup.MASTER_TOKEN_NAME;
-    String cellName = "userDataCreateLinkLimitTestCell";
+    String cellName = "userdatacreatelinklimittestcell";
     String boxName = "box";
     String colName = "col";
 

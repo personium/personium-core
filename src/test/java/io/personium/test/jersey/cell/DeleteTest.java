@@ -99,7 +99,7 @@ public class DeleteTest extends ODataCommon {
 
     private void cellCreate() {
         // DBサーバーを共有した際、同時にテストを行うと、同じCell名では409となってしまうため、一意にするため、Cell名に時間をセット
-        this.cellInfo.cellName = "cell_name" + Long.toString(Calendar.getInstance().getTimeInMillis());
+        this.cellInfo.cellName = "cell-name" + Long.toString(Calendar.getInstance().getTimeInMillis());
 
         // Cellを作成
         this.cellInfo.resCell = createCell(cellInfo.cellName);
@@ -355,7 +355,7 @@ public class DeleteTest extends ODataCommon {
     public final void Cell削除のMessageが存在する時のテスト() {
 
         // 送信先CellUrl
-        String receivedCell = "receivedCell";
+        String receivedCell = "receivedcell";
 
         // リクエストボディ作成
         JSONObject body = new JSONObject();

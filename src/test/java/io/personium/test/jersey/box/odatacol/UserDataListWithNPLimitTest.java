@@ -68,7 +68,7 @@ public class UserDataListWithNPLimitTest extends PersoniumTest {
     @Test
     public final void ONE対ASTのUserDataをNavigationProperty経由でtopにデフォルト取得件数プラス1を指定した場合指定した件数分データが取得できること()
             throws ParseException {
-        String cellName = "userDataListWithNpLimitTestCell";
+        String cellName = "userdatalistwithnplimittestcell";
         String boxName = "box";
         String colName = "col";
         String srcEntityTypeName = "srcEntity";
@@ -156,7 +156,7 @@ public class UserDataListWithNPLimitTest extends PersoniumTest {
     @Test
     public final void AST対ASTのUserDataをNavigationProperty経由でtopにデフォルト取得件数プラス1を指定した場合指定した件数分データが取得できること()
             throws ParseException {
-        String cellName = "userDataListWithNpLimitTestCell";
+        String cellName = "userdatalistwithnplimittestcell";
         String boxName = "box";
         String colName = "col";
         String srcEntityTypeName = "srcEntity";

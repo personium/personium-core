@@ -78,7 +78,7 @@ public class UserDataLinkTopSkipTest extends PersoniumTest {
     @Test
     public final void ユーザデータのlink一覧取得で$topに1$skipに10を指定した場合に11件目のデータが取得されること_AssociationEndがアスタ対アスタ()
             throws ParseException {
-        String cellName = "UserDataLinkNNSkip";
+        String cellName = "userdatalinknnskip";
         String boxName = "box1";
         String colName = "col";
 
@@ -141,7 +141,7 @@ public class UserDataLinkTopSkipTest extends PersoniumTest {
     @Test
     public final void ユーザデータのlink一覧取得で$topに1$skipに10を指定した場合に11件目のデータが取得されること_AssociationEndがONE対アスタ()
             throws ParseException {
-        String cellName = "UserDataLinkNNSkip";
+        String cellName = "userdatalinknnskip";
         String boxName = "box1";
         String colName = "col";
 

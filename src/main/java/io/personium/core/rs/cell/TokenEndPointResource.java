@@ -19,6 +19,7 @@ package io.personium.core.rs.cell;
 import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_AN_HOUR;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
@@ -367,10 +368,10 @@ public class TokenEndPointResource {
      */
     private String clientAuth(final String clientId, final String clientSecret,
             final String authzHeader) {
-        String id = clientId;
-        String pw = clientSecret;
-        if (pw == null) {
-            pw = "";
+        String targetClientId = clientId;
+        String targetClientSecret = clientSecret;
+        if (targetClientSecret == null) {
+            targetClientSecret = "";
         }
 
         //Parsing authzHeader
@@ -379,8 +380,8 @@ public class TokenEndPointResource {
                     .parseBasicAuthzHeader(authzHeader);
             if (idpw != null) {
                 //Specify authzHeader first
-                id = idpw[0];
-                pw = idpw[1];
+                targetClientId = idpw[0];
+                targetClientSecret = idpw[1];
             } else {
                 throw PersoniumCoreAuthnException.AUTH_HEADER_IS_INVALID
                         .realm(cell.getUrl());
@@ -391,7 +392,7 @@ public class TokenEndPointResource {
         //· Since PW is a SAML token, it is parsed.
         TransCellAccessToken tcToken = null;
         try {
-            tcToken = TransCellAccessToken.parse(pw);
+            tcToken = TransCellAccessToken.parse(targetClientSecret);
         } catch (TokenParseException e) {
             //Perth failure
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage())
@@ -417,16 +418,26 @@ public class TokenEndPointResource {
                     .getUrl());
         }
 
-        //· Confirm that Issuer is equal to ID
-        if (!id.equals(tcToken.getIssuer())) {
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH
-                    .realm(cell.getUrl());
+        // Confirm that Issuer is equal to ID
+        String normalizedClientId;
+        try {
+            normalizedClientId = UriUtils.convertFqdnBaseToPathBase(targetClientId);
+        } catch (URISyntaxException e) {
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cell.getUrl());
+        }
+        if (!normalizedClientId.equals(tcToken.getIssuer())) {
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cell.getUrl());
         }
 
-        //If the target of the token is not yourself, an error response
-        if (!tcToken.getTarget().equals(cell.getUrl())) {
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_TARGET_WRONG
-                    .realm(cell.getUrl());
+        // If the target of the token is not yourself, an error response
+        String normalizedTarget;
+        try {
+            normalizedTarget = UriUtils.convertFqdnBaseToPathBase(tcToken.getTarget());
+        } catch (URISyntaxException e) {
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_TARGET_WRONG.realm(cell.getUrl());
+        }
+        if (!normalizedTarget.equals(cell.getUrl())) {
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_TARGET_WRONG.realm(cell.getUrl());
         }
 
         //Give # c if the role is a confidential value
@@ -436,11 +447,11 @@ public class TokenEndPointResource {
         for (Role role : tcToken.getRoles()) {
             if (confidentialRoleUrl.equals(role.createUrl())) {
                 //Successful authentication.
-                return id + OAuth2Helper.Key.CONFIDENTIAL_MARKER;
+                return normalizedClientId + OAuth2Helper.Key.CONFIDENTIAL_MARKER;
             }
         }
         //Successful authentication.
-        return id;
+        return normalizedClientId;
     }
 
     private Response receiveSaml2(final String target, final String owner,
@@ -648,7 +659,7 @@ public class TokenEndPointResource {
             //The p_cookie value to return to the header is encrypted
             String encodedCookieValue = LocalToken.encode(cookieValue,
                     UnitLocalUnitUserToken.getIvBytes(AccessContext
-                            .getCookieCryptKey(requestURIInfo.getBaseUri())));
+                            .getCookieCryptKey(requestURIInfo.getBaseUri().getHost())));
             //Specify cookie version (0)
             int version = 0;
             String path = getCookiePath();

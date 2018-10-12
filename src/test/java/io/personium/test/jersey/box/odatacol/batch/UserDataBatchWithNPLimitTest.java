@@ -65,7 +65,7 @@ import io.personium.test.utils.UserDataUtils;
 public class UserDataBatchWithNPLimitTest extends AbstractUserDataBatchTest {
 
     String masterToken = Setup.MASTER_TOKEN_NAME;
-    String cellName = "userDataBatchWithNPLimitTestCell";
+    String cellName = "userdatabatchwithnplimittestcell";
     String boxName = "box";
     String colName = "col";
 

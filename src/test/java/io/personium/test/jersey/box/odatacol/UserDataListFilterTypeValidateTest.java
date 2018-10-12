@@ -45,7 +45,7 @@ import io.personium.test.utils.UserDataUtils;
 public class UserDataListFilterTypeValidateTest extends AbstractUserDataTest {
 
     private static final String TOKEN = PersoniumUnitConfig.getMasterToken();
-    private static final String CELL = "filterTypeValidateTest";
+    private static final String CELL = "filtertypevalidatetest";
     private static final String BOX = "box";
     private static final String COL = "odata";
     private static final String ENTITY = "entity";

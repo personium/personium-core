@@ -42,7 +42,7 @@ import io.personium.test.utils.DavResourceUtils;
 @Category({Unit.class, Integration.class, Regression.class })
 public class DefaultBoxTest extends PersoniumTest {
 
-    private static final String CELL_NAME = "createCell1";
+    private static final String CELL_NAME = "createcell1";
     private static final String COL_NAME = "createCol";
     private static final String TOKEN = AbstractCase.MASTER_TOKEN_NAME;
 

@@ -724,7 +724,7 @@ public class AclTest extends PersoniumTest {
      */
     @Test
     public final void 認証で使用されたAccountに対象のRoleが存在しないかつ権限が設定されていないRoleが紐ついている場合にリクエストを実行した場合_403が返却されること() {
-        String cellName = "cellAclTest";
+        String cellName = "cellacltest";
         String boxName = "boxAclTest";
         String colName = "colAclTest";
         String account = "accountAclTest";

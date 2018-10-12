@@ -2024,7 +2024,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
     @Test
     public final void Nameが大文字小文字のみ異なるComplexTypeが存在する場合に指定データがそれぞれ適切に登録されること() {
         String token = AbstractCase.MASTER_TOKEN_NAME;
-        String cellName = "userODataComplexTypeTestCell";
+        String cellName = "userodatacomplextypetestcell";
         String boxName = "TestBox";
         String colName = "TestCol";
         String entityTypeName = "TestEntityType";
@@ -2099,7 +2099,7 @@ public class UserDataComplexTypeCreateTest extends AbstractUserDataTest {
     @Test
     public final void ユーザOData登録でNameが大文字小文字のみ異なるComplexTypeが存在する場合にスキーマ定義にないComplexTypePropertyが登録できないこと() {
         String token = AbstractCase.MASTER_TOKEN_NAME;
-        String cellName = "userODataComplexTypeTestCell";
+        String cellName = "userodatacomplextypetestcell";
         String boxName = "TestBox";
         String colName = "TestCol";
         String entityTypeName = "TestEntityType";

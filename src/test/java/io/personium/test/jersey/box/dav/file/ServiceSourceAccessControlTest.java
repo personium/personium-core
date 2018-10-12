@@ -59,7 +59,7 @@ import io.personium.test.utils.TResponse;
 public class ServiceSourceAccessControlTest extends PersoniumTest {
 
     private static final String PASSWORD = "password";
-    private static final String CELL_NAME = "CollectionAclTestCell";
+    private static final String CELL_NAME = "collectionacltestcell";
     private static final String BOX_NAME = "box1";
     private static final String PARENT_COL_NAME = "parentCollection";
     private static final String TARGET_SOURCE_FILE_PATH = "__src/targetFile";
