@@ -1,3 +1,8 @@
+## 1.7.0
+IMPROVEMENTS:
+* Support per-Cell FQDN.(Prerelease. Some functions will not work yet.)([#223](https://github.com/personium/personium-core/issues/223))
+* Incorrect error message.(__authz endpoint).([#232](https://github.com/personium/personium-core/issues/232))
+
 ## 1.6.16
 * Change Servlet Spec from 3.0 to 3.1([#6](https://github.com/personium/personium-core/issues/6))
 * English comments on major source files([#244](https://github.com/personium/personium-core/issues/244))
