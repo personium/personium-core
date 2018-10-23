@@ -123,12 +123,20 @@ public class CellRootGetTest extends AbstractCase {
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns().debug().statusCode(HttpStatus.SC_OK);
 
+        String unitUrl = UrlUtils.unitRoot();
+        boolean pathBasedEnabled = PersoniumUnitConfig.isPathBasedCellUrlEnabled();
+
         String cellName = Setup.TEST_CELL1;
         String cellUrl = UrlUtils.cellRoot(Setup.TEST_CELL1);
 
         JSONObject bodyJson = res.bodyAsJson();
+        JSONObject unitJson = (JSONObject) bodyJson.get("unit");
         JSONObject cellJson = (JSONObject) bodyJson.get("cell");
         assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is(MediaType.APPLICATION_JSON));
+
+        assertThat(unitJson.get("url"), is(unitUrl));
+        assertThat(unitJson.get("path_based_cellurl_enabled"), is(pathBasedEnabled));
+
         assertThat(cellJson.get("name"), is(cellName));
         assertThat(cellJson.get("url"), is(cellUrl));
     }

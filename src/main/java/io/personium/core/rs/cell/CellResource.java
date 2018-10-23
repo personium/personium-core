@@ -145,33 +145,62 @@ public class CellResource {
     @GET
     public Response get(@Context HttpHeaders httpHeaders) {
         if (httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_JSON_TYPE)) {
-            JSONObject responseJson = cellRsCmp.getCellMetadataJson();
-            return Response.ok().entity(responseJson.toJSONString()).build();
+            return createMetadataJsonResponse();
         } else if (httpHeaders.getAcceptableMediaTypes().contains(MediaType.APPLICATION_XML_TYPE)) {
-            StringBuffer sb = new StringBuffer();
-            sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            sb.append("<cell xmlns=\"urn:x-personium:xmlns\">");
-            sb.append("<uuid>" + this.cell.getId() + "</uuid>");
-            sb.append("<ctl>" + this.cell.getUrl() + "__ctl/" + "</ctl>");
-            sb.append("</cell>");
-            return Response.ok().entity(sb.toString()).build();
+            return createXmlResponse();
         } else {
-            HttpResponse res = cellRsCmp.requestGetRelayHtml();
-            int statusCode = res.getStatusLine().getStatusCode();
-            HttpEntity entity = res.getEntity();
-            StreamingOutput streamingOutput = new StreamingOutput() {
-                @Override
-                public void write(final OutputStream os) throws IOException {
-                    try (InputStream in = entity.getContent()) {
-                        int chr;
-                        while ((chr = in.read()) != -1) {
-                            os.write(chr);
-                        }
+            return createRootHtmlResponse();
+        }
+    }
+
+    /**
+     * Create metadata json response.
+     * @return metadata json response
+     */
+    @SuppressWarnings("unchecked")
+    private Response createMetadataJsonResponse() {
+        JSONObject response = new JSONObject();
+        JSONObject cellMetadataJson = cellRsCmp.getCellMetadataJson();
+        JSONObject unitMetadataJson = accessContext.getUnitMetadataJson();
+        response.putAll(cellMetadataJson);
+        response.putAll(unitMetadataJson);
+        return Response.ok().entity(response.toJSONString()).build();
+    }
+
+    /**
+     * Create xml response.
+     * @return xml response
+     */
+    private Response createXmlResponse() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        sb.append("<cell xmlns=\"urn:x-personium:xmlns\">");
+        sb.append("<uuid>" + this.cell.getId() + "</uuid>");
+        sb.append("<ctl>" + this.cell.getUrl() + "__ctl/" + "</ctl>");
+        sb.append("</cell>");
+        return Response.ok().entity(sb.toString()).build();
+    }
+
+    /**
+     * Create root html response.
+     * @return root html response
+     */
+    private Response createRootHtmlResponse() {
+        HttpResponse res = cellRsCmp.requestGetRelayHtml();
+        int statusCode = res.getStatusLine().getStatusCode();
+        HttpEntity entity = res.getEntity();
+        StreamingOutput streamingOutput = new StreamingOutput() {
+            @Override
+            public void write(final OutputStream os) throws IOException {
+                try (InputStream in = entity.getContent()) {
+                    int chr;
+                    while ((chr = in.read()) != -1) {
+                        os.write(chr);
                     }
                 }
-            };
-            return Response.status(statusCode).entity(streamingOutput).build();
-        }
+            }
+        };
+        return Response.status(statusCode).entity(streamingOutput).build();
     }
 
     /**

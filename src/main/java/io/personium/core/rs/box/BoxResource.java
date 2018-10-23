@@ -237,8 +237,10 @@ public class BoxResource {
         JSONObject response = new JSONObject();
         JSONObject boxMetadataJson = boxRsCmp.getBoxMetadataJson();
         JSONObject cellMetadataJson = cellRsCmp.getCellMetadataJson();
+        JSONObject unitMetadataJson = accessContext.getUnitMetadataJson();
         response.putAll(boxMetadataJson);
         response.putAll(cellMetadataJson);
+        response.putAll(unitMetadataJson);
         return response;
     }
 
@@ -251,8 +253,10 @@ public class BoxResource {
         JSONObject response = new JSONObject();
         JSONObject boxMetadataJson = boxRsCmp.getBoxMetadataJson(values);
         JSONObject cellMetadataJson = cellRsCmp.getCellMetadataJson();
+        JSONObject unitMetadataJson = accessContext.getUnitMetadataJson();
         response.putAll(boxMetadataJson);
         response.putAll(cellMetadataJson);
+        response.putAll(unitMetadataJson);
         return response;
     }
 

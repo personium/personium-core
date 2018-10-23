@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
@@ -65,25 +66,33 @@ public class BoxRootGetTest extends PersoniumTest {
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns().debug().statusCode(HttpStatus.SC_OK);
 
+        String unitUrl = UrlUtils.unitRoot();
+        boolean pathBasedEnabled = PersoniumUnitConfig.isPathBasedCellUrlEnabled();
+
         String cellName = Setup.TEST_CELL1;
-        String boxName = Setup.TEST_BOX1;
         String cellUrl = UrlUtils.cellRoot(cellName);
+
+        String boxName = Setup.TEST_BOX1;
         String boxSchema = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
         String boxStatus = "ready";
         String boxUrl = UrlUtils.boxRoot(cellName, boxName) + "/";
 
         JSONObject bodyJson = res.bodyAsJson();
-        JSONObject boxJson = (JSONObject) bodyJson.get("box");
+        JSONObject unitJson = (JSONObject) bodyJson.get("unit");
         JSONObject cellJson = (JSONObject) bodyJson.get("cell");
+        JSONObject boxJson = (JSONObject) bodyJson.get("box");
         assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is(MediaType.APPLICATION_JSON));
+
+        assertThat(unitJson.get("url"), is(unitUrl));
+        assertThat(unitJson.get("path_based_cellurl_enabled"), is(pathBasedEnabled));
+
+        assertThat(cellJson.get("name"), is(cellName));
+        assertThat(cellJson.get("url"), is(cellUrl));
 
         assertThat(boxJson.get("name"), is(boxName));
         assertThat(boxJson.get("url"), is(boxUrl));
         assertThat(boxJson.get("schema"), is(boxSchema));
         assertNotNull(boxJson.get("installed_at"));
         assertThat(boxJson.get("status"), is(boxStatus));
-
-        assertThat(cellJson.get("name"), is(cellName));
-        assertThat(cellJson.get("url"), is(cellUrl));
     }
 }
