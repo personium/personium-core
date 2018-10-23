@@ -23,10 +23,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.codec.CharEncoding;
+import org.json.simple.JSONObject;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
@@ -77,6 +80,20 @@ public class UnitResource {
         this.headerPersoniumUnitUser = headerPersoniumUnitUser;
         this.uriInfo = uriInfo;
         this.requestBaseUri = uriInfo.getBaseUri().toString();
+    }
+
+    /**
+     * handler for GET Method.
+     * @param httpHeaders Request headers
+     * @return JAX-RS Response Object
+     */
+    @GET
+    public Response get(@Context HttpHeaders httpHeaders) {
+        AccessContext accessContext = AccessContext.create(headerAuthz,
+                uriInfo, cookiePeer, cookieAuthValue, null, requestBaseUri,
+                headerHost, headerPersoniumUnitUser);
+        JSONObject responseJson = accessContext.getUnitMetadataJson();
+        return Response.ok().entity(responseJson.toJSONString()).build();
     }
 
     /**
