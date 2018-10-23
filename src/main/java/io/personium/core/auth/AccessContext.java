@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.ws.rs.core.UriInfo;
 
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -421,6 +422,20 @@ public class AccessContext {
             }
         }
         return false;
+    }
+
+    /**
+     * Get unit info (url, path_based_cellurl_enabled).
+     * @return unit info
+     */
+    @SuppressWarnings("unchecked")
+    public JSONObject getUnitMetadataJson() {
+        JSONObject responseJson = new JSONObject();
+        JSONObject unitMetadataJson = new JSONObject();
+        unitMetadataJson.put("url", PersoniumUnitConfig.getBaseUrl());
+        unitMetadataJson.put("path_based_cellurl_enabled", PersoniumUnitConfig.isPathBasedCellUrlEnabled());
+        responseJson.put("unit", unitMetadataJson);
+        return responseJson;
     }
 
     /**

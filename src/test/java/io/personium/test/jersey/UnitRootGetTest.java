@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.test.jersey.box;
+package io.personium.test.jersey;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -29,26 +28,24 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
-import io.personium.test.jersey.PersoniumIntegTestRunner;
-import io.personium.test.jersey.PersoniumTest;
-import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 
 /**
- * GET Box root get tests.
+ * GET Unit root url tests.
  */
 @Category({Integration.class})
 @RunWith(PersoniumIntegTestRunner.class)
-public class BoxRootGetTest extends PersoniumTest {
+public class UnitRootGetTest extends PersoniumTest {
 
     /**
      * Constructor.
      */
-    public BoxRootGetTest() {
+    public UnitRootGetTest() {
         super(new PersoniumCoreApplication());
     }
 
@@ -58,32 +55,17 @@ public class BoxRootGetTest extends PersoniumTest {
      */
     @Test
     public void normal_get_json() {
-        TResponse res = Http.request("box/box-root-get.txt")
-                .with("cell", Setup.TEST_CELL1)
-                .with("box", Setup.TEST_BOX1)
-                .with("token", Setup.MASTER_TOKEN_NAME)
+        TResponse res = Http.request("unit/unit-root-get.txt")
                 .with("accept", MediaType.APPLICATION_JSON)
                 .returns().debug().statusCode(HttpStatus.SC_OK);
 
-        String cellName = Setup.TEST_CELL1;
-        String boxName = Setup.TEST_BOX1;
-        String cellUrl = UrlUtils.cellRoot(cellName);
-        String boxSchema = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
-        String boxStatus = "ready";
-        String boxUrl = UrlUtils.boxRoot(cellName, boxName) + "/";
+        String unitUrl = UrlUtils.unitRoot();
+        boolean pathBasedEnabled = PersoniumUnitConfig.isPathBasedCellUrlEnabled();
 
         JSONObject bodyJson = res.bodyAsJson();
-        JSONObject boxJson = (JSONObject) bodyJson.get("box");
-        JSONObject cellJson = (JSONObject) bodyJson.get("cell");
+        JSONObject unitJson = (JSONObject) bodyJson.get("unit");
         assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is(MediaType.APPLICATION_JSON));
-
-        assertThat(boxJson.get("name"), is(boxName));
-        assertThat(boxJson.get("url"), is(boxUrl));
-        assertThat(boxJson.get("schema"), is(boxSchema));
-        assertNotNull(boxJson.get("installed_at"));
-        assertThat(boxJson.get("status"), is(boxStatus));
-
-        assertThat(cellJson.get("name"), is(cellName));
-        assertThat(cellJson.get("url"), is(cellUrl));
+        assertThat(unitJson.get("url"), is(unitUrl));
+        assertThat(unitJson.get("path_based_cellurl_enabled"), is(pathBasedEnabled));
     }
 }
