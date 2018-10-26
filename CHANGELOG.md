@@ -1,3 +1,9 @@
+## 1.7.1
+IMPROVEMENTS:
+* Add "Retrieve unit meta data" API.([#262](https://github.com/personium/personium-core/issues/262))
+* Add unit metadata to metadata of cell and box.([#263](https://github.com/personium/personium-core/issues/263))
+* Updates to libraries with security warnings.([#264](https://github.com/personium/personium-core/issues/264))
+
 ## 1.7.0
 IMPROVEMENTS:
 * Support per-Cell FQDN.(Prerelease. Some functions will not work yet.)([#223](https://github.com/personium/personium-core/issues/223))
