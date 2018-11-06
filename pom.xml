@@ -32,7 +32,7 @@
         <dependency>
             <groupId>io.personium</groupId>
             <artifactId>personium-lib-common</artifactId>
-            <version>1.4.15</version>
+            <version>1.4.16-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.personium</groupId>
