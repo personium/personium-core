@@ -126,10 +126,10 @@ public class TokenEndPointResourceTest {
         // --------------------
         // Load methods for private
         Method method = TokenEndPointResource.class.getDeclaredMethod("receiveRefresh",
-                String.class, String.class, String.class, String.class, String.class);
+                String.class, String.class, String.class, String.class);
         method.setAccessible(true);
         // Run method
-        Response actual = (Response) method.invoke(tokenEndPointResource, target, owner, schema, host, refreshToken);
+        Response actual = (Response) method.invoke(tokenEndPointResource, target, owner, schema, refreshToken);
 
         // --------------------
         // Confirm result
@@ -194,10 +194,10 @@ public class TokenEndPointResourceTest {
         // --------------------
         // Load methods for private
         Method method = TokenEndPointResource.class.getDeclaredMethod("receiveRefresh",
-                String.class, String.class, String.class, String.class, String.class);
+                String.class, String.class, String.class, String.class);
         method.setAccessible(true);
         // Run method
-        Response actual = (Response) method.invoke(tokenEndPointResource, target, owner, schema, host, refreshToken);
+        Response actual = (Response) method.invoke(tokenEndPointResource, target, owner, schema, refreshToken);
 
         // --------------------
         // Confirm result
