@@ -218,12 +218,4 @@ public class Box {
         return getCell().getUrl() + getName() + "/";
     }
 
-    /**
-     * Get cell base box url.
-     * Cell base url : "https://{cellname}.{domain}/{boxname}/...".
-     * @return cell base box url
-     */
-    public String getCellBaseUrl() {
-        return getCell().getFqdnBaseUrl() + getName() + "/";
-    }
 }

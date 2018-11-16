@@ -31,8 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.utils.PersoniumCoreUtils;
-
 /**
  * Scheme Utilities.
  * @author fjqs
@@ -209,31 +207,6 @@ public class UriUtils {
                 .toString();
     }
 
-//    /**
-//     * "https://{cellname}.{domain}" to "https://{domain}/{cellname}".
-//     * @param cellUrl CellUrl
-//     * @return Normalized CellUrl
-//     */
-//    public static String normalizeCellUrl(String cellUrl) {
-//        String normalizedCellUrl = cellUrl;
-//        URI uri;
-//        try {
-//            uri = new URI(cellUrl);
-//        } catch (URISyntaxException e) {
-//            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cellUrl);
-//        }
-//        String path = uri.getPath();
-//        if (StringUtils.isEmpty(path) || path.equals("/")) {
-//            String host = uri.getHost();
-//            String cellName = host.split("\\.")[0];
-//            String escapedHost = host.replaceFirst(cellName + "\\.", "");
-//            StringBuilder builder = new StringBuilder();
-//            builder.append(uri.getScheme()).append("://").append(escapedHost).append("/").append(cellName).append("/");
-//            normalizedCellUrl = builder.toString();
-//        }
-//        return normalizedCellUrl;
-//    }
-
     /**
      * "https://{cellname}.{domain}/..." to "https://{domain}/{cellname}/...".
      * @param sourceUrl Source url
@@ -243,18 +216,15 @@ public class UriUtils {
     public static String convertFqdnBaseToPathBase(String sourceUrl) throws URISyntaxException {
         String convertedUrl = sourceUrl;
         URI uri = new URI(sourceUrl);
-        String configFqdn = PersoniumCoreUtils.getFQDN();
-        if (configFqdn.equals(uri.getHost())) {
-            // sourceUrl is "https://{domain}/..."
-            return convertedUrl;
-        }
 
         String cellName = uri.getHost().split("\\.")[0];
         StringBuilder pathBuilder = new StringBuilder();
         pathBuilder.append("/").append(cellName).append(uri.getPath());
 
+        String domain = uri.getHost().replaceFirst(cellName + "\\.", "");
+
         UriBuilder uriBuilder = UriBuilder.fromUri(uri);
-        uriBuilder.host(configFqdn);
+        uriBuilder.host(domain);
         uriBuilder.replacePath(pathBuilder.toString());
         convertedUrl = uriBuilder.build().toString();
         return convertedUrl;
@@ -271,15 +241,11 @@ public class UriUtils {
     public static String convertPathBaseToFqdnBase(String sourceUrl) throws URISyntaxException {
         String convertedUrl = sourceUrl;
         URI uri = new URI(sourceUrl);
-        String configFqdn = PersoniumCoreUtils.getFQDN();
-        if (!configFqdn.equals(uri.getHost())) {
-            // sourceUrl is "https://{cellname}.{domain}/..."
-            return convertedUrl;
-        }
 
+        String domain = uri.getHost();
         String cellName = uri.getPath().split("/")[1];
         StringBuilder hostBuilder = new StringBuilder();
-        hostBuilder.append(cellName).append(".").append(configFqdn);
+        hostBuilder.append(cellName).append(".").append(domain);
         StringBuilder cellPathBuilder = new StringBuilder();
         cellPathBuilder.append("/").append(cellName);
         String path = uri.getPath().replaceFirst(cellPathBuilder.toString(), "");
