@@ -165,7 +165,6 @@ public class AuthzEndPointResource {
      * @param clientId query parameter
      * @param responseType query parameter
      * @param redirectUri query parameter
-     * @param host Host header
      * @param pCookie p_cookie
      * @param cookieRefreshToken cookie
      * @param keepLogin query parameter
@@ -182,7 +181,6 @@ public class AuthzEndPointResource {
             @QueryParam(Key.CLIENT_ID) final String clientId,
             @QueryParam(Key.RESPONSE_TYPE) final String responseType,
             @QueryParam(Key.REDIRECT_URI) final String redirectUri,
-            @HeaderParam(HttpHeaders.HOST) final String host,
             @CookieParam(FacadeResource.P_COOKIE_KEY) final String pCookie,
             @CookieParam(Key.SESSION_ID) final String cookieRefreshToken,
             @QueryParam(Key.KEEPLOGIN) final String keepLogin,
@@ -190,7 +188,7 @@ public class AuthzEndPointResource {
             @QueryParam(Key.CANCEL_FLG) final String isCancel,
             @Context final UriInfo uriInfo) {
 
-        return auth(pOwner, null, null, pTarget, assertion, clientId, responseType, redirectUri, host,
+        return auth(pOwner, null, null, pTarget, assertion, clientId, responseType, redirectUri,
                 pCookie, cookieRefreshToken, keepLogin, state, isCancel, uriInfo);
 
     }
@@ -201,7 +199,6 @@ public class AuthzEndPointResource {
      * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
      * </ul>
      * @param authzHeader Authorization header
-     * @param host Host header
      * @param pCookie p_cookie
      * @param cookieRefreshToken cookie
      * @param formParams Body parameters
@@ -210,7 +207,6 @@ public class AuthzEndPointResource {
      */
     @POST
     public final Response authPost(@HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,  // CHECKSTYLE IGNORE
-            @HeaderParam(HttpHeaders.HOST) final String host,
             @CookieParam(FacadeResource.P_COOKIE_KEY) final String pCookie,
             @CookieParam(Key.SESSION_ID) final String cookieRefreshToken,
             MultivaluedMap<String, String> formParams,
@@ -229,7 +225,7 @@ public class AuthzEndPointResource {
         String state = formParams.getFirst(Key.STATE);
         String isCancel = formParams.getFirst(Key.CANCEL_FLG);
 
-        return auth(pOwner, username, password, pTarget, assertion, clientId, responseType, redirectUri, host,
+        return auth(pOwner, username, password, pTarget, assertion, clientId, responseType, redirectUri,
                 pCookie, cookieRefreshToken, keepLogin, state, isCancel, uriInfo);
     }
 
@@ -249,7 +245,6 @@ public class AuthzEndPointResource {
             final String clientId,
             final String responseType,
             final String redirectUri,
-            final String host,
             final String pCookie,
             final String cookieRefreshToken,
             final String keepLogin,
@@ -285,7 +280,7 @@ public class AuthzEndPointResource {
 
         //clientId and redirectUri parameter check
         try {
-            this.checkImplicitParam(normalizedClientId, normalizedRedirectUri, uriInfo.getBaseUri());
+            this.checkImplicitParam(normalizedClientId, normalizedRedirectUri);
         } catch (PersoniumCoreException e) {
             log.debug(e.getMessage());
             if ((username == null && password == null) //NOPMD -To maintain readability
@@ -312,10 +307,10 @@ public class AuthzEndPointResource {
             return this.returnErrorRedirect(redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
                     OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0004");
         } else if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
-            return this.handleImplicitFlow(redirectUri, clientId, host, username, password, cookieRefreshToken,
+            return this.handleImplicitFlow(redirectUri, clientId, username, password, cookieRefreshToken,
                     pTarget, keepLogin, assertion, schema, state, pOwner);
         } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
-            return handleCodeFlow(redirectUri, clientId, host, username, password, pCookie,
+            return handleCodeFlow(redirectUri, clientId, username, password, pCookie,
                     pTarget, state, pOwner, uriInfo);
         } else {
             return this.returnErrorRedirect(redirectUri, OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE,
@@ -327,7 +322,6 @@ public class AuthzEndPointResource {
     private Response handleCodeFlow(
             final String redirectUriStr,
             final String clientId,
-            final String host,
             final String username,
             final String password,
             final String pCookie,
@@ -359,7 +353,7 @@ public class AuthzEndPointResource {
 //            return handleCookieRefreshToken(redirectUriStr, clientId, host,
 //                    cookieRefreshToken, OAuth2Helper.Key.TRUE_STR, state, pOwner);
         } else if (pCookie != null) {
-            return handlePCookie(redirectUriStr, clientId, host,
+            return handlePCookie(redirectUriStr, clientId,
                     pCookie, OAuth2Helper.Key.TRUE_STR, state, pOwner, uriInfo);
         } else {
             //TODO Return error because it is not yet implemented
@@ -375,7 +369,6 @@ public class AuthzEndPointResource {
 
     private Response handlePCookie(final String redirectUriStr,
             final String clientId,
-            final String host,
             final String pCookie,
             final String keepLogin,
             final String state,
@@ -590,7 +583,6 @@ public class AuthzEndPointResource {
      * @param keepLogin
      * @param state
      * @param pOwner
-     * @param host
      * @return
      */
     private Response handleImplicitFlowPassWord(final String pTarget,
@@ -600,8 +592,7 @@ public class AuthzEndPointResource {
             final String password,
             final String keepLogin,
             final String state,
-            final String pOwner,
-            final String host) {
+            final String pOwner) {
 
         //If both user ID and password are unspecified, return login error
         boolean passCheck = true;
@@ -804,7 +795,6 @@ public class AuthzEndPointResource {
      * Cookie authentication processing at ImplicitFlow.
      * @param redirectUriStr
      * @param clientId
-     * @param host
      * @param cookieRefreshToken
      * @param pTarget
      * @param keepLogin
@@ -812,7 +802,6 @@ public class AuthzEndPointResource {
      */
     private Response handleImplicitFlowcookie(final String redirectUriStr,
             final String clientId,
-            final String host,
             final String cookieRefreshToken,
             final String pTarget,
             final String keepLogin,
@@ -903,7 +892,6 @@ public class AuthzEndPointResource {
      * Authentication processing handling by ImplicitFlow.
      * @param redirectUriStr
      * @param clientId
-     * @param host
      * @param username
      * @param password
      * @param cookieRefreshToken
@@ -917,7 +905,6 @@ public class AuthzEndPointResource {
     private Response handleImplicitFlow(
             final String redirectUriStr,
             final String clientId,
-            final String host,
             final String username,
             final String password,
             final String cookieRefreshToken,
@@ -942,7 +929,7 @@ public class AuthzEndPointResource {
         if (username != null || password != null) {
             //When there is a setting in either user ID or password
             Response response = this.handleImplicitFlowPassWord(pTarget, redirectUriStr, clientId,
-                    username, password, keepLogin, state, pOwner, host);
+                    username, password, keepLogin, state, pOwner);
 
             if (PersoniumUnitConfig.getAccountLastAuthenticatedEnable()
                     && isSuccessAuthorization(response)) {
@@ -961,7 +948,7 @@ public class AuthzEndPointResource {
         } else if (cookieRefreshToken != null) {
             //When cookie is specified
             //For cookie authentication, keepLogin always works as true
-            return this.handleImplicitFlowcookie(redirectUriStr, clientId, host,
+            return this.handleImplicitFlowcookie(redirectUriStr, clientId,
                     cookieRefreshToken, pTarget, OAuth2Helper.Key.TRUE_STR, state, pOwner);
         } else {
             //If user ID, password, assertion, cookie are not specified, send form
@@ -1161,7 +1148,7 @@ public class AuthzEndPointResource {
      * @param redirectUri
      * @param baseUri
      */
-    private void checkImplicitParam(String clientId, String redirectUri, URI baseUri) {
+    private void checkImplicitParam(String clientId, String redirectUri) {
         if (redirectUri == null || clientId == null) {
             //TODO Error if one is null. Message change required
             throw PersoniumCoreAuthnException.INVALID_TARGET;

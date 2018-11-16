@@ -84,17 +84,19 @@ public class TokenEndPointResourceTest {
         String target = "";
         String owner = "false";
         String schema = "https://personium/appcell/";
+        String cellUrl = "https://personium/testcell/";
         String host = "https://personium/";
         String refreshToken = "RA~TEST_REFRESH_TOKEN";
 
         // --------------------
         // Mock settings
         // --------------------
-        doReturn("https://personium/testcell/").when(mockCell).getUrl();
+        PowerMockito.doReturn(cellUrl).when(tokenEndPointResource, "getIssuerUrl");
+        doReturn(host).when(mockCell).getUnitUrl();
         CellLocalRefreshToken mockOldRToken = PowerMockito.mock(CellLocalRefreshToken.class);
         PowerMockito.mockStatic(AbstractOAuth2Token.class);
         PowerMockito.when(AbstractOAuth2Token.class,
-                "parse", refreshToken, mockCell.getUrl(), host).thenReturn(mockOldRToken);
+                "parse", refreshToken, cellUrl, host).thenReturn(mockOldRToken);
 
         PowerMockito.doReturn(false).when(mockOldRToken).isRefreshExpired();
 
@@ -152,17 +154,19 @@ public class TokenEndPointResourceTest {
         String target = "https://personium/testcell/";
         String owner = "false";
         String schema = "https://personium/appcell/";
+        String cellUrl = "https://personium/testcell/";
         String host = "https://personium/";
         String refreshToken = "RA~TEST_REFRESH_TOKEN";
 
         // --------------------
         // Mock settings
         // --------------------
-        doReturn("https://personium/testcell/").when(mockCell).getUrl();
+        PowerMockito.doReturn(cellUrl).when(tokenEndPointResource, "getIssuerUrl");
+        doReturn(host).when(mockCell).getUnitUrl();
         TransCellRefreshToken mockOldRToken = PowerMockito.mock(TransCellRefreshToken.class);
         PowerMockito.mockStatic(AbstractOAuth2Token.class);
         PowerMockito.when(AbstractOAuth2Token.class,
-                "parse", refreshToken, mockCell.getUrl(), host).thenReturn(mockOldRToken);
+                "parse", refreshToken, cellUrl, host).thenReturn(mockOldRToken);
 
         PowerMockito.doReturn(false).when(mockOldRToken).isRefreshExpired();
 

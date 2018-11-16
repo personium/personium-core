@@ -124,14 +124,12 @@ public class TokenEndPointResource {
      * </ul>
      * @param uriInfo  URI information
      * @param authzHeader Authorization Header
-     * @param host Host header
      * @param formParams Body parameters
      * @return JAX-RS Response Object
      */
     @POST
     public final Response token(@Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,
-            @HeaderParam(HttpHeaders.HOST) final String host,
             MultivaluedMap<String, String> formParams) {
         // Using @FormParam will cause a closed error on the library side in case of an incorrect body.
         // Since we can not catch Exception, retrieve the value after receiving it with MultivaluedMap.
@@ -169,7 +167,7 @@ public class TokenEndPointResource {
 
         if (OAuth2Helper.GrantType.PASSWORD.equals(grantType)) {
             //Regular password authentication
-            Response response = this.handlePassword(target, pOwner, host,
+            Response response = this.handlePassword(target, pOwner,
                     schema, username, password);
 
             //When the password authentication succeeds, the last login time of the account is updated
@@ -190,13 +188,13 @@ public class TokenEndPointResource {
         } else if (OAuth2Helper.GrantType.SAML2_BEARER.equals(grantType)) {
             return this.receiveSaml2(target, pOwner, schema, assertion);
         } else if (OAuth2Helper.GrantType.REFRESH_TOKEN.equals(grantType)) {
-            return this.receiveRefresh(target, pOwner, schema, host, refreshToken);
+            return this.receiveRefresh(target, pOwner, schema, refreshToken);
         } else if (OAuth2Helper.GrantType.AUTHORIZATION_CODE.equals(grantType)) {
-            return receiveCode(target, pOwner, schema, host, code);
+            return receiveCode(target, pOwner, schema, code);
         } else {
             // Call Auth Plugins
             return this.callAuthPlugins(grantType, formParams, target, pOwner,
-                    schema, host);
+                    schema);
         }
     }
 
@@ -210,7 +208,7 @@ public class TokenEndPointResource {
 
     //TODO temporary implementation
     private Response receiveCode(final String target, String owner, String schema,
-            final String host, final String code) {
+            final String code) {
         if (code == null) {
             //If code is not set, it is regarded as a parse error
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
@@ -282,11 +280,10 @@ public class TokenEndPointResource {
      * @param owner
      * @param schema
      * @param username
-     * @param host
      * @return Response
      */
     private Response callAuthPlugins(String grantType, MultivaluedMap<String, String> params,
-            String target, String owner, String schema, String host) {
+            String target, String owner, String schema) {
         // Plugin manager.
         PluginManager pm = PersoniumCoreApplication.getPluginManager();
         // Search target plugin.
@@ -342,7 +339,7 @@ public class TokenEndPointResource {
         }
 
         // When processing is normally completed, issue a token.
-        return this.issueToken(target, owner, host, schema, accountName);
+        return this.issueToken(target, owner, schema, accountName);
     }
 
     /**
@@ -545,12 +542,11 @@ public class TokenEndPointResource {
      * @param target
      * @param owner
      * @param schema
-     * @param host
      * @param refreshToken
      * @return
      */
     private Response receiveRefresh(final String target, String owner, String schema,
-            final String host, final String refreshToken) {
+            final String refreshToken) {
         if (refreshToken == null) {
             //If refreshToken is not set, it is regarded as a parse error
             throw PersoniumCoreAuthnException.TOKEN_PARSE_ERROR.realm(this.cell.getUrl());
@@ -683,7 +679,7 @@ public class TokenEndPointResource {
     }
 
     private Response handlePassword(final String target, final String owner,
-            final String host, final String schema, final String username,
+            final String schema, final String username,
             final String password) {
 
         //Password check processing
@@ -728,11 +724,11 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
-        return issueToken(target, owner, host, schema, username);
+        return issueToken(target, owner, schema, username);
     }
 
     private Response issueToken(final String target, final String owner,
-            final String host, final String schema, final String username) {
+            final String schema, final String username) {
         long issuedAt = new Date().getTime();
 
         if (Key.TRUE_STR.equals(owner)) {
