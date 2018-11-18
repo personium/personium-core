@@ -711,10 +711,12 @@ public class AccessContext {
         AbstractOAuth2Token tk = null;
         try {
             String issuer = null;
+            String unitHost = host;
             if (cell != null) {
-                issuer = cell.getUrl();
+                issuer = cell.getPathBaseUrl();
+                unitHost = cell.getUnitUrl();
             }
-            tk = AbstractOAuth2Token.parse(accessToken, issuer, host);
+            tk = AbstractOAuth2Token.parse(accessToken, issuer, unitHost);
         } catch (TokenParseException e) {
             //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();

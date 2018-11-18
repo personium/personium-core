@@ -102,6 +102,9 @@ import io.personium.core.utils.ResourceUtils;
  * ImplicitFlow JAX-RS resource responsible for authentication processing.
  */
 public class AuthzEndPointResource {
+    // core issue #223
+    // "issuer" in the token may be interpreted by other units.
+    // For that reason, "path based cell url" is set for "issuer" regardless of unit property setting.
 
     private static final int COOKIE_MAX_AGE = 86400;
 
@@ -162,7 +165,6 @@ public class AuthzEndPointResource {
      * @param clientId query parameter
      * @param responseType query parameter
      * @param redirectUri query parameter
-     * @param host Host header
      * @param pCookie p_cookie
      * @param cookieRefreshToken cookie
      * @param keepLogin query parameter
@@ -179,7 +181,6 @@ public class AuthzEndPointResource {
             @QueryParam(Key.CLIENT_ID) final String clientId,
             @QueryParam(Key.RESPONSE_TYPE) final String responseType,
             @QueryParam(Key.REDIRECT_URI) final String redirectUri,
-            @HeaderParam(HttpHeaders.HOST) final String host,
             @CookieParam(FacadeResource.P_COOKIE_KEY) final String pCookie,
             @CookieParam(Key.SESSION_ID) final String cookieRefreshToken,
             @QueryParam(Key.KEEPLOGIN) final String keepLogin,
@@ -187,7 +188,7 @@ public class AuthzEndPointResource {
             @QueryParam(Key.CANCEL_FLG) final String isCancel,
             @Context final UriInfo uriInfo) {
 
-        return auth(pOwner, null, null, pTarget, assertion, clientId, responseType, redirectUri, host,
+        return auth(pOwner, null, null, pTarget, assertion, clientId, responseType, redirectUri,
                 pCookie, cookieRefreshToken, keepLogin, state, isCancel, uriInfo);
 
     }
@@ -198,7 +199,6 @@ public class AuthzEndPointResource {
      * <li> If URL is written in p_target, issue transCellToken as CELL of TARGET as its CELL. </ li>
      * </ul>
      * @param authzHeader Authorization header
-     * @param host Host header
      * @param pCookie p_cookie
      * @param cookieRefreshToken cookie
      * @param formParams Body parameters
@@ -207,7 +207,6 @@ public class AuthzEndPointResource {
      */
     @POST
     public final Response authPost(@HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,  // CHECKSTYLE IGNORE
-            @HeaderParam(HttpHeaders.HOST) final String host,
             @CookieParam(FacadeResource.P_COOKIE_KEY) final String pCookie,
             @CookieParam(Key.SESSION_ID) final String cookieRefreshToken,
             MultivaluedMap<String, String> formParams,
@@ -226,8 +225,16 @@ public class AuthzEndPointResource {
         String state = formParams.getFirst(Key.STATE);
         String isCancel = formParams.getFirst(Key.CANCEL_FLG);
 
-        return auth(pOwner, username, password, pTarget, assertion, clientId, responseType, redirectUri, host,
+        return auth(pOwner, username, password, pTarget, assertion, clientId, responseType, redirectUri,
                 pCookie, cookieRefreshToken, keepLogin, state, isCancel, uriInfo);
+    }
+
+    /**
+     * Get url of "issuer" to be set to token.
+     * @return url of "issuer"
+     */
+    private String getIssuerUrl() {
+        return cell.getPathBaseUrl();
     }
 
     private Response auth(final String pOwner,
@@ -238,7 +245,6 @@ public class AuthzEndPointResource {
             final String clientId,
             final String responseType,
             final String redirectUri,
-            final String host,
             final String pCookie,
             final String cookieRefreshToken,
             final String keepLogin,
@@ -274,7 +280,7 @@ public class AuthzEndPointResource {
 
         //clientId and redirectUri parameter check
         try {
-            this.checkImplicitParam(normalizedClientId, normalizedRedirectUri, uriInfo.getBaseUri());
+            this.checkImplicitParam(normalizedClientId, normalizedRedirectUri);
         } catch (PersoniumCoreException e) {
             log.debug(e.getMessage());
             if ((username == null && password == null) //NOPMD -To maintain readability
@@ -301,10 +307,10 @@ public class AuthzEndPointResource {
             return this.returnErrorRedirect(redirectUri, OAuth2Helper.Error.INVALID_REQUEST,
                     OAuth2Helper.Error.INVALID_REQUEST, state, "PR400-AZ-0004");
         } else if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
-            return this.handleImplicitFlow(redirectUri, clientId, host, username, password, cookieRefreshToken,
+            return this.handleImplicitFlow(redirectUri, clientId, username, password, cookieRefreshToken,
                     pTarget, keepLogin, assertion, schema, state, pOwner);
         } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
-            return handleCodeFlow(redirectUri, clientId, host, username, password, pCookie,
+            return handleCodeFlow(redirectUri, clientId, username, password, pCookie,
                     pTarget, state, pOwner, uriInfo);
         } else {
             return this.returnErrorRedirect(redirectUri, OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE,
@@ -316,7 +322,6 @@ public class AuthzEndPointResource {
     private Response handleCodeFlow(
             final String redirectUriStr,
             final String clientId,
-            final String host,
             final String username,
             final String password,
             final String pCookie,
@@ -348,7 +353,7 @@ public class AuthzEndPointResource {
 //            return handleCookieRefreshToken(redirectUriStr, clientId, host,
 //                    cookieRefreshToken, OAuth2Helper.Key.TRUE_STR, state, pOwner);
         } else if (pCookie != null) {
-            return handlePCookie(redirectUriStr, clientId, host,
+            return handlePCookie(redirectUriStr, clientId,
                     pCookie, OAuth2Helper.Key.TRUE_STR, state, pOwner, uriInfo);
         } else {
             //TODO Return error because it is not yet implemented
@@ -364,7 +369,6 @@ public class AuthzEndPointResource {
 
     private Response handlePCookie(final String redirectUriStr,
             final String clientId,
-            final String host,
             final String pCookie,
             final String keepLogin,
             final String state,
@@ -382,7 +386,7 @@ public class AuthzEndPointResource {
             //Obtain authorizationHeader equivalent token from information in cookie
             String authToken = decodedCookieValue.substring(separatorIndex + 1);
 
-            AbstractOAuth2Token token = AbstractOAuth2Token.parse(authToken, cell.getUrl(), host);
+            AbstractOAuth2Token token = AbstractOAuth2Token.parse(authToken, getIssuerUrl(), cell.getUnitUrl());
 
             if (!(token instanceof IAccessToken)) {
                 return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
@@ -579,7 +583,6 @@ public class AuthzEndPointResource {
      * @param keepLogin
      * @param state
      * @param pOwner
-     * @param host
      * @return
      */
     private Response handleImplicitFlowPassWord(final String pTarget,
@@ -589,8 +592,7 @@ public class AuthzEndPointResource {
             final String password,
             final String keepLogin,
             final String state,
-            final String pOwner,
-            final String host) {
+            final String pOwner) {
 
         //If both user ID and password are unspecified, return login error
         boolean passCheck = true;
@@ -665,14 +667,14 @@ public class AuthzEndPointResource {
             //uluut issuance processing
             localToken = new UnitLocalUnitUserToken(
                     issuedAt, UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
-                    cell.getOwner(), host);
+                    cell.getOwner(), cell.getUnitUrl());
 
         }
 
         //Generate Refresh Token
         CellLocalRefreshToken rToken = new CellLocalRefreshToken(issuedAt,
                 CellLocalRefreshToken.REFRESH_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
-                cell.getUrl(), username, schema);
+                getIssuerUrl(), username, schema);
         //Respond with 303 and return Location header
         try {
             if (localToken != null) {
@@ -685,15 +687,15 @@ public class AuthzEndPointResource {
                 if (pTarget == null || "".equals(pTarget)) {
                     //Returning cell local token
                     AccountAccessToken aToken = new AccountAccessToken(issuedAt,
-                            AccountAccessToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR, cell.getUrl(),
+                            AccountAccessToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR, getIssuerUrl(),
                             username, schema);
                     return returnSuccessRedirect(redirectUriStr, aToken.toTokenString(), aToken.expiresIn(),
                             rToken.toTokenString(), keepLogin, state);
                 } else {
                     //Returning transcell token
                     List<Role> roleList = cell.getRoleListForAccount(username);
-                    TransCellAccessToken tcToken = new TransCellAccessToken(cell.getUrl(),
-                            cell.getUrl() + "#" + username, pTarget, roleList, schema);
+                    TransCellAccessToken tcToken = new TransCellAccessToken(getIssuerUrl(),
+                            cell.getPathBaseUrl() + "#" + username, pTarget, roleList, schema);
                     return returnSuccessRedirect(redirectUriStr, tcToken.toTokenString(), tcToken.expiresIn(),
                             rToken.toTokenString(), keepLogin, state);
                 }
@@ -773,9 +775,10 @@ public class AuthzEndPointResource {
         //The target can be freely decided.
         IAccessToken aToken = null;
         if (pTarget == null || "".equals(pTarget)) {
-            aToken = new CellLocalAccessToken(issuedAt, cell.getUrl(), tcToken.getSubject(), rolesHere, schemaVerified);
+            aToken = new CellLocalAccessToken(
+                    issuedAt, getIssuerUrl(), tcToken.getSubject(), rolesHere, schemaVerified);
         } else {
-            aToken = new TransCellAccessToken(UUID.randomUUID().toString(), issuedAt, cell.getUrl(),
+            aToken = new TransCellAccessToken(UUID.randomUUID().toString(), issuedAt, getIssuerUrl(),
                     tcToken.getSubject(), pTarget, rolesHere, schemaVerified);
         }
         //Successful authentication with transcell token
@@ -792,7 +795,6 @@ public class AuthzEndPointResource {
      * Cookie authentication processing at ImplicitFlow.
      * @param redirectUriStr
      * @param clientId
-     * @param host
      * @param cookieRefreshToken
      * @param pTarget
      * @param keepLogin
@@ -800,7 +802,6 @@ public class AuthzEndPointResource {
      */
     private Response handleImplicitFlowcookie(final String redirectUriStr,
             final String clientId,
-            final String host,
             final String cookieRefreshToken,
             final String pTarget,
             final String keepLogin,
@@ -809,7 +810,8 @@ public class AuthzEndPointResource {
         IRefreshToken rToken = null;
         IAccessToken aToken = null;
         try {
-            AbstractOAuth2Token token = AbstractOAuth2Token.parse(cookieRefreshToken, cell.getUrl(), host);
+            AbstractOAuth2Token token = AbstractOAuth2Token.parse(
+                    cookieRefreshToken, getIssuerUrl(), cell.getUnitUrl());
             if (!(token instanceof IRefreshToken)) {
                 return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
             }
@@ -838,7 +840,7 @@ public class AuthzEndPointResource {
                 //uluut issuance processing
                 UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(
                         issuedAt, UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
-                        cell.getOwner(), host);
+                        cell.getOwner(), cell.getUnitUrl());
                 //Cookie authentication successful
                 //Respond with 303 and return Location header
                 try {
@@ -855,11 +857,11 @@ public class AuthzEndPointResource {
                 if (rToken instanceof CellLocalRefreshToken) {
                     String subject = rToken.getSubject();
                     List<Role> roleList = cell.getRoleListForAccount(subject);
-                    aToken = rToken.refreshAccessToken(issuedAt, pTarget, cell.getUrl(), roleList);
+                    aToken = rToken.refreshAccessToken(issuedAt, pTarget, cell.getPathBaseUrl(), roleList);
                 } else {
                     //Ask CELL to determine the role of you from the role of the token issuer.
                     List<Role> rolesHere = cell.getRoleListHere((IExtRoleContainingToken) rToken);
-                    aToken = rToken.refreshAccessToken(issuedAt, pTarget, cell.getUrl(), rolesHere);
+                    aToken = rToken.refreshAccessToken(issuedAt, pTarget, getIssuerUrl(), rolesHere);
                 }
             }
 
@@ -890,7 +892,6 @@ public class AuthzEndPointResource {
      * Authentication processing handling by ImplicitFlow.
      * @param redirectUriStr
      * @param clientId
-     * @param host
      * @param username
      * @param password
      * @param cookieRefreshToken
@@ -904,7 +905,6 @@ public class AuthzEndPointResource {
     private Response handleImplicitFlow(
             final String redirectUriStr,
             final String clientId,
-            final String host,
             final String username,
             final String password,
             final String cookieRefreshToken,
@@ -929,7 +929,7 @@ public class AuthzEndPointResource {
         if (username != null || password != null) {
             //When there is a setting in either user ID or password
             Response response = this.handleImplicitFlowPassWord(pTarget, redirectUriStr, clientId,
-                    username, password, keepLogin, state, pOwner, host);
+                    username, password, keepLogin, state, pOwner);
 
             if (PersoniumUnitConfig.getAccountLastAuthenticatedEnable()
                     && isSuccessAuthorization(response)) {
@@ -948,7 +948,7 @@ public class AuthzEndPointResource {
         } else if (cookieRefreshToken != null) {
             //When cookie is specified
             //For cookie authentication, keepLogin always works as true
-            return this.handleImplicitFlowcookie(redirectUriStr, clientId, host,
+            return this.handleImplicitFlowcookie(redirectUriStr, clientId,
                     cookieRefreshToken, pTarget, OAuth2Helper.Key.TRUE_STR, state, pOwner);
         } else {
             //If user ID, password, assertion, cookie are not specified, send form
@@ -1105,19 +1105,10 @@ public class AuthzEndPointResource {
         EntitySetAccessor boxAcceccor = EsModel.box(this.cell);
 
         // {filter={and={filters=[{term={c=$CELL_ID}, {term={s.Schema.untouched=$CLIENT_ID}]}}}
-        // {filter={and={filters=[
-        //     {term={c=$CELL_ID}},
-        //     {or={filters=[
-        //         {term={s.Schema.untouched=$CLIENT_ID}},
-        //         {term={s.Schema.untouched=$NORMALIZED_CLIENT_ID}}
-        //     ]}}
-        // ]}}}
         Map<String, Object> query1 = new HashMap<String, Object>();
         Map<String, Object> term1 = new HashMap<String, Object>();
         Map<String, Object> query2 = new HashMap<String, Object>();
         Map<String, Object> term2 = new HashMap<String, Object>();
-//        Map<String, Object> query3 = new HashMap<String, Object>();
-//        Map<String, Object> term3 = new HashMap<String, Object>();
         List<Map<String, Object>> filtersList = new ArrayList<Map<String, Object>>();
         List<Map<String, Object>> queriesList = new ArrayList<Map<String, Object>>();
         Map<String, Object> filters = new HashMap<String, Object>();
@@ -1130,11 +1121,6 @@ public class AuthzEndPointResource {
         String boxSchemaKey = OEntityDocHandler.KEY_STATIC_FIELDS + "." + Box.P_SCHEMA.getName() + ".untouched";
         query2.put(boxSchemaKey, clientId);
         term2.put("term", query2);
-
-        // TODO Issue-223
-//        String normalizedCelientId = UriUtils.convertCellBaseToDomainBase(clientId);
-//        query3.put(boxSchemaKey, normalizedCelientId);
-//        term3.put("term", query3);
 
         queriesList.add(term1);
         filtersList.add(term2);
@@ -1162,7 +1148,7 @@ public class AuthzEndPointResource {
      * @param redirectUri
      * @param baseUri
      */
-    private void checkImplicitParam(String clientId, String redirectUri, URI baseUri) {
+    private void checkImplicitParam(String clientId, String redirectUri) {
         if (redirectUri == null || clientId == null) {
             //TODO Error if one is null. Message change required
             throw PersoniumCoreAuthnException.INVALID_TARGET;
@@ -1188,28 +1174,15 @@ public class AuthzEndPointResource {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
         }
 
-        //Get baseurl's path
-        String bPath = baseUri.getPath();
-
-        //Deletes the path of baseUri from the path of client_id and redirect_uri
-        String cPath = objClientId.getPath().substring(bPath.length());
-        String rPath = objRedirectUri.getPath().substring(bPath.length());
-
-        //split the path of client_id and redirect_uri with /
-        String[] cPaths = StringUtils.split(cPath, "/");
-        String[] rPaths = StringUtils.split(rPath, "/");
-
         //Compare client_id and redirect_uri, and if the cells are different, an authentication error
         //Comparison of cell URLs
         if (!objClientId.getAuthority().equals(objRedirectUri.getAuthority())
-                || rPaths.length == 0
-                || !cPaths[0].equals(rPaths[0])) {
+                || !redirectUri.startsWith(clientId)) {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_REDIRECT_INVALID;
         }
 
         //Compare the client_id with the name of the requested cell, and an error if the cells are the same
-        if (cPaths.length == 0
-                || cPaths[0].equals(this.cell.getName())) {
+        if (clientId.equals(cell.getUrl())) {
             throw PersoniumCoreException.Auth.REQUEST_PARAM_CLIENTID_INVALID;
         }
 

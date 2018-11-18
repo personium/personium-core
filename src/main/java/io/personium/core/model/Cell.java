@@ -78,16 +78,24 @@ public interface Cell {
 
     /**
      * returns URL string for this cell.
+     * Return PathBaseURL or FQDNBaseURL depending on property setting.
      * @return URL string
      */
     String getUrl();
 
     /**
      * returns Cell base URL string for this cell.
-     * Cell base url : "https://{cellname}.{domain}/...".
+     * Cell base url : "https://{cellname}.{domain}/".
      * @return Cell base URL string
      */
     String getFqdnBaseUrl();
+
+    /**
+     * returns Cell base URL string for this cell.
+     * Cell base url : "https://{domain}/{cellname}/".
+     * @return Cell base URL string
+     */
+    String getPathBaseUrl();
 
     /**
      * returns Unit URL string for this cell.

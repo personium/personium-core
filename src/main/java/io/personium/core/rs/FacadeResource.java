@@ -146,11 +146,11 @@ public class FacadeResource {
             // {CellName}.{FQDN} access
             String cellName = headerHost.split("\\.")[0];
             Cell cell = ModelFactory.cellFromName(cellName);
-            AccessContext ac = AccessContext.create(headerAuthz, uriInfo, cookiePeer, cookieAuthValue, cell,
-                    uriInfo.getBaseUri().toString(), headerHost, headerPersoniumUnitUser);
             if (cell == null) {
                 throw PersoniumCoreException.Dav.CELL_NOT_FOUND;
             }
+            AccessContext ac = AccessContext.create(headerAuthz, uriInfo, cookiePeer, cookieAuthValue, cell,
+                    uriInfo.getBaseUri().toString(), headerHost, headerPersoniumUnitUser);
 
             CellLockManager.STATUS cellStatus = CellLockManager.getCellStatus(cell.getId());
             if (CellLockManager.STATUS.BULK_DELETION.equals(cellStatus)) {

@@ -242,13 +242,15 @@ public class AccessContextTest {
         Cell cell = (Cell) mock(Cell.class);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
         when(cell.getOwner()).thenReturn("cellowner");
+        when(cell.getPathBaseUrl()).thenReturn(UrlUtils.getBaseUrl() + "/cellowner");
+        when(cell.getUnitUrl()).thenReturn(UrlUtils.getBaseUrl());
 
         UriInfo uriInfo =  new TestUriInfo();
 
         // uluut発行処理
         UnitLocalUnitUserToken uluut = new UnitLocalUnitUserToken(
                 System.currentTimeMillis(), UnitLocalUnitUserToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR,
-                cell.getOwner(), uriInfo.getBaseUri().getHost()  + ":"  + uriInfo.getBaseUri().getPort());
+                cell.getOwner(), UrlUtils.getBaseUrl());
 
         String tokenString = uluut.toTokenString();
         // p_cookie_peerとして、ランダムなUUIDを設定する
@@ -274,12 +276,14 @@ public class AccessContextTest {
         Cell cell = (Cell) mock(Cell.class);
         when(cell.authenticateAccount((OEntityWrapper) Matchers.any(), Matchers.anyString())).thenReturn(true);
         when(cell.getOwner()).thenReturn("cellowner");
-        when(cell.getUrl()).thenReturn(uriInfo.getBaseUri().getHost()  + ":"  + uriInfo.getBaseUri().getPort());
+        when(cell.getUrl()).thenReturn(UrlUtils.getBaseUrl());
+        when(cell.getPathBaseUrl()).thenReturn(UrlUtils.getBaseUrl() + "/cellowner");
+        when(cell.getUnitUrl()).thenReturn(UrlUtils.getBaseUrl());
 
         // Token発行処理
         CellLocalAccessToken token = new CellLocalAccessToken(
-                uriInfo.getBaseUri().getHost()  + ":"  + uriInfo.getBaseUri().getPort(), cell.getOwner(), null,
-                uriInfo.getBaseUri().getHost()  + ":"  + uriInfo.getBaseUri().getPort());
+                UrlUtils.getBaseUrl() + "/cellowner", cell.getOwner(), null,
+                UrlUtils.getBaseUrl() + "/cellowner");
 
         String tokenString = token.toTokenString();
         // p_cookie_peerとして、ランダムなUUIDを設定する

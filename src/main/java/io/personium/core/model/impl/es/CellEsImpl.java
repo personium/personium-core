@@ -267,12 +267,20 @@ public class CellEsImpl implements Cell {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getPathBaseUrl() {
+        return url;
+    }
+
+    /**
      * Returns the Unit URL of this Cell.
      * @return unitUrl string
      */
     @Override
     public String getUnitUrl() {
-        return UriUtils.getUnitUrl(this.getUrl());
+        return UriUtils.getUnitUrl(this.getPathBaseUrl());
     }
 
     @Override
