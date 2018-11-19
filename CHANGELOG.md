@@ -1,3 +1,7 @@
+## 1.7.2
+IMPROVEMENTS:
+* Support per-Cell FQDN.(Under development. Some functions will not work yet.)([#223](https://github.com/personium/personium-core/issues/223))
+
 ## 1.7.1
 IMPROVEMENTS:
 * Add "Retrieve unit meta data" API.([#262](https://github.com/personium/personium-core/issues/262))
