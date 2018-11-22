@@ -259,8 +259,6 @@ public class DavRsCmp {
             throw PersoniumCoreException.Dav.INVALID_DEPTH_HEADER.params(depth);
         }
 
-        // String reqUri = getEsacapingUrl();
-
         String reqUri = this.getUrl();
         // take away trailing slash
         if (reqUri.endsWith("/")) {
