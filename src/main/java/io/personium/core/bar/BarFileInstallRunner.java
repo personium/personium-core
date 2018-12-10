@@ -31,8 +31,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.ws.rs.core.UriInfo;
-
 import org.apache.wink.webdav.model.Getcontenttype;
 import org.apache.wink.webdav.model.Multistatus;
 import org.apache.wink.webdav.model.Prop;
@@ -107,8 +105,6 @@ public class BarFileInstallRunner implements Runnable {
     private BoxCmp boxCmp;
     /** Bar file path. */
     private Path barFilePath;
-    /** Unit base url. */
-    private String baseUrl;
     /** Progress info. */
     private BarInstallProgressInfo progressInfo;
     /** OData entity resource. */
@@ -135,7 +131,6 @@ public class BarFileInstallRunner implements Runnable {
      * @param entryCount Entry file count in bar file
      * @param boxName Target box name
      * @param schema Target box schema
-     * @param uriInfo URI info
      * @param entityResource OData entity resource
      * @param requestKey Personium event request key
      */
@@ -143,11 +138,9 @@ public class BarFileInstallRunner implements Runnable {
             long entryCount,
             String boxName,
             String schema,
-            UriInfo uriInfo,
             ODataEntityResource entityResource,
             String requestKey) {
         this.barFilePath = barFilePath;
-        this.baseUrl = uriInfo.getBaseUri().toASCIIString();
         this.entityResource = entityResource;
         this.requestKey = requestKey;
 
@@ -552,8 +545,8 @@ public class BarFileInstallRunner implements Runnable {
                             continue;
                         }
                         if (nodeName.equals("acl")) {
-                            aclElement = BarFileUtils.convertToRoleInstanceUrl(element, baseUrl,
-                                    box.getCell().getName(), box.getName());
+                            aclElement = BarFileUtils.convertToRoleInstanceUrl(element,
+                                    box.getCell().getUrl(), box.getName());
                             continue;
                         }
                         propElements.add(element);

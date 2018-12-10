@@ -35,7 +35,6 @@ import java.util.zip.ZipException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
@@ -79,7 +78,6 @@ public class BarFileInstaller {
     private final Cell cell;
     private String boxName;
     private ODataEntityResource oDataEntityResource;
-    private UriInfo uriInfo;
 
     private String barTempDir = PersoniumUnitConfig.getBarInstallTempDir();
 
@@ -92,17 +90,14 @@ public class BarFileInstaller {
      * @param boxName
      * Box name
      * @param oDataEntityResource oDataEntityResource
-     * @param uriInfo UriInfo
      */
     public BarFileInstaller(
             final Cell cell,
             final String boxName,
-            final ODataEntityResource oDataEntityResource,
-            final UriInfo uriInfo) {
+            final ODataEntityResource oDataEntityResource) {
         this.cell = cell;
         this.boxName = boxName;
         this.oDataEntityResource = oDataEntityResource;
-        this.uriInfo = uriInfo;
     }
 
     /**
@@ -149,7 +144,7 @@ public class BarFileInstaller {
             //Errors so far are 400 series errors, Box is not created, so it does not write to Box metadata (cache) and ends.
             runner = new BarFileReadRunner(file, this.cell, this.boxName,
                     this.oDataEntityResource, this.oDataEntityResource.getOdataProducer(),
-                    Box.EDM_TYPE_NAME, this.uriInfo, requestKey);
+                    Box.EDM_TYPE_NAME, requestKey);
             runner.createBox(this.manifestJson);
 
             //bar Set the number of entries in the file (create ProgressInfo at this point)
@@ -227,7 +222,7 @@ public class BarFileInstaller {
             throw PersoniumCoreException.BarInstall.BAR_FILE_CANNOT_OPEN.params(e.getMessage());
         }
         BarFileInstallRunner runner = new BarFileInstallRunner(file.toPath(), entryCount,
-                boxName, schema, uriInfo, oDataEntityResource, requestKey);
+                boxName, schema, oDataEntityResource, requestKey);
         PersoniumThread.BOX_IO.execute(runner);
         return true;
     }

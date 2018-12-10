@@ -42,11 +42,10 @@ public class BarFileUtilsTest {
      */
     @Test
     public void rootprops_xmlのACL_URLがロールインスタンスURLに変換されること() {
-        final String cellName = "installTargetCell";
         final String boxName = "installTargetBox";
         final String baseUrl = "https://baseserver/testcell1/__role/__";
-        final String targetUrl = "https://targetserver/";
-        final String master = targetUrl + cellName + "/__role/" + boxName + "/";
+        final String cellUrl = "https://targetserver/installTargetCell/";
+        final String master = cellUrl + "__role/" + boxName + "/";
         try {
             DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docbuilder;
@@ -56,12 +55,12 @@ public class BarFileUtilsTest {
             element.setAttribute("xml:base", baseUrl + "/");
 
             // ACL_URLの末尾に"/"がある場合
-            Element res = BarFileUtils.convertToRoleInstanceUrl(element, targetUrl, cellName, boxName);
+            Element res = BarFileUtils.convertToRoleInstanceUrl(element, cellUrl, boxName);
             assertEquals(master, res.getAttribute("xml:base"));
 
             // ACL_URLの末尾に"/"がない場合
             element.setAttribute("xml:base", baseUrl);
-            res = BarFileUtils.convertToRoleInstanceUrl(element, targetUrl, cellName, boxName);
+            res = BarFileUtils.convertToRoleInstanceUrl(element, cellUrl, boxName);
             assertEquals(master, res.getAttribute("xml:base"));
             return;
         } catch (ParserConfigurationException e) {
@@ -79,10 +78,9 @@ public class BarFileUtilsTest {
      */
     @Test
     public void rootprops_xmlのACL_URLがURL形式ではない場合に例外がスローされること() {
-        final String cellName = "installTargetCell";
         final String boxName = "installTargetBox";
         final String baseUrl = "https/baseserver/testcell1/__role/__/col1/";
-        final String targetUrl = "https://targetserver/";
+        final String cellUrl = "https://targetserver/installTargetCell/";
         try {
             DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docbuilder;
@@ -91,7 +89,7 @@ public class BarFileUtilsTest {
             Element element = document.createElement("acl");
             element.setAttribute("xml:base", baseUrl + "/");
 
-            BarFileUtils.convertToRoleInstanceUrl(element, targetUrl, cellName, boxName);
+            BarFileUtils.convertToRoleInstanceUrl(element, cellUrl, boxName);
             fail("Unexpected exception");
         } catch (ParserConfigurationException e) {
             fail("DOM Parsing Error: " + e.getMessage());
