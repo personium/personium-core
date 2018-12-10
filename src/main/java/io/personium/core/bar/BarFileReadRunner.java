@@ -38,7 +38,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -162,7 +161,6 @@ public class BarFileReadRunner implements Runnable {
     private final ODataEntityResource odataEntityResource;
     private final PersoniumODataProducer odataProducer;
     private final String entitySetName;
-    private final UriInfo uriInfo;
     private final String requestKey;
 
     static final String ROOT_DIR = "bar/";
@@ -206,7 +204,6 @@ public class BarFileReadRunner implements Runnable {
      * @param odataEntityResource JAX-RS resource
      * @param producer ODataProducer
      * @param entitySetName entitySetName(=box name)
-     * @param uriInfo uriInfo
      * @param requestKey The value of the RequestKey field to be output to the event log
      */
     public BarFileReadRunner(
@@ -216,14 +213,12 @@ public class BarFileReadRunner implements Runnable {
             ODataEntityResource odataEntityResource,
             PersoniumODataProducer producer,
             String entitySetName,
-            UriInfo uriInfo,
             String requestKey) {
         this.barFile = barFile;
         this.boxName = boxName;
         this.odataEntityResource = odataEntityResource;
         this.odataProducer = producer;
         this.entitySetName = entitySetName;
-        this.uriInfo = uriInfo;
         this.cell = cell;
         this.box = null;
         this.boxCmp = null;
@@ -981,9 +976,8 @@ public class BarFileReadRunner implements Runnable {
                             continue;
                         }
                         if (nodeName.equals("acl")) {
-                            String baseUrl = uriInfo.getBaseUri().toASCIIString();
-                            aclElement = BarFileUtils.convertToRoleInstanceUrl(element, baseUrl,
-                                    box.getCell().getName(), box.getName());
+                            aclElement = BarFileUtils.convertToRoleInstanceUrl(element,
+                                    box.getCell().getUrl(), box.getName());
                             continue;
                         }
                         propElements.add(element);

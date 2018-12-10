@@ -52,7 +52,7 @@ public class BarFileContentsTest {
      */
     private class TestBarRunner extends BarFileReadRunner {
         TestBarRunner() {
-            super(null, null, null, null, null, null, null, null);
+            super(null, null, null, null, null, null, null);
         }
 
         /**

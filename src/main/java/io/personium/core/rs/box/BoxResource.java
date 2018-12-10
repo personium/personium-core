@@ -33,7 +33,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
@@ -335,7 +334,6 @@ public class BoxResource {
 
     /**
      * Processing of MKCOL method.
-     * @param uriInfo UriInfo
      * @param pCredHeader dcCredHeader
      * @param contentType Value of Content-Type header
      * @param contentLength Value of the Content-Length header
@@ -345,7 +343,6 @@ public class BoxResource {
     @WriteAPI
     @MKCOL
     public Response mkcol(
-            @Context final UriInfo uriInfo,
             @HeaderParam(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_CREDENTIAL) final String pCredHeader,
             @HeaderParam(HttpHeaders.CONTENT_TYPE) final String contentType,
             @HeaderParam(HttpHeaders.CONTENT_LENGTH) final String contentLength,
@@ -381,7 +378,7 @@ public class BoxResource {
             headers.put(HttpHeaders.CONTENT_LENGTH, contentLength);
 
             BarFileInstaller installer =
-                    new BarFileInstaller(this.cell, this.boxName, odataEntity, uriInfo);
+                    new BarFileInstaller(this.cell, this.boxName, odataEntity);
 
             res = installer.barFileInstall(headers, inStream, requestKey);
             result = Integer.toString(res.getStatus());
