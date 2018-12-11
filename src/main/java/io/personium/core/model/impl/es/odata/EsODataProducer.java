@@ -436,7 +436,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             //Assemble the search information of the link target
             String propertyName = eProp.getName();
             HashMap<String, String> ntkp = AbstractODataResource.convertNTKP(propertyName);
-            if (ntkp != null) {
+            if (links != null && ntkp != null) {
                 String entityType = ntkp.get("entityType");
                 String propName = ntkp.get("propName");
                 String linkId = (String) links.get(getLinkskey(entityType));
@@ -804,7 +804,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 Map<String, Object> links = oedh.getManyToOnelinkId();
                 for (Map.Entry<String, String> ntkpProperty : ntkpProperties.entrySet()) {
                     String linksKey = getLinkskey(ntkpProperty.getValue());
-                    if (links.containsKey(linksKey)) {
+                    if (links != null && links.containsKey(linksKey)) {
                         String linkId = links.get(linksKey).toString();
                         staticFields.put(ntkpProperty.getKey(), ntkpValueMap.get(ntkpProperty.getKey() + linkId));
                     } else {
