@@ -237,7 +237,7 @@ public final class CellCtlResource extends ODataResource {
                     }
                 } else if (Rule.P_EXTERNAL.getName().equals(name) && value != null) {
                     external = Boolean.valueOf(value);
-                } else if (Rule.P_SERVICE.getName().equals(name) && value != null) {
+                } else if (Rule.P_TARGETURL.getName().equals(name) && value != null) {
                     targetUrl = value;
                 } else if (Rule.P_SUBJECT.getName().equals(name) && value != null) {
                     subject = value;
@@ -284,7 +284,7 @@ public final class CellCtlResource extends ODataResource {
         }
         converted = UriUtils.convertSchemeFromHttpToLocalUnit(unitUrl, targetUrl);
         if (converted != null && !converted.equals(targetUrl)) {
-            return Rule.P_SERVICE.getName();
+            return Rule.P_TARGETURL.getName();
         }
 
         return validateRule(external, type, object, info, action, targetUrl, boxBound);
@@ -305,75 +305,114 @@ public final class CellCtlResource extends ODataResource {
             Boolean external,
             String type, String object, String info, String action, String targetUrl, Boolean boxBound) {
 
-        // action: relay or relay.event or exec -> targetUrl: not null
-        if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_RELAY_EVENT.equals(action)
-                || Rule.ACTION_EXEC.equals(action)) && targetUrl == null) {
-            return Rule.P_SERVICE.getName();
+        if (!validateRuleExternal(external, type)) {
+            return Rule.P_EXTERNAL.getName();
         }
-
-        // type: timer.periodic or timer.oneshot -> external: false
-        //                                       -> object: decimal number
-        if (PersoniumEventType.timerPeriodic().equals(type) || PersoniumEventType.timerOneshot().equals(type)) {
-            // external: false
-            if (external) {
-                return Rule.P_EXTERNAL.getName();
-            }
-            // object: > 0
-            if (object == null || !ODataUtils.validateTime(object)) {
-                return Rule.P_OBJECT.getName();
-            }
-        } else if (boxBound.booleanValue()) {
-            // boxbound
-
-            // external: false -> object: personium-localbox:/xxx or personium-localcell:/__xxx
-            if (!external && object != null
-                    && !ODataUtils.isValidLocalBoxUrl(object)
-                    && !(ODataUtils.isValidLocalCellUrl(object)
-                            && object.startsWith(UriUtils.SCHEME_LOCALCELL + ":/__"))) {
-                return Rule.P_OBJECT.getName();
-            }
-            // action: exec -> targetUrl: personium-localbox:/col/srv
-            if (Rule.ACTION_EXEC.equals(action)
-                    && !ODataUtils.validateLocalBoxUrl(targetUrl, Common.PATTERN_SERVICE_LOCALBOX_PATH)) {
-                return Rule.P_SERVICE.getName();
-            }
-            // action: relay -> targetUrl: personium-localunit:/xxx or http://xxx or https://xxx
-            //                           or personium-localcell:/xxx or personium-localbox:/xxx
-            if (Rule.ACTION_RELAY.equals(action)
-                    && !ODataUtils.isValidUrl(targetUrl)
-                    && !ODataUtils.isValidLocalUnitUrl(targetUrl)
-                    && !ODataUtils.isValidLocalCellUrl(targetUrl)
-                    && !ODataUtils.isValidLocalBoxUrl(targetUrl)) {
-                return Rule.P_SERVICE.getName();
-            }
-        } else {
-            // external: false -> object: personium-localcell:/xxx
-            if (!external && object != null && !ODataUtils.isValidLocalCellUrl(object)) {
-                return Rule.P_OBJECT.getName();
-            }
-            // action: exec -> targetUrl: personium-localcell:/box/col/srv
-            if (Rule.ACTION_EXEC.equals(action)
-                    && !ODataUtils.validateLocalCellUrl(targetUrl, Common.PATTERN_SERVICE_LOCALCELL_PATH)) {
-                return Rule.P_SERVICE.getName();
-            }
-            // action: relay -> targetUrl: personium-localunit:/xxx or http://xxx or https://xxx
-            //                             or personium-localcell:/xxx
-            if (Rule.ACTION_RELAY.equals(action)
-                    && !ODataUtils.isValidUrl(targetUrl)
-                    && !ODataUtils.isValidLocalUnitUrl(targetUrl)
-                    && !ODataUtils.isValidLocalCellUrl(targetUrl)) {
-                return Rule.P_SERVICE.getName();
-            }
+        if (!validateRuleType(type, action)) {
+            return Rule.P_TYPE.getName();
         }
-
-        // action: relay.event -> targetUrl: cell url or personium-localcell:/
-        if (Rule.ACTION_RELAY_EVENT.equals(action)
-                && !ODataUtils.isValidCellUrl(targetUrl)
-                && !targetUrl.equals(UriUtils.SCHEME_LOCALCELL + ":/")) {
-            return Rule.P_SERVICE.getName();
+        if (!validateRuleObject(object, external, type, boxBound)) {
+            return Rule.P_OBJECT.getName();
+        }
+        if (!validateRuleTargetUrl(targetUrl, action, boxBound)) {
+            return Rule.P_TARGETURL.getName();
         }
 
         return null; // valid
+    }
+
+    private static boolean validateRuleExternal(Boolean external, String type) {
+        // type: timer.periodic or timer.oneshot -> external: false
+        if ((PersoniumEventType.timerPeriodic().equals(type) || PersoniumEventType.timerOneshot().equals(type))
+            && external.booleanValue()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static boolean validateRuleType(String type, String action) {
+        // action: relay.data -> type: odata.create or odata.update or odata.patch
+        if (Rule.ACTION_RELAY_DATA.equals(action)
+            && !(PersoniumEventType.odata("", PersoniumEventType.Operation.CREATE).equals(type)
+                 || PersoniumEventType.odata("", PersoniumEventType.Operation.UPDATE).equals(type)
+                 || PersoniumEventType.odata("", PersoniumEventType.Operation.MERGE).equals(type))) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean validateRuleObject(String object, Boolean external, String type, Boolean boxBound) {
+        // type: timer.periodic or timer.oneshot -> object: decimal number
+        if (PersoniumEventType.timerPeriodic().equals(type) || PersoniumEventType.timerOneshot().equals(type)) {
+            // object: > 0
+            if (object == null || !ODataUtils.validateTime(object)) {
+                return false;
+            }
+        } else if (boxBound.booleanValue()) {
+            // external: false -> object: personium-localbox:/xxx or personium-localcell:/__xxx
+            if (!external.booleanValue() && object != null
+                    && !ODataUtils.isValidLocalBoxUrl(object)
+                    && !(ODataUtils.isValidLocalCellUrl(object)
+                            && object.startsWith(UriUtils.SCHEME_CELL_URI + "__"))) {
+                return false;
+            }
+        } else {
+            // external: false -> object: personium-localcell:/xxx
+            if (!external.booleanValue() && object != null && !ODataUtils.isValidLocalCellUrl(object)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean validateRuleTargetUrl(String targetUrl, String action, Boolean boxBound) {
+        // action: relay or relay.event or exec or relay.data -> targetUrl: not null
+        if ((Rule.ACTION_RELAY.equals(action) || Rule.ACTION_RELAY_EVENT.equals(action)
+                || Rule.ACTION_EXEC.equals(action) || Rule.ACTION_RELAY_DATA.equals(action)) && targetUrl == null) {
+            return false;
+        }
+
+        if (Rule.ACTION_EXEC.equals(action)) {
+            if (boxBound.booleanValue()) {
+                // targetUrl: personium-localbox:/xxx
+                if (!ODataUtils.isValidLocalBoxUrl(targetUrl)) {
+                    return false;
+                }
+            } else {
+                // targetUrl: personium-localcell:/xxx
+                if (!ODataUtils.isValidLocalCellUrl(targetUrl)) {
+                    return false;
+                }
+            }
+        } else if (Rule.ACTION_RELAY.equals(action) || Rule.ACTION_RELAY_DATA.equals(action)) {
+            if (boxBound.booleanValue()) {
+                // targetUrl: personium-localunit:/xxx or http://xxx or https://xxx
+                //            or personium-localcell:/xxx or personium-localbox:/xxx
+                if (!ODataUtils.isValidUrl(targetUrl)
+                    && !ODataUtils.isValidLocalUnitUrl(targetUrl)
+                    && !ODataUtils.isValidLocalCellUrl(targetUrl)
+                    && !ODataUtils.isValidLocalBoxUrl(targetUrl)) {
+                    return false;
+                }
+            } else {
+                // targetUrl: personium-localunit:/xxx or http://xxx or https://xxx
+                //            or personium-localcell:/xxx
+                if (!ODataUtils.isValidUrl(targetUrl)
+                    && !ODataUtils.isValidLocalUnitUrl(targetUrl)
+                    && !ODataUtils.isValidLocalCellUrl(targetUrl)) {
+                    return false;
+                }
+            }
+        } else if (Rule.ACTION_RELAY_EVENT.equals(action)
+                   && !ODataUtils.isValidCellUrl(targetUrl)
+                   && !targetUrl.equals(UriUtils.SCHEME_CELL_URI)) {
+            // targetUrl: cell url or personium-localcell:/
+            return false;
+        }
+
+        return true;
     }
 
     /**

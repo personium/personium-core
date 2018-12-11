@@ -16,7 +16,9 @@
  */
 package io.personium.core.rule.action;
 
-import org.json.simple.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
@@ -41,12 +43,8 @@ public class RelayEventAction extends RelayAction {
     }
 
     @Override
-    @SuppressWarnings({ "unchecked" })
-    protected JSONObject createEvent(PersoniumEvent event) {
-        String type = event.getType();
-        if (type == null) {
-            type = "";
-        }
+    protected Map<String, Object> createEvent(PersoniumEvent event) {
+        String type = event.getType().orElse("");
         if (!type.startsWith("relay.")) {
             if (event.getExternal()) {
                 type = "relay.ext." + type;
@@ -55,29 +53,19 @@ public class RelayEventAction extends RelayAction {
             }
         }
 
-        JSONObject json = new JSONObject();
-        json.put("Type", type);
-        json.put("Object", event.getObject());
-        json.put("Info", event.getInfo());
+        Map<String, Object> map = new HashMap<>();
+        map.put("Type", type);
+        event.getObject().ifPresent(object -> map.put("Object", object));
+        event.getInfo().ifPresent(info -> map.put("Info", info));
 
-        return json;
+        return map;
     }
 
     @Override
-    protected String getVia(PersoniumEvent event) {
-        // set X-Personium-Via header
-        String via = event.getVia();
-        if (via == null) {
-            via = cell.getUrl();
-        } else {
-            via = via + "," + cell.getUrl();
-        }
-        return via;
+    protected Optional<String> getVia(PersoniumEvent event) {
+        // for X-Personium-Via header
+        return Optional.ofNullable(event.getVia().map(via -> via + "," + cell.getUrl()).orElse(cell.getUrl()));
     }
 
-    @Override
-    protected String getTargetCellUrl() {
-        return service;
-    }
 }
 

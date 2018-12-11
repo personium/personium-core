@@ -24,10 +24,10 @@ import java.util.List;
 public interface EventReceiver {
 
     /**
-     * Subscribe.
+     * Open.
      * @param queueName queue name
      */
-    void subscribe(String queueName);
+    void open(String queueName);
 
     /**
      * Receive.
@@ -36,8 +36,8 @@ public interface EventReceiver {
     List<PersoniumEvent> receive();
 
     /**
-     * Unsubscribe.
+     * Close.
      */
-    void unsubscribe();
+    void close();
 
 }

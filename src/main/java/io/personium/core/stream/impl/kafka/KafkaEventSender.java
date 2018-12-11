@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.core.event.impl.kafka;
+package io.personium.core.stream.impl.kafka;
 
 import java.util.Properties;
 
@@ -23,7 +23,6 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.event.EventPublisher;
 import io.personium.core.event.EventSender;
 import io.personium.core.event.PersoniumEvent;
@@ -34,10 +33,15 @@ import io.personium.core.event.PersoniumEvent;
 public class KafkaEventSender implements EventSender, EventPublisher {
 
     private Producer<String, PersoniumEvent> producer;
+    private String broker;
     private String topicName;
 
-    /** Constructor. */
-    public KafkaEventSender() {
+    /**
+     * Constructor.
+     * @param broker brokers
+     */
+    public KafkaEventSender(final String broker) {
+        this.broker = broker;
     }
 
     /**
@@ -46,10 +50,8 @@ public class KafkaEventSender implements EventSender, EventPublisher {
      */
     @Override
     public void open(final String topic) {
-        String servers = PersoniumUnitConfig.getEventBusKafkaServers();
-
         Properties props = new Properties();
-        props.put("bootstrap.servers", servers);
+        props.put("bootstrap.servers", broker);
         props.put("acks", "all");
         props.put("key.serializer", StringSerializer.class);
         props.put("value.serializer", PersoniumEventSerializer.class);
@@ -66,6 +68,11 @@ public class KafkaEventSender implements EventSender, EventPublisher {
     @Override
     public void send(final PersoniumEvent event) {
         producer.send(new ProducerRecord<>(topicName, event));
+    }
+
+    @Override
+    public void publish(final PersoniumEvent event) {
+        send(event);
     }
 
     /**

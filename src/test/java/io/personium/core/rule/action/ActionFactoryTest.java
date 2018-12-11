@@ -254,6 +254,17 @@ public class ActionFactoryTest {
     /**
      * Test createAction().
      * Normal test.
+     * action is relay.data.
+     */
+    @Test
+    public void createAction_Normal_action_is_relaydata() {
+        ActionInfo ai = new ActionInfo("relay.data", "http://personium/cell/box/col/ent", null, null);
+        assertThat(ActionFactory.createAction(null, ai), instanceOf(RelayDataAction.class));
+    }
+
+    /**
+     * Test createAction().
+     * Normal test.
      * action is invalid.
      */
     @Test

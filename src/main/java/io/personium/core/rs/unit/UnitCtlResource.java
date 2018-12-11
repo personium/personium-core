@@ -37,7 +37,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.auth.Privilege;
-import io.personium.core.event.EventUtils;
+import io.personium.core.eventlog.EventUtils;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.Cell;

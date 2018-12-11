@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,6 +106,8 @@ public final class Mkcol {
                 return DavCmp.TYPE_COL_ODATA;
             } else if ("service".equals(localName)) {
                 return DavCmp.TYPE_COL_SVC;
+            } else if ("stream".equals(localName)) {
+                return DavCmp.TYPE_COL_STREAM;
             }
             throw new RequestException("such DC1 extension not supported on this server");
         } else if ("urn:ietf:params:xml:ns:caldav".equals(e.getNamespaceURI())) {

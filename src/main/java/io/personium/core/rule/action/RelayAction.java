@@ -16,16 +16,11 @@
  */
 package io.personium.core.rule.action;
 
-import java.util.Date;
-import java.util.UUID;
-import java.util.regex.Pattern;
+import java.util.Optional;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpMessage;
 
-import io.personium.common.auth.token.AccountAccessToken;
-import io.personium.common.auth.token.CellLocalAccessToken;
-import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
@@ -50,77 +45,19 @@ public class RelayAction extends PostAction {
     }
 
     @Override
-    protected void setHeaders(HttpMessage req, PersoniumEvent event) {
-        if (cell == null || req == null || event.getSubject() == null) {
+    protected void setSpecificHeaders(HttpMessage req, PersoniumEvent event) {
+        if (cell == null || req == null) {
             return;
         }
 
-        String accessToken;
-        String targetCell = getTargetCellUrl();
-        if (cell.getUrl().equals(targetCell)) {
-            // local access token
-            String subject = event.getSubject();
-            if (subject.startsWith(cell.getUrl())) {
-                String[] parts = subject.split(Pattern.quote("#"));
-                if (parts.length == 2) {
-                    subject = parts[1];
-                } else {
-                    subject = null;
-                }
-                // AccountAccessToken
-                AccountAccessToken token = new AccountAccessToken(
-                    new Date().getTime(),
-                    AccountAccessToken.ACCESS_TOKEN_EXPIRES_HOUR * AccountAccessToken.MILLISECS_IN_AN_HOUR,
-                    cell.getUrl(),
-                    subject,
-                    event.getSchema()
-                );
-                accessToken = token.toTokenString();
-            } else {
-                // CellLocalAccessToken
-                CellLocalAccessToken token = new CellLocalAccessToken(
-                    new Date().getTime(),
-                    CellLocalAccessToken.ACCESS_TOKEN_EXPIRES_HOUR * CellLocalAccessToken.MILLISECS_IN_AN_HOUR,
-                    cell.getUrl(),
-                    subject,
-                    getRoleList(event),
-                    event.getSchema()
-                );
-                accessToken = token.toTokenString();
-            }
-        } else {
-            // create transcell token
-            TransCellAccessToken token = new TransCellAccessToken(
-                UUID.randomUUID().toString(),
-                new Date().getTime(),
-                TransCellAccessToken.LIFESPAN,
-                cell.getUrl(),
-                event.getSubject(),
-                getTargetCellUrl(), // targetUrl
-                getRoleList(event),
-                event.getSchema() // schema
-            );
-            accessToken = token.toTokenString();
-        }
-        req.addHeader(HttpHeaders.AUTHORIZATION, OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + accessToken);
+        Optional<String> accessToken = new TokenBuilder().cellUrl(cell.getUrl())
+                                                         .targetCellUrl(ActionUtils.getCellUrl(service))
+                                                         .subject(event.getSubject().orElse(null))
+                                                         .schema(event.getSchema().orElse(null))
+                                                         .roleList(event.getRoleList())
+                                                         .build();
+        accessToken.ifPresent(token -> req.addHeader(HttpHeaders.AUTHORIZATION,
+                                                     OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + token));
     }
 
-    private static final int SPLIT_NUM = 7;
-    private static final int BOXCOLSVC_SPLIT_NUM = 3;
-
-    /**
-     * Get target cell from targetUrl.
-     * @return cell url
-     */
-    protected String getTargetCellUrl() {
-        String[] parts = service.split(Pattern.quote("/"));
-        if (parts.length < SPLIT_NUM) {
-            return null;
-        }
-        String target = parts[0];
-        for (int i = 1; i < parts.length - BOXCOLSVC_SPLIT_NUM; i++) {
-            target += "/" + parts[i];
-        }
-        return target + "/";
-    }
 }

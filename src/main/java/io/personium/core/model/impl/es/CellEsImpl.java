@@ -52,7 +52,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.event.EventBus;
-import io.personium.core.event.EventUtils;
+import io.personium.core.eventlog.EventUtils;
 import io.personium.core.model.Box;
 import io.personium.core.model.BoxCmp;
 import io.personium.core.model.Cell;
@@ -95,7 +95,7 @@ public class CellEsImpl implements Cell {
 
     private String id;
     private String name;
-    private String url;
+    private String url; // Note: path base
     private String owner;
     private Long published;
     private Map<String, Object> json;
@@ -280,7 +280,7 @@ public class CellEsImpl implements Cell {
      */
     @Override
     public String getUnitUrl() {
-        return UriUtils.getUnitUrl(this.getPathBaseUrl());
+        return PersoniumUnitConfig.getBaseUrl();
     }
 
     @Override

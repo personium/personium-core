@@ -28,10 +28,10 @@ public interface EventPublisher {
     void open(String topic);
 
     /**
-     * Send event to default topic.
+     * Publish event.
      * @param event event to send
      */
-    void send(PersoniumEvent event);
+    void publish(PersoniumEvent event);
 
     /**
      * Close connection.

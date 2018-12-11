@@ -30,6 +30,10 @@ public abstract class Privilege {
     public static final String ACCESS_TYPE_WRITE = "write";
     /** Access type : EXEC. */
     public static final String ACCESS_TYPE_EXEC = "exec";
+    /** Access type : SEND. */
+    public static final String ACCESS_TYPE_SEND = "send";
+    /** Access type : RECEIVE. */
+    public static final String ACCESS_TYPE_RECEIVE = "receive";
     /** Access type : ALL. */
     public static final String ACCESS_TYPE_ALL = "all";
 

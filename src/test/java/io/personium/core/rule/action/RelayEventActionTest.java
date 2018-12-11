@@ -19,7 +19,7 @@ package io.personium.core.rule.action;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.json.simple.JSONObject;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -107,15 +107,15 @@ public class RelayEventActionTest {
         // --------------------
         ActionInfo ai = new ActionInfo("relay.event", service, null, null);
         RelayEventAction action = new RelayEventAction(null, ai);
-        JSONObject json = action.createEvent(event);
+        Map<String, Object> map = action.createEvent(event);
 
         // --------------------
         // Confirm result
         // --------------------
-        assertThat(json.size(), is(size));
-        assertThat(json.get("Type"), is(type));
-        assertThat(json.get("Object"), is(event.getObject()));
-        assertThat(json.get("Info"), is(event.getInfo()));
+        assertThat(map.size(), is(size));
+        assertThat(map.get("Type"), is(type));
+        assertThat(map.get("Object"), is(event.getObject().get()));
+        assertThat(map.get("Info"), is(event.getInfo().get()));
     }
 
     /**
@@ -158,48 +158,15 @@ public class RelayEventActionTest {
         // --------------------
         ActionInfo ai = new ActionInfo("relay.event", service, null, null);
         RelayEventAction action = new RelayEventAction(null, ai);
-        JSONObject json = action.createEvent(event);
+        Map<String, Object> map = action.createEvent(event);
 
         // --------------------
         // Confirm result
         // --------------------
-        assertThat(json.size(), is(size));
-        assertThat(json.get("Type"), is(type));
-        assertThat(json.get("Object"), is(event.getObject()));
-        assertThat(json.get("Info"), is(event.getInfo()));
-    }
-
-    /**
-     * Test getTargetCellUrl().
-     * Normal test
-     */
-    @Test
-    public void getTargetCellUrl_Normal() {
-        // --------------------
-        // Test method args
-        // --------------------
-        String service = "http://personium/path/cell/";
-
-        // --------------------
-        // Expected result
-        // --------------------
-        String expected = service;
-
-        // --------------------
-        // Mock settings
-        // --------------------
-
-        // --------------------
-        // Run method
-        // --------------------
-        ActionInfo ai = new ActionInfo("relay.event", service, null, null);
-        RelayEventAction action = new RelayEventAction(null, ai);
-        String result = action.getTargetCellUrl();
-
-        // --------------------
-        // Confirm result
-        // --------------------
-        assertThat(result, is(expected));
+        assertThat(map.size(), is(size));
+        assertThat(map.get("Type"), is(type));
+        assertThat(map.get("Object"), is(event.getObject().get()));
+        assertThat(map.get("Info"), is(event.getInfo().get()));
     }
 
 }

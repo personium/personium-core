@@ -58,6 +58,10 @@ public final class BoxPrivilege extends Privilege {
     public static final BoxPrivilege EXEC = new BoxPrivilege("exec", ACCESS_TYPE_EXEC, ALL);
     /** Schema change authority. Included in ALL authority.*/
     public static final BoxPrivilege ALTER_SCHEMA = new BoxPrivilege("alter-schema", ACCESS_TYPE_WRITE, ALL);
+    /** SEND authority, included in ALL authority.*/
+    public static final BoxPrivilege SEND = new BoxPrivilege("send", ACCESS_TYPE_SEND, ALL);
+    /** RECEIVE authority, included in ALL authority.*/
+    public static final BoxPrivilege RECEIVE = new BoxPrivilege("receive", ACCESS_TYPE_RECEIVE, ALL);
 
     static Map<String, BoxPrivilege> map = new HashMap<String, BoxPrivilege>();
 
@@ -82,6 +86,8 @@ public final class BoxPrivilege extends Privilege {
         register(WRITE_PROPERTIES);
         register(EXEC);
         register(ALTER_SCHEMA);
+        register(SEND);
+        register(RECEIVE);
     }
 
     private static void register(final BoxPrivilege p) {

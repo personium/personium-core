@@ -562,7 +562,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
             rule.put(Rule.P_OBJECT.getName(), requestObject.get(Rule.P_OBJECT.getName()));
             rule.put(Rule.P_INFO.getName(), requestObject.get(Rule.P_INFO.getName()));
             rule.put(Rule.P_ACTION.getName(), requestObject.get(Rule.P_ACTION.getName()));
-            rule.put(Rule.P_SERVICE.getName(), requestObject.get(RequestObject.P_TARGET_URL.getName()));
+            rule.put(Rule.P_TARGETURL.getName(), requestObject.get(RequestObject.P_TARGET_URL.getName()));
 
             // Rule settings
             //   External: false

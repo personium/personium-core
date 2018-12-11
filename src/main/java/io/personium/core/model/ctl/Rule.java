@@ -45,6 +45,8 @@ public class Rule {
     public static final String ACTION_EXEC = "exec";
     /** action relay. */
     public static final String ACTION_RELAY = "relay";
+    /** action relay.data. */
+    public static final String ACTION_RELAY_DATA = "relay.data";
     /** action relay.event. */
     public static final String ACTION_RELAY_EVENT = "relay.event";
     /** action log. */
@@ -58,23 +60,23 @@ public class Rule {
 
     /** Extended Schema Format rule-object. */
     public static final String P_FORMAT_PATTERN_RULE_OBJECT = "rule-object";
-    /** Extended Schema Format rule-service. */
-    public static final String P_FORMAT_PATTERN_RULE_SERVICE = "rule-service";
+    /** Extended Schema Format rule-targeturl. */
+    public static final String P_FORMAT_PATTERN_RULE_TARGETURL = "rule-targeturl";
 
     /** Pattern action. */
-    private static final String PATTERN_ACTION = "^(exec)|(relay)|(relay\\.event)|(log)|(log\\.info)|(log\\.warn)|(log\\.error)$"; // CHECKSTYLE IGNORE - To maintein readability
+    private static final String PATTERN_ACTION = "^(exec)|(relay)|(relay\\.data)|(relay\\.event)|(log)|(log\\.info)|(log\\.warn)|(log\\.error)$"; // CHECKSTYLE IGNORE - To maintein readability
 
     /** Annotations for Object. */
     private static final List<EdmAnnotation<?>> P_FORMAT_OBJECT = new ArrayList<EdmAnnotation<?>>();
     /** Annotations for Action. */
     private static final List<EdmAnnotation<?>> P_FORMAT_ACTION = new ArrayList<EdmAnnotation<?>>();
-    /** Annotations for Service. */
-    private static final List<EdmAnnotation<?>> P_FORMAT_SERVICE = new ArrayList<EdmAnnotation<?>>();
+    /** Annotations for TargetUrl. */
+    private static final List<EdmAnnotation<?>> P_FORMAT_TARGETURL = new ArrayList<EdmAnnotation<?>>();
 
     static {
         P_FORMAT_OBJECT.add(createFormatObjectAnnotation());
         P_FORMAT_ACTION.add(createFormatActionAnnotation());
-        P_FORMAT_SERVICE.add(createFormatServiceAnnotation());
+        P_FORMAT_TARGETURL.add(createFormatTargetUrlAnnotation());
     }
 
     /**
@@ -98,13 +100,13 @@ public class Rule {
     }
 
     /**
-     * Get annotation for Service.
-     * @return annotation for Service
+     * Get annotation for TargetUrl.
+     * @return annotation for TargetUrl
      */
-    private static EdmAnnotation<?> createFormatServiceAnnotation() {
+    private static EdmAnnotation<?> createFormatTargetUrlAnnotation() {
         return new EdmAnnotationAttribute(
                 Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
-                Common.P_FORMAT, P_FORMAT_PATTERN_RULE_SERVICE);
+                Common.P_FORMAT, P_FORMAT_PATTERN_RULE_TARGETURL);
     }
 
     /**
@@ -159,10 +161,10 @@ public class Rule {
     /**
      * TargetUrl property.
      */
-    public static final EdmProperty.Builder P_SERVICE = EdmProperty.newBuilder("TargetUrl")
+    public static final EdmProperty.Builder P_TARGETURL = EdmProperty.newBuilder("TargetUrl")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(P_FORMAT_SERVICE);
+            .setAnnotations(P_FORMAT_TARGETURL);
 
     /**
      * EntityType Builder.
@@ -173,7 +175,7 @@ public class Rule {
             .setName(EDM_TYPE_NAME)
             .addProperties(
                     Enumerable.create(P_NAME, Common.P_BOX_NAME,
-                            P_EXTERNAL, P_SUBJECT, P_TYPE, P_OBJECT, P_INFO, P_ACTION, P_SERVICE,
+                            P_EXTERNAL, P_SUBJECT, P_TYPE, P_OBJECT, P_INFO, P_ACTION, P_TARGETURL,
                             Common.P_PUBLISHED, Common.P_UPDATED).toList())
             .addKeys(Common.P_NAME.getName(), Common.P_BOX_NAME.getName());
 

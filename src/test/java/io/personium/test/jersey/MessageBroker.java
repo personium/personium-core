@@ -62,6 +62,9 @@ public class MessageBroker {
     }
 
     private void startActiveMQ() throws Exception {
+        PersoniumUnitConfig.set(
+                "io.personium.core.eventbus.broker",
+                "vm://localhost?broker.create=false");
         broker = new BrokerService();
         broker.setPersistent(false);
         broker.start();
@@ -75,7 +78,7 @@ public class MessageBroker {
         embeddedKafka = new KafkaEmbedded(1, true, 1, PersoniumUnitConfig.getEventBusQueueName());
         embeddedKafka.before();
         PersoniumUnitConfig.set(
-                "io.personium.core.eventbus.kafka.bootstrap.servers",
+                "io.personium.core.eventbus.broker",
                 embeddedKafka.getBrokersAsString());
     }
 

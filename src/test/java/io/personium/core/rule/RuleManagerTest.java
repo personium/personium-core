@@ -1065,7 +1065,7 @@ public class RuleManagerTest {
         PowerMockito.doNothing().when(logger).error(anyString());
         PowerMockito.doNothing().when(logger).debug(anyString());
         EventPublisher publisher = PowerMockito.mock(EventPublisher.class);
-        PowerMockito.doNothing().when(publisher).send(event);
+        PowerMockito.doNothing().when(publisher).publish(event);
 
         // --------------------
         // Run method
@@ -1084,7 +1084,7 @@ public class RuleManagerTest {
         // Confirm result
         // --------------------
         PowerMockito.verifyStatic(Mockito.times(2));
-        publisher.send(event);
+        publisher.publish(event);
     }
 
     /**
@@ -1113,7 +1113,7 @@ public class RuleManagerTest {
         PowerMockito.doNothing().when(logger).error(anyString());
         PowerMockito.doNothing().when(logger).debug(anyString());
         EventPublisher publisher = PowerMockito.mock(EventPublisher.class);
-        PowerMockito.doNothing().when(publisher).send(event);
+        PowerMockito.doNothing().when(publisher).publish(event);
 
         // --------------------
         // Run method
@@ -1132,7 +1132,7 @@ public class RuleManagerTest {
         // Confirm result
         // --------------------
         PowerMockito.verifyStatic(Mockito.times(1));
-        publisher.send(event);
+        publisher.publish(event);
     }
 
     /**
@@ -1162,7 +1162,7 @@ public class RuleManagerTest {
         PowerMockito.doNothing().when(logger).error(anyString());
         PowerMockito.doNothing().when(logger).debug(anyString());
         EventPublisher publisher = PowerMockito.mock(EventPublisher.class);
-        PowerMockito.doNothing().when(publisher).send(event);
+        PowerMockito.doNothing().when(publisher).publish(event);
 
         // --------------------
         // Run method
@@ -1181,7 +1181,7 @@ public class RuleManagerTest {
         // Confirm result
         // --------------------
         PowerMockito.verifyStatic(Mockito.times(1));
-        publisher.send(event);
+        publisher.publish(event);
     }
 
 }
