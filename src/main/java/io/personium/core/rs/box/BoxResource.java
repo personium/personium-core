@@ -79,6 +79,8 @@ public class BoxResource {
 
     /** Media-Type:personium bar file. */
     private static final MediaType MEDIATYPE_PERSONIUM_BAR = MediaType.valueOf(BarFile.CONTENT_TYPE);
+    /** Old Media-Type:personium bar file. It is used for backward compatibility. */
+    private static final MediaType MEDIATYPE_PERSONIUM_BAR_OLD = MediaType.valueOf(BarFile.CONTENT_TYPE_OLD);
 
     String boxName;
     Cell cell;
@@ -167,7 +169,8 @@ public class BoxResource {
      */
     @GET
     public Response get(@Context HttpHeaders httpHeaders) {
-        if (httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_BAR)) {
+        if (httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_BAR)
+                || httpHeaders.getAcceptableMediaTypes().contains(MEDIATYPE_PERSONIUM_BAR_OLD)) {
             return getBarFile();
         } else {
             return getMetadata();

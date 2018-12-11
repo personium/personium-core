@@ -48,6 +48,8 @@ public class BarFile implements Closeable {
 
     /** Content-Type of bar file. */
     public static final String CONTENT_TYPE = PersoniumCoreUtils.ContentType.CONTENT_TYPE_BAR;
+    /** Old content-type. It is used for backward compatibility. */
+    public static final String CONTENT_TYPE_OLD = "application/x-personium-bar+zip";
 
     /** Directory name : meta. */
     private static final String META_DIR = "00_meta";
