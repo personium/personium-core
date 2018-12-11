@@ -34,25 +34,25 @@ import io.personium.test.categories.Unit;
 public class DecideOutputFormatTest {
 
     /**
-     * format指定なしaccept指定なしでxmlが返却されること.
+     * format指定なしaccept指定なしでjsonが返却されること.
      */
     @Test
-    public final void format指定なしaccept指定なしでxmlが返却されること() {
+    public final void format指定なしaccept指定なしでjsonが返却されること() {
         ODataEntityResource odataEntityResource = new ODataEntityResource();
 
         MediaType type = odataEntityResource.decideOutputFormat(null, null);
-        assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
+        assertEquals(MediaType.APPLICATION_JSON_TYPE, type);
     }
 
     /**
-     * format指定なしでacceptにアスタリスクを指定した場合xmlが返却されること.
+     * format指定なしでacceptにアスタリスクを指定した場合jsonが返却されること.
      */
     @Test
-    public final void format指定なしでacceptにアスタリスクを指定した場合xmlが返却されること() {
+    public final void format指定なしでacceptにアスタリスクを指定した場合jsonが返却されること() {
         ODataEntityResource odataEntityResource = new ODataEntityResource();
 
         MediaType type = odataEntityResource.decideOutputFormat(MediaType.WILDCARD, null);
-        assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
+        assertEquals(MediaType.APPLICATION_JSON_TYPE, type);
     }
 
     /**
@@ -89,15 +89,15 @@ public class DecideOutputFormatTest {
     }
 
     /**
-     * format指定なしでacceptにJSONとATOM_XMLを指定した場合XMLが返却されること.
+     * format指定なしでacceptにJSONとATOM_XMLを指定した場合JSONが返却されること.
      */
     @Test
-    public final void format指定なしでacceptにJSONとATOM_XMLを指定した場合XMLが返却されること() {
+    public final void format指定なしでacceptにJSONとATOM_XMLを指定した場合JSONが返却されること() {
         ODataEntityResource odataEntityResource = new ODataEntityResource();
 
         MediaType type = odataEntityResource.decideOutputFormat(
                 MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_ATOM_XML, null);
-        assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
+        assertEquals(MediaType.APPLICATION_JSON_TYPE, type);
     }
 
     /**
@@ -108,7 +108,7 @@ public class DecideOutputFormatTest {
         ODataEntityResource odataEntityResource = new ODataEntityResource();
 
         MediaType type = odataEntityResource.decideOutputFormat(
-                "application/xml;q=0.9,*/*;q=0.8", null);
+                "application/xml;q=0.9", null);
         assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
     }
 
@@ -142,15 +142,15 @@ public class DecideOutputFormatTest {
     }
 
     /**
-     * format指定なしでacceptにxmlとJSONを指定した場合xmlが返却されること.
+     * format指定なしでacceptにxmlとJSONを指定した場合JSONが返却されること.
      */
     @Test
-    public final void format指定なしでacceptにxmlとJSONを指定した場合xmlが返却されること() {
+    public final void format指定なしでacceptにxmlとJSONを指定した場合JSONが返却されること() {
         ODataEntityResource odataEntityResource = new ODataEntityResource();
 
         MediaType type = odataEntityResource.decideOutputFormat(
                 MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_ATOM_XML, null);
-        assertEquals(MediaType.APPLICATION_ATOM_XML_TYPE, type);
+        assertEquals(MediaType.APPLICATION_JSON_TYPE, type);
     }
 
     /**

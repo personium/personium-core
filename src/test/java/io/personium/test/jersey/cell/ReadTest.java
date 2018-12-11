@@ -1002,10 +1002,10 @@ public class ReadTest extends AbstractCase {
     }
 
     /**
-     * Acceptに空文字を指定してCell取得した場合にXMLでレスポンスが返却されること. $format → なし Accept → 空文字
+     * Acceptに空文字を指定してCell取得した場合にJSONでレスポンスが返却されること. $format → なし Accept → 空文字
      */
     @Test
-    public final void acceptが空文字でCell取得した場合にXMLでレスポンスが返却されること() {
+    public final void acceptが空文字でCell取得した場合にJSONでレスポンスが返却されること() {
         String url = getUrl(this.cellId);
         // $format なし
         // Acceptヘッダ 空文字
@@ -1016,12 +1016,12 @@ public class ReadTest extends AbstractCase {
 
         PersoniumResponse res = restGet(url);
         assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-        this.responseHeaderMap.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_ATOM_XML);
+        this.responseHeaderMap.put(HTTP.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         this.checkHeaders(res);
         // Etagのチェック
         assertEquals(1, res.getResponseHeaders(HttpHeaders.ETAG).length);
         // レスポンスボディのパース
-        res.bodyAsXml();
+        res.bodyAsJson();
     }
 
     /**

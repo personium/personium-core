@@ -137,7 +137,7 @@ public class ReadListTest extends ODataCommon {
     public final void Cellの一覧取得のAcceptヘッダ無しのテスト() {
         cellCreate(DEF_CELL_NUM);
         PersoniumRequest req = PersoniumRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
-        this.cellListNormalXml(req);
+        this.cellListNormal(req);
     }
 
     /**
@@ -148,7 +148,6 @@ public class ReadListTest extends ODataCommon {
     public final void Cellの一覧取得でAcceptヘッダにATOM_XMLを指定した場合XML形式で返却されること() {
         cellCreate(DEF_CELL_NUM);
         PersoniumRequest req = PersoniumRequest.get(UrlUtils.unitCtl(Cell.EDM_TYPE_NAME));
-        // 制限によりATOM_XMLを指定してもjson形式で返却される.
         req.header("Accept", MediaType.APPLICATION_ATOM_XML);
         this.cellListNormalXml(req);
     }

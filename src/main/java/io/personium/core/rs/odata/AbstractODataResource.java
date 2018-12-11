@@ -160,7 +160,7 @@ public abstract class AbstractODataResource {
         }
         if (mediaType == null) {
             // set default.
-            mediaType = MediaType.APPLICATION_ATOM_XML_TYPE;
+            mediaType = MediaType.APPLICATION_JSON_TYPE;
         }
         return mediaType;
     }
@@ -196,11 +196,11 @@ public abstract class AbstractODataResource {
         while (st.hasMoreTokens()) {
             String accept = truncateAfterSemicolon(st.nextToken());
             if (isAcceptXml(accept)) {
-                mediaType = MediaType.APPLICATION_ATOM_XML_TYPE;
-            } else if (isAcceptJson(accept)) {
                 if (mediaType == null) {
-                    mediaType = MediaType.APPLICATION_JSON_TYPE;
+                    mediaType = MediaType.APPLICATION_ATOM_XML_TYPE;
                 }
+            } else if (isAcceptJson(accept)) {
+                mediaType = MediaType.APPLICATION_JSON_TYPE;
             } else {
                 throw PersoniumCoreException.OData.UNSUPPORTED_MEDIA_TYPE.params(acceptHeaderValue);
             }
@@ -224,12 +224,12 @@ public abstract class AbstractODataResource {
 
     private boolean isAcceptXml(String accept) {
         return accept.equals(MediaType.APPLICATION_ATOM_XML)
-                || accept.equals(MediaType.APPLICATION_XML)
-                || accept.equals(MediaType.WILDCARD);
+                || accept.equals(MediaType.APPLICATION_XML);
     }
 
     private boolean isAcceptJson(String accept) {
-        return accept.equals(MediaType.APPLICATION_JSON);
+        return accept.equals(MediaType.APPLICATION_JSON)
+                || accept.equals(MediaType.WILDCARD);
     }
 
     /**
