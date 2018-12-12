@@ -19,6 +19,7 @@ package io.personium.core.rs.cell;
 import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_AN_HOUR;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
@@ -388,7 +389,7 @@ public class TokenEndPointResource {
         }
 
         //Check pw
-        //· Since PW is a SAML token, it is parsed.
+        //Since PW is a SAML token, it is parsed.
         TransCellAccessToken tcToken = null;
         try {
             tcToken = TransCellAccessToken.parse(pw);
@@ -411,16 +412,24 @@ public class TokenEndPointResource {
             throw PersoniumCoreException.Auth.ROOT_CA_CRT_SETTING_ERROR;
         }
 
-        //· Expiration date check
+        //Expiration date check
         if (tcToken.isExpired()) {
             throw PersoniumCoreAuthnException.CLIENT_SECRET_EXPIRED.realm(cell
                     .getUrl());
         }
 
-        //· Confirm that Issuer is equal to ID
-        if (!id.equals(tcToken.getIssuer())) {
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH
-                    .realm(cell.getUrl());
+        // Confirm that Issuer is equal to ID
+        // #279 Resolve "issuer does not match" error.
+        // issuer is always pathbase.
+        String fqdnBaseIssuer;
+        try {
+            fqdnBaseIssuer = UriUtils.convertPathBaseToFqdnBase(tcToken.getIssuer());
+        } catch (URISyntaxException e) {
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cell.getUrl());
+        }
+        if (!id.equals(tcToken.getIssuer())
+                && !id.equals(fqdnBaseIssuer)) {
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cell.getUrl());
         }
 
         //If the target of the token is not yourself, an error response

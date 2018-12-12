@@ -17,6 +17,7 @@
 package io.personium.core.utils;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -202,6 +203,31 @@ public class UriUtils {
                 .append("/")
                 .append(parts[1])
                 .toString();
+    }
+
+    /**
+     * "https://{domain}/{cellname}/..." to "https://{cellname}.{domain}/...".
+     * @param sourceUrl Source url
+     * @return Converted url
+     * @throws URISyntaxException Source url is not URI
+     */
+    public static String convertPathBaseToFqdnBase(String sourceUrl) throws URISyntaxException {
+        String convertedUrl = sourceUrl;
+        URI uri = new URI(sourceUrl);
+
+        String domain = uri.getHost();
+        String cellName = uri.getPath().split("/")[1];
+        StringBuilder hostBuilder = new StringBuilder();
+        hostBuilder.append(cellName).append(".").append(domain);
+        StringBuilder cellPathBuilder = new StringBuilder();
+        cellPathBuilder.append("/").append(cellName);
+        String path = uri.getPath().replaceFirst(cellPathBuilder.toString(), "");
+
+        UriBuilder uriBuilder = UriBuilder.fromUri(uri);
+        uriBuilder.host(hostBuilder.toString());
+        uriBuilder.replacePath(path);
+        convertedUrl = uriBuilder.build().toString();
+        return convertedUrl;
     }
 
     /**
