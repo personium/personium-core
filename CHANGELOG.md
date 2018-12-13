@@ -1,3 +1,11 @@
+## 1.6.17
+BUG FIXES:
+* Resolve "issuer does not match" error.([#279](https://github.com/personium/personium-core/issues/279))
+
+IMPROVEMENTS:
+* Box import supports per-Cell FQDN format.([#274](https://github.com/personium/personium-core/issues/274))
+* Enable the old Content-Type of box export.([#275](https://github.com/personium/personium-core/issues/275))
+
 ## 1.6.16
 * Change Servlet Spec from 3.0 to 3.1([#6](https://github.com/personium/personium-core/issues/6))
 * English comments on major source files([#244](https://github.com/personium/personium-core/issues/244))
