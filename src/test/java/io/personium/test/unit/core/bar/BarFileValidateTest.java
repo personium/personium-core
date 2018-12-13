@@ -72,7 +72,7 @@ public class BarFileValidateTest {
      */
     private class TestBarRunner extends BarFileReadRunner {
         TestBarRunner() {
-            super(null, null, null, null, null, null, null, null);
+            super(null, null, null, null, null, null, null);
         }
 
         public boolean createMetadata(
@@ -1669,7 +1669,7 @@ public class BarFileValidateTest {
      */
     private class TestBarInstaller extends BarFileInstaller {
         TestBarInstaller() {
-            super(null, null, null, null);
+            super(null, null, null);
         }
 
         protected long getMaxBarFileSize() {
@@ -1745,7 +1745,7 @@ public class BarFileValidateTest {
         try {
             CellEsImpl cell = new CellEsImpl();
             cell.setId("hogeCell");
-            BarFileInstaller bfi = Mockito.spy(new BarFileInstaller(cell, "hogeBox", null, null));
+            BarFileInstaller bfi = Mockito.spy(new BarFileInstaller(cell, "hogeBox", null));
             Method method = BarFileInstaller.class.getDeclaredMethod(
                     "storeTemporaryBarFile", new Class<?>[] {InputStream.class});
             method.setAccessible(true);
@@ -1769,7 +1769,7 @@ public class BarFileValidateTest {
         try {
             CellEsImpl cell = new CellEsImpl();
             cell.setId("hogeCell");
-            BarFileInstaller bfi = Mockito.spy(new BarFileInstaller(cell, "hogeBox", null, null));
+            BarFileInstaller bfi = Mockito.spy(new BarFileInstaller(cell, "hogeBox", null));
             Method method = BarFileInstaller.class.getDeclaredMethod(
                     "storeTemporaryBarFile", new Class<?>[] {InputStream.class});
             method.setAccessible(true);
