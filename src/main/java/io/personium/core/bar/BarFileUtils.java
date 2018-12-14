@@ -59,7 +59,7 @@ public class BarFileUtils {
     static final String CODE_INSTALL_COMPLETED = "PL-BI-1003";
 
     /** For checking xml: base Current status Most of the values ​​are replaced internally, so checking is made loose.*/
-    private static final String PATTERN_XML_BASE = "^(https?://.+)/([^/]{1,128})/__role/([^/]{1,128})/?$";
+    private static final String PATTERN_XML_BASE = "^(https?://.+)__role/([^/]{1,128})/?$";
 
     private BarFileUtils() {
     }
@@ -92,13 +92,12 @@ public class BarFileUtils {
      * Validate the namespace of the ACL.
      * At the same time, it converts to the role instance URL and converts the Base URL.
      * @param element element
-     * @param baseUrl baseUrl
-     * @param cellName cellName
+     * @param cellUrl cellUrl
      * @param boxName boxName
      * @return Generated Element node
      */
     static Element convertToRoleInstanceUrl(
-            final Element element, final String baseUrl, final String cellName, final String boxName) {
+            final Element element, final String cellUrl, final String boxName) {
         String namespaceUri = element.getAttribute("xml:base");
         if (StringUtils.isEmpty(namespaceUri)) {
             return null;
@@ -110,7 +109,7 @@ public class BarFileUtils {
             throw PersoniumCoreException.BarInstall.JSON_FILE_FORMAT_ERROR.params(BarFileReadRunner.ROOTPROPS_XML);
         }
 
-        String converted = getLocalUrl(baseUrl, cellName, boxName);
+        String converted = getLocalUrl(cellUrl, boxName);
         Element retElement = (Element) element.cloneNode(true);
         retElement.setAttribute("xml:base", converted);
 
@@ -119,18 +118,17 @@ public class BarFileUtils {
 
     /**
      * Replace the host information (scheme: // hostname /) of the URL described in the bar file with the information of the server being processed.
-     * @param baseUrl baseUrl
-     * @param cellName cellName
+     * @param cellUrl cellUrl
      * @param boxName boxName
      * @return Generated URL
      */
-    private static String getLocalUrl(String baseUrl, String cellName, String boxName) {
+    private static String getLocalUrl(String cellUrl, String boxName) {
         StringBuilder builder = new StringBuilder();
-        builder.append(baseUrl);
-        if (!baseUrl.endsWith("/")) {
+        builder.append(cellUrl);
+        if (!cellUrl.endsWith("/")) {
             builder.append("/");
         }
-        builder.append(cellName).append("/__role/").append(boxName).append("/");
+        builder.append("__role/").append(boxName).append("/");
         return builder.toString();
     }
 
