@@ -34,14 +34,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
 import javax.websocket.PongMessage;
 import javax.websocket.Session;
-import javax.websocket.server.PathParam;
-import javax.websocket.server.ServerEndpoint;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -77,9 +71,8 @@ import io.personium.core.utils.ResourceUtils;
 import io.personium.core.utils.UriUtils;
 
 /**
- * WebSocket Endpoint for Stream.
+ * Common Endpoint for Stream.
  */
-@ServerEndpoint(value = "/stream/{topic}")
 public class StreamEndpoint implements IDataListener {
     // log
     private static Logger log = LoggerFactory.getLogger(StreamEndpoint.class);
@@ -110,6 +103,9 @@ public class StreamEndpoint implements IDataListener {
     private static final String REASON_INVALID_MESSAGE = "Invalid message";
     private static final String REASON_TOKEN_INACTIVE = "Token inactive";
     private static final String REASON_SESSION_EXPIRED = "Session expired";
+
+    /** separator of topic name. */
+    static final String SEPARATOR = ".";
 
     // session
     private Session mySession;
@@ -171,15 +167,12 @@ public class StreamEndpoint implements IDataListener {
         }
     }
 
-
     /**
      * This callback method is called when a client connects.
-     * Add session info in sessionMap, cellSessionIdMap.
      * @param topic topic specified in url param
      * @param session WebSocket session
      */
-    @OnOpen
-    public void onOpen(@PathParam("topic") String topic, Session session) {
+    public void onOpen(String topic, Session session) {
         log.debug("ws: onOpen[{}]: {}", topic, session.getId());
 
         // initialization
@@ -218,10 +211,8 @@ public class StreamEndpoint implements IDataListener {
 
     /**
      * This callback method is called when a client disconnects.
-     * Delete data about disconnected session in cellSessionIdMap, sessionMap.
      * @param session WebSocket session
      */
-    @OnClose
     public void onClose(Session session) {
         Map<String, Object> userProperties = session.getUserProperties();
         String topic = (String) userProperties.get(KEY_PROPERTIES_TOPIC);
@@ -237,14 +228,9 @@ public class StreamEndpoint implements IDataListener {
 
     /**
      * This callback method is called when a client send message data.
-     * sent text is allowed to be JSON and the following data types.
-     *  * authorization {access_token: ${any}}
-     *  * subscribe {subscribe: {Type: ${any}, Object: ${any}}}
-     *  * unsubscribe {unsubscribe: {Type: ${any}, Object: ${any}}}
      * @param text received message
      * @param session sender session
      */
-    @OnMessage
     public void onMessage(String text, Session session) {
         Map<String, Object> userProperties = session.getUserProperties();
         String topic = (String) userProperties.get(KEY_PROPERTIES_TOPIC);
@@ -325,10 +311,10 @@ public class StreamEndpoint implements IDataListener {
      * @param pongMessage pong
      * @param session session
      */
-    @OnMessage
     public void onMessage(PongMessage pongMessage, Session session) {
-        int count = sendPingCount.getAndDecrement();
-        log.debug("ws: receive pong message: {}:", session.getId(), count);
+        sendPingCount.getAndDecrement();
+        // int count = sendPingCount.getAndDecrement();
+        // log.debug("ws: receive pong message: {}:{}", session.getId(), count);
     }
 
     /**
@@ -336,7 +322,6 @@ public class StreamEndpoint implements IDataListener {
      * @param session session info
      * @param e Throwable Error Information
      */
-    @OnError
     public void onError(Session session, Throwable e) {
         log.error("ws: onError: {}", e.getMessage());
         // e.printStackTrace();
@@ -382,7 +367,7 @@ public class StreamEndpoint implements IDataListener {
 
         // url
         //  topic: cell.box.{dir}+.col.topic.topicname -> /cell/box/{dir}+/col
-        List<String> paths = Stream.of(topic.split(Pattern.quote(".")))
+        List<String> paths = Stream.of(topic.split(Pattern.quote(SEPARATOR)))
                                    .collect(Collectors.toList());
         String topicName = paths.remove(paths.size() - 1);
         String type = paths.remove(paths.size() - 1);
@@ -492,7 +477,7 @@ public class StreamEndpoint implements IDataListener {
         }
 
         // topic: cell.box.{dir}+.col.topic.topicname
-        String url = convertUrl(PersoniumUnitConfig.getBaseUrl() + topic.replace(".", "/"));
+        String url = convertUrl(PersoniumUnitConfig.getBaseUrl() + topic.replace(SEPARATOR, "/"));
         HttpOptions req;
         try {
             req = new HttpOptions(url);
@@ -528,7 +513,7 @@ public class StreamEndpoint implements IDataListener {
         if (token == null || topic == null) {
             return result;
         }
-        Optional<String> cell = Stream.of(topic.split(Pattern.quote(".")))
+        Optional<String> cell = Stream.of(topic.split(Pattern.quote(SEPARATOR)))
                                       .filter(s -> !s.isEmpty())
                                       .findFirst();
         String url = cell.map(name -> PersoniumUnitConfig.getBaseUrl() + name + "/__introspect")
