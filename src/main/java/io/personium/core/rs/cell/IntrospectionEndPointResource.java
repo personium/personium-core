@@ -129,7 +129,6 @@ public class IntrospectionEndPointResource {
                            || tk instanceof TransCellAccessToken) {
                     IAccessToken iat = (IAccessToken) tk;
                     String audience = iat.getTarget();
-                    
                     if (issuer.equals(this.cell.getUrl())
                         || this.cell.getUrl().equals(audience)) {
                         map.put(RESP_ACTIVE, true);
