@@ -348,7 +348,7 @@ public class PersoniumEngineSvcCollectionResource {
         URI requestUrl = createRequestUrl(path);
 
         //Get baseUrl
-        String baseUrl = uriInfo.getBaseUri().toString();
+        String baseUrl = davCmp.getCell().getUnitUrl();
 
         //Acquire request header, add content below
         HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_DEFAULT);
@@ -381,6 +381,8 @@ public class PersoniumEngineSvcCollectionResource {
             req.addHeader("X-Personium-Fs-Routing-Id", dcmp.getCellId());
         }
         req.addHeader("X-Personium-Box-Schema", this.davRsCmp.getBox().getSchema());
+        req.addHeader("X-Personium-Path-Based-Cell-Url-Enabled",
+                String.valueOf(PersoniumUnitConfig.isPathBasedCellUrlEnabled()));
 
         //Add header to relay
         MultivaluedMap<String, String> multivalueHeaders = headers.getRequestHeaders();
