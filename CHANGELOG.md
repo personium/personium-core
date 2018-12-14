@@ -1,14 +1,27 @@
-## 1.7.2
+## 1.7.3
+IMPROVEMENTS:
+* Response body of PROPFIND is URL-encoded.([#219](https://github.com/personium/personium-core/issues/219))
+* Support per-Cell FQDN.(Under development. Please check the issue for details.)([#223](https://github.com/personium/personium-core/issues/223))
+
+## 1.6.17
+BUG FIXES:
+* Resolve "issuer does not match" error.([#279](https://github.com/personium/personium-core/issues/279))
+
+IMPROVEMENTS:
+* Box import supports per-Cell FQDN format.([#274](https://github.com/personium/personium-core/issues/274))
+* Enable the old Content-Type of box export.([#275](https://github.com/personium/personium-core/issues/275))
+
+## 1.7.0 Beta3
 IMPROVEMENTS:
 * Support per-Cell FQDN.(Under development. Some functions will not work yet.)([#223](https://github.com/personium/personium-core/issues/223))
 
-## 1.7.1
+## 1.7.0 Beta2
 IMPROVEMENTS:
 * Add "Retrieve unit meta data" API.([#262](https://github.com/personium/personium-core/issues/262))
 * Add unit metadata to metadata of cell and box.([#263](https://github.com/personium/personium-core/issues/263))
 * Updates to libraries with security warnings.([#264](https://github.com/personium/personium-core/issues/264))
 
-## 1.7.0
+## 1.7.0 Beta1
 IMPROVEMENTS:
 * Support per-Cell FQDN.(Prerelease. Some functions will not work yet.)([#223](https://github.com/personium/personium-core/issues/223))
 * Incorrect error message.(__authz endpoint).([#232](https://github.com/personium/personium-core/issues/232))
