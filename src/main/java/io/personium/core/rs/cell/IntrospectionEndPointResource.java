@@ -40,7 +40,6 @@ import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.TransCellRefreshToken;
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
@@ -63,7 +62,7 @@ public class IntrospectionEndPointResource {
     private static final String RESP_AUDIENCE = "aud";
     private static final String RESP_ISSUER = "iss";
 
-    private static final String RESP_EXT_ROLES = "personium_roles";
+    private static final String RESP_EXT_ROLES = "p_roles";
 
     private final Cell cell;
     private final DavRsCmp davRsCmp;
@@ -81,14 +80,12 @@ public class IntrospectionEndPointResource {
     /**
      * OAuth2.0 Introspection Endpoint.
      * @param uriInfo  URI information
-     * @param authzHeader Authorization Header
      * @param host Host Header
      * @param formParams Body parameters
      * @return JAX-RS Response Object
      */
     @POST
     public final Response introspect(@Context final UriInfo uriInfo,
-            @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,
             @HeaderParam(HttpHeaders.HOST) final String host,
             MultivaluedMap<String, String> formParams) {
 
@@ -99,13 +96,6 @@ public class IntrospectionEndPointResource {
             return ResourceUtils.responseBuilderJson(map).build();
         }
         String token = formParams.getFirst(PARAM_TOKEN);
-
-        // If authorization header's token equals token parameter, return response.
-        String headerToken = PersoniumCoreUtils.parseBearerAuthzHeader(authzHeader);
-        if (headerToken == null || !headerToken.equals(token)) {
-            // Access Control
-            this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.AUTH_READ);
-        }
 
         try {
             AbstractOAuth2Token tk = AbstractOAuth2Token.parse(token, this.cell.getUrl(), host);
