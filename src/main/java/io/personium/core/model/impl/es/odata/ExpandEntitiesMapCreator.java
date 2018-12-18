@@ -367,7 +367,7 @@ public final class ExpandEntitiesMapCreator {
                     String baseEntityId = baseEntity.getId();
                     Map<String, Object> links = baseEntity.getManyToOnelinkId();
 
-                    if (links.containsKey(linksKey)) {
+                    if (links != null && links.containsKey(linksKey)) {
                         String relatedEntityId = links.get(linksKey).toString();
                         idList.add(relatedEntityId);
 
