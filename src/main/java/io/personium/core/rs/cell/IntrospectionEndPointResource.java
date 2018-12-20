@@ -41,7 +41,12 @@ import io.personium.common.auth.token.IAccessToken;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.TransCellRefreshToken;
 import io.personium.common.utils.PersoniumCoreUtils;
+import io.personium.core.PersoniumCoreAuthzException;
+import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
+import io.personium.core.auth.OAuth2Helper.AcceptableAuthScheme;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.utils.ResourceUtils;
@@ -63,7 +68,7 @@ public class IntrospectionEndPointResource {
     private static final String RESP_AUDIENCE = "aud";
     private static final String RESP_ISSUER = "iss";
 
-    private static final String RESP_EXT_ROLES = "personium_roles";
+    private static final String RESP_EXT_ROLES = "p_roles";
 
     private final Cell cell;
     private final DavRsCmp davRsCmp;
@@ -88,9 +93,45 @@ public class IntrospectionEndPointResource {
      */
     @POST
     public final Response introspect(@Context final UriInfo uriInfo,
-            @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,
-            @HeaderParam(HttpHeaders.HOST) final String host,
-            MultivaluedMap<String, String> formParams) {
+                                     @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,
+                                     @HeaderParam(HttpHeaders.HOST) final String host,
+                                     MultivaluedMap<String, String> formParams) {
+
+        AccessContext accessContext = this.davRsCmp.getAccessContext();
+        if (AccessContext.TYPE_ANONYMOUS.equals(accessContext.getType())) {
+            throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(cell.getUrl(), AcceptableAuthScheme.ALL);
+        }
+
+        String schema;
+
+        if (AccessContext.TYPE_INVALID.equals(accessContext.getType())) {
+            String[] idpw = PersoniumCoreUtils.parseBasicAuthzHeader(authzHeader);
+            if (idpw != null) {
+                String username = PersoniumUnitConfig.getIntrospectUsername();
+                String password = PersoniumUnitConfig.getIntrospectPassword();
+                if (idpw[0].equals(username) && idpw[1].equals(password)) {
+                    schema = null;
+                } else if (TokenEndPointResource.clientAuth(idpw[0], idpw[1], null, cell.getUrl()) != null) {
+                    schema = idpw[0];
+                } else {
+                    // no privilege
+                    throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+                }
+            } else {
+                // no privilege
+                throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+            }
+        } else {
+            if (accessContext.isUnitUserToken()) {
+                schema = null;
+            } else {
+                schema = accessContext.getSchema();
+                if (schema == null || schema.isEmpty()) {
+                    // no privilege
+                    throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
+                }
+            }
+        }
 
         Map<String, Object> map = new HashMap<>();
         map.put(RESP_ACTIVE, false);
@@ -100,16 +141,9 @@ public class IntrospectionEndPointResource {
         }
         String token = formParams.getFirst(PARAM_TOKEN);
 
-        // If authorization header's token equals token parameter, return response.
-        String headerToken = PersoniumCoreUtils.parseBearerAuthzHeader(authzHeader);
-        if (headerToken == null || !headerToken.equals(token)) {
-            // Access Control
-            this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.AUTH_READ);
-        }
-
         try {
             AbstractOAuth2Token tk = AbstractOAuth2Token.parse(token, this.cell.getUrl(), host);
-            if (!tk.isExpired()) {
+            if (!tk.isExpired() && (schema == null || schema != null && schema.equals(tk.getSchema()))) {
                 String issuer = tk.getIssuer();
                 int expirationTime = tk.getIssuedAt() + tk.expiresIn();
                 if (tk instanceof AccountAccessToken

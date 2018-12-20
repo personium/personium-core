@@ -162,7 +162,7 @@ public class TokenEndPointResource {
         //First, check if you want to authenticate Client
         //If neither Scope nor authzHeader nor clientId exists, it is assumed that Client authentication is not performed.
         if (clientId != null || authzHeader != null) {
-            schema = this.clientAuth(clientId, clientSecret, authzHeader);
+            schema = this.clientAuth(clientId, clientSecret, authzHeader, cell.getUrl());
         }
 
         if (OAuth2Helper.GrantType.PASSWORD.equals(grantType)) {
@@ -369,13 +369,14 @@ public class TokenEndPointResource {
 
     /**
      * Client authentication processing.
-     * @param clientId
-     * @param clientSecret
-     * @param authzHeader
+     * @param clientId Schema
+     * @param clientSecret token
+     * @param authzHeader Value of Authorization Header
+     * @param cellUrl Cell URL
      * @return null: Client authentication failed.
      */
-    private String clientAuth(final String clientId, final String clientSecret,
-            final String authzHeader) {
+    public static String clientAuth(final String clientId, final String clientSecret,
+            final String authzHeader, final String cellUrl) {
         String targetClientId = clientId;
         String targetClientSecret = clientSecret;
         if (targetClientSecret == null) {
@@ -392,7 +393,7 @@ public class TokenEndPointResource {
                 targetClientSecret = idpw[1];
             } else {
                 throw PersoniumCoreAuthnException.AUTH_HEADER_IS_INVALID
-                        .realm(cell.getUrl());
+                        .realm(cellUrl);
             }
         }
 
@@ -405,13 +406,13 @@ public class TokenEndPointResource {
             //Perth failure
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
             throw PersoniumCoreAuthnException.CLIENT_SECRET_PARSE_ERROR.realm(
-                    cell.getUrl()).reason(e);
+                    cellUrl).reason(e);
         } catch (TokenDsigException e) {
             //Signature validation error
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage())
                     .writeLog();
             throw PersoniumCoreAuthnException.TOKEN_DSIG_INVALID
-                    .realm(this.cell.getUrl());
+                    .realm(cellUrl);
         } catch (TokenRootCrtException e) {
             //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(
@@ -421,7 +422,7 @@ public class TokenEndPointResource {
 
         //· Expiration date check
         if (tcToken.isExpired()) {
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_EXPIRED.realm(cell.getUrl());
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_EXPIRED.realm(cellUrl);
         }
 
         // Confirm that Issuer is equal to ID
@@ -430,16 +431,16 @@ public class TokenEndPointResource {
         try {
             fqdnBaseIssuer = UriUtils.convertPathBaseToFqdnBase(tcToken.getIssuer());
         } catch (URISyntaxException e) {
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cell.getUrl());
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cellUrl);
         }
         if (!targetClientId.equals(tcToken.getIssuer())
                 && !targetClientId.equals(fqdnBaseIssuer)) {
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cell.getUrl());
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_ISSUER_MISMATCH.realm(cellUrl);
         }
 
         // If the target of the token is not yourself, an error response
-        if (!tcToken.getTarget().equals(cell.getUrl())) {
-            throw PersoniumCoreAuthnException.CLIENT_SECRET_TARGET_WRONG.realm(cell.getUrl());
+        if (!tcToken.getTarget().equals(cellUrl)) {
+            throw PersoniumCoreAuthnException.CLIENT_SECRET_TARGET_WRONG.realm(cellUrl);
         }
 
         //Give # c if the role is a confidential value
