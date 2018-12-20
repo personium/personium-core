@@ -62,7 +62,6 @@ import org.w3c.dom.NodeList;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.stream.DataSubscriber;
 import io.personium.core.stream.IDataListener;
 import io.personium.core.stream.StreamFactory;
@@ -385,7 +384,7 @@ public class StreamEndpoint implements IDataListener {
         }
 
         req.addHeader(HttpHeaders.AUTHORIZATION,
-                      OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + token);
+                      PersoniumCoreUtils.createBearerAuthzHeader(token));
         req.addHeader(HttpHeaders.DEPTH, "0");
         req.addHeader(HttpHeaders.ACCEPT, "application/xml");
 
@@ -486,7 +485,7 @@ public class StreamEndpoint implements IDataListener {
         }
 
         req.addHeader(HttpHeaders.AUTHORIZATION,
-                      OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + token);
+                      PersoniumCoreUtils.createBearerAuthzHeader(token));
 
         try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
              CloseableHttpResponse response = client.execute(req)) {
@@ -526,12 +525,13 @@ public class StreamEndpoint implements IDataListener {
             List<NameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("token", token));
             req.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+            req.addHeader(HttpHeaders.AUTHORIZATION,
+                          PersoniumCoreUtils.createBasicAuthzHeader(PersoniumUnitConfig.getIntrospectUsername(),
+                                                                    PersoniumUnitConfig.getIntrospectPassword()));
         } catch (Exception e) {
             return result;
         }
 
-        req.addHeader(HttpHeaders.AUTHORIZATION,
-                      OAuth2Helper.Scheme.BEARER_CREDENTIALS_PREFIX + token);
         req.addHeader(HttpHeaders.ACCEPT, "application/json");
 
         try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
