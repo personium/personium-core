@@ -403,27 +403,38 @@ public class StreamEndpoint implements IDataListener {
                 try {
                     DocumentBuilder builder = factory.newDocumentBuilder();
                     Document doc = builder.parse(response.getEntity().getContent());
-                    Element element = doc.getDocumentElement();
-                    log.debug("root: {}", element.getTagName());
-                    NodeList propstats = element.getElementsByTagName("propstat");
-                    for (int i = 0; i < propstats.getLength(); i++) {
-                        Element propstat = (Element) propstats.item(i);
-                        log.debug("propstat: {}", propstat.getTagName());
-                        NodeList statusList = propstat.getElementsByTagName("status");
-                        Node status = statusList.item(statusList.getLength() - 1);
-                        log.debug("status: {}", status.getNodeName());
-                        if (!"HTTP/1.1 200 OK".equals(status.getTextContent())) {
+                    Element docElem = doc.getDocumentElement();
+                    NodeList propstatList = docElem.getElementsByTagName("propstat");
+                    for (int i = 0; i < propstatList.getLength(); i++) {
+                        Element propstatElem = (Element) propstatList.item(i);
+                        // check status
+                        NodeList statusList = propstatElem.getElementsByTagName("status");
+                        Node statusNode = statusList.item(statusList.getLength() - 1);
+                        if (!"HTTP/1.1 200 OK".equals(statusNode.getTextContent())) {
                             break;
                         }
-                        Element ep = (Element) propstat;
-                        NodeList topics = ep.getElementsByTagNameNS(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, "topics");
-                        for (int j = 0; j < topics.getLength(); j++) {
-                            Element et = (Element) topics.item(j);
-                            log.debug("topics: {}", et.getTagName());
-                            NodeList topicList = et.getElementsByTagNameNS(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
-                                                                           "topic");
+                        // check resourcetype
+                        NodeList resourcetypeList = propstatElem.getElementsByTagName("resourcetype");
+                        if (resourcetypeList.getLength() != 1) {
+                            break;
+                        }
+                        Element resourcetypeElem = (Element) resourcetypeList.item(0);
+                        NodeList streamList;
+                        streamList = resourcetypeElem.getElementsByTagNameNS(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
+                                                                             "stream");
+                        if (streamList.getLength() != 1) {
+                            break;
+                        }
+                        // check topics
+                        NodeList topicsList;
+                        topicsList = propstatElem.getElementsByTagNameNS(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
+                                                                         "topics");
+                        for (int j = 0; j < topicsList.getLength(); j++) {
+                            Element topicElem = (Element) topicsList.item(j);
+                            NodeList topicList;
+                            topicList = topicElem.getElementsByTagNameNS(PersoniumCoreUtils.XmlConst.NS_PERSONIUM,
+                                                                         "topic");
                             for (int k = 0; k < topicList.getLength(); k++) {
-                                log.debug("topic: {}", topicList.item(k).getNodeName());
                                 if (topicName.equals(topicList.item(k).getTextContent())) {
                                     return true;
                                 }
@@ -545,7 +556,6 @@ public class StreamEndpoint implements IDataListener {
 
                 // get expiration time
                 String res = EntityUtils.toString(response.getEntity());
-                log.debug("getExpirationTime: res={}", res);
                 Map<String, Object> map = ResourceUtils.convertToMap(res);
                 if (map != null) {
                     Object obj = map.get("active");
