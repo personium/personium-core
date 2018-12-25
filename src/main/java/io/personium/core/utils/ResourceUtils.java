@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2014 FUJITSU LIMITED
+ * Copyright 2014-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,21 @@ package io.personium.core.utils;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
@@ -35,6 +46,8 @@ import io.personium.core.PersoniumCoreException;
  * A class that collects resource-related utility functions.
  */
 public class ResourceUtils {
+
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * constructor.
@@ -65,6 +78,73 @@ public class ResourceUtils {
             throw PersoniumCoreException.Common.JSON_PARSE_ERROR.params(bodyString);
         }
         return body;
+    }
+
+    /**
+     * Get request body from Reader and make it Map.
+     * @param reader request body
+     * @return Map
+     */
+    public static Map<String, Object> parseBodyAsJsonToMap(Reader reader) {
+        Map<String, Object> body;
+        try {
+            body = objectMapper.readValue(reader, new TypeReference<Map<String, Object>>() { });
+        } catch (JsonParseException | JsonMappingException e) {
+            throw PersoniumCoreException.Common.JSON_PARSE_ERROR.params(e.getMessage());
+        } catch (IOException e) {
+            throw PersoniumCoreException.Common.REQUEST_BODY_LOAD_FAILED.reason(e);
+        }
+        return body;
+    }
+
+    /**
+     * Convert JSON String to Map.
+     * @param json json string
+     * @return Map
+     */
+    public static Map<String, Object> convertToMap(String json) {
+        Map<String, Object> body;
+        try {
+            body = objectMapper.readValue(json, new TypeReference<Map<String, Object>>() { });
+        } catch (Exception e) {
+            if (json != null) {
+                body = new HashMap<>();
+                body.put("content", json);
+            } else {
+                body = null;
+            }
+        }
+        return body;
+    }
+
+    /**
+     * Convert List to JSON String.
+     * @param list list of string
+     * @return converted JSON string
+     */
+    public static String convertListToString(List<String> list) {
+        try {
+            List<Map<String, Object>> lm;
+            lm = list.stream().map(s -> convertToMap(s))
+                              .filter(map -> map != null)
+                              .collect(Collectors.toList());
+            return objectMapper.writeValueAsString(lm);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Convert Map to JSON String.
+     * @param map Map object
+     * @return converted JSON string
+     */
+    public static String convertMapToString(Map<String, Object> map) {
+        try {
+            return objectMapper.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
     }
 
     /**
@@ -118,4 +198,33 @@ public class ResourceUtils {
         return Response.ok().header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, allowedMethodsBuilder.toString())
                 .header(HttpHeaders.ALLOW, allowedMethodsBuilder.toString());
     }
+
+    /**
+     * Return ResponseBuilder with converting list object to Json string.
+     * @param list list of string
+     * @return ResponseBuilder
+     */
+    public static ResponseBuilder responseBuilderJson(List<String> list) {
+        String ret = convertListToString(list);
+        if (ret != null) {
+            return Response.ok(ret, MediaType.APPLICATION_JSON);
+        } else {
+            return Response.serverError();
+        }
+    }
+
+    /**
+     * return ResponseBuilder with converting map object to Json string.
+     * @param map map object
+     * @return ResponseBuilder
+     */
+    public static ResponseBuilder responseBuilderJson(Map<String, Object> map) {
+        String ret = convertMapToString(map);
+        if (ret != null) {
+            return Response.ok(ret, MediaType.APPLICATION_JSON);
+        } else {
+            return Response.serverError();
+        }
+    }
+
 }
