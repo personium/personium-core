@@ -436,7 +436,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             //Assemble the search information of the link target
             String propertyName = eProp.getName();
             HashMap<String, String> ntkp = AbstractODataResource.convertNTKP(propertyName);
-            if (ntkp != null) {
+            if (links != null && ntkp != null) {
                 String entityType = ntkp.get("entityType");
                 String propName = ntkp.get("propName");
                 String linkId = (String) links.get(getLinkskey(entityType));
@@ -769,7 +769,7 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
                 selectQuery = queryInfo.select;
             }
 
-            //Create Property / ComplexTypeProperty and Alias ​​mapping data
+            //Create Property / ComplexTypeProperty and Alias mapping data
             //Also, create mapping data of UUID and name of EntityType / ComplexType (
             if (this.propertyAliasMap != null) {
                 setEntityPropertyMap(eSet, hits, ntkpValueMap);
@@ -784,31 +784,20 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
             creator.setCache(entityList, this);
 
             for (EntitySetDocHandler oedh : entityList) {
-                //Generation of entityKey
-                List<String> keys = eSet.getType().getKeys();
-
-                List<String> kv = new ArrayList<String>();
-                for (String key : keys) {
-                    kv.add(key);
-                    //I assume that the TODO key is a String. If the value of the key is other than a character string, it is necessary to deal with it.
-                    String v = (String) oedh.getStaticFields().get(key);
-                    if (v == null) {
-                        v = AbstractODataResource.DUMMY_KEY;
-                    }
-                    kv.add(v);
+                Map<String, Object> staticFields = oedh.getStaticFields();
+                if (staticFields == null) {
+                    continue;
                 }
+
                 expandEntitiesMap = creator.create(oedh, this);
 
-                //Set values ​​from NTKPHashMap
-                Map<String, Object> staticFields = oedh.getStaticFields();
+                //Set values from NTKPHashMap
                 Map<String, Object> links = oedh.getManyToOnelinkId();
                 for (Map.Entry<String, String> ntkpProperty : ntkpProperties.entrySet()) {
                     String linksKey = getLinkskey(ntkpProperty.getValue());
-                    if (links.containsKey(linksKey)) {
+                    if (links != null && links.containsKey(linksKey)) {
                         String linkId = links.get(linksKey).toString();
                         staticFields.put(ntkpProperty.getKey(), ntkpValueMap.get(ntkpProperty.getKey() + linkId));
-                    } else {
-                        staticFields.put(ntkpProperty.getKey(), null);
                     }
                 }
                 oedh.setStaticFields(staticFields);

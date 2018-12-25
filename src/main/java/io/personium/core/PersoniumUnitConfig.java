@@ -408,6 +408,16 @@ public class PersoniumUnitConfig {
         public static final String TIMEREVENT_THREAD_NUM = KEY_ROOT + "rule.timerEvent.thread.num";
     }
 
+    /**
+     * Token Introspection configurations.
+     */
+    public static final class Introspect {
+        /** username for basic auth from resource server. */
+        public static final String USERNAME = KEY_ROOT + "introspect.username";
+        /** password for basic auth from resource server. */
+        public static final String PASSWORD = KEY_ROOT + "introspect.password";
+    }
+
     static {
         //Forcibly load various message output classes
         PersoniumCoreLog.loadConfig();
@@ -423,7 +433,7 @@ public class PersoniumUnitConfig {
     /** Property entity that stores the setting value.*/
     private final Properties props = new Properties();
 
-    /** Property entity that stores setting values ​​to be overridden.*/
+    /** Property entity that stores setting values to be overridden.*/
     private final Properties propsOverride = new Properties();
 
     /**
@@ -1281,7 +1291,31 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * 設定情報をリロードします.
+     * Get username for Token Introspection.
+     * @return username
+     */
+    public static String getIntrospectUsername() {
+        String value = get(Introspect.USERNAME);
+        if (value != null && value.isEmpty()) {
+            value = null;
+        }
+        return value;
+    }
+
+    /**
+     * Get password for Token Introspection.
+     * @return username
+     */
+    public static String getIntrospectPassword() {
+        String value = get(Introspect.PASSWORD);
+        if (value != null && value.isEmpty()) {
+            value = null;
+        }
+        return value;
+    }
+
+    /**
+>>>>>>> develop
      * Reload the configuration information.
      */
     public static void reload() {

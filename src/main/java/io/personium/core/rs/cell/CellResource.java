@@ -312,6 +312,15 @@ public class CellResource {
     }
 
     /**
+     * Endpoint of introspection.
+     * @return IntrospectionEndPointResource object
+     */
+    @Path("__introspect")
+    public IntrospectionEndPointResource introspect() {
+        return new IntrospectionEndPointResource(this.cell, this.cellRsCmp);
+    }
+
+    /**
      * Endpoint of error response by Html.
      * @return AuthzEndPointResource object
      */
