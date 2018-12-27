@@ -117,7 +117,7 @@ public class AuthzGetTest extends AbstractCase {
         String cellUrl = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/";
         String message = PersoniumCoreMessageUtils.getMessage("PS-AU-0002");
         String expected = createDefaultHtml(
-                clientId, redirectUri, message, null, responseType, null, null, cellUrl);
+                clientId, redirectUri, message, null, null, responseType, null, null, cellUrl);
         assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
             assertThat(res.getBody(), is(expected));
     }
@@ -295,7 +295,7 @@ public class AuthzGetTest extends AbstractCase {
     // Create system default html.
     // TODO Should call AuthzEndPointResource.createForm() properly.
     private String createDefaultHtml(String clientId, String redirectUriStr, String message, String state,
-            String responseType, String pTarget, String pOwner, String cellUrl) {
+            String scope, String responseType, String pTarget, String pOwner, String cellUrl) {
         // If processing fails, return system default html.
         List<Object> paramsList = new ArrayList<Object>();
 
@@ -303,6 +303,7 @@ public class AuthzGetTest extends AbstractCase {
             clientId = clientId + "/";
         }
 
+        paramsList.add(AuthResourceUtils.getJavascript("ajax.js"));
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
         paramsList.add(clientId + Box.DEFAULT_BOX_NAME + "/profile.json");
         paramsList.add(cellUrl + Box.DEFAULT_BOX_NAME + "/profile.json");
@@ -315,7 +316,7 @@ public class AuthzGetTest extends AbstractCase {
         paramsList.add(pOwner != null ? pOwner : ""); // CHECKSTYLE IGNORE
         paramsList.add(clientId);
         paramsList.add(redirectUriStr);
-        paramsList.add(AuthResourceUtils.getJavascript("ajax.js"));
+        paramsList.add(scope);
 
         Object[] params = paramsList.toArray();
 
