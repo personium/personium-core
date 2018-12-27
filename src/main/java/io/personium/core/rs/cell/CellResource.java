@@ -416,6 +416,15 @@ public class CellResource {
     }
 
     /**
+     * Certs endpoint.(OpenID Connect).
+     * @return CertsResource
+     */
+    @Path("__certs")
+    public CertsResource certs() {
+        return new CertsResource();
+    }
+
+    /**
      * A method that passes the following path to BoxResource.
      * @param boxName Box path name
      * @param jaxRsRequest HTTP request for JAX-RS
