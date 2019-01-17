@@ -170,6 +170,16 @@ public final class OAuth2Helper {
         public static final String TOKEN = "token";
         /** code. */
         public static final String CODE = "code";
+        /** id_token. It is used with the openid connect of the oauth2 extension. */
+        public static final String ID_TOKEN = "id_token";
+    }
+
+    /**
+     * Literal on Scope.
+     */
+    public static class Scope {
+        /** openid. It is used with the openid connect of the oauth2 extension. */
+        public static final String OPENID = "openid";
     }
 
     /**

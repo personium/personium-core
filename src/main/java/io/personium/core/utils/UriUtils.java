@@ -105,6 +105,18 @@ public class UriUtils {
     }
 
     /**
+     * Judge whether the argument's URL is personium-localunit and return it.
+     * @param targetUrl target
+     * @return true:localunit false:other
+     */
+    public static boolean isLocalUnitUrl(String targetUrl) {
+        if (targetUrl != null && targetUrl.startsWith(SCHEME_LOCALUNIT)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Convert scheme from LocalUnit to http(s).
      * @param unitUrl unit url
      * @param localUnitSchemeUrl local unit url

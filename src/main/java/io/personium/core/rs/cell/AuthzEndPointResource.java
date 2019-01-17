@@ -98,6 +98,7 @@ import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.FacadeResource;
 import io.personium.core.utils.ResourceUtils;
 
+//TODO Refactor the entire class.
 /**
  * ImplicitFlow JAX-RS resource responsible for authentication processing.
  */
@@ -118,30 +119,25 @@ public class AuthzEndPointResource {
     private final Cell cell;
     private final CellRsCmp cellRsCmp;
 
-    /**
-     * Login form _ Javascript source file.
-     */
-    private final String jsFileName = "ajax.js";
-
-    /**
-     * Login form _ Initial display message.
-     */
-    private final String passFormMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0002");
-
-    /**
-     * Login form _ User ID/Password not yet entered.
-     */
-    private final String noIdPassMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0003");
-
-    /**
-     * Message when cookie authentication failed.
-     */
-    private final String missCookieMsg = PersoniumCoreMessageUtils.getMessage("PS-AU-0005");
+    /** Login form _ Javascript source file. */
+    private static final String AJAX_FILE_NAME = "ajax.js";
+    /** Login form _ Initial display message. */
+    private static final String MSG_PASS_FORM = PersoniumCoreMessageUtils.getMessage("PS-AU-0002");
+    /** Login form _ User ID/Password not yet entered. */
+    private static final String MSG_NO_ID_PASS = PersoniumCoreMessageUtils.getMessage("PS-AU-0003");
+    /** Login form User ID or password is incorrect. */
+    private static final String MSG_INCORRECT_ID_PASS = PersoniumCoreMessageUtils.getMessage("PS-AU-0004");
+    /** Message when cookie authentication failed. */
+    private static final String MSG_MISS_COOKIE = PersoniumCoreMessageUtils.getMessage("PS-AU-0005");
+    /** Message when account locked. */
+    private static final String MSG_ACCOUNT_LOCK = PersoniumCoreMessageUtils.getMessage("PS-AU-0006");
 
     /**
      * The UUID of the Account used for password authentication. It is used to update the last login time after password authentication.
      */
     private String accountId;
+
+    private String oAuthResponseType;
 
     /**
      * constructor.
@@ -169,6 +165,7 @@ public class AuthzEndPointResource {
      * @param cookieRefreshToken cookie
      * @param keepLogin query parameter
      * @param state query parameter
+     * @param scope query parameter
      * @param isCancel Cancel flag
      * @param uriInfo context
      * @return JAX-RS Response Object
@@ -185,11 +182,12 @@ public class AuthzEndPointResource {
             @CookieParam(Key.SESSION_ID) final String cookieRefreshToken,
             @QueryParam(Key.KEEPLOGIN) final String keepLogin,
             @QueryParam(Key.STATE) final String state,
+            @QueryParam(Key.SCOPE) final String scope,
             @QueryParam(Key.CANCEL_FLG) final String isCancel,
             @Context final UriInfo uriInfo) {
 
         return auth(pOwner, null, null, pTarget, assertion, clientId, responseType, redirectUri,
-                pCookie, cookieRefreshToken, keepLogin, state, isCancel, uriInfo);
+                pCookie, cookieRefreshToken, keepLogin, state, scope, isCancel, uriInfo);
 
     }
 
@@ -223,10 +221,11 @@ public class AuthzEndPointResource {
         String redirectUri = formParams.getFirst(Key.REDIRECT_URI);
         String keepLogin = formParams.getFirst(Key.KEEPLOGIN);
         String state = formParams.getFirst(Key.STATE);
+        String scope = formParams.getFirst(Key.SCOPE);
         String isCancel = formParams.getFirst(Key.CANCEL_FLG);
 
         return auth(pOwner, username, password, pTarget, assertion, clientId, responseType, redirectUri,
-                pCookie, cookieRefreshToken, keepLogin, state, isCancel, uriInfo);
+                pCookie, cookieRefreshToken, keepLogin, state, scope, isCancel, uriInfo);
     }
 
     /**
@@ -249,13 +248,15 @@ public class AuthzEndPointResource {
             final String cookieRefreshToken,
             final String keepLogin,
             final String state,
+            final String scope,
             final String isCancel,
             final UriInfo uriInfo) {
 
+        this.oAuthResponseType = responseType;
         String normalizedRedirectUri = redirectUri;
         String normalizedClientId = clientId;
         if (redirectUri == null || "".equals(redirectUri)) {
-            return this.returnErrorRedirect(cell.getUrl() + "__html/error", "PR400-AZ-0003");
+            return returnErrorPageRedirect("PR400-AZ-0003");
         } else {
             //Presence / absence of trailing "/"
             if (!redirectUri.endsWith("/")) {
@@ -263,7 +264,7 @@ public class AuthzEndPointResource {
             }
         }
         if (clientId == null || "".equals(clientId)) {
-            return this.returnErrorRedirect(cell.getUrl() + "__html/error", "PR400-AZ-0002");
+            return returnErrorPageRedirect("PR400-AZ-0002");
         } else {
             if (!clientId.endsWith("/")) {
                 normalizedClientId = clientId + "/";
@@ -275,7 +276,7 @@ public class AuthzEndPointResource {
         //
         if (!checkAuthorization(normalizedClientId)) {
             log.debug(PersoniumCoreMessageUtils.getMessage("PS-ER-0003"));
-            return this.returnErrorRedirect(cell.getUrl() + "__html/error", "PS-ER-0003");
+            return returnErrorPageRedirect("PS-ER-0003");
         }
 
         //clientId and redirectUri parameter check
@@ -289,7 +290,7 @@ public class AuthzEndPointResource {
                 //If user ID, password, assertion, cookie are not specified, send form
                 throw e;
             } else {
-                return this.returnErrorRedirect(cell.getUrl() + "__html/error", e.getCode());
+                return returnErrorPageRedirect(e.getCode());
             }
         }
 
@@ -313,8 +314,120 @@ public class AuthzEndPointResource {
             return handleCodeFlow(redirectUri, clientId, username, password, pCookie,
                     pTarget, state, pOwner, uriInfo);
         } else {
+            if (OAuth2Helper.ResponseType.ID_TOKEN.equals(responseType) && OAuth2Helper.Scope.OPENID.equals(scope)) {
+                return handleIdToken(redirectUri, clientId, username, password, pCookie, state, scope, uriInfo);
+            }
             return this.returnErrorRedirect(redirectUri, OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE,
                     OAuth2Helper.Error.UNSUPPORTED_RESPONSE_TYPE, state, "PR400-AZ-0001");
+        }
+    }
+
+    /**
+     * Authentication processing handling by ImplicitFlow.
+     * @param redirectUriStr
+     * @param clientId
+     * @param username
+     * @param password
+     * @param cookieRefreshToken
+     * @param pTarget
+     * @param keepLogin
+     * @param assertion
+     * @param state
+     * @param pOwner TODO
+     * @return
+     */
+    private Response handleImplicitFlow(
+            final String redirectUriStr,
+            final String clientId,
+            final String username,
+            final String password,
+            final String cookieRefreshToken,
+            final String pTarget,
+            final String keepLogin,
+            final String assertion,
+            final String schema,
+            final String state,
+            final String pOwner) {
+
+        //If p_target is not a URL, it creates a vulnerability of header injection. (Such as a line feed code is included)
+        try {
+            this.checkPTarget(pTarget);
+        } catch (PersoniumCoreAuthnException e) {
+            return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.INVALID_REQUEST,
+                    e.getMessage(), state, "code");
+        }
+        //TODO box existence check -> In some cases: Return token, if not: Create box (authorization check -> Box import execution)
+        //However, it returns an error until Box import is implemented
+
+        //Password authentication / Transcel token authentication / Cookie authentication separation
+        if (username != null || password != null) {
+            //When there is a setting in either user ID or password
+            Response response = this.handleImplicitFlowPassWord(pTarget, redirectUriStr, clientId,
+                    username, password, keepLogin, state, pOwner);
+
+            if (PersoniumUnitConfig.getAccountLastAuthenticatedEnable()
+                    && isSuccessAuthorization(response)) {
+                //Obtain schema information of Account
+                PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(cell);
+                EdmEntitySet esetAccount = producer.getMetadata().getEdmEntitySet(Account.EDM_TYPE_NAME);
+                OEntityKey originalKey = OEntityKey.parse("('" + username + "')");
+                //Ask Producer to change the last login time (Get / release lock within this method)
+                producer.updateLastAuthenticated(esetAccount, originalKey, accountId);
+            }
+            return response;
+        } else if (assertion != null && !"".equals(assertion)) {
+            //When assertion is specified
+            return this.handleImplicitFlowTcToken(redirectUriStr, clientId, assertion, pTarget, keepLogin, schema,
+                    state);
+        } else if (cookieRefreshToken != null) {
+            //When cookie is specified
+            //For cookie authentication, keepLogin always works as true
+            return this.handleImplicitFlowcookie(redirectUriStr, clientId,
+                    cookieRefreshToken, pTarget, OAuth2Helper.Key.TRUE_STR, state, pOwner);
+        } else {
+            //If user ID, password, assertion, cookie are not specified, send form
+            ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
+            return rb.entity(this.createForm(clientId, redirectUriStr, MSG_PASS_FORM, state,
+                    null, pTarget, pOwner)).build();
+        }
+    }
+
+    /**
+     * Authentication processing handling by ID Token.
+     * @param redirectUriStr
+     * @param clientId
+     * @param username
+     * @param password
+     * @param pCookie
+     * @param state
+     * @param scope
+     * @param uriInfo
+     * @return
+     */
+    private Response handleIdToken(
+            final String redirectUriStr,
+            final String clientId,
+            final String username,
+            final String password,
+            final String pCookie,
+            final String state,
+            final String scope,
+            final UriInfo uriInfo) {
+        //TODO box existence check -> In some cases: Return token, if not: Create box (authorization check -> Box import execution)
+        //However, it returns an error until Box import is implemented
+
+        //Password authentication / Transcel token authentication / Cookie authentication separation
+        if (username != null || password != null) {
+            //When there is a setting in either user ID or password
+            Response response = this.idTokenPassWord(redirectUriStr, clientId, username, password, state, scope);
+            return response;
+        } else if (pCookie != null) {
+            return idTokenPCookie(redirectUriStr, clientId, pCookie, state, scope, uriInfo);
+        } else {
+            //If user ID, password, assertion, cookie are not specified, send form
+            ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
+            return rb.entity(this.createForm(clientId, redirectUriStr, MSG_PASS_FORM, state,
+                    scope, null, null)).build();
         }
     }
 
@@ -346,14 +459,14 @@ public class AuthzEndPointResource {
             //TODO Return error because it is not yet implemented
             return this.returnErrorRedirectCodeGrant(redirectUriStr, OAuth2Helper.Error.UNSUPPORTED_GRANT_TYPE,
                     OAuth2Helper.Error.UNSUPPORTED_GRANT_TYPE, state, "PR400-AZ-0007");
-         //Do you need TODO?
+         //TODO Do you need?
 //        } else if (cookieRefreshToken != null) {
 //// if cookie is specified
 //// For cookie authentication, keepLogin always works as true
 //            return handleCookieRefreshToken(redirectUriStr, clientId, host,
 //                    cookieRefreshToken, OAuth2Helper.Key.TRUE_STR, state, pOwner);
         } else if (pCookie != null) {
-            return handlePCookie(redirectUriStr, clientId,
+            return handleCodeFlowPCookie(redirectUriStr, clientId,
                     pCookie, OAuth2Helper.Key.TRUE_STR, state, pOwner, uriInfo);
         } else {
             //TODO Return error because it is not yet implemented
@@ -367,7 +480,7 @@ public class AuthzEndPointResource {
         }
     }
 
-    private Response handlePCookie(final String redirectUriStr,
+    private Response handleCodeFlowPCookie(final String redirectUriStr,
             final String clientId,
             final String pCookie,
             final String keepLogin,
@@ -389,12 +502,12 @@ public class AuthzEndPointResource {
             AbstractOAuth2Token token = AbstractOAuth2Token.parse(authToken, getIssuerUrl(), cell.getUnitUrl());
 
             if (!(token instanceof IAccessToken)) {
-                return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
+                return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, null, null, pOwner);
             }
 
             //Checking the validity of tokens
             if (token.isExpired()) {
-                return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
+                return returnErrorMessage(clientId, redirectUriStr, MSG_MISS_COOKIE, state, null, null, pOwner);
             }
 
             long issuedAt = new Date().getTime();
@@ -406,15 +519,15 @@ public class AuthzEndPointResource {
         } catch (TokenParseException e) {
             //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
-            return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
+            return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, null, null, pOwner);
         } catch (TokenDsigException e) {
             //Because certificate validation failed
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
-            return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
+            return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, null, null, pOwner);
         } catch (TokenRootCrtException e) {
             //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
-            return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
+            return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, null, null, pOwner);
         }
         //Cookie authentication successful
         //Respond with 303 and return Location header
@@ -422,7 +535,7 @@ public class AuthzEndPointResource {
             return returnSuccessRedirect(redirectUriStr, aToken.toCodeString(),
                     rToken.toTokenString(), keepLogin, state);
         } catch (MalformedURLException e) {
-            return returnErrorMessageCodeGrant(clientId, redirectUriStr, missCookieMsg, state, null, pOwner);
+            return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, null, null, pOwner);
         }
     }
 
@@ -484,13 +597,6 @@ public class AuthzEndPointResource {
         return rb.entity("").build();
     }
 
-    private Response returnErrorMessageCodeGrant(String clientId, String redirectUriStr, String massage,
-            String state, String pTarget, String pOwner) {
-        ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
-        return rb.entity(this.createForm(clientId, redirectUriStr, massage, state,
-                OAuth2Helper.ResponseType.CODE, pTarget, pOwner)).build();
-    }
-
     private void checkPTarget(final String pTarget) {
         String target = pTarget;
         if (target != null && !"".equals(pTarget)) {
@@ -516,12 +622,14 @@ public class AuthzEndPointResource {
      * @param redirectUriStr redirectUriStr
      * @param message String to be output to message display area
      * @param state state
+     * @param scope scope
+     * @param oAuthResponseType responseType
      * @param dcTraget dcTraget
      * @param pOwner pOwner
      * @return HTML
      */
     private String createForm(String clientId, String redirectUriStr, String message, String state,
-            String responseType, String pTarget, String pOwner) {
+            String scope, String pTarget, String pOwner) {
 
         try {
             HttpResponse response = cellRsCmp.requestGetAuthorizationHtml();
@@ -543,6 +651,7 @@ public class AuthzEndPointResource {
                 clientId = clientId + "/";
             }
 
+            paramsList.add(AuthResourceUtils.getJavascript(AJAX_FILE_NAME));
             //title
             paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
             //Ansel's profile.json
@@ -557,12 +666,12 @@ public class AuthzEndPointResource {
             paramsList.add(message);
             //hidden item
             paramsList.add(state);
-            paramsList.add(responseType);
+            paramsList.add(oAuthResponseType);
             paramsList.add(pTarget != null ? pTarget : ""); // CHECKSTYLE IGNORE
             paramsList.add(pOwner != null ? pOwner : ""); // CHECKSTYLE IGNORE
             paramsList.add(clientId);
             paramsList.add(redirectUriStr);
-            paramsList.add(AuthResourceUtils.getJavascript(jsFileName));
+            paramsList.add(scope);
 
             Object[] params = paramsList.toArray();
 
@@ -598,8 +707,8 @@ public class AuthzEndPointResource {
         boolean passCheck = true;
         if (username == null || password == null || "".equals(username) || "".equals(password)) {
             ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
-            return rb.entity(this.createForm(clientId, redirectUriStr, noIdPassMsg, state,
-                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
+            return rb.entity(this.createForm(clientId, redirectUriStr, MSG_NO_ID_PASS, state,
+                    null, pTarget, pOwner)).build();
         }
 
         OEntityWrapper oew = cell.getAccount(username);
@@ -610,7 +719,7 @@ public class AuthzEndPointResource {
             log.info("responseMessage : " + missIdPassMsg);
             ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
             return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state,
-                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
+                    null, pTarget, pOwner)).build();
         }
         //In order to update the last login time, keep UUID in class variable
         accountId = (String) oew.getUuid();
@@ -628,7 +737,7 @@ public class AuthzEndPointResource {
                 log.info("responseMessage : " + accountLockMsg);
                 ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, accountLockMsg, state,
-                        OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
+                        null, pTarget, pOwner)).build();
             }
 
             //Check user ID and password
@@ -642,7 +751,7 @@ public class AuthzEndPointResource {
                 log.info("responseMessage : " + missIdPassMsg);
                 ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state,
-                        OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
+                        null, pTarget, pOwner)).build();
             }
         } catch (PersoniumCoreException e) {
             return this.returnErrorRedirect(redirectUriStr, e.getMessage(),
@@ -657,11 +766,11 @@ public class AuthzEndPointResource {
         if (Key.TRUE_STR.equals(pOwner)) {
             //Check unit escalation privilege setting
             if (!this.cellRsCmp.checkOwnerRepresentativeAccounts(username)) {
-                return returnErrorMessage(clientId, redirectUriStr, passFormMsg, state, pTarget, pOwner);
+                return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, null, pTarget, pOwner);
             }
             //Do not promote cells for which the owner of the cell is not set.
             if (cell.getOwner() == null) {
-                return returnErrorMessage(clientId, redirectUriStr, passFormMsg, state, pTarget, pOwner);
+                return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, null, pTarget, pOwner);
             }
 
             //uluut issuance processing
@@ -701,7 +810,7 @@ public class AuthzEndPointResource {
                 }
             }
         } catch (MalformedURLException e) {
-            return returnErrorMessage(clientId, redirectUriStr, passFormMsg, state, pTarget, pOwner);
+            return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, null, pTarget, pOwner);
         }
     }
 
@@ -787,7 +896,7 @@ public class AuthzEndPointResource {
             return returnSuccessRedirect(redirectUriStr, aToken.toTokenString(), aToken.expiresIn(),
                     null, keepLogin, state);
         } catch (MalformedURLException e) {
-            return returnErrorMessage(clientId, redirectUriStr, passFormMsg, state, pTarget, "");
+            return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, null, pTarget, "");
         }
     }
 
@@ -813,12 +922,12 @@ public class AuthzEndPointResource {
             AbstractOAuth2Token token = AbstractOAuth2Token.parse(
                     cookieRefreshToken, getIssuerUrl(), cell.getUnitUrl());
             if (!(token instanceof IRefreshToken)) {
-                return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
+                return returnErrorMessage(clientId, redirectUriStr, MSG_MISS_COOKIE, state, null, pTarget, pOwner);
             }
 
             //Refresh token expiration check
             if (token.isRefreshExpired()) {
-                return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
+                return returnErrorMessage(clientId, redirectUriStr, MSG_MISS_COOKIE, state, null, pTarget, pOwner);
             }
 
             long issuedAt = new Date().getTime();
@@ -826,15 +935,15 @@ public class AuthzEndPointResource {
             if (Key.TRUE_STR.equals(pOwner)) {
                 //You can be promoted only for your own cell refresh.
                 if (token.getClass() != CellLocalRefreshToken.class) {
-                    return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
+                    return returnErrorMessage(clientId, redirectUriStr, MSG_MISS_COOKIE, state, null, pTarget, pOwner);
                 }
                 //Check unit escalation privilege setting
                 if (!this.cellRsCmp.checkOwnerRepresentativeAccounts(token.getSubject())) {
-                    return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
+                    return returnErrorMessage(clientId, redirectUriStr, MSG_MISS_COOKIE, state, null, pTarget, pOwner);
                 }
                 //Do not promote cells for which the owner of the cell is not set.
                 if (cell.getOwner() == null) {
-                    return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
+                    return returnErrorMessage(clientId, redirectUriStr, MSG_MISS_COOKIE, state, null, pTarget, pOwner);
                 }
 
                 //uluut issuance processing
@@ -847,7 +956,7 @@ public class AuthzEndPointResource {
                     return returnSuccessRedirect(redirectUriStr, uluut.toTokenString(), uluut.expiresIn(),
                             null, keepLogin, state);
                 } catch (MalformedURLException e) {
-                    return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
+                    return returnErrorMessage(clientId, redirectUriStr, MSG_MISS_COOKIE, state, null, pTarget, pOwner);
                 }
             } else {
                 //Regenerate AccessToken and RefreshToken from received Refresh Token
@@ -868,15 +977,15 @@ public class AuthzEndPointResource {
         } catch (TokenParseException e) {
             //Because I failed in Perth
             PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
-            return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
+            return returnErrorMessage(clientId, redirectUriStr, MSG_MISS_COOKIE, state, null, pTarget, pOwner);
         } catch (TokenDsigException e) {
             //Because certificate validation failed
             PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
-            return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
+            return returnErrorMessage(clientId, redirectUriStr, MSG_MISS_COOKIE, state, null, pTarget, pOwner);
         } catch (TokenRootCrtException e) {
             //Error setting root CA certificate
             PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
-            return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
+            return returnErrorMessage(clientId, redirectUriStr, MSG_MISS_COOKIE, state, null, pTarget, pOwner);
         }
         //Cookie authentication successful
         //Respond with 303 and return Location header
@@ -884,77 +993,126 @@ public class AuthzEndPointResource {
             return returnSuccessRedirect(redirectUriStr, aToken.toTokenString(), aToken.expiresIn(),
                     rToken.toTokenString(), keepLogin, state);
         } catch (MalformedURLException e) {
-            return returnErrorMessage(clientId, redirectUriStr, missCookieMsg, state, pTarget, pOwner);
+            return returnErrorMessage(clientId, redirectUriStr, MSG_MISS_COOKIE, state, null, pTarget, pOwner);
         }
     }
 
     /**
-     * Authentication processing handling by ImplicitFlow.
+     * Password authentication processing at id_token.
      * @param redirectUriStr
      * @param clientId
      * @param username
      * @param password
-     * @param cookieRefreshToken
-     * @param pTarget
-     * @param keepLogin
-     * @param assertion
      * @param state
-     * @param pOwner TODO
+     * @param scope
      * @return
      */
-    private Response handleImplicitFlow(
-            final String redirectUriStr,
+    private Response idTokenPassWord(final String redirectUriStr,
             final String clientId,
             final String username,
             final String password,
-            final String cookieRefreshToken,
-            final String pTarget,
-            final String keepLogin,
-            final String assertion,
-            final String schema,
             final String state,
-            final String pOwner) {
+            final String scope) {
 
-        //If p_target is not a URL, it creates a vulnerability of header injection. (Such as a line feed code is included)
-        try {
-            this.checkPTarget(pTarget);
-        } catch (PersoniumCoreAuthnException e) {
-            return this.returnErrorRedirect(redirectUriStr, OAuth2Helper.Error.INVALID_REQUEST,
-                    e.getMessage(), state, "code");
-        }
-        //TODO box existence check -> In some cases: Return token, if not: Create box (authorization check -> Box import execution)
-        //However, it returns an error until Box import is implemented
-
-        //Password authentication / Transcel token authentication / Cookie authentication separation
-        if (username != null || password != null) {
-            //When there is a setting in either user ID or password
-            Response response = this.handleImplicitFlowPassWord(pTarget, redirectUriStr, clientId,
-                    username, password, keepLogin, state, pOwner);
-
-            if (PersoniumUnitConfig.getAccountLastAuthenticatedEnable()
-                    && isSuccessAuthorization(response)) {
-                //Obtain schema information of Account
-                PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(cell);
-                EdmEntitySet esetAccount = producer.getMetadata().getEdmEntitySet(Account.EDM_TYPE_NAME);
-                OEntityKey originalKey = OEntityKey.parse("('" + username + "')");
-                //Ask Producer to change the last login time (Get / release lock within this method)
-                producer.updateLastAuthenticated(esetAccount, originalKey, accountId);
-            }
-            return response;
-        } else if (assertion != null && !"".equals(assertion)) {
-            //When assertion is specified
-            return this.handleImplicitFlowTcToken(redirectUriStr, clientId, assertion, pTarget, keepLogin, schema,
-                    state);
-        } else if (cookieRefreshToken != null) {
-            //When cookie is specified
-            //For cookie authentication, keepLogin always works as true
-            return this.handleImplicitFlowcookie(redirectUriStr, clientId,
-                    cookieRefreshToken, pTarget, OAuth2Helper.Key.TRUE_STR, state, pOwner);
-        } else {
-            //If user ID, password, assertion, cookie are not specified, send form
+        //If both user ID and password are unspecified, return login error
+        boolean passCheck = true;
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
-            return rb.entity(this.createForm(clientId, redirectUriStr, passFormMsg, state,
-                    OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
+            return rb.entity(this.createForm(clientId, redirectUriStr, MSG_NO_ID_PASS, state,
+                    scope, null, null)).build();
+        }
+
+        OEntityWrapper oew = cell.getAccount(username);
+        if (oew == null) {
+            log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);
+            ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
+            return rb.entity(this.createForm(clientId, redirectUriStr, MSG_INCORRECT_ID_PASS, state,
+                    scope, null, null)).build();
+        }
+        //In order to update the last login time, keep UUID in class variable
+        accountId = (String) oew.getUuid();
+
+        //Check lock
+        Boolean isLock = true;
+        try {
+            isLock = AuthResourceUtils.isLockedAccount(accountId);
+            if (isLock) {
+                //Update lock time of memcached
+                AuthResourceUtils.registAccountLock(accountId);
+                // Message is the same as ID / PASS error. intentional?
+                log.info("responseMessage : " + MSG_ACCOUNT_LOCK);
+                ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
+                return rb.entity(this.createForm(clientId, redirectUriStr, MSG_ACCOUNT_LOCK, state,
+                        scope, null, null)).build();
+            }
+
+            //Check user ID and password
+            passCheck = cell.authenticateAccount(oew, password);
+            if (!passCheck) {
+                //Make lock on memcached
+                AuthResourceUtils.registAccountLock(accountId);
+                log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);
+                ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
+                return rb.entity(this.createForm(clientId, redirectUriStr, MSG_INCORRECT_ID_PASS, state,
+                        scope, null, null)).build();
+            }
+        } catch (PersoniumCoreException e) {
+            return this.returnErrorRedirect(redirectUriStr, e.getMessage(), e.getMessage(), state, e.getCode());
+        }
+        //Respond with 303 and return Location header
+        try {
+            //Create a response.
+            return returnSuccessRedirect(redirectUriStr, "dummy_id_token", state);
+        } catch (MalformedURLException e) {
+            return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, scope, null, null);
+        }
+    }
+
+    private Response idTokenPCookie(final String redirectUriStr,
+            final String clientId,
+            final String pCookie,
+            final String state,
+            final String scope,
+            UriInfo uriInfo) {
+        //Cookie authentication
+        //Get decrypted value of cookie value
+        try {
+            String decodedCookieValue = LocalToken.decode(pCookie,
+                    UnitLocalUnitUserToken.getIvBytes(
+                            AccessContext.getCookieCryptKey(uriInfo.getBaseUri().getHost())));
+            int separatorIndex = decodedCookieValue.indexOf("\t");
+            //Obtain authorizationHeader equivalent token from information in cookie
+            String authToken = decodedCookieValue.substring(separatorIndex + 1);
+
+            AbstractOAuth2Token token = AbstractOAuth2Token.parse(authToken, getIssuerUrl(), cell.getUnitUrl());
+
+            if (!(token instanceof IAccessToken)) {
+                return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, scope, null, null);
+            }
+
+            //Checking the validity of tokens
+            if (token.isExpired()) {
+                return returnErrorMessage(clientId, redirectUriStr, MSG_MISS_COOKIE, state, scope, null, null);
+            }
+        } catch (TokenParseException e) {
+            //Because I failed in Perth
+            PersoniumCoreLog.Auth.TOKEN_PARSE_ERROR.params(e.getMessage()).writeLog();
+            return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, scope, null, null);
+        } catch (TokenDsigException e) {
+            //Because certificate validation failed
+            PersoniumCoreLog.Auth.TOKEN_DISG_ERROR.params(e.getMessage()).writeLog();
+            return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, scope, null, null);
+        } catch (TokenRootCrtException e) {
+            //Error setting root CA certificate
+            PersoniumCoreLog.Auth.ROOT_CA_CRT_SETTING_ERROR.params(e.getMessage()).writeLog();
+            return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, scope, null, null);
+        }
+        //Cookie authentication successful
+        //Respond with 303 and return Location header
+        try {
+            return returnSuccessRedirect(redirectUriStr, "dummy_id_token", state);
+        } catch (MalformedURLException e) {
+            return returnErrorMessage(clientId, redirectUriStr, MSG_PASS_FORM, state, scope, null, null);
         }
     }
 
@@ -1036,15 +1194,43 @@ public class AuthzEndPointResource {
     }
 
     /**
-     * Of the errors during authentication with ImplicitFlow, execute Redirect to redirect_uri set by the user in the following situation. Invalid / unspecified response_type 2
+     * After authenticating with IDToken, execute Redirect.
+     * @param redirectUriStr
+     * @param localTokenStr
+     * @param localTokenExpiresIn
+     * @param refreshTokenStr
+     * @param keepLogin
      * @param state
      * @return
      * @throws MalformedURLException
      */
-    private Response returnErrorRedirect(String redirectUri, String code) {
+    private Response returnSuccessRedirect(String redirectUriStr, String idToken,
+            String state) throws MalformedURLException {
         //Respond with 303 and return Location header
         ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
+        rb.header(HttpHeaders.LOCATION, redirectUriStr + "#"
+                + OAuth2Helper.Key.ID_TOKEN + "=" + idToken
+                + "&" + OAuth2Helper.Key.STATE + "=" + state);
+        //Returning the response
+        return rb.entity("").build();
+    }
+
+    /**
+     * Redirect to error page.
+     * @param state
+     * @return
+     * @throws MalformedURLException
+     */
+    // RFC6749.
+    // If the request fails due to a missing, invalid, or mismatching redirection URI,
+    // or if the client identifier is missing or invalid,
+    // the authorization server SHOULD inform the resource owner of the error and MUST NOT automatically redirect
+    // the user-agent to the invalid redirection URI.
+    private Response returnErrorPageRedirect(String code) {
+        String redirectUri = cell.getUrl() + "__html/error";
+        //Respond with 303 and return Location header
+        ResponseBuilder rb = Response.status(Status.SEE_OTHER).type(MediaType.APPLICATION_JSON_TYPE);
         rb.header(HttpHeaders.LOCATION, redirectUri + getConnectionCode(redirectUri)
                 + OAuth2Helper.Key.CODE + "=" + code);
         //Returning the response
@@ -1068,8 +1254,10 @@ public class AuthzEndPointResource {
             sbuf.append(URLEncoder.encode(error, "utf-8"));
             sbuf.append("&" + OAuth2Helper.Key.ERROR_DESCRIPTION + "=");
             sbuf.append(URLEncoder.encode(errorDesp, "utf-8"));
-            sbuf.append("&" + OAuth2Helper.Key.STATE + "=");
-            sbuf.append(URLEncoder.encode(state, "utf-8"));
+            if (StringUtils.isNotEmpty(state)) {
+                sbuf.append("&" + OAuth2Helper.Key.STATE + "=");
+                sbuf.append(URLEncoder.encode(state, "utf-8"));
+            }
             sbuf.append("&" + OAuth2Helper.Key.CODE + "=");
             sbuf.append(URLEncoder.encode(code, "utf-8"));
         } catch (UnsupportedEncodingException e) {
@@ -1085,15 +1273,16 @@ public class AuthzEndPointResource {
      * Error handling during authentication with ImplicitFlow_cookie.
      * @param clientId
      * @param redirectUriStr
-     * @param state TODO
+     * @param state
+     * @param scope
      * @param massagae
      * @return
      */
     private Response returnErrorMessage(String clientId, String redirectUriStr, String massage,
-            String state, String pTarget, String pOwner) {
+            String state, String scope, String pTarget, String pOwner) {
         ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
         return rb.entity(this.createForm(clientId, redirectUriStr, massage, state,
-                OAuth2Helper.ResponseType.TOKEN, pTarget, pOwner)).build();
+                scope, pTarget, pOwner)).build();
     }
 
     /**

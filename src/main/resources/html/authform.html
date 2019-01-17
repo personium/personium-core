@@ -18,12 +18,12 @@
 -->
 <html>
 <head>
-<script type="text/javascript">{12}</script>
-<title>{0}</title>
+<script type="text/javascript">{0}</script>
+<title>{1}</title>
 </head>
-<body onload="requestFile(''GET'', ''{1}'' , ''{2}'' ,true )">
-<h1>{3}</h1><br />
-<form action="{4}" name="form" method="POST">
+<body onload="requestFile(''GET'', ''{2}'' , ''{3}'' ,true )">
+<h1>{4}</h1><br />
+<form action="{5}" name="form" method="POST">
 <table border="1">
 <tr>
 <td>userimg</td>
@@ -34,7 +34,7 @@
 <td><div id="dataUserName"></div></td>
 </tr>
 <tr>
-<td colspan="2"><div id="message">{5}</div></td>
+<td colspan="2"><div id="message">{6}</div></td>
 </tr>
 <tr>
 <td>applogo</td>
@@ -62,12 +62,13 @@
 <input type="button" value="cancel" onclick="onCancel()"/></td>
 </tr>
 </table>
-<input type="hidden" name="state" id="state" value="{6}"/>
-<input type="hidden" name="response_type" id="response_type" value="{7}"/>
-<input type="hidden" name="p_target" id="p_target" value="{8}"/>
-<input type="hidden" name="p_owner" id="p_owner" value="{9}"/>
-<input type="hidden" name="client_id" id="client_id" value="{10}"/>
-<input type="hidden" name="redirect_uri" id="redirect_uri" value="{11}"/>
+<input type="hidden" name="state" id="state" value="{7}"/>
+<input type="hidden" name="response_type" id="response_type" value="{8}"/>
+<input type="hidden" name="p_target" id="p_target" value="{9}"/>
+<input type="hidden" name="p_owner" id="p_owner" value="{10}"/>
+<input type="hidden" name="client_id" id="client_id" value="{11}"/>
+<input type="hidden" name="redirect_uri" id="redirect_uri" value="{12}"/>
+<input type="hidden" name="scope" id="scope" value="{13}"/>
 <input type="hidden" name="cancel_flg" id="cancel_flg" value="0"/>
 </form>
 </body>

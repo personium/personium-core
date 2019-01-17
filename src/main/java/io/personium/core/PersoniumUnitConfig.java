@@ -1315,7 +1315,6 @@ public class PersoniumUnitConfig {
     }
 
     /**
->>>>>>> fix-issue281
      * Reload the configuration information.
      */
     public static void reload() {
