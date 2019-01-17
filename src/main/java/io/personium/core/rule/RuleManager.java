@@ -91,6 +91,7 @@ public class RuleManager {
         String boxname;
         BoxInfo box;
         String name;
+        long hitcount;
     }
 
     /** EventType definition for rule event. */
@@ -210,7 +211,7 @@ public class RuleManager {
     }
 
     /**
-     * Match with rule and execute the matched rule.
+     * If the event matches with rule, then execute action of the matched rule.
      * @param event target event object
      */
     public void judge(PersoniumEvent event) {
@@ -255,7 +256,7 @@ public class RuleManager {
                 if (map != null) {
                     for (Map.Entry<String, RuleInfo> e : map.entrySet()) {
                         RuleInfo rule = e.getValue();
-                        if (match(rule, event)) {
+                        if (isMatched(rule, event)) {
                             String targetUrl = rule.targeturl;
                             // replace localcell and localbox
                             if (targetUrl != null) {
@@ -294,6 +295,7 @@ public class RuleManager {
                                 }
                             }
                             logger.debug("TargetUrl:{} -> {}", rule.targeturl, targetUrl);
+                            rule.hitcount++;
                             ActionInfo ai = new ActionInfo(rule.action, targetUrl, eventId, ruleChain);
                             actionList.add(ai);
                         }
@@ -365,7 +367,7 @@ public class RuleManager {
         return null;
     }
 
-    private boolean match(RuleInfo rule, PersoniumEvent event) {
+    private boolean isMatched(RuleInfo rule, PersoniumEvent event) {
         if (rule == null) {
             return false;
         }
@@ -379,9 +381,15 @@ public class RuleManager {
         }
 
         // compare type
-        if (rule.type != null
-            && !event.getType().map(type -> type.startsWith(rule.type)).orElse(false)) {
-            return false;
+        if (rule.type != null) {
+            // if rule.type is .xxx then backward match, otherwise forward match.
+            if (rule.type.startsWith(PersoniumEventType.SEPARATOR)) {
+                if (!event.getType().map(type -> type.endsWith(rule.type)).orElse(false)) {
+                    return false;
+                }
+            } else if (!event.getType().map(type -> type.startsWith(rule.type)).orElse(false)) {
+                return false;
+            }
         }
 
         // compare schema
@@ -482,6 +490,7 @@ public class RuleManager {
         rule.targeturl = (String) oEntity.getProperty(Rule.P_TARGETURL.getName()).getValue();
         rule.boxname = (String) oEntity.getProperty(Common.P_BOX_NAME.getName()).getValue();
         rule.name = (String) oEntity.getProperty(Rule.P_NAME.getName()).getValue();
+        rule.hitcount = 0;
 
         return rule;
     }
@@ -933,6 +942,7 @@ public class RuleManager {
                                                         m.put(Common.P_BOX_NAME.getName(), ri.box.name);
                                                     }
                                                     m.put(Rule.P_NAME.getName(), ri.name);
+                                                    m.put("HitCount", ri.hitcount);
                                                     return m;
                                                 })
                                                .collect(Collectors.toList()))
