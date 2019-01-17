@@ -1,3 +1,16 @@
+## 1.7.4
+BUG FIXES:
+* "Unknown Exception" has occurred on $select query for CellCtl object.([#56](https://github.com/personium/personium-core/issues/56))
+
+IMPROVEMENTS:
+* OAuth2 Token Introspection.([#281](https://github.com/personium/personium-core/issues/281))
+* Support OpenID Connect.([#287](https://github.com/personium/personium-core/issues/287)) **Under development.**
+  * __authz endpoint
+    * Accept "scope=openid"
+    * Accept "response_type=id_token"
+  * Add "__certs" endpoint
+  * Responses are still all dummy
+
 ## 1.7.3
 IMPROVEMENTS:
 * Response body of PROPFIND is URL-encoded.([#219](https://github.com/personium/personium-core/issues/219))
