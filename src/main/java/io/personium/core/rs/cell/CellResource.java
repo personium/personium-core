@@ -54,6 +54,9 @@ import io.personium.core.annotations.PROPPATCH;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellCmp;
@@ -62,6 +65,7 @@ import io.personium.core.model.ModelFactory;
 import io.personium.core.model.lock.UnitUserLockManager;
 import io.personium.core.rs.box.BoxResource;
 import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * JAX-RS Resource handling Cell Level Api.
@@ -461,8 +465,26 @@ public class CellResource {
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
         this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.PROPFIND);
-        return this.cellRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
-                CellPrivilege.ACL_READ);
+        Response response = this.cellRsCmp.doPropfind(requestBodyXml,
+                                                      depth,
+                                                      contentLength,
+                                                      transferEncoding,
+                                                      CellPrivilege.ACL_READ);
+
+        // post event to EventBus
+        String type = PersoniumEventType.cell(PersoniumEventType.Operation.PROPFIND);
+        String object = UriUtils.SCHEME_CELL_URI;
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.cellRsCmp)
+                                              .build();
+        EventBus eventBus = this.cell.getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -487,7 +509,22 @@ public class CellResource {
         if (!ac.isUnitUserToken()) {
             throw PersoniumCoreException.Auth.UNITUSER_ACCESS_REQUIRED;
         }
-        return this.cellRsCmp.doProppatch(requestBodyXml);
+        Response response = this.cellRsCmp.doProppatch(requestBodyXml);
+
+        // post event to EventBus
+        String type = PersoniumEventType.cell(PersoniumEventType.Operation.PROPPATCH);
+        String object = UriUtils.SCHEME_CELL_URI;
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.cellRsCmp)
+                                              .build();
+        EventBus eventBus = this.cell.getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -500,7 +537,22 @@ public class CellResource {
     public Response acl(final Reader reader) {
         //Access control
         this.cellRsCmp.checkAccessContext(this.cellRsCmp.getAccessContext(), CellPrivilege.ACL);
-        return this.cellRsCmp.doAcl(reader);
+        Response response = this.cellRsCmp.doAcl(reader);
+
+        // post event to EventBus
+        String type = PersoniumEventType.cell(PersoniumEventType.Operation.ACL);
+        String object = UriUtils.SCHEME_CELL_URI;
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.cellRsCmp)
+                                              .build();
+        EventBus eventBus = this.cell.getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
