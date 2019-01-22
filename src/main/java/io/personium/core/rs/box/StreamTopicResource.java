@@ -96,8 +96,8 @@ public class StreamTopicResource extends StreamResource {
                                  sender.close();
                                  return Response.ok().build();
                              })
-                            .orElse(Response.status(Response.Status.NOT_FOUND)
-                                            .entity("data bus is disabled.")
+                            .orElse(Response.status(Response.Status.FORBIDDEN)
+                                            .entity("stream is disabled.")
                                             .build());
     }
 

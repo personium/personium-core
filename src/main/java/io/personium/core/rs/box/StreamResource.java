@@ -107,6 +107,8 @@ public abstract class StreamResource {
 
     /**
      * PUT method.
+     * This method is needed to access url with key in relay.data action of rule.
+     * key parameter is ignored.
      * @param name destination name
      * @param key key string
      * @param is Request body
@@ -135,7 +137,7 @@ public abstract class StreamResource {
         List<String> allow = new ArrayList<>();
 
         try {
-            this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.SEND);
+            this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.STREAM_SEND);
             allow.add(HttpMethod.POST);
             allow.add(HttpMethod.PUT);
         } catch (Exception e) {
@@ -143,7 +145,7 @@ public abstract class StreamResource {
         }
 
         try {
-            this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.RECEIVE);
+            this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.STREAM_RECEIVE);
             allow.add(HttpMethod.GET);
         } catch (Exception e) {
             logger.debug("no privilege for receive");
@@ -215,7 +217,7 @@ public abstract class StreamResource {
      */
     private Response receiveCommon(String name) {
         // access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.RECEIVE);
+        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.STREAM_RECEIVE);
 
         // resource exist?
         checkExistence(name);
@@ -234,7 +236,7 @@ public abstract class StreamResource {
      */
     private Response sendCommon(String name, InputStream is) {
         // access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.SEND);
+        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.STREAM_SEND);
 
         // resource exist?
         checkExistence(name);
