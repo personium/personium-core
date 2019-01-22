@@ -92,8 +92,8 @@ public class StreamQueueResource extends StreamResource {
                                  receiver.close();
                                  return ResourceUtils.responseBuilderJson(list).build();
                              })
-                            .orElse(Response.status(Response.Status.NOT_FOUND)
-                                            .entity("data bus is disabled.")
+                            .orElse(Response.status(Response.Status.FORBIDDEN)
+                                            .entity("stream is disabled.")
                                             .build());
     }
 
@@ -106,8 +106,8 @@ public class StreamQueueResource extends StreamResource {
                                  sender.close();
                                  return Response.ok().build();
                              })
-                            .orElse(Response.status(Response.Status.NOT_FOUND)
-                                            .entity("data bus is disabled.")
+                            .orElse(Response.status(Response.Status.FORBIDDEN)
+                                            .entity("stream is disabled.")
                                             .build());
     }
 
