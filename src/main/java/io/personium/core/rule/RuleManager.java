@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.ws.rs.core.UriBuilder;
+
 import org.odata4j.core.NamedValue;
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityKey;
@@ -761,6 +763,17 @@ public class RuleManager {
         }
     }
 
+    private String removeFragment(String url) {
+        try {
+            return UriBuilder.fromUri(url)
+                             .fragment(null)
+                             .build()
+                             .toString();
+        } catch (Exception e) {
+            return url;
+        }
+    }
+
     /**
      * Register rule by OEntity object.
      * @param oEntity OEntity object of Rule
@@ -773,6 +786,8 @@ public class RuleManager {
 
         // Replace personium-localunit scheme to http scheme.
         rule.subject = UriUtils.convertSchemeFromLocalUnitToHttp(cell.getUnitUrl(), rule.subject);
+        // Remove fragment from TargetUrl
+        rule.targeturl = removeFragment(rule.targeturl);
         try {
             URI uri = new URI(rule.targeturl);
             if (UriUtils.SCHEME_LOCALUNIT.equals(uri.getScheme())) {
