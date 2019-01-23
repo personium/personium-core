@@ -28,7 +28,8 @@ import org.junit.runners.Suite.SuiteClasses;
     ActionFactoryTest.class,
     ExecActionTest.class,
     RelayActionTest.class,
-    RelayEventActionTest.class
+    RelayEventActionTest.class,
+    ActionUtilsTest.class
 })
 public class AllTests {
 }

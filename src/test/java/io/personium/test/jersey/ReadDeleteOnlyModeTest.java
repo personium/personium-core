@@ -37,7 +37,6 @@ import java.util.regex.Pattern;
 import javax.ws.rs.HttpMethod;
 
 import org.apache.http.HttpStatus;
-import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

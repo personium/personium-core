@@ -16,45 +16,33 @@
  */
 package io.personium.core.rule.action;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.HttpMessage;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-
-import org.json.simple.JSONObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.personium.common.auth.token.Role;
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.event.PersoniumEvent;
 import io.personium.core.model.Cell;
 import io.personium.core.rule.ActionInfo;
 import io.personium.core.utils.HttpClientFactory;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * Abstract class of Action about Post.
  */
-public abstract class PostAction extends Action {
+public abstract class PostAction extends HttpAction {
     static Logger logger = LoggerFactory.getLogger(PostAction.class);
-
-    Cell cell;
-    String service;
-    String action;
-    String eventId;
-    String chain;
 
     /**
      * Constructor.
@@ -62,11 +50,7 @@ public abstract class PostAction extends Action {
      * @param ai ActionInfo object
      */
     public PostAction(Cell cell, ActionInfo ai) {
-        this.cell = cell;
-        this.service = ai.getService();
-        this.action = ai.getAction();
-        this.eventId = ai.getEventId();
-        this.chain = ai.getRuleChain();
+        super(cell, ai);
     }
 
     @Override
@@ -76,34 +60,27 @@ public abstract class PostAction extends Action {
             return null;
         }
 
-        HttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
         HttpPost req = new HttpPost(requestUrl);
 
         // create payload as JSON
-        JSONObject json = createEvent(event);
-        req.setEntity(new StringEntity(
-                json.toString(),
-                ContentType.APPLICATION_JSON.withCharset(StandardCharsets.UTF_8)));
+        Map<String, Object> map = createEvent(event);
+        String body = ResourceUtils.convertMapToString(map);
+        if (body != null) {
+            req.setEntity(new StringEntity(
+                    body,
+                    ContentType.APPLICATION_JSON.withCharset(StandardCharsets.UTF_8)));
+        }
 
         // set headers
         //  X-Personium-RequestKey, X-Personium-EventId, X-Personium-RuleChain, X-Personium-Via
-        if (event.getRequestKey() != null) {
-            req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_REQUESTKEY, event.getRequestKey());
-        }
-        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_EVENTID, eventId);
-        req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_RULECHAIN, chain);
-        String via = getVia(event);
-        if (via != null) {
-            req.addHeader(PersoniumCoreUtils.HttpHeaders.X_PERSONIUM_VIA, via);
-        }
+        setCommonHeaders(req, event);
 
         // set specific headers in derrived class
-        setHeaders(req, event);
+        setSpecificHeaders(req, event);
 
-        HttpResponse objResponse = null;
         String result;
-        try {
-            objResponse = client.execute(req);
+        try (CloseableHttpClient client = HttpClientFactory.create(HttpClientFactory.TYPE_INSECURE);
+             CloseableHttpResponse objResponse = client.execute(req)) {
             logger.info(EntityUtils.toString(objResponse.getEntity()));
             result = Integer.toString(objResponse.getStatusLine().getStatusCode());
         } catch (ClientProtocolException e) {
@@ -112,27 +89,18 @@ public abstract class PostAction extends Action {
         } catch (Exception e) {
             logger.error("Connection Error: " + e.getMessage(), e);
             result = "404";
-        } finally {
-            HttpClientUtils.closeQuietly(objResponse);
-            HttpClientUtils.closeQuietly(client);
         }
 
         // create event for result of script execution
         PersoniumEvent evt = event.clone()
-                .type(action)
-                .object(service)
-                .info(result)
-                .eventId(eventId)
-                .ruleChain(chain)
-                .build();
+                                  .type(action)
+                                  .object(service)
+                                  .info(result)
+                                  .eventId(eventId)
+                                  .ruleChain(chain)
+                                  .build();
 
         return evt;
-    }
-
-    @Override
-    public PersoniumEvent execute(PersoniumEvent[] events) {
-        // not supported
-        return null;
     }
 
     /**
@@ -142,26 +110,21 @@ public abstract class PostAction extends Action {
     protected abstract String getRequestUrl();
 
     /**
-     * Create event in json format.
+     * Create event.
      * @param event PersoniumEvent object
-     * @return json object
+     * @return Map object
      */
-    @SuppressWarnings({ "unchecked" })
-    protected JSONObject createEvent(PersoniumEvent event) {
-        JSONObject json = new JSONObject();
+    protected Map<String, Object> createEvent(PersoniumEvent event) {
+        Map<String, Object> map = new HashMap<>();
 
-        json.put("External", event.getExternal());
-        if (event.getSchema() != null) {
-            json.put("Schema", event.getSchema());
-        }
-        if (event.getSubject() != null) {
-            json.put("Subject", event.getSubject());
-        }
-        json.put("Type", event.getType());
-        json.put("Object", event.getObject());
-        json.put("Info", event.getInfo());
+        map.put("External", event.getExternal());
+        event.getSchema().ifPresent(schema -> map.put("Schema", schema));
+        event.getSubject().ifPresent(subject -> map.put("Subject", subject));
+        event.getType().ifPresent(type -> map.put("Type", type));
+        event.getObject().ifPresent(object -> map.put("Object", object));
+        event.getInfo().ifPresent(info -> map.put("Info", info));
 
-        return json;
+        return map;
     }
 
     /**
@@ -169,39 +132,6 @@ public abstract class PostAction extends Action {
      * @param req Request to set headers
      * @param event PersoniumEvent object
      */
-    protected abstract void setHeaders(HttpMessage req, PersoniumEvent event);
+    protected abstract void setSpecificHeaders(HttpMessage req, PersoniumEvent event);
 
-    /**
-     * Get Via header string.
-     * @param event PersoniumEvent object
-     * @return via header string
-     */
-    protected String getVia(PersoniumEvent event) {
-        return event.getVia();
-    }
-
-    /**
-     * Get permitted role list from event.
-     * @param event PersoniumEvent object
-     * @return role list
-     */
-    protected List<Role> getRoleList(PersoniumEvent event) {
-        // create permitted role list
-        List<Role> roleList = new ArrayList<Role>();
-        String roles = event.getRoles();
-        if (roles != null) {
-            String[] parts = roles.split(",");
-            for (int i = 0; i < parts.length; i++) {
-                try {
-                    URL url = new URL(parts[i]);
-                    Role role = new Role(url);
-                    roleList.add(role);
-                } catch (MalformedURLException e) {
-                    // return empty list because of error
-                    return new ArrayList<Role>();
-                }
-            }
-        }
-        return roleList;
-    }
 }

@@ -17,13 +17,10 @@
 package io.personium.core.event;
 
 import io.personium.core.PersoniumUnitConfig;
-import io.personium.core.event.impl.activemq.ActiveMQEventReceiver;
-import io.personium.core.event.impl.activemq.ActiveMQEventPublisher;
-import io.personium.core.event.impl.activemq.ActiveMQEventSender;
-import io.personium.core.event.impl.activemq.ActiveMQEventSubscriber;
-import io.personium.core.event.impl.kafka.KafkaEventReceiver;
-import io.personium.core.event.impl.kafka.KafkaEventSender;
-import io.personium.core.event.impl.kafka.KafkaEventSubscriber;
+import io.personium.core.stream.impl.activemq.ActiveMQReceiver;
+import io.personium.core.stream.impl.activemq.ActiveMQSender;
+import io.personium.core.stream.impl.kafka.KafkaEventReceiver;
+import io.personium.core.stream.impl.kafka.KafkaEventSender;
 
 /**
  * Factory class for event.
@@ -33,6 +30,7 @@ public class EventFactory {
     private static final String KAFKA = "kafka";
 
     private static String mq = PersoniumUnitConfig.getEventBusMQ();
+    private static String broker = PersoniumUnitConfig.getEventBusBroker();
     private static String queueName = PersoniumUnitConfig.getEventBusQueueName();
     private static String topicName = PersoniumUnitConfig.getEventBusTopicName();
 
@@ -51,13 +49,13 @@ public class EventFactory {
         EventReceiver eventReceiver;
 
         if (ACTIVEMQ.equals(mq)) {
-            eventReceiver = new ActiveMQEventReceiver();
+            eventReceiver = new ActiveMQReceiver(broker);
         } else if (KAFKA.equals(mq)) {
-            eventReceiver = new KafkaEventReceiver();
+            eventReceiver = new KafkaEventReceiver(broker);
         } else {
-            eventReceiver = new ActiveMQEventReceiver();
+            eventReceiver = new ActiveMQReceiver(broker);
         }
-        eventReceiver.subscribe(queueName);
+        eventReceiver.open(queueName);
 
         return eventReceiver;
     }
@@ -70,11 +68,11 @@ public class EventFactory {
         EventSubscriber eventSubscriber;
 
         if (ACTIVEMQ.equals(mq)) {
-            eventSubscriber = new ActiveMQEventSubscriber();
+            eventSubscriber = new ActiveMQReceiver(broker);
         } else if (KAFKA.equals(mq)) {
-            eventSubscriber = new KafkaEventSubscriber();
+            eventSubscriber = new KafkaEventReceiver(broker);
         } else {
-            eventSubscriber = new ActiveMQEventSubscriber();
+            eventSubscriber = new ActiveMQReceiver(broker);
         }
         eventSubscriber.subscribe(topicName);
 
@@ -90,11 +88,11 @@ public class EventFactory {
         EventSubscriber eventSubscriber;
 
         if (ACTIVEMQ.equals(mq)) {
-            eventSubscriber = new ActiveMQEventSubscriber();
+            eventSubscriber = new ActiveMQReceiver(broker);
         } else if (KAFKA.equals(mq)) {
-            eventSubscriber = new KafkaEventSubscriber();
+            eventSubscriber = new KafkaEventReceiver(broker);
         } else {
-            eventSubscriber = new ActiveMQEventSubscriber();
+            eventSubscriber = new ActiveMQReceiver(broker);
         }
         eventSubscriber.subscribe(topic);
 
@@ -106,11 +104,11 @@ public class EventFactory {
      */
     static void createEventSender() {
         if (ACTIVEMQ.equals(mq)) {
-            eventSender = new ActiveMQEventSender();
+            eventSender = new ActiveMQSender(broker);
         } else if (KAFKA.equals(mq)) {
-            eventSender = new KafkaEventSender();
+            eventSender = new KafkaEventSender(broker);
         } else {
-            eventSender = new ActiveMQEventSender();
+            eventSender = new ActiveMQSender(broker);
         }
         eventSender.open(queueName);
     }
@@ -136,11 +134,11 @@ public class EventFactory {
      */
     static void createEventPublisher() {
         if (ACTIVEMQ.equals(mq)) {
-            eventPublisher = new ActiveMQEventPublisher();
+            eventPublisher = new ActiveMQSender(broker);
         } else if (KAFKA.equals(mq)) {
-            eventPublisher = new KafkaEventSender();
+            eventPublisher = new KafkaEventSender(broker);
         } else {
-            eventPublisher = new ActiveMQEventPublisher();
+            eventPublisher = new ActiveMQSender(broker);
         }
         eventPublisher.open(topicName);
     }
@@ -169,11 +167,11 @@ public class EventFactory {
         EventPublisher publisher;
 
         if (ACTIVEMQ.equals(mq)) {
-            publisher = new ActiveMQEventPublisher();
+            publisher = new ActiveMQSender(broker);
         } else if (KAFKA.equals(mq)) {
-            publisher = new KafkaEventSender();
+            publisher = new KafkaEventSender(broker);
         } else {
-            publisher = new ActiveMQEventPublisher();
+            publisher = new ActiveMQSender(broker);
         }
         publisher.open(topic);
 

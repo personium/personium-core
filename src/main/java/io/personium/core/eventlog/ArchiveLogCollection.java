@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.PersoniumCoreException;
-import io.personium.core.event.EventUtils;
 import io.personium.core.model.Cell;
 
 /**

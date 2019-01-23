@@ -20,48 +20,161 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
 
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
 
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 
 /**
  * Unit Test class for UriUtils.
  */
 @Category({ Unit.class })
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ PersoniumUnitConfig.class, UriUtils.class })
 public class UriUtilsTest {
+
+    /**
+     * Test convertSchemeFromLocalUnitToHttp().
+     * normal.
+     * path base
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void convertSchemeFromLocalUnitToHttp_Normal_pathBase() throws Exception {
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.doReturn(true)
+                    .when(PersoniumUnitConfig.class, "isPathBasedCellUrlEnabled");
+        PowerMockito.spy(UriUtils.class);
+        PowerMockito.doReturn("http://cell.host.domain/")
+                    .when(UriUtils.class, "convertPathBaseToFqdnBase", "http://host.domain/cell/");
+
+        assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("http://host.domain/",
+                                                             "personium-localunit:/cell/"),
+                   is("http://host.domain/cell/"));
+        assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("https://host.domain/",
+                                                             "personium-localunit:/cell/"),
+                   is("https://host.domain/cell/"));
+        assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("https://host.domain/",
+                                                             "personium-localunit:/cell/#account"),
+                   is("https://host.domain/cell/#account"));
+        assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("https://host.domain/",
+                                                             "personium-localunit:/cell/box"),
+                   is("https://host.domain/cell/box"));
+        assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("https://host.domain/",
+                                                             "personium-localunit:/cell/box/col/ent?$inlinecount=allpages"),
+                   is("https://host.domain/cell/box/col/ent?$inlinecount=allpages"));
+    }
+
+    /**
+     * Test convertSchemeFromLocalUnitToHttp().
+     * normal.
+     * fqdn base
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void convertSchemeFromLocalUnitToHttp_Normal_fqdnBase() throws Exception {
+        PowerMockito.spy(PersoniumUnitConfig.class);
+        PowerMockito.doReturn(false)
+                    .when(PersoniumUnitConfig.class, "isPathBasedCellUrlEnabled");
+        PowerMockito.spy(UriUtils.class);
+        PowerMockito.doReturn("http://cell.host.domain/")
+                    .when(UriUtils.class, "convertPathBaseToFqdnBase", "http://host.domain/cell/");
+        PowerMockito.doReturn("https://cell.host.domain/")
+                    .when(UriUtils.class, "convertPathBaseToFqdnBase", "https://host.domain/cell/");
+
+        assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("http://host.domain/",
+                                                             "personium-localunit:/cell/"),
+                   is("http://cell.host.domain/"));
+        assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("https://host.domain/",
+                                                             "personium-localunit:/cell/"),
+                   is("https://cell.host.domain/"));
+        assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("https://host.domain/",
+                                                             "personium-localunit:/cell/#account"),
+                   is("https://cell.host.domain/#account"));
+        assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("https://host.domain/",
+                                                             "personium-localunit:/cell/box"),
+                   is("https://cell.host.domain/box"));
+        assertThat(UriUtils.convertSchemeFromLocalUnitToHttp("https://host.domain/",
+                                                             "personium-localunit:/cell/box/col/ent?$inlinecount=allpages"),
+                   is("https://cell.host.domain/box/col/ent?$inlinecount=allpages"));
+    }
 
     /**
      * Test convertSchemeFromHttpToLocalUnit().
      * normal.
      * url starts with uniturl.
+     * @throws Exception exception occurred in some errors
      */
     @Test
-    public void convertSchemeFromHttpToLocalUnit_Normal_url_starts_with_uniturl() {
-        String actual = UriUtils.convertSchemeFromHttpToLocalUnit("http://uniturl/", "http://uniturl/cell");
-        assertThat(actual, is("personium-localunit:/cell"));
+    public void convertSchemeFromHttpToLocalUnit_Normal_url_starts_with_uniturl() throws Exception {
+        PowerMockito.spy(UriUtils.class);
+        PowerMockito.doReturn("http://host/host/cell/")
+                    .when(UriUtils.class, "convertFqdnBaseToPathBase", "http://host/cell/");
+        String actual = UriUtils.convertSchemeFromHttpToLocalUnit("http://host/",
+                                                                  "http://host/cell/");
+        assertThat(actual, is("personium-localunit:/cell/"));
+    }
+
+    /**
+     * Test convertSchemeFromHttpToLocalUnit().
+     * normal.
+     * url is fqdn base.
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void convertSchemeFromHttpToLocalUnit_Normal_url_is_fqdn_base() throws Exception {
+        PowerMockito.spy(UriUtils.class);
+        PowerMockito.doReturn("http://host.domain/cell/")
+                    .when(UriUtils.class, "convertFqdnBaseToPathBase", "http://cell.host.domain/");
+        String actual = UriUtils.convertSchemeFromHttpToLocalUnit("http://host.domain/",
+                                                                  "http://cell.host.domain/");
+        assertThat(actual, is("personium-localunit:/cell/"));
     }
 
     /**
      * Test convertSchemeFromHttpToLocalUnit().
      * normal.
      * url not starts with uniturl.
+     * @throws Exception exception occurred in some errors
      */
     @Test
-    public void convertSchemeFromHttpToLocalUnit_Normal_url_not_starts_with_uniturl() {
-        String actual = UriUtils.convertSchemeFromHttpToLocalUnit("http://uniturl/", "http://otheruniturl/cell");
-        assertThat(actual, is("http://otheruniturl/cell"));
+    public void convertSchemeFromHttpToLocalUnit_Normal_url_not_starts_with_uniturl() throws Exception {
+        PowerMockito.spy(UriUtils.class);
+        PowerMockito.doReturn("http://otherdomain/otherhost/cell/")
+                    .when(UriUtils.class, "convertFqdnBaseToPathBase", "http://otherhost.otherdomain/cell/");
+        String actual = UriUtils.convertSchemeFromHttpToLocalUnit("http://host.domain/",
+                                                                  "http://otherhost.otherdomain/cell/");
+        assertThat(actual, is("http://otherhost.otherdomain/cell/"));
     }
 
     /**
      * Test convertSchemeFromHttpToLocalUnit().
      * normal.
      * url is null.
+     * @throws Exception exception occurred in some errors
      */
     @Test
-    public void convertSchemeFromHttpToLocalUnit_Normal_url_is_null() {
-        String actual = UriUtils.convertSchemeFromHttpToLocalUnit("http://uniturl/", null);
+    public void convertSchemeFromHttpToLocalUnit_Normal_url_is_null() throws Exception {
+        String actual = UriUtils.convertSchemeFromHttpToLocalUnit("http://host.domain/", null);
         assertNull(actual);
+    }
+
+    /**
+     * Test convertSchemeFromHttpToLocalUnit().
+     * normal.
+     * url is invalid.
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void convertSchemeFromHttpToLocalUnit_Normal_url_is_invalid() throws Exception {
+        String actual = UriUtils.convertSchemeFromHttpToLocalUnit("http://host.domain/", "hoge");
+        assertThat(actual, is("hoge"));
     }
 
     /**
@@ -83,7 +196,7 @@ public class UriUtilsTest {
     @Test
     public void convertSchemeFromLocalBoxToLocalCell_Noraml_boxName_is_null() {
         String actual = UriUtils.convertSchemeFromLocalBoxToLocalCell("personium-localbox:/col", null);
-        assertNull(actual);
+        assertThat(actual, is("personium-localbox:/col"));
     }
 
     /**
@@ -94,7 +207,7 @@ public class UriUtilsTest {
     @Test
     public void convertSchemeFromLocalBoxToLocalCell_Noraml_url_not_starts_with_localbox() {
         String actual = UriUtils.convertSchemeFromLocalBoxToLocalCell("personium-localunit:/cell", "box");
-        assertNull(actual);
+        assertThat(actual, is("personium-localunit:/cell"));
     }
 
     /**
@@ -106,6 +219,74 @@ public class UriUtilsTest {
     public void convertSchemeFromLocalBoxToLocalCell_Noraml_url_starts_with_localcell() {
         String actual = UriUtils.convertSchemeFromLocalBoxToLocalCell("personium-localcell:/cell/box", "box");
         assertThat(actual, is("personium-localcell:/cell/box"));
+    }
+
+    /**
+     * Test convertFqdnBaseToPathBase().
+     * normal.
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void convertFqdnBaseToPathBase_Noraml() throws Exception {
+        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/"),
+                   is("https://host.domain/cell/"));
+        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/box/col"),
+                   is("https://host.domain/cell/box/col"));
+        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/box/col/"),
+                   is("https://host.domain/cell/box/col/"));
+        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/#account"),
+                   is("https://host.domain/cell/#account"));
+        assertThat(UriUtils.convertFqdnBaseToPathBase("https://cell.host.domain/box/col/ent?$inlinecount=allpages"),
+                   is("https://host.domain/cell/box/col/ent?$inlinecount=allpages"));
+        assertThat(UriUtils.convertFqdnBaseToPathBase("https://host.domain/cell/"),
+                   is("https://domain/host/cell/"));
+        assertThat(UriUtils.convertFqdnBaseToPathBase("https://host/cell/"),
+                   is("https://host/host/cell/"));
+        assertThat(UriUtils.convertFqdnBaseToPathBase("hoge"),
+                   is("hoge"));
+    }
+
+    /**
+     * Test convertFqdnBaseToPathBase().
+     * error.
+     * @throws Exception exception occurred in some errors
+     */
+    @Test(expected = NullPointerException.class)
+    public void convertFqdnBaseToPathBase_Error_null() throws Exception {
+        UriUtils.convertFqdnBaseToPathBase(null);
+    }
+
+    /**
+     * Test convertPathBaseToFqdnBase().
+     * normal.
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void convertPathBaseToFqdnBase_Noraml() throws Exception {
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/cell/"),
+                   is("https://cell.host.domain/"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/cell/box/col"),
+                   is("https://cell.host.domain/box/col"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/cell/box/col/"),
+                   is("https://cell.host.domain/box/col/"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host.domain/cell/#account"),
+                   is("https://cell.host.domain/#account"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://cell.host.domain/box"),
+                   is("https://box.cell.host.domain"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("https://host/cell/"),
+                   is("https://cell.host/"));
+        assertThat(UriUtils.convertPathBaseToFqdnBase("hoge"),
+                   is("hoge"));
+    }
+
+    /**
+     * Test convertPathBaseToFqdnBase().
+     * error.
+     * @throws Exception exception occurred in some errors
+     */
+    @Test(expected = NullPointerException.class)
+    public void convertPathBaseToFqdnBase_Error_null() throws Exception {
+        UriUtils.convertPathBaseToFqdnBase(null);
     }
 
 }

@@ -550,74 +550,12 @@ public final class ODataUtils {
     }
 
     /**
-     * Check the value of property item with LocalBox URL.
-     * @param str Input string
-     * @param pFormat regular expression format
-     * @return true:OK false:NG
-     */
-    public static boolean validateLocalBoxUrl(String str, String pFormat) {
-        URI uri;
-        try {
-            uri = new URI(str);
-            String scheme = uri.getScheme();
-            // Scheme check
-            if (!isValidLocalBoxUrlScheme(scheme)) {
-                return false;
-            }
-            // String length check
-            if (uri.toString().length() > URI_MAX_LENGTH) {
-                return false;
-            }
-        } catch (URISyntaxException e) {
-            return false;
-        }
-        String path = getPath(uri);
-        if (path == null) {
-            return false;
-        }
-        log.debug("path is " + path);
-        // Regular expression check
-        return ODataUtils.validateRegEx(path, pFormat);
-    }
-
-    /**
-     * Check the value of property item with LocalCell URL.
-     * @param str Input string
-     * @param pFormat regular expression format
-     * @return true:OK false:NG
-     */
-    public static boolean validateLocalCellUrl(String str, String pFormat) {
-        URI uri;
-        try {
-            uri = new URI(str);
-            String scheme = uri.getScheme();
-            // Scheme check
-            if (!isValidLocalCellUrlScheme(scheme)) {
-                return false;
-            }
-            // String length check
-            if (uri.toString().length() > URI_MAX_LENGTH) {
-                return false;
-            }
-        } catch (URISyntaxException e) {
-            return false;
-        }
-        String path = getPath(uri);
-        if (path == null) {
-            return false;
-        }
-        log.debug("path is " + path);
-        // Regular expression check
-        return ODataUtils.validateRegEx(path, pFormat);
-    }
-
-    /**
      * Check the value of property item with LocalUnit URL.
      * @param str Input string
      * @param pFormat regular expression format
      * @return true:OK false:NG
      */
-    public static boolean validateLocalUnitUrl(String str, String pFormat) {
+    private static boolean validateLocalUnitUrl(String str, String pFormat) {
         URI uri;
         try {
             uri = new URI(str);

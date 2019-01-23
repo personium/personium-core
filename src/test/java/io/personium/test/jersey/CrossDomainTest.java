@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNotNull;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpStatus;
-import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
