@@ -73,6 +73,7 @@ import io.personium.core.rs.box.DavFileResource;
 import io.personium.core.rs.box.NullResource;
 import io.personium.core.rs.box.ODataSvcCollectionResource;
 import io.personium.core.rs.box.PersoniumEngineSvcCollectionResource;
+import io.personium.core.rs.box.StreamCollectionResource;
 import io.personium.core.utils.ResourceUtils;
 
 /**
@@ -134,6 +135,8 @@ public class DavRsCmp {
             return new ODataSvcCollectionResource(this, nextCmp);
         } else if (DavCmp.TYPE_COL_SVC.equals(type)) {
             return new PersoniumEngineSvcCollectionResource(this, nextCmp);
+        } else if (DavCmp.TYPE_COL_STREAM.equals(type)) {
+            return new StreamCollectionResource(this, nextCmp);
         }
 
         return null;
@@ -557,6 +560,17 @@ public class DavRsCmp {
             colRt.setCollection(of.createCollection());
             List<Element> listElement = colRt.getAny();
             QName qname = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, PersoniumCoreUtils.XmlConst.SERVICE,
+                    PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
+            Element element = WebDAVModelHelper.createElement(qname);
+            listElement.add(element);
+            ret.setPropertyOk(colRt);
+
+        } else if (DavCmp.TYPE_COL_STREAM.equals(type)) {
+            // Stream Resource
+            Resourcetype colRt = of.createResourcetype();
+            colRt.setCollection(of.createCollection());
+            List<Element> listElement = colRt.getAny();
+            QName qname = new QName(PersoniumCoreUtils.XmlConst.NS_PERSONIUM, PersoniumCoreUtils.XmlConst.STREAM,
                     PersoniumCoreUtils.XmlConst.NS_PREFIX_PERSONIUM);
             Element element = WebDAVModelHelper.createElement(qname);
             listElement.add(element);

@@ -14,27 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.personium.core.event.impl.kafka;
+package io.personium.core.stream.impl.kafka;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.kafka.common.errors.SerializationException;
-import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.Serializer;
 
 import io.personium.core.event.PersoniumEvent;
 
 /**
- * Deserializer for PersoniumEvent.
+ * Event.
  */
-public class PersoniumEventDeserializer implements Deserializer<PersoniumEvent> {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+public class PersoniumEventSerializer implements Serializer<PersoniumEvent> {
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        objectMapper.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
+        objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+    }
 
     /**
      * Constructor.
      */
-    public PersoniumEventDeserializer() {
+    public PersoniumEventSerializer() {
     }
 
     @Override
@@ -42,19 +49,16 @@ public class PersoniumEventDeserializer implements Deserializer<PersoniumEvent> 
     }
 
     @Override
-    public PersoniumEvent deserialize(String topic, byte[] bytes) {
-        if (bytes == null) {
+    public byte[] serialize(String topic, PersoniumEvent event) {
+        if (event == null) {
             return null;
         }
 
-        PersoniumEvent event;
         try {
-            event = objectMapper.readValue(bytes, PersoniumEvent.class);
+            return objectMapper.writeValueAsBytes(event);
         } catch (Exception e) {
-            throw new SerializationException("Error deserializing to PersoniumEvent message", e);
+            throw new SerializationException("Error serializing PersoniumEvent message", e);
         }
-
-        return event;
     }
 
     @Override

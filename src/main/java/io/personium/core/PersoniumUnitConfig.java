@@ -69,9 +69,6 @@ public class PersoniumUnitConfig {
     /** Port number key for UnitUrl. */
     public static final String UNIT_PORT = KEY_ROOT + "unitPort";
 
-    /** Path key for UnitUrl. */
-    public static final String UNIT_PATH = KEY_ROOT + "unitPath";
-
     /** URL format to access cell (true: path based(default) false: per cell fqdn). */
     public static final String PATH_BASED_CELL_URL_ENABLED = KEY_ROOT + "pathBasedCellUrl.enabled";
 
@@ -370,11 +367,8 @@ public class PersoniumUnitConfig {
         /** message queue implementation to use. */
         public static final String MQ = KEY_ROOT + "eventbus.mq";
 
-        /** ActiveMQ broker url. */
-        public static final String ACTIVEMQ_BROKER_URL = KEY_ROOT + "eventbus.activemq.brokerUrl";
-
-        /** Kafka servers. */
-        public static final String KAFKA_SERVERS = KEY_ROOT + "eventbus.kafka.bootstrap.servers";
+        /** broker. */
+        public static final String BROKER = KEY_ROOT + "eventbus.broker";
 
         /** queue name of EventBus. */
         public static final String QUEUE = KEY_ROOT + "eventbus.queue";
@@ -387,6 +381,22 @@ public class PersoniumUnitConfig {
 
         /** Number of threads to process event. */
         public static final String EVENTPROC_THREAD_NUM = KEY_ROOT + "eventbus.eventProcessing.thread.num";
+    }
+
+    /**
+     * Stream configurations.
+     */
+    public static final class Stream {
+        /** Message queue implementation to use. */
+        public static final String MQ = KEY_ROOT + "stream.mq";
+        /** Broker. */
+        public static final String BROKER = KEY_ROOT + "stream.broker";
+        /** username to connect to broker. */
+        public static final String USERNAME = KEY_ROOT + "stream.username";
+        /** password to connect to broker. */
+        public static final String PASSWORD = KEY_ROOT + "stream.password";
+        /** data retention period. */
+        public static final String EXPIRESIN = KEY_ROOT + "stream.expiresIn";
     }
 
     /**
@@ -676,14 +686,6 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Get path for Unit.
-     * @return path
-     */
-    public static String getUnitPath() {
-        return get(UNIT_PATH);
-    }
-
-    /**
      * URL format to access cell.
      * @return true: path based. false: per cell fqdn.
      */
@@ -703,22 +705,12 @@ public class PersoniumUnitConfig {
      * @return base url
      */
     public static String getBaseUrl() {
-        String path = getUnitPath();
-        if (path != null) {
-            if (path.endsWith("/")) {
-                path = path.substring(0, path.length() - 1);
-            }
-        } else {
-            path = "";
-        }
-
-        UriBuilder uriBuilder = UriBuilder
-                .fromPath(path)
-                .scheme(getUnitScheme())
-                .host(PersoniumCoreUtils.getFQDN())
-                .port(getUnitPort());
-
-        return uriBuilder.build().toString() + "/";
+         return UriBuilder.fromPath("/")
+                          .scheme(getUnitScheme())
+                          .host(PersoniumCoreUtils.getFQDN())
+                          .port(getUnitPort())
+                          .build()
+                          .toString();
     }
 
     /**
@@ -1210,19 +1202,11 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * Get broker url of setting for activemq.
+     * Get broker for EventBus.
      * @return broker url
      */
-    public static String getEventBusActiveMQBrokerUrl() {
-        return get(EventBus.ACTIVEMQ_BROKER_URL);
-    }
-
-    /**
-     * Get servers of setting for kafka.
-     * @return comma-separated servers
-     */
-    public static String getEventBusKafkaServers() {
-        return get(EventBus.KAFKA_SERVERS);
+    public static String getEventBusBroker() {
+        return get(EventBus.BROKER);
     }
 
     /**
@@ -1258,6 +1242,46 @@ public class PersoniumUnitConfig {
     }
 
     /**
+     * Get message queue implementation for Stream.
+     * @return message queue string
+     */
+    public static String getStreamMQ() {
+        return get(Stream.MQ);
+    }
+
+    /**
+     * Get broker for Stream.
+     * @return broker
+     */
+    public static String getStreamBroker() {
+        return get(Stream.BROKER);
+    }
+
+    /**
+     * Get username for Stream.
+     * @return username
+     */
+    public static String getStreamUsername() {
+        return get(Stream.USERNAME);
+    }
+
+    /**
+     * Get password for Stream.
+     * @return password
+     */
+    public static String getStreamPassword() {
+        return get(Stream.PASSWORD);
+    }
+
+    /**
+     * Get expiresIn for Stream.
+     * @return expiresIn
+     */
+    public static int getStreamExpiresIn() {
+        return Integer.parseInt(get(Stream.EXPIRESIN));
+    }
+
+    /**
      * Get thread number of timer event.
      * @return thread num
      */
@@ -1290,6 +1314,7 @@ public class PersoniumUnitConfig {
     }
 
     /**
+>>>>>>> develop
      * Reload the configuration information.
      */
     public static void reload() {

@@ -1,6 +1,6 @@
 /**
  * personium.io
- * Copyright 2017 FUJITSU LIMITED
+ * Copyright 2017-2018 FUJITSU LIMITED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,30 +16,39 @@
  */
 package io.personium.core.rs.cell;
 
+import java.util.Map;
+
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Response;
 
+import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.CellPrivilege;
 import io.personium.core.model.Cell;
-import io.personium.core.model.DavRsCmp;
-
+import io.personium.core.model.CellRsCmp;
 import io.personium.core.rule.RuleManager;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * JAX-RS Resource for Rule Endpoint.
  */
 public class RuleResource {
+
     Cell cell;
-    DavRsCmp davRsCmp;
+    AccessContext accessContext;
+    CellRsCmp cellRsCmp;
 
     /**
      * constructor.
      * @param cell Cell
-     * @param davRsCmp DavRsCmp
+     * @param accessContext AccessContext
+     * @param cellRsCmp CellRsCmp
      */
-    public RuleResource(final Cell cell, final DavRsCmp davRsCmp) {
+    public RuleResource(final Cell cell, final AccessContext accessContext, final CellRsCmp cellRsCmp) {
         this.cell = cell;
-        this.davRsCmp = davRsCmp;
+        this.accessContext = accessContext;
+        this.cellRsCmp = cellRsCmp;
     }
 
     /**
@@ -49,12 +58,24 @@ public class RuleResource {
     @GET
     public final Response list() {
         // access control
-        this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), CellPrivilege.RULE_READ);
+        this.cellRsCmp.checkAccessContext(this.accessContext, CellPrivilege.RULE_READ);
 
         RuleManager rman = RuleManager.getInstance();
-        String ruleList = rman.getRules(this.cell);
+        Map<String, Object> map = rman.getRules(this.cell);
 
-        return Response.ok(ruleList).build();
+        return ResourceUtils.responseBuilderJson(map).build();
+    }
+
+    /**
+     * OPTIONS method.
+     * @return JAX-RS Response
+     */
+    @OPTIONS
+    public Response options() {
+        // Access Control
+        this.cellRsCmp.checkAccessContext(this.accessContext, CellPrivilege.RULE_READ);
+        return ResourceUtils.responseBuilderForOptions(HttpMethod.GET)
+                            .build();
     }
 
 }

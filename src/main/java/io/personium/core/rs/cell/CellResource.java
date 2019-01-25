@@ -371,7 +371,7 @@ public class CellResource {
      */
     @Path("__rule")
     public RuleResource rule() {
-        return new RuleResource(this.cell, this.cellRsCmp);
+        return new RuleResource(this.cell, this.accessContext, this.cellRsCmp);
     }
 
     /**

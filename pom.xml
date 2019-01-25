@@ -22,10 +22,10 @@
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.25</slf4j.version>
         <httpclient.version>4.5.5</httpclient.version>
-        <jackson.version>2.9.5</jackson.version>
+        <jackson.version>2.9.8</jackson.version>
         <jacoco.include.package>io.personium.*</jacoco.include.package>
         <activemq.version>5.15.6</activemq.version>
-        <kafka.version>1.1.0</kafka.version>
+        <kafka.version>1.1.1</kafka.version>
     </properties>
     <dependencies>
         <!-- personium-lib. -->
@@ -152,6 +152,11 @@
             <version>${activemq.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>2.1.10.RELEASE</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>${kafka.version}</version>
@@ -231,14 +236,8 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
-            <version>2.1.5.RELEASE</version>
+            <version>2.1.10.RELEASE</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.kafka</groupId>
-                    <artifactId>kafka-clients</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>

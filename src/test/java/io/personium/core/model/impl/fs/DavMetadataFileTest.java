@@ -47,6 +47,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 
 /**
@@ -68,12 +69,21 @@ public class DavMetadataFileTest {
     /** Test dir. */
     private static File testDir;
 
+    /** UnitTest path. */
+    private static String unitTestPath;
+
     /**
      * BeforeClass.
      */
     @BeforeClass
     public static void beforeClass() {
-        testDir = new File(TEST_DIR_PATH);
+        unitTestPath = PersoniumUnitConfig.get("io.personium.core.test.unitTest.root");
+        if (unitTestPath != null) {
+            unitTestPath += "/" + CLASS_NAME + "/";
+        } else {
+            unitTestPath = TEST_DIR_PATH;
+        }
+        testDir = new File(unitTestPath);
         testDir.mkdirs();
         testDir.setWritable(true);
     }
@@ -93,7 +103,7 @@ public class DavMetadataFileTest {
      */
     @Test
     public void load_Normal() throws Exception {
-        String metaPath = TEST_DIR_PATH + "/.pmeta";
+        String metaPath = unitTestPath + "/.pmeta";
         File metaFile = new File(metaPath);
 
         // --------------------
@@ -131,7 +141,7 @@ public class DavMetadataFileTest {
      */
     @Test
     public void load_Normal_retry_ok() throws Exception {
-        String metaPath = TEST_DIR_PATH + "/.pmeta";
+        String metaPath = unitTestPath + "/.pmeta";
         File metaFile = new File(metaPath);
 
         // --------------------
@@ -175,7 +185,7 @@ public class DavMetadataFileTest {
      */
     @Test
     public void load_Error_retry_ng() throws Exception {
-        String metaPath = TEST_DIR_PATH + "/.pmeta";
+        String metaPath = unitTestPath + "/.pmeta";
         File metaFile = new File(metaPath);
 
         // --------------------
@@ -232,7 +242,7 @@ public class DavMetadataFileTest {
     @Ignore
     // TODO Thread class mocking can not be done successfully pending.
     public void load_Error_retry_sleep_error() throws Exception {
-        String metaPath = TEST_DIR_PATH + "/.pmeta";
+        String metaPath = unitTestPath + "/.pmeta";
         File metaFile = new File(metaPath);
 
         // --------------------
@@ -283,7 +293,7 @@ public class DavMetadataFileTest {
     @SuppressWarnings("unchecked")
     @Test
     public void doLoad_Normal() throws Exception {
-        String metaPath = TEST_DIR_PATH + "/.pmeta";
+        String metaPath = unitTestPath + "/.pmeta";
         File metaFile = new File(metaPath);
 
         try {
@@ -376,7 +386,7 @@ public class DavMetadataFileTest {
      */
     @Test
     public void doLoad_Error_IOException() throws Exception {
-        String metaPath = TEST_DIR_PATH + "/.pmeta";
+        String metaPath = unitTestPath + "/.pmeta";
         File metaFile = new File(metaPath);
 
         try {
@@ -430,7 +440,7 @@ public class DavMetadataFileTest {
      */
     @Test
     public void doLoad_Error_ParseException() throws Exception {
-        String metaPath = TEST_DIR_PATH + "/.pmeta";
+        String metaPath = unitTestPath + "/.pmeta";
         File metaFile = new File(metaPath);
         String pmetaStr = "}{1234567890!#$%&()";
 

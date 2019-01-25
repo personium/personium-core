@@ -113,13 +113,21 @@ public class DavCmpFsImplTest {
     private DavCmpFsImpl davCmpFsImpl;
     /** Test dir. */
     private static File testDir;
+    /** UnitTest path. */
+    private static String unitTestPath;
 
     /**
      * BeforeClass.
      */
     @BeforeClass
     public static void beforeClass() {
-        testDir = new File(TEST_DIR_PATH);
+        unitTestPath = PersoniumUnitConfig.get("io.personium.core.test.unitTest.root");
+        if (unitTestPath != null) {
+            unitTestPath += "/" + CLASS_NAME + "/";
+        } else {
+            unitTestPath = TEST_DIR_PATH;
+        }
+        testDir = new File(unitTestPath);
         testDir.mkdirs();
         testDir.setWritable(true);
     }
@@ -140,7 +148,7 @@ public class DavCmpFsImplTest {
      */
     @Test
     public void doPutForCreate_Normal_encrypt_false() throws Exception {
-        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        String contentPath = unitTestPath + CONTENT_FILE;
         File contentFile = new File(contentPath);
         InputStream inputStream = null;
         FileInputStream contentStream = null;
@@ -162,7 +170,7 @@ public class DavCmpFsImplTest {
 
             doReturn(CELL_ID).when(davCmpFsImpl).getCellId();
 
-            Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
+            Whitebox.setInternalState(davCmpFsImpl, "fsPath", unitTestPath);
 
             PowerMockito.doReturn(contentPath).when(davCmpFsImpl, "getContentFilePath");
 
@@ -232,7 +240,7 @@ public class DavCmpFsImplTest {
      */
     @Test
     public void doPutForCreate_Normal_encrypt_true() throws Exception {
-        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        String contentPath = unitTestPath + CONTENT_FILE;
         File contentFile = new File(contentPath);
         InputStream inputStream = null;
         FileInputStream contentStream = null;
@@ -255,7 +263,7 @@ public class DavCmpFsImplTest {
             doReturn(CELL_ID).when(davCmpFsImpl).getCellId();
             DataCryptor.setKeyString(AES_KEY);
 
-            Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
+            Whitebox.setInternalState(davCmpFsImpl, "fsPath", unitTestPath);
 
             PowerMockito.doReturn(contentPath).when(davCmpFsImpl, "getContentFilePath");
 
@@ -326,8 +334,8 @@ public class DavCmpFsImplTest {
      */
     @Test
     public void doPutForUpdate_Normal_encrypt_false() throws Exception {
-        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
-        String tempContentPath = TEST_DIR_PATH + TEMP_CONTENT_FILE;
+        String contentPath = unitTestPath + CONTENT_FILE;
+        String tempContentPath = unitTestPath + TEMP_CONTENT_FILE;
         InputStream inputStream = null;
         FileInputStream contentStream = null;
         File contentFile = new File(contentPath);
@@ -426,8 +434,8 @@ public class DavCmpFsImplTest {
      */
     @Test
     public void doPutForUpdate_Normal_encrypt_true() throws Exception {
-        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
-        String tempContentPath = TEST_DIR_PATH + TEMP_CONTENT_FILE;
+        String contentPath = unitTestPath + CONTENT_FILE;
+        String tempContentPath = unitTestPath + TEMP_CONTENT_FILE;
         InputStream inputStream = null;
         FileInputStream contentStream = null;
         File contentFile = new File(contentPath);
@@ -527,8 +535,8 @@ public class DavCmpFsImplTest {
      */
     @Test
     public void doPutForUpdate_Error_Not_match_ETag() throws Exception {
-        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
-        String tempContentPath = TEST_DIR_PATH + TEMP_CONTENT_FILE;
+        String contentPath = unitTestPath + CONTENT_FILE;
+        String tempContentPath = unitTestPath + TEMP_CONTENT_FILE;
         File contentFile = new File(contentPath);
         File tempContentFile = new File(tempContentPath);
         try {
@@ -587,7 +595,7 @@ public class DavCmpFsImplTest {
      */
     @Test
     public void get_Normal_encrypt_false() throws Exception {
-        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        String contentPath = unitTestPath + CONTENT_FILE;
         InputStream inputStream = null;
         File contentFile = new File(contentPath);
         try {
@@ -603,7 +611,7 @@ public class DavCmpFsImplTest {
             // --------------------
             davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
 
-            Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
+            Whitebox.setInternalState(davCmpFsImpl, "fsPath", unitTestPath);
 
             doReturn("text/plain").when(davCmpFsImpl).getContentType();
             doReturn(98L).when(davCmpFsImpl).getContentLength();
@@ -651,7 +659,7 @@ public class DavCmpFsImplTest {
      */
     @Test
     public void get_Normal_encrypt_true() throws Exception {
-        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        String contentPath = unitTestPath + CONTENT_FILE;
         InputStream inputStream = null;
         File contentFile = new File(contentPath);
         try {
@@ -667,7 +675,7 @@ public class DavCmpFsImplTest {
             // --------------------
             davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
 
-            Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
+            Whitebox.setInternalState(davCmpFsImpl, "fsPath", unitTestPath);
 
             doReturn("text/plain").when(davCmpFsImpl).getContentType();
             doReturn(98L).when(davCmpFsImpl).getContentLength();
@@ -717,7 +725,7 @@ public class DavCmpFsImplTest {
      */
     @Test
     public void get_Normal_range_encrypt_false() throws Exception {
-        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        String contentPath = unitTestPath + CONTENT_FILE;
         InputStream inputStream = null;
         File contentFile = new File(contentPath);
         try {
@@ -733,7 +741,7 @@ public class DavCmpFsImplTest {
             // --------------------
             davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
 
-            Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
+            Whitebox.setInternalState(davCmpFsImpl, "fsPath", unitTestPath);
 
             doReturn("text/plain").when(davCmpFsImpl).getContentType();
             doReturn(98L).when(davCmpFsImpl).getContentLength();
@@ -784,7 +792,7 @@ public class DavCmpFsImplTest {
      */
     @Test
     public void get_Normal_range_encrypt_true() throws Exception {
-        String contentPath = TEST_DIR_PATH + CONTENT_FILE;
+        String contentPath = unitTestPath + CONTENT_FILE;
         InputStream inputStream = null;
         File contentFile = new File(contentPath);
         try {
@@ -800,7 +808,7 @@ public class DavCmpFsImplTest {
             // --------------------
             davCmpFsImpl = PowerMockito.spy(DavCmpFsImpl.create("", null));
 
-            Whitebox.setInternalState(davCmpFsImpl, "fsPath", TEST_DIR_PATH);
+            Whitebox.setInternalState(davCmpFsImpl, "fsPath", unitTestPath);
 
             doReturn("text/plain").when(davCmpFsImpl).getContentType();
             doReturn(98L).when(davCmpFsImpl).getContentLength();
@@ -850,8 +858,8 @@ public class DavCmpFsImplTest {
      */
     @Test
     public void move_Normal_Dest_DavNode_not_exists() throws Exception {
-        String sourcePath = TEST_DIR_PATH + SOURCE_FILE;
-        String destPath = TEST_DIR_PATH + DEST_FILE;
+        String sourcePath = unitTestPath + SOURCE_FILE;
+        String destPath = unitTestPath + DEST_FILE;
         File sourceFile = new File(sourcePath);
         File destFile = new File(destPath);
         try {
@@ -926,8 +934,8 @@ public class DavCmpFsImplTest {
      */
     @Test
     public void move_Error_Not_match_ETag() throws Exception {
-        String sourcePath = TEST_DIR_PATH + SOURCE_FILE;
-        String destPath = TEST_DIR_PATH + DEST_FILE;
+        String sourcePath = unitTestPath + SOURCE_FILE;
+        String destPath = unitTestPath + DEST_FILE;
         File sourceFile = new File(sourcePath);
         File destFile = new File(destPath);
         try {

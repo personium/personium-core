@@ -644,17 +644,13 @@ public class WebSocketService {
     @SuppressWarnings("unchecked")
     private static JSONObject toJSON(PersoniumEvent event) {
         JSONObject json = new JSONObject();
-        json.put("RequestKey", event.getRequestKey());
+        json.put("RequestKey", event.getRequestKey().orElse(null));
         json.put("External", event.getExternal());
-        String schema = null;
-        if (event.getSchema() != null && !event.getSchema().equals("")) {
-            schema = event.getSchema();
-        }
-        json.put("Schema", schema);
-        json.put("Subject", event.getSubject());
-        json.put("Type", event.getType());
-        json.put("Object", event.getObject());
-        json.put("Info", event.getInfo());
+        json.put("Schema", event.getSchema().filter(s -> !s.equals("")).orElse(null));
+        json.put("Subject", event.getSubject().orElse(null));
+        json.put("Type", event.getType().orElse(null));
+        json.put("Object", event.getObject().orElse(null));
+        json.put("Info", event.getInfo().orElse(null));
         json.put("Timestamp", event.getTime());
         return json;
     }
@@ -682,11 +678,11 @@ public class WebSocketService {
                     continue;
                 }
                 if (rule.type != null
-                        && event.getType() != null
-                        && (event.getType().startsWith(rule.type) || rule.type.equals("*"))
-                        && rule.object != null
-                        && event.getObject() != null
-                        && (event.getObject().startsWith(rule.object) || rule.object.equals("*"))) {
+                    && event.getType().map(type -> type.startsWith(rule.type) || rule.type.equals("*"))
+                                      .orElse(false)
+                    && rule.object != null
+                    && event.getObject().map(object -> object.startsWith(rule.object) || rule.object.equals("*"))
+                                        .orElse(false)) {
                     result = true;
                 }
             }

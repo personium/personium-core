@@ -14,7 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.personium.core.stream;
+
+import java.util.List;
+
 /**
- * Classes for implementations by kafka.
+ * Receive data from queue.
  */
-package io.personium.core.event.impl.kafka;
+public interface DataReceiver {
+
+    /**
+     * Open connection.
+     * @param queue queue name
+     */
+    void open(final String queue);
+
+    /**
+     * Receive data from queue.
+     * @return list of data
+     */
+    List<String> receiveData();
+
+    /**
+     * Close connection.
+     */
+    void close();
+
+}

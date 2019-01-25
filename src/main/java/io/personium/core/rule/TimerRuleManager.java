@@ -28,9 +28,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import java.util.stream.Collectors;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -361,40 +359,46 @@ class TimerRuleManager {
     /**
      * Get timer list managed on TimerRuleManager.
      * @param cell target cell object
-     * @return JSONArray of timer list managed on  TimerRuleManager
+     * @return timer list managed on TimerRuleManager
      */
-    @SuppressWarnings("unchecked")
-    JSONArray getTimerList(Cell cell) {
+    List<Map<String, Object>> getTimerList(Cell cell) {
         String cellId = cell.getId();
         if (cellId == null) {
             return null;
         }
-        JSONArray jsonTimerArray = new JSONArray();
 
         synchronized (lockObj) {
-            for (TimerInfo ti : timerMap.values()) {
-                for (Iterator<Map.Entry<String, List<TimerRuleInfo>>> iruleMap = ti.ruleMap.entrySet().iterator();
-                        iruleMap.hasNext();) {
-                    Map.Entry<String, List<TimerRuleInfo>> entry = iruleMap.next();
-                    if (cellId.equals(entry.getKey())) {
-                        for (Iterator<TimerRuleInfo> i = entry.getValue().iterator(); i.hasNext();) {
-                            TimerRuleInfo rule = i.next();
-                            JSONObject json = new JSONObject();
-                            json.put(Rule.P_SUBJECT.getName(), rule.subject);
-                            json.put(Rule.P_OBJECT.getName(), rule.object);
-                            json.put(Rule.P_INFO.getName(), rule.info);
-                            json.put("boxId", rule.boxId);
-                            json.put("count", rule.count);
-                            json.put("interval", ti.interval);
-                            json.put("nextTime", ti.nextTime);
-                            jsonTimerArray.add(json);
-                        }
-                    }
-                }
-            }
-        }
+            List<Map<String, Object>> ret =
+                timerMap.entrySet()
+                        .stream()
+                        .map(tme ->
+                             tme.getValue()
+                                .ruleMap
+                                .entrySet()
+                                .stream()
+                                .filter(rme -> cellId.equals(rme.getKey()))
+                                .map(frme ->
+                                     frme.getValue()
+                                         .stream()
+                                         .map(tri -> {
+                                              Map<String, Object> m = new HashMap<>();
+                                              m.put(Rule.P_SUBJECT.getName(), tri.subject);
+                                              m.put(Rule.P_OBJECT.getName(), tri.object);
+                                              m.put(Rule.P_INFO.getName(), tri.info);
+                                              m.put("boxId", tri.boxId);
+                                              m.put("count", tri.count);
+                                              m.put("interval", tme.getValue().interval);
+                                              m.put("nextTime", tme.getValue().nextTime);
+                                              return m;
+                                          })
+                                         .collect(Collectors.toList()))
+                                .flatMap(list -> list.stream())
+                                .collect(Collectors.toList()))
+                        .flatMap(list -> list.stream())
+                        .collect(Collectors.toList());
 
-        return jsonTimerArray;
+            return ret;
+        }
     }
 
 }

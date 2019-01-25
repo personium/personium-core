@@ -310,6 +310,27 @@ public class MessageODataProducer extends CellCtlODataProducer {
         EdmEntitySet extCellEdmEntitySet = getMetadata().findEdmEntitySet(ExtCell.EDM_TYPE_NAME);
         EntitySetDocHandler extCellDocHandler = retrieveWithKey(extCellEdmEntitySet, extCellKey);
 
+        //TODO Provisional action.
+        // Issue #301 External cells are doubly registered when roles / relations are given in messages.
+        // ExtCell in the same Unit must be converted to "personium-localunit" at the time of registration originally.
+        if (extCellDocHandler == null) {
+            String convertedTargetUrl;
+            if (UriUtils.isLocalUnitUrl(targetUrl)) {
+                convertedTargetUrl = UriUtils.convertSchemeFromLocalUnitToHttp(this.cell.getUnitUrl(), targetUrl);
+            } else {
+                convertedTargetUrl = UriUtils.convertSchemeFromHttpToLocalUnit(this.cell.getUnitUrl(), targetUrl);
+            }
+            Map<String, Object> convertedExtCellKeyMap = new HashMap<>();
+            convertedExtCellKeyMap.put(Common.P_URL.getName(), convertedTargetUrl);
+            OEntityKey convertedExtCellKey = OEntityKey.create(convertedExtCellKeyMap);
+            EntitySetDocHandler convertedExtCellDocHandler = retrieveWithKey(extCellEdmEntitySet, convertedExtCellKey);
+            if (convertedExtCellDocHandler != null) {
+                extCellKeyMap = convertedExtCellKeyMap;
+                extCellKey = convertedExtCellKey;
+                extCellDocHandler = convertedExtCellDocHandler;
+            }
+        }
+
         OEntityId entityId = OEntityIds.create(Relation.EDM_TYPE_NAME, entityKey);
         OEntityId extCellEntityId = OEntityIds.create(ExtCell.EDM_TYPE_NAME, extCellKey);
 
@@ -443,6 +464,27 @@ public class MessageODataProducer extends CellCtlODataProducer {
         EdmEntitySet extCellEdmEntitySet = getMetadata().findEdmEntitySet(ExtCell.EDM_TYPE_NAME);
         EntitySetDocHandler extCellDocHandler = retrieveWithKey(extCellEdmEntitySet, extCellKey);
 
+        //TODO Provisional action.
+        // Issue #301 External cells are doubly registered when roles / relations are given in messages.
+        // ExtCell in the same Unit must be converted to "personium-localunit" at the time of registration originally.
+        if (extCellDocHandler == null) {
+            String convertedTargetUrl;
+            if (UriUtils.isLocalUnitUrl(targetUrl)) {
+                convertedTargetUrl = UriUtils.convertSchemeFromLocalUnitToHttp(this.cell.getUnitUrl(), targetUrl);
+            } else {
+                convertedTargetUrl = UriUtils.convertSchemeFromHttpToLocalUnit(this.cell.getUnitUrl(), targetUrl);
+            }
+            Map<String, Object> convertedExtCellKeyMap = new HashMap<>();
+            convertedExtCellKeyMap.put(Common.P_URL.getName(), convertedTargetUrl);
+            OEntityKey convertedExtCellKey = OEntityKey.create(convertedExtCellKeyMap);
+            EntitySetDocHandler convertedExtCellDocHandler = retrieveWithKey(extCellEdmEntitySet, convertedExtCellKey);
+            if (convertedExtCellDocHandler != null) {
+                extCellKeyMap = convertedExtCellKeyMap;
+                extCellKey = convertedExtCellKey;
+                extCellDocHandler = convertedExtCellDocHandler;
+            }
+        }
+
         OEntityId entityId = OEntityIds.create(Role.EDM_TYPE_NAME, entityKey);
         OEntityId extCellEntityId = OEntityIds.create(ExtCell.EDM_TYPE_NAME, extCellKey);
 
@@ -562,7 +604,7 @@ public class MessageODataProducer extends CellCtlODataProducer {
             rule.put(Rule.P_OBJECT.getName(), requestObject.get(Rule.P_OBJECT.getName()));
             rule.put(Rule.P_INFO.getName(), requestObject.get(Rule.P_INFO.getName()));
             rule.put(Rule.P_ACTION.getName(), requestObject.get(Rule.P_ACTION.getName()));
-            rule.put(Rule.P_SERVICE.getName(), requestObject.get(RequestObject.P_TARGET_URL.getName()));
+            rule.put(Rule.P_TARGETURL.getName(), requestObject.get(RequestObject.P_TARGET_URL.getName()));
 
             // Rule settings
             //   External: false

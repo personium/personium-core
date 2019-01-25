@@ -66,14 +66,14 @@ class EventReceiveRunner implements Runnable {
                             rman.judge(event);
 
                             // publish event
-                            EventFactory.getEventPublisher().send(event);
+                            EventFactory.getEventPublisher().publish(event);
                         }
                     }
                 } catch (Exception e) {
                     log.error("Exception occurred: " + e.getMessage(), e);
                 }
             }
-            receiver.unsubscribe();
+            receiver.close();
         } catch (Exception e) {
             log.error("EventReceiver failed: " + e.getMessage(), e);
         }

@@ -990,7 +990,7 @@ public class ODataReceivedMessageResourceTest {
         // Expected result
         // --------------------
         PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                oDataReceivedMessageResource.concatRequestObjectPropertyName(Rule.P_SERVICE.getName()));
+                oDataReceivedMessageResource.concatRequestObjectPropertyName(Rule.P_TARGETURL.getName()));
 
         // --------------------
         // Run method
@@ -1061,7 +1061,7 @@ public class ODataReceivedMessageResourceTest {
         // Expected result
         // --------------------
         PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                oDataReceivedMessageResource.concatRequestObjectPropertyName(Rule.P_SERVICE.getName()));
+                oDataReceivedMessageResource.concatRequestObjectPropertyName(Rule.P_TARGETURL.getName()));
 
         // --------------------
         // Run method
@@ -1133,7 +1133,7 @@ public class ODataReceivedMessageResourceTest {
         // Expected result
         // --------------------
         PersoniumCoreException expected = PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params(
-                oDataReceivedMessageResource.concatRequestObjectPropertyName(Rule.P_SERVICE.getName()));
+                oDataReceivedMessageResource.concatRequestObjectPropertyName(Rule.P_TARGETURL.getName()));
 
         // --------------------
         // Run method
