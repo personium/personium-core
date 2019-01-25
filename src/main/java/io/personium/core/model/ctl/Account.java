@@ -50,12 +50,6 @@ public class Account {
             .setNullable(false).setAnnotations(Common.P_FORMAT_NAME_WITH_SIGN);
 
     /**
-     * LastAuthenticated property definition body.
-     */
-    public static final EdmProperty.Builder P_LAST_AUTHENTICATED = EdmProperty.newBuilder("LastAuthenticated")
-            .setType(EdmSimpleType.DATETIME).setNullable(true).setDefaultValue("null");
-
-    /**
      * Definition of Type property.
      */
     public static final EdmProperty.Builder P_TYPE = EdmProperty.newBuilder("Type").setType(EdmSimpleType.STRING)
@@ -71,7 +65,6 @@ public class Account {
      */
     public static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder()
             .setNamespace(Common.EDM_NS_CELL_CTL).setName(EDM_TYPE_NAME)
-            .addProperties(Enumerable.create(P_NAME, P_LAST_AUTHENTICATED, P_TYPE, P_CELL,
-                    Common.P_PUBLISHED, Common.P_UPDATED).toList())
+            .addProperties(Enumerable.create(P_NAME, P_TYPE, P_CELL, Common.P_PUBLISHED, Common.P_UPDATED).toList())
             .addKeys(P_NAME.getName());
 }

@@ -292,6 +292,14 @@ public final class OAuth2Helper {
          */
         public static final String REFRESH_TOKEN_EXPIRES_IN = "refresh_token_expires_in";
         /**
+         * last_authenticated.
+         */
+        public static final String LAST_AUTHENTICATED = "last_authenticated";
+        /**
+         * failed_count.
+         */
+        public static final String FAILED_COUNT = "failed_count";
+        /**
          * #c.
          */
         public static final String CONFIDENTIAL_MARKER = "#c";

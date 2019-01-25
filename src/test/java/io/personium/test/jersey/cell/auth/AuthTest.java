@@ -239,7 +239,6 @@ public class AuthTest extends PersoniumTest {
         String transCellAccessToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
         // Queryでスキーマ認証
-        Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(TEST_CELL1, "account1");
         Http.request("authn/password-cl-cp.txt")
                 .with("remoteCell", TEST_CELL1)
                 .with("username", "account1")
@@ -248,7 +247,6 @@ public class AuthTest extends PersoniumTest {
                 .with("client_secret", transCellAccessToken)
                 .returns()
                 .statusCode(HttpStatus.SC_OK);
-        AuthTestCommon.accountLastAuthenticatedCheck(TEST_CELL1, "account1", lastAuthenticatedTime);
 
         String schemaTransCellAccessTokenHeader =
                 PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1),
@@ -918,13 +916,11 @@ public class AuthTest extends PersoniumTest {
             }
 
             // アプリセルに対して認証
-            Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(TEST_CELL1, "account1");
             TResponse res = Http.request("authn/refresh-cl.txt")
                     .with("remoteCell", TEST_CELL1)
                     .with("refresh_token", refreshToken)
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
-            AuthTestCommon.accountLastAuthenticatedNotUpdatedCheck(TEST_CELL1, "account1", lastAuthenticatedTime);
             String refreshToken2 = (String) res.bodyAsJson().get(OAuth2Helper.Key.REFRESH_TOKEN);
             CellLocalRefreshToken rCellLocalToken2 = CellLocalRefreshToken.parse(refreshToken2,
                     UrlUtils.cellRoot(TEST_CELL1));

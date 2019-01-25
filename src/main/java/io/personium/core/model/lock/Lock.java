@@ -44,6 +44,11 @@ public class Lock implements Serializable {
      */
     public static final String CATEGORY_REFERENCE_ONLY = "referenceOnly";
 
+    /**
+     * Lock category to use when dealing with auth history.
+     */
+    public static final String CATEGORY_AUTH_HISTORY = "authHistory";
+
     String fullKey;
     Long createdAt;
 

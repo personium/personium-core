@@ -88,10 +88,8 @@ public class AuthCookieTest extends PersoniumTest {
      */
     @Test
     public final void p_target指定なしでp_cookieがtrueの場合にCookieが返却されること() {
-        Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(TEST_CELL1, "account1");
         TResponse passRes = requestAuthentication(TEST_CELL1, "account1",
                 "password1", "true", HttpStatus.SC_OK);
-        AuthTestCommon.accountLastAuthenticatedCheck(TEST_CELL1, "account1", lastAuthenticatedTime);
         String body = (String) passRes.bodyAsJson().get("p_cookie_peer");
         assertNotNull(body);
         String header = passRes.getHeader("Set-Cookie");

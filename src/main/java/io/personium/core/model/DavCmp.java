@@ -179,6 +179,18 @@ public interface DavCmp {
     Map<String, DavCmp> getChildren();
 
     /**
+     * Returns the cellId
+     * @return cellId
+     */
+    String getCellId();
+
+    /**
+     * Returns the fs path
+     * @return FsPath
+     */
+    String getFsPath();
+
+    /**
      * Returns the part responsible for the parent path.
      * @return Parts responsible for parent path
      */
