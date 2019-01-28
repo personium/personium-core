@@ -48,11 +48,11 @@ public class AuthHistoryLastFile {
     /** Maximum number of metafile reading retries. */
     private static final int AUTH_HISTORY_LOAD_RETRY_MAX = 5;
 
-    /** data file */
+    /** data file. */
     File file;
-    /** json object */
+    /** json object. */
     JSONObject json = new JSONObject();
-    /** account ID */
+    /** account ID. */
     String accountId;
 
     /**
@@ -181,21 +181,24 @@ public class AuthHistoryLastFile {
     }
 
     /**
-     * @return the last_authenticated
+     * Return the last authenticated.
+     * @return the last authenticated
      */
     public Long getLastAuthenticated() {
         return (Long) this.json.get(OAuth2Helper.Key.LAST_AUTHENTICATED);
     }
 
     /**
-     * @param last_authenticated the last authenticated to set
+     * Set up a last authenticated.
+     * @param lastAuthenticated the last authenticated to set
      */
     @SuppressWarnings("unchecked")
-    public void setLastAuthenticated(Long last_authenticated) {
-        this.json.put(OAuth2Helper.Key.LAST_AUTHENTICATED, last_authenticated);
+    public void setLastAuthenticated(Long lastAuthenticated) {
+        this.json.put(OAuth2Helper.Key.LAST_AUTHENTICATED, lastAuthenticated);
     }
 
     /**
+     * Return the failed count.
      * @return the failed count
      */
     public Long getFailedCount() {
@@ -203,11 +206,12 @@ public class AuthHistoryLastFile {
     }
 
     /**
-     * @param failed_count the failed count to set
+     * Set up a failed count.
+     * @param failedCount the failed count to set
      */
     @SuppressWarnings("unchecked")
-    public void setFailedCount(long failed_count) {
-        this.json.put(OAuth2Helper.Key.FAILED_COUNT, failed_count);
+    public void setFailedCount(long failedCount) {
+        this.json.put(OAuth2Helper.Key.FAILED_COUNT, failedCount);
     }
 
 }

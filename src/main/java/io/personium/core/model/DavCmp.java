@@ -191,13 +191,13 @@ public interface DavCmp {
     Map<String, DavCmp> getChildren();
 
     /**
-     * Returns the cellId
+     * Returns the cellId.
      * @return cellId
      */
     String getCellId();
 
     /**
-     * Returns the fs path
+     * Returns the fs path.
      * @return FsPath
      */
     String getFsPath();

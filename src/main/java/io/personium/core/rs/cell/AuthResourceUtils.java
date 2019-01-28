@@ -138,6 +138,7 @@ public class AuthResourceUtils {
      * get auth history last params.
      * @param fsPath fs path
      * @param accountId account ID
+     * @return file storing the last authentication history
      */
    public static AuthHistoryLastFile getAuthHistoryLast(String fsPath, String accountId) {
        AuthHistoryLastFile last = AuthHistoryLastFile.newInstance(fsPath, accountId);
@@ -194,7 +195,7 @@ public class AuthResourceUtils {
     /**
      * Process to check if an Account lock exists.
      * @param accountId account ID
-     * Returns true if @return lock exists
+     * @return boolean Returns true if lock exists
      */
     public static Boolean isLockedAccount(String accountId) {
         return AccountLockManager.hasLockObject(accountId);
