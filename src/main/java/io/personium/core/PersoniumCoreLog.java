@@ -16,12 +16,12 @@
  */
 package io.personium.core;
 
-import io.personium.plugin.base.PluginMessageUtils.Severity;
-
 import java.text.MessageFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.personium.plugin.base.PluginMessageUtils.Severity;
 
 /**
  * Log message creation class.
@@ -103,6 +103,27 @@ public final class PersoniumCoreLog {
          * {0}: Detailed message
          */
         public static final PersoniumCoreLog UNSUPPORTED_ACCOUNT_GRANT_TYPE = create("PL-AU-0005");
+        /**
+         * Authentication failed. User ID or password is incorrect.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog AUTHENTICATION_FAILED_NAME_OR_PASSWORD_INCORRECT = create("PL-AU-0006");
+        /**
+         * Authentication failed. invalid authorization interval.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog AUTHENTICATION_FAILED_INVALID_INTERVAL = create("PL-AU-0007");
+        /**
+         * Authentication failed. account locked.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog AUTHENTICATION_FAILED_ACCOUNT_LOCKED = create("PL-AU-0008");
     }
 
     /**

@@ -102,6 +102,7 @@ public class TokenEndPointResource {
     private UriInfo requestURIInfo;
     //The UUID of the Account used for password authentication. It is used to update the last login time after password authentication.
     private String accountId;
+    private String ipaddress;
 
     /**
      * constructor.
@@ -122,12 +123,14 @@ public class TokenEndPointResource {
      * @param uriInfo  URI information
      * @param authzHeader Authorization Header
      * @param formParams Body parameters
+     * @param xForwardedFor X-Forwarded-For Header
      * @return JAX-RS Response Object
      */
     @POST
     public final Response token(@Context final UriInfo uriInfo,
             @HeaderParam(HttpHeaders.AUTHORIZATION) final String authzHeader,
-            MultivaluedMap<String, String> formParams) {
+            MultivaluedMap<String, String> formParams,
+            @HeaderParam("X-Forwarded-For") final String xForwardedFor) {
         // Using @FormParam will cause a closed error on the library side in case of an incorrect body.
         // Since we can not catch Exception, retrieve the value after receiving it with MultivaluedMap.
         String grantType = formParams.getFirst(Key.GRANT_TYPE);
@@ -154,6 +157,8 @@ public class TokenEndPointResource {
             issueCookie = Boolean.parseBoolean(pCookie);
             requestURIInfo = uriInfo;
         }
+
+        this.ipaddress = xForwardedFor;
 
         String schema = null;
         //First, check if you want to authenticate Client
@@ -653,6 +658,8 @@ public class TokenEndPointResource {
             resp.put(OAuth2Helper.Key.FAILED_COUNT, last.getFailedCount());
             // update auth history.
             AuthResourceUtils.addSuccessAuthHistory(davRsCmp.getDavCmp().getFsPath(), accountId);
+            // release account lock.
+            AuthResourceUtils.releaseAccountLock(accountId);
         }
 
         return rb.entity(resp.toJSONString()).build();
@@ -687,8 +694,9 @@ public class TokenEndPointResource {
 
         OEntityWrapper oew = cell.getAccount(username);
         if (oew == null) {
-            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell
-                    .getUrl());
+            PersoniumCoreLog.Auth.AUTHENTICATION_FAILED_NAME_OR_PASSWORD_INCORRECT.params(
+                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
         //Confirmation of Type value
@@ -702,21 +710,39 @@ public class TokenEndPointResource {
         //In order to update the last login time, keep UUID in class variable
         accountId = (String) oew.getUuid();
 
-        //Check lock
-        Boolean isLock = AuthResourceUtils.isLockedAccount(accountId);
+        //Check valid authentication interval
+        Boolean isLock = AuthResourceUtils.isLockedInterval(accountId);
         if (isLock) {
             //Update lock time of memcached
-            AuthResourceUtils.registAccountLock(accountId);
+            AuthResourceUtils.registIntervalLock(accountId);
+            AuthResourceUtils.countupFailedCountForAccountLock(accountId);
             AuthResourceUtils.addFailedAuthHistory(davRsCmp.getDavCmp().getFsPath(), accountId);
-            throw PersoniumCoreAuthnException.ACCOUNT_LOCK_ERROR.realm(this.cell.getUrl());
+            PersoniumCoreLog.Auth.AUTHENTICATION_FAILED_INVALID_INTERVAL.params(
+                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
+        }
+
+        //Check account lock
+        isLock = AuthResourceUtils.isLockedAccount(accountId);
+        if (isLock) {
+            //Update lock time of memcached
+            AuthResourceUtils.registIntervalLock(accountId);
+            AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+            AuthResourceUtils.addFailedAuthHistory(davRsCmp.getDavCmp().getFsPath(), accountId);
+            PersoniumCoreLog.Auth.AUTHENTICATION_FAILED_ACCOUNT_LOCKED.params(
+                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
         boolean authSuccess = cell.authenticateAccount(oew, password);
 
         if (!authSuccess) {
             //Make lock on memcached
-            AuthResourceUtils.registAccountLock(accountId);
+            AuthResourceUtils.registIntervalLock(accountId);
+            AuthResourceUtils.countupFailedCountForAccountLock(accountId);
             AuthResourceUtils.addFailedAuthHistory(davRsCmp.getDavCmp().getFsPath(), accountId);
+            PersoniumCoreLog.Auth.AUTHENTICATION_FAILED_NAME_OR_PASSWORD_INCORRECT.params(
+                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 

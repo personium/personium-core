@@ -169,8 +169,19 @@ public class PersoniumUnitConfig {
         /** Type of Lock Tolerance: memcached.*/
         public static final String TYPE = KEY_ROOT + "lock.type";
 
-        /** Account lock expiration date (s).*/
-        public static final String ACCOUNTLOCK_LIFETIME = KEY_ROOT + "lock.accountlock.time";
+        /** Account lock expiration failed count.*/
+        public static final String ACCOUNTLOCK_COUNT = KEY_ROOT + "lock.accountlock.count";
+        /** Account lock expiration failed count maximum value. */
+        private static final Long ACCOUNTLOCK_COUNT_MAX = 100L;
+        /** Account lock expiration failed count minimum value. */
+        private static final Long ACCOUNTLOCK_COUNT_MIN = 0L;
+
+        /** Account lock expiration time (s).*/
+        public static final String ACCOUNTLOCK_TIME = KEY_ROOT + "lock.accountlock.time";
+        /** Account lock expiration time maximum value. */
+        private static final Long ACCOUNTLOCK_TIME_MAX = 2592000L;
+        /** Account lock expiration time minimum value. */
+        private static final Long ACCOUNTLOCK_TIME_MIN = 0L;
 
         /** Number of retries at lock acquisition.*/
         public static final String RETRY_TIMES = KEY_ROOT + "lock.retry.times";
@@ -192,6 +203,14 @@ public class PersoniumUnitConfig {
 
         /** Lock memcached operation Timeout value (ms).*/
         public static final String MEMCACHED_OPTIMEOUT = KEY_ROOT + "lock.memcached.opTimeout";
+    }
+
+    /**
+     * Authn setting.
+     */
+    public static final class Authn {
+        /** Account valid authentication interval time (s).*/
+        public static final String ACCOUNT_VALID_AUTHN_INTERVAL = KEY_ROOT + "authn.account.validAuthnInterval";
     }
 
     /**
@@ -440,6 +459,7 @@ public class PersoniumUnitConfig {
      */
     protected PersoniumUnitConfig() {
         this.doReload();
+        this.doCheckProperties();
     }
 
     /**
@@ -571,6 +591,33 @@ public class PersoniumUnitConfig {
             log.info("personium-unit-config.properties from class path.");
         }
         return configFileInputStream;
+    }
+
+    /**
+     * check a properties.
+     */
+    private synchronized void doCheckProperties() {
+        checkNumber(Lock.ACCOUNTLOCK_COUNT, Lock.ACCOUNTLOCK_COUNT_MIN, Lock.ACCOUNTLOCK_COUNT_MAX);
+        checkNumber(Lock.ACCOUNTLOCK_TIME, Lock.ACCOUNTLOCK_TIME_MIN, Lock.ACCOUNTLOCK_TIME_MAX);
+    }
+
+    /**
+     * check parameter is number and within range.
+     *
+     * @param key properity key
+     * @param min manimum value (Unlimited if null is set)
+     * @param max maximum value (Unlimited if null is set)
+     */
+    private void checkNumber(String key, Long min, Long max) {
+        // check is number.
+        try {
+            long value = Long.parseLong(this.props.getProperty(key));
+            if ((min != null && value < min) || (max != null && value > max)) {
+                throw new RuntimeException("illegal parameter. " + key + " out of range.");
+            }
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("illegal parameter. " + key + " number format error.", e);
+        }
     }
 
     /**
@@ -872,10 +919,17 @@ public class PersoniumUnitConfig {
     }
 
     /**
-     * @return Account lock expiration date (s).
+     * @return Account lock expiration failed count.
      */
-    public static String getAccountLockLifetime() {
-        return get(Lock.ACCOUNTLOCK_LIFETIME);
+    public static int getAccountLockCount() {
+        return Integer.parseInt(get(Lock.ACCOUNTLOCK_COUNT));
+    }
+
+    /**
+     * @return Account lock expiration time (s).
+     */
+    public static int getAccountLockTime() {
+        return Integer.parseInt(get(Lock.ACCOUNTLOCK_TIME));
     }
 
     /**
@@ -925,6 +979,13 @@ public class PersoniumUnitConfig {
      */
     public static long getLockMemcachedOpTimeout() {
         return Long.parseLong(get(Lock.MEMCACHED_OPTIMEOUT));
+    }
+
+    /**
+     * @return Account valid authentication interval time (s).
+     */
+    public static int getAccountValidAuthnInterval() {
+        return Integer.parseInt(get(Authn.ACCOUNT_VALID_AUTHN_INTERVAL));
     }
 
     /**

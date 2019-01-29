@@ -140,7 +140,7 @@ public class AccountUpdateTest extends ODataCommon {
 
         // 元のユーザパスワードでは認証不可を確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // Accountを戻しておく
         this.userName = newUserName;
@@ -164,7 +164,7 @@ public class AccountUpdateTest extends ODataCommon {
 
         // 元のユーザパスワードでは認証不可を確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // Accountを戻しておく
         this.userName = newUserName;
@@ -188,7 +188,7 @@ public class AccountUpdateTest extends ODataCommon {
 
         // 元のユーザパスワードでは認証不可を確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // Accountを戻しておく
         this.updatePwd(this.orgUserName, this.orgPass, HttpStatus.SC_NO_CONTENT);
@@ -212,7 +212,7 @@ public class AccountUpdateTest extends ODataCommon {
         //
         // 元のユーザパスワードでは認証不可を確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // Accountを戻しておく
         this.userName = newUserName;
@@ -274,7 +274,7 @@ public class AccountUpdateTest extends ODataCommon {
 
         // 更新失敗したAccountでは認証不可であることを確認
         this.auth(newUserName, newPassword, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // 元のユーザパスワードで認証可能であることを確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_OK);
@@ -308,7 +308,7 @@ public class AccountUpdateTest extends ODataCommon {
 
         // 更新失敗したAccountでは認証不可であることを確認
         this.auth(newUserName, newPassword, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // 元のユーザパスワードで認証可能であることを確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_OK);
@@ -342,7 +342,7 @@ public class AccountUpdateTest extends ODataCommon {
 
         // 更新失敗したAccountでは認証不可であることを確認
         this.auth(newUserName, newPassword, HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         // 元のユーザパスワードで認証可能であることを確認
         this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_OK);

@@ -36,6 +36,7 @@ import org.junit.runners.Suite.SuiteClasses;
         SchemaAuthTest.class,
         X509AuthTest.class,
         AuthAccountLockTest.class,
+        AuthValidIntervalTest.class,
         AuthAccountUpdateTest.class,
         AuthHistoryTest.class,
         AuthzGetAuthHistoryTest.class,

@@ -290,7 +290,8 @@ public final class PersoniumCoreContainerFilter implements ContainerRequestFilte
         sb.append(requestUri);
         sb.append(" ");
         if (httpServletRequest != null) {
-            sb.append(httpServletRequest.getRemoteAddr());
+            String xForwardedFor = httpServletRequest.getHeader("X-Forwarded-For");
+            sb.append(xForwardedFor);
         }
         log.info(sb.toString());
     }

@@ -100,7 +100,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     HttpStatus.SC_UNAUTHORIZED, cellName, boxName, thisMethodColName);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // コレクションPROPFIND(Basic認証-成功)
             DavResourceUtils.propfind("box/propfind-box-allprop-anyAuthSchema.txt", token, cellName,
@@ -110,7 +110,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     boxName + "/" + colName, 1, HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // コレクションPROPPATCH(Basic認証-成功)
             Http.request("box/proppatch.txt").with("cell", cellName).with("box", boxName)
@@ -128,7 +128,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     .returns().statusCode(HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // コレクションACL設定(Basic認証-成功)
             DavResourceUtils.setACLwithBox(cellName, tokenForACLWrite, HttpStatus.SC_OK,
@@ -140,7 +140,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     "<D:read/>", "<D:write/>", "");
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // コレクションOPTIONS(Basic認証-成功)
             ResourceUtils.optionsWithAnyAuthSchema(cellName, token, colName, HttpStatus.SC_OK);
@@ -149,7 +149,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // コレクション削除(Basic認証-成功)
             DavResourceUtils.deleteCollectionWithAnyAuthSchema(cellName, boxName, colName, token,
@@ -159,7 +159,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
         } finally {
             DavResourceUtils.deleteCollection(cellName, boxName, colName, AbstractCase.MASTER_TOKEN_NAME, -1);
         }
@@ -186,7 +186,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     cellName, boxName + "/" + srcCol, 1, HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // サービスソースコレクションOPTIONS(Basic認証-成功)
             // TODO 本来は、200が返却されるべきだが、現在は環境によって動作が異なるため、401でないことのみチェックしている
@@ -197,7 +197,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
             // res = ResourceUtils.optionsWithAnyAuthSchema(cellName, invalidToken, srcCol,
             // HttpStatus.SC_UNAUTHORIZED);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
         } finally {
             DavResourceUtils.deleteWebDavFile("box/dav-delete.txt", cellName, AbstractCase.MASTER_TOKEN_NAME,
                     srcFile, -1, boxName);
@@ -221,7 +221,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     "hoge", boxName, srcFile, HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // ファイルを取得(Basic認証-成功)
             DavResourceUtils.getWebDavFile(cellName, token, "box/dav-get-anyAuthSchema.txt",
@@ -231,7 +231,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     srcFile, HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // ファイルをPROPFIND(Basic認証-成功)
             DavResourceUtils.propfind("box/propfind-box-allprop-anyAuthSchema.txt", token,
@@ -241,7 +241,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     boxName + "/" + srcFile, 1, HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // ファイルをPROPPATCH(Basic認証-成功)
             Http.request("box/proppatch.txt").with("cell", cellName).with("box", boxName)
@@ -259,7 +259,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     .returns().statusCode(HttpStatus.SC_UNAUTHORIZED);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // ファイルにACL設定(Basic認証-成功)
             DavResourceUtils.setACLwithBox(cellName, tokenForACLWrite, HttpStatus.SC_METHOD_NOT_ALLOWED,
@@ -275,7 +275,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     "<D:write/>", "");
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // ファイルOPTIONS(Basic認証-成功)
             // TODO 本来は、200が返却されるべきだが、現在は環境によって動作が異なるため、401でないことのみチェックしている
@@ -286,7 +286,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
             // res = ResourceUtils.optionsWithAnyAuthSchema(cellName, invalidToken, srcFile,
             // HttpStatus.SC_UNAUTHORIZED);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // ファイルを削除(Basic認証-成功)
             DavResourceUtils.deleteWebDavFile("box/dav-delete-anyAuthSchema.txt", cellName, token,
@@ -296,7 +296,7 @@ public class BasicAuthSvcCollectionLevelTest extends PersoniumTest {
                     srcFile, HttpStatus.SC_UNAUTHORIZED, boxName);
             checkAuthenticateHeaderForSchemalessBoxLevel(res, cellName);
             // 認証失敗のアカウントロックが解除されるのを待ち合わせる
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
         } finally {
             DavResourceUtils.deleteWebDavFile("box/dav-delete.txt", cellName, AbstractCase.MASTER_TOKEN_NAME,
                     srcFile, -1, boxName);

@@ -16,10 +16,14 @@
  */
 package io.personium.test.jersey.cell.auth;
 
-import static org.junit.Assert.assertTrue;
+import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -32,37 +36,53 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.model.lock.LockManager;
 import io.personium.core.rs.PersoniumCoreApplication;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
+import io.personium.test.jersey.AbstractCase;
+import io.personium.test.jersey.PersoniumException;
 import io.personium.test.jersey.PersoniumIntegTestRunner;
+import io.personium.test.jersey.PersoniumResponse;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
+import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
+import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
-import io.personium.test.utils.Http;
-import io.personium.test.utils.TResponse;
 
 /**
- * account lock test.
+ * account lock test for authz.
  */
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class, Integration.class, Regression.class })
-public class AuthAccountLockTest extends PersoniumTest {
+public class AuthzAccountLockTest extends PersoniumTest {
+
+    /** log. */
+    static Logger log = LoggerFactory.getLogger(AuthzAccountLockTest.class);
 
     private static final int TEST_ACCOUNTLOCK_COUNT = 3;
     private static final int TEST_ACCOUNTLOCK_TIME = 5;
 
     /** test cell name. */
-    private static final String TEST_CELL = "testcellauthaccountlock";
+    private static final String TEST_CELL = "testcellauthzaccountlock";
+    /** test box name. */
+    private static final String TEST_BOX = "testboxauthzaccountlock";
     /** test account name. */
     private static final String TEST_ACCOUNT1 = "account1";
     /** test account name. */
     private static final String TEST_ACCOUNT2 = "account2";
     /** test account password. */
     private static final String TEST_PASSWORD = "password";
+
+    /**
+     * constructor.
+     */
+    public AuthzAccountLockTest() {
+        super(new PersoniumCoreApplication());
+    }
 
     /**
      * before class.
@@ -103,6 +123,8 @@ public class AuthAccountLockTest extends PersoniumTest {
     public void before() {
         LockManager.deleteAllLocks();
         CellUtils.create(TEST_CELL, Setup.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
+        BoxUtils.createWithSchema(TEST_CELL, TEST_BOX, AbstractCase.MASTER_TOKEN_NAME,
+                UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
         AccountUtils.create(Setup.MASTER_TOKEN_NAME, TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD,
                 HttpStatus.SC_CREATED);
         AccountUtils.create(Setup.MASTER_TOKEN_NAME, TEST_CELL, TEST_ACCOUNT2, TEST_PASSWORD,
@@ -117,39 +139,37 @@ public class AuthAccountLockTest extends PersoniumTest {
         LockManager.deleteAllLocks();
         AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, TEST_ACCOUNT1, -1);
         AccountUtils.delete(TEST_CELL, Setup.MASTER_TOKEN_NAME, TEST_ACCOUNT2, -1);
+        BoxUtils.delete(TEST_CELL, AbstractCase.MASTER_TOKEN_NAME, TEST_BOX, -1);
         CellUtils.delete(Setup.MASTER_TOKEN_NAME, TEST_CELL, -1);
-    }
-
-    /** log. */
-    static Logger log = LoggerFactory.getLogger(AuthAccountLockTest.class);
-
-    /**
-     * constructor.
-     */
-    public AuthAccountLockTest() {
-        super(new PersoniumCoreApplication());
     }
 
     /**
      * Tests that are account locked when the failure is greater than or equal to "lock.accountlock.count".
      * Tests that lock is released after "lock.accountlock.time" elapsed.
+     * @throws Exception Unexpected exception
      */
     @Test
-    public final void accountlock_and_unlock() {
+    public final void accountlock_and_unlock() throws Exception {
         // account not locked.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
+        PersoniumResponse dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
+        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        Map<String, String> responseMap = parseResponse(dcRes);
+        assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // authentication failed repeatedly, account is locked.
         for (int i = 0; i < TEST_ACCOUNTLOCK_COUNT; i++) {
-            requestAuthorization(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
+            requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, "error");
         }
         AuthTestCommon.waitForIntervalLock();
-        TResponse passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_BAD_REQUEST);
-        String body = (String) passRes.bodyAsJson().get("error_description");
-        assertTrue(body.startsWith("[PR400-AN-0017]"));
+        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
+        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        ImplicitFlowTest.checkHtmlBody(dcRes, "PS-AU-0004", TEST_CELL);
 
         // other account not locked.
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT2, TEST_PASSWORD, HttpStatus.SC_OK);
+        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT2, TEST_PASSWORD);
+        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        responseMap = parseResponse(dcRes);
+        assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // wait account lock expiration time (s). accountlock is released .
         try {
@@ -157,27 +177,37 @@ public class AuthAccountLockTest extends PersoniumTest {
         } catch (InterruptedException e) {
             log.debug("");
         }
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
+        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT2, TEST_PASSWORD);
+        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        responseMap = parseResponse(dcRes);
+        assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
     }
 
     /**
      * Test that the failure count is reset on successful authentication.
+     * @throws Exception Unexpected exception
      */
     @Test
-    public final void reset_failed_count() {
+    public final void reset_failed_count() throws Exception {
         // first authenticated.
         for (int i = 0; i < TEST_ACCOUNTLOCK_COUNT - 1; i++) {
-            requestAuthorization(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
+            requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, "error");
         }
         AuthTestCommon.waitForIntervalLock();
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
+        PersoniumResponse dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
+        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        Map<String, String> responseMap = parseResponse(dcRes);
+        assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
         // seccond authenticated.
         for (int i = 0; i < TEST_ACCOUNTLOCK_COUNT - 1; i++) {
-            requestAuthorization(TEST_CELL, TEST_ACCOUNT1, "error", HttpStatus.SC_BAD_REQUEST);
+            requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, "error");
         }
         AuthTestCommon.waitForIntervalLock();
-        requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
+        dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
+        assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
+        responseMap = parseResponse(dcRes);
+        assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
     }
 
     /**
@@ -185,16 +215,31 @@ public class AuthAccountLockTest extends PersoniumTest {
      * @param cellName cell name
      * @param userName user name
      * @param password password
-     * @param code expected status code
      * @return http response
      */
-    private TResponse requestAuthorization(String cellName, String userName, String password, int code) {
-        TResponse passRes = Http.request("authn/password-cl-c0.txt")
-                .with("remoteCell", cellName)
-                .with("username", userName)
-                .with("password", password)
-                .returns()
-                .statusCode(code);
-        return passRes;
+    private PersoniumResponse requestAuthorization4Authz(String cellName, String userName, String password)
+            throws PersoniumException {
+        PersoniumResponse dcRes = CellUtils.implicitflowAuthenticate(cellName, Setup.TEST_CELL_SCHEMA1, userName,
+                password, "__/redirect.html", ImplicitFlowTest.DEFAULT_STATE, null);
+        return dcRes;
+    }
+
+    /**
+     * parse response.
+     * @param res the personium response
+     * @return parse response.
+     */
+    private Map<String, String> parseResponse(PersoniumResponse res) {
+        String location = res.getFirstHeader(HttpHeaders.LOCATION);
+        System.out.println(location);
+        String[] locations = location.split("#");
+        String[] responses = locations[1].split("&");
+        Map<String, String> map = new HashMap<String, String>();
+        for (String response : responses) {
+            String[] value = response.split("=");
+            map.put(value[0], value[1]);
+        }
+
+        return map;
     }
 }
