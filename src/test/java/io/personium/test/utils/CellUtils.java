@@ -659,7 +659,7 @@ public class CellUtils {
         // リクエストヘッダをセット
         String schemaCellUrl = UrlUtils.cellRoot(schemaCell);
         String authorization =
-                "Basic " + PersoniumCoreUtils.createBasicAuthzHeader(schemaCellUrl, schemaAuthenticatedToken);
+                PersoniumCoreUtils.createBasicAuthzHeader(schemaCellUrl, schemaAuthenticatedToken);
 
         HashMap<String, String> requestheaders = new HashMap<String, String>();
         requestheaders.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
