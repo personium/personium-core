@@ -279,7 +279,23 @@ public class BoxResource {
         // Check acl.
         boxRsCmp.checkAccessContext(boxRsCmp.getAccessContext(), CellPrivilege.BOX);
 
-        return boxRsCmp.getDavCmp().delete(null, recursive).build();
+        Response response = boxRsCmp.getDavCmp().delete(null, recursive).build();
+
+        // post event to EventBus
+        String type = PersoniumEventType.box(PersoniumEventType.Operation.DELETE);
+        String object = new StringBuilder(UriUtils.SCHEME_CELL_URI).append(this.boxName)
+                                                                   .toString();
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.boxRsCmp)
+                                              .build();
+        EventBus eventBus = this.cell.getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -297,8 +313,27 @@ public class BoxResource {
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
         this.boxRsCmp.checkAccessContext(this.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
-        return this.boxRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
-                BoxPrivilege.READ_ACL);
+        Response response = this.boxRsCmp.doPropfind(requestBodyXml,
+                                                     depth,
+                                                     contentLength,
+                                                     transferEncoding,
+                                                     BoxPrivilege.READ_ACL);
+
+        // post event to EventBus
+        String type = PersoniumEventType.box(PersoniumEventType.Operation.PROPFIND);
+        String object = new StringBuilder(UriUtils.SCHEME_CELL_URI).append(this.boxName)
+                                                                   .toString();
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.boxRsCmp)
+                                              .build();
+        EventBus eventBus = this.cell.getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -311,7 +346,23 @@ public class BoxResource {
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
         this.boxRsCmp.checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
-        return this.boxRsCmp.doProppatch(requestBodyXml);
+        Response response = this.boxRsCmp.doProppatch(requestBodyXml);
+
+        // post event to EventBus
+        String type = PersoniumEventType.box(PersoniumEventType.Operation.PROPPATCH);
+        String object = new StringBuilder(UriUtils.SCHEME_CELL_URI).append(this.boxName)
+                                                                   .toString();
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.boxRsCmp)
+                                              .build();
+        EventBus eventBus = this.cell.getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -333,7 +384,23 @@ public class BoxResource {
     public Response acl(final Reader reader) {
         //Access control
         this.boxRsCmp.checkAccessContext(this.boxRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
-        return this.boxRsCmp.doAcl(reader);
+        Response response = this.boxRsCmp.doAcl(reader);
+
+        // post event to EventBus
+        String type = PersoniumEventType.box(PersoniumEventType.Operation.ACL);
+        String object = new StringBuilder(UriUtils.SCHEME_CELL_URI).append(this.boxName)
+                                                                   .toString();
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.boxRsCmp)
+                                              .build();
+        EventBus eventBus = this.cell.getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -354,8 +421,7 @@ public class BoxResource {
 
         EventBus eventBus = this.cell.getEventBus();
         String result = "";
-        String object = new StringBuilder(UriUtils.SCHEME_LOCALCELL)
-                .append(":/")
+        String object = new StringBuilder(UriUtils.SCHEME_CELL_URI)
                 .append(this.boxName)
                 .toString();
         String requestKey = this.cellRsCmp.getRequestKey();

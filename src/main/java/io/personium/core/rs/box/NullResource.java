@@ -52,6 +52,9 @@ import io.personium.core.annotations.PROPPATCH;
 import io.personium.core.annotations.REPORT;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavCommon;
 import io.personium.core.model.DavRsCmp;
@@ -61,6 +64,7 @@ import io.personium.core.model.jaxb.MkcolResponse;
 import io.personium.core.model.jaxb.ObjectFactory;
 import io.personium.core.model.jaxb.ObjectIo;
 import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * A JAX-RS resource that is responsible for nonexistent paths below Box.
@@ -124,7 +128,48 @@ public class NullResource {
             throw PersoniumCoreException.Dav.HAS_NOT_PARENT.params(this.davRsCmp.getParent().getUrl());
         }
 
-        return this.davRsCmp.getDavCmp().putForCreate(contentType, inputStream).build();
+        Response response = this.davRsCmp.getDavCmp().putForCreate(contentType, inputStream).build();
+
+        // post event to EventBus
+        String type = PersoniumEventType.webdav(PersoniumEventType.Operation.CREATE);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .type(type)
+                .object(object)
+                .info(info)
+                .davRsCmp(this.davRsCmp)
+                .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(event);
+
+        return response;
+    }
+
+    private void postEvent(String colType, String info) {
+        String type;
+        if (DavCmp.TYPE_COL_WEBDAV.equals(colType)) {
+            type = PersoniumEventType.webdavcol(PersoniumEventType.Operation.MKCOL);
+        } else if (DavCmp.TYPE_COL_ODATA.equals(colType)) {
+            type = PersoniumEventType.odatacol(PersoniumEventType.Operation.MKCOL);
+        } else if (DavCmp.TYPE_COL_SVC.equals(colType)) {
+            type = PersoniumEventType.servicecol(PersoniumEventType.Operation.MKCOL);
+        } else if (DavCmp.TYPE_COL_STREAM.equals(colType)) {
+            type = PersoniumEventType.streamcol(PersoniumEventType.Operation.MKCOL);
+        } else {
+            type = PersoniumEventType.webdavcol(PersoniumEventType.Operation.MKCOL);
+        }
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.davRsCmp)
+                                              .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(ev);
     }
 
     /**
@@ -160,7 +205,9 @@ public class NullResource {
 
         //If request is empty obediently create collection with webdav
         if (!ResourceUtils.hasApparentlyRequestBody(contentLength, transferEncoding)) {
-            return this.davRsCmp.getDavCmp().mkcol(DavCmp.TYPE_COL_WEBDAV).build();
+            Response response = this.davRsCmp.getDavCmp().mkcol(DavCmp.TYPE_COL_WEBDAV).build();
+            postEvent(DavCmp.TYPE_COL_WEBDAV, Integer.toString(response.getStatus()));
+            return response;
         }
 
         //If the request is not empty, parse and do the appropriate extension.
@@ -182,6 +229,7 @@ public class NullResource {
                 DavCmp srcCmp = this.davRsCmp.getDavCmp().getChild(DavCmp.SERVICE_SRC_COLLECTION);
                 response = srcCmp.mkcol(DavCmp.TYPE_COL_WEBDAV).build();
             }
+            postEvent(colType, Integer.toString(response.getStatus()));
             return response;
             // return this.parent.mkcolChild(this.pathName, colType);
         } catch (RequestException e) {

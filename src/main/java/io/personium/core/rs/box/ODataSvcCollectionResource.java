@@ -84,9 +84,27 @@ public final class ODataSvcCollectionResource extends ODataResource {
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
-        return this.davRsCmp.doPropfind(requestBodyXml, depth, contentLength, transferEncoding,
-                BoxPrivilege.READ_ACL);
+        Response response = this.davRsCmp.doPropfind(requestBodyXml,
+                                                     depth,
+                                                     contentLength,
+                                                     transferEncoding,
+                                                     BoxPrivilege.READ_ACL);
 
+        // post event to EventBus
+        String type = PersoniumEventType.odatacol(PersoniumEventType.Operation.PROPFIND);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.davRsCmp)
+                                              .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -101,7 +119,23 @@ public final class ODataSvcCollectionResource extends ODataResource {
         this.checkAccessContext(
                 this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
 
-        return this.davRsCmp.doProppatch(requestBodyXml);
+        Response response = this.davRsCmp.doProppatch(requestBodyXml);
+
+        // post event to EventBus
+        String type = PersoniumEventType.odatacol(PersoniumEventType.Operation.PROPPATCH);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.davRsCmp)
+                                              .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -114,7 +148,23 @@ public final class ODataSvcCollectionResource extends ODataResource {
     public Response acl(final Reader reader) {
         //Access control
         this.checkAccessContext(this.getAccessContext(), BoxPrivilege.WRITE_ACL);
-        return this.davRsCmp.getDavCmp().acl(reader).build();
+        Response response = this.davRsCmp.getDavCmp().acl(reader).build();
+
+        // post event to EventBus
+        String type = PersoniumEventType.odatacol(PersoniumEventType.Operation.ACL);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.davRsCmp)
+                                              .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -142,7 +192,23 @@ public final class ODataSvcCollectionResource extends ODataResource {
         if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
             throw PersoniumCoreException.Dav.HAS_CHILDREN;
         }
-        return this.davRsCmp.getDavCmp().delete(null, recursive).build();
+        Response response = this.davRsCmp.getDavCmp().delete(null, recursive).build();
+
+        // post event to EventBus
+        String type = PersoniumEventType.odatacol(PersoniumEventType.Operation.DELETE);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.davRsCmp)
+                                              .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**

@@ -63,9 +63,13 @@ public class Rule {
     /** Extended Schema Format rule-targeturl. */
     public static final String P_FORMAT_PATTERN_RULE_TARGETURL = "rule-targeturl";
 
+    /** Regular expression in type. */
+    private static final String REGEX_TYPE = "[a-zA-Z0-9-_\\+:.]{0,127}";
     /** Pattern action. */
     private static final String PATTERN_ACTION = "^(exec)|(relay)|(relay\\.data)|(relay\\.event)|(log)|(log\\.info)|(log\\.warn)|(log\\.error)$"; // CHECKSTYLE IGNORE - To maintein readability
 
+    /** Annotations for Type. */
+    private static final List<EdmAnnotation<?>> P_FORMAT_TYPE = new ArrayList<EdmAnnotation<?>>();
     /** Annotations for Object. */
     private static final List<EdmAnnotation<?>> P_FORMAT_OBJECT = new ArrayList<EdmAnnotation<?>>();
     /** Annotations for Action. */
@@ -74,9 +78,20 @@ public class Rule {
     private static final List<EdmAnnotation<?>> P_FORMAT_TARGETURL = new ArrayList<EdmAnnotation<?>>();
 
     static {
+        P_FORMAT_TYPE.add(createFormatTypeAnnotation());
         P_FORMAT_OBJECT.add(createFormatObjectAnnotation());
         P_FORMAT_ACTION.add(createFormatActionAnnotation());
         P_FORMAT_TARGETURL.add(createFormatTargetUrlAnnotation());
+    }
+
+    /**
+     * Get annotation for Type.
+     * @return annotation for Type
+     */
+    private static EdmAnnotation<?> createFormatTypeAnnotation() {
+        return new EdmAnnotationAttribute(
+                Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
+                Common.P_FORMAT, Common.P_FORMAT_PATTERN_REGEX + "('" + REGEX_TYPE + "')");
     }
 
     /**
@@ -137,7 +152,7 @@ public class Rule {
     public static final EdmProperty.Builder P_TYPE = EdmProperty.newBuilder("EventType")
             .setType(EdmSimpleType.STRING)
             .setNullable(true)
-            .setAnnotations(Common.P_FORMAT_NAME_WITH_SIGN);
+            .setAnnotations(P_FORMAT_TYPE);
     /**
      * EventObject property.
      */
