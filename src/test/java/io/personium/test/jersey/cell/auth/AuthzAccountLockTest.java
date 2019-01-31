@@ -144,13 +144,13 @@ public class AuthzAccountLockTest extends PersoniumTest {
     }
 
     /**
-     * Tests that are account locked when the failure is greater than or equal to "lock.accountlock.count".
-     * Tests that lock is released after "lock.accountlock.time" elapsed.
+     * Tests that are account locked when the failure is greater than or equal to "authn.account.lockCount".
+     * Tests that lock is released after "authn.account.lockTime" elapsed.
      * @throws Exception Unexpected exception
      */
     @Test
-    public final void accountlock_and_unlock() throws Exception {
-        // account not locked.
+    public final void lock_and_unlock() throws Exception {
+        // before account lock.
         PersoniumResponse dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD);
         assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
         Map<String, String> responseMap = parseResponse(dcRes);
@@ -171,7 +171,7 @@ public class AuthzAccountLockTest extends PersoniumTest {
         responseMap = parseResponse(dcRes);
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
 
-        // wait account lock expiration time (s). accountlock is released .
+        // wait account lock expiration time (s). lock is released .
         try {
             Thread.sleep(1000 * TEST_ACCOUNTLOCK_TIME);
         } catch (InterruptedException e) {

@@ -694,7 +694,7 @@ public class TokenEndPointResource {
 
         OEntityWrapper oew = cell.getAccount(username);
         if (oew == null) {
-            PersoniumCoreLog.Auth.AUTHENTICATION_FAILED_NAME_OR_PASSWORD_INCORRECT.params(
+            PersoniumCoreLog.Auth.AUTHN_FAILED_NO_SUCH_ACCOUNT.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
@@ -717,7 +717,7 @@ public class TokenEndPointResource {
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCountForAccountLock(accountId);
             AuthResourceUtils.addFailedAuthHistory(davRsCmp.getDavCmp().getFsPath(), accountId);
-            PersoniumCoreLog.Auth.AUTHENTICATION_FAILED_INVALID_INTERVAL.params(
+            PersoniumCoreLog.Auth.AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
@@ -729,7 +729,7 @@ public class TokenEndPointResource {
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCountForAccountLock(accountId);
             AuthResourceUtils.addFailedAuthHistory(davRsCmp.getDavCmp().getFsPath(), accountId);
-            PersoniumCoreLog.Auth.AUTHENTICATION_FAILED_ACCOUNT_LOCKED.params(
+            PersoniumCoreLog.Auth.AUTHN_FAILED_ACCOUNT_IS_LOCKED.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
@@ -741,7 +741,7 @@ public class TokenEndPointResource {
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCountForAccountLock(accountId);
             AuthResourceUtils.addFailedAuthHistory(davRsCmp.getDavCmp().getFsPath(), accountId);
-            PersoniumCoreLog.Auth.AUTHENTICATION_FAILED_NAME_OR_PASSWORD_INCORRECT.params(
+            PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_PASSWORD.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }

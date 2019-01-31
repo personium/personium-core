@@ -127,10 +127,6 @@ public final class PersoniumCoreAuthnException extends PersoniumCoreException {
      */
     public static final PersoniumCoreAuthnException AUTH_HEADER_IS_INVALID =
             create("PR400-AN-0018", Error.INVALID_CLIENT);
-    /**
-     * Account locked.
-     */
-    public static final PersoniumCoreAuthnException ACCOUNT_LOCK_ERROR = create("PR400-AN-0019", Error.INVALID_GRANT);
 
     /**
      * NetWork related error.

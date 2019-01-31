@@ -169,20 +169,6 @@ public class PersoniumUnitConfig {
         /** Type of Lock Tolerance: memcached.*/
         public static final String TYPE = KEY_ROOT + "lock.type";
 
-        /** Account lock expiration failed count.*/
-        public static final String ACCOUNTLOCK_COUNT = KEY_ROOT + "lock.accountlock.count";
-        /** Account lock expiration failed count maximum value. */
-        private static final Long ACCOUNTLOCK_COUNT_MAX = 100L;
-        /** Account lock expiration failed count minimum value. */
-        private static final Long ACCOUNTLOCK_COUNT_MIN = 0L;
-
-        /** Account lock expiration time (s).*/
-        public static final String ACCOUNTLOCK_TIME = KEY_ROOT + "lock.accountlock.time";
-        /** Account lock expiration time maximum value. */
-        private static final Long ACCOUNTLOCK_TIME_MAX = 2592000L;
-        /** Account lock expiration time minimum value. */
-        private static final Long ACCOUNTLOCK_TIME_MIN = 0L;
-
         /** Number of retries at lock acquisition.*/
         public static final String RETRY_TIMES = KEY_ROOT + "lock.retry.times";
 
@@ -209,6 +195,20 @@ public class PersoniumUnitConfig {
      * Authn setting.
      */
     public static final class Authn {
+        /** Account lock expiration failed count.*/
+        public static final String ACCOUNT_LOCK_COUNT = KEY_ROOT + "authn.account.lockCount";
+        /** Account lock expiration failed count maximum value. */
+        private static final Long ACCOUNT_LOCK_COUNT_MAX = 100L;
+        /** Account lock expiration failed count minimum value. */
+        private static final Long ACCOUNT_LOCK_COUNT_MIN = 0L;
+
+        /** Account lock expiration time (s).*/
+        public static final String ACCOUNT_LOCK_TIME = KEY_ROOT + "authn.account.lockTime";
+        /** Account lock expiration time maximum value. */
+        private static final Long ACCOUNT_LOCK_TIME_MAX = 2592000L;
+        /** Account lock expiration time minimum value. */
+        private static final Long ACCOUNT_LOCK_TIME_MIN = 0L;
+
         /** Account valid authentication interval time (s).*/
         public static final String ACCOUNT_VALID_AUTHN_INTERVAL = KEY_ROOT + "authn.account.validAuthnInterval";
     }
@@ -597,8 +597,8 @@ public class PersoniumUnitConfig {
      * check a properties.
      */
     private synchronized void doCheckProperties() {
-        checkNumber(Lock.ACCOUNTLOCK_COUNT, Lock.ACCOUNTLOCK_COUNT_MIN, Lock.ACCOUNTLOCK_COUNT_MAX);
-        checkNumber(Lock.ACCOUNTLOCK_TIME, Lock.ACCOUNTLOCK_TIME_MIN, Lock.ACCOUNTLOCK_TIME_MAX);
+        checkNumber(Authn.ACCOUNT_LOCK_COUNT, Authn.ACCOUNT_LOCK_COUNT_MIN, Authn.ACCOUNT_LOCK_COUNT_MAX);
+        checkNumber(Authn.ACCOUNT_LOCK_TIME, Authn.ACCOUNT_LOCK_TIME_MIN, Authn.ACCOUNT_LOCK_TIME_MAX);
     }
 
     /**
@@ -922,14 +922,14 @@ public class PersoniumUnitConfig {
      * @return Account lock expiration failed count.
      */
     public static int getAccountLockCount() {
-        return Integer.parseInt(get(Lock.ACCOUNTLOCK_COUNT));
+        return Integer.parseInt(get(Authn.ACCOUNT_LOCK_COUNT));
     }
 
     /**
      * @return Account lock expiration time (s).
      */
     public static int getAccountLockTime() {
-        return Integer.parseInt(get(Lock.ACCOUNTLOCK_TIME));
+        return Integer.parseInt(get(Authn.ACCOUNT_LOCK_TIME));
     }
 
     /**

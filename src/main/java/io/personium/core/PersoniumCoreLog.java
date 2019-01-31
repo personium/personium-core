@@ -104,26 +104,33 @@ public final class PersoniumCoreLog {
          */
         public static final PersoniumCoreLog UNSUPPORTED_ACCOUNT_GRANT_TYPE = create("PL-AU-0005");
         /**
-         * Authentication failed. User ID or password is incorrect.
+         * Authentication failed. No such account.
          * {0}: URL
          * {1}: IP address
          * {2}: User ID(username)
          */
-        public static final PersoniumCoreLog AUTHENTICATION_FAILED_NAME_OR_PASSWORD_INCORRECT = create("PL-AU-0006");
+        public static final PersoniumCoreLog AUTHN_FAILED_NO_SUCH_ACCOUNT = create("PL-AU-0006");
         /**
-         * Authentication failed. invalid authorization interval.
+         * Authentication failed. Consequtive authentication trial before valid authentication interval.
          * {0}: URL
          * {1}: IP address
          * {2}: User ID(username)
          */
-        public static final PersoniumCoreLog AUTHENTICATION_FAILED_INVALID_INTERVAL = create("PL-AU-0007");
+        public static final PersoniumCoreLog AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL = create("PL-AU-0007");
         /**
-         * Authentication failed. account locked.
+         * Authentication failed. Account is locked.
          * {0}: URL
          * {1}: IP address
          * {2}: User ID(username)
          */
-        public static final PersoniumCoreLog AUTHENTICATION_FAILED_ACCOUNT_LOCKED = create("PL-AU-0008");
+        public static final PersoniumCoreLog AUTHN_FAILED_ACCOUNT_IS_LOCKED = create("PL-AU-0008");
+        /**
+         * Authentication failed. Incorrect password.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog AUTHN_FAILED_INCORRECT_PASSWORD = create("PL-AU-0009");
     }
 
     /**

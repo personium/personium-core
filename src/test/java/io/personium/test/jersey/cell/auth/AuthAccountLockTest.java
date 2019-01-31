@@ -131,12 +131,12 @@ public class AuthAccountLockTest extends PersoniumTest {
     }
 
     /**
-     * Tests that are account locked when the failure is greater than or equal to "lock.accountlock.count".
-     * Tests that lock is released after "lock.accountlock.time" elapsed.
+     * Tests that are account locked when the failure is greater than or equal to "authn.account.lockCount".
+     * Tests that lock is released after "authn.account.lockTime" elapsed.
      */
     @Test
-    public final void accountlock_and_unlock() {
-        // account not locked.
+    public final void lock_and_unlock() {
+        // before account lock.
         requestAuthorization(TEST_CELL, TEST_ACCOUNT1, TEST_PASSWORD, HttpStatus.SC_OK);
 
         // authentication failed repeatedly, account is locked.

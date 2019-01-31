@@ -297,7 +297,7 @@ public class ImplicitFlowTest extends PersoniumTest {
             assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
 
             // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0006", Setup.TEST_CELL1);
+            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
             AuthTestCommon.waitForIntervalLock();
         }
     }
@@ -332,7 +332,7 @@ public class ImplicitFlowTest extends PersoniumTest {
             assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
 
             // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0006", Setup.TEST_CELL1);
+            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
             AuthTestCommon.waitForIntervalLock();
         }
     }
