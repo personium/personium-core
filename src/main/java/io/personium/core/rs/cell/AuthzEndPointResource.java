@@ -758,6 +758,8 @@ public class AuthzEndPointResource {
                         null, pTarget, pOwner)).build();
             }
 
+            // TODO ★IPアドレスのチェックを追加
+
             //Check user ID and password
             passCheck = cell.authenticateAccount(oew, password);
             if (!passCheck) {
@@ -1086,6 +1088,8 @@ public class AuthzEndPointResource {
                 return rb.entity(this.createForm(clientId, redirectUriStr, MSG_INCORRECT_ID_PASS, state,
                         scope, null, null)).build();
             }
+
+            // TODO ★IPアドレスのチェックを追加
 
             //Check user ID and password
             passCheck = cell.authenticateAccount(oew, password);

@@ -16,6 +16,8 @@
  */
 package io.personium.test.jersey.cell.ctl;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
 
 import org.apache.http.HttpStatus;
@@ -220,10 +222,10 @@ public class AccountUpdateTest extends ODataCommon {
     }
 
     /**
-     * アカウントを更新時にLastAuthenticatedを省略した場合nullで更新されること.
+     * When IPAddressRange is omitted, it is updated with null.
      */
     @Test
-    public final void アカウントを更新時にLastAuthenticatedを省略した場合nullで更新されること() {
+    public final void update_IPAddressRange_not_set() {
         String updateUserName = "account1999";
         String updatePass = "password19999";
 
@@ -237,13 +239,93 @@ public class AccountUpdateTest extends ODataCommon {
             // Account取得
             TResponse res = AccountUtils
                     .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
-            String getLastAuthenticated = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
+            String ipAddressRange = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
                     .get("results"))
-                    .get("LastAuthenticated");
-            assertNull(getLastAuthenticated);
+                    .get("IPAddressRange");
+            assertNull(ipAddressRange);
         } finally {
             AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
         }
+    }
+
+    /**
+     * When IPAddressRange is set null It is updated with null.
+     */
+    @Test
+    public final void update_IPAddressRange_is_null() {
+        String updateUserName = "account1999";
+        String updatePass = "password19999";
+        String updateIPAddressRange = null;
+
+        try {
+            // Account作成
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
+                    HttpStatus.SC_CREATED);
+            // Account更新
+            AccountUtils.updateWithIPAddressRange(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updateUserName, orgPass, updateIPAddressRange, HttpStatus.SC_NO_CONTENT);
+            // Account取得
+            TResponse res = AccountUtils
+                    .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
+            String ipAddressRange = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
+                    .get("results"))
+                    .get("IPAddressRange");
+            assertThat(ipAddressRange, is(updateIPAddressRange));
+        } finally {
+            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
+        }
+    }
+
+    /**
+     * When IPAddressRange is set It is updated with that value.
+     */
+    @Test
+    public final void update_IPAddressRange_is_set_value() {
+        String updateUserName = "account1999";
+        String updatePass = "password19999";
+        String updateIPAddressRange = "192.0.1.0,192.0.2.0/24,192.0.3.0";
+
+        try {
+            // Account作成
+            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
+                    HttpStatus.SC_CREATED);
+            // Account更新
+            AccountUtils.updateWithIPAddressRange(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
+                    updateUserName, orgPass, updateIPAddressRange, HttpStatus.SC_NO_CONTENT);
+            // Account取得
+            TResponse res = AccountUtils
+                    .get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, updateUserName);
+            String ipAddressRange = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
+                    .get("results"))
+                    .get("IPAddressRange");
+            assertThat(ipAddressRange, is(updateIPAddressRange));
+        } finally {
+            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, updateUserName, -1);
+        }
+    }
+
+    /**
+     * When IPAddressRange is set illegal format It is result in 400 error.
+     */
+    @Test
+    public final void update_IPAddressRange_is_set_illgal_format() {
+        String newUserName = "account999";
+        String newPassword = "new_password0";
+        String newIPAddressRange = "illegal_format";
+
+        // 認証可能を確認
+        this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_OK);
+
+        // Account更新
+        AccountUtils.updateWithIPAddressRange(AbstractCase.MASTER_TOKEN_NAME, cellName, userName, newUserName,
+                newPassword, newIPAddressRange, HttpStatus.SC_BAD_REQUEST);
+
+        // 更新失敗したAccountでは認証不可であることを確認
+        this.auth(newUserName, newPassword, HttpStatus.SC_BAD_REQUEST);
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
+
+        // 元のユーザパスワードで認証可能であることを確認
+        this.auth(this.orgUserName, this.orgPass, HttpStatus.SC_OK);
     }
 
     /**

@@ -734,6 +734,11 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
+        // TODO ★IPアドレスのチェックを追加
+        if (AuthResourceUtils.checkIPAddressRange(this.ipaddress, ipAddressRange)) {
+
+        }
+
         boolean authSuccess = cell.authenticateAccount(oew, password);
 
         if (!authSuccess) {

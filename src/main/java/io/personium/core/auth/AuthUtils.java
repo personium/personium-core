@@ -31,6 +31,7 @@ import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Account;
+import io.personium.core.model.ctl.Common;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.plugin.PluginInfo;
 import io.personium.core.plugin.PluginManager;
@@ -126,6 +127,43 @@ public final class AuthUtils {
             // Remove to avoid duplication.
             allowedTypeList.remove(accountType);
         }
+    }
+
+    /**
+     * Validate account ip address range.
+     * @param oEntityWrapper EntityWrapper
+     * @param entitySetName entitySetName
+     */
+    public static void validateAccountIPAddressRange(OEntityWrapper oEntityWrapper, String entitySetName) {
+        if (!Account.EDM_TYPE_NAME.equals(entitySetName)) {
+            return;
+        }
+
+        // Check IP address range.
+        String ipAddressRange = (String) oEntityWrapper.getProperty(Account.P_IP_ADDRESS_RANGE.getName()).getValue();
+        if (ipAddressRange == null || ipAddressRange.isEmpty()) {
+            return;
+        }
+        Pattern pattern = Pattern.compile(Common.PATTERN_SINGLE_IP_ADDRESS_RANGE);
+        String[] addresses = ipAddressRange.split(",");
+        for (String address : addresses) {
+            Matcher matcher = pattern.matcher(address);
+            if (!matcher.matches()) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
+                        .params(Account.P_IP_ADDRESS_RANGE.getName());
+            }
+        }
+    }
+
+    /**
+     * getIPAddressRenge.
+     * @param oew oew
+     * @return List<String>
+     */
+    public static List<String> getIPAddressRange(OEntityWrapper oew) {
+        String addrStr =  (String) oew.getProperty(Account.P_IP_ADDRESS_RANGE.getName()).getValue();
+        String[] addrAry = addrStr.split(" ");
+        return Arrays.asList(addrAry);
     }
 
     /**
