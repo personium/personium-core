@@ -35,10 +35,14 @@ import io.personium.core.annotations.PROPFIND;
 import io.personium.core.annotations.PROPPATCH;
 import io.personium.core.annotations.WriteAPI;
 import io.personium.core.auth.BoxPrivilege;
+import io.personium.core.event.EventBus;
+import io.personium.core.event.PersoniumEvent;
+import io.personium.core.event.PersoniumEventType;
 import io.personium.core.model.DavCmp;
 import io.personium.core.model.DavMoveResource;
 import io.personium.core.model.DavRsCmp;
 import io.personium.core.utils.ResourceUtils;
+import io.personium.core.utils.UriUtils;
 
 /**
  * JAX-RS resource responsible for StreamCollectionResource.
@@ -73,12 +77,27 @@ public class StreamCollectionResource {
             @HeaderParam("Transfer-Encoding") final String transferEncoding) {
         // Access Control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.READ_PROPERTIES);
-        return this.davRsCmp.doPropfind(requestBodyXml,
-                                        depth,
-                                        contentLength,
-                                        transferEncoding,
-                                        BoxPrivilege.READ_ACL);
+        Response response = this.davRsCmp.doPropfind(requestBodyXml,
+                                                     depth,
+                                                     contentLength,
+                                                     transferEncoding,
+                                                     BoxPrivilege.READ_ACL);
 
+        // post event to EventBus
+        String type = PersoniumEventType.streamcol(PersoniumEventType.Operation.PROPFIND);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.davRsCmp)
+                                              .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -105,7 +124,23 @@ public class StreamCollectionResource {
         if (!recursive && !this.davRsCmp.getDavCmp().isEmpty()) {
             throw PersoniumCoreException.Dav.HAS_CHILDREN;
         }
-        return this.davCmp.delete(null, recursive).build();
+        Response response = this.davCmp.delete(null, recursive).build();
+
+        // post event to EventBus
+        String type = PersoniumEventType.streamcol(PersoniumEventType.Operation.DELETE);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.davRsCmp)
+                                              .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -118,7 +153,23 @@ public class StreamCollectionResource {
     public Response proppatch(final Reader requestBodyXml) {
         //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_PROPERTIES);
-        return this.davRsCmp.doProppatch(requestBodyXml);
+        Response response = this.davRsCmp.doProppatch(requestBodyXml);
+
+        // post event to EventBus
+        String type = PersoniumEventType.streamcol(PersoniumEventType.Operation.PROPPATCH);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.davRsCmp)
+                                              .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
@@ -131,7 +182,23 @@ public class StreamCollectionResource {
     public Response acl(final Reader reader) {
         //Access control
         this.davRsCmp.checkAccessContext(this.davRsCmp.getAccessContext(), BoxPrivilege.WRITE_ACL);
-        return this.davCmp.acl(reader).build();
+        Response response = this.davCmp.acl(reader).build();
+
+        // post event to EventBus
+        String type = PersoniumEventType.streamcol(PersoniumEventType.Operation.ACL);
+        String object = UriUtils.convertSchemeFromHttpToLocalCell(this.davRsCmp.getCell().getUrl(),
+                                                                  this.davRsCmp.getUrl());
+        String info = Integer.toString(response.getStatus());
+        PersoniumEvent ev = new PersoniumEvent.Builder()
+                                              .type(type)
+                                              .object(object)
+                                              .info(info)
+                                              .davRsCmp(this.davRsCmp)
+                                              .build();
+        EventBus eventBus = this.davRsCmp.getCell().getEventBus();
+        eventBus.post(ev);
+
+        return response;
     }
 
     /**
