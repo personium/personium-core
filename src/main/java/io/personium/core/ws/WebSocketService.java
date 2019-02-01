@@ -32,8 +32,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
 import javax.websocket.PongMessage;
 import javax.websocket.Session;
 
@@ -491,7 +489,6 @@ public class WebSocketService {
      * @param pongMessage pong
      * @param session session
      */
-    @OnMessage
     public void onMessage(PongMessage pongMessage, Session session) {
         synchronized (lockObj) {
             int sendPingCount = (int) session.getUserProperties().get(KEY_PROPERTIES_PING_COUNT);
@@ -506,7 +503,6 @@ public class WebSocketService {
      * @param session session info
      * @param e Throwable Error Information
      */
-    @OnError
     public void onError(Session session, Throwable e) {
         log.error("ws: onError: " + e.getMessage());
         // e.printStackTrace();

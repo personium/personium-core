@@ -152,11 +152,11 @@ public class AuthResourceUtils {
    }
 
     /**
-     * add success authentication history.
+     * update auth history last file with authentication success.
      * @param fsPath fs path
      * @param accountId account ID
      */
-    public static void addSuccessAuthHistory(String fsPath, String accountId) {
+    public static void updateAuthHistoryLastFileWithSuccess(String fsPath, String accountId) {
         Lock lock = LockManager.getLock(Lock.CATEGORY_AUTH_HISTORY, null, null, accountId);
         log.debug("lock auth history. accountId:" + accountId);
         try {
@@ -171,11 +171,11 @@ public class AuthResourceUtils {
     }
 
     /**
-     * add failed authentication history.
+     * update auth history last file with authentication failed.
      * @param fsPath fs path
      * @param accountId account ID
      */
-    public static void addFailedAuthHistory(String fsPath, String accountId) {
+    public static void updateAuthHistoryLastFileWithFailed(String fsPath, String accountId) {
         Lock lock = LockManager.getLock(Lock.CATEGORY_AUTH_HISTORY, null, null, accountId);
         log.debug("lock auth history. accountId:" + accountId);
         try {

@@ -22,55 +22,60 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.PongMessage;
 import javax.websocket.Session;
+import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 /**
- * WebSocket Endpoint.
- * /__event.
+ * Stream Endpoint.
+ * /__topic/{box}/{path}.
  */
 @ServerEndpoint(
-        value = "/__event",
+        value = "/__topic/{box}/{path}",
         configurator = PersoniumConfigurator.class
 )
-public class WebSocketFqdnBaseEndpoint {
+public class StreamFqdnBaseEndpoint {
 
-    /** Websocket service. */
-    private WebSocketService webSocketService;
+    /** Stream common Endpoint. */
+    private StreamEndpoint streamEndpoint;
 
     /**
      * This callback method is called when a client connects.
-     * Add session info in sessionMap, cellSessionIdMap.
+     * @param boxName boxName specified in url param
+     * @param path path specified in url param
      * @param session WebSocket session
      */
     @OnOpen
-    public void onOpen(Session session) {
+    public void onOpen(@PathParam("box") String boxName,
+                       @PathParam("path") String path,
+                       Session session) {
         String cellName = (String) session.getUserProperties().get("CellName");
-        webSocketService = new WebSocketService();
-        webSocketService.onOpen(cellName, session);
+        String topicName = new StringBuilder().append(cellName)
+                                              .append(StreamEndpoint.SEPARATOR)
+                                              .append(boxName)
+                                              .append(StreamEndpoint.SEPARATOR)
+                                              .append(path)
+                                              .toString();
+        streamEndpoint = new StreamEndpoint();
+        streamEndpoint.onOpen(topicName, session);
     }
 
     /**
      * This callback method is called when a client disconnects.
-     * Delete data about disconnected session in cellSessionIdMap, sessionMap.
      * @param session WebSocket session
      */
     @OnClose
     public void onClose(Session session) {
-        webSocketService.onClose(session);
+        streamEndpoint.onClose(session);
     }
 
     /**
      * This callback method is called when a client send message data.
-     * sent text is allowed to be JSON and the following data types.
-     *  * authorization {access_token: ${any}}
-     *  * subscribe {subscribe: {Type: ${any}, Object: ${any}}}
-     *  * unsubscribe {unsubscribe: {Type: ${any}, Object: ${any}}}
      * @param text received message
      * @param session sender session
      */
     @OnMessage
     public void onMessage(String text, Session session) {
-        webSocketService.onMessage(text, session);
+        streamEndpoint.onMessage(text, session);
     }
 
     /**
@@ -80,7 +85,7 @@ public class WebSocketFqdnBaseEndpoint {
      */
     @OnMessage
     public void onMessage(PongMessage pongMessage, Session session) {
-        webSocketService.onMessage(pongMessage, session);
+        streamEndpoint.onMessage(pongMessage, session);
     }
 
     /**
@@ -90,7 +95,7 @@ public class WebSocketFqdnBaseEndpoint {
      */
     @OnError
     public void onError(Session session, Throwable e) {
-        webSocketService.onError(session, e);
+        streamEndpoint.onError(session, e);
     }
 
 }

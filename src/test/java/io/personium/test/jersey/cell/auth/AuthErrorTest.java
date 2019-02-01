@@ -310,7 +310,7 @@ public class AuthErrorTest extends PersoniumTest {
     @Test
     public final void パスワード認証APIのヘッダにclient_secretの指定がない場合_400が返却されること() {
         String schemaTransCellAccessTokenHeader =
-                "Basic " + PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1), "");
+                PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1), "");
 
         // セルに対してパスワード認証
         TResponse passRes = Http.request("authn/auth-with-header.txt")
@@ -384,7 +384,7 @@ public class AuthErrorTest extends PersoniumTest {
         String transCellAccessToken = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
         String schemaTransCellAccessTokenHeader =
-                "Basic " + PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1), "");
+                PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1), "");
 
         // セルに対してトークン認証
         TResponse tokenRes =
@@ -456,7 +456,7 @@ public class AuthErrorTest extends PersoniumTest {
         String refreshToken = (String) json.get(OAuth2Helper.Key.REFRESH_TOKEN);
 
         String schemaTransCellAccessTokenHeader =
-                "Basic " + PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1), "");
+                PersoniumCoreUtils.createBasicAuthzHeader(UrlUtils.cellRoot(TEST_APP_CELL1), "");
         // リフレッシュトークン認証
         TResponse tokenRes = Http.request("authn/auth-with-header.txt")
                 .with("remoteCell", TEST_CELL1)

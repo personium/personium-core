@@ -26,22 +26,32 @@ public class PersoniumEventType {
     /** Category. */
     static class Category {
         /** Cell category. */
-        static final String CELL    = "cell";
+        static final String CELL       = "cell";
         /** Cell control object category. */
-        static final String CELLCTL = "cellctl";
+        static final String CELLCTL    = "cellctl";
+        /** Box category. */
+        static final String BOX        = "box";
         /** OData category. */
-        static final String ODATA   = "odata";
-        /** Webdav category. */
-        static final String WEBDAV  = "davfile";
+        static final String ODATA      = "odata";
+        /** Webdav Collection category. */
+        static final String WEBDAVCOL  = "webdavcol";
+        /** OData Collection category. */
+        static final String ODATACOL   = "odatacol";
+        /** Service Collection category. */
+        static final String SERVICECOL = "servicecol";
+        /** Stream Collection category. */
+        static final String STREAMCOL  = "streamcol";
+        /** Webdav File category. */
+        static final String WEBDAV     = "davfile";
         /** Message category. */
-        static final String MESSAGE = "message";
+        static final String MESSAGE    = "message";
         /** Service category. */
-        static final String SERVICE = "service";
+        static final String SERVICE    = "service";
         /** Box Install category. */
-        static final String BI      = "boxinstall";
+        static final String BI         = "boxinstall";
 
         /** Timer category. */
-        static final String TIMER   = "timer";
+        static final String TIMER      = "timer";
     }
 
     /** Operation. */
@@ -58,6 +68,15 @@ public class PersoniumEventType {
         public static final String MERGE   = "patch";
         /** Delete operation. */
         public static final String DELETE  = "delete";
+
+        /** Mkcol operation. */
+        public static final String MKCOL     = "mkcol";
+        /** Acl operation. */
+        public static final String ACL       = "acl";
+        /** Propfind operation. */
+        public static final String PROPFIND  = "propfind";
+        /** Proppatch operation. */
+        public static final String PROPPATCH = "proppatch";
 
         /** Link operation. */
         public static final String LINK    = "links";
@@ -92,7 +111,7 @@ public class PersoniumEventType {
     }
 
     /** Separator string. */
-    static final String SEPARATOR = ".";
+    public static final String SEPARATOR = ".";
 
     /**
      * Get Type of cell operations.
@@ -116,6 +135,66 @@ public class PersoniumEventType {
         return new StringBuilder(Category.CELLCTL)
                 .append(SEPARATOR)
                 .append(entityName)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of box operations.
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String box(String op) {
+        return new StringBuilder(Category.BOX)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of WebDav Collection operations.
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String webdavcol(String op) {
+        return new StringBuilder(Category.WEBDAVCOL)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of OData Collection operations.
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String odatacol(String op) {
+        return new StringBuilder(Category.ODATACOL)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of Service Collection operations.
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String servicecol(String op) {
+        return new StringBuilder(Category.SERVICECOL)
+                .append(SEPARATOR)
+                .append(op)
+                .toString();
+    }
+
+    /**
+     * Get Type of Stream Collection operations.
+     * @param op Operation string
+     * @return Type string
+     */
+    public static final String streamcol(String op) {
+        return new StringBuilder(Category.STREAMCOL)
                 .append(SEPARATOR)
                 .append(op)
                 .toString();

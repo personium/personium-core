@@ -1375,7 +1375,6 @@ public class PersoniumUnitConfig {
     }
 
     /**
->>>>>>> develop
      * Reload the configuration information.
      */
     public static void reload() {

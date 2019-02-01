@@ -47,13 +47,13 @@ import io.personium.test.categories.Unit;
 public class RuleManagerTest {
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * argument is null.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_argument_is_null() throws Exception {
+    public void isMatched_Normal_argument_is_null() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -75,9 +75,9 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -86,13 +86,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * external of RuleInfo is null.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_external_of_ruleinfo_is_null() throws Exception {
+    public void isMatched_Normal_external_of_ruleinfo_is_null() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -114,9 +114,9 @@ public class RuleManagerTest {
         Field field = RuleManager.class.getDeclaredField("logger");
         field.setAccessible(true);
         field.set(rman, logger);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -125,13 +125,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * external matches with false.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_external_matches_with_false() throws Exception {
+    public void isMatched_Normal_external_matches_with_false() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -169,9 +169,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -180,13 +180,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * external matches with true.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_external_matches_with_true() throws Exception {
+    public void isMatched_Normal_external_matches_with_true() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -225,9 +225,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -236,13 +236,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * schema matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_schema_matches() throws Exception {
+    public void isMatched_Normal_schema_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -284,9 +284,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -295,13 +295,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * schema not matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_schema_not_matches() throws Exception {
+    public void isMatched_Normal_schema_not_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -343,9 +343,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -354,13 +354,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * subject matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_subject_matches() throws Exception {
+    public void isMatched_Normal_subject_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -400,9 +400,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -411,13 +411,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * subject not matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_subject_not_matches() throws Exception {
+    public void isMatched_Normal_subject_not_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -457,23 +457,24 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
         // --------------------
         assertThat(result, is(false));
     }
+
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * type matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_type_matches() throws Exception {
+    public void isMatched_Normal_type_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -513,9 +514,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -524,13 +525,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * type partial matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_type_partial_matches() throws Exception {
+    public void isMatched_Normal_type_partial_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -570,9 +571,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -581,13 +582,70 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
+     * Normal test.
+     * type partial backward matches.
+     * @throws Exception exception occurred in some errors
+     */
+    @Test
+    public void isMatched_Normal_type_partial_backward_matches() throws Exception {
+        // --------------------
+        // Test method args
+        // --------------------
+        RuleManager rman = PowerMockito.mock(RuleManager.class);
+        RuleManager.RuleInfo ri = rman.new RuleInfo();
+        ri.external = Boolean.TRUE;
+        ri.type = ".create";
+        PersoniumEvent event = new PersoniumEvent.Builder()
+                .external()
+                .schema("http://personium/dummyCell/")
+                .subject("subject")
+                .type("cellctl.Rule.create")
+                .object("object")
+                .info("info")
+                .requestKey("requestKey")
+                .eventId("eventid")
+                .ruleChain("rulechain")
+                .via("via")
+                .roles("roles")
+                .build();
+
+        // --------------------
+        // Mock settings
+        // --------------------
+        Logger logger = PowerMockito.mock(Logger.class);
+        PowerMockito.doNothing().when(logger).info(anyString());
+        PowerMockito.doNothing().when(logger).error(anyString());
+        PowerMockito.doNothing().when(logger).debug(anyString());
+
+        // --------------------
+        // Run method
+        // --------------------
+        Field field = RuleManager.class.getDeclaredField("logger");
+        field.setAccessible(true);
+        field.set(rman, logger);
+        Object lock = new Object();
+        Field objField = RuleManager.class.getDeclaredField("boxLockObj");
+        objField.setAccessible(true);
+        objField.set(rman, lock);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
+
+        // --------------------
+        // Confirm result
+        // --------------------
+        assertThat(result, is(true));
+    }
+
+    /**
+     * Test isMatched().
      * Normal test.
      * type not matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_type_not_matches() throws Exception {
+    public void isMatched_Normal_type_not_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -627,9 +685,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -638,13 +696,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * object matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_object_matches() throws Exception {
+    public void isMatched_Normal_object_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -684,9 +742,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -695,13 +753,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * object matches in boxbounded.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_object_matches_in_boxbounded() throws Exception {
+    public void isMatched_Normal_object_matches_in_boxbounded() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -747,9 +805,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -758,13 +816,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * object partial matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_object_partial_matches() throws Exception {
+    public void isMatched_Normal_object_partial_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -803,9 +861,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -814,13 +872,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * object not matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_object_not_matches() throws Exception {
+    public void isMatched_Normal_object_not_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -859,9 +917,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -870,13 +928,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * info matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_info_matches() throws Exception {
+    public void isMatched_Normal_info_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -916,9 +974,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -927,13 +985,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * info partial matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_info_partial_matches() throws Exception {
+    public void isMatched_Normal_info_partial_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -973,9 +1031,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
@@ -984,13 +1042,13 @@ public class RuleManagerTest {
     }
 
     /**
-     * Test match().
+     * Test isMatched().
      * Normal test.
      * info not matches.
      * @throws Exception exception occurred in some errors
      */
     @Test
-    public void match_Normal_info_not_matches() throws Exception {
+    public void isMatched_Normal_info_not_matches() throws Exception {
         // --------------------
         // Test method args
         // --------------------
@@ -1030,9 +1088,9 @@ public class RuleManagerTest {
         Field objField = RuleManager.class.getDeclaredField("boxLockObj");
         objField.setAccessible(true);
         objField.set(rman, lock);
-        Method match = RuleManager.class.getDeclaredMethod("match", RuleManager.RuleInfo.class, PersoniumEvent.class);
-        match.setAccessible(true);
-        boolean result = (boolean) match.invoke(rman, ri, event);
+        Method isMatched = RuleManager.class.getDeclaredMethod("isMatched", RuleManager.RuleInfo.class, PersoniumEvent.class);
+        isMatched.setAccessible(true);
+        boolean result = (boolean) isMatched.invoke(rman, ri, event);
 
         // --------------------
         // Confirm result
