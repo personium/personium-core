@@ -67,7 +67,7 @@ public class AuthHistoryLastFileTest {
     private static final String TEST_ACCOUNT_ID = "account_last_1";
 
     /** Test dir path. */
-    private static final String TEST_DEFAULT_DIR_PATH = "/personium_nfs/personium-core/unitTest/" + CLASS_NAME + "/";
+    private static final String TEST_DIR_PATH = "/personium_nfs/personium-core/unitTest/" + CLASS_NAME + "/";
     /** Test auth history account path. */
     private static final String TEST_AUTH_HISTORY_PATH = AuthHistoryLastFile.AUTH_HISTORY_DIRECTORY + "/"
             + TEST_ACCOUNT_ID + "/";
@@ -93,7 +93,7 @@ public class AuthHistoryLastFileTest {
         if (unitTestPath != null) {
             unitTestPath += "/" + CLASS_NAME + "/";
         } else {
-            unitTestPath = TEST_DEFAULT_DIR_PATH;
+            unitTestPath = TEST_DIR_PATH;
         }
 
         // create test dir.
