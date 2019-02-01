@@ -170,7 +170,7 @@ public class AccountLockManagerTest {
         assertThat(AccountLockManager.getFailedCount("account_2"), is(3));
 
         // wait account lock expiration time (s).
-        Thread.sleep(1000 * AccountLockManager.accountLockTime);
+        Thread.sleep(1000 * AccountLockManager.accountLockTime + 1);
 
         // check ralease account lock and reset failed count.
         assertThat(AccountLockManager.isLockedAccount("account_1"), is(false));
