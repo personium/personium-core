@@ -16,11 +16,6 @@
  */
 package io.personium.test.jersey.cell.ctl;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -28,18 +23,12 @@ import org.json.simple.parser.ParseException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.core.PersoniumCoreException;
-import io.personium.core.model.ctl.Common;
 import io.personium.core.rs.PersoniumCoreApplication;
-import io.personium.core.utils.ODataUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.categories.Regression;
 import io.personium.test.categories.Unit;
-import io.personium.test.jersey.AbstractCase;
 import io.personium.test.jersey.ODataCommon;
-import io.personium.test.jersey.box.odatacol.UserDataListFilterTest;
 import io.personium.test.setup.Setup;
-import io.personium.test.unit.core.UrlUtils;
 import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.RoleUtils;
 import io.personium.test.utils.TResponse;
@@ -81,7 +70,7 @@ public class AccountViaNPTest extends ODataCommon {
                     null,
                     "CellCtl.Account",
                     (JSONObject) (new JSONParser()).parse("{\"Name\":\"" + accountName
-                            + "\", \"LastAuthenticated\":null}"));
+                            + "\"}"));
         } finally {
             // $links削除
             RoleUtils.deleteLink(CELL_NAME, MASTER_TOKEN_NAME, RoleUtils.keyString(roleName),
@@ -93,156 +82,5 @@ public class AccountViaNPTest extends ODataCommon {
             // Account削除
             AccountUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, accountName, -1);
         }
-    }
-
-    /**
-     * RoleからNP経由でLastAuthenticatedに時刻を指定したAccountの登録ができること.
-     * @throws ParseException リクエストボディのパースに失敗
-     */
-    @SuppressWarnings("unchecked")
-    @Test
-    public void RoleからNP経由でLastAuthenticatedに時刻を指定したAccountの登録ができること() throws ParseException {
-        String roleName = "AccountViaNPTestRole";
-        String accountName = "AccountViaNPTestAccount";
-        long datelong = 1414656074074L;
-
-        try {
-            // Role作成
-            RoleUtils.create(CELL_NAME, MASTER_TOKEN_NAME, roleName, HttpStatus.SC_CREATED);
-
-            // Role-AccountNP経由登録
-            String body = "{\"Name\":\"" + accountName + "\", \"LastAuthenticated\":\"/Date(" + datelong + ")/\"}";
-            TResponse res = AccountUtils.createViaNPNonCredential(CELL_NAME, MASTER_TOKEN_NAME, "Role", roleName, body,
-                    HttpStatus.SC_CREATED);
-            ODataCommon.checkResponseBody(res.bodyAsJson(),
-                    null,
-                    "CellCtl.Account",
-                    (JSONObject) (new JSONParser()).parse(body));
-        } finally {
-            // $links削除
-            RoleUtils.deleteLink(CELL_NAME, MASTER_TOKEN_NAME, RoleUtils.keyString(roleName),
-                    "Account", "'" + accountName + "'", -1);
-
-            // Role削除
-            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, roleName, null, -1);
-
-            // Account削除
-            AccountUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, accountName, -1);
-        }
-    }
-
-    /**
-     * RoleからNP経由でLastAuthenticatedにSYSUTCDATETIMEを指定したAccountの登録ができること.
-     * @throws ParseException リクエストボディのパースに失敗
-     */
-    @Test
-    public void RoleからNP経由でLastAuthenticatedにSYSUTCDATETIMEを指定したAccountの登録ができること() throws ParseException {
-        String roleName = "AccountViaNPTestRole";
-        String accountName = "AccountViaNPTestAccount";
-
-        try {
-            // Role作成
-            RoleUtils.create(CELL_NAME, MASTER_TOKEN_NAME, roleName, HttpStatus.SC_CREATED);
-
-            // Role-AccountNP経由登録
-            String body = "{\"Name\":\"" + accountName + "\", \"LastAuthenticated\":\"" + Common.SYSUTCDATETIME + "\"}";
-            TResponse res = AccountUtils.createViaNPNonCredential(CELL_NAME, MASTER_TOKEN_NAME, "Role", roleName, body,
-                    HttpStatus.SC_CREATED);
-            String lastAuthenticated = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d")).get("results"))
-                    .get("LastAuthenticated");
-
-            assertTrue("LastAuthenticatedがpersonium.ioの日付書式としてバリデートできなかった 。 lastAuthenticated:" + lastAuthenticated,
-                    ODataUtils.validateDateTime(lastAuthenticated));
-        } finally {
-            // $links削除
-            RoleUtils.deleteLink(CELL_NAME, MASTER_TOKEN_NAME, RoleUtils.keyString(roleName),
-                    "Account", "'" + accountName + "'", -1);
-
-            // Role削除
-            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, roleName, null, -1);
-
-            // Account削除
-            AccountUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, accountName, -1);
-        }
-    }
-
-    /**
-     * RoleからNP経由でLastAuthenticatedに予約語以外の文字列を指定したAccountの登録ができないこと.
-     * @throws ParseException リクエストボディのパースに失敗
-     */
-    @Test
-    public void RoleからNP経由でLastAuthenticatedに予約語以外の文字列を指定したAccountの登録ができないこと() throws ParseException {
-        String roleName = "AccountViaNPTestRole";
-        String accountName = "AccountViaNPTestAccount";
-
-        try {
-            // Role作成
-            RoleUtils.create(CELL_NAME, MASTER_TOKEN_NAME, roleName, HttpStatus.SC_CREATED);
-
-            // Role-AccountNP経由登録
-            String body = "{\"Name\":\"" + accountName + "\", \"LastAuthenticated\":\"SYSUTCDATE()\"}";
-            TResponse res = AccountUtils.createViaNPNonCredential(CELL_NAME, MASTER_TOKEN_NAME, "Role", roleName, body,
-                    HttpStatus.SC_BAD_REQUEST);
-            res.checkErrorResponse(PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.getCode(),
-                    PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR.params("LastAuthenticated").getMessage());
-        } finally {
-            // $links削除
-            RoleUtils.deleteLink(CELL_NAME, MASTER_TOKEN_NAME, RoleUtils.keyString(roleName),
-                    "Account", "'" + accountName + "'", -1);
-            // Role削除
-            RoleUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, roleName, null, -1);
-            // Account削除
-            AccountUtils.delete(CELL_NAME, MASTER_TOKEN_NAME, accountName, -1);
-        }
-    }
-
-    /**
-     * 最終ログイン時刻でNP経由での範囲検索ができることの確認.
-     * @throws ParseException リクエストボディのパースに失敗
-     */
-    @Test
-    public void 最終ログイン時刻でNP経由での範囲検索ができることの確認() throws ParseException {
-        // 範囲検索クエリ用の時刻を取り出す
-        TResponse res = AccountUtils.get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, Setup.TEST_CELL1,
-                "LastAuthenticatedListUser005");
-        String lastAuthenticatedString1 = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                .get("results"))
-                .get("LastAuthenticated");
-        long lastAuthenticatedlong1 = UserDataListFilterTest.parseDateStringToLong(lastAuthenticatedString1);
-        res = AccountUtils.get(AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_OK, Setup.TEST_CELL1,
-                "LastAuthenticatedListUser015");
-        String lastAuthenticatedString2 = (String) ((JSONObject) ((JSONObject) res.bodyAsJson().get("d"))
-                .get("results"))
-                .get("LastAuthenticated");
-        long lastAuthenticatedlong2 = UserDataListFilterTest.parseDateStringToLong(lastAuthenticatedString2);
-
-        // Accountの一覧検索
-        // ・Nameが"LastAuthenticatedListUser"で始まる、かつ、
-        // ・LastAuthenticatedがLastAuthenticatedListUser006～LastAuthenticatedListUser015の値の間のAccountを
-        // ・LastAuthenticatedで昇順並び替え
-        String query = "?\\$filter=startswith(Name,%27LastAuthenticatedListUser%27)+"
-                + "and+LastAuthenticated+gt+" + lastAuthenticatedlong1 + "+"
-                + "and+LastAuthenticated+le+" + lastAuthenticatedlong2
-                + "&\\$orderby=LastAuthenticated&\\$inlinecount=allpages";
-        res = AccountUtils.listViaNP(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "Role",
-                "'accountListViaNPRoleName'", query);
-
-        // レスポンスボディーチェック用expectの作成
-        // URI
-        Map<String, String> uri = new HashMap<String, String>();
-        for (int i = 6; i <= 15; i++) {
-            String accountName = String.format("LastAuthenticatedListUser%3d", i);
-            uri.put(accountName, UrlUtils.accountLinks(Setup.TEST_CELL1, accountName));
-        }
-        // プロパティ
-        Map<String, Map<String, Object>> additional = new HashMap<String, Map<String, Object>>();
-        for (int i = 6; i <= 15; i++) {
-            Map<String, Object> additionalprop = new HashMap<String, Object>();
-            String accountName = String.format("LastAuthenticatedListUser%3d", i);
-            additional.put(accountName, additionalprop);
-            additionalprop.put("Name", accountName);
-        }
-
-        ODataCommon.checkResponseBodyList(res.bodyAsJson(), uri, "CellCtl.Account", additional, "__id", 10, null);
     }
 }

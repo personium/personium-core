@@ -2839,46 +2839,6 @@ public abstract class EsODataProducer implements PersoniumODataProducer {
     }
 
     /**
-     * Update last login time of Account.
-     * @param entitySet entitySetName
-     * @param originalKey Key to be updated
-     * @param accountId Account ID
-     */
-    public void updateLastAuthenticated(final EdmEntitySet entitySet, final OEntityKey originalKey, String accountId) {
-        Lock lock = lock();
-        try {
-            //Get current time
-            long nowTimeMillis = System.currentTimeMillis();
-
-            //Acquire Account information to be changed from ES
-            EntitySetAccessor esType = this.getAccessorForEntitySet(entitySet.getName());
-            PersoniumGetResponse personiumGetResponseNew = esType.get(accountId);
-            if (personiumGetResponseNew == null) {
-                //When the Account is deleted from the authentication until the last login time update, since there is no update object, the process ends normally.
-                PersoniumCoreLog.Auth.ACCOUNT_ALREADY_DELETED.params(originalKey.toKeyString()).writeLog();
-                return;
-            }
-            EntitySetDocHandler oedhNew = new OEntityDocHandler(personiumGetResponseNew);
-            //Overwrite the last login date and time of the acquired Account
-            Map<String, Object> staticFields = oedhNew.getStaticFields();
-            staticFields.put("LastAuthenticated", nowTimeMillis);
-            oedhNew.setStaticFields(staticFields);
-            //Since this method is called at the time of authentication success, it is regarded as not updating the Account.
-            //For this reason, Account's __updated has not been overwritten.
-            //Also, when updating the Elasticsearch data, ETag is replaced, but here it is acceptable to replace it.
-
-            //Save esJson in ES
-            //Retrieve version information of Account
-            Long version = oedhNew.getVersion();
-            esType.update(oedhNew.getId(), oedhNew, version);
-        } finally {
-            log.debug("unlock");
-            lock.release();
-        }
-    }
-
-
-    /**
      * Replaces an existing link between two entities.
      * @param sourceEntity an entity with at least one navigation property
      * @param targetNavProp the navigation property

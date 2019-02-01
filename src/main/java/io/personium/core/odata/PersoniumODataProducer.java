@@ -72,14 +72,6 @@ public interface PersoniumODataProducer extends ODataProducer {
     void updatePassword(EdmEntitySet entitySetName, OEntityKey originalKey, String pCredHeader);
 
     /**
-     * Change last login time of Account.
-     * @param entitySetName entitySetName
-     * @param originalKey Key to be updated
-     * @param accountId Account ID
-     */
-    void updateLastAuthenticated(EdmEntitySet entitySetName, OEntityKey originalKey, String accountId);
-
-    /**
      * ETag · Entity MERGE for primary key change.
      * @param entitySetName entitySetName
      * @param originalKey Key to be updated

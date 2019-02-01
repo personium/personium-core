@@ -83,11 +83,8 @@ public class MyPasswordTest extends PersoniumTest {
             // セルローカルトークンを取得する
             String tokenStr = (String) resBody.get(OAuth2Helper.Key.ACCESS_TOKEN);
 
-            Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "PasswordTest");
             PersoniumResponse res = requesttoMypassword(tokenStr, "newPassword", Setup.TEST_CELL1);
             assertEquals(204, res.getStatusCode());
-            AuthTestCommon.accountLastAuthenticatedNotUpdatedCheck(
-                    Setup.TEST_CELL1, "PasswordTest", lastAuthenticatedTime);
 
             // 確認
             // TODO 仕様の問題で変更前のトークンが有効となっているため確認未実施

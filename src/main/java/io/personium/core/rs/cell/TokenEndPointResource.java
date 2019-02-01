@@ -43,8 +43,6 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
-import org.odata4j.core.OEntityKey;
-import org.odata4j.edm.EdmEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,16 +67,15 @@ import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.DavRsCmp;
-import io.personium.core.model.ModelFactory;
 import io.personium.core.model.ctl.Account;
 import io.personium.core.odata.OEntityWrapper;
-import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.plugin.PluginInfo;
 import io.personium.core.plugin.PluginManager;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -169,21 +166,6 @@ public class TokenEndPointResource {
             //Regular password authentication
             Response response = this.handlePassword(target, pOwner,
                     schema, username, password);
-
-            //When the password authentication succeeds, the last login time of the account is updated
-            //It passes only here if password authentication succeeds (exceptions will be thrown if an error occurs in handlePassword)
-            if (PersoniumUnitConfig.getAccountLastAuthenticatedEnable()) {
-                //Obtain schema information of Account
-                PersoniumODataProducer producer = ModelFactory.ODataCtl
-                        .cellCtl(cell);
-                EdmEntitySet esetAccount = producer.getMetadata()
-                        .getEdmEntitySet(Account.EDM_TYPE_NAME);
-                OEntityKey originalKey = OEntityKey.parse("('" + username
-                        + "')");
-                //Ask Producer to change the last login time (Get / release lock within this method)
-                producer.updateLastAuthenticated(esetAccount, originalKey,
-                        accountId);
-            }
             return response;
         } else if (OAuth2Helper.GrantType.SAML2_BEARER.equals(grantType)) {
             return this.receiveSaml2(target, pOwner, schema, assertion);
@@ -662,6 +644,17 @@ public class TokenEndPointResource {
             //Return "p_cookie_peer" of the response body
             resp.put("p_cookie_peer", pCookiePeer);
         }
+
+        if (accountId != null && !accountId.isEmpty()) {
+            // get last auth history.
+            AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
+                    davRsCmp.getDavCmp().getFsPath(), accountId);
+            resp.put(OAuth2Helper.Key.LAST_AUTHENTICATED, last.getLastAuthenticated());
+            resp.put(OAuth2Helper.Key.FAILED_COUNT, last.getFailedCount());
+            // update auth history.
+            AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(davRsCmp.getDavCmp().getFsPath(), accountId);
+        }
+
         return rb.entity(resp.toJSONString()).build();
     }
 
@@ -714,6 +707,7 @@ public class TokenEndPointResource {
         if (isLock) {
             //Update lock time of memcached
             AuthResourceUtils.registAccountLock(accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
             throw PersoniumCoreAuthnException.ACCOUNT_LOCK_ERROR.realm(this.cell.getUrl());
         }
 
@@ -722,6 +716,7 @@ public class TokenEndPointResource {
         if (!authSuccess) {
             //Make lock on memcached
             AuthResourceUtils.registAccountLock(accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 

@@ -134,8 +134,7 @@ public class PersoniumUnitConfig {
      * Setting around Account.
      */
     public static final class Account {
-        /** Whether or not to update the last login time of Account at the time of successful password authentication (true: Update (default) false: Do not update).*/
-        public static final String ACCOUNT_LAST_AUTHENTICATED_ENABLED = KEY_ROOT + "account.lastauthenticated.enabled";
+        // TODO add properties later.
     }
 
     /**
@@ -1372,14 +1371,6 @@ public class PersoniumUnitConfig {
         int depth = getUserdataSimpleTypePropertyLimits().length;
         String expr = get(UserDataProperties.COMPLEX_TYPE_PROPERTY_LIMITS);
         return getPropertyLimits(expr, depth);
-    }
-
-    /**
-     * Whether or not to update the last login time of Account when password authentication is successful ().
-     * @return true: Update (default) false: Do not update
-     */
-    public static boolean getAccountLastAuthenticatedEnable() {
-        return Boolean.parseBoolean(get(Account.ACCOUNT_LAST_AUTHENTICATED_ENABLED));
     }
 
     /**

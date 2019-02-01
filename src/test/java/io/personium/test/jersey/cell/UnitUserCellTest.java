@@ -282,14 +282,12 @@ public class UnitUserCellTest extends PersoniumTest {
                     "cell/proppatch-uluut.txt", HttpStatus.SC_MULTI_STATUS);
 
             // パスワード認証でのユニット昇格
-            Long lastAuthenticatedTime = AuthTestCommon.getAccountLastAuthenticated(Setup.TEST_CELL1, "account1");
             TResponse res = Http.request("authnUnit/password-uluut.txt")
                     .with("remoteCell", Setup.TEST_CELL1)
                     .with("username", "account1")
                     .with("password", "password1")
                     .returns()
                     .statusCode(HttpStatus.SC_OK);
-            AuthTestCommon.accountLastAuthenticatedCheck(Setup.TEST_CELL1, "account1", lastAuthenticatedTime);
 
             JSONObject json = res.bodyAsJson();
             String uluutString = (String) json.get(OAuth2Helper.Key.ACCESS_TOKEN);

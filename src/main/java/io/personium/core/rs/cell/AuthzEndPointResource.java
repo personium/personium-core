@@ -56,8 +56,6 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
-import org.odata4j.core.OEntityKey;
-import org.odata4j.edm.EdmEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,19 +80,17 @@ import io.personium.core.PersoniumCoreLog;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
+import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
 import io.personium.core.model.Cell;
 import io.personium.core.model.CellRsCmp;
-import io.personium.core.model.ModelFactory;
-import io.personium.core.model.ctl.Account;
 import io.personium.core.model.impl.es.EsModel;
 import io.personium.core.model.impl.es.QueryMapFactory;
 import io.personium.core.model.impl.es.accessor.EntitySetAccessor;
 import io.personium.core.model.impl.es.doc.OEntityDocHandler;
 import io.personium.core.odata.OEntityWrapper;
-import io.personium.core.odata.PersoniumODataProducer;
 import io.personium.core.rs.FacadeResource;
 import io.personium.core.utils.ResourceUtils;
 
@@ -364,16 +360,6 @@ public class AuthzEndPointResource {
             //When there is a setting in either user ID or password
             Response response = this.handleImplicitFlowPassWord(pTarget, redirectUriStr, clientId,
                     username, password, keepLogin, state, pOwner);
-
-            if (PersoniumUnitConfig.getAccountLastAuthenticatedEnable()
-                    && isSuccessAuthorization(response)) {
-                //Obtain schema information of Account
-                PersoniumODataProducer producer = ModelFactory.ODataCtl.cellCtl(cell);
-                EdmEntitySet esetAccount = producer.getMetadata().getEdmEntitySet(Account.EDM_TYPE_NAME);
-                OEntityKey originalKey = OEntityKey.parse("('" + username + "')");
-                //Ask Producer to change the last login time (Get / release lock within this method)
-                producer.updateLastAuthenticated(esetAccount, originalKey, accountId);
-            }
             return response;
         } else if (assertion != null && !"".equals(assertion)) {
             //When assertion is specified
@@ -735,6 +721,7 @@ public class AuthzEndPointResource {
                 String accountLockMsg = PersoniumCoreMessageUtils.getMessage(resCode);
                 log.info("MessageCode : " + resCode);
                 log.info("responseMessage : " + accountLockMsg);
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, accountLockMsg, state,
                         null, pTarget, pOwner)).build();
@@ -749,6 +736,7 @@ public class AuthzEndPointResource {
                 String missIdPassMsg = PersoniumCoreMessageUtils.getMessage(resCode);
                 log.info("MessageCode : " + resCode);
                 log.info("responseMessage : " + missIdPassMsg);
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state,
                         null, pTarget, pOwner)).build();
@@ -1041,6 +1029,7 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.registAccountLock(accountId);
                 // Message is the same as ID / PASS error. intentional?
                 log.info("responseMessage : " + MSG_ACCOUNT_LOCK);
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, MSG_ACCOUNT_LOCK, state,
                         scope, null, null)).build();
@@ -1052,6 +1041,7 @@ public class AuthzEndPointResource {
                 //Make lock on memcached
                 AuthResourceUtils.registAccountLock(accountId);
                 log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, MSG_INCORRECT_ID_PASS, state,
                         scope, null, null)).build();
@@ -1059,6 +1049,7 @@ public class AuthzEndPointResource {
         } catch (PersoniumCoreException e) {
             return this.returnErrorRedirect(redirectUriStr, e.getMessage(), e.getMessage(), state, e.getCode());
         }
+
         //Respond with 303 and return Location header
         try {
             //Create a response.
@@ -1162,6 +1153,17 @@ public class AuthzEndPointResource {
     private Response returnSuccessRedirect(String redirectUriStr, String localTokenStr,
             int localTokenExpiresIn, String refreshTokenStr,
             String keepLogin, String state) throws MalformedURLException {
+        String authHistoryResponse = "";
+        if (accountId != null && !accountId.isEmpty()) {
+            // get last auth history.
+            AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
+                    cellRsCmp.getDavCmp().getFsPath(), accountId);
+            authHistoryResponse += "&" + OAuth2Helper.Key.LAST_AUTHENTICATED + "=" + last.getLastAuthenticated();
+            authHistoryResponse += "&" + OAuth2Helper.Key.FAILED_COUNT + "=" + last.getFailedCount();
+            // update auth history.
+            AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId);
+        }
+
         //Respond with 303 and return Location header
         ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
@@ -1170,7 +1172,8 @@ public class AuthzEndPointResource {
                 + OAuth2Helper.Key.TOKEN_TYPE + "="
                 + OAuth2Helper.Scheme.BEARER
                 + "&" + OAuth2Helper.Key.EXPIRES_IN + "=" + localTokenExpiresIn
-                + "&" + OAuth2Helper.Key.STATE + "=" + state);
+                + "&" + OAuth2Helper.Key.STATE + "=" + state
+                + authHistoryResponse);
         //Returning the response
 
         //Return a cookie that is valid only in the cell to be authenticated
@@ -1206,12 +1209,24 @@ public class AuthzEndPointResource {
      */
     private Response returnSuccessRedirect(String redirectUriStr, String idToken,
             String state) throws MalformedURLException {
+        String authHistoryResponse = "";
+        if (accountId != null && !accountId.isEmpty()) {
+            // get last auth history.
+            AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
+                    cellRsCmp.getDavCmp().getFsPath(), accountId);
+            authHistoryResponse += "&" + OAuth2Helper.Key.LAST_AUTHENTICATED + "=" + last.getLastAuthenticated();
+            authHistoryResponse += "&" + OAuth2Helper.Key.FAILED_COUNT + "=" + last.getFailedCount();
+            // update auth history.
+            AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId);
+        }
+
         //Respond with 303 and return Location header
         ResponseBuilder rb = Response.status(Status.SEE_OTHER)
                 .type(MediaType.APPLICATION_JSON_TYPE);
         rb.header(HttpHeaders.LOCATION, redirectUriStr + "#"
                 + OAuth2Helper.Key.ID_TOKEN + "=" + idToken
-                + "&" + OAuth2Helper.Key.STATE + "=" + state);
+                + "&" + OAuth2Helper.Key.STATE + "=" + state
+                + authHistoryResponse);
         //Returning the response
         return rb.entity("").build();
     }

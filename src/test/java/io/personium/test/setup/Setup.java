@@ -1584,10 +1584,11 @@ public class Setup extends AbstractCase {
                 .with("token", AbstractCase.MASTER_TOKEN_NAME).returns();
     }
 
+    // TODO "LastAuthenticated" has been abolished. Review the account list test.
     /**
      * アカウントの一覧取得用のベースデータ作成.
      * アカウントの最終ログイン時刻を検索条件に指定するテストに用いるため、LastAuthenticatedに時刻を入れて作成している。
-      * @param cellName
+     * @param cellName
      */
     private void createAccountforList(String cellName) {
         final int accountNum = 10;
@@ -1599,24 +1600,25 @@ public class Setup extends AbstractCase {
 
         // 1ブロック目
         for (int i = 1; i <= accountNum; i++) {
+            // TODO "LastAuthenticated" has been abolished.
             String userName = String.format("LastAuthenticatedListUser%03d", i);
-            String body = "{\"Name\":\"" + userName + "\", \"LastAuthenticated\":\"/Date(" + System.currentTimeMillis()
-                    + ")/\"}";
+            String body = "{\"Name\":\"" + userName + "\"}";
             AccountUtils.createViaNPNonCredential(cellName, AbstractCase.MASTER_TOKEN_NAME, "Role", roleName, body,
                     HttpStatus.SC_CREATED);
         }
 
         // 2ブロック目
         for (int i = accountNum + 1; i < accountNum * 2; i++) {
+            // TODO "LastAuthenticated" has been abolished.
             String userName = String.format("LastAuthenticatedListUser%03d", i);
-            String body = "{\"Name\":\"" + userName + "\", \"LastAuthenticated\":\"/Date(" + System.currentTimeMillis()
-                    + ")/\"}";
+            String body = "{\"Name\":\"" + userName + "\"}";
             AccountUtils.createViaNPNonCredential(cellName, AbstractCase.MASTER_TOKEN_NAME, "Role", roleName, body,
                     HttpStatus.SC_CREATED);
         }
 
         // 最終更新日時を持たないアカウント
         for (int i = accountNum * 2 + 1; i < accountNum * 2 + noTimeAccountNum; i++) {
+            // TODO "LastAuthenticated" has been abolished.
             String userName = String.format("LastAuthenticatedListUser%03d", i);
             String body = "{\"Name\":\"" + userName + "\"}";
             AccountUtils.createViaNPNonCredential(cellName, AbstractCase.MASTER_TOKEN_NAME, "Role", roleName, body,

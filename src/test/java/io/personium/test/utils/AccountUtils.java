@@ -72,30 +72,6 @@ public class AccountUtils {
     }
 
     /**
-     * アカウントを作成するユーティリティ.
-     * @param token トークン
-     * @param cellName セル名
-     * @param userName ユーザ名
-     * @param pass パスワード
-     * @param lastAuthenticated 最終ログイン時刻(Edm.DateTime)
-     * @param code ステータスコード
-     * @return レスポンス
-     */
-    public static TResponse create(final String token, final String cellName,
-            final String userName, final String pass, final String lastAuthenticated, int code) {
-        // AccountのC
-        TResponse tresponse = Http.request("account-create-lastauthenticated.txt")
-                .with("token", token)
-                .with("cellPath", cellName)
-                .with("username", userName)
-                .with("password", pass)
-                .with("lastauthenticated", lastAuthenticated)
-                .returns()
-                .statusCode(code);
-        return tresponse;
-    }
-
-    /**
      * X-Personium-Credentialヘッダー有でTypeを指定してアカウントを作成するユーティリティ.
      * @param token トークン
      * @param typeName Type値
@@ -210,37 +186,6 @@ public class AccountUtils {
                 .with("username", userName)
                 .with("password", newPassword)
                 .with("newUsername", newUsername)
-                .returns().debug();
-        res.statusCode(sc);
-        return res;
-    }
-
-    /**
-     * アカウント更新(LastAuthenticated指定あり).
-     * @param token 認証トークン
-     * @param cellName セル名
-     * @param userName 旧ユーザ名
-     * @param newUsername アカウント名
-     * @param newPassword パスワード
-     * @param newLastAuthenticated 最終ログイン時刻
-     * @param sc ステータスコード
-     * @return レスポンス
-     */
-    public static TResponse update(String token, String cellName, String userName, String newUsername,
-            String newPassword, String newLastAuthenticated, int sc) {
-        if (null != newLastAuthenticated) {
-            // nullでない場合は文字列であるため、ダブルクォーテーションで囲う
-            newLastAuthenticated = "\"" + newLastAuthenticated + "\"";
-        } else {
-            newLastAuthenticated = "null";
-        }
-        TResponse res = Http.request("account-update-lastauthenticated.txt")
-                .with("token", token)
-                .with("cellPath", cellName)
-                .with("username", userName)
-                .with("password", newPassword)
-                .with("newUsername", newUsername)
-                .with("newLastAuthenticated", newLastAuthenticated)
                 .returns().debug();
         res.statusCode(sc);
         return res;

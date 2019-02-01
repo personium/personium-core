@@ -23,14 +23,18 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.PersoniumUnitConfig;
+import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.model.Cell;
 import io.personium.core.model.lock.AccountLockManager;
+import io.personium.core.model.lock.Lock;
+import io.personium.core.model.lock.LockManager;
 
 /**
  * A utility class that defines methods that are generic to use in resource classes.
@@ -131,9 +135,67 @@ public class AuthResourceUtils {
     }
 
     /**
+     * get auth history last params.
+     * @param fsPath fs path
+     * @param accountId account ID
+     * @return file storing the last authentication history
+     */
+   public static AuthHistoryLastFile getAuthHistoryLast(String fsPath, String accountId) {
+       AuthHistoryLastFile last = AuthHistoryLastFile.newInstance(fsPath, accountId);
+       if (last.exists()) {
+           last.load();
+       } else {
+           last.setDefault();
+       }
+       return last;
+   }
+
+    /**
+     * update auth history last file with authentication success.
+     * @param fsPath fs path
+     * @param accountId account ID
+     */
+    public static void updateAuthHistoryLastFileWithSuccess(String fsPath, String accountId) {
+        Lock lock = LockManager.getLock(Lock.CATEGORY_AUTH_HISTORY, null, null, accountId);
+        log.debug("lock auth history. accountId:" + accountId);
+        try {
+            AuthHistoryLastFile last = AuthHistoryLastFile.newInstance(fsPath, accountId);
+            last.setLastAuthenticated(new Date().getTime());
+            last.setFailedCount(0);
+            last.save();
+        } finally {
+            log.debug("unlock auth history. accountId:" + accountId);
+            lock.release();
+        }
+    }
+
+    /**
+     * update auth history last file with authentication failed.
+     * @param fsPath fs path
+     * @param accountId account ID
+     */
+    public static void updateAuthHistoryLastFileWithFailed(String fsPath, String accountId) {
+        Lock lock = LockManager.getLock(Lock.CATEGORY_AUTH_HISTORY, null, null, accountId);
+        log.debug("lock auth history. accountId:" + accountId);
+        try {
+            AuthHistoryLastFile last = AuthHistoryLastFile.newInstance(fsPath, accountId);
+            if (last.exists()) {
+                last.load();
+            } else {
+                last.setDefault();
+            }
+            last.setFailedCount(last.getFailedCount() + 1);
+            last.save();
+        } finally {
+            log.debug("unlock auth history. accountId:" + accountId);
+            lock.release();
+        }
+    }
+
+    /**
      * Process to check if an Account lock exists.
      * @param accountId account ID
-     * Returns true if @return lock exists
+     * @return boolean Returns true if lock exists
      */
     public static Boolean isLockedAccount(String accountId) {
         return AccountLockManager.hasLockObject(accountId);
