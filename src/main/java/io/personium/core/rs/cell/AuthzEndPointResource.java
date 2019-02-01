@@ -721,7 +721,7 @@ public class AuthzEndPointResource {
                 String accountLockMsg = PersoniumCoreMessageUtils.getMessage(resCode);
                 log.info("MessageCode : " + resCode);
                 log.info("responseMessage : " + accountLockMsg);
-                AuthResourceUtils.addFailedAuthHistory(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, accountLockMsg, state,
                         null, pTarget, pOwner)).build();
@@ -736,7 +736,7 @@ public class AuthzEndPointResource {
                 String missIdPassMsg = PersoniumCoreMessageUtils.getMessage(resCode);
                 log.info("MessageCode : " + resCode);
                 log.info("responseMessage : " + missIdPassMsg);
-                AuthResourceUtils.addFailedAuthHistory(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, missIdPassMsg, state,
                         null, pTarget, pOwner)).build();
@@ -1029,7 +1029,7 @@ public class AuthzEndPointResource {
                 AuthResourceUtils.registAccountLock(accountId);
                 // Message is the same as ID / PASS error. intentional?
                 log.info("responseMessage : " + MSG_ACCOUNT_LOCK);
-                AuthResourceUtils.addFailedAuthHistory(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, MSG_ACCOUNT_LOCK, state,
                         scope, null, null)).build();
@@ -1041,7 +1041,7 @@ public class AuthzEndPointResource {
                 //Make lock on memcached
                 AuthResourceUtils.registAccountLock(accountId);
                 log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);
-                AuthResourceUtils.addFailedAuthHistory(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
                 ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
                 return rb.entity(this.createForm(clientId, redirectUriStr, MSG_INCORRECT_ID_PASS, state,
                         scope, null, null)).build();
@@ -1161,7 +1161,7 @@ public class AuthzEndPointResource {
             authHistoryResponse += "&" + OAuth2Helper.Key.LAST_AUTHENTICATED + "=" + last.getLastAuthenticated();
             authHistoryResponse += "&" + OAuth2Helper.Key.FAILED_COUNT + "=" + last.getFailedCount();
             // update auth history.
-            AuthResourceUtils.addSuccessAuthHistory(cellRsCmp.getDavCmp().getFsPath(), accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId);
         }
 
         //Respond with 303 and return Location header
@@ -1217,7 +1217,7 @@ public class AuthzEndPointResource {
             authHistoryResponse += "&" + OAuth2Helper.Key.LAST_AUTHENTICATED + "=" + last.getLastAuthenticated();
             authHistoryResponse += "&" + OAuth2Helper.Key.FAILED_COUNT + "=" + last.getFailedCount();
             // update auth history.
-            AuthResourceUtils.addSuccessAuthHistory(cellRsCmp.getDavCmp().getFsPath(), accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(cellRsCmp.getDavCmp().getFsPath(), accountId);
         }
 
         //Respond with 303 and return Location header

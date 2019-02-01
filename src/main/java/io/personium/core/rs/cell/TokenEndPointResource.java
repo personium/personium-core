@@ -652,7 +652,7 @@ public class TokenEndPointResource {
             resp.put(OAuth2Helper.Key.LAST_AUTHENTICATED, last.getLastAuthenticated());
             resp.put(OAuth2Helper.Key.FAILED_COUNT, last.getFailedCount());
             // update auth history.
-            AuthResourceUtils.addSuccessAuthHistory(davRsCmp.getDavCmp().getFsPath(), accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithSuccess(davRsCmp.getDavCmp().getFsPath(), accountId);
         }
 
         return rb.entity(resp.toJSONString()).build();
@@ -707,7 +707,7 @@ public class TokenEndPointResource {
         if (isLock) {
             //Update lock time of memcached
             AuthResourceUtils.registAccountLock(accountId);
-            AuthResourceUtils.addFailedAuthHistory(davRsCmp.getDavCmp().getFsPath(), accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
             throw PersoniumCoreAuthnException.ACCOUNT_LOCK_ERROR.realm(this.cell.getUrl());
         }
 
@@ -716,7 +716,7 @@ public class TokenEndPointResource {
         if (!authSuccess) {
             //Make lock on memcached
             AuthResourceUtils.registAccountLock(accountId);
-            AuthResourceUtils.addFailedAuthHistory(davRsCmp.getDavCmp().getFsPath(), accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 

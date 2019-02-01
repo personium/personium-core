@@ -49,6 +49,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import io.personium.core.PersoniumCoreException;
+import io.personium.core.PersoniumUnitConfig;
 import io.personium.test.categories.Unit;
 
 /**
@@ -64,47 +65,63 @@ public class AuthHistoryLastFileTest {
 
     /** Test account id. */
     private static final String TEST_ACCOUNT_ID = "account_last_1";
-    /** Test fs path. */
-    private static final String TEST_FS_PATH = "/personium_nfs/personium-core/unitTest/" + CLASS_NAME + "/";
+
     /** Test dir path. */
-    private static final String TEST_DIR_PATH = TEST_FS_PATH + "/" + AuthHistoryLastFile.AUTH_HISTORY_DIRECTORY + "/"
+    private static final String TEST_DEFAULT_DIR_PATH = "/personium_nfs/personium-core/unitTest/" + CLASS_NAME + "/";
+    /** Test auth history account path. */
+    private static final String TEST_AUTH_HISTORY_PATH = AuthHistoryLastFile.AUTH_HISTORY_DIRECTORY + "/"
             + TEST_ACCOUNT_ID + "/";
+
+    /** UnitTest path. */
+    private static String unitTestPath;
+    /** Test dir. */
+    private static File testDir;
+    /** Test auth history path. */
+    private static String testAuthHistoryPath;
+    /** Test auth history dir. */
+    private static File testAuthHistoryDir;
 
     /** Test class. */
     private AuthHistoryLastFile authHistoryLastFile;
-
-    /** Test dir. */
-    private static File testFs;
-    private static File testDir;
 
     /**
      * BeforeClass.
      */
     @BeforeClass
     public static void beforeClass() {
-        testFs = new File(TEST_FS_PATH);
-        testFs.mkdirs();
-        testFs.setWritable(true);
-        testDir = new File(TEST_DIR_PATH);
+        unitTestPath = PersoniumUnitConfig.get("io.personium.core.test.unitTest.root");
+        if (unitTestPath != null) {
+            unitTestPath += "/" + CLASS_NAME + "/";
+        } else {
+            unitTestPath = TEST_DEFAULT_DIR_PATH;
+        }
+
+        // create test dir.
+        testDir = new File(unitTestPath);
+        testDir.mkdirs();
+        testDir.setWritable(true);
+
+        testAuthHistoryPath = unitTestPath + TEST_AUTH_HISTORY_PATH;
+        testAuthHistoryDir = new File(testAuthHistoryPath);
     }
 
     /**
      * AfterClass.
-     * @throws IOException
+     * @throws IOException Unexpected error
      */
     @AfterClass
     public static void afterClass() throws IOException {
-        FileUtils.deleteDirectory(testFs);
+        FileUtils.deleteDirectory(testDir);
     }
 
     /**
      * After.
-     * @throws IOException
+     * @throws IOException Unexpected error
      */
     @After
     public void after() throws IOException {
-        if (testFs.listFiles().length > 0) {
-            FileUtils.cleanDirectory(testFs);
+        if (testDir.listFiles().length > 0) {
+            FileUtils.cleanDirectory(testDir);
         }
     }
 
@@ -123,7 +140,7 @@ public class AuthHistoryLastFileTest {
         // --------------------
         // Mock settings
         // --------------------
-        authHistoryLastFile = PowerMockito.spy(AuthHistoryLastFile.newInstance(TEST_FS_PATH, TEST_ACCOUNT_ID));
+        authHistoryLastFile = PowerMockito.spy(AuthHistoryLastFile.newInstance(unitTestPath, TEST_ACCOUNT_ID));
         PowerMockito.doNothing().when(authHistoryLastFile, "doLoad");
 
         // --------------------
@@ -158,7 +175,7 @@ public class AuthHistoryLastFileTest {
         // --------------------
         // Mock settings
         // --------------------
-        authHistoryLastFile = PowerMockito.spy(AuthHistoryLastFile.newInstance(TEST_FS_PATH, TEST_ACCOUNT_ID));
+        authHistoryLastFile = PowerMockito.spy(AuthHistoryLastFile.newInstance(unitTestPath, TEST_ACCOUNT_ID));
 
         // The first and second fail, the third success.
         PersoniumCoreException exception = PersoniumCoreException.Common.FILE_IO_ERROR.reason(new IOException());
@@ -199,7 +216,7 @@ public class AuthHistoryLastFileTest {
         // --------------------
         // Mock settings
         // --------------------
-        authHistoryLastFile = PowerMockito.spy(AuthHistoryLastFile.newInstance(TEST_FS_PATH, TEST_ACCOUNT_ID));
+        authHistoryLastFile = PowerMockito.spy(AuthHistoryLastFile.newInstance(unitTestPath, TEST_ACCOUNT_ID));
 
         // All fail.
         PersoniumCoreException exception = PersoniumCoreException.Common.FILE_IO_ERROR.reason(new IOException());
@@ -243,15 +260,15 @@ public class AuthHistoryLastFileTest {
     @SuppressWarnings("unchecked")
     @Test
     public void doLoad_Normal() throws Exception {
-        String path = TEST_DIR_PATH + AuthHistoryLastFile.AUTH_HISTORY_LAST_FILE_NAME;
+        String path = testAuthHistoryPath + AuthHistoryLastFile.AUTH_HISTORY_LAST_FILE_NAME;
         File file = new File(path);
 
         try {
-            testDir.mkdirs();
-            testDir.setWritable(true);
+            testAuthHistoryDir.mkdirs();
+            testAuthHistoryDir.setWritable(true);
             Files.copy(getSystemResourceAsStream("pauthhistory/authHistoryLastTest/auth_history_last.json"),
                     file.toPath());
-            authHistoryLastFile = AuthHistoryLastFile.newInstance(TEST_FS_PATH, TEST_ACCOUNT_ID);
+            authHistoryLastFile = AuthHistoryLastFile.newInstance(unitTestPath, TEST_ACCOUNT_ID);
 
             // --------------------
             // Test method args
@@ -297,11 +314,11 @@ public class AuthHistoryLastFileTest {
      */
     @Test
     public void doLoad_Error_IOException() throws Exception {
-        String path = TEST_DIR_PATH + AuthHistoryLastFile.AUTH_HISTORY_LAST_FILE_NAME;
+        String path = testAuthHistoryPath + AuthHistoryLastFile.AUTH_HISTORY_LAST_FILE_NAME;
         File file = new File(path);
 
         try {
-            authHistoryLastFile = AuthHistoryLastFile.newInstance(TEST_FS_PATH, TEST_ACCOUNT_ID);
+            authHistoryLastFile = AuthHistoryLastFile.newInstance(unitTestPath, TEST_ACCOUNT_ID);
 
             // --------------------
             // Test method args
@@ -351,15 +368,15 @@ public class AuthHistoryLastFileTest {
      */
     @Test
     public void doLoad_Error_ParseException() throws Exception {
-        String path = TEST_DIR_PATH + AuthHistoryLastFile.AUTH_HISTORY_LAST_FILE_NAME;
+        String path = testAuthHistoryPath + AuthHistoryLastFile.AUTH_HISTORY_LAST_FILE_NAME;
         File file = new File(path);
         String data = "}{1234567890!#$%&()";
 
         try (InputStream stream = new ByteArrayInputStream(data.getBytes())) {
-            testDir.mkdirs();
-            testDir.setWritable(true);
+            testAuthHistoryDir.mkdirs();
+            testAuthHistoryDir.setWritable(true);
             Files.copy(stream, file.toPath());
-            authHistoryLastFile = AuthHistoryLastFile.newInstance(TEST_FS_PATH, TEST_ACCOUNT_ID);
+            authHistoryLastFile = AuthHistoryLastFile.newInstance(unitTestPath, TEST_ACCOUNT_ID);
 
             // --------------------
             // Test method args
@@ -408,11 +425,11 @@ public class AuthHistoryLastFileTest {
      */
     @Test
     public void save_Normal_create() throws Exception {
-        String path = TEST_DIR_PATH + AuthHistoryLastFile.AUTH_HISTORY_LAST_FILE_NAME;
+        String path = testAuthHistoryPath + AuthHistoryLastFile.AUTH_HISTORY_LAST_FILE_NAME;
         File file = new File(path);
 
         try {
-            authHistoryLastFile = AuthHistoryLastFile.newInstance(TEST_FS_PATH, TEST_ACCOUNT_ID);
+            authHistoryLastFile = AuthHistoryLastFile.newInstance(unitTestPath, TEST_ACCOUNT_ID);
             authHistoryLastFile.setLastAuthenticated(null);
             authHistoryLastFile.setFailedCount(1L);
 
@@ -463,16 +480,16 @@ public class AuthHistoryLastFileTest {
      */
     @Test
     public void save_Normal_update() throws Exception {
-        String path = TEST_DIR_PATH + AuthHistoryLastFile.AUTH_HISTORY_LAST_FILE_NAME;
+        String path = testAuthHistoryPath + AuthHistoryLastFile.AUTH_HISTORY_LAST_FILE_NAME;
         File file = new File(path);
 
         try {
-            testDir.mkdirs();
-            testDir.setWritable(true);
+            testAuthHistoryDir.mkdirs();
+            testAuthHistoryDir.setWritable(true);
             Files.copy(getSystemResourceAsStream("pauthhistory/authHistoryLastTest/auth_history_last.json"),
                     file.toPath());
 
-            authHistoryLastFile = AuthHistoryLastFile.newInstance(TEST_FS_PATH, TEST_ACCOUNT_ID);
+            authHistoryLastFile = AuthHistoryLastFile.newInstance(unitTestPath, TEST_ACCOUNT_ID);
             authHistoryLastFile.setLastAuthenticated(12345678L);
             authHistoryLastFile.setFailedCount(123L);
 
