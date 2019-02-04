@@ -612,7 +612,7 @@ public class PersoniumUnitConfig {
         // check is number.
         try {
             long value = Long.parseLong(this.props.getProperty(key));
-            if ((min != null && value < min) || (max != null && value > max)) {
+            if (min != null && value < min || max != null && value > max) {
                 throw new RuntimeException("illegal parameter. " + key + " out of range.");
             }
         } catch (NumberFormatException e) {
