@@ -22,6 +22,7 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpStatus;
+import org.json.simple.JSONObject;
 
 /**
  * Httpリクエストドキュメントを利用するユーティリティ.
@@ -186,6 +187,34 @@ public class AccountUtils {
                 .with("username", userName)
                 .with("password", newPassword)
                 .with("newUsername", newUsername)
+                .returns().debug();
+        res.statusCode(sc);
+        return res;
+    }
+
+    /**
+     * アカウント更新 IPアドレス範囲付き.
+     * @param token 認証トークン
+     * @param cellName セル名
+     * @param userName 旧ユーザ名
+     * @param newUsername アカウント名
+     * @param newPassword パスワード
+     * @param newIPAddressRange IPアドレス範囲
+     * @param sc ステータスコード
+     * @return レスポンス
+     */
+    @SuppressWarnings("unchecked")
+    public static TResponse updateWithIPAddressRange(String token, String cellName, String userName, String newUsername,
+            String newPassword, String newIPAddressRange, int sc) {
+        JSONObject updateBody = new JSONObject();
+        updateBody.put("Name", newUsername);
+        updateBody.put("IPAddressRange", newIPAddressRange);
+        TResponse res = Http.request("account-update-without-body.txt")
+                .with("token", token)
+                .with("cellPath", cellName)
+                .with("username", userName)
+                .with("password", newPassword)
+                .with("body", updateBody.toJSONString())
                 .returns().debug();
         res.statusCode(sc);
         return res;

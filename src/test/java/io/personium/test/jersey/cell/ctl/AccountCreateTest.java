@@ -391,6 +391,119 @@ public class AccountCreateTest extends ODataCommon {
         }
     }
 
+    /**
+     * Test that designates a single IP address as "IPAddressRange" in account creation.
+     */
+    @Test
+    public final void Account_create_set_IP_address() {
+        String testAccountName = "account.create.test.IPAddress";
+        String testAccountPass = "password1234";
+        String testAccountIPAddressRange = "127.93.0.234";
+        String accLocHeader = null;
+
+        try {
+            TResponse response = createAccountWithIPAddressRange(testAccountName, testAccountPass,
+                    testAccountIPAddressRange, HttpStatus.SC_CREATED);
+            accLocHeader = response.getLocationHeader();
+
+            String ipAddressRange = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
+                    .get("results")).get("IPAddressRange");
+            assertEquals(testAccountIPAddressRange, ipAddressRange);
+
+            response = AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, testAccountName);
+            ipAddressRange = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
+                    .get("results")).get("IPAddressRange");
+            assertEquals(testAccountIPAddressRange, ipAddressRange);
+
+
+        } finally {
+            if (accLocHeader != null) {
+                deleteAccount(accLocHeader);
+            }
+        }
+    }
+
+    /**
+     * Test that designates a single IP address range as "IPAddressRange" in account creation.
+     */
+    @Test
+    public final void Account_create_set_IP_address_range() {
+        String testAccountName = "account.create.test.IPAddress";
+        String testAccountPass = "password1234";
+        String testAccountIPAddressRange = "127.93.0.234/28";
+
+        try {
+            TResponse response = createAccountWithIPAddressRange(testAccountName, testAccountPass,
+                    testAccountIPAddressRange, HttpStatus.SC_CREATED);
+
+            String ipAddressRange = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
+                    .get("results")).get("IPAddressRange");
+            assertEquals(testAccountIPAddressRange, ipAddressRange);
+
+            response = AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, testAccountName);
+            ipAddressRange = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
+                    .get("results")).get("IPAddressRange");
+            assertEquals(testAccountIPAddressRange, ipAddressRange);
+        } finally {
+            AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
+        }
+    }
+
+    /**
+     * Test that designates a mulutiple IP address range as "IPAddressRange" in account creation.
+     */
+    @Test
+    public final void Account_create_set_IP_address_mulutiple() {
+        String testAccountName = "account.create.test.IPAddress";
+        String testAccountPass = "password1234";
+        String testAccountIPAddressRange = "0.0.0.0,127.93.0.234/1,127.93.0.235,127.93.0.236/32,255.255.255.255";
+
+        try {
+            TResponse response = createAccountWithIPAddressRange(testAccountName, testAccountPass,
+                    testAccountIPAddressRange, HttpStatus.SC_CREATED);
+
+            String ipAddressRange = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
+                    .get("results")).get("IPAddressRange");
+            assertEquals(testAccountIPAddressRange, ipAddressRange);
+
+            response = AccountUtils.get(MASTER_TOKEN_NAME, HttpStatus.SC_OK, cellName, testAccountName);
+            ipAddressRange = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
+                    .get("results")).get("IPAddressRange");
+            assertEquals(testAccountIPAddressRange, ipAddressRange);
+        } finally {
+            AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
+        }
+    }
+
+    /**
+     * Test that designates a illegal IP address as "IPAddressRange" in account creation.
+     */
+    @Test
+    public final void Account_create_set_IP_address_illegal() {
+        String testAccountName = "account.create.test.IPAddress";
+        String testAccountPass = "password1234";
+
+        ArrayList<String> invalidIPAddressList = new ArrayList<String>();
+        invalidIPAddressList.add("strings");
+        invalidIPAddressList.add("1.2.3");
+        invalidIPAddressList.add("1.2.3.4.5");
+        invalidIPAddressList.add("-1.0.0.0");
+        invalidIPAddressList.add("256.0.0.0");
+        invalidIPAddressList.add("0.0.0.0/0");
+        invalidIPAddressList.add("0.0.0.0/33");
+        invalidIPAddressList.add("0.0.0.0/32/32");
+        invalidIPAddressList.add("127.93.0.1,strings,127.93.0.3");
+
+        try {
+            for (String invalidIPAddress : invalidIPAddressList) {
+                createAccountWithIPAddressRange(testAccountName, testAccountPass,
+                        invalidIPAddress, HttpStatus.SC_BAD_REQUEST);
+            }
+        } finally {
+            AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
+        }
+    }
+
     private String createAccount(String testAccountName, String testAccountPass, int code) {
         String accLocHeader;
         TResponse res = Http.request("account-create.txt")
@@ -422,6 +535,28 @@ public class AccountCreateTest extends ODataCommon {
         accLocHeader = res.getLocationHeader();
         res.statusCode(code);
         return accLocHeader;
+    }
+
+    /**
+     * create account with IP address range.
+     * @param testAccountName name
+     * @param testAccountPass password
+     * @param ipAddressRange IP address range
+     * @param code Expected response code
+     * @return responese
+     */
+    private TResponse createAccountWithIPAddressRange(String testAccountName, String testAccountPass,
+            String ipAddressRange, int code) {
+        TResponse res = Http.request("account-create-with-IPAddressRange.txt")
+                .with("token", AbstractCase.MASTER_TOKEN_NAME)
+                .with("cellPath", cellName)
+                .with("username", testAccountName)
+                .with("password", testAccountPass)
+                .with("IPAddressRange", ipAddressRange)
+                .returns()
+                .debug();
+        res.statusCode(code);
+        return res;
     }
 
     /**
