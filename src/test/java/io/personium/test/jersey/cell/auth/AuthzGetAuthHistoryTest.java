@@ -121,11 +121,7 @@ public class AuthzGetAuthHistoryTest extends PersoniumTest {
         requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, "dummypassword");
         requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, "dummypassword");
         requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, "dummypassword");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            log.debug("");
-        }
+        AuthTestCommon.waitForIntervalLock();
         Long beforeFirstAuthenticatedTime = new Date().getTime();
         PersoniumResponse dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
         Long afterFirstAuthenticatedTime = new Date().getTime();
@@ -149,11 +145,7 @@ public class AuthzGetAuthHistoryTest extends PersoniumTest {
 
         // third get token. failed count = 1.
         requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, "dummypassword");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            log.debug("");
-        }
+        AuthTestCommon.waitForIntervalLock();
         dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
 
         assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);

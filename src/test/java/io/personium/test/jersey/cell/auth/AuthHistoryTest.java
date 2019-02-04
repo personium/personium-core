@@ -110,11 +110,7 @@ public class AuthHistoryTest extends PersoniumTest {
         requestAuthorization(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
         requestAuthorization(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
         requestAuthorization(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            log.debug("");
-        }
+        AuthTestCommon.waitForIntervalLock();
         Long beforeFirstAuthenticatedTime = new Date().getTime();
         TResponse passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
         Long afterFirstAuthenticatedTime = new Date().getTime();
@@ -134,11 +130,7 @@ public class AuthHistoryTest extends PersoniumTest {
 
         // third get token. failed count = 1.
         requestAuthorization(TEST_CELL, TEST_ACCOUNT, "dummypassword1", HttpStatus.SC_BAD_REQUEST);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            log.debug("");
-        }
+        AuthTestCommon.waitForIntervalLock();
         passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
 
         assertTrue(passRes.bodyAsJson().containsKey(OAuth2Helper.Key.LAST_AUTHENTICATED));
@@ -173,11 +165,7 @@ public class AuthHistoryTest extends PersoniumTest {
         assertFalse(passRes.bodyAsJson().containsKey(OAuth2Helper.Key.FAILED_COUNT));
 
         // get token after refreshed. check last authenticated and failed count.
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            log.debug("");
-        }
+        AuthTestCommon.waitForIntervalLock();
         passRes = requestAuthorization(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD, HttpStatus.SC_OK);
         Long lastAuthenticated = (Long) passRes.bodyAsJson().get(OAuth2Helper.Key.LAST_AUTHENTICATED);
         assertTrue(beforeAuthenticatedTime <= lastAuthenticated && lastAuthenticated <= afterFirstAuthenticatedTime);
