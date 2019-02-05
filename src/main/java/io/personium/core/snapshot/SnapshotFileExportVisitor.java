@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.personium.core.model.file.DataCryptor;
+import io.personium.core.model.impl.fs.DavCmpFsImpl;
 import io.personium.core.model.impl.fs.DavMetadataFile;
 
 /**
@@ -103,7 +104,7 @@ public class SnapshotFileExportVisitor implements FileVisitor<Path> {
             } else {
                 Files.copy(file, pathInZip);
             }
-        } else {
+        } else if (DavCmpFsImpl.CONTENT_FILE_NAME.equals(file.getFileName().toString())) {
             // Content file
             // Load Metadata to determine whether it is encrypted or not
             Path metadataPath = file.getParent().resolve(DavMetadataFile.DAV_META_FILE_NAME);
@@ -113,6 +114,10 @@ public class SnapshotFileExportVisitor implements FileVisitor<Path> {
             try (InputStream in = cryptor.decode(new FileInputStream(file.toFile()), metadata.getEncryptionType())) {
                 Files.copy(in, pathInZip);
             }
+        } else {
+            // Metafile other than DavMetadata.
+            // Because encryption is not done, only copy files.
+            Files.copy(file, pathInZip);
         }
         progressInfo.addDelta(1L);
         progressInfo.writeToCache();

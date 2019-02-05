@@ -53,8 +53,6 @@ public class PersoniumTest extends JerseyTest {
     @Override
     protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
 
-//        return new GrizzlyWebTestContainerFactory();
-
         return new TestContainerFactory() {
 
             @Override
@@ -101,8 +99,4 @@ public class PersoniumTest extends JerseyTest {
         };
     }
 
-//    @Override
-//    protected DeploymentContext configureDeployment() {
-//        return ServletDeploymentContext.builder(configure()).build();
-//    }
 }

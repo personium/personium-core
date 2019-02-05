@@ -16,6 +16,8 @@
  */
 package io.personium.core.model;
 
+import io.personium.core.model.impl.fs.CellKeys;
+
 /**
  * Interface of parts corresponding to Cell.
  */
@@ -26,4 +28,10 @@ public interface CellCmp extends DavCmp {
      * @param status cell status
      */
     void setCellStatusAndSave(String status);
+
+    /**
+     * Get CellKeys.
+     * @return CellKeys
+     */
+    CellKeys getCellKeys();
 }

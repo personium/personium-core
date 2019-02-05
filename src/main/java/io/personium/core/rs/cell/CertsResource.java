@@ -16,12 +16,22 @@
  */
 package io.personium.core.rs.cell;
 
+import java.security.interfaces.RSAPublicKey;
+
 import javax.ws.rs.GET;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.apache.cxf.rs.security.jose.jwa.AlgorithmUtils;
+import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
+import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
+import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
+
+import io.personium.core.model.CellCmp;
+import io.personium.core.model.impl.fs.CellKeysFile;
+import io.personium.core.utils.ResourceUtils;
 
 /**
  * JAX-RS resource.
@@ -29,10 +39,15 @@ import org.json.simple.JSONObject;
  */
 public class CertsResource {
 
+    /** Import target cell information. */
+    private CellCmp cellCmp;
+
     /**
      * Constructor.
+     * @param cellCmp CellCmp
      */
-    public CertsResource() {
+    public CertsResource(CellCmp cellCmp) {
+        this.cellCmp = cellCmp;
     }
 
     /**
@@ -40,26 +55,24 @@ public class CertsResource {
      * Return public key information set in Cell.
      * @return public key information (JWK)
      */
-    @SuppressWarnings("unchecked")
     @GET
     public Response get() {
-        //TODO Under development.
-        // Returns json of dummy.
-        JSONObject keyJson = new JSONObject();
-        keyJson.put("kty", "RSA");
-        keyJson.put("use", "sig");
-        keyJson.put("alg", "RS256");
-        keyJson.put("kid", "2dx0zf47146wbvt63o24ansk3h0du1yf");
-        keyJson.put("n", "dummy_modulus");
-        keyJson.put("e", "AQAB");
-
-        JSONArray keysJsonArray = new JSONArray();
-        keysJsonArray.add(keyJson);
-
-        JSONObject responseJson = new JSONObject();
-        responseJson.put("keys", keysJsonArray);
-
-        return Response.ok(responseJson.toJSONString(), MediaType.APPLICATION_JSON).build();
+        CellKeysFile cellKeysFile = cellCmp.getCellKeys().getCellKeysFile();
+        RSAPublicKey publicKey = (RSAPublicKey) cellKeysFile.getPublicKey();
+        JsonWebKey jwk = JwkUtils.fromRSAPublicKey(
+                publicKey, AlgorithmUtils.RS_SHA_256_ALGO, cellKeysFile.getKeyId());
+        JsonWebKeys jwks = new JsonWebKeys(jwk);
+        return Response.ok(JwkUtils.jwkSetToJson(jwks), MediaType.APPLICATION_JSON).build();
     }
 
+    /**
+     * Processing of the OPTIONS method.
+     * @return JAX-RS response object
+     */
+    @OPTIONS
+    public Response options() {
+        return ResourceUtils.responseBuilderForOptions(
+                HttpMethod.GET
+                ).build();
+    }
 }

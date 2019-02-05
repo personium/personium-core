@@ -430,7 +430,7 @@ public class CellResource {
      */
     @Path("__certs")
     public CertsResource certs() {
-        return new CertsResource();
+        return new CertsResource(cellCmp);
     }
 
     /**

@@ -387,5 +387,12 @@ public class SnapshotFileExportRunner implements Runnable {
         } catch (IOException e1) {
             throw PersoniumCoreException.Common.FILE_IO_ERROR.params("create error file").reason(e1);
         }
+
+        Path metadataFilePath = errorFilePath.getParent().resolve(DavMetadataFile.DAV_META_FILE_NAME);
+        DavMetadataFile metadataFile = DavMetadataFile.prepareNewFile(metadataFilePath.toFile(), DavCmp.TYPE_DAV_FILE);
+        metadataFile.setContentType("application/json");
+        metadataFile.setContentLength(errorFilePath.toFile().length());
+        metadataFile.setEncryptionType(DataCryptor.ENCRYPTION_TYPE_NONE);
+        metadataFile.save();
     }
 }
