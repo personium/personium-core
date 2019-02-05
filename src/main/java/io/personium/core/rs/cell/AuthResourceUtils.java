@@ -33,6 +33,7 @@ import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.model.Cell;
 import io.personium.core.model.lock.AccountLockManager;
+import io.personium.core.model.lock.AccountValidAuthnIntervalLockManager;
 import io.personium.core.model.lock.Lock;
 import io.personium.core.model.lock.LockManager;
 
@@ -193,19 +194,44 @@ public class AuthResourceUtils {
     }
 
     /**
+     * Process to check if an Account valid authentication interval lock exists.
+     * @param accountId account ID
+     * @return boolean Returns true if lock exists
+     */
+    public static Boolean isLockedInterval(String accountId) {
+        return AccountValidAuthnIntervalLockManager.hasLockObject(accountId);
+    }
+
+    /**
+     * Register Account valid authentication interval lock.
+     * @param accountId account ID
+     */
+    public static void registIntervalLock(String accountId) {
+        AccountValidAuthnIntervalLockManager.registLockObject(accountId);
+    }
+
+    /**
      * Process to check if an Account lock exists.
      * @param accountId account ID
      * @return boolean Returns true if lock exists
      */
     public static Boolean isLockedAccount(String accountId) {
-        return AccountLockManager.hasLockObject(accountId);
+        return AccountLockManager.isLockedAccount(accountId);
     }
 
     /**
-     * Register Account lock.
+     * Countup failed count.
      * @param accountId account ID
      */
-    public static void registAccountLock(String accountId) {
-        AccountLockManager.registAccountLockObjct(accountId);
+    public static void countupFailedCount(String accountId) {
+        AccountLockManager.countupFailedCount(accountId);
+    }
+
+    /**
+     * release Account lock. Reset the failed count.
+     * @param accountId account ID
+     */
+    public static void releaseAccountLock(String accountId) {
+        AccountLockManager.releaseAccountLock(accountId);
     }
 }

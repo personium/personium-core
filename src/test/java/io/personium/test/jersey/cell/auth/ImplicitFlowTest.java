@@ -264,12 +264,12 @@ public class ImplicitFlowTest extends PersoniumTest {
 
         // レスポンスボディのチェック
         checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
-        AuthTestCommon.waitForAccountLock();
+        AuthTestCommon.waitForIntervalLock();
     }
 
     /**
      * パスワード認証失敗後1秒以内に成功する認証をリクエストした場合200が返却されてエラーhtmlが返却されること.
-     * io.personium.core.lock.accountlock.timeを1秒に設定すると失敗するためIgnore
+     * io.personium.core.authn.account.validAuthnIntervalを1秒に設定すると失敗するためIgnore
      */
     @Test
     @Ignore
@@ -297,14 +297,14 @@ public class ImplicitFlowTest extends PersoniumTest {
             assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
 
             // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0006", Setup.TEST_CELL1);
-            AuthTestCommon.waitForAccountLock();
+            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
+            AuthTestCommon.waitForIntervalLock();
         }
     }
 
     /**
      * パスワード認証失敗後1秒以内に失敗する認証をリクエストした場合200が返却されてエラーhtmlが返却されること.
-     * io.personium.core.lock.accountlock.timeを1秒に設定すると失敗するためIgnore
+     * io.personium.core.authn.account.validAuthnIntervalを1秒に設定すると失敗するためIgnore
      */
     @Test
     @Ignore
@@ -332,8 +332,8 @@ public class ImplicitFlowTest extends PersoniumTest {
             assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
 
             // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0006", Setup.TEST_CELL1);
-            AuthTestCommon.waitForAccountLock();
+            checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
+            AuthTestCommon.waitForIntervalLock();
         }
     }
 
@@ -357,7 +357,7 @@ public class ImplicitFlowTest extends PersoniumTest {
 
             addbody = "&username=account2&password=password2";
 
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // 1秒後にパスワード認証(認証成功)
             res = requesttoAuthz(addbody);
@@ -399,7 +399,7 @@ public class ImplicitFlowTest extends PersoniumTest {
 
             addbody = "&username=account2&password=dummypassword";
 
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
 
             // 1秒後にパスワード認証(401エラー(PS-AU-0004))
             res = requesttoAuthz(addbody);
@@ -411,7 +411,7 @@ public class ImplicitFlowTest extends PersoniumTest {
 
             // レスポンスボディのチェック
             checkHtmlBody(res, "PS-AU-0004", Setup.TEST_CELL1);
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
         }
     }
 
@@ -446,7 +446,7 @@ public class ImplicitFlowTest extends PersoniumTest {
 
         // レスポンスボディのチェック
         checkHtmlBody(res, "PS-AU-0003", Setup.TEST_CELL1);
-        AuthTestCommon.waitForAccountLock();
+        AuthTestCommon.waitForIntervalLock();
     }
 
     /**

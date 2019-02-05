@@ -83,7 +83,9 @@ public class CellResourceTest {
         PowerMockito.doReturn("0").when(PersoniumUnitConfig.class, "getLockRetryTimes");
         PowerMockito.doReturn(null).when(PersoniumUnitConfig.class, "getLockMemcachedHost");
         PowerMockito.doReturn(null).when(PersoniumUnitConfig.class, "getLockMemcachedPort");
-        PowerMockito.doReturn("0").when(PersoniumUnitConfig.class, "getAccountLockLifetime");
+        PowerMockito.doReturn(0).when(PersoniumUnitConfig.class, "getAccountValidAuthnInterval");
+        PowerMockito.doReturn(0).when(PersoniumUnitConfig.class, "getAccountLockCount");
+        PowerMockito.doReturn(0).when(PersoniumUnitConfig.class, "getAccountLockTime");
         PowerMockito.mockStatic(UnitUserLockManager.class);
         PowerMockito.doReturn(false).when(UnitUserLockManager.class, "hasLockObject", anyString());
         doReturn(Cell.STATUS_NORMAL).when(cellCmp).getCellStatus();

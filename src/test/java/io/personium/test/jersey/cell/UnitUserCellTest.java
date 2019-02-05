@@ -334,7 +334,7 @@ public class UnitUserCellTest extends PersoniumTest {
                 .with("password", "password3")
                 .returns()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
-        AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+        AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
     }
 
     /**
@@ -502,7 +502,7 @@ public class UnitUserCellTest extends PersoniumTest {
                     .with("password", "password1")
                     .returns()
                     .statusCode(HttpStatus.SC_BAD_REQUEST);
-            AuthTestCommon.waitForAccountLock(); // アカウントロック回避用にスリープ
+            AuthTestCommon.waitForIntervalLock(); // アカウントロック回避用にスリープ
 
         } finally {
             // アカウント削除

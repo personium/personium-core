@@ -834,7 +834,7 @@ public class AuthCheckTest extends PersoniumTest {
 
             // パスワード認証（password空文字）
             ResourceUtils.getLocalTokenByPassAuth(TEST_CELL1, userName, "", HttpStatus.SC_BAD_REQUEST);
-            AuthTestCommon.waitForAccountLock(); // アカウントロック回避
+            AuthTestCommon.waitForIntervalLock(); // アカウントロック回避
 
             // パスワード認証（password指定無し）
             Http.request("authn/password-cl-c0-no-password.txt")

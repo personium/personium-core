@@ -1298,11 +1298,11 @@ public class AuthTestCommon extends PersoniumTest {
     }
 
     /**
-     * Accountロックが解放されるのを待つ.
+     * wait for interval lock.
      */
-    public static void waitForAccountLock() {
+    public static void waitForIntervalLock() {
         try {
-            Thread.sleep(Long.parseLong(PersoniumUnitConfig.getAccountLockLifetime()) * SLEEP_MILLES);
+            Thread.sleep(PersoniumUnitConfig.getAccountValidAuthnInterval() * SLEEP_MILLES);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

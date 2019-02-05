@@ -27,6 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
     LockManagerTest.class,
     AccountLockManagerTest.class,
+    AccountValidAuthnIntervalLockManagerTest.class,
     CellLockManagerTest.class
     })
 public class AllTests {

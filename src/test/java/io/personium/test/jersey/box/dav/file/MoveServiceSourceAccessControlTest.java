@@ -155,7 +155,7 @@ public class MoveServiceSourceAccessControlTest extends PersoniumTest {
                     HttpStatus.SC_UNAUTHORIZED);
             PersoniumCoreException expectedException = PersoniumCoreAuthzException.TOKEN_PARSE_ERROR;
             ODataCommon.checkErrorResponseBody(res, expectedException.getCode(), expectedException.getMessage());
-            AuthTestCommon.waitForAccountLock();
+            AuthTestCommon.waitForIntervalLock();
         } finally {
             DavResourceUtils.deleteWebDavFile(CELL_NAME, MASTER_TOKEN, BOX_NAME, SRC_COL_NAME + "/__src/" + FILE_NAME);
         }

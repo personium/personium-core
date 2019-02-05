@@ -34,7 +34,9 @@ public abstract class LockManager {
     static volatile int lockRetryTimes = Integer.valueOf(PersoniumUnitConfig.getLockRetryTimes());
     static volatile String lockMemcachedHost = PersoniumUnitConfig.getLockMemcachedHost();
     static volatile String lockMemcachedPort = PersoniumUnitConfig.getLockMemcachedPort();
-    static volatile int accountLockLifeTime = Integer.valueOf(PersoniumUnitConfig.getAccountLockLifetime());
+    static volatile int accountValidAuthnInterval = PersoniumUnitConfig.getAccountValidAuthnInterval();
+    static volatile int accountLockCount = PersoniumUnitConfig.getAccountLockCount();
+    static volatile int accountLockTime = PersoniumUnitConfig.getAccountLockTime();
 
     /**
      * Memcached type.
@@ -57,9 +59,11 @@ public abstract class LockManager {
 
     abstract Boolean doPutReferenceOnlyLock(String fullKey, String value);
 
-    abstract String doGetAccountLock(String fullKey);
+    abstract Integer doGetAccountLock(String fullKey);
 
-    abstract Boolean doPutAccountLock(String fullKey, String value, int expired);
+    abstract Boolean doPutAccountLock(String fullKey, Integer value, int expired);
+
+    abstract void doReleaseAccountLock(String fullKey);
 
     abstract String doGetUnituserLock(String fullKey);
 
