@@ -81,6 +81,7 @@ import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AccessContext;
 import io.personium.core.auth.AuthHistoryLastFile;
+import io.personium.core.auth.AuthUtils;
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.auth.OAuth2Helper.Key;
 import io.personium.core.model.Box;
@@ -758,7 +759,22 @@ public class AuthzEndPointResource {
                         null, pTarget, pOwner)).build();
             }
 
-            // TODO ★IPアドレスのチェックを追加
+            // Check valid IP address
+            if (!AuthUtils.isValidIPAddress(oew, this.ipaddress)) {
+                //Update lock time of memcached
+                AuthResourceUtils.registIntervalLock(accountId);
+                AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+                PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_IP_ADDRESS.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                String resCode = "PS-AU-0004";
+                String responseMessage = PersoniumCoreMessageUtils.getMessage(resCode);
+                log.info("MessageCode : " + resCode);
+                log.info("responseMessage : " + responseMessage);
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
+                return rb.entity(this.createForm(clientId, redirectUriStr, responseMessage, state,
+                        null, pTarget, pOwner)).build();
+            }
 
             //Check user ID and password
             passCheck = cell.authenticateAccount(oew, password);
@@ -1089,7 +1105,19 @@ public class AuthzEndPointResource {
                         scope, null, null)).build();
             }
 
-            // TODO ★IPアドレスのチェックを追加
+            // Check valid IP address
+            if (!AuthUtils.isValidIPAddress(oew, this.ipaddress)) {
+                //Update lock time of memcached
+                AuthResourceUtils.registIntervalLock(accountId);
+                AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+                PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_IP_ADDRESS.params(
+                        requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+                log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);
+                AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
+                ResponseBuilder rb = Response.ok().type("text/html; charset=UTF-8");
+                return rb.entity(this.createForm(clientId, redirectUriStr, MSG_INCORRECT_ID_PASS, state,
+                        scope, null, null)).build();
+            }
 
             //Check user ID and password
             passCheck = cell.authenticateAccount(oew, password);

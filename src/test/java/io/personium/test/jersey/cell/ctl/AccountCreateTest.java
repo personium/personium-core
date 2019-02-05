@@ -396,14 +396,14 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account_create_set_IP_address() {
-        String testAccountName = "account.create.test.IPAddress";
+        String testAccountName = "account.create.test.IPAddress1";
         String testAccountPass = "password1234";
         String testAccountIPAddressRange = "127.93.0.234";
         String accLocHeader = null;
 
         try {
-            TResponse response = createAccountWithIPAddressRange(testAccountName, testAccountPass,
-                    testAccountIPAddressRange, HttpStatus.SC_CREATED);
+            TResponse response = AccountUtils.createWithIPAddressRange(AbstractCase.MASTER_TOKEN_NAME, cellName,
+                    testAccountName, testAccountPass, testAccountIPAddressRange, HttpStatus.SC_CREATED);
             accLocHeader = response.getLocationHeader();
 
             String ipAddressRange = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
@@ -428,13 +428,13 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account_create_set_IP_address_range() {
-        String testAccountName = "account.create.test.IPAddress";
+        String testAccountName = "account.create.test.IPAddress2";
         String testAccountPass = "password1234";
         String testAccountIPAddressRange = "127.93.0.234/28";
 
         try {
-            TResponse response = createAccountWithIPAddressRange(testAccountName, testAccountPass,
-                    testAccountIPAddressRange, HttpStatus.SC_CREATED);
+            TResponse response = AccountUtils.createWithIPAddressRange(AbstractCase.MASTER_TOKEN_NAME, cellName,
+                    testAccountName, testAccountPass, testAccountIPAddressRange, HttpStatus.SC_CREATED);
 
             String ipAddressRange = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
                     .get("results")).get("IPAddressRange");
@@ -454,13 +454,13 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account_create_set_IP_address_mulutiple() {
-        String testAccountName = "account.create.test.IPAddress";
+        String testAccountName = "account.create.test.IPAddress3";
         String testAccountPass = "password1234";
         String testAccountIPAddressRange = "0.0.0.0,127.93.0.234/1,127.93.0.235,127.93.0.236/32,255.255.255.255";
 
         try {
-            TResponse response = createAccountWithIPAddressRange(testAccountName, testAccountPass,
-                    testAccountIPAddressRange, HttpStatus.SC_CREATED);
+            TResponse response = AccountUtils.createWithIPAddressRange(AbstractCase.MASTER_TOKEN_NAME, cellName,
+                    testAccountName, testAccountPass, testAccountIPAddressRange, HttpStatus.SC_CREATED);
 
             String ipAddressRange = (String) ((JSONObject) ((JSONObject) response.bodyAsJson().get("d"))
                     .get("results")).get("IPAddressRange");
@@ -480,7 +480,7 @@ public class AccountCreateTest extends ODataCommon {
      */
     @Test
     public final void Account_create_set_IP_address_illegal() {
-        String testAccountName = "account.create.test.IPAddress";
+        String testAccountName = "account.create.test.IPAddress4";
         String testAccountPass = "password1234";
 
         ArrayList<String> invalidIPAddressList = new ArrayList<String>();
@@ -496,8 +496,8 @@ public class AccountCreateTest extends ODataCommon {
 
         try {
             for (String invalidIPAddress : invalidIPAddressList) {
-                createAccountWithIPAddressRange(testAccountName, testAccountPass,
-                        invalidIPAddress, HttpStatus.SC_BAD_REQUEST);
+                AccountUtils.createWithIPAddressRange(AbstractCase.MASTER_TOKEN_NAME, cellName,
+                        testAccountName, testAccountPass, invalidIPAddress, HttpStatus.SC_BAD_REQUEST);
             }
         } finally {
             AccountUtils.delete(cellName, MASTER_TOKEN_NAME, testAccountName, -1);
@@ -535,28 +535,6 @@ public class AccountCreateTest extends ODataCommon {
         accLocHeader = res.getLocationHeader();
         res.statusCode(code);
         return accLocHeader;
-    }
-
-    /**
-     * create account with IP address range.
-     * @param testAccountName name
-     * @param testAccountPass password
-     * @param ipAddressRange IP address range
-     * @param code Expected response code
-     * @return responese
-     */
-    private TResponse createAccountWithIPAddressRange(String testAccountName, String testAccountPass,
-            String ipAddressRange, int code) {
-        TResponse res = Http.request("account-create-with-IPAddressRange.txt")
-                .with("token", AbstractCase.MASTER_TOKEN_NAME)
-                .with("cellPath", cellName)
-                .with("username", testAccountName)
-                .with("password", testAccountPass)
-                .with("IPAddressRange", ipAddressRange)
-                .returns()
-                .debug();
-        res.statusCode(code);
-        return res;
     }
 
     /**

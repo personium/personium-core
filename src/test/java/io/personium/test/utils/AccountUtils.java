@@ -73,6 +73,30 @@ public class AccountUtils {
     }
 
     /**
+     * Utility to create account with IPAddressRenge.
+     * @param token token
+     * @param cellName cell name
+     * @param userName user name
+     * @param pass password
+     * @param ipAddressRange IP address range
+     * @param code Expected response code
+     * @return responese
+     */
+    public static TResponse createWithIPAddressRange(final String token, final String cellName, final String userName,
+            final String pass, String ipAddressRange, int code) {
+        TResponse tresponse = Http.request("account-create-with-IPAddressRange.txt")
+                .with("token", token)
+                .with("cellPath", cellName)
+                .with("username", userName)
+                .with("password", pass)
+                .with("IPAddressRange", ipAddressRange)
+                .returns()
+                .debug();
+        tresponse.statusCode(code);
+        return tresponse;
+    }
+
+    /**
      * X-Personium-Credentialヘッダー有でTypeを指定してアカウントを作成するユーティリティ.
      * @param token トークン
      * @param typeName Type値

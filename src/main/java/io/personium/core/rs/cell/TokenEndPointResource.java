@@ -734,9 +734,14 @@ public class TokenEndPointResource {
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
-        // TODO ★IPアドレスのチェックを追加
-        if (AuthResourceUtils.checkIPAddressRange(this.ipaddress, ipAddressRange)) {
-
+        // Check valid IP address
+        if (!AuthUtils.isValidIPAddress(oew, this.ipaddress)) {
+            AuthResourceUtils.registIntervalLock(accountId);
+            AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+            AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
+            PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_IP_ADDRESS.params(
+                    requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
+            throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }
 
         boolean authSuccess = cell.authenticateAccount(oew, password);

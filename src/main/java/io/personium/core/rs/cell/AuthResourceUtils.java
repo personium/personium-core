@@ -24,10 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.commons.net.util.SubnetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +32,6 @@ import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.AuthHistoryLastFile;
 import io.personium.core.model.Cell;
-import io.personium.core.model.ctl.Common;
 import io.personium.core.model.lock.AccountLockManager;
 import io.personium.core.model.lock.AccountValidAuthnIntervalLockManager;
 import io.personium.core.model.lock.Lock;
@@ -195,50 +191,6 @@ public class AuthResourceUtils {
             log.debug("unlock auth history. accountId:" + accountId);
             lock.release();
         }
-    }
-
-    /**
-     * Check IP address range.
-     * @param requestIPAddress ip address of request
-     * @param accountIPAddressRange ip address range of Account
-     * @return boolean Returns false if authentication failure.
-     */
-    public static Boolean checkIPAddressRange(String requestIPAddress, String accountIPAddressRange) {
-        // When IPAddrsesRange of Account is not set, all IP addresses are permitted.
-        if (accountIPAddressRange == null || accountIPAddressRange.isEmpty()) {
-            return true;
-        }
-
-        // If the IP address of the client is unknown, it is an error.
-        if (requestIPAddress == null || requestIPAddress.isEmpty()) {
-            return false;
-        }
-        // If the IP address of the client is an illegal format, it is an error
-        String clientIPAddress = requestIPAddress.split(",")[0].trim();
-        Pattern pattern = Pattern.compile(Common.PATTERN_SINGLE_IP_ADDRESS);
-        Matcher matcher = pattern.matcher(clientIPAddress);
-        if (!matcher.matches()) {
-            return false;
-        }
-
-        // Check if the IP address of the client is included in "IPAddressRange".
-        for (String singleIPAddressRange : accountIPAddressRange.split(",")) {
-            if (singleIPAddressRange.contains("/")) {
-                SubnetUtils subnet = new SubnetUtils(singleIPAddressRange);
-                SubnetUtils.SubnetInfo subnetInfo = subnet.getInfo();
-                int address = subnetInfo.asInteger(clientIPAddress);
-                int low = subnetInfo.asInteger(subnetInfo.getLowAddress());
-                int high = subnetInfo.asInteger(subnetInfo.getHighAddress());
-                if (low <= address && address <= high) {
-                    return false;
-                }
-            } else {
-                if (singleIPAddressRange.equals(clientIPAddress)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**

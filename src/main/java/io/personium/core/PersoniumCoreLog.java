@@ -131,6 +131,13 @@ public final class PersoniumCoreLog {
          * {2}: User ID(username)
          */
         public static final PersoniumCoreLog AUTHN_FAILED_INCORRECT_PASSWORD = create("PL-AU-0009");
+        /**
+         * Authentication failed. Incorrect IP address.
+         * {0}: URL
+         * {1}: IP address
+         * {2}: User ID(username)
+         */
+        public static final PersoniumCoreLog AUTHN_FAILED_INCORRECT_IP_ADDRESS = create("PL-AU-0010");
     }
 
     /**
