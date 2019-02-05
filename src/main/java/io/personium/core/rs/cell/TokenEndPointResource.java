@@ -715,7 +715,7 @@ public class TokenEndPointResource {
         if (isLock) {
             //Update lock time of memcached
             AuthResourceUtils.registIntervalLock(accountId);
-            AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+            AuthResourceUtils.countupFailedCount(accountId);
             AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
             PersoniumCoreLog.Auth.AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
@@ -727,7 +727,7 @@ public class TokenEndPointResource {
         if (isLock) {
             //Update lock time of memcached
             AuthResourceUtils.registIntervalLock(accountId);
-            AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+            AuthResourceUtils.countupFailedCount(accountId);
             AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
             PersoniumCoreLog.Auth.AUTHN_FAILED_ACCOUNT_IS_LOCKED.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
@@ -739,7 +739,7 @@ public class TokenEndPointResource {
         if (!authSuccess) {
             //Make lock on memcached
             AuthResourceUtils.registIntervalLock(accountId);
-            AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+            AuthResourceUtils.countupFailedCount(accountId);
             AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
             PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_PASSWORD.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();

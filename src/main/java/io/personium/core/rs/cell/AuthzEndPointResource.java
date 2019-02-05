@@ -727,7 +727,7 @@ public class AuthzEndPointResource {
             if (isLock) {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
-                AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Auth.AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 String resCode = "PS-AU-0004";
@@ -745,7 +745,7 @@ public class AuthzEndPointResource {
             if (isLock) {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
-                AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Auth.AUTHN_FAILED_ACCOUNT_IS_LOCKED.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 String resCode = "PS-AU-0004";
@@ -763,7 +763,7 @@ public class AuthzEndPointResource {
             if (!passCheck) {
                 //Make lock on memcached
                 AuthResourceUtils.registIntervalLock(accountId);
-                AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_PASSWORD.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 String resCode = "PS-AU-0004";
@@ -1063,7 +1063,7 @@ public class AuthzEndPointResource {
             if (isLock) {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
-                AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Auth.AUTHN_FAILED_BEFORE_AUTHENTICATION_INTERVAL.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);
@@ -1077,7 +1077,7 @@ public class AuthzEndPointResource {
             if (isLock) {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
-                AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Auth.AUTHN_FAILED_ACCOUNT_IS_LOCKED.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);
@@ -1092,7 +1092,7 @@ public class AuthzEndPointResource {
             if (!passCheck) {
                 //Make lock on memcached
                 AuthResourceUtils.registIntervalLock(accountId);
-                AuthResourceUtils.countupFailedCountForAccountLock(accountId);
+                AuthResourceUtils.countupFailedCount(accountId);
                 PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_PASSWORD.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);

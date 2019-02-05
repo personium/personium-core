@@ -220,10 +220,10 @@ public class AuthResourceUtils {
     }
 
     /**
-     * Countup failed count for Account lock.
+     * Countup failed count.
      * @param accountId account ID
      */
-    public static void countupFailedCountForAccountLock(String accountId) {
+    public static void countupFailedCount(String accountId) {
         AccountLockManager.countupFailedCount(accountId);
     }
 
