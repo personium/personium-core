@@ -739,7 +739,7 @@ public class TokenEndPointResource {
             AuthResourceUtils.registIntervalLock(accountId);
             AuthResourceUtils.countupFailedCountForAccountLock(accountId);
             AuthResourceUtils.updateAuthHistoryLastFileWithFailed(davRsCmp.getDavCmp().getFsPath(), accountId);
-            PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_IP_ADDRESS.params(
+            PersoniumCoreLog.Auth.AUTHN_FAILED_OUTSIDE_IP_ADDRESS_RANGE.params(
                     requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
             throw PersoniumCoreAuthnException.AUTHN_FAILED.realm(this.cell.getUrl());
         }

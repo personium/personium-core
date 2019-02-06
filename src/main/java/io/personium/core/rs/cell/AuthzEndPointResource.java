@@ -764,7 +764,7 @@ public class AuthzEndPointResource {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCountForAccountLock(accountId);
-                PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_IP_ADDRESS.params(
+                PersoniumCoreLog.Auth.AUTHN_FAILED_OUTSIDE_IP_ADDRESS_RANGE.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 String resCode = "PS-AU-0004";
                 String responseMessage = PersoniumCoreMessageUtils.getMessage(resCode);
@@ -1110,7 +1110,7 @@ public class AuthzEndPointResource {
                 //Update lock time of memcached
                 AuthResourceUtils.registIntervalLock(accountId);
                 AuthResourceUtils.countupFailedCountForAccountLock(accountId);
-                PersoniumCoreLog.Auth.AUTHN_FAILED_INCORRECT_IP_ADDRESS.params(
+                PersoniumCoreLog.Auth.AUTHN_FAILED_OUTSIDE_IP_ADDRESS_RANGE.params(
                         requestURIInfo.getRequestUri().toString(), this.ipaddress, username).writeLog();
                 log.info("responseMessage : " + MSG_INCORRECT_ID_PASS);
                 AuthResourceUtils.updateAuthHistoryLastFileWithFailed(cellRsCmp.getDavCmp().getFsPath(), accountId);
