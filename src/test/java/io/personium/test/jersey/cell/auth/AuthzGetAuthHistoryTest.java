@@ -31,8 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.personium.core.auth.OAuth2Helper;
 import io.personium.core.rs.PersoniumCoreApplication;
@@ -56,8 +54,6 @@ import io.personium.test.utils.CellUtils;
 @RunWith(PersoniumIntegTestRunner.class)
 @Category({ Unit.class, Integration.class, Regression.class })
 public class AuthzGetAuthHistoryTest extends PersoniumTest {
-
-    private static Logger log = LoggerFactory.getLogger(AuthzGetAuthHistoryTest.class);
 
     /** test cell name. */
     private static final String TEST_CELL = "testcellauthzgetauthhistory";
@@ -99,10 +95,10 @@ public class AuthzGetAuthHistoryTest extends PersoniumTest {
 
     /**
      * first authenticated.
-     * @throws PersoniumException
+     * @throws Exception Unexpected exception
      */
     @Test
-    public final void authz_first_authenticated() throws PersoniumException {
+    public final void authz_first_authenticated() throws Exception {
         PersoniumResponse dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
         assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
         Map<String, String> responseMap = parseResponse(dcRes);
@@ -113,18 +109,18 @@ public class AuthzGetAuthHistoryTest extends PersoniumTest {
 
     /**
      * get "last_authenticated" and "failed_count".
-     * @throws PersoniumException
+     * @throws Exception Unexpected exception
      */
     @Test
-    public final void get_last_authenticated() throws PersoniumException {
+    public final void get_last_authenticated() throws Exception {
         // first get token. failed count = 3.
         requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, "dummypassword");
         requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, "dummypassword");
         requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, "dummypassword");
         AuthTestCommon.waitForIntervalLock();
-        Long beforeFirstAuthenticatedTime = new Date().getTime();
+        Long before1stAuthnTime = new Date().getTime();
         PersoniumResponse dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
-        Long afterFirstAuthenticatedTime = new Date().getTime();
+        Long after1stAuthnTime = new Date().getTime();
 
         assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
         Map<String, String> responseMap = parseResponse(dcRes);
@@ -134,13 +130,13 @@ public class AuthzGetAuthHistoryTest extends PersoniumTest {
 
         // second get token. failed count = 0.
         dcRes = requestAuthorization4Authz(TEST_CELL, TEST_ACCOUNT, TEST_PASSWORD);
-        Long afterSecondAuthenticatedTime = new Date().getTime();
+        Long after2ndAuthnTime = new Date().getTime();
 
         assertThat(dcRes.getStatusCode()).isEqualTo(HttpStatus.SC_SEE_OTHER);
         responseMap = parseResponse(dcRes);
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
         Long lastAuthenticated = Long.valueOf(responseMap.get(OAuth2Helper.Key.LAST_AUTHENTICATED));
-        assertTrue(beforeFirstAuthenticatedTime <= lastAuthenticated && lastAuthenticated <= afterFirstAuthenticatedTime);
+        assertTrue(before1stAuthnTime <= lastAuthenticated && lastAuthenticated <= after1stAuthnTime);
         assertThat(responseMap.get(OAuth2Helper.Key.FAILED_COUNT)).contains("0");
 
         // third get token. failed count = 1.
@@ -152,12 +148,12 @@ public class AuthzGetAuthHistoryTest extends PersoniumTest {
         responseMap = parseResponse(dcRes);
         assertFalse(responseMap.containsKey(OAuth2Helper.Key.ERROR));
         lastAuthenticated = Long.valueOf(responseMap.get(OAuth2Helper.Key.LAST_AUTHENTICATED));
-        assertTrue(afterFirstAuthenticatedTime <= lastAuthenticated && lastAuthenticated <= afterSecondAuthenticatedTime);
+        assertTrue(after1stAuthnTime <= lastAuthenticated && lastAuthenticated <= after2ndAuthnTime);
         assertThat(responseMap.get(OAuth2Helper.Key.FAILED_COUNT)).contains("1");
     }
 
     /**
-     * request authorization.（__authz)
+     * request authorization for authz.
      * @param cellName cell name
      * @param userName user name
      * @param password password
