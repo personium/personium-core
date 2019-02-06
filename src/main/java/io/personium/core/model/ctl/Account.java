@@ -16,7 +16,12 @@
  */
 package io.personium.core.model.ctl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.core4j.Enumerable;
+import org.odata4j.edm.EdmAnnotation;
+import org.odata4j.edm.EdmAnnotationAttribute;
 import org.odata4j.edm.EdmEntityType;
 import org.odata4j.edm.EdmProperty;
 import org.odata4j.edm.EdmSimpleType;
@@ -27,6 +32,11 @@ import org.odata4j.edm.EdmSimpleType;
 public class Account {
     private Account() {
     }
+
+    /** Pattern IP address range. */
+    private static final String P_FORMAT_PATTERN_IP_ADDRESS_RANGE = "ip-address-range";
+    /** Annotations for IP address range. */
+    private static final List<EdmAnnotation<?>> P_FORMAT_IP_ADDRESS_RANGE = new ArrayList<EdmAnnotation<?>>();
 
     /**
      * Type value basic.
@@ -42,6 +52,21 @@ public class Account {
      * NavigationProperty name with ReceivedMessage.
      */
     public static final String EDM_NPNAME_FOR_RECEIVED_MESSAGE = "_ReceivedMessageRead";
+
+     // Initialization of format annotation.
+     static {
+         P_FORMAT_IP_ADDRESS_RANGE.add(createFormatIPAddressRangeAnnotation());
+     }
+
+     /**
+      * Create annotation for IP address range.
+      * @return annotation for IP address range
+      */
+     private static EdmAnnotation<?> createFormatIPAddressRangeAnnotation() {
+         return new EdmAnnotationAttribute(
+                 Common.P_NAMESPACE.getUri(), Common.P_NAMESPACE.getPrefix(),
+                 Common.P_FORMAT, P_FORMAT_PATTERN_IP_ADDRESS_RANGE);
+     }
 
     /**
      * Definition field of Name property.
@@ -60,11 +85,20 @@ public class Account {
      */
     public static final EdmProperty.Builder P_CELL = EdmProperty.newBuilder("Cell").setType(EdmSimpleType.STRING)
             .setNullable(true).setDefaultValue("null");
+
+    /**
+     * Definition field of IP address range.
+     */
+    public static final EdmProperty.Builder P_IP_ADDRESS_RANGE = EdmProperty.newBuilder("IPAddressRange")
+            .setType(EdmSimpleType.STRING).setNullable(true).setDefaultValue("null")
+            .setAnnotations(P_FORMAT_IP_ADDRESS_RANGE);
+
     /**
      * EntityType Builder.
      */
     public static final EdmEntityType.Builder EDM_TYPE_BUILDER = EdmEntityType.newBuilder()
             .setNamespace(Common.EDM_NS_CELL_CTL).setName(EDM_TYPE_NAME)
-            .addProperties(Enumerable.create(P_NAME, P_TYPE, P_CELL, Common.P_PUBLISHED, Common.P_UPDATED).toList())
+            .addProperties(Enumerable.create(P_NAME, P_TYPE, P_CELL, P_IP_ADDRESS_RANGE,
+                    Common.P_PUBLISHED, Common.P_UPDATED).toList())
             .addKeys(P_NAME.getName());
 }

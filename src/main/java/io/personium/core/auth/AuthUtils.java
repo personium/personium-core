@@ -26,11 +26,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.CharEncoding;
+import org.apache.commons.net.util.SubnetUtils;
 
 import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreException;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.model.ctl.Account;
+import io.personium.core.model.ctl.Common;
 import io.personium.core.odata.OEntityWrapper;
 import io.personium.core.plugin.PluginInfo;
 import io.personium.core.plugin.PluginManager;
@@ -167,5 +169,89 @@ public final class AuthUtils {
         } else {
             throw PersoniumCoreException.Auth.PASSWORD_INVALID;
         }
+    }
+
+    /**
+     * Validate account ip address range.
+     * @param oEntityWrapper EntityWrapper
+     * @param entitySetName entitySetName
+     */
+    public static void validateAccountIPAddressRange(OEntityWrapper oEntityWrapper, String entitySetName) {
+        if (!Account.EDM_TYPE_NAME.equals(entitySetName)) {
+            return;
+        }
+
+        // Check IP address range.
+        List<String> ipAddressRangeList = getIPAddressRangeList(oEntityWrapper);
+        if (ipAddressRangeList == null || ipAddressRangeList.isEmpty()) {
+            return;
+        }
+        Pattern pattern = Pattern.compile(Common.PATTERN_SINGLE_IP_ADDRESS_RANGE);
+        for (String address : ipAddressRangeList) {
+            Matcher matcher = pattern.matcher(address);
+            if (!matcher.matches()) {
+                throw PersoniumCoreException.OData.REQUEST_FIELD_FORMAT_ERROR
+                        .params(Account.P_IP_ADDRESS_RANGE.getName());
+            }
+        }
+    }
+
+    /**
+     * Check is Valid IP address.
+     * @param oew oew
+     * @param requestIPAddress ip address of request
+     * @return boolean Returns false if authentication failure.
+     */
+    public static Boolean isValidIPAddress(OEntityWrapper oew, String requestIPAddress) {
+        // When IPAddrsesRange of Account is not set, all IP addresses are permitted.
+        List<String> ipAddressRangeList = getIPAddressRangeList(oew);
+        if (ipAddressRangeList == null) {
+            return true;
+        }
+
+        // If the IP address of the client is unknown, it is an error.
+        if (requestIPAddress == null || requestIPAddress.isEmpty()) {
+            return false;
+        }
+        // If the IP address of the client is an illegal format, it is an error
+        String clientIPAddress = requestIPAddress.split(",")[0].trim();
+        Pattern pattern = Pattern.compile(Common.PATTERN_SINGLE_IP_ADDRESS);
+        Matcher matcher = pattern.matcher(clientIPAddress);
+        if (!matcher.matches()) {
+            return false;
+        }
+
+        // Check if the IP address of the client is included in "IPAddressRange".
+        for (String ipAddressRange : ipAddressRangeList) {
+            if (ipAddressRange.contains("/")) {
+                SubnetUtils subnet = new SubnetUtils(ipAddressRange);
+                SubnetUtils.SubnetInfo subnetInfo = subnet.getInfo();
+                int address = subnetInfo.asInteger(clientIPAddress);
+                int low = subnetInfo.asInteger(subnetInfo.getLowAddress());
+                int high = subnetInfo.asInteger(subnetInfo.getHighAddress());
+                if (low <= address && address <= high) {
+                    return true;
+                }
+            } else {
+                if (ipAddressRange.equals(clientIPAddress)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * get ip address renge list .
+     * @param oew oew
+     * @return List<String>
+     */
+    private static List<String> getIPAddressRangeList(OEntityWrapper oew) {
+        String addrStr =  (String) oew.getProperty(Account.P_IP_ADDRESS_RANGE.getName()).getValue();
+        if (addrStr == null || addrStr.isEmpty()) {
+            return null;
+        }
+        String[] addrAry = addrStr.split(",");
+        return Arrays.asList(addrAry);
     }
 }

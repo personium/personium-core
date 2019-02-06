@@ -52,6 +52,12 @@ public class Common {
     private static final String REGEX_USERDATA_KEY = "[a-zA-Z0-9][a-zA-Z0-9-_]{0,127}";
     /** Regular exporession in decimal. */
     private static final String REGEX_DECIMAL = "-?[0-9]{1,5}\\.[0-9]{1,5}";
+    /** Regular expression in single ip address. */
+    private static final String REGEX_SINGLE_IP_ADDRESS =
+            "(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])";
+    /** Regular expression in single ip address range. */
+    private static final String REGEX_SINGLE_IP_ADDRESS_RANGE =
+            REGEX_SINGLE_IP_ADDRESS + "(/[1-9]|/[1-2][0-9]|/3[0-2])?";
 
     /**
      * Namespace of UnitCtl.
@@ -113,6 +119,10 @@ public class Common {
     public static final String PATTERN_USERDATA_KEY = "^" + REGEX_USERDATA_KEY + "$";
     /** Pattern decimal. */
     public static final String PATTERN_DECIMAL = "^" + REGEX_DECIMAL + "$";
+    /** Pattern single ip address. */
+    public static final String PATTERN_SINGLE_IP_ADDRESS = "^" + REGEX_SINGLE_IP_ADDRESS + "$";
+    /** Pattern single ip address range. */
+    public static final String PATTERN_SINGLE_IP_ADDRESS_RANGE = "^" + REGEX_SINGLE_IP_ADDRESS_RANGE + "$";
 
     /** Max length of userdata. */
     public static final int MAX_USERDATA_VALUE_LENGTH = 1024 * 50;
