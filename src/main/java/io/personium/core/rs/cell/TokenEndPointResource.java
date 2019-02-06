@@ -163,7 +163,7 @@ public class TokenEndPointResource {
         String schema = null;
         //First, check if you want to authenticate Client
         //If neither Scope nor authzHeader nor clientId exists, it is assumed that Client authentication is not performed.
-        if (clientSecret != null || authzHeader != null) {
+        if (clientId != null || authzHeader != null) {
             schema = this.clientAuth(clientId, clientSecret, authzHeader, cell.getUrl());
         }
 
