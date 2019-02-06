@@ -1,0 +1,7 @@
+POST /${cellName}/__authz HTTP/1.1
+Host: ?
+Content-Length: ?
+Connection: close
+Content-Type: application/x-www-form-urlencoded
+
+${body}

@@ -19,34 +19,26 @@ package io.personium.test.jersey.cell.auth;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.CharEncoding;
 import org.apache.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import io.personium.common.utils.PersoniumCoreUtils;
 import io.personium.core.PersoniumCoreMessageUtils;
 import io.personium.core.PersoniumUnitConfig;
 import io.personium.core.auth.OAuth2Helper;
-import io.personium.core.model.Box;
 import io.personium.core.rs.PersoniumCoreApplication;
-import io.personium.core.rs.cell.AuthResourceUtils;
 import io.personium.test.categories.Integration;
 import io.personium.test.jersey.AbstractCase;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
+import io.personium.test.utils.AuthzUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
-import io.personium.test.utils.Http;
 import io.personium.test.utils.TResponse;
 
 /**
@@ -101,25 +93,18 @@ public class AuthzGetTest extends AbstractCase {
         String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String responseType = OAuth2Helper.ResponseType.TOKEN;
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("response_type=").append(responseType)
-                .append("&client_id=").append(PersoniumCoreUtils.encodeUrlComp(clientId))
-                .append("&redirect_uri=").append(PersoniumCoreUtils.encodeUrlComp(redirectUri));
 
         PersoniumUnitConfig.set(PersoniumUnitConfig.Cell.AUTHORIZATIONHTMLURL_DEFAULT, "");
 
         // Exec.
-        TResponse res = Http.request("cell/authz-get.txt")
-                .with("cellName", Setup.TEST_CELL1)
-                .with("query", queryBuilder.toString())
-                .returns().debug().statusCode(HttpStatus.SC_OK);
+        TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, HttpStatus.SC_OK);
 
         String cellUrl = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/";
         String message = PersoniumCoreMessageUtils.getMessage("PS-AU-0002");
-        String expected = createDefaultHtml(
+        String expected = AuthzUtils.createDefaultHtml(
                 clientId, redirectUri, message, null, null, responseType, null, null, cellUrl);
         assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
-            assertThat(res.getBody(), is(expected));
+        assertThat(res.getBody(), is(expected));
     }
 
     /**
@@ -133,10 +118,6 @@ public class AuthzGetTest extends AbstractCase {
         String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String responseType = OAuth2Helper.ResponseType.TOKEN;
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("response_type=").append(responseType)
-                .append("&client_id=").append(PersoniumCoreUtils.encodeUrlComp(clientId))
-                .append("&redirect_uri=").append(PersoniumCoreUtils.encodeUrlComp(redirectUri));
 
         String authorizationhtmlurl = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
                 + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML_NAME;
@@ -154,10 +135,7 @@ public class AuthzGetTest extends AbstractCase {
                     aclPath, OAuth2Helper.SchemaLevel.NONE);
 
             // Exec.
-            TResponse res = Http.request("cell/authz-get.txt")
-                    .with("cellName", Setup.TEST_CELL1)
-                    .with("query", queryBuilder.toString())
-                    .returns().debug().statusCode(HttpStatus.SC_OK);
+            TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, HttpStatus.SC_OK);
 
             assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
             assertThat(res.getBody(), is(AUTHORIZATION_HTML_BODY));
@@ -180,10 +158,6 @@ public class AuthzGetTest extends AbstractCase {
         String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String responseType = OAuth2Helper.ResponseType.TOKEN;
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("response_type=").append(responseType)
-                .append("&client_id=").append(PersoniumCoreUtils.encodeUrlComp(clientId))
-                .append("&redirect_uri=").append(PersoniumCoreUtils.encodeUrlComp(redirectUri));
 
         String authorizationhtmlurl = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
                 + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML_NAME;
@@ -205,10 +179,7 @@ public class AuthzGetTest extends AbstractCase {
                     MASTER_TOKEN_NAME, HttpStatus.SC_MULTI_STATUS);
 
             // Exec.
-            TResponse res = Http.request("cell/authz-get.txt")
-                    .with("cellName", Setup.TEST_CELL1)
-                    .with("query", queryBuilder.toString())
-                    .returns().debug().statusCode(HttpStatus.SC_OK);
+            TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, HttpStatus.SC_OK);
 
             assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
             assertThat(res.getBody(), is(AUTHORIZATION_HTML_BODY));
@@ -235,10 +206,6 @@ public class AuthzGetTest extends AbstractCase {
         String clientId = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String redirectUri = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL_SCHEMA1;
         String responseType = OAuth2Helper.ResponseType.TOKEN;
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("response_type=").append(responseType)
-                .append("&client_id=").append(PersoniumCoreUtils.encodeUrlComp(clientId))
-                .append("&redirect_uri=").append(PersoniumCoreUtils.encodeUrlComp(redirectUri));
 
         String authorizationhtmlurl1 = UrlUtils.getBaseUrl() + "/" + Setup.TEST_CELL1 + "/"
                 + Setup.TEST_BOX1 + "/" + AUTHORIZATION_HTML_NAME;
@@ -270,10 +237,7 @@ public class AuthzGetTest extends AbstractCase {
                     MASTER_TOKEN_NAME, HttpStatus.SC_MULTI_STATUS);
 
             // Exec.
-            TResponse res = Http.request("cell/authz-get.txt")
-                    .with("cellName", Setup.TEST_CELL1)
-                    .with("query", queryBuilder.toString())
-                    .returns().debug().statusCode(HttpStatus.SC_OK);
+            TResponse res = AuthzUtils.get(Setup.TEST_CELL1, responseType, redirectUri, clientId, HttpStatus.SC_OK);
 
             assertThat(res.getHeader(HttpHeaders.CONTENT_TYPE), is("text/html;charset=UTF-8"));
             assertThat(res.getBody(), is(AUTHORIZATION_HTML2_BODY));
@@ -292,37 +256,4 @@ public class AuthzGetTest extends AbstractCase {
         }
     }
 
-    // Create system default html.
-    // TODO Should call AuthzEndPointResource.createForm() properly.
-    private String createDefaultHtml(String clientId, String redirectUriStr, String message, String state,
-            String scope, String responseType, String pTarget, String pOwner, String cellUrl) {
-        // If processing fails, return system default html.
-        List<Object> paramsList = new ArrayList<Object>();
-
-        if (!"".equals(clientId) && !clientId.endsWith("/")) {
-            clientId = clientId + "/";
-        }
-
-        paramsList.add(AuthResourceUtils.getJavascript("ajax.js"));
-        paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
-        paramsList.add(clientId + Box.DEFAULT_BOX_NAME + "/profile.json");
-        paramsList.add(cellUrl + Box.DEFAULT_BOX_NAME + "/profile.json");
-        paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
-        paramsList.add(cellUrl + "__authz");
-        paramsList.add(message);
-        paramsList.add(state);
-        paramsList.add(responseType);
-        paramsList.add(pTarget != null ? pTarget : ""); // CHECKSTYLE IGNORE
-        paramsList.add(pOwner != null ? pOwner : ""); // CHECKSTYLE IGNORE
-        paramsList.add(clientId);
-        paramsList.add(redirectUriStr);
-        paramsList.add(scope);
-
-        Object[] params = paramsList.toArray();
-
-        String html = PersoniumCoreUtils.readStringResource("html/authform.html", CharEncoding.UTF_8);
-        html = MessageFormat.format(html, params);
-
-        return html;
-    }
 }

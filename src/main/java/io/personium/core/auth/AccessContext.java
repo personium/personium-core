@@ -72,6 +72,8 @@ public class AccessContext {
     public static final String TYPE_UNIT_MASTER = "unit-master";
     /** Access by basic authentication. */
     public static final String TYPE_BASIC = "basic";
+    /** Access by account access token. */
+    public static final String TYPE_ACCOUNT = "account";
     /** Access by cell local access token. */
     public static final String TYPE_LOCAL = "local";
     /** Access by TransCell Access Token. */
@@ -472,8 +474,8 @@ public class AccessContext {
         } else if (TYPE_ANONYMOUS.equals(this.getType())
                 || TYPE_BASIC.equals(this.getType())) {
             throw PersoniumCoreAuthzException.AUTHORIZATION_REQUIRED.realm(getRealm(), acceptableAuthScheme);
-        } else if (!(this.getType() == TYPE_LOCAL
-        && this.getCell().getName().equals(cellname.getName()))) {
+        } else if (!TYPE_ACCOUNT.equals(this.getType())
+                ||  !this.getCell().getName().equals(cellname.getName())) {
             throw PersoniumCoreException.Auth.NECESSARY_PRIVILEGE_LACKING;
         }
     }
@@ -744,7 +746,7 @@ public class AccessContext {
 
         AccessContext ret = new AccessContext(null, cell, baseUri, uriInfo);
         if (tk instanceof AccountAccessToken) {
-            ret.accessType = TYPE_LOCAL;
+            ret.accessType = TYPE_ACCOUNT;
             //Retrieve role information.
             String acct = tk.getSubject();
             ret.roles = cell.getRoleListForAccount(acct);

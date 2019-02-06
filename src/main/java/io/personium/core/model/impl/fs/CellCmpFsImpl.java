@@ -21,6 +21,7 @@ package io.personium.core.model.impl.fs;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.wink.webdav.model.ObjectFactory;
 import org.slf4j.Logger;
@@ -40,6 +41,9 @@ import io.personium.core.model.lock.LockManager;
 public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
 
     static Logger log = LoggerFactory.getLogger(CellCmpFsImpl.class);
+
+    /** CellKeys. */
+    private CellKeys cellKeys;
 
     /**
      * Default constructor.
@@ -69,6 +73,10 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
             this.metaFile = DavMetadataFile.newInstance(this.fsPath);
         }
         this.load();
+        // When accessing under Cell, read it every time.
+        // In case of performance problems, fix it to read with "__token, __authz, __certs".
+        cellKeys = new CellKeys(Paths.get(fsPath, CellKeys.KEYS_DIR_NAME));
+        cellKeys.load();
     }
 
     /**
@@ -140,5 +148,13 @@ public class CellCmpFsImpl extends DavCmpFsImpl implements CellCmp {
     @Override
     public PersoniumCoreException getNotFoundException() {
         return PersoniumCoreException.Dav.CELL_NOT_FOUND;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CellKeys getCellKeys() {
+        return cellKeys;
     }
 }

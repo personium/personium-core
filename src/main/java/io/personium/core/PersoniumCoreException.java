@@ -755,6 +755,11 @@ public class PersoniumCoreException extends RuntimeException {
          * When JSON Encode fails.
          */
         public static final PersoniumCoreException IDTOKEN_ENCODED_INVALID = create("PR400-AZ-0006");
+        /**
+         * Error when "Box whose schema is the cell url specified by clientId" does not exist.
+         * Because there is a possibility that it may be used illegally for confirming the existence of Box, the message is "Authorization failed".
+         */
+        public static final PersoniumCoreException BOX_NOT_INSTALLED = create("PR400-AZ-0007");
 
     }
 
