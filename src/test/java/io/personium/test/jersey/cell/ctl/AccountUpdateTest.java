@@ -231,8 +231,8 @@ public class AccountUpdateTest extends ODataCommon {
 
         try {
             // Account作成
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
-                    HttpStatus.SC_CREATED);
+            AccountUtils.createWithIPAddressRange(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
+                    "192.127.0.2", HttpStatus.SC_CREATED);
             // Account更新
             AccountUtils.update(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updateUserName,
                     orgPass, HttpStatus.SC_NO_CONTENT);
@@ -259,8 +259,8 @@ public class AccountUpdateTest extends ODataCommon {
 
         try {
             // Account作成
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
-                    HttpStatus.SC_CREATED);
+            AccountUtils.createWithIPAddressRange(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName, updatePass,
+                    "192.127.0.2", HttpStatus.SC_CREATED);
             // Account更新
             AccountUtils.updateWithIPAddressRange(AbstractCase.MASTER_TOKEN_NAME, cellName, updateUserName,
                     updateUserName, orgPass, updateIPAddressRange, HttpStatus.SC_NO_CONTENT);

@@ -270,7 +270,6 @@ public class AccountTest extends ODataCommon {
         JSONObject accountJson = res.bodyAsJson();
         accountJson = getResultsFromEntityResponse(accountJson);
         assertEquals(name, accountJson.get("Name"));
-        // TODO ★IPAddressRangeが取得できること
         assertNotNull(accountJson.get("__published"));
         assertNotNull(accountJson.get("__updated"));
         assertEquals(etag, ((JSONObject) accountJson.get("__metadata")).get("etag"));
