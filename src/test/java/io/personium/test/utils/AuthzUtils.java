@@ -168,13 +168,11 @@ public class AuthzUtils {
         paramsList.add(PersoniumCoreMessageUtils.getMessage("PS-AU-0001"));
         paramsList.add(cellUrl + "__authz");
         paramsList.add(message);
-        paramsList.add(state);
+        paramsList.add(state != null ? state : ""); // CHECKSTYLE IGNORE
         paramsList.add(responseType);
-        paramsList.add(pTarget != null ? pTarget : ""); // CHECKSTYLE IGNORE
-        paramsList.add(pOwner != null ? pOwner : ""); // CHECKSTYLE IGNORE
         paramsList.add(clientId);
         paramsList.add(redirectUriStr);
-        paramsList.add(scope);
+        paramsList.add(scope != null ? scope : ""); // CHECKSTYLE IGNORE
 
         Object[] params = paramsList.toArray();
 

@@ -16,8 +16,6 @@
  */
 package io.personium.core.rs.cell;
 
-import static io.personium.common.auth.token.AbstractOAuth2Token.MILLISECS_IN_AN_HOUR;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -247,12 +245,7 @@ public class AuthzEndPointResource {
             this.validateClientIdAndRedirectUri(clientId, redirectUri);
         } catch (PersoniumCoreException e) {
             log.debug(e.getMessage());
-            if ((username == null && password == null)) {
-                //If user ID, password, assertion, cookie are not specified, send form
-                throw e;
-            } else {
-                return returnErrorPageRedirect(e.getCode());
-            }
+            return returnErrorPageRedirect(e.getCode());
         }
 
         //Check value of response_Type
@@ -387,14 +380,17 @@ public class AuthzEndPointResource {
 //                    getIssuerUrl(), username, schema);
             //Respond with 303 and return Location header
             //Returning cell local token
-            AccountAccessToken aToken = new AccountAccessToken(issuedAt,
-                    AccountAccessToken.ACCESS_TOKEN_EXPIRES_HOUR * MILLISECS_IN_AN_HOUR, getIssuerUrl(),
-                    username, schema);
             if (OAuth2Helper.ResponseType.TOKEN.equals(responseType)) {
+                AccountAccessToken aToken = new AccountAccessToken(issuedAt,
+                        AccountAccessToken.ACCESS_TOKEN_EXPIRES_HOUR * AccountAccessToken.MILLISECS_IN_AN_HOUR,
+                        getIssuerUrl(), username, schema);
                 paramMap.put(OAuth2Helper.Key.ACCESS_TOKEN, aToken.toTokenString());
                 paramMap.put(OAuth2Helper.Key.TOKEN_TYPE, OAuth2Helper.Scheme.BEARER);
                 paramMap.put(OAuth2Helper.Key.EXPIRES_IN, String.valueOf(aToken.expiresIn()));
             } else if (OAuth2Helper.ResponseType.CODE.equals(responseType)) {
+                List<Role> roleList = cell.getRoleListForAccount(username);
+                CellLocalAccessToken aToken = new CellLocalAccessToken(
+                        issuedAt, getIssuerUrl(), username, roleList, schema);
                 paramMap.put(OAuth2Helper.Key.CODE, aToken.toCodeString());
             }
         } else {

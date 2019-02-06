@@ -18,12 +18,10 @@ package io.personium.test.jersey.cell.auth;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,8 +51,6 @@ import io.personium.common.auth.token.AbstractOAuth2Token.TokenDsigException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenParseException;
 import io.personium.common.auth.token.AbstractOAuth2Token.TokenRootCrtException;
 import io.personium.common.auth.token.AccountAccessToken;
-import io.personium.common.auth.token.CellLocalAccessToken;
-import io.personium.common.auth.token.CellLocalRefreshToken;
 import io.personium.common.auth.token.TransCellAccessToken;
 import io.personium.common.auth.token.UnitLocalUnitUserToken;
 import io.personium.core.PersoniumCoreMessageUtils;
@@ -74,13 +70,11 @@ import io.personium.test.jersey.PersoniumRestAdapter;
 import io.personium.test.jersey.PersoniumTest;
 import io.personium.test.setup.Setup;
 import io.personium.test.unit.core.UrlUtils;
-import io.personium.test.utils.AccountUtils;
 import io.personium.test.utils.BoxUtils;
 import io.personium.test.utils.CellUtils;
 import io.personium.test.utils.DavResourceUtils;
 import io.personium.test.utils.ExtCellUtils;
 import io.personium.test.utils.Http;
-import io.personium.test.utils.ResourceUtils;
 import io.personium.test.utils.TResponse;
 
 /**
@@ -149,10 +143,10 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * 認証フォームへのPOSTでclient_idで指定したCellに認証リクエストを実行し400エラーとなること.
+     * 認証フォームへのPOSTでclient_idで指定したCellに認証リクエストを実行し認可エラーとなること.
      */
     @Test
-    public final void 認証フォームへのPOSTでclient_idで指定したCellに認証リクエストを実行し400エラーとなること() {
+    public final void 認証フォームへのPOSTでclient_idで指定したCellに認証リクエストを実行し認可エラーとなること() {
         String clientId = UrlUtils.cellRoot(Setup.TEST_CELL1);
 
         try {
@@ -160,7 +154,7 @@ public class ImplicitFlowTest extends PersoniumTest {
             BoxUtils.createWithSchema(Setup.TEST_CELL1, "authzBox", AbstractCase.MASTER_TOKEN_NAME, clientId);
 
             PersoniumResponse res = requesttoAuthz(null, Setup.TEST_CELL1, clientId, null);
-            assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
+            assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
         } finally {
             BoxUtils.delete(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME, "authzBox");
@@ -168,16 +162,16 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * 認証フォームへのPOSTでredirect_uriとclient_idが異なる場合400エラーとなること.
+     * 認証フォームへのPOSTでredirect_uriとclient_idが異なる場合認可エラーとなること.
      */
     @Test
-    public final void 認証フォームへのPOSTでredirect_uriとclient_idが異なる場合400エラーとなること() {
+    public final void 認証フォームへのPOSTでredirect_uriとclient_idが異なる場合認可エラーとなること() {
         String redirectUri = UrlUtils.cellRoot(Setup.TEST_CELL2) + REDIRECT_HTML;
 
         PersoniumResponse res = requesttoAuthz(null, Setup.TEST_CELL1, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
                 redirectUri);
 
-        assertEquals(HttpStatus.SC_BAD_REQUEST, res.getStatusCode());
+        assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
     }
 
     /**
@@ -190,7 +184,7 @@ public class ImplicitFlowTest extends PersoniumTest {
         PersoniumResponse res = requesttoAuthz(null, Setup.TEST_CELL1, clientId, null);
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
-        assertEquals(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error?code=PS-ER-0003",
+        assertEquals(UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error?code=PR400-AZ-0007",
                 res.getFirstHeader(HttpHeaders.LOCATION));
     }
 
@@ -210,7 +204,7 @@ public class ImplicitFlowTest extends PersoniumTest {
             PersoniumResponse res = requesttoAuthz(null, cellName, clientId, null);
             assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
-            assertEquals(UrlUtils.cellRoot(cellName) + "__html/error?code=PS-ER-0003",
+            assertEquals(UrlUtils.cellRoot(cellName) + "__html/error?code=PR400-AZ-0007",
                     res.getFirstHeader(HttpHeaders.LOCATION));
         } finally {
             CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, cellName);
@@ -228,9 +222,6 @@ public class ImplicitFlowTest extends PersoniumTest {
         PersoniumResponse res = requesttoAuthz(addbody);
 
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-
-        // cookieの値と有効期限の確認
-        checkSessionId(false, Setup.TEST_CELL1);
 
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
         Map<String, String> response = parseResponse(res);
@@ -482,9 +473,6 @@ public class ImplicitFlowTest extends PersoniumTest {
 
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
-        // cookieの値と有効期限の確認
-        checkSessionId(false, Setup.TEST_CELL2);
-
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
         Map<String, String> response = parseResponse(res);
         try {
@@ -524,10 +512,6 @@ public class ImplicitFlowTest extends PersoniumTest {
 
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
-        // cookieが設定されていないことの確認
-        Map<String, Object> sessionMap = getSessionMap();
-        assertNull(sessionMap.get(SESSION_ID));
-
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
         Map<String, String> response = parseResponse(res);
         try {
@@ -562,10 +546,6 @@ public class ImplicitFlowTest extends PersoniumTest {
                 null);
 
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-
-        // cookieが設定されていないことの確認
-        Map<String, Object> sessionMap = getSessionMap();
-        assertNull(sessionMap.get(SESSION_ID));
 
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
         Map<String, String> response = parseResponse(res);
@@ -642,6 +622,8 @@ public class ImplicitFlowTest extends PersoniumTest {
     /**
      * パスワード認証でkeeploginを指定した場合Cookieの有効期限が設定されること.
      */
+    // TODO keeplogin実装後に対応
+    @Ignore
     @Test
     public final void パスワード認証でkeeploginを指定した場合Cookieの有効期限が設定されること() {
 
@@ -651,45 +633,12 @@ public class ImplicitFlowTest extends PersoniumTest {
 
         assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
 
-        // cookieの値と有効期限の確認
-        checkSessionId(true, Setup.TEST_CELL1);
-
         // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
         Map<String, String> response = parseResponse(res);
         try {
             AccountAccessToken aToken = AccountAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
                     UrlUtils.cellRoot(Setup.TEST_CELL1));
             assertNotNull("access token parse error.", aToken);
-            assertEquals(OAuth2Helper.Scheme.BEARER, response.get(OAuth2Helper.Key.TOKEN_TYPE));
-            assertEquals("3600", response.get(OAuth2Helper.Key.EXPIRES_IN));
-            assertEquals(DEFAULT_STATE, response.get(OAuth2Helper.Key.STATE));
-        } catch (TokenParseException e) {
-            fail(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * トークン認証で他人セルローカルトークンを取得できること.
-     */
-    @Test
-    public final void トークン認証で他人セルローカルトークンを取得できること() {
-
-        String transCellAccessToken = getTcToken();
-
-        // トークン認証
-        String addbody = "&assertion=" + transCellAccessToken;
-        PersoniumResponse res = requesttoAuthz(addbody, Setup.TEST_CELL2, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1),
-                null);
-
-        assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-
-        // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
-        Map<String, String> response = parseResponse(res);
-        try {
-            CellLocalAccessToken token = CellLocalAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
-                    UrlUtils.cellRoot(Setup.TEST_CELL2));
-            assertNotNull("access token parse error.", token);
             assertEquals(OAuth2Helper.Scheme.BEARER, response.get(OAuth2Helper.Key.TOKEN_TYPE));
             assertEquals("3600", response.get(OAuth2Helper.Key.EXPIRES_IN));
             assertEquals(DEFAULT_STATE, response.get(OAuth2Helper.Key.STATE));
@@ -820,434 +769,6 @@ public class ImplicitFlowTest extends PersoniumTest {
     }
 
     /**
-     * トークン認証でassertionに不正な文字列を指定した場合302が返却されること.
-     */
-    @Test
-    public final void トークン認証でassertionに不正な文字列を指定した場合302が返却されること() {
-
-        // トークン認証
-        String addbody = "&assertion=dummytoken";
-        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
-        String redirecturi = clientId + REDIRECT_HTML;
-        String body = "response_type=token&client_id=" + clientId
-                + "&redirect_uri=" + redirecturi
-                + "&state=" + DEFAULT_STATE + addbody;
-        PersoniumResponse res = requesttoAuthzWithBody(Setup.TEST_CELL2, body);
-
-        assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-
-        // {redirect_uri}#error={error}&error_description={error_description}&state={state}&code={code}
-        assertEquals(redirecturi
-                + "#error=access_denied&error_description=access_denied&state=" + DEFAULT_STATE
-                + "&code=PR401-AZ-0002",
-                res.getFirstHeader(HttpHeaders.LOCATION));
-    }
-
-    /**
-     * トークン認証でassertionのターゲットが別のCellの場合302が返却されること.
-     */
-    @Test
-    public final void トークン認証でassertionのターゲットが別のCellの場合302が返却されること() {
-
-        String transCellAccessToken = getTcToken();
-
-        // トークン認証
-        String addbody = "&assertion=" + transCellAccessToken;
-        String clientId = UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1);
-        String redirecturi = clientId + REDIRECT_HTML;
-        String body = "response_type=token&client_id=" + clientId
-                + "&redirect_uri=" + redirecturi
-                + "&state=" + DEFAULT_STATE + addbody;
-        PersoniumResponse res = requesttoAuthzWithBody(Setup.TEST_CELL1, body);
-
-        assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-
-        // {redirect_uri}#error={error}&error_description={error_description}&state={state}&code={code}
-        assertEquals(redirecturi
-                + "#error=access_denied&error_description=access_denied&state=" + DEFAULT_STATE
-                + "&code=PR401-AZ-0002",
-                res.getFirstHeader(HttpHeaders.LOCATION));
-    }
-
-    /**
-     * Cookie認証で自分セルローカルトークンを取得できること.
-     */
-    @Test
-    public final void Cookie認証で自分セルローカルトークンを取得できること() {
-
-        // パスワード認証で自分セルリフレッシュトークン取得
-        String addbody = "&username=account2&password=password2";
-        PersoniumResponse res = requesttoAuthz(addbody);
-        assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-        // cookieの値と有効期限の確認
-        String sessionId = checkSessionId(false, Setup.TEST_CELL1);
-
-        // Cookie認証
-        String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
-                + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
-                + "&state=" + DEFAULT_STATE;
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("Cookie", OAuth2Helper.Key.SESSION_ID + "=" + sessionId);
-        res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
-
-        checkSessionId(true, Setup.TEST_CELL1);
-
-        // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
-        Map<String, String> response = parseResponse(res);
-        try {
-            AccountAccessToken aToken = AccountAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
-                    UrlUtils.cellRoot(Setup.TEST_CELL1));
-            assertNotNull("access token parse error.", aToken);
-            assertEquals(OAuth2Helper.Scheme.BEARER, response.get(OAuth2Helper.Key.TOKEN_TYPE));
-            assertEquals("3600", response.get(OAuth2Helper.Key.EXPIRES_IN));
-            assertEquals(DEFAULT_STATE, response.get(OAuth2Helper.Key.STATE));
-        } catch (TokenParseException e) {
-            fail(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Cookie認証でトランスセルトークンを取得できること.
-     */
-    @Ignore
-    @Test
-    public final void Cookie認証でトランスセルトークンを取得できること() {
-
-        // パスワード認証で自分セルリフレッシュトークン取得
-        String addbody = "&username=account2&password=password2";
-        PersoniumResponse res = requesttoAuthz(addbody);
-        assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-        // cookieの値と有効期限の確認
-        String sessionId = checkSessionId(false, Setup.TEST_CELL1);
-
-        // Cookie認証
-        String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
-                + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
-                + "&state=" + DEFAULT_STATE
-                + "&p_target=" + UrlUtils.cellRoot(Setup.TEST_CELL2);
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("session-id", sessionId);
-        res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
-
-        checkSessionId(true, Setup.TEST_CELL1);
-
-        // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
-        Map<String, String> response = parseResponse(res);
-        try {
-            AbstractOAuth2Token tcToken = TransCellAccessToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
-                    UrlUtils.cellRoot(Setup.TEST_CELL2), UrlUtils.getHost());
-            assertNotNull("access token parse error.", tcToken);
-            assertTrue("access token parse error.", tcToken instanceof TransCellAccessToken);
-            assertEquals(OAuth2Helper.Scheme.BEARER, response.get(OAuth2Helper.Key.TOKEN_TYPE));
-            assertEquals("3600", response.get(OAuth2Helper.Key.EXPIRES_IN));
-            assertEquals(DEFAULT_STATE, response.get(OAuth2Helper.Key.STATE));
-        } catch (TokenParseException e) {
-            fail(e.getMessage());
-            e.printStackTrace();
-        } catch (TokenDsigException e) {
-            fail(e.getMessage());
-            e.printStackTrace();
-        } catch (TokenRootCrtException e) {
-            fail(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Cookie認証でp_ownerを指定した場合ULUUTを取得できること.
-     */
-    @Test
-    @Ignore // UUT promotion setting API invalidation.
-    public final void Cookie認証でp_ownerを指定した場合ULUUTを取得できること() {
-
-        // パスワード認証で自分セルリフレッシュトークン取得
-        String addbody = "&username=account2&password=password2";
-        PersoniumResponse res = requesttoAuthz(addbody);
-        assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-        // cookieの値と有効期限の確認
-        String sessionId = checkSessionId(false, Setup.TEST_CELL1);
-
-        // アカウントにユニット昇格権限付与
-        DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
-                "cell/proppatch-uluut.txt", HttpStatus.SC_MULTI_STATUS);
-
-        // Cookie認証
-        String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
-                + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
-                + "&state=" + DEFAULT_STATE
-                + "&p_owner=true";
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("session-id", sessionId);
-        res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
-
-        // cookieが設定されていないことの確認
-        Map<String, Object> sessionMap = getSessionMap();
-        assertNull(sessionMap.get(SESSION_ID));
-
-        // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
-        Map<String, String> response = parseResponse(res);
-        try {
-            UnitLocalUnitUserToken uluut = UnitLocalUnitUserToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
-                    UrlUtils.getHost());
-            assertEquals(Setup.OWNER_VET, uluut.getSubject());
-            assertEquals(UrlUtils.getHost(), uluut.getIssuer());
-            assertEquals(OAuth2Helper.Scheme.BEARER, response.get(OAuth2Helper.Key.TOKEN_TYPE));
-            assertEquals("3600", response.get(OAuth2Helper.Key.EXPIRES_IN));
-            assertEquals(DEFAULT_STATE, response.get(OAuth2Helper.Key.STATE));
-        } catch (TokenParseException e) {
-            fail(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Cookie認証でp_targetとp_ownerを指定した場合ULUUTを取得できること.
-     */
-    @Test
-    @Ignore // UUT promotion setting API invalidation.
-    public final void Cookie認証でp_targetとp_ownerを指定した場合ULUUTを取得できること() {
-
-        // パスワード認証で自分セルリフレッシュトークン取得
-        String addbody = "&username=account2&password=password2";
-        PersoniumResponse res = requesttoAuthz(addbody);
-        assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-        // cookieの値と有効期限の確認
-        String sessionId = checkSessionId(false, Setup.TEST_CELL1);
-
-        // アカウントにユニット昇格権限付与
-        DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
-                "cell/proppatch-uluut.txt", HttpStatus.SC_MULTI_STATUS);
-
-        // Cookie認証
-        String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
-                + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
-                + "&state=" + DEFAULT_STATE
-                + "&p_owner=true&p_target=" + UrlUtils.cellRoot(Setup.TEST_CELL2);
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("session-id", sessionId);
-        res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
-
-        assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-
-        // cookieが設定されていないことの確認
-        Map<String, Object> sessionMap = getSessionMap();
-        assertNull(sessionMap.get(SESSION_ID));
-
-        // {redirect_uri}#access_token={access_token}&token_type=Bearer&expires_in={expires_in}&state={state}
-        Map<String, String> response = parseResponse(res);
-        try {
-            UnitLocalUnitUserToken uluut = UnitLocalUnitUserToken.parse(response.get(OAuth2Helper.Key.ACCESS_TOKEN),
-                    UrlUtils.getHost());
-            assertEquals(Setup.OWNER_VET, uluut.getSubject());
-            assertEquals(UrlUtils.getHost(), uluut.getIssuer());
-            assertEquals(OAuth2Helper.Scheme.BEARER, response.get(OAuth2Helper.Key.TOKEN_TYPE));
-            assertEquals("3600", response.get(OAuth2Helper.Key.EXPIRES_IN));
-            assertEquals(DEFAULT_STATE, response.get(OAuth2Helper.Key.STATE));
-        } catch (TokenParseException e) {
-            fail(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Cookie認証で昇格失敗した場合302が返ること.
-     */
-    @Test
-    @Ignore // UUT promotion setting API invalidation.
-    public final void Cookie認証で昇格失敗した場合302が返ること() {
-
-        // パスワード認証で自分セルリフレッシュトークン取得
-        String addbody = "&username=account4&password=password4";
-        PersoniumResponse res = requesttoAuthz(addbody);
-        assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-        // cookieの値と有効期限の確認
-        String sessionId = checkSessionId(false, Setup.TEST_CELL1);
-
-        // アカウントにユニット昇格権限付与
-        DavResourceUtils.setProppatch(Setup.TEST_CELL1, AbstractCase.MASTER_TOKEN_NAME,
-                "cell/proppatch-uluut.txt", HttpStatus.SC_MULTI_STATUS);
-
-        // Cookie認証
-        String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
-                + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
-                + "&state=" + DEFAULT_STATE
-                + "&p_owner=true";
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("session-id", sessionId);
-        res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
-
-        // cookieが設定されていないことの確認
-        Map<String, Object> sessionMap = getSessionMap();
-        assertNull(sessionMap.get(SESSION_ID));
-
-        assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-        // レスポンスヘッダのチェック
-        assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-        // レスポンスボディのチェック
-        checkHtmlBody(res, "PS-AU-0005", Setup.TEST_CELL1, "true");
-    }
-
-    /**
-     * Cookie認証でオーナー指定の無いセルに対しp_ownerを指定した場合302が返ること.
-     */
-    @Test
-    @Ignore // UUT promotion setting API invalidation.
-    public final void Cookie認証でオーナー指定の無いセルに対しp_ownerを指定した場合302が返ること() {
-
-        String cellName = "authzcell";
-        try {
-            // Cell作成
-            CellUtils.create(cellName, AbstractCase.MASTER_TOKEN_NAME, HttpStatus.SC_CREATED);
-
-            // Account作成
-            AccountUtils.create(AbstractCase.MASTER_TOKEN_NAME, cellName, "account1", "password1",
-                    HttpStatus.SC_CREATED);
-
-            // Box作成
-            BoxUtils.createWithSchema(cellName, "box", AbstractCase.MASTER_TOKEN_NAME,
-                    UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1));
-
-            // パスワード認証で自分セルリフレッシュトークン取得
-            String addbody = "&username=account1&password=password1";
-            PersoniumResponse res = requesttoAuthz(addbody, cellName, UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1), null);
-            assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-            // cookieの値と有効期限の確認
-            String sessionId = checkSessionId(false, cellName);
-
-            // アカウントにユニット昇格権限付与
-            DavResourceUtils.setProppatch(cellName, AbstractCase.MASTER_TOKEN_NAME,
-                    "cell/proppatch-uluut.txt", HttpStatus.SC_MULTI_STATUS);
-
-            // Cookie認証
-            String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
-                    + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
-                    + "&state=" + DEFAULT_STATE
-                    + "&p_owner=true";
-            HashMap<String, String> headers = new HashMap<String, String>();
-            headers.put("session-id", sessionId);
-            res = requesttoAuthzWithBody(cellName, body, headers);
-
-            // cookieが設定されていないことの確認
-            Map<String, Object> sessionMap = getSessionMap();
-            assertNull(sessionMap.get(SESSION_ID));
-
-            assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-            // レスポンスヘッダのチェック
-            assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-            // レスポンスボディのチェック
-            checkHtmlBody(res, "PS-AU-0005", cellName, "true");
-        } finally {
-            // Box削除
-            BoxUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, "box");
-
-            // Account削除
-            AccountUtils.delete(cellName, AbstractCase.MASTER_TOKEN_NAME, "account1", -1);
-
-            // Cell削除
-            CellUtils.delete(AbstractCase.MASTER_TOKEN_NAME, cellName);
-        }
-    }
-
-    /**
-     * Cookie認証でsession_idに不正なトークンを指定した場合302エラーとなること.
-     */
-    @Test
-    public final void Cookie認証でsession_idに不正なトークンを指定した場合302エラーとなること() {
-
-        // パスワード認証で自分セルリフレッシュトークン取得
-        String addbody = "&username=account2&password=password2";
-        PersoniumResponse res = requesttoAuthz(addbody);
-        assertEquals(HttpStatus.SC_SEE_OTHER, res.getStatusCode());
-        // cookieの値と有効期限の確認
-        String sessionId = checkSessionId(false, Setup.TEST_CELL1);
-
-        // Cookie認証
-        String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
-                + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
-                + "&state=" + DEFAULT_STATE;
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("Cookie", OAuth2Helper.Key.SESSION_ID + "=" + sessionId);
-        res = requesttoAuthzWithBody(Setup.TEST_CELL2, body, headers);
-
-        // cookieが設定されていないことの確認
-        Map<String, Object> sessionMap = getSessionMap();
-        assertNull(sessionMap.get(SESSION_ID));
-
-        assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-        // レスポンスヘッダのチェック
-        assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-        // レスポンスボディのチェック
-        checkHtmlBody(res, "PS-AU-0005", Setup.TEST_CELL2);
-    }
-
-    /**
-     * Cookie認証でsession_idにアクセストークンを指定した場合302エラーとなること.
-     */
-    @Test
-    public final void Cookie認証でsession_idにアクセストークンを指定した場合302エラーとなること() {
-
-        // アクセストークンの取得
-        String sessionId = ResourceUtils.getMyCellLocalToken(Setup.TEST_CELL1, "account2", "password2");
-
-        // Cookie認証
-        String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
-                + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
-                + "&state=" + DEFAULT_STATE;
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("Cookie", OAuth2Helper.Key.SESSION_ID + "=" + sessionId);
-        PersoniumResponse res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
-
-        // cookieが設定されていないことの確認
-        Map<String, Object> sessionMap = getSessionMap();
-        assertNull(sessionMap.get(SESSION_ID));
-
-        assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-        // レスポンスヘッダのチェック
-        assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-        // レスポンスボディのチェック
-        checkHtmlBody(res, "PS-AU-0005", Setup.TEST_CELL1);
-    }
-
-    /**
-     * Cookie認証でsession_idに空文字を指定した場合302エラーとなること.
-     */
-    @Test
-    public final void Cookie認証でsession_idに空文字を指定した場合302エラーとなること() {
-
-        // アクセストークンの取得
-        String sessionId = "";
-
-        // Cookie認証
-        String body = "response_type=token&client_id=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1)
-                + "&redirect_uri=" + UrlUtils.cellRoot(Setup.TEST_CELL_SCHEMA1) + REDIRECT_HTML
-                + "&state=" + DEFAULT_STATE;
-        HashMap<String, String> headers = new HashMap<String, String>();
-        headers.put("Cookie", OAuth2Helper.Key.SESSION_ID + "=" + sessionId);
-        PersoniumResponse res = requesttoAuthzWithBody(Setup.TEST_CELL1, body, headers);
-
-        // cookieが設定されていないことの確認
-        Map<String, Object> sessionMap = getSessionMap();
-        assertNull(sessionMap.get(SESSION_ID));
-
-        assertEquals(HttpStatus.SC_OK, res.getStatusCode());
-
-        // レスポンスヘッダのチェック
-        assertEquals(MediaType.TEXT_HTML + ";charset=UTF-8", res.getFirstHeader(HttpHeaders.CONTENT_TYPE));
-
-        // レスポンスボディのチェック
-        checkHtmlBody(res, "PS-AU-0005", Setup.TEST_CELL1);
-    }
-
-    /**
      * __authzへのリクエストを投入する.
      * @param addbody 追加のボディ
      * @return レスポンス
@@ -1337,42 +858,21 @@ public class ImplicitFlowTest extends PersoniumTest {
         return map;
     }
 
-    private String checkSessionId(boolean keeplogin, String cellName) {
-        Map<String, Object> sessionMap = getSessionMap();
-
-        try {
-            CellLocalRefreshToken rToken = CellLocalRefreshToken.parse((String) sessionMap.get(SESSION_ID),
-                    UrlUtils.cellRoot(cellName));
-            assertNotNull("can't get session-id from response.", rToken);
-
-            if (keeplogin) {
-                assertNotNull("can't get ExpiryDate from response.", sessionMap.get(MAX_AGE));
-            } else {
-                assertNull("ExpiryDate is exists from response.", sessionMap.get(MAX_AGE));
-            }
-        } catch (TokenParseException e) {
-            fail(e.getMessage());
-            e.printStackTrace();
-        }
-
-        return (String) sessionMap.get(SESSION_ID);
-    }
-
-    private Map<String, Object> getSessionMap() {
-        Map<String, Object> sessionMap = new HashMap<String, Object>();
-        String sessionId = null;
-        Date maxAge = null;
-        for (Cookie cookie : cookies) {
-            if (SESSION_ID.equals(cookie.getName())) {
-                sessionId = cookie.getValue();
-                maxAge = cookie.getExpiryDate();
-            }
-        }
-        sessionMap.put(SESSION_ID, sessionId);
-        sessionMap.put(MAX_AGE, maxAge);
-
-        return sessionMap;
-    }
+//    private Map<String, Object> getSessionMap() {
+//        Map<String, Object> sessionMap = new HashMap<String, Object>();
+//        String sessionId = null;
+//        Date maxAge = null;
+//        for (Cookie cookie : cookies) {
+//            if (SESSION_ID.equals(cookie.getName())) {
+//                sessionId = cookie.getValue();
+//                maxAge = cookie.getExpiryDate();
+//            }
+//        }
+//        sessionMap.put(SESSION_ID, sessionId);
+//        sessionMap.put(MAX_AGE, maxAge);
+//
+//        return sessionMap;
+//    }
 
     static void checkHtmlBody(PersoniumResponse res, String messageId, String dataCellName) {
         checkHtmlBody(res, messageId, dataCellName, "");
