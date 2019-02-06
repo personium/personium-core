@@ -402,8 +402,8 @@ public class AuthzEndPointResource {
         // get last auth history.
         AuthHistoryLastFile last = AuthResourceUtils.getAuthHistoryLast(
                 cellRsCmp.getDavCmp().getFsPath(), accountId);
-        String lastAuthenticated = last.getLastAuthenticated() != null ? last.getLastAuthenticated().toString() : null;
-        String failedCount = last.getFailedCount() != null ? last.getFailedCount().toString() : null;
+        String lastAuthenticated = last.getLastAuthenticated() != null ? last.getLastAuthenticated().toString() : null; //CHECKSTYLE IGNORE
+        String failedCount = last.getFailedCount() != null ? last.getFailedCount().toString() : null; //CHECKSTYLE IGNORE
         paramMap.put(OAuth2Helper.Key.LAST_AUTHENTICATED, lastAuthenticated);
         paramMap.put(OAuth2Helper.Key.FAILED_COUNT, failedCount);
         // update auth history.
