@@ -203,7 +203,7 @@ public class CodeFlowTest extends PersoniumTest {
 
         String expectedUri = UrlUtils.cellRoot(Setup.TEST_CELL1) + "__html/error";
         assertThat(locationUri, is(expectedUri));
-        assertThat(locationQuery.get("code"), is("PS-ER-0003"));
+        assertThat(locationQuery.get("code"), is("PR400-AZ-0007"));
     }
 
     /**
